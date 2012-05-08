@@ -1,0 +1,44 @@
+The goal of this software is to aid self-organized cooperatives in
+managing their flow of goods and money.  It uses mysql, php and
+jquery/javascript.
+
+Revision history:
+
+2.03:
+some bugfixes in the installation procedure; some conformance to strict php5,
+although this hasn't been extensively tested yet except in the installation.
+New feature:
+- The individual components of the zip file with the current order now have
+  three different views on the orders for each provider, to accomodate 
+  different needs
+
+2.02:
+again various bugfixes, but less than last time. New features:
+- Deactivation of products that didn't arrive
+- simplified menu for Checkout
+- unified incidents and account reports
+
+2.01:
+numerous bugfixes. New features:
+- users can now view their previous sales that actually happened
+- improved incident handling
+- improved and corrected account handling
+- improved and corrected moving of orders; still slightly buggy
+- prepared features for future releases: favorite carts, undo of validations
+
+2.00: 
+first production version
+
+The directory structure is as follows:
+
+.               contains the most widely used php files
+css/            stylesheets 
+inc/            php include files 
+img/            some pictures
+js/             javascript components 
+local_config    configuration files
+local_config/lang       files for i18n 
+lib/            php library files
+sql/            database definitions
+sql/queries/    sql stored procedures and functions
+

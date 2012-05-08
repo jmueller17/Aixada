@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/aixada-new/!svn/ver/614/principal/sql/setup
+END
+aixada_setup_details.sql
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/aixada-new/!svn/ver/524/principal/sql/setup/aixada_setup_details.sql
+END
+tables_modified_by.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/aixada-new/!svn/ver/612/principal/sql/setup/tables_modified_by.php
+END
+aixada_delete_table_contents.sql
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/aixada-new/!svn/ver/317/principal/sql/setup/aixada_delete_table_contents.sql
+END
+queries_reading.php
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/aixada-new/!svn/ver/614/principal/sql/setup/queries_reading.php
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/aixada-new/!svn/ver/514/principal/sql/setup/Makefile
+END
+make_query_dependencies.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/aixada-new/!svn/ver/478/principal/sql/setup/make_query_dependencies.php
+END

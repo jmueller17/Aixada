@@ -1,0 +1,53 @@
+@CHARSET "UTF-8";
+
+div#headwrap 			{display:none;}
+div#OrderOptions		{display:none;}
+#datepicker				{font-size:.9em; font-weight:bold; width:18em;}
+#ui-datepicker-div 				{display:none;}
+
+.hideInPrint					{display:none;}
+.showInPrint					{display:block;}
+.report_total_quantity_num		{font-weight:bold;}
+.page-break						{display:block; page-break-after:always;}
+
+thead 							{display:table-header-group;} 
+
+/** for index page **/
+div#leftIconCol						{display:none}
+div#rightSummaryCol					{display:none}
+button 								{display:none}
+div#cartLayer						{float:left;}
+.ui-icon							{display:none}
+
+/** for report page **/
+h4, h1								{font-family:Arial, Helvetica, sans-serif; font-size:1em; font-weight:bold; padding:2px;}
+p 									{font-family:Arial, Helvetica, sans-serif; font-size:.9em;}
+div.OrderListing					{margin-top:15px;}
+div.OrderListing .order4Provider p	{padding:2px 2px; margin-top:2px; margin-bottom:2px; background-color:#f3f3f3;}
+div.OrderListing .provider 			{margin-bottom:1px; margin-top:10px; padding:2px; padding-right:10px; border:1px solid black;}
+div.OrderListing .provider a 		{text-decoration:none; color:black;} 
+div.OrderListing table 				{margin-left:5px; margin-bottom:20px; width:95%;}
+div.OrderListing td 				{text-align:right; padding:2px 4px 3px 3px; border:1px solid #ccc; border-collapse:collapse; font-size:.8em; font-family:Arial, Helvetica, sans-serif;}
+div.OrderListing .report_total_quantity, .report_total_price {float:right; margin-left:5px; margin-right:5px;}
+div.OrderListing .report_email, .report_printout, .report_total {margin-left:5px; margin-right:5px; float:right;}
+div.OrderListing .report_email 		{display:none;}
+
+/** for daily stats report **/
+h3									{display:block; border:1px solid black; padding:2px;}
+table.table_listing					{}
+#dailyStats p					{font-size:10px; font-family:Arial, Helvetica, sans-serif;}
+table.printStats th	 			{font-size:10px; font-family:Arial, Helvetica, sans-serif; font-weight:bold; background-color:#f3f3f3; padding:2px; border:1px solid #ccc; }
+table.printStats td	 			{font-size:10px; font-family:Arial, Helvetica, sans-serif; border-bottom:1px solid #ccc;}
+table.printStats .negativeBalance{color:red;}
+
+/** for incidents page **/
+table#tbl_incidents 				{border:1px solid #ccc; width:100%;}
+table#tbl_incidents th				{font-size:10px; font-weight:bold;  font-family:Arial, Helvetica, sans-serif; background-color:#f3f3f3;}
+table#tbl_incidents td				{font-size:10px; font-family:Arial, Helvetica, sans-serif;  text-align:left; padding:2px; border:1px solid #ccc; border-collapse:collapse;}
+table#tbl_incidents td.incidentsDetails		{margin-bottom:2px; border-bottom:2px black solid; text-align:left;}
+.spacingEnd	{background-color:#d3d3d3; padding:0px;}
+table#tbl_incidents td.noBorder		{border:0px solid #fff;}
+
+/** for products and provider manage page **/
+
+

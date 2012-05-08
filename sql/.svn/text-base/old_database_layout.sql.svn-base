@@ -1,0 +1,428 @@
+-- phpMyAdmin SQL Dump
+-- version 2.6.4-pl3
+-- http://www.phpmyadmin.net
+-- 
+-- Host: localhost
+-- Generation Time: Apr 04, 2009 at 06:54 AM
+-- Server version: 5.0.67
+-- PHP Version: 5.2.6
+-- 
+-- Database: `aixada_installer`
+-- 
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `categoria`
+-- 
+
+CREATE TABLE `categoria` (
+  `pcid` int(11) NOT NULL auto_increment,
+  `pcnom` varchar(255) NOT NULL default '',
+  `pcparentpc` int(11) default NULL,
+  PRIMARY KEY  (`pcid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+-- 
+-- Dumping data for table `categoria`
+-- 
+
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `data`
+-- 
+
+CREATE TABLE `data` (
+  `datid` int(11) NOT NULL auto_increment,
+  `datdata` date NOT NULL default '0000-00-00',
+  `datestat` tinyint(3) unsigned default '0',
+  PRIMARY KEY  (`datid`),
+  UNIQUE KEY `datdata` (`datdata`),
+  KEY `datid` (`datid`),
+  KEY `datid_2` (`datid`)
+) ENGINE=InnoDB AUTO_INCREMENT=239 DEFAULT CHARSET=latin1 AUTO_INCREMENT=239 ;
+
+-- 
+-- Dumping data for table `data`
+-- 
+
+INSERT INTO `data` VALUES (1, '2009-04-16', 1);
+INSERT INTO `data` VALUES (237, '2009-04-23', 1);
+INSERT INTO `data` VALUES (238, '2009-04-30', 1);
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `ingres`
+-- 
+
+CREATE TABLE `ingres` (
+  `inuf` int(11) NOT NULL default '0',
+  `indata` date NOT NULL default '0000-00-00',
+  `inquantitat` float(10,2) NOT NULL default '0.00',
+  `inmemid` int(11) NOT NULL default '0',
+  `innota` varchar(255) NOT NULL default '',
+  KEY `UF` (`inuf`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 
+-- Dumping data for table `ingres`
+-- 
+
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `liniacomanda`
+-- 
+
+CREATE TABLE `liniacomanda` (
+  `lcid` int(10) unsigned NOT NULL auto_increment,
+  `lcdata` date NOT NULL default '0000-00-00',
+  `lcuf` int(4) unsigned NOT NULL default '0',
+  `lcprod` int(10) unsigned NOT NULL default '0',
+  `lcquantitat` float(10,2) unsigned NOT NULL default '0.00',
+  `lcpreuunitat` float(10,2) NOT NULL default '0.00',
+  `lcvenda` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`lcid`),
+  KEY `users` (`lcuf`),
+  KEY `data` (`lcdata`),
+  KEY `lcprod` (`lcprod`)
+) ENGINE=InnoDB AUTO_INCREMENT=300026 DEFAULT CHARSET=latin1 AUTO_INCREMENT=300026 ;
+
+-- 
+-- Dumping data for table `liniacomanda`
+-- 
+
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `membre`
+-- 
+
+CREATE TABLE `membre` (
+  `memid` int(11) NOT NULL auto_increment,
+  `memuf` int(11) NOT NULL default '0',
+  `memnom` varchar(255) NOT NULL default '',
+  `memlogin` varchar(50) NOT NULL default '',
+  `mempassword` varchar(255) NOT NULL default '',
+  `memactive` smallint(6) NOT NULL default '1',
+  `memtipus` tinyint(4) NOT NULL default '0',
+  `memtel` varchar(255) default NULL,
+  `mememail` varchar(255) default NULL,
+  `memextrainfo` varchar(255) default NULL,
+  PRIMARY KEY  (`memid`),
+  KEY `memuf` (`memuf`)
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=latin1 AUTO_INCREMENT=118 ;
+
+-- 
+-- Dumping data for table `membre`
+-- 
+
+INSERT INTO `membre` VALUES (117, 0, 'rusc', 'rusc', 'axlVqxkVBamqc', 0, 1, '', '', '');
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `producte`
+-- 
+
+CREATE TABLE `producte` (
+  `prodid` int(11) NOT NULL auto_increment,
+  `prodcode` varchar(255) NOT NULL default '',
+  `prodprov` int(11) default '0',
+  `prodnom` varchar(255) NOT NULL default '',
+  `prodactive` smallint(6) NOT NULL default '1',
+  `prodpreuinicial` float(10,2) default '0.00',
+  `prodiva` int(11) default '0',
+  `prodpreu` float(10,2) NOT NULL default '0.00',
+  `prodisstock` tinyint(4) NOT NULL default '0',
+  `prodstockmin` int(11) default '0',
+  `prodstockmax` int(11) default '0',
+  `prodstockactual` float(10,2) default '0.00',
+  PRIMARY KEY  (`prodid`)
+) ENGINE=InnoDB AUTO_INCREMENT=739 DEFAULT CHARSET=latin1 AUTO_INCREMENT=739 ;
+
+-- 
+-- Dumping data for table `producte`
+-- 
+
+INSERT INTO `producte` VALUES (12, '8411495112147', 2, 'ArrÃ²s integral a granel (sac de 25kg) preu per 1Kg', 1, 1.45, 4, 1.51, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (13, '8411495112130', 2, 'ArrÃ²s blanc 1 Kg', 1, 0.00, 0, 1.80, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (14, '8410693274121', 2, 'Macarrons 500 g', 1, 0.90, 7, 0.96, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (15, '8410693270123', 2, 'Espaguettis 500 g', 1, 0.90, 7, 0.96, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (16, '8410693271410', 2, 'Sopa de lletres 250 g', 1, 0.70, 7, 0.75, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (20, '4003395414816', 4, 'Paper de cuina 4 rotllos', 1, 2.25, 0, 2.25, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (22, '782126003010', 4, 'Compreses fines (slender de 20)', 1, 0.00, 0, 2.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (23, '23', 4, 'Compreses regulars (14)', 1, 0.00, 0, 2.11, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (24, '782126003041', 4, 'Compreses nit', 1, 0.00, 0, 2.42, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (25, '4003395445612', 4, 'Paquets WC sac de 8 u', 1, 2.41, 0, 2.41, 1, 0, NULL, 0.00);
+INSERT INTO `producte` VALUES (26, '4003395211316', 4, 'Mocadors de paper (paquet de 15)', 1, 0.00, 0, 1.58, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (27, '782126003010', 4, 'Salva Slips', 1, 0.00, 0, 2.16, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (28, '782126008008', 4, 'Tampons Regulars (paquet de 16)', 1, 0.00, 0, 3.20, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (29, '782126009005', 4, 'Tampons SÃºper (paquet de 16)', 1, 3.92, 0, 3.92, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (30, '30', 4, 'Paper reciclat DIN-A4 Nature', 1, 0.00, 0, 3.20, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (31, '31', 4, 'Sobre reciclat AMERICA AUTO.OBREF.115x225 CAPSA 500', 1, 0.00, 0, 11.57, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (32, '8436003920427', 5, 'xocolata amb llet (100 g)', 1, 1.25, 7, 1.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (33, '8436003920441', 5, 'xocolata negre 62% cacau (100 g)', 1, 1.30, 7, 1.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (34, '34', 5, 'xocolata negre 73% cacau (100 g)', 1, 1.35, 7, 1.44, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (35, '35', 5, 'xocolata d''avellana (100 g)', 1, 0.00, 0, 1.14, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (36, '36', 5, 'xocolata moca (100 g)', 1, 0.00, 0, 1.35, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (37, '37', 5, 'xocolata d''arrÃ²s (100 g)', 1, 0.00, 0, 1.35, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (38, '8019772000516', 5, 'cacau amarg', 1, 0.00, 0, 1.45, 1, 2, NULL, 0.00);
+INSERT INTO `producte` VALUES (39, '8019772003166', 5, 'cacau instantani', 1, 3.00, 7, 3.21, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (40, '8436003920007', 5, 'sucre de canya integral (Panela Biologica) (preu per kg)', 1, 1.90, 7, 2.03, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (41, '41', 5, 'barretes de sÃ¨sam (30 g)', 1, 0.40, 0, 0.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (52, '52', 8, '1_COMANDA ENTREGADA', 1, 0.00, 0, 1.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (53, '53', 1, 'Iogurt Natural 750 cc (500 gr)', 1, 2.60, 0, 2.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (54, '54', 1, 'Iogurt Natural 350 cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (55, '55', 1, 'Iogurt Desnatat 750 cc (500 gr)', 1, 2.60, 0, 2.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (56, '56', 1, 'Iogurt Desnatat 350 cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (57, '57', 1, 'Iogurt Grec petit', 1, 1.20, 0, 1.20, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (58, '58', 1, 'Iogurt Bifidus 350 cc', 1, 0.00, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (59, '', 1, 'Iogurt Maduixa 350cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (60, '60', 1, 'Iogurt Llimona 350cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (61, '61', 1, 'Iogurt Vainilla 350cc', 1, 0.00, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (62, '62', 1, 'Iogurt CafÃ¨ 350cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (63, '63', 1, 'Iogurt Nabius 350cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (64, '64', 1, 'Formatge Semi (kg)', 1, 0.00, 0, 14.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (65, '65', 4, 'Llibreta eco natur foli', 1, 2.09, 0, 2.09, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (66, '66', 4, 'Carpetas amb solapas', 1, 0.00, 0, 0.79, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (67, '67', 4, 'Llibreta eco natur 1/4', 1, 1.20, 0, 1.29, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (68, '68', 4, 'Llibreta eco natur A6', 1, 0.00, 0, 0.65, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (69, '69', 5, 'crema cacao amb nous', 1, 2.07, 7, 2.21, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (70, '70', 5, 'tisana digestiva', 1, 1.90, 7, 2.03, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (71, '8019772140021', 5, 'tisana balsamica', 1, 0.00, 0, 1.70, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (72, '8019772000134', 5, 'te verd darjeeling', 1, 2.10, 7, 2.25, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (73, '8019772000141', 5, 'te vert (bolsitas)', 1, 2.10, 7, 2.25, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (74, '8019772000486', 5, 'te verd a granel(cistella)', 1, 2.06, 7, 2.20, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (75, '8019772000332', 5, 'te earl grey', 1, 2.15, 7, 2.30, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (76, '8019772000349', 5, 'te vert (llimona)', 1, 0.00, 0, 2.30, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (77, '8019772000363', 5, 'te vert (jasmine) (gelsomino)', 1, 2.21, 7, 2.36, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (78, '8019772000387', 5, 'Rooibos (tronja-canela)', 1, 2.40, 7, 2.57, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (79, '79', 5, 'Cafe Cuba', 1, 0.00, 0, 2.35, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (80, '80', 5, 'Cafe Colombia', 1, 0.00, 0, 2.35, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (150, '150444444', 6, 'CafÃ¨ en graaaaaaaaaaaaaa (1000g)', 1, 0.00, 0, 8.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (151, '150444444', 6, 'CafÃ¨ mÃ²lt (250g)', 1, 2.20, 7, 2.45, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (281, '281', 1, 'Iogurt Menta  350cc', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (315, '23011', 2, 'Arros blanc a granel (sacs de 25 kg) preu per 1kg.', 1, 1.69, 4, 1.76, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (316, '14100', 2, 'llenties 25 kg', 1, 2.00, 4, 2.08, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (376, '9000', 20, 'Mel de mil flors 1/2 Kg', 1, 3.70, 7, 3.96, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (377, '9001', 20, 'Mel de romanÃ­ 1/2 Kg', 1, 3.40, 7, 3.64, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (378, '9002', 20, 'Mel de mil flors 1Kg', 1, 6.45, 7, 6.90, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (379, '9003', 20, 'Mel de romanÃ­ 1Kg', 1, 6.00, 7, 6.42, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (380, '9004', 20, 'PolÂ·len fresc 230 gr', 1, 7.00, 7, 7.49, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (418, '', 20, 'Mel de bruc 1/2 kg', 1, 3.40, 7, 3.64, 1, NULL, 7, 0.00);
+INSERT INTO `producte` VALUES (419, '', 20, 'Mel de Castanyer 1/2 kg', 1, 3.40, 7, 3.64, 1, NULL, 7, 0.00);
+INSERT INTO `producte` VALUES (421, '', 20, 'Mel de Muntanya 1/2 kg', 1, 3.40, 7, 3.64, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (445, '015455555', 20, 'tintura de propolis al 30% 30 ml', 1, 6.80, 7, 7.28, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (446, '03554654654', 20, 'Mel amb propolis al 3% 250 cc', 1, 6.30, 7, 6.74, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (480, '', 20, 'mel amb propolis', 1, 5.10, 7, 5.46, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (481, '', 20, 'mel de bruc 1/2 Kg.', 1, 3.40, 7, 3.64, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (483, '', 20, 'mel de castanyer 1/2 Kg', 1, 3.70, 7, 3.96, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (484, '', 20, 'mel de mil flors 1/2 Kg.', 1, 3.40, 7, 3.64, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (515, 'UL1501048051', 27, 'Detergente Concentrado Lavadora - unitat de 1 Litre', 1, 2.83, 16, 3.28, 1, 1, 50, 0.00);
+INSERT INTO `producte` VALUES (516, 'UL1501048408', 27, 'Blanqueador percarborado - unidades de 1Kg', 1, 4.29, 16, 4.98, 0, 1, 1, 0.00);
+INSERT INTO `producte` VALUES (517, 'UL1502042151', 27, 'Lavavajillas concentrado con aloe vera - preu per 1 Litre', 1, 2.68, 16, 3.11, 1, 1, 40, 0.00);
+INSERT INTO `producte` VALUES (518, 'UL1503049051', 27, 'Limpiahogar concentrado - bidÃ³n 10L. - preu per 1 Litre', 1, 2.10, 16, 2.44, 1, 1, 20, 0.00);
+INSERT INTO `producte` VALUES (519, 'UL151506049800', 27, 'Grifo envase de 10L. - preu per 1 Litro', 1, 9.00, 0, 9.01, 1, 0, 0, 0.00);
+INSERT INTO `producte` VALUES (520, 'UL1502050047', 27, 'Pastillas para lavavajillas - bote 60 unidades:', 1, 9.65, 16, 11.19, 0, 2, 2, 0.00);
+INSERT INTO `producte` VALUES (539, 'CE0907015402', 27, 'sal marina fina (saco de 25 Kg) - preu per 1kg', 1, 1.49, 7, 1.59, 1, 5, 25, 0.00);
+INSERT INTO `producte` VALUES (542, '', 21, 'Pollastre sencer (anoteu el pes exacte!!!)', 1, 7.00, 7, 7.49, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (543, '', 21, 'Pollastre sencer eviscerat (anoteu el pes exacte!!!)', 1, 8.00, 7, 8.56, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (544, '', 21, 'Pollastre tallat a quarts amb menuts (anoteu el pes exacte!!!)', 1, 8.00, 7, 8.56, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (545, '', 21, 'Pollastre tallat a quarts amb menuts envasat al buit (anoteu el pes exacte!!!)', 1, 9.00, 7, 9.63, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (546, '', 21, 'Tot un pollastre tallat envasat al buit cada part per separat  (anoteu el pes exacte!!!)', 1, 9.00, 7, 9.63, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (553, '', 1, 'Formatge de cabra (12 â‚¬/kg)', 1, 12.00, 0, 12.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (557, '', 27, 'Flocs de civada (avena) (1,80â‚¬/kg)', 1, 1.80, 0, 1.80, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (558, '', 27, 'Cigrons sÃ¨cs (granel, 2.65â‚¬/Kg)', 1, 2.65, 0, 2.65, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (560, '', 27, 'Farina Blanca (granel, 1.03â‚¬/kg)', 1, 0.99, 4, 1.03, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (561, '', 27, 'Flocs d''Ordi (cebada) (500gr)', 1, 1.19, 7, 1.27, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (562, '', 27, 'Flocs de sÃ¨gol (centeno)(500gr)', 1, 1.13, 7, 1.21, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (563, '', 27, 'Flocs de blat (500gr)', 1, 1.14, 7, 1.22, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (564, '', 27, 'Flocs espelta (500gr)', 1, 1.45, 0, 0.72, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (566, '', 20, 'tintura de propolis al 30% 60 ml', 1, 11.00, 7, 11.77, 0, NULL, 5, 0.00);
+INSERT INTO `producte` VALUES (576, '', 29, 'Vi negre Sang de Drac merlot semi crianÃ§a 75 cl', 1, 4.80, 16, 5.57, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (577, '', 29, 'Vi negre jove 75 cl', 1, 2.80, 16, 3.25, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (578, '', 29, 'Cava Brut Nature', 1, 4.80, 16, 5.57, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (579, '', 29, 'Cava Gran Reserva', 1, 3.60, 16, 4.18, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (582, '', 5, 'Roiboos natural bossetes', 1, 1.30, 7, 1.39, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (584, '', 5, 'sucre de canya integral (granel, sac11,36 Kg) Panela Bio 2.01euros/kilo', 1, 1.89, 7, 2.02, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (585, '1444', 5, 'tisana depurante', 1, 1.90, 7, 2.03, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (634, '12121212', 1, 'Iogurt begut (desnatat) de maduixa 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (635, '13131313', 1, 'Iogurt begut (desnatat) de llimona 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (636, '14141414', 1, 'Iogurt begut (desnatat) de nabius 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (637, '15151515', 1, 'Iogurt begut (desnatat) de menta 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (638, '16161616', 1, 'Iogurt begut (desnatat) de vainilla 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (639, '171717171', 1, 'Iogurt begut (desnatat) de cafÃ¨ 200cc', 1, 1.10, 0, 1.10, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (687, '687', 36, 'Formatge tendre de cabra  de 500gr  (preu per Kg) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 16.20, 4, 16.85, 0, 0, 0, 0.00);
+INSERT INTO `producte` VALUES (688, '688', 36, 'Fromatge tendre de cabra GRAN peÃ§a de 1,7kg (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 18.00, 0, 18.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (689, '689', 36, 'Fromatge de cabra a les fines herbes de 500gr (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 22.00, 0, 22.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (690, '690', 36, 'Formatge de cabra al pebre negre de 500 gr (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 22.00, 0, 22.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (691, '691', 36, 'Formatge curat de cabra petit (350gr) (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 24.00, 0, 24.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (692, '693', 36, 'Formatge curat de cabra gran (700gr) (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 24.00, 0, 24.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (693, '694', 36, 'Formatge curat de cabra enorme (2.2kg) (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 24.00, 0, 24.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (694, '694', 36, 'Formatge curat de cabra en barra (1.2kg) (preu per KG) DEMANAR PER PEÃ‡A I QUAN ARRIBI ESCRIURE PES!!!', 1, 24.00, 0, 24.00, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (695, '695', 36, 'MatÃ³ de cabra de 125 gr (preu de la peÃ§a)', 1, 1.60, 0, 1.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (696, '695', 36, 'Iogurt de cabra de 125 gr', 1, 0.90, 0, 0.90, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (697, '696', 36, 'LLet de cabra d''1 litre', 1, 2.60, 0, 2.60, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (698, '697', 36, 'Pot de formatge se  amb oli', 1, 9.00, 4, 9.36, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (699, '', 37, 'Farina egÃ­pcia (75% espelta i 25% camut) (1.5e/Kg)', 1, 1.50, 0, 1.70, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (700, '', 37, 'Un quart de xai (2.5-3 Kg) (12.5e/Kg)', 1, 13.00, 0, 13.00, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (701, '', 37, 'Mig xai (6Kg aprox) (11.5e/Kg)', 1, 12.00, 0, 12.00, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (702, '', 37, 'LletÃ³ (6-7 kg) (18e/kg)', 1, 18.00, 0, 18.00, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (703, '', 37, 'Mill (2e/Kg)', 1, 2.00, 0, 2.00, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (710, '', 1, 'Iogurt grec 350', 0, 1.80, 0, 1.80, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (711, '', 1, 'Iogurt grec 350cc', 1, 1.80, 0, 1.80, 0, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (715, '33', 5, 'Te negre Morawakkorale bossa 100 grs', 1, 1.52, 7, 2.10, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (716, '45', 5, 'Te negre Morawakkorale bergamota bossa 100 grs', 1, 1.68, 7, 1.80, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (717, '23', 5, 'Te fruites', 1, 1.52, 7, 2.10, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (718, '67', 5, 'Te Morawakkorale mango bossa 100 grs', 1, 1.52, 7, 2.10, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (719, '45', 5, 'Roiboos natural', 1, 1.30, 7, 1.40, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (730, '', 27, 'Melmelada taronja amarga 350 gt', 1, 2.86, 7, 3.06, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (731, '', 27, 'Melmelada maduixa amb sirop 350 gr', 1, 2.86, 7, 3.06, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (732, '', 27, 'Melmelada prÃ©ssec amb sirop 350 gr', 1, 2.86, 7, 3.06, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (733, '', 27, 'Melmelada de mirtil 350 gr', 1, 2.86, 7, 3.06, 1, NULL, NULL, 0.00);
+INSERT INTO `producte` VALUES (734, '', 27, 'Melmelada de mora 350 gr', 1, 2.86, 7, 3.06, 1, NULL, NULL, 0.00);
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `productecategoria`
+-- 
+
+CREATE TABLE `productecategoria` (
+  `prodid` int(11) NOT NULL,
+  `catid` int(11) NOT NULL,
+  PRIMARY KEY  (`prodid`,`catid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 
+-- Dumping data for table `productecategoria`
+-- 
+
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `productecomanda`
+-- 
+
+CREATE TABLE `productecomanda` (
+  `pcprodid` int(3) unsigned NOT NULL default '0',
+  `pcdata` date NOT NULL default '0000-00-00',
+  PRIMARY KEY  (`pcprodid`,`pcdata`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 
+-- Dumping data for table `productecomanda`
+-- 
+
+INSERT INTO `productecomanda` VALUES (64, '2009-04-16');
+INSERT INTO `productecomanda` VALUES (553, '2009-04-16');
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `proveidor`
+-- 
+
+CREATE TABLE `proveidor` (
+  `provid` int(11) NOT NULL auto_increment,
+  `provnom` varchar(255) NOT NULL default '',
+  `provactive` smallint(6) NOT NULL default '1',
+  `provtelefon` varchar(255) default NULL,
+  `provfax` varchar(255) default NULL,
+  `provextrainfo` text NOT NULL,
+  `provresponsable` varchar(255) default NULL,
+  `provtelefonresponsable` varchar(255) default NULL,
+  PRIMARY KEY  (`provid`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
+
+-- 
+-- Dumping data for table `proveidor`
+-- 
+
+INSERT INTO `proveidor` VALUES (1, 'MAS CLAPEROL', 1, '', '', 'asdasdaddadd', 'Laia Comas Arfelis', '');
+INSERT INTO `proveidor` VALUES (2, 'RIET VELL', 1, NULL, NULL, '', 'Jose Royo', NULL);
+INSERT INTO `proveidor` VALUES (4, 'ECO-RECICLAT', 1, NULL, NULL, '', 'Marta Ricard', NULL);
+INSERT INTO `proveidor` VALUES (5, 'XARXA CONSUM SOLIDARI', 1, NULL, NULL, '', 'Bet (de Sandra)', NULL);
+INSERT INTO `proveidor` VALUES (6, 'CAFÃ‰ DE CHIAPAS', 1, NULL, NULL, '', 'Bet (UF 25)', NULL);
+INSERT INTO `proveidor` VALUES (8, 'Feixa Verda', 1, '93 780 72 11', 'preferent:93 780 72 11 secundari:93 790 16 43', 'Compte: Caixa Terrassa \r\n2074 0008 14 2120 640154', 'Marta Ricard/Laia Capdevila', 'marta ricard: 93 284 11 33');
+INSERT INTO `proveidor` VALUES (17, 'Carn Vall Fosca', 1, '608899551', NULL, 'Assumpta', 'Jose Royo (de moment)', '655643345');
+INSERT INTO `proveidor` VALUES (19, 'Fruita Fraga (Lleida)', 0, NULL, NULL, '', 'Josep MÂª y Laia Comas', '655643345 696723824');
+INSERT INTO `proveidor` VALUES (20, 'La Mel d''en Miquel', 1, '608388837', NULL, '', 'Thais Fabregas', '605584770');
+INSERT INTO `proveidor` VALUES (21, 'La Kresta', 1, '654012518', NULL, 'Aviram Agroecologic ', 'Isa Coderch', '649590637');
+INSERT INTO `proveidor` VALUES (27, 'Mon Verd', 1, NULL, NULL, 'Productes verds', 'Antonio i ConcepciÃ³', NULL);
+INSERT INTO `proveidor` VALUES (29, 'Can Suriol', 1, '616393575', NULL, '', 'Jose Royo', '655643345');
+INSERT INTO `proveidor` VALUES (33, 'AlgaMar', 1, '986404857 670252214', NULL, 'CIF: B36545 853', 'Laia Capdevila / Marga ...', '');
+INSERT INTO `proveidor` VALUES (34, 'Llet Raphel Llado', 1, NULL, NULL, '', NULL, NULL);
+INSERT INTO `proveidor` VALUES (36, 'Formatges MAS GARET', 1, NULL, NULL, '', 'Claudia', NULL);
+INSERT INTO `proveidor` VALUES (37, 'Cal Pauet', 1, '650122365', NULL, '', 'Nuria Ribas', NULL);
+INSERT INTO `proveidor` VALUES (38, 'Liquats Vegetals (Monsoy)', 1, NULL, NULL, '', 'Veronica Villar (UF56)', '+34646812076');
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `stockinput`
+-- 
+
+CREATE TABLE `stockinput` (
+  `stidata` date NOT NULL default '0000-00-00',
+  `stiprod` int(11) NOT NULL default '0',
+  `stipreu` float(10,2) NOT NULL default '0.00',
+  `stiquantitat` float(10,2) NOT NULL default '0.00',
+  `stimem` int(11) NOT NULL default '0',
+  KEY `stidata` (`stidata`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stock input table.  Does not maintain current stock.';
+
+-- 
+-- Dumping data for table `stockinput`
+-- 
+
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `unitatfamiliar`
+-- 
+
+CREATE TABLE `unitatfamiliar` (
+  `ufid` int(4) unsigned NOT NULL default '0',
+  `ufname` varchar(63) NOT NULL default '',
+  `ufcontact` varchar(255) default NULL,
+  `ufaddress` varchar(255) default NULL,
+  `ufval` float(10,2) NOT NULL default '0.00',
+  `ufactive` smallint(6) NOT NULL default '1',
+  PRIMARY KEY  (`ufid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 
+-- Dumping data for table `unitatfamiliar`
+-- 
+
+INSERT INTO `unitatfamiliar` VALUES (0, 'El Rusc', 'El Rusc', '', 0.00, 1);
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `venda`
+-- 
+
+CREATE TABLE `venda` (
+  `venid` int(11) NOT NULL auto_increment,
+  `venuf` int(11) NOT NULL default '0',
+  `vendata` date NOT NULL default '0000-00-00',
+  `venvendedor` int(11) NOT NULL default '0',
+  `vensubtotal` float(10,2) NOT NULL default '0.00',
+  `venafegit` float(10,2) NOT NULL default '0.00',
+  PRIMARY KEY  (`venid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6168 DEFAULT CHARSET=latin1 AUTO_INCREMENT=6168 ;
+
+-- 
+-- Dumping data for table `venda`
+-- 
+

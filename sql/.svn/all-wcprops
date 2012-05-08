@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svnroot/aixada-new/!svn/ver/625/principal/sql
+END
+old_database_layout.png
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/aixada-new/!svn/ver/1/principal/sql/old_database_layout.png
+END
+aixada_setup_queries.sql
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/aixada-new/!svn/ver/605/principal/sql/aixada_setup_queries.sql
+END
+command-line-for-converting-categories.txt
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/aixada-new/!svn/ver/416/principal/sql/command-line-for-converting-categories.txt
+END
+aixada.sql
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/aixada-new/!svn/ver/628/principal/sql/aixada.sql
+END
+database-definition.up-to-date
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/aixada-new/!svn/ver/337/principal/sql/database-definition.up-to-date
+END
+aixada.png
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/aixada-new/!svn/ver/563/principal/sql/aixada.png
+END
+aixada_migrate.sql
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/aixada-new/!svn/ver/438/principal/sql/aixada_migrate.sql
+END
+database-queries.up-to-date
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/aixada-new/!svn/ver/337/principal/sql/database-queries.up-to-date
+END
+old_database_layout.sql
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/aixada-new/!svn/ver/1/principal/sql/old_database_layout.sql
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/aixada-new/!svn/ver/517/principal/sql/Makefile
+END
+do_dump.sh
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/aixada-new/!svn/ver/119/principal/sql/do_dump.sh
+END

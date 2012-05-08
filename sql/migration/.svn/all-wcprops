@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/aixada-new/!svn/ver/562/principal/sql/migration
+END
+aixada_migrate_fake_orders.sql
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/aixada-new/!svn/ver/275/principal/sql/migration/aixada_migrate_fake_orders.sql
+END
+aixada_migrate_member.sql
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/aixada-new/!svn/ver/454/principal/sql/migration/aixada_migrate_member.sql
+END
+aixada_migrate_provider.sql
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/aixada-new/!svn/ver/442/principal/sql/migration/aixada_migrate_provider.sql
+END
+aixada_migrate_uf.sql
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/aixada-new/!svn/ver/309/principal/sql/migration/aixada_migrate_uf.sql
+END
+aixada_migrate_account.sql
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/aixada-new/!svn/ver/562/principal/sql/migration/aixada_migrate_account.sql
+END
+aixada_migrate_incident.sql
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/aixada-new/!svn/ver/417/principal/sql/migration/aixada_migrate_incident.sql
+END
+aixada_migrate_orders.sql
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/aixada-new/!svn/ver/511/principal/sql/migration/aixada_migrate_orders.sql
+END
+aixada_migrate_favorite.sql
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/aixada-new/!svn/ver/300/principal/sql/migration/aixada_migrate_favorite.sql
+END
+aixada_migrate_product.sql
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/aixada-new/!svn/ver/514/principal/sql/migration/aixada_migrate_product.sql
+END
+aixada_migrate_role.sql
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/aixada-new/!svn/ver/454/principal/sql/migration/aixada_migrate_role.sql
+END
+aixada_migrate_users.sql
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/aixada-new/!svn/ver/454/principal/sql/migration/aixada_migrate_users.sql
+END

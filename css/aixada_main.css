@@ -1,0 +1,195 @@
+@charset "utf-8";
+/* CSS Document */
+
+* 					{margin:0; padding:0;}
+
+h1					{font-size:1.6em; padding-left:6px; margin-top:20px; margin-bottom:20px;}
+h2,h3,h4			{padding:2px;}
+td 					{vertical-align:top;}
+th					{background:#E1E1E1; margin-bottom:3px;}
+input 				{padding-left:2px;}
+img 				{border:0px solid #fff;}
+
+
+
+/** generic styles **/
+.textAlignRight		{text-align:right;}
+.textAlignLeft		{text-align:left;}
+.textAlignCenter	{text-align:center;}
+.floatLeft			{float:left;}
+.floatRight			{float:right;}
+.hidden				{display:none;}
+.showBlock			{display:block;}
+.showInline			{display:inline;}
+.msg_dialog			{text-align:center;}
+.optionLink			{font-size:1.0em;}
+.negativeBalance	{color:red;}
+.dblBorderTop		{border-top:double #000 1px;}
+.greenBg			{background-color:green;}
+.lightGreenBg		{background-color:#72b42d;}
+.dateNum			{font-weight:bold; margin:1px; padding-right:2px;}
+.grayed				{color:#E1E1E1;}
+
+.oneThirdCol		{width:30%; margin:2px 3px;}
+.splitCol			{width:48%; margin:4px 4px;}
+.minSidesMargin		{margin:0px 5px;}
+.loadAnim			{padding:3px 2px;}
+.loadAnimValidate	{float:right; margin-top:10px; margin-right:10px;}
+.loadAnimShop		{margin-top:-27px; padding-right:5px; padding-left:2px;}
+.minPadding			{padding:3px;}
+.padding10x5		{padding:10px 5px;}
+
+
+
+div#wrap			{width:90%; margin: 0 auto; background-color:#fff;}
+div#topMenu			{}
+div#menuBgBar		{padding:5px;}
+a#navMyAccount		{float:right;}
+div#headwrap		{width:100%; background-color:#fff;}
+
+div#titlewrap		{width:100%; overflow:hidden; margin-bottom:20px;}
+div#titleLeftCol	{width:70%; float:left;}
+div#titleRightCol	{width:28%; float:left; padding-top:10px; line-height:2em;}
+div#titleLeftCol50	{width:40%; float:left;}
+div#titleRightCol50	{width:58%; float:left; padding-top:15px; line-height:2em;}
+div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
+div#ViewChoice		{float:right; margin-top:10px;}
+
+
+div#logonStatus		{text-align:right; padding:6px 5px; color:#999; font-size:0.8em;}
+div#stagewrap		{width:100%; background-color:#fff;}
+div#wrapUFSelect	{margin-top:140px;}
+
+div#leftCol			{width:60%; float:left;}
+div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}
+.toggleShopDate		{font-weight:bold; cursor:pointer;}
+
+
+
+
+/** for login **/
+div#logonWrap 			{min-width:280px; float:right;}
+div#registerWrap		{width:550px; margin:50px auto;}
+div#pwdWrap				{width:350px; margin:100px auto;}
+div#newsWrap			{float:left; margin-left:0px; max-width:500px;}
+p#logonHeader			{width:100%; height:150px; margin:10px auto; background-color:#fff; background-image:url('../img/aixada_header1600.150.png');}
+.success_msg			{margin:20px; padding:15px; background-color:#72b42d; border:1px solid #72b42d; text-align:center; border-radius:10px;}
+sup						{color:red; font-size:0.6em; padding-top:3px;}
+
+
+
+/** for validate **/
+div#deposit_content 	{padding:10px 5px;}
+.rightCol-Observer		{padding:3px; margin-bottom:5px;}
+.rightCol-Observer h3	{padding:2px 4px;}
+
+
+/** for cashbox **/
+div#withdraw_cash, #deposit_cash 		{margin-bottom:60px;}
+.highlight-deposit		{background-color:#72b42d; padding:12px;}
+.highlight-withdrawl	{background-color:red; padding:12px;}
+
+/** for incidents **/
+div#tbl_div				{max-height:200px; overflow:scroll;}
+div#incidents_listing a	{font-size:0.8em; margin-right:20px;}
+.spacingEnd				{background-color:#d3d3d3; padding:0px;}
+
+table#tbl_incidents		{width:100%; } /* also for incidents page */
+table#tbl_incidents td  {padding-top:1px; padding-right:20px;}
+table#tbl_incidents th  {text-align:left;}
+.minwidth-50			{min-width:50px;}
+.minwidth-30			{min-width:30px;}
+.minwidth-180			{min-width:180px;}
+.minwidth-150			{min-width:150px;}
+.width-400				{width:400px;}
+.width-280				{width:280px;}
+.maxwidth-30			{width:30px;}
+
+.incidentsSubject		{text-decoration:underline; cursor:hand;}
+.incidentsDetails		{padding-top:10px; background-color:white; padding-bottom:10px;}
+
+	
+	
+/** for home **/
+div#menuTable table 	{border:0px solid black;}
+div#menuTable table td 	{padding:20px 30px; text-align:center;}
+div#menuTable a			{font-size:1.2em; text-decoration:none;}
+div#menuTable a:hover	{font-size:1.2em; text-decoration:underline;}
+div#homeWrap			{margin:0 auto; max-width:800px;}
+div#leftIconCol			{width:30%; float:left; margin-right:30px;}
+div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}
+.homeIcon				{margin-bottom:20px; text-align:center;}
+
+
+/** for report page **/
+div#mainReportListing						{margin-top:15px;}
+div#mainReportListing  .order4Provider p	{padding:2px 2px; margin-top:2px; margin-bottom:2px; background-color:#f3f3f3}
+div#mainReportListing .provider 			{margin-bottom:1px; margin-top:10px; padding:2px; padding-right:10px;}
+div#mainReportListing .provider a 			{text-decoration:none;} 
+div#mainReportListing table 				{margin-left:30px; margin-bottom:20px;}
+div#mainReportListing td 					{text-align:right; padding:2px 4px 3px 3px; border:1px solid #ccc; border-collapse:collapse;}
+div#mainReportListing .report_total_quantity, .report_total_price {float:right; margin-left:30px;}
+div#mainReportListing .report_total_quantity_num {font-weight:bold;}
+
+div#mainReportListing .report_email, .report_printout, .report_total {margin-left:20px; margin-right:5px; float:right;}
+div#mainReportListing .report_email 		{display:none;}
+#reportShowExtended							{margin-right:20px; float:right;}
+.provIcon						{float:left;}
+
+/** for account report **/
+div#account_listing				{width:100%;}
+div#cashbox_listing				{width:100%; clear:both;}
+
+
+/** three column layout for: manager_orders, activate roles, activate products**/
+.multipleSelect			{width:250px; height:300px;}
+div#threeColWrap div	{float:left;}
+div#middleColumn		{padding:40px 20px;}
+div#mngOrderBtn			{clear:both; margin-left:500px; padding-top:10px;}
+
+
+
+/** styles for cart **/
+.right-icons {float:right; margin-right:5px; margin-top:3px;}
+.left-icons	{float:left; margin-right:5px;}
+
+/** for pagination navigation **/
+div#pagNav span			{float:left; margin-left:3px; margin-right:3px;}
+
+
+/** styles for forms **/
+.formLabel				{text-align:right; padding-right:4px;}
+.inputTxt				{border:1px #d3d3d3 solid; background-color:#fff;}
+td h1					{font-weight:bold; font-size:1.2em; padding-top:12px; padding-bottom:3px; border:none;}
+td h2					{font-weight:bold; font-size:1em; padding-top:12px; padding-bottom:3px;}
+input 					{height:1.6em;}
+.total, .total_label	{font-weight:bold;}
+.faintSuggest			{color:#d3d3d3;}
+.textareaSmall			{width:180px; height:50px;}
+.textareaLarge			{width:480px; height:150px;}
+.textareaMax			{width:100%; height:80px;}
+.inputTxtTiny			{width:40px;}
+.inputTxtSmall			{width:110px;}
+.inputTxtMiddle			{width:180px;}
+.inputTxtLarge			{width:480px;}
+.inputTxtMax			{width:100%;}
+
+.mediumSelect			{width:150px; }
+.longSelect				{width:300px; margin-bottom:10px;}
+.datePickerInput		{font-size:.85em; width:17em;}
+.multipleSelect			{height:280px;}
+
+form table td 			{padding:2px 5px;}
+form table td label		{float:right;}
+form table td input 	{line-height:1.2em; font-size:.8em;}
+
+.product_list_wrap										{margin-top:10px;}
+.product_list, .table_listing, .purchase_listing		{width:100%;}
+.product_list_mng td, th			{padding:2px 5px;}
+.table_listing td					{text-align:right; padding:1px;}
+.product_list td					{text-align:right; background:#EBEBEB; padding:5px 5px;}
+.purchase_listing td				{text-align:right; padding-right:5px;}
+.table_listing_cashbox				{width:100%;}
+.table_listing_cashbox td			{text-align:left; padding:2px;}
+
+
