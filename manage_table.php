@@ -22,7 +22,7 @@ function navGrid_options() {
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><?php 
@@ -30,43 +30,28 @@ function navGrid_options() {
       			echo $Text['global_title'] . " - " . $Text['head_ti_manage'] . $what; ?>
     </title>
 
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />    
+	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/jquery-ui/ui-lightness/jquery-ui-1.8.custom.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="js/jqGrid-4.3.1/css/ui.jqgrid.css"/>
     
     
-    
-	<!--  link rel="stylesheet" type="text/css"   media="screen" href="css/css_for_manage_table.min.css" /-->
-	<!--link rel="stylesheet" type="text/css"   media="print" href="css/print.css" /-->
-
-    
+        
 	<!--  this cannot be minified because the order of the i18n file for jqgrid is important  -->
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
  	<script type="text/javascript" src="js/jqGrid-4.3.1/js/i18n/grid.locale-<?php echo $language; ?>.js"></script>
-    <!-- script type="text/javascript" src="js/jquery/jquery.jqGrid.min.js"></script-->
     <script type="text/javascript" src="js/jqGrid-4.3.1/js/jquery.jqGrid.min.js"></script>
-
-
-	<script type="text/javascript" src="js/jquery/jquery-ui-1.8.custom.min.js"></script>
+	<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
 	<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-	<script type="text/javascript" src="js/jquery/jquery.aixadaMenu.js"></script>     	 
-   	<script type="text/javascript" src="js/jquery/jquery.aixadaUtilities.js" ></script>
+	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
+
  
- 
-   <?php if(!isset($_REQUEST['table']))
-      echo '
-        <script language="javascript" type="text/javascript">
-          alert("manage_table: variable table not set in query");
-        </script>';
-   ?>
-  
+   
    <script type="text/javascript">
      var selected_row; 
      var lastsel = 0; 
-	 
-	 
-	
 	
 	/**
 	 *	Custom extension to retrieve the detail table for a given table
@@ -97,12 +82,18 @@ function navGrid_options() {
 			 
 	});
 
+	
 	/**	
 	 *	main table 
 	 */
 	 
 	$(document).ready(function (){ 
-		var current_table = $.getUrlVar('table'); 						
+		var current_table = $.getUrlVar('table'); 	
+
+		if (current_table == null || current_table == '') {
+			alert("variable table not set in query");
+		}
+							
 		$.ajax({
 			type: 'POST',
 	    	url: "ctrlTableManager.php?table="+current_table+"&oper=getColumnsAsJSON",
@@ -113,13 +104,13 @@ function navGrid_options() {
 	    	success: function(result){
 	      		colN = result.col_names;
 	      		colM = result.col_model;
-			active_fields = result.active_fields;
+				active_fields = result.active_fields;
 	      		opt = result.field_options;
-			var filter_text = new String('');
-			var filter_cond = $.getUrlVar('filter');
-			if (filter_cond.length>0) {
-			  filter_text = "&filter=" + filter_cond;
-			}
+				var filter_text = new String('');
+				var filter_cond = $.getUrlVar('filter');
+				if (filter_cond.length>0) {
+			  		filter_text = "&filter=" + filter_cond;
+				}
 			$("#desc").jqGrid({
 			  url: "ctrlTableManager.php?table="+current_table+"&oper=listAll" + filter_text,
 			      	height: 200,
