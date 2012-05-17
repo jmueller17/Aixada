@@ -1,5 +1,56 @@
 delimiter |
 
+/**
+ * returns all those dates that are orderable but for which 
+ * there are no items ordered yet. 
+ */
+drop procedure if exists get_empty_orderable_dates|
+create procedure get_empty_orderable_dates()
+begin
+	select od.orderable_date 
+	from aixada_orderable_dates od left join aixada_order_item oi
+	on (od.orderable_date = oi.date_for_order)
+	where oi.date_for_order is null
+	and od.orderable_date >= date(sysdate());
+end|
+
+  
+/**
+ *  returns all those dates for which there are ordered items
+ */
+drop procedure if exists get_nonempty_orderable_dates|
+create procedure get_nonempty_orderable_dates()
+begin
+	select distinct date_for_order 
+	from aixada_order_item
+	where date_for_order >= date(sysdate());
+end|
+
+
+
+/**
+ * returns all orderable dates empty or with ordered items. 
+ * this correspond basically to the entries in aixada_order_dates
+ */
+drop procedure if exists get_all_orderable_dates|
+create procedure get_all_orderable_dates()
+begin
+	select orderable_date 
+	from aixada_orderable_dates
+	where orderable_date >= date(sysdate());
+end|
+
+/**
+ * insert into aixada_orderable_date new dates available for ordering
+ */
+drop procedure if exists add_orderable_dates|
+create procedure add_orderable_dates(in dates text)
+begin
+	insert into aixada_orderable_dates
+	values (dates);
+end|
+
+
 drop procedure if exists get_sales_dates|
 create procedure get_sales_dates(in the_date date, in num int)
 begin

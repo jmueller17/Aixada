@@ -26,7 +26,7 @@ class configuration_vars {
    */
   public $db_type = 'mysqli';
   public $db_host = 'localhost';
-  public $db_name = 'aixada';
+  public $db_name = 'aixadat';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
 
@@ -39,6 +39,15 @@ class configuration_vars {
    *  in next_shop_dates() in utilities_shop_and_order.php
    */
   public $shopping_day = 'Wednesday';  
+  
+  
+  /**
+   * These are the days of the week that people can come in and pick up their stuff. These 
+   * days are usually orderable, i.e. people can make orders for these days. Names have to be in English 
+   * @var array
+   */
+  public $orderable_days = array('Wednesday');
+  
 
   
   /**
@@ -46,7 +55,6 @@ class configuration_vars {
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
    */
-
   public $default_theme = "start"; // start | ui-lightness | smoothness
   
   

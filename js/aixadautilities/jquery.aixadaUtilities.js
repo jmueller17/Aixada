@@ -3,11 +3,31 @@ $(function(){
 	
 	
 	$.extend({
-		//retrieves the available dates for future orders
-		getAvailableDates4Orders: function(callbackfn){
+		//retrieves all dates for which items can be orderd. Includes dates that have orders already and those that don't
+		getAllOrderableDates: function(callbackfn){
 			$.ajax({
 				type: "GET",
-				url: "ctrlDates.php?oper=availableDates",		
+				url: "ctrlDates.php?oper=getAllOrderableDates",		
+				dataType: "JSON", 
+				success: function(data){
+					var availableDates = eval(data);
+					if(typeof callbackfn == 'function'){
+						callbackfn.call(this, availableDates);
+					}
+				}, 
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					$.showMsg({
+						msg:XMLHttpRequest.responseText,
+						type: 'error'});
+					
+				}		
+			}); //end ajax retrieve date
+		},
+		//get orderabl dates that have not items ordered
+		getEmptyOrderableDates: function(callbackfn){
+			$.ajax({
+				type: "GET",
+				url: "ctrlDates.php?oper=getEmptyOrderableDates",		
 				dataType: "JSON", 
 				success: function(data){
 					var availableDates = eval(data);
@@ -25,10 +45,9 @@ $(function(){
 		},
 		//retrieve available dates with ordered items
 		getDatesWithOrders : function(callbackfn){
-		
 			$.ajax({
 				type: "GET",
-				url: "ctrlDates.php?oper=datesWithOrders",		
+				url: "ctrlDates.php?oper=getDatesWithOrders",		
 				dataType: "JSON", 
 				success: function(data){
 			
