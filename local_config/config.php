@@ -55,7 +55,7 @@ class configuration_vars {
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
    */
-  public $default_theme = "start"; // start | ui-lightness | smoothness
+  public $default_theme = "redmond"; // start | ui-lightness | smoothness | redmond
   
   
   /**

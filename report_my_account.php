@@ -1,16 +1,30 @@
 <?php include "inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_account'] ;?></title>
 
-
-	 <link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
+	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
 	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/jquery-ui/ui-lightness/jquery-ui-1.8.custom.css"/>
-    <script type="text/javascript" src="js/js_for_report_account.php"></script>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+     
+  	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
+		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+   	<?php  } else { ?>
+	   	<script type="text/javascript" src="js/js_for_report_my_account.min.js"></script>
+    <?php }?>
+   
+   
+    	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
+   
+   
    
 	<script type="text/javascript">
 	

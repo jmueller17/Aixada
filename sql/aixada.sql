@@ -42,11 +42,11 @@ create table aixada_member (
   nif 				varchar(15) 	default null,
   zip				varchar(10)		default null,
   city				varchar(255) 	not null,
-  phone1    		varchar(50) 	default NULL,
-  phone2			varchar(50) 	default NULL,
-  web				varchar(255) 	default NULL,
-  picture           varchar(255)    default NULL,
-  notes  	 		text 			default NULL,
+  phone1    		varchar(50) 	default null,
+  phone2			varchar(50) 	default null,
+  web				varchar(255) 	default null,
+  picture           varchar(255)    default null,
+  notes  	 		text 			default null,
   active     	  	tinyint			default 1, 
   participant		bool 			default true,
   adult		        bool			default true, 
@@ -78,7 +78,7 @@ create table aixada_provider (
   notes  			text 			default null,
   active     	  	tinyint 		default 1,
   responsible_uf_id	int     		default null,
-  default_closing_offset tinyint	default 1,
+  offset_order_close int			default 1, 			/* default offset closing of order in days*/
   ts			  	timestamp 		not null default current_timestamp,
   primary key (id),
   key (active),
@@ -223,13 +223,13 @@ create table aixada_orderable_dates (
  * products orderable for a given date	
  */
 create table aixada_product_orderable_for_date (
-  id   	                int     not null auto_increment,
-  product_id   	     	int     not null,
-  date_for_order        date    not null,
-  closing_date 			date 	not null,
+  id   	                int     	not null auto_increment,
+  product_id   	     	int     	not null,
+  date_for_order        date    	not null,
+  closing_date 			datetime 	not null,
   primary key (id),
   foreign key (product_id)     	references aixada_product(id),
-  foreign key (date_for_order)	references aixada_orderable_dates(orderable_date)
+  foreign key (date_for_order)	references aixada_orderable_dates(orderable_date) on delete cascade
 ) engine=InnoDB default character set utf8;       
   
 
@@ -240,7 +240,7 @@ create table aixada_product_orderable_for_date (
 create table aixada_order_item (
   id  	     		int		  	not null auto_increment,
   date_for_order 	date 		not null, 
-  closing_date 		date 		not null,
+  closing_date 		datetime 	not null,
   uf_id     	  	int 		not null,	
   product_id	  	int 		not null,	
   quantity 	  		float(10,4) default 0.0,				

@@ -29,14 +29,19 @@ if (!isset($_SESSION)) {
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title> <?php print $Text['global_title']; ?> </title>
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="css/aixada_main.css"  />
-	<link rel="stylesheet" type="text/css" media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
+	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 	
-    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-	<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
-   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+   <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>	
+   	<?php  } else { ?>
+	   	<script type="text/javascript" src="js/js_for_login.min.js"></script>
+    <?php }?>
 	   	
+	
 	   	
 	<script type="text/javascript">
 		$(function(){

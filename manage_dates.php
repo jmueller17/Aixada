@@ -7,12 +7,13 @@
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	  	<script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
+	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
@@ -72,11 +73,11 @@
 									
 								//is available -> deselect it	
 								} else if ($.inArray(selectedDate, availableDates) > -1) {
-									oper = "removeDate";
+									oper = "delOrderableDate";
 											   
 								//is not available  -> set it orerable
 								} else {
-									oper="addDate";
+									oper="addOrderableDate";
 								}
 
 								if (oper != ""){
@@ -86,12 +87,12 @@
 										url: "ctrlDates.php?oper="+oper+"&date="+selectedDate,		
 										dataType: "JSON", 
 										success: function(msg){
-											if (oper == "removeDate"){
+											if (oper == "delOrderableDate"){
 												//remove date from array.					
 												availableDates = jQuery.grep(availableDates, function(value) {
 												  return value != selectedDate;
 												});
-											} else if (oper == "addDate"){
+											} else if (oper == "addOrderableDate"){
 												availableDates.push(selectedDate);
 											}
 	

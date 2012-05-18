@@ -6,6 +6,7 @@ ob_start(); // Starts FirePHP output buffering
 require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities_dates.php");
+require_once ('utilities.php');
 
 $firephp = FirePHP::getInstance(true);
 
@@ -30,23 +31,23 @@ try{
   switch ($oper) {
 
   	case 'getEmptyOrderableDates':
-  	  echo get_empty_orderable_dates();
+  	  echo get_orderable_dates('get_empty_orderable_dates');
   	  exit;
 
   	case 'getDatesWithOrders':
-      echo get_dates_with_orders();
+  	  echo get_orderable_dates('get_nonempty_orderable_dates');
       exit;
       
   	case 'getAllOrderableDates':
-  	  echo get_all_orderable_dates();
+  	  echo get_orderable_dates('get_all_orderable_dates');
   	  exit;
       
-  	case 'addDate':
-      echo add_date($date);
+  	case 'addOrderableDate':
+      do_stored_query('add_orderable_date',$date);
       exit;
 
-  	case 'removeDate':
-      echo remove_date($date);
+  	case 'delOrderableDate':
+      do_stored_query('del_orderable_date',$date);
       exit;
 
   	default:

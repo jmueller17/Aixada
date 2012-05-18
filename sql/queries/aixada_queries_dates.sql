@@ -29,7 +29,7 @@ end|
 
 
 /**
- * returns all orderable dates empty or with ordered items. 
+ * returns all orderable dates, irrespective if they have ordered items or not. 
  * this correspond basically to the entries in aixada_order_dates
  */
 drop procedure if exists get_all_orderable_dates|
@@ -40,15 +40,65 @@ begin
 	where orderable_date >= date(sysdate());
 end|
 
+
+
 /**
- * insert into aixada_orderable_date new dates available for ordering
+ * insert into aixada_orderable_date new dates available for ordering.
+ * and, activate always orderable products for this date. 
  */
-drop procedure if exists add_orderable_dates|
-create procedure add_orderable_dates(in dates text)
+drop procedure if exists add_orderable_date|
+create procedure add_orderable_date(in the_date date)
 begin
-	insert into aixada_orderable_dates
-	values (dates);
+	replace into aixada_orderable_dates
+	values (the_date);
+	
+	/* activate always orderable products*/
+	insert into aixada_product_orderable_for_date (
+		product_id, 
+		date_for_order, 
+		closing_date)
+	select 
+		p.id,
+		the_date,
+		subdate(the_date, pv.offset_order_close)
+	from 
+		aixada_product p,
+		aixada_provider pv		
+	where 
+		p.orderable_type_id = 3
+		and p.active = 1
+		and p.provider_id = pv.id; 
 end|
+
+
+/**
+ * delete dates from aixada_orderable_date. also delete always orderable products 
+ * associated with this date 
+ */
+drop procedure if exists del_orderable_date|
+create procedure del_orderable_date(in the_date date)
+begin
+	declare hasOrderItems int;
+	declare statusMsg int;
+	
+	select 
+		count(*) into hasOrderItems
+	from aixada_order_item
+	where date_for_order = the_date; 
+	
+	if hasOrderItems = 0 then
+		delete from aixada_orderable_dates 
+		where orderable_date = the_date;
+		set statusMsg = 1; 
+	else
+		set statusMsg = 0; 
+	end if;
+
+end|
+
+
+
+
 
 
 drop procedure if exists get_sales_dates|

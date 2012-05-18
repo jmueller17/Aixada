@@ -9,22 +9,22 @@
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
-
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+    
+   <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
+		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
+	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	    	
    	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_validate.min.js"></script>
+	   	<script type="text/javascript" src="js/js_for_all_prevorders.min.js"></script>
     <?php }?>
-    
-  
+   		
+ 	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
  	   
    

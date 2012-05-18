@@ -32,7 +32,7 @@ function navGrid_options() {
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="js/jqGrid-4.3.1/css/ui.jqgrid.css"/>
     
     
@@ -41,12 +41,13 @@ function navGrid_options() {
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
  	<script type="text/javascript" src="js/jqGrid-4.3.1/js/i18n/grid.locale-<?php echo $language; ?>.js"></script>
     <script type="text/javascript" src="js/jqGrid-4.3.1/js/jquery.jqGrid.min.js"></script>
-	<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
+    
+	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 	<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
    	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
-
+	   	   	
  
    
    <script type="text/javascript">
@@ -93,10 +94,10 @@ function navGrid_options() {
 		if (current_table == null || current_table == '') {
 			alert("variable table not set in query");
 		}
-							
+		
 		$.ajax({
 			type: 'POST',
-	    	url: "ctrlTableManager.php?table="+current_table+"&oper=getColumnsAsJSON",
+	    	url: 'ctrlTableManager.php?table='+current_table+'&oper=getColumnsAsJSON',
 	    	dataType: 'json',
 	      	error: function(xhr, ajaxOptions, thrownError) {
               alert(xhr.statusText +" "+ thrownError);   

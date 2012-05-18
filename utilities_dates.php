@@ -6,6 +6,18 @@ require_once ('utilities.php');
 //$firephp = FirePHP::getInstance(true);
 
 
+function get_orderable_dates($type)
+{
+	$rs = do_stored_query($type);
+	
+	$dates = '[';
+	while ($row = $rs->fetch_array()) {
+        $dates .= '"' . $row[0] . '",';
+    }
+	return rtrim($dates, ',') . ']';
+}
+
+/*
 function get_empty_orderable_dates()
 {
 	$rs = do_stored_query('get_empty_orderable_dates');
@@ -41,10 +53,10 @@ function get_all_orderable_dates()
 }
 
 
-function add_date($date)
+function add_orderable_date($date)
 {
 	try{
-		do_stored_query('add_orderable_dates',$date);
+		do_stored_query('add_orderable_date',$date);
 		return 1; 
 	} catch(Exception $e) {
   		return $e->getMessage();
@@ -52,12 +64,16 @@ function add_date($date)
 
 }
 
-function remove_date($date)
+function del_orderable_date($date)
 {
-    DBWrap::get_instance()->Execute("replace into aixada_orderable_dates values (:1q, 0)", $date);
-    return 1;
+    try{
+		do_stored_query('del_orderable_date',$date);
+		return 1; 
+	} catch(Exception $e) {
+  		return $e->getMessage();
+	} 
 }
-
+*/
 
 /*
 

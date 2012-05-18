@@ -30,9 +30,7 @@ function existing_languages_selectbox()
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Install</title>
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
- 	<link rel="stylesheet" type="text/css"   media="screen" href="css/jquery-ui/ui-lightness/jquery-ui-1.8.custom.css"/>
- 	
- 	</script>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
  	
 </head>
 <body>

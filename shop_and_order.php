@@ -9,11 +9,12 @@
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jquery-ui-1.8.20.custom.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jquery-ui-1.8.20.custom.min.js"></script>
+		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
@@ -210,7 +211,8 @@
 				}
 			}); //end ajax retrieve date
 
-			$.getAvailableDates4Orders(function (dates){
+
+			$.getEmptyOrderableDates(function (dates){
 				availableDates = dates;
 				$("#datepicker").datepicker("refresh");
 			});
@@ -219,7 +221,7 @@
 				datesWithOrders = dates;
 				$("#datepicker").datepicker("refresh");		
 			});
-						
+
 			
 			//make tabs widget resizeable
 			/*$("#tabs").resizable({
