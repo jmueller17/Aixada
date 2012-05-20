@@ -49,3 +49,10 @@ drop table aixada_providers_of_distributor;
 drop table aixada_account_balance;
 
 
+/**
+ *  alter table aixada_product_orderable_for_date add foreign key (date_for_order) references aixada_orderable_dates(orderable_date) on delete cascade;
+
+ */
+
+
+

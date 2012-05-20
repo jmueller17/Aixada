@@ -3,11 +3,10 @@ $(function(){
 	
 	
 	$.extend({
-		//retrieves all dates for which items can be orderd. Includes dates that have orders already and those that don't
-		getAllOrderableDates: function(callbackfn){
+		getOrderableDates : function(oper, callbackfn){
 			$.ajax({
 				type: "GET",
-				url: "ctrlDates.php?oper=getAllOrderableDates",		
+				url: "ctrlDates.php?oper="+oper,		
 				dataType: "JSON", 
 				success: function(data){
 					var availableDates = eval(data);
@@ -22,56 +21,17 @@ $(function(){
 					
 				}		
 			}); //end ajax retrieve date
-		},
-		//get orderabl dates that have not items ordered
-		getEmptyOrderableDates: function(callbackfn){
-			$.ajax({
-				type: "GET",
-				url: "ctrlDates.php?oper=getEmptyOrderableDates",		
-				dataType: "JSON", 
-				success: function(data){
-					var availableDates = eval(data);
-					if(typeof callbackfn == 'function'){
-						callbackfn.call(this, availableDates);
-					}
-				}, 
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
-				}		
-			}); //end ajax retrieve date
-		},
-		//retrieve available dates with ordered items
-		getDatesWithOrders : function(callbackfn){
-			$.ajax({
-				type: "GET",
-				url: "ctrlDates.php?oper=getDatesWithOrders",		
-				dataType: "JSON", 
-				success: function(data){
 			
-					var datesWithOrders = eval(data);
-					if(typeof callbackfn == 'function'){
-						callbackfn.call(this, datesWithOrders);
-					}
-				}, 
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
-				}
-			}); //end ajax retrieve date
-			
-		}
-		
-		
+		},
+		//util function to retrieve formated date from datepicker
+		getSelectedDate: function(selector, format){
+			formatDate = (format != null && format != '')? format:'yy-mm-dd';
+			return $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
+		}		
 		
 	});
 	
 	$.extend({
-			
 			updateTips: function(where, type, msg, timing ) {
 					
 					var style = 'ui-state-highlight';

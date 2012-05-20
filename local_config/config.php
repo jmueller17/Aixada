@@ -20,6 +20,7 @@ class configuration_vars {
   public $n_checkout_enabled_users = 2;
   public $n_seconds_enabled_for_checkout = 1200; // 20 minutes until checkout right gets revoked
   public $default_language = 'en';
+  
 
   /**
    * Configure the database connection
@@ -30,9 +31,6 @@ class configuration_vars {
   public $db_user = 'aixada';
   public $db_password = 'aixada';
 
-  /**
-   * When will shopping usually take place?
-   */
 
   /**
    *  the next variable must be in English; will be called by PHP's strtotime() 
@@ -46,17 +44,30 @@ class configuration_vars {
    * days are usually orderable, i.e. people can make orders for these days. Names have to be in English 
    * @var array
    */
-  public $orderable_days = array('Wednesday');
+  //public $orderable_days = array('Wednesday');
   
 
+  /**
+   * 
+   * Sets the max. time scale for activating orderable dates into the future. E.g. 48 means that max. the orderable dates 
+   * for the next 4 years can be generated in advance. 
+   * @var num
+   */
+  public $max_month_orderable_dates = 24;
   
   /**
    * 
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
    */
-  public $default_theme = "redmond"; // start | ui-lightness | smoothness | redmond
+  public $default_theme = "start"; // start | ui-lightness | smoothness | redmond
   
+  
+  /**
+   * Sets the global development variable for debugging etc. 
+   * 
+   */
+  public $development = true; 
   
   /**
    * Code optimizations

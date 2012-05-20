@@ -40,7 +40,62 @@
 
 			//dates that are orderable and have already items -> need moving, cannot be deleted
 			var datesWithOrders = ["2011-00-02"];
-			
+
+			//date that are active and that have sometimes orderable products activated
+			var datesWithSometimesOrderable = ["2011-00-02"];
+
+
+			/**
+			 * add/delete date ajax calls
+			 */
+			function doAjaxDates(oper, date){
+				if (oper != ""){
+					//send de/select date to db and retrieve / update array "available Dates"
+					$.ajax({
+						type: "POST",
+						url: "ctrlDates.php?oper="+oper+"&date="+date,		
+						dataType: "JSON", 
+						success: function(msg){
+							if (oper == "delOrderableDate"){
+								//remove date from array.					
+								availableDates = jQuery.grep(availableDates, function(value) {
+								  return value != date;
+								});
+								datesWithSometimesOrderable = jQuery.grep(datesWithSometimesOrderable, function(value) {
+									  return value != date;
+									});
+							} else if (oper == "addOrderableDate"){
+								availableDates.push(date);
+							}
+
+						},  //end success
+						complete : function(){
+							$("#setOrderable").datepicker("refresh");
+						}
+					}); //end ajaxz
+				}
+				
+			}
+
+
+			/**
+			 *	load date arrays upon loading of page
+			 */	
+			function loadAllOrderableDates(){
+				$.getOrderableDates('getEmptyOrderableDates', function (dates){
+					availableDates = dates;
+					$("#setOrderable").datepicker("refresh");
+				});
+
+				$.getOrderableDates('getDatesWithOrders', function (dates){
+					datesWithOrders = dates;
+					$("#setOrderable").datepicker("refresh");
+				});
+	
+				$.getOrderableDates('getDatesWithSometimesOrderable', function (dates){
+					datesWithSometimesOrderable = dates;
+				});
+			}
 			
 						
 			
@@ -64,43 +119,23 @@
 
 							},
 							onSelect 	: function (dateText, instance){
-								var selectedDate = getSelectedDate("#setOrderable");
-								var oper = "";
+								var selectedDate = $.getSelectedDate("#setOrderable");
 								
-								//has items 
+								//has items -> needs moving, cannot be deleted
 								if ($.inArray(selectedDate, datesWithOrders) > -1){
-									$("#moveDate").dialog("open");
-									
+									$("#dialog-moveDate").dialog("open");
+
+								//is available and has sometimes orderable items activiated, prompt to be sure for deletion
+								} else if ($.inArray(selectedDate, datesWithSometimesOrderable) > -1){
+									 $("#dialog-confirmDateDelete").dialog("open");
+	
 								//is available -> deselect it	
 								} else if ($.inArray(selectedDate, availableDates) > -1) {
-									oper = "delOrderableDate";
+									doAjaxDates("delOrderableDate", selectedDate);
 											   
 								//is not available  -> set it orerable
 								} else {
-									oper="addOrderableDate";
-								}
-
-								if (oper != ""){
-									//send de/select date to db and retrieve / update array "available Dates"
-									$.ajax({
-										type: "POST",
-										url: "ctrlDates.php?oper="+oper+"&date="+selectedDate,		
-										dataType: "JSON", 
-										success: function(msg){
-											if (oper == "delOrderableDate"){
-												//remove date from array.					
-												availableDates = jQuery.grep(availableDates, function(value) {
-												  return value != selectedDate;
-												});
-											} else if (oper == "addOrderableDate"){
-												availableDates.push(selectedDate);
-											}
-	
-										},  //end success
-										complete : function(){
-											$("#setOrderable").datepicker("refresh");
-										}
-									}); //end ajaxz
+									doAjaxDates("addOrderableDate", selectedDate);
 								}
 
 								
@@ -108,28 +143,35 @@
 							}//end select
 				}).show();//end date pick
 
+
 			
-			//util function to retrieve and format selected date
-			function getSelectedDate(selector){	
-				return $.datepicker.formatDate('yy-mm-dd', $(selector).datepicker('getDate'));
-			}
 			
-
-			$.getEmptyOrderableDates(function (dates){
-					availableDates = dates;
-					$("#setOrderable").datepicker("refresh");
-			});
-
-			$.getDatesWithOrders(function(dates){
-					datesWithOrders = dates;
-					$("#setOrderable").datepicker("refresh");		
-			});
-
+			/**
+			 * confirm date dialog
+			 */
+			 $("#dialog-confirmDateDelete").dialog({
+				 	autoOpen: false,
+					resizable: true,
+					height:320,
+					width:360, 
+					modal: true,
+					buttons: {
+						"Delete date": function() {
+							doAjaxDates("delOrderableDate", $.getSelectedDate("#setOrderable"));
+							$( this ).dialog( "close" );
+						},
+						"Cancel": function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			 
+			
 
 			/**
 			 *	if user deselects date for which orders exist, this dialoge to move orders opens
 			 */
-			$("#moveDate").dialog({
+			$("#dialog-moveDate").dialog({
 					autoOpen: false,
 					height: 480,
 					width: 400,
@@ -140,8 +182,8 @@
 						},
 						"<?=$Text['btn_move'];?>" : function(){
 
-							var from_date = getSelectedDate("#setOrderable");
-							var to_date = getSelectedDate("#pickerToDate");
+							var from_date = $.getSelectedDate("#setOrderable");
+							var to_date = $.getSelectedDate("#pickerToDate");
 							
 							//move the dates
 							$.ajax({
@@ -181,7 +223,7 @@
 				minDate		: 0,
 				beforeShowDay: function(date){								//activate only those dates that are available for ordering. smallqueries.php order retrieval does not work...
 
-					var selectedDate = getSelectedDate("#setOrderable");	//get the not yet deselected Date
+					var selectedDate = $.getSelectedDate("#setOrderable");	//get the not yet deselected Date
 					var dmy = date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear();
 
 					if (dmy ==  selectedDate) { 							//make sure that users don't select the date they want to move
@@ -200,7 +242,40 @@
 				}//end selec
 			}).show();
 
+
+			//detect form submit and prevent page navigation; we use ajax. 
+			$('#generateOrderableDates').submit(function() { 
+
+
+				var fdata = $('#generateOrderableDates').serialize();
+				
+
+				$.ajax({
+					type: "POST",
+					data: fdata,
+					url: "ctrlDates.php?oper=generateDates",	
+					beforeSend : function (){
+						//$('#deposit .loadAnim').show();
+					},	
+					success: function(msg){
+						loadAllOrderableDates();
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						
+					},
+					complete : function(msg){
+						
+					}
+				}); //end ajax
+				
+				return false; 
+			});		
 			
+
+			$('#generateDates').button();
+
+
+			loadAllOrderableDates();
 			
 				
 			
@@ -227,17 +302,13 @@
 						
 					}
 					
-					
-				
 				?>
-				
 		</div>
 		
-		<div id="setOrderable">
+		<div id="setOrderable" class="floatLeft">
 		</div>
-		<br/>
 		
-		<div class="ui-widget">
+		<div class="ui-widget" id="dateLegend">
 			<p>Legend:</p>
 			<table>
 				<tr>
@@ -275,6 +346,44 @@
 			</table>
 		</div>
 		
+		<div class="ui-widget">	
+			<h1 class="clearBoth">2.<?php echo $Text['ti_mng_dates_pattern'];?></h1>
+		</div>
+		
+		<div class="ui-widget">
+			<form id="generateOrderableDates">
+			<p>Activate for the next <select id="nrOfMonth" name="nrOfMonth" >
+									<?php 
+										for ($i=0; $i<configuration_vars::get_instance()->max_month_orderable_dates; $i++){
+											$month = $i +1;
+											printf("<option value='%s'> %s </option>",$month, $month);	
+										}	
+									?>
+									</select> month(s) the following days of the week: </p>
+		
+			<p id="weekDays">		
+				<input type="checkbox" name="weekday[]" id="Mon" value="Monday"/> <label for="Mon"><?=$Text['mon'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Tue" value="Tuesday"/> <label for="Tue"><?=$Text['tue'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Wed" value="Wednesday"/> <label for="Wed"><?=$Text['wed'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Thu" value="Thursday"/> <label for="Thu"><?=$Text['thu'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Fri" value="Friday"/> <label for="Fri"><?=$Text['fri'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Sat" value="Saturday"/> <label for="Sat"><?=$Text['sat'];?></label><br/>
+				<input type="checkbox" name="weekday[]" id="Sun" value="Sunday"/> <label for="Sun"><?=$Text['sun'];?></label><br/>
+			</p>
+			<p>Do this for 	<select id="frequency" name="frequency">
+								<option value="1">every week</option>
+								<option value="2">bi-weekly</option>
+								<option value="3">every third week</option>
+								<option value="4">every four weeks</option>
+							</select></p>
+							
+			<p>
+				<button id="generateDates" type="submit">Generate</button>	
+			</p>
+			</form>
+	
+		</div>
+		
 		
 	</div>
 	<!-- end of stage wrap -->
@@ -282,13 +391,19 @@
 <!-- end of wrap -->
 <p id="log"></p>
 
-<div id="moveDate" title="Move Order">
+<div id="dialog-moveDate" title="Move Order">
 	<p class="ui-state-error ui-corner-all minPadding">You cannot deselect the current date because there exist already ordered items. As an alternative you can move it to a new date, 
 	including all its orders for all providers!  Choose a new date for this order below:</p>
 	<br/>
 	<div id="pickerToDate">
 	</div>
-	
+</div>
+
+<div id="dialog-confirmDateDelete" title="Confirm date delete">
+	<p class="ui-state-highlight ui-corner-all minPadding">Some products have been activated as "orderable" for the marked date, none of which have been ordered yet. <br/><br/>However, 
+	 deleting this date will also delete the associated orderable products. Are you sure you want to deactivate this date and all its 
+	 associated products?  
+	</p>
 </div>
 
 

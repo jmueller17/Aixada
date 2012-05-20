@@ -3,8 +3,9 @@
 require_once('inc/database.php');
 require_once('local_config/config.php');
 require_once ('utilities.php');
-//$firephp = FirePHP::getInstance(true);
 
+$firephp = FirePHP::getInstance(true);
+ob_start(); // Starts FirePHP output buffering
 
 function get_orderable_dates($type)
 {
@@ -17,63 +18,41 @@ function get_orderable_dates($type)
 	return rtrim($dates, ',') . ']';
 }
 
-/*
-function get_empty_orderable_dates()
+function add_orderable_dates($date_array)
 {
-	$rs = do_stored_query('get_empty_orderable_dates');
-	
-	$dates = '[';
-	while ($row = $rs->fetch_array()) {
-        $dates .= '"' . $row[0] . '",';
-    }
-	return rtrim($dates, ',') . ']';
-}
-
-
-function get_dates_with_orders() 
-{
-	$rs = do_stored_query('get_nonempty_orderable_dates');
-	
-	$dates = '[';
-	while ($row = $rs->fetch_array()) {
-        $dates .= '"' . $row[0] . '",';
-    }
-	return rtrim($dates, ',') . ']';
-}
-
-
-function get_all_orderable_dates()
-{
-	$rs = do_stored_query('get_all_orderable_dates');
-	$dates = '[';
-	while ($row = $rs->fetch_array()) {
-        $dates .= '"' . $row[0] . '",';
-    }
-	return rtrim($dates, ',') . ']';
-}
-
-
-function add_orderable_date($date)
-{
-	try{
+	foreach($date_array as $date){
 		do_stored_query('add_orderable_date',$date);
-		return 1; 
-	} catch(Exception $e) {
-  		return $e->getMessage();
-	} 
-
+	}
+	unset($date);
+	
 }
 
-function del_orderable_date($date)
+function generate_date_pattern($weekDays, $nrMonth, $frequency)
 {
-    try{
-		do_stored_query('del_orderable_date',$date);
-		return 1; 
-	} catch(Exception $e) {
-  		return $e->getMessage();
-	} 
+	$dates = array();
+	$gc = 0; 
+	$totalweeks = $nrMonth * 4; 
+	
+	for ($w=0; $w<$totalweeks; $w+=$frequency){
+		foreach($weekDays as $day){
+				$dates[$gc] = 	strftime('%Y-%m-%d', strtotime('next ' . $day . ' + '.$w.' week'));
+				$gc++;	
+		}
+		unset($day);
+	}	
+	return $dates;
 }
-*/
+
+function generate_and_add_date_pattern($weekDays, $nrMonth, $frequency){
+	$dates = generate_date_pattern($weekDays, $nrMonth, $frequency);
+	if (count($dates)> 0){
+		add_orderable_dates($dates);
+		return 1; 
+	}	else {
+		return 0;
+	}
+}
+
 
 /*
 

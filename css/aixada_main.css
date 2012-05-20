@@ -18,6 +18,7 @@ img 				{border:0px solid #fff;}
 .textAlignCenter	{text-align:center;}
 .floatLeft			{float:left;}
 .floatRight			{float:right;}
+.clearBoth			{clear:both;}
 .hidden				{display:none;}
 .showBlock			{display:block;}
 .showInline			{display:inline;}
@@ -38,6 +39,7 @@ img 				{border:0px solid #fff;}
 .loadAnimShop		{margin-top:-27px; padding-right:5px; padding-left:2px;}
 .minPadding			{padding:3px;}
 .padding10x5		{padding:10px 5px;}
+
 
 
 
@@ -76,6 +78,10 @@ p#logonHeader			{width:100%; height:150px; margin:10px auto; background-color:#f
 .success_msg			{margin:20px; padding:15px; background-color:#72b42d; border:1px solid #72b42d; text-align:center; border-radius:10px;}
 sup						{color:red; font-size:0.6em; padding-top:3px;}
 
+
+/** for manage dates **/
+div#setOrderable		{margin-right:20px; margin-bottom:40px;}
+p#weekDays			{margin:10px 20px;}
 
 
 /** for validate **/

@@ -28,6 +28,13 @@ $Text['uf_long'] = "Household";
  */
 $Text['date_from'] = 'from';
 $Text['date_to'] = 'to';
+$Text['mon'] = 'Monday';
+$Text['tue'] = 'Tuesday';
+$Text['wed'] = 'Wednesday';
+$Text['thu'] = 'Thursday';
+$Text['fri'] = 'Friday';
+$Text['sat'] = 'Saturday';
+$Text['sun'] = 'Sunday';
 
 /**
  * 				selects
@@ -84,7 +91,8 @@ $Text['ti_mng_move_orders'] = "Move orders";
 $Text['ti_mng_activate_preorders'] = "Convert preorder to order";
 $Text['ti_mng_members'] = "Manage members";
 $Text['ti_mng_ufs'] = "Manage households";
-$Text['ti_mng_dates'] = "Set future order dates";
+$Text['ti_mng_dates'] = "De-/activate order dates individually";
+$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates";
 $Text['ti_mng_db'] = "Backup database"; 
 $Text['ti_order'] = "Place your order for ";
 $Text['ti_shop'] = "Buy stuff ";

@@ -6,11 +6,14 @@ ob_start(); // Starts FirePHP output buffering
 
 require_once('inc/cookie.inc.php');
 require_once('local_config/config.php');
+
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 $default_theme = configuration_vars::get_instance()->default_theme; 
+$dev = configuration_vars::get_instance()->development;
 
 require_once('local_config/lang/' . $language . '.php');
 
+//should be deleted in the end, and globally set. 
 $_SESSION['dev'] = true;
 
    try {

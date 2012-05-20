@@ -7,11 +7,16 @@ delimiter |
 drop procedure if exists get_empty_orderable_dates|
 create procedure get_empty_orderable_dates()
 begin
-	select od.orderable_date 
-	from aixada_orderable_dates od left join aixada_order_item oi
-	on (od.orderable_date = oi.date_for_order)
-	where oi.date_for_order is null
-	and od.orderable_date >= date(sysdate());
+	select 
+		od.orderable_date 
+	from 
+		aixada_orderable_dates od 
+		left join aixada_order_item oi
+	on 
+		(od.orderable_date = oi.date_for_order)
+	where 
+		oi.date_for_order is null
+		and od.orderable_date >= date(sysdate());
 end|
 
   
@@ -40,6 +45,25 @@ begin
 	where orderable_date >= date(sysdate());
 end|
 
+
+/**
+ * 
+ */
+drop procedure if exists get_sometimes_orderable_dates|
+create procedure get_sometimes_orderable_dates()
+begin
+	select 
+		od.orderable_date
+	from 
+		aixada_orderable_dates od,
+		aixada_product_orderable_for_date po,
+		aixada_product pr
+	where 
+		od.orderable_date = po.date_for_order
+		and po.product_id = pr.id
+		and pr.orderable_type_id = 2
+		and orderable_date >= date(sysdate());
+end|
 
 
 /**
@@ -79,7 +103,6 @@ drop procedure if exists del_orderable_date|
 create procedure del_orderable_date(in the_date date)
 begin
 	declare hasOrderItems int;
-	declare statusMsg int;
 	
 	select 
 		count(*) into hasOrderItems
@@ -89,9 +112,6 @@ begin
 	if hasOrderItems = 0 then
 		delete from aixada_orderable_dates 
 		where orderable_date = the_date;
-		set statusMsg = 1; 
-	else
-		set statusMsg = 0; 
 	end if;
 
 end|

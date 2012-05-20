@@ -31,6 +31,14 @@ $Text['uf_long'] = "Unidad familiar";
  */
 $Text['date_from'] = 'de';
 $Text['date_to'] = 'a';
+$Text['mon'] = 'Lunes';
+$Text['tue'] = 'Martes';
+$Text['wed'] = 'Miércoles';
+$Text['thu'] = 'Jueves';
+$Text['fri'] = 'Viernes';
+$Text['sat'] = 'Sabado';
+$Text['sun'] = 'Domingo';
+
 
 /**
  * 				selects
@@ -88,7 +96,8 @@ $Text['ti_mng_move_orders'] = "Cambiar un pedido";
 $Text['ti_mng_activate_preorders'] = "Convertir un prepedido en pedido";
 $Text['ti_mng_members'] = "Gestionar los miembros";
 $Text['ti_mng_ufs'] = "Gestionar las unidades familiares";
-$Text['ti_mng_dates'] = "Set future order dates";
+$Text['ti_mng_dates'] = "De-/activar individualmente fechas para hacer pedidos";
+$Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos";
 $Text['ti_mng_db'] = "Copia de seguridad de la base de datos"; 
 $Text['ti_order'] = "Hacer el pedido para ";
 $Text['ti_shop'] = "Comprar artículos ";

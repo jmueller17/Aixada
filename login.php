@@ -11,6 +11,7 @@ require_once 'lib/exceptions.php';
 require_once 'local_config/config.php';
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 $default_theme = configuration_vars::get_instance()->default_theme; 
+$dev = configuration_vars::get_instance()->development;
 require_once('local_config/lang/' . $language . '.php');
 
 
@@ -32,7 +33,7 @@ if (!isset($_SESSION)) {
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 	
-   <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+   <?php if (isset($dev) && $dev == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
 		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
