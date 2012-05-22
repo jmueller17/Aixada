@@ -36,7 +36,7 @@ try{
   case 'getActivatedProducts':
       printXML(stored_query_XML('get_activated_products', 'products', 'name', $_REQUEST['provider_id'], $_REQUEST['date']));
       exit;
-
+      
   case 'getDeactivatedProducts':
       printXML(stored_query_XML('get_deactivated_products', 'products', 'name', $_REQUEST['provider_id'], $_REQUEST['date']));
     exit;

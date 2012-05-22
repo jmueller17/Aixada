@@ -31,6 +31,7 @@ function navGrid_options() {
     </title>
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
+	<link rel="stylesheet" type="text/css"   media="screen" href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="js/jqGrid-4.3.1/css/ui.jqgrid.css"/>
@@ -39,7 +40,7 @@ function navGrid_options() {
         
 	<!--  this cannot be minified because the order of the i18n file for jqgrid is important  -->
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
- 	<script type="text/javascript" src="js/jqGrid-4.3.1/js/i18n/grid.locale-<?php echo $language; ?>.js"></script>
+ 	<script type="text/javascript" src="js/jqGrid-4.3.1/js/i18n/grid.locale-<?=$language;?>.js"></script>
     <script type="text/javascript" src="js/jqGrid-4.3.1/js/jquery.jqGrid.min.js"></script>
     
 	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>

@@ -104,10 +104,7 @@
 			}).show();//end date pick
 			
 			$('#ui-datepicker-div').draggable();
-			//util function to retrieve and format selected date
-			function getSelectedDate(){
-				return $.datepicker.formatDate('yy-mm-dd', $("#datepicker").datepicker('getDate'));
-			}
+		
 
 			var today = 0;
 			$.ajax({
@@ -121,19 +118,20 @@
 				}
 			}); //end ajax retrieve date
 
-			$.getEmptyOrderableDates(function (dates){
+			
+			$.getOrderableDates('getEmptyOrderableDates', function (dates){
 				availableDates = dates;
 				$("#datepicker").datepicker("refresh");
 			});
 
-			$.getDatesWithOrders(function(dates){
+			$.getOrderableDates('getDatesWithOrders', function (dates){
 				datesWithOrders = dates;
-				$("#datepicker").datepicker("refresh");		
+				$("#datepicker").datepicker("refresh");
 			});
-			 
+
 			
 			function setStateSubmit(){
-				var date = getSelectedDate(); 
+				var date = $.getSelectedDate('#datepicker'); 
 				
 				if (gotItems && date != 0) {
 					$("#btn_submit").button( "option", "disabled", false ); 
@@ -146,7 +144,7 @@
 			
 			$('form').submit(function() { 				
   				var dataSerial = $(this).serialize();
-  				var date =  getSelectedDate(); 
+  				var date =  $.getSelectedDate('#datepicker'); 
   				$.ajax({
   					   url: 'ctrlShopAndOrder.php?oper=activatePreOrderProducts&date='+date,
   					   data: dataSerial,

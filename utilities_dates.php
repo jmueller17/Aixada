@@ -7,6 +7,11 @@ require_once ('utilities.php');
 $firephp = FirePHP::getInstance(true);
 ob_start(); // Starts FirePHP output buffering
 
+/**
+ * 
+ * Generic function to return the orderable dates of different types
+ * @param String $type  getEmptyOrderableDates | getDatesWithOrders | getDatesWithSometimesOrderable | getAllOrderableDates
+ */
 function get_orderable_dates($type)
 {
 	$rs = do_stored_query($type);
@@ -18,14 +23,72 @@ function get_orderable_dates($type)
 	return rtrim($dates, ',') . ']';
 }
 
+/**
+ * 
+ * Adds dates to the dB; currently expets format yyyy-mm-dd as does mysql.
+ * @param array $date_array  array of strings in the format yyyy-mm-dd
+ */
 function add_orderable_dates($date_array)
 {
+	//TODO check if dates have correct format
 	foreach($date_array as $date){
 		do_stored_query('add_orderable_date',$date);
 	}
 	unset($date);
 	
 }
+
+/**
+ * 
+ * Enter description here ...
+ * @param unknown_type $first
+ * @param unknown_type $last
+ * @param unknown_type $outDateFormat
+ * @param unknown_type $step
+ * @param unknown_type $dataFormat
+ */
+function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $step = '+1 day' ) {
+
+	
+	$current = strtotime( $first );  //TODO check if dates are valid. However, if they are feed by datepicker, this should be ok.
+	$last = strtotime( $last );
+	
+	
+	if ($dataFormat == 'xml'){
+		$dates = '<dates>';
+	
+		while( $current <= $last ) {
+			$date = date( $outDateFormat, $current );
+			
+			$dates .= '<date>' . $date .'</date>';
+			
+			$current = strtotime( $step, $current );
+		}
+		$dates .= '</dates>';
+
+		
+	} else if ($dataFormat == 'arrayStr'){
+		$dates = '[';
+	
+		while( $current <= $last ) {
+			$date = date( $outDateFormat, $current );
+			//$dates[] = $date;
+			$dates .= "'".$date."',";			
+			$current = strtotime( $step, $current );
+		}
+		$dates .= ']';
+		
+	} else {
+		
+		
+	}
+	
+	global $firephp;
+	$firephp->log($dates);
+
+	return $dates;
+}
+
 
 function generate_date_pattern($weekDays, $nrMonth, $frequency)
 {

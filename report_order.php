@@ -67,7 +67,7 @@
 							onSelect 	: function (dateText, instance){
 								//$('#noItemsMsg').show();
 								$("#OrderListing_"+what).xml2html("reload",{
-									params : 'oper=listSummarizedOrdersForDate&date='+getSelectedDate('#datepicker'), 
+									params : 'oper=listSummarizedOrdersForDate&date='+$.getSelectedDate('#datepicker'), 
 								});
 							}//end select
 				}).show();//end date pick
@@ -76,11 +76,6 @@
 
 			//make all datepickers dragable
 			$('#ui-datepicker-div').draggable();
-
-			//util function to retrieve and format selected date
-			function getSelectedDate(selector){	
-				return $.datepicker.formatDate('yy-mm-dd', $(selector).datepicker('getDate'));
-			}
 
 
 			//retrieve date for upcoming order and set it in the report
@@ -100,14 +95,13 @@
 				}
 			}); //end ajax retrieve date
 			
-			//mark available dates in the calendar
-			$.getDatesWithOrders(function(dates){
-					datesWithOrders = dates;
-					$("#datepicker").datepicker("refresh");
-					//$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', datesWithOrders[0]));
-					$("#OrderListing_"+what).xml2html("reload",{
-						params : 'oper=listSummarizedOrdersForDate&date='+getSelectedDate('#datepicker'), 
-					});	
+
+			$.getOrderableDates('getDatesWithOrders', function (dates){
+				datesWithOrders = dates;
+				$("#datepicker").datepicker("refresh");
+				$("#OrderListing_"+what).xml2html("reload",{
+					params : 'oper=listSummarizedOrdersForDate&date='+$.getSelectedDate('#datepicker'), 
+				});
 			});
 			
 
@@ -156,7 +150,7 @@
 							
 							//load the items right away if we want the report
 							if (what == 'report'){								
-								$('#row_'+index).load('ctrlReport.php?oper=list'+listStyle+'OrdersForProviderAndDate&provider_id='+provider_id+'&date='+getSelectedDate("#datepicker"));
+								$('#row_'+index).load('ctrlReport.php?oper=list'+listStyle+'OrdersForProviderAndDate&provider_id='+provider_id+'&date='+$.getSelectedDate("#datepicker"));
 							} else if (what == 'preorder'){
 								$('#row_'+index).load('ctrlReport.php?oper=list'+listStyle+'PreOrderProductsForProvider&provider_id='+provider_id);
 							}
@@ -217,7 +211,7 @@
 
 			//download zip with all orders. 
 			$('#dwnZip').click(function(){
-				var url = 'ctrlReport.php?oper=bundleOrdersForDate&date='+ getSelectedDate('#datepicker');
+				var url = 'ctrlReport.php?oper=bundleOrdersForDate&date='+ $.getSelectedDate('#datepicker');
 				$.get(url, function(zipURL) {
 					 window.frames['dataFrame'].window.location = zipURL;					  
 					});

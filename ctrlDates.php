@@ -53,6 +53,18 @@ try{
   	case 'delOrderableDate':
       	do_stored_query('del_orderable_date',$date);
       	exit;
+      	
+  	case 'getDateRangeAsXML':
+		 printXML(dateRange($_REQUEST['fromDate'],$_REQUEST['toDate'],'D d'));
+  		exit;
+  
+  	case 'getDateRangeAsArray':
+  		echo dateRange($_REQUEST['fromDate'], $_REQUEST['toDate'],'D d', 'arrayStr');
+  		exit;
+  		
+  	case 'getActiveDates4Product':
+		//do_stored_query('get_products_with_dates');
+  		exit;
   	case 'generateDates':
   		$weekDays = extract_data('weekday');		
   		$nrMonth = extract_data('nrOfMonth'); 

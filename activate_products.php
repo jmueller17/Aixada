@@ -38,6 +38,8 @@
 			//dates that are orderable and have already items -> need moving, cannot be deleted
 			var datesWithOrders = ["2011-11-02"];
 
+			var datesWithSometimesOrderable  = ["2011-11-02"];
+			
 			
 			//datepicker for setting orderable date
 			$("#datepicker").datepicker({
@@ -59,10 +61,6 @@
 		
 			}).show();//end date pick
 
-			//util function to retrieve and format selected date
-			function getSelectedDate(){
-				return $.datepicker.formatDate('yy-mm-dd', $("#datepicker").datepicker('getDate'));
-			}
 			
 			//retrieve date for upcoming order
 			$.ajax({
@@ -82,19 +80,6 @@
 			}); //end ajax retrieve date
 
 			
-			$.getEmptyOrderableDates(function (dates){
-				availableDates = dates;
-				$("#datepicker").datepicker("refresh");
-			});
-
-			$.getDatesWithOrders(function(dates){
-				datesWithOrders = dates;
-				$("#datepicker").datepicker("refresh");		
-			});
-
-
-
-			
 			$("#providerSelect").xml2html("init", {
 				loadOnInit  : true,
 				offSet		: 1,
@@ -109,13 +94,13 @@
 				$('#inactiveProducts').xml2html("reload",{
 					url     : 'ctrlActivateProducts.php',
 					tpl		: '<option value="{id}">{id} {name}</option>',
-					params	: 'oper=getDeactivatedProducts&provider_id='+id+'&date='+getSelectedDate()					
+					params	: 'oper=getDeactivatedProducts&provider_id='+id+'&date='+$.getSelectedDate("#datepicker")					
 				});	
 
 				$('#activeProducts').xml2html("reload",{
 					url     : 'ctrlActivateProducts.php',
 					tpl		: '<option value="{id}">{id} {name}</option>',
-					params	: 'oper=getActivatedProducts&provider_id='+id+'&date='+getSelectedDate()				
+					params	: 'oper=getActivatedProducts&provider_id='+id+'&date='+$.getSelectedDate("#datepicker")				
 				});	
 
 			});
@@ -163,7 +148,7 @@
 						product_id[i++] = $(this).val();
 				});
 				
-				var dataSerial = "provider_id="+$("#providerSelect option:selected").val() +"&product_ids="+product_id + "&date="+getSelectedDate();
+				var dataSerial = "provider_id="+$("#providerSelect option:selected").val() +"&product_ids="+product_id + "&date="+$.getSelectedDate("#datepicker");
 				
 				$.ajax({
 					type: "GET",
@@ -180,6 +165,20 @@
 				}); //end ajax
 				return false; 
 			});//end submit
+
+
+
+			$.getOrderableDates('getEmptyOrderableDates', function (dates){
+				availableDates = dates;
+				$("#datepicker").datepicker("refresh");
+			});
+
+			$.getOrderableDates('getDatesWithOrders', function (dates){
+				datesWithOrders = dates;
+				$("#datepicker").datepicker("refresh");
+			});
+
+			
 
 			
 	});  //close document ready

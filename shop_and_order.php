@@ -98,7 +98,7 @@
 
 							$('.loadAnimShop').show();
 							$('#product_list_provider tbody').xml2html("reload",{
-								params: 'oper=listProducts&provider_id='+id+'&what='+what + "&date="+getSelectedDate(),
+								params: 'oper=listProducts&provider_id='+id+'&what='+what + "&date="+$.getSelectedDate('#datepicker'),
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();
@@ -132,7 +132,7 @@
 
 							$('.loadAnimShop').show();
 							$('#product_list_category tbody').xml2html("reload",{
-								params: 'oper=listProducts&category_id='+id+'&what='+what + "&date="+getSelectedDate(),
+								params: 'oper=listProducts&category_id='+id+'&what='+what + "&date="+$.getSelectedDate('#datepicker'),
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();
@@ -149,6 +149,7 @@
 
 			//dates that are orderable and have already items -> need moving, cannot be deleted
 			var datesWithOrders = ["2011-00-00"];
+
 			
 			$("#datepicker").datepicker({
 						dateFormat 	: 'DD, d MM, yy',
@@ -166,15 +167,10 @@
 							}
 						},
 						onSelect 	: function (dateText, instance){
-							refreshSelects(getSelectedDate());							
+							refreshSelects($.getSelectedDate('#datepicker'));							
 						}//end select
 		
 			}).show();//end date pick
-			
-			//util function to retrieve and format selected date
-			function getSelectedDate(){
-				return $.datepicker.formatDate('yy-mm-dd', $("#datepicker").datepicker('getDate'));
-			}
 
 
 	    	var date_url = "smallqueries.php?oper=getNextEqualShopDate";
@@ -211,17 +207,18 @@
 				}
 			}); //end ajax retrieve date
 
+			
 
-			$.getEmptyOrderableDates(function (dates){
+			$.getOrderableDates('getEmptyOrderableDates', function (dates){
 				availableDates = dates;
 				$("#datepicker").datepicker("refresh");
 			});
 
-			$.getDatesWithOrders(function(dates){
+			$.getOrderableDates('getDatesWithOrders', function (dates){
 				datesWithOrders = dates;
-				$("#datepicker").datepicker("refresh");		
+				$("#datepicker").datepicker("refresh");
 			});
-
+			
 			
 			//make tabs widget resizeable
 			/*$("#tabs").resizable({
@@ -270,7 +267,7 @@
 						if (searchStr.length >= minLength){
 							$('.loadAnimShop').show();
 						  	$('#product_list_search tbody').xml2html("reload",{
-								params: 'oper=listProductsLike&what='+what+'&date='+getSelectedDate()+'&like='+searchStr,
+								params: 'oper=listProductsLike&what='+what+'&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();

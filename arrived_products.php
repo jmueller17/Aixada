@@ -64,10 +64,6 @@
 		
 			}).show();//end date pick
 
-			//util function to retrieve and format selected date
-			function getSelectedDate(){
-				return $.datepicker.formatDate('yy-mm-dd', $("#datepicker").datepicker('getDate'));
-			}
 			
 			//retrieve date for upcoming order
 			$.ajax({
@@ -82,16 +78,7 @@
 				} //end success
 			}); //end ajax retrieve date
 
-			$.getEmptyOrderableDates(function (dates){
-				availableDates = dates;
-				$("#datepicker").datepicker("refresh");
-			});
-
-			$.getDatesWithOrders(function(dates){
-				datesWithOrders = dates;
-				$("#datepicker").datepicker("refresh");		
-			});
-
+			
 
 
 			
@@ -99,7 +86,7 @@
 				loadOnInit  : true,
 				offSet		: 1,
 				url         : 'ctrlActivateProducts.php',				
-			    params 		: 'oper=listOrderedProviders&date=2011-12-14'+getSelectedDate()
+			    params 		: 'oper=listOrderedProviders&date=2011-12-14'+$.getSelectedDate('#datepicker')
 			}).change(function(){
 				//get the id of the provider
 				var id = $("option:selected", this).val(); 
@@ -109,13 +96,13 @@
 				$('#notArrivedProducts').xml2html("reload",{
 					url     : 'ctrlActivateProducts.php',
 					tpl		: '<option value="{id}">{id} {name}</option>',
-					params	: 'oper=getNotArrivedProducts&provider_id='+id+'&date='+getSelectedDate()					
+					params	: 'oper=getNotArrivedProducts&provider_id='+id+'&date='+$.getSelectedDate('#datepicker')					
 				});	
 
 				$('#arrivedProducts').xml2html("reload",{
 					url     : 'ctrlActivateProducts.php',
 					tpl		: '<option value="{id}">{id} {name}</option>',
-					params	: 'oper=getArrivedProducts&provider_id='+id+'&date='+getSelectedDate()				
+					params	: 'oper=getArrivedProducts&provider_id='+id+'&date='+$.getSelectedDate('#datepicker')				
 				});	
 
 			});
@@ -159,7 +146,7 @@
 						product_id[i++] = $(this).val();
 				});
 				
-				var dataSerial = "provider_id="+$("#providerSelect option:selected").val() +"&product_ids="+product_id + "&date="+getSelectedDate();
+				var dataSerial = "provider_id="+$("#providerSelect option:selected").val() +"&product_ids="+product_id + "&date="+$.getSelectedDate('#datepicker');
 				
 				$.ajax({
 					type: "GET",
@@ -176,6 +163,17 @@
 				}); //end ajax
 				return false; 
 			});//end submit
+
+			$.getOrderableDates('getEmptyOrderableDates', function (dates){
+				availableDates = dates;
+				$("#datepicker").datepicker("refresh");
+			});
+
+			$.getOrderableDates('getDatesWithOrders', function (dates){
+				datesWithOrders = dates;
+				$("#datepicker").datepicker("refresh");
+			});
+			
 
 			
 	});  //close document ready
