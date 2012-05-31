@@ -32,11 +32,19 @@ try{
   case 'listProviders':
       printXML(stored_query_XML('list_all_providers_short', 'providers', 'name'));
       exit;
+      
+  case 'getOrderableProducts4DateRange':
+  		printXML(stored_query_XML('get_orderable_products_for_dates', 'products', 'date', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));
+  		exit; 	
+  		
+  case 'toggleOrderableProduct':
+  		echo do_stored_query('toggle_orderable_product', $_REQUEST['product_id'], $the_date);
+        exit;
 
   case 'getActivatedProducts':
       printXML(stored_query_XML('get_activated_products', 'products', 'name', $_REQUEST['provider_id'], $_REQUEST['date']));
       exit;
-      
+        
   case 'getDeactivatedProducts':
       printXML(stored_query_XML('get_deactivated_products', 'products', 'name', $_REQUEST['provider_id'], $_REQUEST['date']));
     exit;

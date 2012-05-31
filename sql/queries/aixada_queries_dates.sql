@@ -47,6 +47,70 @@ end|
 
 
 /**
+ * returns all products that have been marked "orderable" for a given provider within a given date range
+ * This corresponds basically to the entries in aixada_products_orderable_for_date
+ */
+drop procedure if exists get_orderable_products_for_dates|
+create procedure get_orderable_products_for_dates(in fromDate date, in toDate date, in provider_id int)
+begin
+	select
+		po.product_id,
+		po.date_for_order
+	from 
+		aixada_product_orderable_for_date po,
+		aixada_product pr
+	where 
+		pr.id = po.product_id
+		and pr.provider_id = provider_id
+		and po.date_for_order >= fromDate
+		and po.date_for_order <= toDate;
+end|
+
+
+/**
+ * activates or deactives a given product for a given date depending on its current status. If the product is active
+ * for the given date, it will be deactivate and vice versa. 
+ */
+drop procedure if exists toggle_orderable_product|
+create procedure toggle_orderable_product (in prod_id int, in the_date date)
+begin
+	declare isActive int;
+	
+	select 
+		count(*) into isActive
+	from 
+		aixada_product_orderable_for_date po
+	where 
+		po.date_for_order = the_date
+		and po.product_id = prod_id;
+			
+		
+	if isActive > 0 then
+		delete from 
+			aixada_product_orderable_for_date
+		where 
+			product_id = prod_id
+			and date_for_order = the_date;
+	else 
+		insert into aixada_product_orderable_for_date (
+			product_id, 
+			date_for_order, 
+			closing_date)
+		select 
+			prod_id,
+			the_date,
+			subdate(the_date, pv.offset_order_close)
+		from 
+			aixada_product p,
+			aixada_provider pv
+		where 
+			p.id = prod_id
+			and p.provider_id = pv.id;
+	end if;
+	
+end|
+
+/**
  * 
  */
 drop procedure if exists get_sometimes_orderable_dates|

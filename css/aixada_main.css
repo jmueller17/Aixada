@@ -189,13 +189,16 @@ form table td 			{padding:2px 5px;}
 form table td label		{float:right;}
 form table td input 	{line-height:1.2em; font-size:.8em;}
 
-.product_list_wrap										{margin-top:10px;}
-.product_list, .table_listing, .purchase_listing		{width:100%;}
-.product_list_mng td, th			{padding:2px 5px;}
-.table_listing td					{text-align:right; padding:1px;}
-.product_list td					{text-align:right; background:#EBEBEB; padding:5px 5px;}
-.purchase_listing td				{text-align:right; padding-right:5px;}
-.table_listing_cashbox				{width:100%;}
-.table_listing_cashbox td			{text-align:left; padding:2px;}
+.product_list_wrap					{margin-top:10px;}
+.product_list, .table_listing, .purchase_listing, .table_listing_cashbox, .table_datesOrderableProducts			{width:100%;}
+.product_list_mng td, th					{padding:2px 5px;}
+.table_listing td							{text-align:right; padding:1px;}
+.product_list td							{text-align:right; background:#EBEBEB; padding:5px 5px;}
+.purchase_listing td						{text-align:right; padding-right:5px;}
+.table_listing_cashbox td					{text-align:left; padding:2px;}
+.table_datesOrderableProducts td			{background:#EBEBEB; padding:5px;}
+.table_datesOrderableProducts td.active		{background:#D1F3D1; cursor:pointer;}
+.table_datesOrderableProducts td.deactive	{background:#FFCCCA; cursor:pointer;}
+
 
 

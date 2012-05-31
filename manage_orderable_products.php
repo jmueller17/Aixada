@@ -28,67 +28,224 @@
 	$(function(){
 
 
-		$('#dot tbody').xml2html({
-				url:'ctrlShopAndOrder.php?oper=listProducts&provider_id=52&what=Shop&date=2012-05-01',
-				loadOnInit:false,
-				rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-					var id =  $(row).attr("id"); 
-					//var qu = $("#cart_quantity_"+id).val();
-					//$("#quantity_"+id).val(qu);
-					apstr = '';
-					for (var i=0; i<dates.length; i++){
+		//var fromDate = "Yesterday";
+		//var toDate = "30 days";
+		var gdates = [];
+		var seekDateSteps = 20;
+		var provider_id = 0; 
+		
+		/**
+		 * retrieve dates for a given time period and constructs the table header
+		 * according to the date format specified
+		 */
+		function makeDateHeader(fromDate, toDate){
+
+			//the format in which the date is shown in the header
+			var outDateFormat = 'D d, M';
+			 
+			$.ajax({
+				type: "POST",
+				url: "ctrlDates.php?oper=getDateRangeAsArray&fromDate="+fromDate+"&toDate="+toDate,	
+				beforeSend : function (){
 					
-							apstr += '<td title="r'+id+':d'+i+'">x</td>';
+				},	
+				success: function(txt){
+
+					gdates = eval(txt);
+					
+					apstr = '';
+					for (var i=0; i<gdates.length; i++){
+						var dt = $.datepicker.parseDate('yy-mm-dd', gdates[i]);
+						var date = $.datepicker.formatDate(outDateFormat, dt);
+						apstr += '<th class="dateth">'+date+'</th>';
 						
+					}
+
+					//remove previous dates and table cells if any
+					$('#dot thead tr .dateth').empty().remove();
+					$('#dot tbody tr .interactiveCell').empty().remove();
+
+					//append the new header with the fresh dates
+					$('#dot thead tr').last().append(apstr);
+
+					//load the products 
+					$('#dot tbody').xml2html('reload');
+		
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+				},
+				complete : function(msg){
+					
+				}
+			}); //end ajax						
+
+		}
+
+		
+		/**
+		 *	generate the tables cells 
+		 */
+
+		$('#dot tbody').xml2html({
+				url:'ctrlShopAndOrder.php',
+				params:'oper=listProducts&provider_id='+provider_id+'&what=Shop&date=2012-05-01',
+				loadOnInit:false,
+				rowComplete : function(rowIndex, row){	//construct table cells with product id and date
+					var id =  $(row).attr("id"); 
+
+					apstr = '';
+					for (var i=0; i<gdates.length; i++){
+						var tdid = gdates[i]+"_"+id; 
+						apstr += '<td title="'+gdates[i]+'" id="'+tdid+'" class="interactiveCell deactive"></td>';
 					}
 					$(row).append(apstr);
 					
 				},
-			});
+				//finally retrieve if products are orderable for given dates
+				complete: function(rowCount){
+					$.ajax({
+						type: "POST",
+						dataType:"xml",
+						url: "ctrlActivateProducts.php?oper=getOrderableProducts4DateRange&fromDate="+gdates[0]+"&toDate="+gdates[gdates.length-1]+"&provider_id="+provider_id,	
+						success: function(xml){
 
-			var dates = [];
-		
-		$.ajax({
-			type: "POST",
-			//dataType:"xml",
-			url: "ctrlDates.php?oper=getDateRangeAsArray&fromDate=2012-05-01&toDate=2012-05-30",	
-			beforeSend : function (){
-				//$('#deposit .loadAnim').show();
-			},	
-			success: function(txt){
+							$(xml).find('row').each(function(){
 
-				dates = eval(txt);
+								var id = $(this).find('id').text();
+								var date = $(this).find('date').text()
+								//var selector = ".Date-"+date + ".Prod-"+id;
+								var selector = "#"+date+"_"+id;
 
-				apstr = '';
-				for (var i=0; i<dates.length; i++){
-					apstr += '<th>'+dates[i]+'</th>';
+								toggleCell(selector); 
+																
+							});
+										},
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							
+						},
+						complete : function(msg){
+							
+						}
+					}); //end ajax		
+					
 					
 				}
-				$('#dot thead tr').append(apstr);
+			});
 
-				$('#dot tbody').xml2html('reload');
-				
-				//alert(txt.length);
-				/*
-				var apstr = '<tr>';
-				$(xml).find('date').each(function(){
 
-					apstr += '<th>'+$(this).text()+'</th>'; 
+		
 
-				});
-				apstr += '</tr>';
-				*/
-				
-				//$('#dot thead').append(apstr);				
-
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown){
-				
-			},
-			complete : function(msg){
-				
+		/**
+		 *	activate / deactive a given product for a given date
+		 */
+		function toggleCell(id){
+			if ($(id).hasClass('active')){
+				$(id)
+				.removeClass('active')
+				.addClass('deactive')
+				.empty();
+			} else {
+				$(id)
+				.removeClass('deactive')
+				.addClass('active')
+				.append('<span class="ui-icon ui-icon-check" style="margin:auto"></span>');
 			}
-		}); //end ajax						
+		}
+		
+		/**
+		 *	event handler for each table cell
+		 */
+		$('td.interactiveCell')
+			.live('click', function(e){
+
+				var tdid = $(this).attr('id');
+				var dateID = tdid.split("_");
+				var urlStr = "ctrlActivateProducts.php?oper=toggleOrderableProduct&product_id="+dateID[1]+"&date="+dateID[0]; 
+
+				
+				$.ajax({
+					type: "POST",
+					//dataType:"xml",
+					url: urlStr,	
+					beforeSend : function (){
+						//$('#deposit .loadAnim').show();
+					},	
+					success: function(txt){
+						
+						toggleCell('#'+tdid); 
+			
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
+					},
+					complete : function(msg){
+						
+					}
+				}); //end ajax	
+				
+					
+			});
+			
+	
+	
+	
+		
+
+		makeDateHeader("Yesterday", "20 days");
+
+
+		$("#prevDates").button({
+            icons: {
+                primary: "ui-icon-seek-prev"
+            },
+            text: false
+        }).click(function(e){
+
+        	var a = new Date(gdates[0]);
+   			a.setDate(a.getDate() - seekDateSteps);
+   			
+   			var date = $.datepicker.formatDate('yy-mm-dd',a);
+         	makeDateHeader(date,gdates[0]);
+			
+        })
+
+        $("#nextDates").button({
+            icons: {
+                primary: "ui-icon-seek-next"
+            },
+            text: false
+        }).click(function(e){
+           
+            var a = new Date(gdates[gdates.length-1]);
+  			a.setDate(a.getDate() + seekDateSteps);
+  			
+  			var date = $.datepicker.formatDate('yy-mm-dd',a);
+        	makeDateHeader(gdates[gdates.length-1], date);
+        });
+
+
+
+		$("#providerSelect").xml2html("init", {
+			loadOnInit  : true,
+			offSet		: 1,
+			url         : 'ctrlActivateProducts.php',				
+			params 		: 'oper=listProviders'
+		}).change(function(){
+			//get the id of the provider
+			provider_id = $("option:selected", this).val(); 
+			
+			if (provider_id < 0) return true; 
+			//load the products 
+			$('#dot tbody').xml2html('reload',{
+				params:'oper=listProducts&provider_id='+provider_id+'&what=Shop&date=2012-05-01'
+			});
+
+		});
+        
 		
 			
 	});  //close document ready
@@ -110,22 +267,32 @@
 		    	
 		</div>
 		
-		<div id="productDateOverview">
+		<div class="wrapSelect">
+				<select id="providerSelect" class="longSelect">
+				        <option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>                    
+                    	<option value="{id}">{id} {name}</option>
+				</select>
+		</div>
 		
-			<table id="dot" class="product_list" >
+		<div id="productDateOverview">
+			
+			<table id="dot" class="table_datesOrderableProducts">
 						<thead>
 						<tr>
+							<td colspan="3"><button id="prevDates" class="floatRight">&nbsp;</button></td>
+							<td colspan="100"><button id="nextDates" class="floatRight">&nbsp;</button></td>
+						</tr>
+						<tr>
 							<th><?php echo $Text['id'];?></th>
-							<th><?php echo $Text['name_item'];?></th>
 							<th><?php echo $Text['provider_name'];?></th>
+							<th><?php echo $Text['name_item'];?></th>
 						</tr>
 						</thead>
 						<tbody>
 							<tr id="{id}">
-								<td class="item_it">{id}</td>
+								<td class="item_it prodActive">{id}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_name">{name}</td>
-								
 											
 							</tr>						
 						</tbody>
@@ -136,6 +303,9 @@
 		
 		
 	</div><!-- end of stage wrap -->
+</div>
+<div id="mylog">
+
 </div>
 <!-- end of wrap -->
 

@@ -38,8 +38,7 @@ alter table aixada_user change color_scheme_id gui_theme varchar(50) default nul
 alter table aixada_product add picture varchar(255) after description_url;
 
 alter table aixada_product_orderable_for_date 
-	add closing_date datetime not null after date_for_order,
-	add foreign key (date_for_order) references aixada_orderable_dates(orderable_date) on delete cascade;
+	add closing_date datetime not null after date_for_order;
 	
 alter table aixada_order_item 	add closing_date datetime not null after date_for_order,
 								add foreign key (date_for_order) references aixada_orderable_dates(orderable_date);

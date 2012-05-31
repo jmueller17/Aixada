@@ -228,8 +228,7 @@ create table aixada_product_orderable_for_date (
   date_for_order        date    	not null,
   closing_date 			datetime 	not null,
   primary key (id),
-  foreign key (product_id)     	references aixada_product(id),
-  foreign key (date_for_order)	references aixada_orderable_dates(orderable_date) on delete cascade
+  foreign key (product_id)     	references aixada_product(id)
 ) engine=InnoDB default character set utf8;       
   
 
