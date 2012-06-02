@@ -7,36 +7,22 @@ require_once ('utilities.php');
 $firephp = FirePHP::getInstance(true);
 ob_start(); // Starts FirePHP output buffering
 
-/**
- * 
- * Generic function to return the orderable dates of different types
- * @param String $type  getEmptyOrderableDates | getDatesWithOrders | getDatesWithSometimesOrderable | getAllOrderableDates
- */
-function get_orderable_dates($type)
+
+
+function generate_date_product_pattern($provider_id, $fromDate, $weeklyFreq, $nrMonth)
 {
-	$rs = do_stored_query($type);
 	
-	$dates = '[';
-	while ($row = $rs->fetch_array()) {
-        $dates .= '"' . $row[0] . '",';
-    }
-	return rtrim($dates, ',') . ']';
+	$daySteps =  $weeklyFreq * 7; 
+  	$nrWeeks = $nrMonth * 4; 
+
+  	//do_store_query('delete_orderable_products', $provider_id, $fromDate);
+  	
+  	echo do_stored_query('repeat_orderable_day_provider', $provider_id, $fromDate, $daySteps, $nrWeeks);
+  	
+
 }
 
-/**
- * 
- * Adds dates to the dB; currently expets format yyyy-mm-dd as does mysql.
- * @param array $date_array  array of strings in the format yyyy-mm-dd
- */
-function add_orderable_dates($date_array)
-{
-	//TODO check if dates have correct format
-	foreach($date_array as $date){
-		do_stored_query('add_orderable_date',$date);
-	}
-	unset($date);
-	
-}
+
 
 /**
  * 
@@ -48,8 +34,6 @@ function add_orderable_dates($date_array)
  * @param unknown_type $dataFormat
  */
 function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $step = '+1 day' ) {
-
-	
 	$current = strtotime( $first );  //TODO check if dates are valid. However, if they are feed by datepicker, this should be ok.
 	$last = strtotime( $last );
 	
@@ -90,31 +74,42 @@ function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $s
 }
 
 
-function generate_date_pattern($weekDays, $nrMonth, $frequency)
+/**
+ * 
+ * Generic function to return the orderable dates of different types
+ * @param String $type  getEmptyOrderableDates | getDatesWithOrders | getDatesWithSometimesOrderable | getAllOrderableDates
+ */
+/*
+function get_orderable_dates($type)
 {
-	$dates = array();
-	$gc = 0; 
-	$totalweeks = $nrMonth * 4; 
+	$rs = do_stored_query($type);
 	
-	for ($w=0; $w<$totalweeks; $w+=$frequency){
-		foreach($weekDays as $day){
-				$dates[$gc] = 	strftime('%Y-%m-%d', strtotime('next ' . $day . ' + '.$w.' week'));
-				$gc++;	
-		}
-		unset($day);
-	}	
-	return $dates;
-}
+	$dates = '[';
+	while ($row = $rs->fetch_array()) {
+        $dates .= '"' . $row[0] . '",';
+    }
+	return rtrim($dates, ',') . ']';
+}*/
 
-function generate_and_add_date_pattern($weekDays, $nrMonth, $frequency){
-	$dates = generate_date_pattern($weekDays, $nrMonth, $frequency);
-	if (count($dates)> 0){
-		add_orderable_dates($dates);
-		return 1; 
-	}	else {
-		return 0;
+/**
+ * 
+ * Adds dates to the dB; currently expets format yyyy-mm-dd as does mysql.
+ * @param array $date_array  array of strings in the format yyyy-mm-dd
+ */
+/*
+function add_orderable_dates($date_array)
+{
+	//TODO check if dates have correct format
+	foreach($date_array as $date){
+		do_stored_query('add_orderable_date',$date);
 	}
-}
+	unset($date);
+	
+}*/
+
+
+
+
 
 
 /*

@@ -31,7 +31,6 @@ function navGrid_options() {
     </title>
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-	<link rel="stylesheet" type="text/css"   media="screen" href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="js/jqGrid-4.3.1/css/ui.jqgrid.css"/>
@@ -214,11 +213,10 @@ function navGrid_options() {
 				}) // close jqgrid
 				
 	   			$("#detail").navGrid('#detail_pager',  
-						     //      {},
-			      //{edit:true,add:true,del:true,search:false}, //options
+				
 						   <?php navGrid_options(); ?>
 
-                                                     {reloadAfterSubmit:true, width:500}, 		//edit options
+                  {reloadAfterSubmit:true, width:500}, 		//edit options
 			      {reloadAfterSubmit:true}, 		//add options
 			      {reloadAfterSubmit:true}, 		//del options
 			      {} //search options

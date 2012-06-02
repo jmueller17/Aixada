@@ -97,15 +97,14 @@
 		<li><a href="manage_table.php?table=aixada_provider"><?php echo $Text['nav_mng_providers'];?></a></li>
 		<li><a href="manage_table.php?table=aixada_product"><?php echo $Text['nav_mng_products'];?></a>
 			<ul>
-				<li><a href="activate_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
-				<!-- li><a href="#"><?php echo $Text['nav_mng_stock'];?></a></li-->
+				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
 			</ul>
 		</li>
 		<li><a href="#"><?php echo $Text['nav_mng_orders'];?></a>
 			<ul>
-				<li><a href="manage_dates.php?what=Setdates"><?php echo $Text['nav_mng_setorderable']; ?></a></li>
-				<li><a href="manage_dates.php?what=Move"><?php echo $Text['nav_mng_move'];?></a></li>
+				<!--  li><a href="manage_dates.php?what=Setdates"><?php echo $Text['nav_mng_setorderable']; ?></a></li-->
+				<!--  li><a href="manage_dates.php?what=Move"><?php echo $Text['nav_mng_move'];?></a></li-->
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
 		</li>

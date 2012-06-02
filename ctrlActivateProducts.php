@@ -6,6 +6,7 @@ ob_start(); // Starts FirePHP output buffering
 require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
+require_once("utilities_dates.php");
 require_once("utilities_shop_and_order.php");
 
 
@@ -34,13 +35,33 @@ try{
       exit;
       
   case 'getOrderableProducts4DateRange':
-  		printXML(stored_query_XML('get_orderable_products_for_dates', 'products', 'date', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));
-  		exit; 	
+  	printXML(stored_query_XML('get_orderable_products_for_dates', 'products', 'date', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));
+  	exit; 	
   		
   case 'toggleOrderableProduct':
-  		echo do_stored_query('toggle_orderable_product', $_REQUEST['product_id'], $the_date);
-        exit;
+  	echo do_stored_query('toggle_orderable_product', $_REQUEST['product_id'], $the_date);
+    exit;
+        
+  case 'getTypeOrderableProducts':
+  	printXML(stored_query_XML_fields('get_type_orderable_products', $_REQUEST['provider_id'] ));
+  	exit;
+  		
+  case 'activateProduct':
+  	echo do_stored_query('change_active_status_product', 1, $_REQUEST['product_id']);
+  	exit;
+  		
+  case 'deactivateProduct':
+  	echo do_stored_query('change_active_status_product', 0, $_REQUEST['product_id']);
+  	exit;
+  	
+  case 'generateDatePattern':
+  	echo generate_date_product_pattern($_REQUEST['provider_id'], $the_date, $_REQUEST['weeklyFreq'],  $_REQUEST['nrMonth'] );
+  	exit; 
+        
 
+  	
+  	
+  	
   case 'getActivatedProducts':
       printXML(stored_query_XML('get_activated_products', 'products', 'name', $_REQUEST['provider_id'], $_REQUEST['date']));
       exit;
@@ -68,7 +89,6 @@ try{
   case 'productsHaveArrived':
     printXML(arrived_products($_REQUEST['provider_id'], $_REQUEST['product_ids'], $_REQUEST['date']));
     exit;
-
 
   default:
     throw new Exception("ctrlActivateProducts: variable oper not set in query");

@@ -91,7 +91,7 @@ $(function(){
 			var settings = {
 				msg : '',
 				title : 'A message...',
-				width: 300,
+				width: 400,
 				type: "default",
 				buttons : {
 					"Ok": function() {

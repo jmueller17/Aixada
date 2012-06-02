@@ -30,7 +30,7 @@ try{
     
   switch ($oper) {
 
-  	case 'getEmptyOrderableDates':
+  	/*case 'getEmptyOrderableDates':
   	  	echo get_orderable_dates('get_empty_orderable_dates');
   	  	exit;
 
@@ -52,7 +52,7 @@ try{
 
   	case 'delOrderableDate':
       	do_stored_query('del_orderable_date',$date);
-      	exit;
+      	exit;*/
       	
   	case 'getDateRangeAsXML':
 		 printXML(dateRange($_REQUEST['fromDate'],$_REQUEST['toDate'],'D d'));

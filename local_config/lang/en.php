@@ -83,7 +83,7 @@ $Text['head_ti_cashbox'] = "Cashbox control";
 /**
  *  			titles for main pages <h1></h1>
  */
-$Text['ti_mng_activate_products'] = "People will be able to order the following things FOR ";
+$Text['ti_mng_activate_products'] = "De-/activate products for ordering";
 $Text['ti_mng_arrived_products'] = "The following products have arrived on ";
 $Text['ti_mng_activate_roles'] = "Manage roles of user ";
 $Text['ti_mng_activate_users'] = "Activate users for ";
@@ -91,8 +91,8 @@ $Text['ti_mng_move_orders'] = "Move orders";
 $Text['ti_mng_activate_preorders'] = "Convert preorder to order";
 $Text['ti_mng_members'] = "Manage members";
 $Text['ti_mng_ufs'] = "Manage households";
-$Text['ti_mng_dates'] = "De-/activate order dates individually";
-$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates";
+$Text['ti_mng_dates'] = "De-/activate products for ordering";	 /*delme*/
+$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates"; /*delme*/
 $Text['ti_mng_db'] = "Backup database"; 
 $Text['ti_order'] = "Place your order for ";
 $Text['ti_shop'] = "Buy stuff ";
