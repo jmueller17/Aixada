@@ -56,19 +56,19 @@ function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $s
 	
 		while( $current <= $last ) {
 			$date = date( $outDateFormat, $current );
-			//$dates[] = $date;
-			$dates .= "'".$date."',";			
+			$dates .= "'".$date."',";
 			$current = strtotime( $step, $current );
 		}
-		$dates .= ']';
+		$dates = rtrim($dates, ',') . ']';
+		
 		
 	} else {
 		
 		
 	}
 	
-	global $firephp;
-	$firephp->log($dates);
+	//global $firephp;
+	//$firephp->log($dates);
 
 	return $dates;
 }

@@ -442,8 +442,6 @@
 					<input type="radio" id="view_cart" name="viewCol"  /><label for="view_cart" title="<?php echo $Text['btn_view_cart_lng'];?>"><?php echo $Text['btn_view_cart'];?> (0)</label>
 					<input type="radio" id="view_both" name="viewCol" checked="checked"/><label for="view_both" title="<?php echo $Text['btn_view_both_lng'];?>"><?php echo $Text['btn_view_both'];?></label>
 				</div>
-    			
-    			
     		</div>
 		</div><!-- end titlewrap -->
 

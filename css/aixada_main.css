@@ -198,13 +198,14 @@ form table td input 	{line-height:1.2em; font-size:.8em;}
 .purchase_listing td							{text-align:right; padding-right:5px;}
 .table_listing_cashbox td						{text-align:left; padding:2px;}
 .table_datesOrderableProducts td				{background:#EBEBEB; padding:5px;}
+.table_datesOrderableProducts th.pastDates		{background:#f0f0f0; padding:5px;}
 .table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
 .table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
 .table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
-.table_datesOrderableProducts .beforeHeader		{background:#ffffff; padding:0px; }
-.tfootDateGenerate								{cursor:pointer}
 .table_datesOrderableProducts td.highlight		{border:solid 5px red;}
-.table_datesOrderableProducts h3				{font-size:1.3em; padding:0.44em;}
+.dateTableMonthYear								{margin:0px 20px;}
+.tfootDateGenerate								{cursor:pointer}
+#providerName									{font-size:1.5em; padding-left:10px;}
 
 
 

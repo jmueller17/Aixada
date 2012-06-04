@@ -30,7 +30,7 @@ try{
     
   switch ($oper) {
 
-  	/*case 'getEmptyOrderableDates':
+  	 /*case 'getEmptyOrderableDates':
   	  	echo get_orderable_dates('get_empty_orderable_dates');
   	  	exit;
 
@@ -38,7 +38,7 @@ try{
   	  	echo get_orderable_dates('get_nonempty_orderable_dates');
       	exit;
       
-    case 'getDatesWithSometimesOrderable':
+   case 'getDatesWithSometimesOrderable':
   	  	echo get_orderable_dates('get_sometimes_orderable_dates');
       	exit;
       
@@ -62,12 +62,6 @@ try{
   		echo dateRange($_REQUEST['fromDate'], $_REQUEST['toDate'],'Y-m-d', 'arrayStr');
   		exit;	
   		  		
-  	case 'generateDates':
-  		$weekDays = extract_data('weekday');		
-  		$nrMonth = extract_data('nrOfMonth'); 
-  		$frequency = extract_data('frequency');
-  		echo generate_and_add_date_pattern($weekDays, $nrMonth, $frequency);
-  	  	exit;
 
   	default:
     	throw new Exception("ctrlDates: \"oper=" . $_REQUEST['oper'] . "\" not valid in query");

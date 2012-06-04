@@ -27,11 +27,12 @@
 	<script type="text/javascript">
 	$(function(){
 
-
-		//var fromDate = "Yesterday";
-		//var toDate = "30 days";
+		//dates to be displayed in header
 		var gdates = [];
+
+		//default number of dates at display
 		var seekDateSteps = 20;
+
 		
 		/**
 		 * retrieve dates for a given time period and constructs the table header
@@ -55,17 +56,34 @@
 					
 					var apstr = '';
 					var tfoot = '';
-					for (var i=0; i<gdates.length; i++){
-						var dt = $.datepicker.parseDate('yy-mm-dd', gdates[i]);
-						var date = $.datepicker.formatDate(outDateFormat, dt);
-						apstr += '<th class="dateth">'+date+'</th>';
-						tfoot += '<td class="tfootDateGenerate" colDate="'+gdates[i]+'"></td>';	
-					}
-					//add table footer
-					
+					var today = new Date();
+					var visMonthYear = new Array(new Date(gdates[0]));
 				
 					
+					for (var i=0; i<gdates.length; i++){
+						var dd = new Date(gdates[i]); 
+						var date = $.datepicker.formatDate(outDateFormat, dd);
 
+						if (dd < today) {
+							apstr += '<th class="dateth pastDates">'+date+'</th>';
+						} else {
+							apstr += '<th class="dateth">'+date+'</th>';
+						}
+						tfoot += '<td class="tfootDateGenerate" colDate="'+gdates[i]+'"></td>';	
+
+						if (dd.getMonth() != visMonthYear[visMonthYear.length-1].getMonth()){
+							visMonthYear.push(dd);
+						} 
+ 
+					}
+
+					//construct month year str for title bar of widget
+					for (var i=0; i<visMonthYear.length; i++){
+						visMonthYear[i] = $.datepicker.formatDate('MM yy',visMonthYear[i]);
+					}
+					var monthYearStr = visMonthYear.join("/ "); 
+					$('.dateTableMonthYear').html(monthYearStr);
+					
 					//remove previous dates and table cells if any
 					$('#dot thead tr .dateth').empty().remove();
 					$('#dot tbody tr .interactiveCell').empty().remove();
@@ -100,7 +118,7 @@
 				rowComplete : function(rowIndex, row){		//construct table cells with product id and date
 					var id =  $(row).attr("id"); 			//get the product id
 					var ckbox = $("input:checkbox", row); 	//if the product is active or not
-					var cellStyle = (ckbox.attr("isActive") == 1)? "notOrderable":"deactivated";
+					var cellStyle = (ckbox.attr("isactive") == 1)? "notOrderable":"deactivated";
 					var apstr = '';
 					
 					for (var i=0; i<gdates.length; i++){
@@ -110,23 +128,26 @@
 					}
 					$(row).append(apstr);
 
-					//revise checkboxe attribute
-					if (ckbox.attr("isActive") == 1){
+					//revise checkboxe attribute for each product row
+					if (ckbox.attr("isactive") == 1){
 						ckbox.attr("checked", "checked")
 					} else {
 						ckbox.removeAttr("checked");
+						if (!$('#showInactiveProducts').children('span:first').hasClass('ui-icon-check')){
+							$(row).hide();
+						}
+						
 					}
 
 					//hide deactivated products
-					if ($('#showInactiveProducts').attr('checked') != 'checked' && ckbox.attr("isActive") != 1){
-						$(row).hide();
-					}
+					
 					
 					
 				},
 				//finally retrieve if products are orderable for given dates
 				complete: function(rowCount){
 					var provider_id = getProviderId();
+				
 					$.ajax({
 						type: "POST",
 						dataType:"xml",
@@ -199,6 +220,7 @@
 			});
 		}
 
+		
 		/**
 		 *	utility function to retrieve the provider_id from the select
 		 */
@@ -252,6 +274,9 @@
 			
 	
 
+		/**
+		 *	date forward backward 
+		 */
 		$("#prevDates").button({
 			icons:{
 				primary: "ui-icon-circle-triangle-w"
@@ -273,7 +298,6 @@
         		secondary: "ui-icon-circle-triangle-e"
         	}
         })
-        
         .click(function(e){
            
             var a = new Date(gdates[gdates.length-1]);
@@ -429,21 +453,43 @@
 			
 		}
 
-		
+
+
 		/**
-		 *	Hide/show deactivated products
+		 *	options button
 		 */
-		$('#showInactiveProducts').click(function(e){
-
-			$('input[name="toggleDeActivateProducts"]').each(function(){
-				if ($(this).attr('checked') != 'checked'){
-					$(this).parent().parent().toggle();
+		 $("#tblOptions").button({
+				icons: {
+		        	secondary: "ui-icon-triangle-1-s"
 				}
+		    }).menu({
+				content: $('#tblOptionsItems').html(),	
+				showSpeed: 50, 
+				width:280,
+				flyOut: true, 
+				itemSelected: function(item){
+					//show hide deactivated products
+					if ($(item).attr('id') == "showInactiveProducts"){
+						if ($(item).children('span').hasClass('ui-icon-check')){
+							$(item).children('span').removeClass('ui-icon ui-icon-check');
+						} else {
+							$(item).children('span').addClass('ui-icon ui-icon-check');
+						}
+						$('input[name="toggleDeActivateProducts"]').each(function(){
+							if ($(this).attr('checked') != 'checked'){
+								if ($(item).children('span').hasClass('ui-icon-check')){
+									$(this).parent().parent().show();
+								} else {
+									$(this).parent().parent().hide();
+								}
+							} 
+						});
+					} ;
+				} 
 			});
-		});
+		
 
-
-		makeDateHeader("Yesterday", "20 days");
+		makeDateHeader("Yesterday", seekDateSteps+" days");
 		
 			
 	});  //close document ready
@@ -460,39 +506,51 @@
 	<div id="stagewrap" class="ui-widget">
 	
 		<div id="titlewrap">
-			
+			<div id="titleLeftCol">
 		    	<h1><?php echo $Text['ti_mng_activate_products'];  ?>
+		    </div>
+		   <div id="titleRightCol">
+		   		<div class="wrapSelect textAlignRight">
+					<select id="providerSelect" class="longSelect">
+					        <option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>                    
+	                    	<option value="{id}">{id} {name}</option>
+					</select>
+				</div>
+		   		<div class="textAlignRight"><button	id="tblOptions">Options</button></div>
+				<div id="tblOptionsItems" class="hidden">
+					<ul>
+						<li><a href="javascript:void(null)" id="showInactiveProducts"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
+						<li><a href="javascript:void(null)">&nbsp;&nbsp;Number of dates at display</a>
+							<ul>
+								<li><a href="javascript:void(null)" id="plusTen">+ 10 Dates</a></li>
+								<li><a href="javascript:void(null)" id="minusTen">- 10 Dates</a></li></ul>
+						</li>
+						
+					</ul>
+				</div>
+				
+		   </div> 
 		    	
 		</div>
 		
-		<div class="wrapSelect">
-				<select id="providerSelect" class="longSelect">
-				        <option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>                    
-                    	<option value="{id}">{id} {name}</option>
-				</select>
-		</div>
-		
-		Show deactivated products as well: <input type="checkbox" id="showInactiveProducts" />
 		
 		
-		<div id="productDateOverview">
+		
+		
+		
+		<div id="productDateOverview" class="ui-widget">
+			<div class="ui-widget-header">
+				<h3 id="providerName" class="minPadding floatLeft">&nbsp;</h3>
+				<p class="textAlignCenter">
+					<button id="prevDates">Earlier dates</button>
+					<span class="dateTableMonthYear"></span>							
+					<button id="nextDates">Next Dates</button>
+				</p>
+			</div>
 			
-			<table id="dot" class="table_datesOrderableProducts">
+			<table id="dot" class="table_datesOrderableProducts ui-widget-content">
 				<thead>
-				<tr>
-					<td colspan="3" class="beforeHeader">
-						<div class="ui-widget-header">
-							<h3 id="providerName" class="">&nbsp;</h3>
-						</div>
-					</td>
-					<td colspan="100" class="beforeHeader">
-						<div class="ui-widget-header minPadding">								
-							
-								<button id="prevDates">Earlier dates</button>							
-								<button id="nextDates" class="floatRight">Next Dates</button>
-						</div>
-					</td>
-				</tr>
+				
 				<tr>
 					<th><?php echo $Text['id'];?></th>
 					<th><?php echo $Text['name_item'];?></th>
@@ -503,7 +561,7 @@
 					<tr id="{id}">
 						<td class="prodActive">{id}</td>
 						<td>{name}</td>
-						<td><input type="checkbox" name="toggleDeActivateProducts" id="ckbox_{id}" isActive="{is_active}"/></td>
+						<td><input type="checkbox" name="toggleDeActivateProducts" id="ckbox_{id}" isactive="{is_active}"/></td>
 									
 					</tr>						
 				</tbody>
