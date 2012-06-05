@@ -9,7 +9,7 @@ td 					{vertical-align:top;}
 th					{background:#E1E1E1; margin-bottom:3px;}
 input 				{padding-left:2px;}
 img 				{border:0px solid #fff;}
-
+option 				{padding:1px 5px;}
 
 
 /** generic styles **/
@@ -202,7 +202,7 @@ form table td input 	{line-height:1.2em; font-size:.8em;}
 .table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
 .table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
 .table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
-.table_datesOrderableProducts td.highlight		{border:solid 5px red;}
+.table_datesOrderableProducts	.highlight		{border:solid 5px red;}
 .dateTableMonthYear								{margin:0px 20px;}
 .tfootDateGenerate								{cursor:pointer}
 #providerName									{font-size:1.5em; padding-left:10px;}

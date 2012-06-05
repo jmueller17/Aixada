@@ -3,10 +3,8 @@
 require_once('inc/database.php');
 require_once('local_config/config.php');
 require_once('inc/caching.inc.php');
-$language = ( (isset($_SESSION['userdata']['language']) and 
-               $_SESSION['userdata']['language'] != '') ? 
-              $_SESSION['userdata']['language'] : 
-              configuration_vars::get_instance()->default_language );
+$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? 
+              	$_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 require_once('local_config/lang/' . $language . '.php');
 
 
@@ -303,48 +301,7 @@ function get_config_menu($user_role)
 }
 
 
-/**
- * Returns $num=10 possible sales dates later than the given start
- * date. The dates are guaranteed to be active. 
- * @param $_start_date date defaults to today
- * @param $num int how many sales days to output. Defaults to 10.
- * @return $sales_dates array(date) 
- */
-function get_10_sales_dates_XML($_start_date=0, $num=10)
-{
-    $xml = stored_query_XML_fields('get_sales_dates', 0, $num);
-    if (strpos('<rowset></rowset>', $xml) !== false) {
-        $today = '<row><date_for_order f="date_for_order"><![CDATA[' 
-            . strftime('%Y-%m-%d', strtotime("now")) 
-            . ']]></date_for_order></row>';
-        $xml = str_replace('<rowset></rowset>', 
-                           '<rowset>' . $today . '</rowset>', $xml);
-    }
-    return $xml;
-}
 
-function get_next_equal_shop_date_XML()
-{
-    return stored_query_XML_fields('get_next_equal_shop_date');
-}
-
-/**
- * Calculate the date of the next sales day not including the given
- * $start_date (which defaults to the current date). 
- * @param $start_date date default 0 means 'counting from today'.
- */ 
-function get_next_shop_date_XML($start_date=0)
-{
-    return  stored_query_XML_fields('get_sales_dates', $start_date, 1);
-}
-
-function get_next_shop_date($start_date=0)
-{
-    $rs = do_stored_query('get_sales_dates', $start_date, 1);
-    $row = $rs->fetch_array();  // putative date of sale
-    DBWrap::get_instance()->free_next_results();
-    return $row[0];
-}
 
 function get_field_options_live($table, $field1, $field2)
 {

@@ -282,32 +282,6 @@ begin
   	date_for_shop desc;
 end|
 
-	/*integrated into new version of procedure past_validated_shop_times_for_uf */
-	/*drop procedure if exists nonvalidated_shop_times_for_uf|
-	create procedure nonvalidated_shop_times_for_uf(in the_uf int)
-	begin
-	  select concat(id, ' ', date_for_shop, ' Comanda no validada') as shop_time
-	  from aixada_shop_item 
-	  where uf_id = the_uf
-	  and   ts_validated = 0
-	  group by date_for_shop
-	  order by date_for_shop desc;
-	end|*/
-
-
-	/*drop procedure if exists past_validated_shop_times_for_uf|
-	create procedure past_validated_shop_times_for_uf(in the_uf int)
-	begin
-	  declare first_past_date date default date_add(date(sysdate()), interval -6 month);
-	  declare  last_past_date date default date_add(date(sysdate()), interval -2 day);
-	  select concat(id, ' date:', date_for_shop, ' validated:', ts_validated) as shop_time
-	  from aixada_shop_item 
-	  where uf_id = the_uf
-	  and   date_for_shop between first_past_date and last_past_date
-	  and   ts_validated > 0
-	  group by date_for_shop
-	  order by date_for_shop desc;
-	end|*/
 
 drop procedure if exists shop_times_for_uf|
 create procedure shop_times_for_uf(in the_uf int)

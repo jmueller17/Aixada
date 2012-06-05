@@ -143,17 +143,6 @@ create table aixada_orderable_type (
 
 
 /**
- * iva types associated then to different products
- */
-create table aixada_iva_type (
-  id   				tinyint			not null auto_increment,
-  percent			smallint 		not null, 
-  primary key (id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
-
-
-
-/**
  *      aixada_unit_measures
  *      stores the possible unit measures (kg, piece, 500g etc)
  */
@@ -171,7 +160,17 @@ create table aixada_rev_tax_type (
   rev_tax_percent	decimal(10,2),
   primary key (id)
 ) engine=InnoDB default character set utf8;
-  
+ 
+
+/**
+ * iva types associated then to different products
+ */
+create table aixada_iva_type (
+  id   				smallint		not null auto_increment,
+  percent			decimal(10,2) 	not null, 
+  primary key (id)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
 
 /**
  * product
@@ -188,7 +187,7 @@ create table aixada_rev_tax_type (
   category_id	      	int				default 1,
   rev_tax_type_id		tinyint			default 1,
   unit_price       		decimal(10,2) 	default 0.0,
-  iva_percent  	      	decimal(10,2) 	default 8,
+  iva_percent_id  	    smallint 		default 1,
   unit_measure_order_id	tinyint			default 1,
   unit_measure_shop_id	tinyint			default 1,
   stock_min    	      	decimal(10,4) 	default 0, 
@@ -198,25 +197,18 @@ create table aixada_rev_tax_type (
   picture 				varchar(255) 	default null,
   ts			  		timestamp 		not null default current_timestamp,
   primary key (id),
-  foreign key (provider_id)    references aixada_provider(id) on delete cascade,
+  foreign key (provider_id)    		references aixada_provider(id) on delete cascade,
           key (active),
-  foreign key (responsible_uf_id) references aixada_uf(id),
-  foreign key (orderable_type_id)    references aixada_orderable_type(id),
-  foreign key (category_id)    references aixada_product_category(id),
-  foreign key (rev_tax_type_id)    references aixada_rev_tax_type(id),
+  foreign key (responsible_uf_id) 	references aixada_uf(id),
+  foreign key (orderable_type_id)   references aixada_orderable_type(id),
+  foreign key (category_id)    		references aixada_product_category(id),
+  foreign key (rev_tax_type_id)    	references aixada_rev_tax_type(id),
+  foreign key (iva_percent_id)		references aixada_iva_type(id),
   foreign key (unit_measure_order_id) references aixada_unit_measure(id),
   foreign key (unit_measure_shop_id) references aixada_unit_measure(id),
   key(delta_stock)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
-
-/**
- * allowed days for ordering
- */
-create table aixada_orderable_dates (
-  orderable_date    date not null,
-  primary key(orderable_date)
-) engine=InnoDB default character set utf8;  
 
 
 /**
@@ -247,7 +239,7 @@ create table aixada_order_item (
   primary key (id),
   foreign key (uf_id) references aixada_uf(id),
   foreign key (product_id) references aixada_product(id),
-  foreign key (date_for_order) references aixada_orderable_dates(orderable_date),
+  foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order),
   unique  key (date_for_order, uf_id, product_id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 

@@ -30,9 +30,13 @@ try{
 
   switch($_REQUEST['oper']) {
 
-  case 'listProviders':
+  /*case 'listProviders':
       printXML(stored_query_XML('list_all_providers_short', 'providers', 'name'));
-      exit;
+      exit;*/
+  	
+  case 'listAllOrderableProviders':
+  	printXML(stored_query_XML('get_orderable_providers', 'providers', 'name'));
+    exit;
       
   case 'getOrderableProducts4DateRange':
   	printXML(stored_query_XML('get_orderable_products_for_dates', 'products', 'date', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));

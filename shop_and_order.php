@@ -98,7 +98,8 @@
 
 							$('.loadAnimShop').show();
 							$('#product_list_provider tbody').xml2html("reload",{
-								params: 'oper=listProducts&provider_id='+id+'&what='+what + "&date="+$.getSelectedDate('#datepicker'),
+								//params: 'oper=listProducts&provider_id='+id+'&what='+what + "&date="+$.getSelectedDate('#datepicker'),
+								params: 'oper=getProducts&provider_id='+id+'&what='+what + "&date="+$.getSelectedDate('#datepicker'),
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();
@@ -147,9 +148,6 @@
 			//dates available to make orders; start with dummy date
 			var availableDates = ["2011-00-00"];
 
-			//dates that are orderable and have already items -> need moving, cannot be deleted
-			var datesWithOrders = ["2011-00-00"];
-
 			
 			$("#datepicker").datepicker({
 						dateFormat 	: 'DD, d MM, yy',
@@ -157,7 +155,7 @@
 						beforeShowDay: function(date){		//activate only those dates that are available for ordering. smallqueries.php order retrieval does not work...
 							if (what == 'Order'){
 								var ymd = $.datepicker.formatDate('yy-mm-dd', date);
-								if ($.inArray(ymd, availableDates) == -1 && $.inArray(ymd, datesWithOrders) == -1 ) {
+								if ($.inArray(ymd, availableDates) == -1) {
 								    return [false,"","Unavailable"];			    
 								} else {
 									  return [true, ""];
@@ -173,7 +171,7 @@
 			}).show();//end date pick
 
 
-	    	var date_url = "smallqueries.php?oper=getNextEqualShopDate";
+	    	
 			if (what == "Shop") { 
 				//preorder tab is only available for ordering
 				$('#tabs ul').children('li:gt(2)').hide();
@@ -181,14 +179,25 @@
 				//hide date input field for shop
 				$("#datepicker").hide();
 
-			} else if (what == "Order"){
-                date_url = "smallqueries.php?oper=getNextDate";
-            }
-			
+				$.getAixadaDates('getToday', function (date){
+					//availableDates = dates;
+					$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
+					$("#datepicker").datepicker("refresh");
+					refreshSelects(date[0]);
+				});	
 
+			} else {
+			
+				$.getAixadaDates('getAllOrderableDates', function (dates){
+					availableDates = dates;
+					$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', availableDates[0]));
+					$("#datepicker").datepicker("refresh");
+					refreshSelects(dates[0]);
+				});
+			}
             
 			//retrieve date for upcoming order
-			$.ajax({
+			/*$.ajax({
 				type: "GET",
    			    url: date_url,
 				dataType: "xml", 
@@ -205,19 +214,15 @@
 						msg:XMLHttpRequest.responseText,
 						type: 'error'});
 				}
-			}); //end ajax retrieve date
+			});*/ //end ajax retrieve date
 
 			
 
-			$.getOrderableDates('getEmptyOrderableDates', function (dates){
-				availableDates = dates;
-				$("#datepicker").datepicker("refresh");
-			});
-
-			$.getOrderableDates('getDatesWithOrders', function (dates){
+		
+			/*$.getOrderableDates('getDatesWithOrders', function (dates){
 				datesWithOrders = dates;
 				$("#datepicker").datepicker("refresh");
-			});
+			});*/
 			
 			
 			//make tabs widget resizeable
@@ -343,7 +348,7 @@
 				}); //end loadCart
 
 				$("#providerSelect").xml2html("reload", {
-					params : 'oper=listProviders&what='+what+'&date='+dateText,
+					params : 'oper=get'+what+'Providers&date='+dateText,
 				})
 
 				$("#categorySelect").xml2html("reload", {

@@ -2,8 +2,8 @@ delimiter |
 
 
 /**
- * given a provider_id and a certain day, make the associated orderable products of this provider
- * orderable every X daysteps during nr_weeks into the future. 
+ * given a provider_id and a certain day, make the associated orderable 
+ * products of this provider orderable every X daysteps during nr_weeks into the future. 
  */
 drop procedure if exists repeat_orderable_day_provider|
 create procedure repeat_orderable_day_provider(in the_provider_id int, in from_date date, in daysteps int, in nr_weeks int)
@@ -11,6 +11,9 @@ begin
 	
 	declare done int default 0;
 	declare the_product_id int; 
+	declare weekday varchar(20) default date_format(from_date, '%W');
+	declare today date default date(sysdate());
+
 	
 	declare pcursor cursor for 
 	select distinct
@@ -25,6 +28,20 @@ begin
 	declare continue handler for not found
 		set done = 1; 
 	
+		
+	/*First, delete all existing orderable dates for this provider and day*/
+	delete 
+		po
+	from 
+		aixada_product p,
+		aixada_product_orderable_for_date po
+	where 
+		po.date_for_order > from_date
+		and p.provider_id = the_provider_id	
+		and date_format(po.date_for_order, '%W') = weekday
+		and po.product_id = p.id;
+
+	/*get all  products for provider, and set the dates for each individually*/	
 	open pcursor;
 	set done = 0; 
 	set the_product_id = 0; 
@@ -35,6 +52,7 @@ begin
 			leave read_loop; 
 		end if;
 		if the_product_id > 0 then 
+			/* create the date pattern for reach product */
 			call repeat_orderable_product(the_product_id, from_date, daysteps, nr_weeks);
 		end if; 
 	end loop;
@@ -42,9 +60,11 @@ begin
 	close pcursor; 
 end|
 
+
+
 /**
- * sets the given product repeatedly orderable starting from the current date, advancing every time X daysteps 
- * during nr_weeks into the future
+ * sets the given product repeatedly orderable starting from the current date, 
+ * advancing every time X daysteps  during nr_weeks into the future
  */
 drop procedure if exists repeat_orderable_product|
 create procedure repeat_orderable_product(in the_product_id int, in from_date date, in daysteps int, in nr_weeks int)
@@ -76,72 +96,10 @@ begin
 	end while; 
 end|
 
-/**
- * procedure that deletes all orderable product entries from the current date onwards. 
- * This works on a "day" basis. For a given provider_id, we check all its products that are orderable
- * for a given weekday and then delete all the corresponding dates for this weekday
- */
-drop procedure if exists delete_orderable_products|
-create procedure delete_orderable_products(in the_provider_id int, in from_date date)
-begin
-	
-	delete 
-		aixada_product_orderable_for_date
-	from 
-		aixada_product,
-		aixada_product_orderable_for_date
-	where 
-		date_format(aixada_product_orderable_for_date.date_for_order, '%W') = date_format(from_date, '%W')
-		and aixada_product_orderable_for_date.product_id = aixada_product.id
-		and aixada_product.provider_id = the_provider_id; 
-end|
-
-
 
 /**
- * returns all providers that have items orderable: "sometimes orderable" or "always orderable"
- */
-drop procedure if exists list_all_providers_short|
-create procedure list_all_providers_short()
-begin
-  select distinct 
-     pv.id, 
-     pv.name
-  from aixada_provider pv
-  left join aixada_product p 
-  on pv.id = p.provider_id 
-  where  
-    pv.active = 1
-    and p.orderable_type_id in (2,3)
-  order by pv.name;
-end|
-
-
-
-/**
- * returns all products that have been marked "orderable" for a given provider within a given date range
- * This corresponds basically to the entries in aixada_products_orderable_for_date
- */
-drop procedure if exists get_orderable_products_for_dates|
-create procedure get_orderable_products_for_dates(in fromDate date, in toDate date, in the_provider_id int)
-begin
-	select
-		po.product_id,
-		po.date_for_order
-	from 
-		aixada_product_orderable_for_date po,
-		aixada_product pr
-	where 
-		pr.id = po.product_id
-		and pr.provider_id = the_provider_id
-		and po.date_for_order >= fromDate
-		and po.date_for_order <= toDate;
-end|
-
-
-/**
- * activates or deactives a given product for a given date depending on its current status. If the product is active
- * for the given date, it will be deactivate and vice versa. 
+ * activates or deactives a given product for a given date depending on its current status. 
+ * If the product is active for the given date, it will be deactivate and vice versa. 
  */
 drop procedure if exists toggle_orderable_product|
 create procedure toggle_orderable_product (in the_product_id int, in the_date date)
@@ -184,6 +142,28 @@ end|
 
 
 /**
+ * sets the active status of a product. this is usually set automatically within the table_manapge jqgrid stuff
+ * but can also be manipulated when the user sets the orderable status of the product
+ */
+drop procedure if exists change_active_status_product|
+create procedure change_active_status_product (in the_active_state boolean, in the_product_id int)
+begin
+	update 
+		aixada_product
+	set
+		active = the_active_state
+	where
+		id = the_product_id;
+		
+	if the_active_state = 0 then
+		delete from aixada_product_orderable_for_date
+		where 
+			product_id = the_product_id;
+	end if;
+end|
+
+
+/**
  * returns all products for a given provider that are marked as either "always orderable" or "sometimes orderable" 
  * active or not active. 
  */
@@ -208,26 +188,55 @@ begin
 end|
 
 
-
 /**
- * sets the active status of a product. this is usually set automatically within the table_manapge jqgrid stuff
- * but can also be manipulated when the user sets the orderable status of the product
+ * returns all products that have been marked "orderable" for a given provider within a given date range
+ * This corresponds basically to the entries in aixada_products_orderable_for_date
  */
-drop procedure if exists change_active_status_product|
-create procedure change_active_status_product (in the_active_state boolean, in the_product_id int)
+drop procedure if exists get_orderable_products_for_dates|
+create procedure get_orderable_products_for_dates(in fromDate date, in toDate date, in the_provider_id int)
 begin
-	update 
-		aixada_product
-	set
-		active = the_active_state
-	where
-		id = the_product_id;
-		
-	if the_active_state = 0 then
-		delete from aixada_product_orderable_for_date
-		where 
-			product_id = the_product_id;
-	end if;
+	select
+		po.product_id,
+		po.date_for_order
+	from 
+		aixada_product_orderable_for_date po,
+		aixada_product pr
+	where 
+		pr.id = po.product_id
+		and pr.provider_id = the_provider_id
+		and po.date_for_order >= fromDate
+		and po.date_for_order <= toDate;
+end|
+
+
+drop procedure if exists get_products_for_provider|
+create procedure get_products_for_provider(in the_provider_id int, in the_date date)
+begin
+	select
+		p.id,
+		p.name,
+		p.description,
+		p.category_id,
+		p.stock_actual,
+		p.unit_price * (1 + iva.percent/100) as unit_price,
+		pv.name as provider_name,	
+		u.unit,
+		t.rev_tax_percent
+	from
+		aixada_product p,
+		aixada_provider pv, 
+		aixada_rev_tax_type t,
+		aixada_iva_type iva,
+		aixada_unit_measure u 
+	where 
+		p.active = 1
+		and pv.active = 1
+		and pv.id = the_provider_id 
+		and p.provider_id = pv.id
+		and p.rev_tax_type_id = t.id
+		and p.iva_percent_id = iva.id 
+		and p.unit_measure_shop_id = u.id
+	order by pv.id, pv.name;
 end|
 
 
@@ -237,10 +246,7 @@ end|
 
 
 
-
-
-
-
+/*
 
 drop procedure if exists list_all_ordered_providers_short|
 create procedure list_all_ordered_providers_short(in the_date date)
@@ -255,7 +261,7 @@ begin
     and pv.active = 1
     and i.date_for_order = the_date
   order by pv.name;
-end|
+end|*/
 
 /*
 drop procedure if exists get_activated_products|

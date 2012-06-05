@@ -42,29 +42,6 @@ try{
         echo get_field_options_live($_REQUEST['table'], $_REQUEST['field1'], $_REQUEST['field2']);
         exit;
 
-    case 'get10Dates':
-        printXML(get_10_sales_dates_XML($date));
-        exit;
-
-    case 'getNextDate':
-        printXML(get_next_shop_date_XML());
-        exit;
-    
-    case 'getNextEqualShopDate':
-        printXML(get_next_equal_shop_date_XML());
-        exit;
-
-    case 'setOrderableDate':
-        set_orderable_date($date, $available);
-        exit;
-
-    case 'getYearsOfOrders':
-        printXML(query_XML_compact('SELECT DISTINCT YEAR(date_for_order) FROM aixada_order_item', 'years', 'year'));
-        exit;
-
-    case 'getOrderDatesOfYear':
-        printXML(next_shop_dates());
-        exit;
 
     case 'getAllAccounts':
         printXML(get_all_accounts());

@@ -23,19 +23,32 @@ try{
 
     // first we process those requests that don't need to construct a cart manager
     switch ($_REQUEST['oper']) {
-    case 'get10Dates':
-        printXML(get_10_sales_dates_XML($the_date));
-        exit;
-
-    case 'listProviders':
-        printXML(stored_query_XML_fields('providers_with_active_products_for_' . $what, $the_date));
-        exit;
     
+    case 'getOrderProviders':
+    	printXML(stored_query_XML_fields('get_orderable_providers_for_date', $the_date));
+    	exit;
+    	
+    case 'getShopProviders':
+    	printXML(stored_query_XML_fields('get_shop_providers_for_date', $the_date));
+    	exit;
+    	
+    case 'getProducts':
+    	printXML(stored_query_XML_fields('get_products_for_provider',$_REQUEST['provider_id'], $the_date);
+    	exit;
+    	
+    /*case 'listProviders':
+        printXML(stored_query_XML_fields('providers_with_active_products_for_' . $what, $the_date));
+        exit;*/
+    /*case 'get10Dates':
+        printXML(get_10_sales_dates_XML($the_date));
+        exit;*/
+	
     case 'listCategories':
         printXML(stored_query_XML_fields('product_categories_for_' . $what, $the_date));
         exit;
+        
 
-    case 'listProducts':
+    /*case 'listProducts':
         if (isset($_REQUEST['provider_id']))
             printXML(stored_query_XML_fields('products_for_' . $what . '_by_provider', 
                                              $_REQUEST['provider_id'], $uf_logged_in, $the_date));
@@ -43,7 +56,7 @@ try{
             printXML(stored_query_XML_fields('products_for_' . $what . '_by_category', 
                                              $_REQUEST['category_id'], $uf_logged_in, $the_date));
         else throw new Exception("You can only search for products by provider or category.");
-        exit;
+        exit;*/
     
     case 'listProductsLike':
         printXML(stored_query_XML_fields('products_for_' . $what . '_like', 

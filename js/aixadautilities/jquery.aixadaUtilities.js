@@ -3,10 +3,10 @@ $(function(){
 	
 	
 	$.extend({
-		getOrderableDates : function(oper, callbackfn){
+		getAixadaDates : function(oper, callbackfn){
 			$.ajax({
 				type: "GET",
-				url: "ctrlDates.php?oper="+oper,		
+				url: "ctrlDates.php?oper="+oper+"&responseFormat=array",		
 				dataType: "JSON", 
 				success: function(data){
 					var availableDates = eval(data);
@@ -87,17 +87,23 @@ $(function(){
 	$.extend({
 		showMsg : function(options){
 			
-				
+			
 			var settings = {
 				msg : '',
-				title : 'A message...',
+				title : '',
 				width: 400,
-				type: "default",
-				buttons : {
-					"Ok": function() {
-							$(this).dialog( "close" );
-						  }
-				}
+				type: "default", 
+				buttons :  [
+						     {
+							    	icons : { primary : "ui-icon-check" }, //does not work!
+									text: "OK", 
+									click : function(){
+										$( this ).dialog( "close" );
+									}
+								}
+
+							]
+				
 			};
 			
 			if ( options ) { 
@@ -107,23 +113,23 @@ $(function(){
 			var str = '';
 
 			if (settings.type == 'error'){
-					settings.title = '$#!@!Error!!!';
+					settings.title = (settings.title == '')? '$#!@!Error!!!':settings.title;
 					str = '<div class="ui-state-error ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
 					
 			} else if (settings.type == 'info'){
-					settings.title = 'Info';
+				settings.title = (settings.title == '')? 'Info':settings.title;
 					str = '<div>'+settings.msg+'</div>';
 					
 			} else if (settings.type == 'warning'){
-					settings.title = 'Warning Message:';
+					settings.title = (settings.title == '')? 'Warning':settings.title;
 					str = '<div class="ui-state-highlight ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
 					
 			} else if (settings.type == 'help'){
-					settings.title = 'Help';
+					settings.title = (settings.title == '')? 'Help':settings.title;
 					str = '<div class="ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-help" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
 			
 			} else if (settings.type == 'confirm')	{
-					settings.title = 'Confirm';
+				settings.title = (settings.title == '')? 'Confirm':settings.title;
 					str = '<div class="ui-state-highlight ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
 				
 			} else {

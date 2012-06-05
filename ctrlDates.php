@@ -41,26 +41,54 @@ try{
    case 'getDatesWithSometimesOrderable':
   	  	echo get_orderable_dates('get_sometimes_orderable_dates');
       	exit;
-      
-  	case 'getAllOrderableDates':
-  	  	echo get_orderable_dates('get_all_orderable_dates');
-  	  	exit;
-      
-  	case 'addOrderableDate':
-      	do_stored_query('add_orderable_date',$date);
-      	exit;
+     */ 
+  	
+  	case 'getToday':
+  		echo get_dates('today', $format='array');
+  		exit;
 
-  	case 'delOrderableDate':
-      	do_stored_query('del_orderable_date',$date);
-      	exit;*/
+  	case 'getNextAvailableOrderDate':
+  		echo get_dates('get_orderable_dates', $format='xml', $limit=1);
+  		exit;
+  		
+  	case 'getAllOrderableDates':
+  	  	echo get_dates('get_orderable_dates', $format='array');
+  	  	exit;
       	
   	case 'getDateRangeAsXML':
 		 printXML(dateRange($_REQUEST['fromDate'],$_REQUEST['toDate'],'D d'));
   		exit;
   
   	case 'getDateRangeAsArray':
-  		echo dateRange($_REQUEST['fromDate'], $_REQUEST['toDate'],'Y-m-d', 'arrayStr');
-  		exit;	
+  		echo dateRange($_REQUEST['fromDate'], $_REQUEST['toDate'],'Y-m-d', 'array');
+  		exit;
+  	
+  		
+  		
+  		
+   /*case 'get10Dates':
+        printXML(get_10_sales_dates_XML($date));
+        exit;
+
+    case 'getNextDate':
+        printXML(get_next_shop_date_XML());
+        exit;
+    
+    case 'getNextEqualShopDate':
+        printXML(get_next_equal_shop_date_XML());
+        exit;
+
+    case 'setOrderableDate':
+        set_orderable_date($date, $available);
+        exit;
+
+    case 'getYearsOfOrders':
+        printXML(query_XML_compact('SELECT DISTINCT YEAR(date_for_order) FROM aixada_order_item', 'years', 'year'));
+        exit;
+
+    case 'getOrderDatesOfYear':
+        printXML(next_shop_dates());
+        exit;*/
   		  		
 
   	default:

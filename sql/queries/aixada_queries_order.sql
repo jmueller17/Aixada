@@ -1,5 +1,6 @@
 delimiter |
 
+/*
 drop procedure if exists providers_with_active_products_for_order|
 create procedure providers_with_active_products_for_order (IN the_order_date date)
 begin
@@ -22,6 +23,8 @@ begin
     )
   order by pv.name;
 end|
+*/
+
 
 /**
  * A query that returns all product categories

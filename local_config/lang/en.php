@@ -339,6 +339,7 @@ $Text['btn_view_list'] = "Products";
 $Text['btn_view_list_lng'] = "View product list only";
 $Text['btn_view_both'] = "Both";
 $Text['btn_view_both_lng'] = "View both, product list and cart";
+$Text['btn_repeat'] = "Ok, repeat this!";
 
 
 

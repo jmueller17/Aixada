@@ -63,11 +63,12 @@
 					for (var i=0; i<gdates.length; i++){
 						var dd = new Date(gdates[i]); 
 						var date = $.datepicker.formatDate(outDateFormat, dd);
-
+						var dateclass = "Date-"+gdates[i];
+						
 						if (dd < today) {
-							apstr += '<th class="dateth pastDates">'+date+'</th>';
+							apstr += '<th class="dateth pastDates '+dateclass+'">'+date+'</th>';
 						} else {
-							apstr += '<th class="dateth">'+date+'</th>';
+							apstr += '<th class="dateth '+dateclass+'">'+date+'</th>';
 						}
 						tfoot += '<td class="tfootDateGenerate" colDate="'+gdates[i]+'"></td>';	
 
@@ -275,7 +276,7 @@
 	
 
 		/**
-		 *	date forward backward 
+		 *	date forward backward buttons
 		 */
 		$("#prevDates").button({
 			icons:{
@@ -284,10 +285,8 @@
 			
 		})		
 		.click(function(e){
-
         	var a = new Date(gdates[0]);
    			a.setDate(a.getDate() - seekDateSteps);
-   			
    			var date = $.datepicker.formatDate('yy-mm-dd',a);
          	makeDateHeader(date,gdates[0]);
 			
@@ -299,7 +298,6 @@
         	}
         })
         .click(function(e){
-           
             var a = new Date(gdates[gdates.length-1]);
   			a.setDate(a.getDate() + seekDateSteps);
   			
@@ -316,7 +314,7 @@
 			loadOnInit  : true,
 			offSet		: 1,
 			url         : 'ctrlActivateProducts.php',				
-			params 		: 'oper=listProviders'
+			params 		: 'oper=listAllOrderableProviders'
 		}).change(function(){
 			var provider_id = getProviderId();
 			var provider_name = $("option:selected", this).text();
@@ -336,7 +334,6 @@
 
 
 
-		
 		/**
 		 *	detect clicks for deactivating or activating the product as such (not for specific dates)  
 		 */
@@ -347,9 +344,19 @@
 			if (isDeactivated){
 				changeProductStatus(product_id, 'activateProduct');
 			} else {
-				//$("#dialog-deactivateProduct").dialog("open");
-				changeProductStatus(product_id, 'deactivateProduct');
-				
+				$.showMsg({
+					title 	: "Confirm deactivate product", 
+					msg		: '<p>You are about to deactivate a product. This means that all associated "orderable" dates will be erased as well.<br/><br/>Are you sure you want to deactivate the product as such? As an alternative you can deactivate selected dates by clicking the corresponding table cells.</p>',
+					buttons: {
+						"<?=$Text['btn_deactivate'];?>":function(){						
+							changeProductStatus(product_id,'deactivateProduct');
+							$(this).dialog("close");
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
 			}
 		});
 
@@ -367,7 +374,7 @@
 			.live('click', function(e){
 				var selDate = $(this).attr("colDate"); 
 				var hasActive = false; 
-				$(".Date-"+selDate).each(function(){
+				$("td.Date-"+selDate).each(function(){
 					hasActive = $(this).hasClass('isOrderable')
 					if (hasActive) return false;
 				});
@@ -378,7 +385,7 @@
 					$(".Date-"+selDate).addClass('highlight');
 				} else {
 					$.showMsg({
-						msg:'The selected column/date has no orderable products! You have to make at least one product orderable first in order to be able to generate a date pattern.  ',
+						msg:'The selected column/date has no orderable products! You have to make at least one product orderable first in order to be able to generate a date pattern.',
 						type: 'warning'});
 				
 				}
@@ -393,38 +400,33 @@
 				height: 340,
 				width: 480,
 				modal: false,
-				buttons: {
-					"Ok, repeat!":function(){
-						generateDatePattern($(this).data('tmpData').selectedDate);
+				buttons: [
+				     {
+				    	icons : { primary : "ui-icon-check" }, //does not work!
+						text: "<?=$Text['btn_repeat'];?>", 
+						click : function(){
+							generateDatePattern($(this).data('tmpData').selectedDate);
+						}
 					},
-					"<?=$Text['btn_close'];?>" : function(){ 
-						$('td').removeClass('highlight');
-						$( this ).dialog( "close" );
+					{
+						icons 	: { primary: "ui-icon-close"},
+						text	: "<?=$Text['btn_cancel'];?>",
+						click	: function(){
+							$('td, th').removeClass('highlight');
+							$( this ).dialog( "close" );
+						} 
+
+
 					}
-				}
+
+				]
 		});
 
-		/**
-		 *	dialog confirm deactivate product
-		 */
-		$( "#dialog-confirmDeactivate").dialog({
-				autoOpen: false,
-				height: 220,
-				width: 420,
-				modal: false,
-				buttons: {
-					"<?=$Text['btn_ok'];?>":function(){
-						changeProductStatus(product_id, 'deactivateProduct');
-					},
-					"<?=$Text['btn_close'];?>" : function(){
-						 
-						$( this ).dialog( "close" );
-					}
-				}
-		});
 
 		
-
+		/**
+		 * utility function to generate date pattners
+		 */
 		function generateDatePattern(selectedDate){
 			var provider_id = getProviderId();
 			var nrMonth = $('#nrOfMonth option:selected').val();
@@ -447,7 +449,8 @@
 					
 				},
 				complete : function(msg){
-					$('#dialog-confirmDeactivate').dialog("close");
+					$('#dialog-generateDates').dialog("close");
+					$('td, th').removeClass('highlight');
 				}
 			}); //end ajax	
 			
@@ -580,7 +583,7 @@
 </div><!-- end of wrap -->
 
 <div id="mylog"></div>
-<div id="dialog-confirmDeactivate"></div>
+
 <div id="dialog-generateDates" title="Generate date-product pattern">
 	<p>&nbsp;</p>
 	<p>Activate the selected day and products for the next 
@@ -602,7 +605,7 @@
 	</p>
 							
 	<br/>
-	<p><em>NOTE:</em> This action will re-generate all dates and products from the current date onwards!</p>
+	<p><em>NOTE:</em> This action will re-generate all dates and products from the selected date onwards!</p>
 </div>
 
 
