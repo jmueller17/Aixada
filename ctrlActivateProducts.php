@@ -39,7 +39,7 @@ try{
     exit;
       
   case 'getOrderableProducts4DateRange':
-  	printXML(stored_query_XML('get_orderable_products_for_dates', 'products', 'date', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));
+  	printXML(stored_query_XML_fields('get_orderable_products_for_dates', $_REQUEST['fromDate'], $_REQUEST['toDate'], $_REQUEST['provider_id']));
   	exit; 	
   		
   case 'toggleOrderableProduct':

@@ -40,6 +40,7 @@ option 				{padding:1px 5px;}
 .minPadding			{padding:3px;}
 .padding10x5		{padding:10px 5px;}
 .tdIconCenter		{margin:1px auto;}
+.tdIconRight		{float:right; padding:2px; margin-bottom:-12px;}
 
 
 

@@ -45,6 +45,7 @@ begin
 end|
 
 
+
 /**
  * returns list of providers that either have stock items or 
  * had orderable products for the given date
@@ -76,8 +77,6 @@ begin
   	and p.orderable_type_id = 1)
   order by name;
 end|
-
-
 
 
 /**
@@ -117,6 +116,78 @@ begin
   order by pv.name;
 end|
 
+
+
+
+/*************************************************
+ * 
+ * procedures for categories
+ * 
+ *************************************************/
+
+
+/**
+ * returns all categories that have orderable products 
+ * for a given date 
+ */
+drop procedure if exists get_orderable_categories_for_date|
+create procedure get_orderable_categories_for_date(in the_date date)
+begin
+  select distinct 
+     pc.id, 
+     pc.description
+  from 
+  	aixada_provider pv, 
+  	aixada_product p,
+  	aixada_product_orderable_for_date po,
+  	aixada_product_category pc
+  where  
+    pv.active = 1
+    and p.active = 1
+    and p.category_id = pc.id
+    and po.date_for_order = the_date
+    and p.id = po.product_id
+    and p.provider_id = pv.id
+  order by pc.description;
+end|
+
+
+/**
+ * returns all categories that have orderable and shop products 
+ * for a given date
+ */
+drop procedure if exists get_shop_categories_for_date|
+create procedure get_shop_categories_for_date(in the_date date)
+begin
+  (select distinct 
+     pc.id, 
+     pc.description as description
+  from 
+  	aixada_provider pv, 
+  	aixada_product p,
+  	aixada_product_orderable_for_date po,
+  	aixada_product_category pc
+  where  
+    po.date_for_order = the_date
+    and p.category_id = pc.id
+    and po.product_id = p.id
+    and p.provider_id = pv.id)
+  union
+  (select distinct
+  	pc.id,
+  	pc.description as description
+  from 
+  	aixada_provider pv,
+ 	aixada_product p,
+ 	aixada_product_category pc
+  where
+  	pv.active = 1
+  	and p.active = 1
+  	and p.category_id = pc.id
+  	and pv.id = p.provider_id
+  	and p.orderable_type_id = 1)
+  order by description;
+end|
 
 
 

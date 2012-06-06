@@ -1,14 +1,15 @@
 <?php
 
 //require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+//$firephp = FirePHP::getInstance(true);
+//ob_start(); // Starts FirePHP output buffering
 
 require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
 require_once("utilities_shop_and_order.php");
 
-//$firephp = FirePHP::getInstance(true);
+
 
 if (!isset($_SESSION)) {
     session_start();
@@ -17,68 +18,75 @@ if (!isset($_SESSION)) {
 DBWrap::get_instance()->debug = true;
 
 try{
-    $uf_logged_in = $_SESSION['userdata']['uf_id'];
-    $what         = (isset($_REQUEST['what']) ? strtolower($_REQUEST['what']) : '');
-    $the_date     = (isset($_REQUEST['date']) ? $_REQUEST['date'] : 0);
-
-    // first we process those requests that don't need to construct a cart manager
-    switch ($_REQUEST['oper']) {
-    
-    case 'getOrderProviders':
-    	printXML(stored_query_XML_fields('get_orderable_providers_for_date', $the_date));
-    	exit;
-    	
-    case 'getShopProviders':
-    	printXML(stored_query_XML_fields('get_shop_providers_for_date', $the_date));
-    	exit;
-    	
-    case 'getProducts':
-    	printXML(stored_query_XML_fields('get_products_for_provider',$_REQUEST['provider_id'], $the_date);
-    	exit;
-    	
-    /*case 'listProviders':
-        printXML(stored_query_XML_fields('providers_with_active_products_for_' . $what, $the_date));
-        exit;*/
-    /*case 'get10Dates':
-        printXML(get_10_sales_dates_XML($the_date));
-        exit;*/
 	
-    case 'listCategories':
-        printXML(stored_query_XML_fields('product_categories_for_' . $what, $the_date));
-        exit;
-        
 
-    /*case 'listProducts':
-        if (isset($_REQUEST['provider_id']))
-            printXML(stored_query_XML_fields('products_for_' . $what . '_by_provider', 
-                                             $_REQUEST['provider_id'], $uf_logged_in, $the_date));
-        else if (isset($_REQUEST['category_id']))
-            printXML(stored_query_XML_fields('products_for_' . $what . '_by_category', 
-                                             $_REQUEST['category_id'], $uf_logged_in, $the_date));
-        else throw new Exception("You can only search for products by provider or category.");
-        exit;*/
+
+	
+    // first we process those requests that don't need to construct a cart manager
+    switch (get_param('oper')) {
     
-    case 'listProductsLike':
-        printXML(stored_query_XML_fields('products_for_' . $what . '_like', 
-                                         $_REQUEST['like'], $uf_logged_in, $the_date));
-        exit;
-    
+	    /**
+	     *  retrieves provider and category selects for Shop or Order
+	     */
+	    case 'getOrderProviders':
+	    	printXML(stored_query_XML_fields('get_orderable_providers_for_date', get_param('date')));
+	    	exit;
+	    
+	   	case 'getShopProviders':
+	    	printXML(stored_query_XML_fields('get_shop_providers_for_date', get_param('date')));
+	    	exit;
+	    	
+	    case 'getOrderCategories':
+	    	printXML(stored_query_XML_fields('get_orderable_categories_for_date', get_param('date')));
+	    	exit;
+	    	
+	    case 'getShopCategories':
+	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', get_param('date')));
+	    	exit;
+    	
+
+	    /**
+	     * retrieve products for providers. We assume
+	     * if date = 0, look for stock products
+	     * else 		look for orderable products
+	     * if provider_id > 0   get products according to provider_id
+	     * if category_id > 0 	get products according to category_id
+	     * if like != '' 		search product names
+	     */
+	    case 'getOrderProducts':
+	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date')));
+	    	exit;
+	
+	    case 'getShopProducts':
+	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), 0));
+	    	exit;
+	    	
+  		case 'getPreorderableProducts':
+	        printXML(stored_query_XML_fields('get_preorderable_products'));
+	        exit;
+	        
+	
+
+   	/**
+   	 * this should be: getOrder|ShopCartItems
+   	 */
     case 'getOrderItemsForDate':
-        printXML(stored_query_XML_fields('products_for_order_by_date', $the_date, $uf_logged_in));
-        exit;
-
-    case 'getOrderItemsByDateAndProvider':
-        printXML(stored_query_XML_fields('products_for_order_by_date_and_provider', $the_date, $_REQUEST['provider_id']));
+        printXML(stored_query_XML_fields('products_for_order_by_date', get_param('date'), $_SESSION['userdata']['uf_id']));
         exit;
 
     case 'getShopItemsForDate':
-        printXML(stored_query_XML_fields('products_for_shopping', $the_date, $uf_logged_in));
+        printXML(stored_query_XML_fields('products_for_shopping', get_param('date'), $_SESSION['userdata']['uf_id']));
         exit;
-
+ 	
+ 	
+ 	/* 
     case 'getShopItemsForDateAndUf':
         printXML(stored_query_XML_fields('products_for_shopping', $the_date, $_REQUEST['uf']));
         exit;
-
+	*/
+	    	
+	    	
+	/*
     case 'makeFavoriteOrderCart':
         printXML(stored_query_XML_fields('make_favorite_order_cart', $uf_logged_in, $the_date, $_REQUEST['cart_name']));
         exit;
@@ -134,29 +142,30 @@ try{
         if ($deactivate_list != '()')
             do_stored_query('deactivate_preorder_products', $the_date, $deactivate_list);
         echo 'ok';
-        exit;
+        exit;*/
 
-    default:    
+    default:  
+    	 //throw new Exception("ctrlShopAndOrder: oper={$_REQUEST['oper']} not supported");  
         break;
     }
 
   
     // now come  the requests that need a cart manager
-
+	$what = get_param('what', $default='');
     switch ($what) {
-    case 'shop':
+    case 'Shop':
         require_once("lib/shop_cart_manager.php");
-        $cm = new shop_cart_manager($uf_logged_in, $the_date); 
+        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
         break;
       
-    case 'order':
+    case 'Order':
         require_once("lib/order_cart_manager.php");
-        $cm = new order_cart_manager($uf_logged_in, $the_date); 
+        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
         break;
       
     case 'favorite_order':
         require_once("lib/favorite_order_cart_manager.php");
-        $cm = new favorite_order_cart_manager($uf_logged_in, $_REQUEST['name']); 
+        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
         break;
       
     default:

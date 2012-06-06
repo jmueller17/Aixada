@@ -155,11 +155,17 @@
 						url: "ctrlActivateProducts.php?oper=getOrderableProducts4DateRange&fromDate="+gdates[0]+"&toDate="+gdates[gdates.length-1]+"&provider_id="+provider_id,	
 						success: function(xml){
 							$(xml).find('row').each(function(){
-								var id = $(this).find('id').text();
-								var date = $(this).find('date').text()
+								var id = $(this).find('product_id').text();
+								var date = $(this).find('date_for_order').text();
+								var closing = $(this).find('time_left').text();
+								
 								//var selector = ".Date-"+date + ".Prod-"+id;
 								var selector = "#"+date+"_"+id;
-								toggleCell(selector); 
+								//$(selector).attr("time_left",closing);
+								
+								toggleCell(selector);
+
+								$(selector).append('<p class="tdIconRight ui-corner-all"><span class="editClosingDate ui-icon ui-icon-arrowthickstop-1-e"></span></p>'); 
 							});
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -173,7 +179,30 @@
 				}
 			});
 
+		$('span.editClosingDate')
+			.live('click', function(e){
+				var td = $(this).parent().parent();
+				
+				if (tdTmp != null){
+					tdTmp.insertBefore(td);
+					td.removeAttr('colspan');
+					tdTmp = null;
+				} else {
+					var days = 2; //$(this).attr("time_left");
+					tdTmp = td.prevAll(':lt('+days+')').detach();
+					td.attr('colspan',days+1);
+				}
+				e.stopPropagation();
+			})
+			.live('mouseenter', function(e){
+				$(this).parent().addClass('ui-state-hover');
+			})
+			.live('mouseleave', function(e){
+				$(this).parent().removeClass('ui-state-hover');
+			});
 
+		
+		
 		/**
 		 *	activate / deactive a given product for a given date
 		 */
@@ -234,12 +263,24 @@
 			}
 		}
 
+		var tdTmp = null; 
+
 		
 		
 		/**
 		 *	event handler for each table cell
 		 */
-		$('td.interactiveCell').live('click', function(e){
+		$('td.interactiveCell')
+			.live('mouseover', function(e){
+				
+				
+				
+			})
+			.live('mouseout', function(e){
+
+			})
+			.live('click', function(e){
+				
 				if($(this).hasClass('deactivated')){
 					$.showMsg({
 						msg:'This product is currently deactive. In order to set an orderable date, you have to activate this product first by clicking its "active" checkbox.',
@@ -366,7 +407,7 @@
 		 */
 		$('.tfootDateGenerate')
 			.live('mouseenter', function(e){
-				$(this).append('<span class="ui-icon ui-icon-circle-arrow-e tdIconCenter" title="Click to repeat this!"></span>')
+				$(this).append('<p class="textAlignCenter ui-state-hover"><span class="ui-icon ui-icon-circle-arrow-e tdIconCenter" title="Click to repeat this!"></span></p>')
 			})
 			.live('mouseleave', function(e){
 				$(this).empty();

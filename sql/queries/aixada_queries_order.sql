@@ -29,6 +29,7 @@ end|
 /**
  * A query that returns all product categories
  */
+/*
 drop procedure if exists product_categories_for_order|
 create procedure product_categories_for_order (IN the_order_date date)
 begin
@@ -52,6 +53,7 @@ begin
       or p.orderable_type_id >= 3
     );
 end|
+*/
 
 /** 
  * A function that returns the total quantity of product
@@ -64,7 +66,7 @@ end|
  * The reason for the subquery is that even zero values for shop dates
  * where nothing was bought are returned.  
 */
-
+/*
 drop function if exists last_order_quantities|
 create function last_order_quantities (the_uf_id int, the_order_date date, the_product_id int)
 returns char(100)
@@ -105,11 +107,12 @@ begin
   close cur;
   return trim(trailing ',' from res);
 end|
-
+*/
 
 /**
  * A query that returns all products eligible for order
  */
+/*
 drop procedure if exists products_for_order_by_provider|
 create procedure products_for_order_by_provider (IN the_provider_id int, IN the_uf_id int, IN the_order_date date)
 begin
@@ -146,10 +149,12 @@ begin
       )
   order by p.name;
 end|
+*/
 
 /**
  * A query that returns all products eligible for order of a certain category
  */
+/*
 drop procedure if exists products_for_order_by_category|
 create procedure products_for_order_by_category (IN the_category_id int, IN the_uf_id int, IN the_order_date date)
 begin
@@ -186,15 +191,16 @@ begin
       )
   order by p.name;
 end|
+*/
 
 /**
  * A query that returns all products eligible for sale
  */
+/*
 drop procedure if exists products_for_order_like|
 create procedure products_for_order_like (in the_like varchar(255), in the_uf_id int, in the_order_date date)
 begin
   select distinct 
-/* this is a kludge to deal with multiple entries for orderable_type_id=4 */
       p.id,
       p.name, 
       p.description,
@@ -225,7 +231,7 @@ begin
       )
       and p.name LIKE ConCAT('%', the_like, '%')
   order by p.name;
-end|
+end|*/
 
 
 /**
@@ -240,7 +246,7 @@ begin
       p.description,
       p.category_id, 
       pv.name as provider_name,
-      p.unit_price * (1 + p.iva_percent*0.01) as unit_price, 
+      p.unit_price * (1 + iva.percent*0.01) as unit_price, 
       m.unit,
       rev_tax_percent,
       if (p.orderable_type_id = 4 and i.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
@@ -255,6 +261,8 @@ begin
       on p.rev_tax_type_id = t.id
       left join aixada_unit_measure m
       on p.unit_measure_order_id = m.id
+      left join aixada_iva_type iva
+      on p.iva_percent_id = iva.id
   where
       i.date_for_order in (order_date, '1234-01-23')
   and i.uf_id = the_uf_id
@@ -475,28 +483,6 @@ begin
    group by p.id;
 end|
 
-drop procedure if exists preorderable_products|
-create procedure preorderable_products()
-begin
-   select 
-        p.id, 
-        p.name,
-        p.description,
-        pv.id as provider_id,
-        pv.name as provider_name,
-        u.unit,
-        r.rev_tax_percent,
-        p.unit_price
-   from aixada_product p
-   left join aixada_provider pv
-   on p.provider_id = pv.id
-   left join aixada_unit_measure u
-   on p.unit_measure_order_id = u.id
-   left join aixada_rev_tax_type r
-   on p.rev_tax_type_id = r.id
-   where p.orderable_type_id = 4
-     and p.active = 1
-     and pv.active = 1;
-end|
+
 
 delimiter ;

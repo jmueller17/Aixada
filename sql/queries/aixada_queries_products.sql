@@ -164,8 +164,9 @@ end|
 
 
 /**
- * returns all products for a given provider that are marked as either "always orderable" or "sometimes orderable" 
- * active or not active. 
+ * returns all products for a given provider that are marked as 
+ * either "always orderable" or "sometimes orderable" 
+ * independent if they are active or not active. 
  */
 drop procedure if exists get_type_orderable_products|
 create procedure get_type_orderable_products (in the_provider_id int)
@@ -197,7 +198,9 @@ create procedure get_orderable_products_for_dates(in fromDate date, in toDate da
 begin
 	select
 		po.product_id,
-		po.date_for_order
+		po.date_for_order,
+		po.closing_date,
+		datediff(po.date_for_order, po.closing_date) as time_left
 	from 
 		aixada_product_orderable_for_date po,
 		aixada_product pr
@@ -209,9 +212,55 @@ begin
 end|
 
 
-drop procedure if exists get_products_for_provider|
-create procedure get_products_for_provider(in the_provider_id int, in the_date date)
+/**
+ *  returns all products (with details). 
+ *  If a provider_id is set, it returns the associated products for the provider. If date is set, then these
+ *  are orderable products, otherwise stock. 
+ * 
+ * 	if category_id is set, it returns products by category. If date is set, these products by category are 
+ *  orderable, otherwise stock.
+ * 
+ * 	if provider_id and category_id = 0 and the_like is set, then searches for product 
+ */
+drop procedure if exists get_products_detail|
+create procedure get_products_detail(	in the_provider_id int, 
+										in the_category_id int, 
+										in the_like varchar(255),
+										in the_date date)
 begin
+	
+    declare wherec varchar(255);
+    declare fromc varchar(255);
+    
+    /** no date provided we assume that we are looking for stock **/
+    if the_date = 0 then
+    	set fromc = "";
+    	set wherec = 	" and p.orderable_type_id = 1 and p.unit_measure_shop_id = u.id ";
+    /** otherwise search for products with orderable dates **/
+    else 
+       	set fromc = 	"aixada_product_orderable_for_date po,";
+    	set wherec = 	concat(" and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
+    end if;
+    
+    
+    
+    /** get products by provider_id **/
+    if the_provider_id > 0 then
+		set wherec = concat(wherec, " and pv.id = '", the_provider_id, "' ");
+    	
+    /** get products by category_id **/
+    elseif the_category_id > 0 then 
+    	set fromc = concat(fromc, "aixada_product_category pc,");
+    	set wherec = concat(wherec, " and pc.id = '", the_category_id, "' and p.category_id = pc.id ");
+	
+    /** search for product name **/
+    elseif the_like != "" then
+    	set wherec 	= concat (wherec, " and p.name LIKE '%", the_like,"%' ");
+    end if;
+    
+    
+  
+	set @q = concat("
 	select
 		p.id,
 		p.name,
@@ -219,10 +268,12 @@ begin
 		p.category_id,
 		p.stock_actual,
 		p.unit_price * (1 + iva.percent/100) as unit_price,
+		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,
 		t.rev_tax_percent
 	from
+		",fromc,"
 		aixada_product p,
 		aixada_provider pv, 
 		aixada_rev_tax_type t,
@@ -231,73 +282,50 @@ begin
 	where 
 		p.active = 1
 		and pv.active = 1
-		and pv.id = the_provider_id 
-		and p.provider_id = pv.id
+		and pv.id = p.provider_id	
+		",wherec,"
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
-		and p.unit_measure_shop_id = u.id
-	order by pv.id, pv.name;
+	order by p.id, p.name;");
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+  
 end|
 
-
-
-
-
-
-
-
-/*
-
-drop procedure if exists list_all_ordered_providers_short|
-create procedure list_all_ordered_providers_short(in the_date date)
+/**
+ *  retrieves all products of type preorderable
+ */
+drop procedure if exists get_preorderable_products|
+create procedure get_preorderable_products()
 begin
-  select distinct pv.id, pv.name 
-  from aixada_provider pv 
-  left join aixada_product p 
-  on pv.id = p.provider_id 
-  left join aixada_order_item i
-  on p.id = i.product_id
-  where p.active = 1 
-    and pv.active = 1
-    and i.date_for_order = the_date
-  order by pv.name;
-end|*/
-
-/*
-drop procedure if exists get_activated_products|
-create procedure get_activated_products(in the_provider_id int, in the_date date)
-begin
-  select distinct
+   select 
         p.id, 
         p.name,
-        p.description
-  from aixada_product p 
-  left join aixada_product_orderable_for_date od on p.id=od.product_id 
-  where p.provider_id = the_provider_id and 
-        p.orderable_type_id = 2 and
-        p.active = true and 
-	od.date_for_order=the_date
-  order by p.name, p.id;
+        p.description,
+        pv.id as provider_id,
+        pv.name as provider_name,
+        u.unit,
+        r.rev_tax_percent,
+        p.unit_price
+   from 
+	   	aixada_product p,
+	   	aixada_provider pv,
+		aixada_unit_measure u,
+		aixada_rev_tax_type r
+   where 
+  		p.orderable_type_id = 4
+  		and p.active = 1	
+     	and pv.active = 1
+  		and p.provider_id = pv.id
+  		and p.rev_tax_type_id = r.id
+  		and	p.unit_measure_order_id = u.id
+  	order by p.id, p.name;
 end|
 
-drop procedure if exists get_deactivated_products|
-create procedure get_deactivated_products(in the_provider_id int, in the_date date)
-begin
-  select distinct
-        p.id, 
-        p.name,
-        p.description 
-  from aixada_product p
-  where p.provider_id = the_provider_id and 
-        p.orderable_type_id = 2 and
-        p.active = true 
-        and not exists
-	  (select od.product_id from aixada_product_orderable_for_date od
-	   where od.product_id = p.id and 
-	         od.date_for_order = the_date)
-  order by p.name, p.id;
-end|
-*/
+
+
 
 drop procedure if exists get_arrived_products|
 create procedure get_arrived_products(in the_provider_id int, in the_date date)

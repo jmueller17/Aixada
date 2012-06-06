@@ -3,50 +3,54 @@
 require_once('inc/database.php');
 require_once('local_config/config.php');
 require_once('inc/caching.inc.php');
-$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? 
-              	$_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
+$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 require_once('local_config/lang/' . $language . '.php');
 
 
 //require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
+//ob_start(); // Starts FirePHP output bufferin
 //$firephp = FirePHP::getInstance(true);
-
 //DBWrap::get_instance()->debug = true;
 
-function purge_cache($sql_func)
-{
-    $cv = configuration_vars::get_instance();
-//     global $firephp;
-//     $firephp->log($cv);
-//     $firephp->log($cv->tables_modified_by);
-//     exit();
-/*
-    if (array_key_exists($sql_func, $cv->tables_modified_by)) {
-        $cache_dir = $cv->cache_dir;
-        foreach($cv->tables_modified_by[$sql_func] as $table) {
-            foreach(glob($cache_dir . $table . '*') as $filename) {
-                unlink($filename);
-            }
-        }
-    }
-*/
 
+function get_param($param_name, $default=null, $transform = ''){
+	$value; 
+	
+	if (isset($_REQUEST[$param_name])) {
+		$value = $_REQUEST[$param_name];
+		if (($value == '' || $value == 'undefined') && isset($default)){
+			$value = $default;
+		} else if (($value == '' || $value == 'undefined') && !isset($default)) {
+			throw new Exception("get_param: Parameter: {$param_name} has no value and $default value is not set either");
+		}	
+			
+	} else if (isset($default)){
+		$value= $default;
+	} else {
+		throw new Exception("get_param: Missing or wrong parameter name: {$param_name} in URL");
+	}
+	
+	
+	switch ($transform){
+		case 'lowercase':
+			$value = strtolower($value);
+			break;
+		case '';
+			$value = $value;
+			break;
+		default: 
+			throw new Exception("get_param: transform {$transform} on URL parameter not supported. ");
+			break;
+	}
+	return $value;
 }
 
-function clean_zeros($value)
-{
-  return ((strpos($value, '.') !== false) ?
-	  rtrim(rtrim($value, '0'), '.') 
-	  : $value);
-}
 
 /**
  * Execute a stored query
  * @param array $args the arguments to be passed to the stored query; possibly empty
  * @return the result set
  */
-
 function do_stored_query()
 {
   $args = func_get_args();
@@ -58,8 +62,7 @@ function do_stored_query()
       $args[$i] = $args[$i][0];
     }
   }
-//     global $firephp;
-//     $firephp->log($args, 'do_stored_query args');
+
   $sql_func = array_shift($args);
   purge_cache($sql_func);
 
@@ -378,6 +381,33 @@ function get_commissions()
         }
     }
     return $XML . '</rows>';
+}
+
+function purge_cache($sql_func)
+{
+    $cv = configuration_vars::get_instance();
+//     global $firephp;
+//     $firephp->log($cv);
+//     $firephp->log($cv->tables_modified_by);
+//     exit();
+/*
+    if (array_key_exists($sql_func, $cv->tables_modified_by)) {
+        $cache_dir = $cv->cache_dir;
+        foreach($cv->tables_modified_by[$sql_func] as $table) {
+            foreach(glob($cache_dir . $table . '*') as $filename) {
+                unlink($filename);
+            }
+        }
+    }
+*/
+
+}
+
+function clean_zeros($value)
+{
+  return ((strpos($value, '.') !== false) ?
+	  rtrim(rtrim($value, '0'), '.') 
+	  : $value);
 }
 
 ?>

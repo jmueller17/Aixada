@@ -67,9 +67,6 @@ try{
         printXML(stored_query_XML_fields('products_below_min_stock'));
         exit;
 
-    case 'getPreorderableProducts':
-        printXML(stored_query_XML_fields('preorderable_products'));
-        exit;
 
     case 'getIncidentTypes':
         printXML(stored_query_XML_fields('get_incident_types'));
