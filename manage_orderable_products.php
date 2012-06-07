@@ -140,10 +140,6 @@
 						
 					}
 
-					//hide deactivated products
-					
-					
-					
 				},
 				//finally retrieve if products are orderable for given dates
 				complete: function(rowCount){
@@ -158,14 +154,21 @@
 								var id = $(this).find('product_id').text();
 								var date = $(this).find('date_for_order').text();
 								var closing = $(this).find('time_left').text();
+								var hasItems = $(this).find('has_ordered_items').text();
+
+								var closingIcon  = (closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
+								var closingTitle = (closing > 0)? closing + " days left for ordering": "order is closed";
+								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
 								var selector = "#"+date+"_"+id;
-								//$(selector).attr("time_left",closing);
+								
 								
 								toggleCell(selector);
 
-								$(selector).append('<p class="tdIconRight ui-corner-all"><span class="editClosingDate ui-icon ui-icon-arrowthickstop-1-e"></span></p>'); 
+								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight">'+hasItems+'</span></p>');
+								
+								//$(selector).append('<p class="tdIconRight ui-corner-all"><span class="editClosingDate ui-icon ui-icon-arrowthickstop-1-e"></span></p>'); 
 							});
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -272,12 +275,8 @@
 		 */
 		$('td.interactiveCell')
 			.live('mouseover', function(e){
-				
-				
-				
 			})
 			.live('mouseout', function(e){
-
 			})
 			.live('click', function(e){
 				

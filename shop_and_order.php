@@ -53,7 +53,7 @@
 	//init cart 
 	$('#cartLayer').aixadacart("init",{
 		saveCartURL : 'ctrlShopAndOrder.php?what='+what+'&oper=commit',
-		loadCartURL : 'shopAndOrder?what='+what,
+		loadCartURL : 'ctrlShopAndOrder.php?oper=get'+what+'Cart',
 		cartType	: (what=='Shop')? 'standalone':'standalone_preorder',
 		btnType		: 'save',
 		autoSave	: 5000,
@@ -321,7 +321,7 @@
 	function refreshSelects(dateText){
 		
 		$('#cartLayer').aixadacart('loadCart',{
-			loadCartURL		: 'ctrlShopAndOrder.php?oper=get'+what+'ItemsForDate&what='+what+'&date='+dateText,
+			loadCartURL		: 'ctrlShopAndOrder.php?oper=get'+what+'Cart&date='+dateText,
 			date 			: dateText
 		}); //end loadCart
 

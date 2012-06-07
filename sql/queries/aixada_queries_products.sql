@@ -192,21 +192,32 @@ end|
 /**
  * returns all products that have been marked "orderable" for a given provider within a given date range
  * This corresponds basically to the entries in aixada_products_orderable_for_date
+ * It also calculates the remaining days before the order closes. 
  */
 drop procedure if exists get_orderable_products_for_dates|
 create procedure get_orderable_products_for_dates(in fromDate date, in toDate date, in the_provider_id int)
 begin
+	
+	declare today date default date(sysdate()); 
+	
 	select
 		po.product_id,
 		po.date_for_order,
 		po.closing_date,
-		datediff(po.date_for_order, po.closing_date) as time_left
+		datediff(po.closing_date, today) as time_left,
+		(select 
+			count(oi.id) 
+		 from 
+		 	aixada_order_item oi 
+		 where 
+		 	p.id=oi.product_id 
+		 	and oi.date_for_order = po.date_for_order) as has_ordered_items
 	from 
 		aixada_product_orderable_for_date po,
-		aixada_product pr
+		aixada_product p
 	where 
-		pr.id = po.product_id
-		and pr.provider_id = the_provider_id
+		p.id = po.product_id
+		and p.provider_id = the_provider_id
 		and po.date_for_order >= fromDate
 		and po.date_for_order <= toDate;
 end|
@@ -323,6 +334,10 @@ begin
   		and	p.unit_measure_order_id = u.id
   	order by p.id, p.name;
 end|
+
+
+
+
 
 
 

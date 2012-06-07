@@ -220,7 +220,9 @@ create table aixada_product_orderable_for_date (
   date_for_order        date    	not null,
   closing_date 			datetime 	not null,
   primary key (id),
-  foreign key (product_id)     	references aixada_product(id)
+  key (date_for_order),
+  foreign key (product_id) references aixada_product(id),
+  unique key (product_id, date_for_order)
 ) engine=InnoDB default character set utf8;       
   
 
@@ -237,9 +239,9 @@ create table aixada_order_item (
   quantity 	  		float(10,4) default 0.0,				
   ts_ordered   	  	timestamp 	default current_timestamp,
   primary key (id),
+  foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
   foreign key (uf_id) references aixada_uf(id),
   foreign key (product_id) references aixada_product(id),
-  foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order),
   unique  key (date_for_order, uf_id, product_id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 

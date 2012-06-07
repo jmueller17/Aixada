@@ -237,6 +237,7 @@ end|*/
 /**
  * A query that returns all products eligible for ordering at a given date
  */
+/*
 drop procedure if exists products_for_order_by_date|
 create procedure products_for_order_by_date (in order_date date, in the_uf_id int)
 begin
@@ -269,6 +270,7 @@ begin
   and orderable_type_id > 1
   order by pv.id, p.id; 
 end|
+*/
 
 /**
  * A query that returns all products corresponding to a given favorite order
@@ -481,6 +483,21 @@ begin
    and p.orderable_type_id = 4
    and i.date_for_order = '1234-01-23'
    group by p.id;
+end|
+
+
+/**
+ * Convert ordered items to shop items
+ */
+drop procedure if exists convert_order_to_shop|
+create procedure convert_order_to_shop(IN uf int, IN order_date date)
+begin
+  replace into aixada_shop_item (
+    uf_id, date_for_shop, product_id, quantity
+  ) select i.uf_id, i.date_for_order, i.product_id, i.quantity
+    from aixada_order_item i
+    where date_for_order = order_date 
+      and uf_id = uf;
 end|
 
 

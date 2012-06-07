@@ -4,6 +4,7 @@ source queries/aixada_queries_general.sql;
 source queries/aixada_queries_order.sql;
 source queries/aixada_queries_products.sql;
 source queries/aixada_queries_providers.sql;
+source queries/aixada_queries_cart.sql;
 source queries/aixada_queries_report.sql;
 source queries/aixada_queries_shop.sql;
 source queries/aixada_queries_statistics.sql;

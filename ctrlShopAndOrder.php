@@ -19,8 +19,6 @@ DBWrap::get_instance()->debug = true;
 
 try{
 	
-
-
 	
     // first we process those requests that don't need to construct a cart manager
     switch (get_param('oper')) {
@@ -67,17 +65,17 @@ try{
 	        
 	
 
-   	/**
-   	 * this should be: getOrder|ShopCartItems
-   	 */
-    case 'getOrderItemsForDate':
-        printXML(stored_query_XML_fields('products_for_order_by_date', get_param('date'), $_SESSION['userdata']['uf_id']));
-        exit;
+	   	/**
+	   	 * retrieves the shop | order items for the logged in user. 
+	   	 */
+  		case 'getOrderCart':
+  			printXML(stored_query_XML_fields('get_order_cart', get_param('date'), $_SESSION['userdata']['uf_id']));
+  			exit;
+  			
+  		case 'getShopCart':
+  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), $_SESSION['userdata']['uf_id'])); 
+			exit; 
 
-    case 'getShopItemsForDate':
-        printXML(stored_query_XML_fields('products_for_shopping', get_param('date'), $_SESSION['userdata']['uf_id']));
-        exit;
- 	
  	
  	/* 
     case 'getShopItemsForDateAndUf':
@@ -172,8 +170,7 @@ try{
         throw new Exception("ctrlShopAndOrder: request what={$_REQUEST['what']} not supported");
     }
   
- 
-    //  $firephp->log($_REQUEST);
+
 
     switch($_REQUEST['oper']) {
     

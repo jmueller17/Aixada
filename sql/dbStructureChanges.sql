@@ -33,15 +33,22 @@ from
 	aixada_order_item oi;
 	
 
+	
+alter table 
+	aixada_product_orderable_for_date 
+		add closing_date datetime not null after date_for_order,
+		/**add key (date_for_order), should already have it**/
+		add unique key (product_id, date_for_order);
+		
 alter table 
 	aixada_order_item 	
-	/*add cart_id int default 0,*/
-	add closing_date datetime not null after date_for_order,
-	add foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order);
-	
-/*alter table
+		add cart_id int default 0 after id,
+		add closing_date datetime not null after date_for_order,
+		add foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order);
+		
+alter table
 	aixada_shop_item
-	add cart_id int default 0;*/
+	add cart_id int default 0 after id; 
 							
 alter table 
 	aixada_provider 
@@ -79,15 +86,14 @@ alter table
 	aixada_product
 	drop iva_percent;
 	
-	
-alter table aixada_product_orderable_for_date 
-	add closing_date datetime not null after date_for_order;
+
 	
 
 
-drop table aixada_distributor;
+
 drop table if exists aixada_providers_of_distributor;
 drop table if exists aixada_account_balance;
+drop table aixada_distributor;
 
 
 
