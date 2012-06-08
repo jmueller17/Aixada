@@ -78,7 +78,7 @@ function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $s
 /**
  * 
  * Generic function to retrieve dates from the database
- * @param string $which  		specifies which stored procedure to call
+ * @param string $which  		specifies which stored procedure to call: today | get_orderable_dates
  * @param string $format		xml | array
  * @param datestr $from_date	a starting date from which onwards dates will be returned. expects mysql standard format 
  * 								yy-mm-dd. if none is specified, takes today

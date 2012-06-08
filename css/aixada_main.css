@@ -39,6 +39,9 @@ option 				{padding:1px 5px;}
 .loadAnimShop		{margin-top:-27px; padding-right:5px; padding-left:2px;}
 .minPadding			{padding:3px;}
 .padding10x5		{padding:10px 5px;}
+.dim60				{opacity:0.6; }
+.dim40				{opacity:0.4; }
+
 
 
 
@@ -207,8 +210,13 @@ form table td input 	{line-height:1.2em; font-size:.8em;}
 .tfootDateGenerate								{cursor:pointer}
  .infoTdLine									{font-size:0.8em; background-color:white; margin-bottom:-0.2em; padding-bottom:0px;}
 h3#providerName									{font-size:1.5em; padding-left:10px;}
-.tdIconCenter		{margin:1px auto;}
-.tdIconRight		{float:right; padding:2px; margin-bottom:-12px;}
+div#rowActionIcons  		{width:280px; padding:4px;}
+.tfIcon						{margin-right:6px; float:left;}
+.tdIconCenter				{margin:1px auto;}
+.tdIconRight				{float:right; padding:2px; margin-bottom:-12px;}
+.tfIconRow					{padding:5px;}
+.iconContainer				{padding:4px; margin:0px auto; width:16px; height:16px; cursor:pointer;}
+.tfIconRow a, a:hover 		{text-decoration:none;}
 
 
 

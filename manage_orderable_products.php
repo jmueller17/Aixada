@@ -84,6 +84,8 @@
 					}
 					var monthYearStr = visMonthYear.join("/ "); 
 					$('.dateTableMonthYear').html(monthYearStr);
+
+					$('#btn_rowActions').appendTo('#btn_rowActionsLimbo');
 					
 					//remove previous dates and table cells if any
 					$('#dot thead tr .dateth').empty().remove();
@@ -153,22 +155,22 @@
 							$(xml).find('row').each(function(){
 								var id = $(this).find('product_id').text();
 								var date = $(this).find('date_for_order').text();
-								var closing = $(this).find('time_left').text();
+								var days2Closing = $(this).find('time_left').text();
+								var closingDate = $(this).find('closing_date').text();
+								//var fclosingDate = $.datepicker.formatDate('DD, d MM, yy',new Date(closingDate));
 								var hasItems = $(this).find('has_ordered_items').text();
 
-								var closingIcon  = (closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
-								var closingTitle = (closing > 0)? closing + " days left for ordering": "order is closed";
+								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
+								var closingTitle = (days2Closing > 0)? "Closes " + closingDate + ". \n " +days2Closing + " days left for ordering": "order is closed";
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
 								var selector = "#"+date+"_"+id;
-								
-								
+								$(selector).attr('closingdate', closingDate);		//a bit overkill. could be attached to each column header				
 								toggleCell(selector);
 
 								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight">'+hasItems+'</span></p>');
 								
-								//$(selector).append('<p class="tdIconRight ui-corner-all"><span class="editClosingDate ui-icon ui-icon-arrowthickstop-1-e"></span></p>'); 
 							});
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -405,31 +407,14 @@
 		 *	interactivity for the date generate buttons
 		 */
 		$('.tfootDateGenerate')
-			.live('mouseenter', function(e){
-				$(this).append('<p class="textAlignCenter ui-state-hover"><span class="ui-icon ui-icon-circle-arrow-e tdIconCenter" title="Click to repeat this!"></span></p>')
+			.live('mouseover', function(e){
+				$('#rowActionIcons').hide();
+				$('#btn_rowActions').appendTo($(this)).show();
+			
 			})
 			.live('mouseleave', function(e){
-				$(this).empty();
-			})
-			.live('click', function(e){
-				var selDate = $(this).attr("colDate"); 
-				var hasActive = false; 
-				$("td.Date-"+selDate).each(function(){
-					hasActive = $(this).hasClass('isOrderable')
-					if (hasActive) return false;
-				});
-
-				if(hasActive){
-					$("#dialog-generateDates").data('tmpData', {selectedDate:selDate})
-					$("#dialog-generateDates").dialog("open");
-					$(".Date-"+selDate).addClass('highlight');
-				} else {
-					$.showMsg({
-						msg:'The selected column/date has no orderable products! You have to make at least one product orderable first in order to be able to generate a date pattern.',
-						type: 'warning'});
-				
-				}
-			});
+				//$('#btn_rowActions').hide(); // .detach($(this));
+				})			
 	
 
 		/**
@@ -440,29 +425,71 @@
 				height: 340,
 				width: 480,
 				modal: false,
-				buttons: [
-				     {
-				    	icons : { primary : "ui-icon-check" }, //does not work!
-						text: "<?=$Text['btn_repeat'];?>", 
-						click : function(){
+				buttons: {  
+						"<?=$Text['btn_repeat'];?>" : function(){
 							generateDatePattern($(this).data('tmpData').selectedDate);
-						}
-					},
-					{
-						icons 	: { primary: "ui-icon-close"},
-						text	: "<?=$Text['btn_cancel'];?>",
-						click	: function(){
+							},
+					
+						"<?=$Text['btn_cancel'];?>"	: function(){
 							$('td, th').removeClass('highlight');
 							$( this ).dialog( "close" );
-						} 
-
-
+							} 
 					}
-
-				]
 		});
 
 
+
+		/**
+		 *	dialog for modifying closing date for order
+		 */
+		$('#blip').dialog({
+			autoOpen:false,
+			width:500,
+			height:540,
+			buttons: {  
+				"<?=$Text['btn_ok'];?>" : function(){
+					
+					setClosingDate($(this).data('tmpData').orderDate); 
+					},
+			
+				"<?=$Text['btn_cancel'];?>"	: function(){
+					$('td, th').removeClass('highlight');
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+		/**
+		 *	modifies the closing date for given provider and order
+		 */
+		function setClosingDate(orderDate){
+			var closingDate = $.getSelectedDate('#closingDatePicker'); 
+			var provider_id = getProviderId();
+			var urlStr = 'ctrlActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+provider_id+'&order_date='+orderDate+'&closing_date='+closingDate;
+
+			$.ajax({
+				type: "POST",
+				url: urlStr,	
+				beforeSend : function (){
+					//$('#deposit .loadAnim').show();
+				},	
+				success: function(txt){
+					$('#dot tbody').xml2html('reload');
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					$.showMsg({
+						msg:XMLHttpRequest.responseText,
+						type: 'error'});
+					
+				},
+				complete : function(msg){
+					$('#blip').dialog("close");
+					$('td, th').removeClass('highlight');
+				}
+			}); //end ajax	
+
+		}
+		 
 		
 		/**
 		 * utility function to generate date pattners
@@ -497,20 +524,45 @@
 		}
 
 
+		function checkRepeat(selDate){
+			var hasActive = false; 
+			$("td.Date-"+selDate).each(function(){
+				hasActive = $(this).hasClass('isOrderable')
+				if (hasActive) return false;
+			});
+
+			if(hasActive){
+				$("#dialog-generateDates").data('tmpData', {selectedDate:selDate})
+				$("#dialog-generateDates").dialog("open");
+				$(".Date-"+selDate).addClass('highlight');
+			} else {
+				$.showMsg({
+					msg:'The selected column/date has no orderable products! You have to make at least one product orderable first in order to be able to generate a date pattern.',
+					type: 'warning'});
+			
+			}
+		}
+
+
+		
+
 
 		/**
 		 *	options button
 		 */
-		 $("#tblOptions").button({
+		
+		$("#tblOptions")
+			.button({
 				icons: {
 		        	secondary: "ui-icon-triangle-1-s"
 				}
-		    }).menu({
+		    })
+		    .menu({
 				content: $('#tblOptionsItems').html(),	
 				showSpeed: 50, 
 				width:280,
 				flyOut: true, 
-				itemSelected: function(item){
+				itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
 					//show hide deactivated products
 					if ($(item).attr('id') == "showInactiveProducts"){
 						if ($(item).children('span').hasClass('ui-icon-check')){
@@ -527,13 +579,77 @@
 								}
 							} 
 						});
-					} ;
-				} 
+					}; //end if show/hide incative products
+				}//end item selected 
+			});//end menu
+
+			
+		/**
+		 *	row actions button
+		 */
+		$('#btn_rowActions')
+			.click(function(e){
+		    	$( "#rowActionIcons" )
+		    		.hide()
+		    		.show()
+		    		.position({
+						of: $('#btn_rowActions'),
+						my: 'left top',
+						at: 'left bottom',
+						offset: '10 0',
+						collision: 'flip'
+
+					})
+					.bind('mouseleave', function(e){
+						$( "#rowActionIcons" ).hide();
+					});
+				
+				e.stopPropagation();
+
 			});
-		
+
+		/**
+		 *	row actions menu
+		 */
+		$('.tfIconRow')
+			.hover(
+				function(){
+					$(this).addClass('ui-state-hover');
+				},
+				function(){
+					$(this).removeClass('ui-state-hover');
+				}
+			)
+			.bind('click', function(e){
+				var action = $('a',this).attr('id');
+				switch (action){
+					case 'tfIconRow-repeat':
+						var selDate = $('#btn_rowActions').parent().attr("colDate");
+						checkRepeat(selDate);
+						break;
+					case 'tfIconRow-selrow':
+						break;
+					case 'tfIconRow-close':
+						var selDate = $('#btn_rowActions').parent().attr("colDate");
+						$(".Date-"+selDate).addClass('highlight');
+						var closingDate = $('.Date-'+selDate +'.isOrderable').attr('closingdate');
+						
+						//var dd = new Date(closingDate); 
+						//var fdate = $.datepicker.formatDate('DD, d MM, yy', dd);
+						
+						$('#infoCurrentClosing').text(closingDate);
+						$("#blip").data('tmpData', {orderDate:selDate})
+						$("#blip").dialog("open");
+						break;
+				}
+		});
+
+		$('#rowActionIcons').hide();
+		$('#closingDatePicker').datepicker();
+			
 
 		makeDateHeader("Yesterday", seekDateSteps+" days");
-		
+
 			
 	});  //close document ready
 </script>
@@ -559,7 +675,7 @@
 	                    	<option value="{id}">{id} {name}</option>
 					</select>
 				</div>
-		   		<div class="textAlignRight"><button	id="tblOptions">Options</button></div>
+		   		<div class="textAlignRight"><button	id="tblOptions">View Options</button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="showInactiveProducts"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
@@ -646,6 +762,24 @@
 							
 	<br/>
 	<p><em>NOTE:</em> This action will re-generate all dates and products from the selected date onwards!</p>
+</div>
+
+
+<div id="blip" title="Modify closing date for selected provider and order">
+	<p>&nbsp;</p>
+	<h3>Currently your order will be closed: <span id="infoCurrentClosing"></span></h3>
+	<br/>
+	<p>Select new closing date: </p>
+	<br/>
+	<div id="closingDatePicker"></div>
+</div>
+
+<div id="btn_rowActionsLimbo" class="hidden"></div>
+<div id="btn_rowActions"> Row <span class="ui-icon ui-icon-triangle-1-s floatLeft" ></span></div>
+<div id="rowActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" >
+	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
+	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
+	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
 </div>
 
 

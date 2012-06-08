@@ -87,9 +87,7 @@
 					$('#product_list_provider tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker'),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-							var id =  $(row).attr("id"); 
-							var qu = $("#cart_quantity_"+id).val();
-							$("#quantity_"+id).val(qu);
+							formatRow(row);
 						},
 						complete : function (rowCount){
 							$('.loadAnimShop').hide();
@@ -120,9 +118,10 @@
 					$('#product_list_category tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker'),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-							var id =  $(row).attr("id"); 
+							/*var id =  $(row).attr("id"); 
 							var qu = $("#cart_quantity_"+id).val();
-							$("#quantity_"+id).val(qu);
+							$("#quantity_"+id).val(qu);*/
+							formatRow(row);
 						},
 						complete : function (rowCount){
 							$('.loadAnimShop').hide();
@@ -135,6 +134,37 @@
 					});							
 	}); //end select change
 
+	
+	/**
+	 *	product SEARCH functionality 
+	 */
+	$("#search").keyup(function(e){
+				var minLength = 3; 						//search with min of X characters
+				var searchStr = $("#search").val(); 
+				
+				if (searchStr.length >= minLength){
+					$('.loadAnimShop').show();
+				  	$('#product_list_search tbody').xml2html("reload",{
+						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
+						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
+							/*var id =  $(row).attr("id"); 
+							var qu = $("#cart_quantity_"+id).val();
+							$("#quantity_"+id).val(qu);*/
+							formatRow(row);
+						}, 
+						complete : function(rowCount){
+							$('.loadAnimShop').hide();
+						}						
+					});	
+				} else {					 
+					$('#product_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
+					
+				}
+		e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
+	}); //end autocomplete
+
+
+	
 	//dates available to make orders; start with dummy date
 	var availableDates = ["2011-00-00"];
 
@@ -208,53 +238,26 @@
 		});
 
 			
-	/**
-	 *	product search functionality 
-	 */
-	$("#search").keyup(function(e){
-				var minLength = 3; 						//search with min of X characters
-				var searchStr = $("#search").val(); 
-				
-				if (searchStr.length >= minLength){
-					$('.loadAnimShop').show();
-				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
-						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-							var id =  $(row).attr("id"); 
-							var qu = $("#cart_quantity_"+id).val();
-							$("#quantity_"+id).val(qu);
-						}, 
-						complete : function(rowCount){
-							$('.loadAnimShop').hide();
-						}						
-					});	
-				} else {					 
-					$('#product_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
-					
-				}
-		e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
-	}); //end autocomplete
-			
 
 	/**
 	 *	product item info column. Constructs context menu for item 
 	 */
-	$(".product_info")
+	$(".rowProductInfo")
 		.live("mouseenter", function(){
-			$(this).parent().addClass('ui-state-hover');
+			$(this).addClass('ui-state-hover');
 			if (!$(this).attr("hasMenu")){
 				//selected tab
 				var selTab = $("#tabs").tabs('option', 'selected')
 	
 				var itemInfo = '<ul>';
 				//only show stock if we buy; order has no stock
-				if (what == 'Shop') itemInfo += '<li><?=$Text["curStock"];?>: ' + $(this).attr("stock");
+				if (what == 'Shop') itemInfo += '<li><?=$Text["curStock"];?>: ' + $(this).attr("stock") + '</li>';
 				//add description of product
 				itemInfo += '<li><?=$Text['description'];?>: '+$(this).attr("description")+'</li>';
 				itemInfo += '</ul>';
 	
 				//init the context menu
-				$(this).parent().menu({
+				$(this).menu({
 					content: itemInfo,	
 					width: 280,
 					showSpeed: 50, 
@@ -265,7 +268,7 @@
 			}
 		})
 		.live("mouseleave", function(){
-			$(this).parent().removeClass('ui-state-hover');
+			$(this).removeClass('ui-state-hover');
 	});
 		
 
@@ -327,6 +330,10 @@
 
 		$("#providerSelect").xml2html("reload", {
 			params : 'oper=get'+what+'Providers&date='+dateText,
+			rowComplete : function(rowIndex, row){
+				//read here if provider's order is still open or not. 
+
+			}
 		})
 
 		$("#categorySelect").xml2html("reload", {
@@ -339,8 +346,24 @@
 
 	};
 
-			
 
+	/**
+	 *	utility function to format product rows 
+	 */		
+	function formatRow(row){
+
+		var days2Closing = $(row).attr("closingdate");
+		var id =  $(row).attr("id"); 
+		var qu = $("#cart_quantity_"+id).val();
+		$("#quantity_"+id).val(qu);
+
+		if (!days2Closing || days2Closing <0){
+			$(row).addClass('dim60');
+			$('td', row).addClass('ui-state-error');
+			$('input', row).attr('disabled','disabled');
+		}
+
+	}
 	
 	
 	/**
@@ -397,7 +420,7 @@
 				<div class="wrapSelect">
 					<select id="providerSelect" class="longSelect">
                     	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    	<option value="{id}">{id} {name}</option>                     
+                    	<option value="{id}"> {name}</option>                     
 					</select>
 
 				</div>
@@ -415,9 +438,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}">
+							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class=""><span class="product_info ui-icon ui-icon-info" stock="{stock_actual}" last_orders="{last_orders}" description="{description}"></span></td>
+								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name hidden">{provider_name}</td>
 								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
@@ -452,9 +475,9 @@
 						</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}">
+							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><span class="product_info ui-icon ui-icon-info" stock="{stock_actual}" last_orders="{last_orders}" description="{description}"></span></td>
+								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
@@ -487,9 +510,9 @@
 						</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}">
+							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><span class="product_info ui-icon ui-icon-info" stock="{stock_actual}" description="{description}"></span></td>
+								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input class="ui-widget-content ui-corner-all" name="{id}" value="0.00"  size="5" id="quantity_{id}"/></td>
@@ -520,7 +543,7 @@
 						<tbody>
 							<tr id="{id}" preorder="true">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><span class="product_info ui-icon ui-icon-info" stock="{stock_actual}" last_orders="{last_orders}" description="{description}"></span></td>
+								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_name">{name}</td>
 								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>

@@ -7,9 +7,10 @@ require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
 require_once("utilities_report.php");
+require_once("utilities_dates.php");
 require_once("lib/report_manager.php");
 
- $firephp = FirePHP::getInstance(true);
+$firephp = FirePHP::getInstance(true);
 
 $use_session_cache = true; 
 // This controls if the table_manager objects are stored in $_SESSION or not.
@@ -47,8 +48,13 @@ try{
     }
     
     $rm = new report_manager;
-  $the_date = ((isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : get_next_shop_date());
-  $provider_id = (isset($_REQUEST['provider_id']) ? $_REQUEST['provider_id'] : 0);
+    $next_order = get_dates('get_orderable_dates', $format='array', $limit=1);
+
+    //$the_date = ((isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : get_next_shop_date());
+    
+    $the_date = (isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : $next_order[0];
+    
+  	$provider_id = (isset($_REQUEST['provider_id']) ? $_REQUEST['provider_id'] : 0);
 
   switch ($_REQUEST['oper']) {
 
@@ -106,24 +112,16 @@ try{
       echo spending_per_provider_JSON($the_date);
       exit;
 
-  /*case 'getLastShopTimes':
-      printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
-      exit;*/
-
-  /*case 'getNonValidatedShopTimes':
-      printXML(stored_query_XML_fields('nonvalidated_shop_times_for_uf', $uf_for_shops));
-      exit;*/
 
   case 'getFutureShopTimes':
-      printXML(stored_query_XML_fields('future_shop_times_for_uf', $uf_for_shops));
-      exit;
-
-  /*case 'getPastValidatedShopTimes':
-      printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
-      exit;*/
+      //printXML(stored_query_XML_fields('future_shop_times_for_uf', $uf_for_shops));
+printXML('<row></row>');
+  	
+  	exit;
       
   case 'getAllShopTimes':
-      printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
+      printXML('<row></row>');
+  	  //printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
       exit;
       
   case 'getShoppedItems':

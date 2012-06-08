@@ -240,16 +240,20 @@ create procedure get_products_detail(	in the_provider_id int,
 										in the_date date)
 begin
 	
+	declare today date default date(sysdate());
     declare wherec varchar(255);
     declare fromc varchar(255);
+    declare fieldc varchar(255);
     
     /** no date provided we assume that we are looking for stock **/
     if the_date = 0 then
+    	set fieldc = "";
     	set fromc = "";
     	set wherec = 	" and p.orderable_type_id = 1 and p.unit_measure_shop_id = u.id ";
     /** otherwise search for products with orderable dates **/
     else 
-       	set fromc = 	"aixada_product_orderable_for_date po,";
+    	set fieldc = concat(" datediff(po.closing_date, '",today,"') as time_left");
+       	set fromc = 	"aixada_product_orderable_for_date po, ";
     	set wherec = 	concat(" and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
     end if;
     
@@ -282,7 +286,8 @@ begin
 		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,
-		t.rev_tax_percent
+		t.rev_tax_percent,
+		",fieldc,"
 	from
 		",fromc,"
 		aixada_product p,

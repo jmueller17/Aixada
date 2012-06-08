@@ -55,8 +55,11 @@ try{
 	  	
 	  case 'generateDatePattern':
 	  	echo generate_date_product_pattern(get_param('provider_id'), get_param('date'), get_param('weeklyFreq'),  get_param('nrMonth') );
-	  	exit; 
-	        
+	  	exit;
+
+	  case 'modifyOrderClosingDate':
+	  	echo do_stored_query('modify_order_closing_date', get_param('provider_id'), get_param('order_date'), get_param('closing_date'));
+	    exit;    
 
   /** TODO **/
   case 'getArrivedProducts':

@@ -1,5 +1,32 @@
 delimiter |
 
+/**
+ * modify the closing date of an order. The closing date is calculated on
+ * a default basis for each provider. However, once an order date exists for a 
+ * provider, the closing date can be modified
+ */
+drop procedure if exists modify_order_closing_date|
+create procedure modify_order_closing_date (in the_provider_id int, in the_order_date date, in the_closing_date date)
+begin
+	
+	update 
+		aixada_product_orderable_for_date po,
+		aixada_product p,
+		aixada_provider pv
+	set 
+		po.closing_date = the_closing_date
+	where
+		po.date_for_order = the_order_date
+		and po.product_id = p.id
+		and p.provider_id = the_provider_id;
+		
+		/** do the same for aixada_order_item **/
+	
+		
+end |
+
+
+
 /*
 drop procedure if exists providers_with_active_products_for_order|
 create procedure providers_with_active_products_for_order (IN the_order_date date)
