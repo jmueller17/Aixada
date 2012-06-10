@@ -38,6 +38,7 @@ option 				{padding:1px 5px;}
 .loadAnimValidate	{float:right; margin-top:10px; margin-right:10px;}
 .loadAnimShop		{margin-top:-27px; padding-right:5px; padding-left:2px;}
 .minPadding			{padding:3px;}
+.padding5x10		{padding:5px 10px;}
 .padding10x5		{padding:10px 5px;}
 .dim60				{opacity:0.6; }
 .dim40				{opacity:0.4; }
@@ -83,9 +84,9 @@ p#logonHeader			{width:100%; height:150px; margin:10px auto; background-color:#f
 sup						{color:red; font-size:0.6em; padding-top:3px;}
 
 
-/** for manage dates **/
+/** for manage dates 
 div#setOrderable		{margin-right:20px; margin-bottom:40px;}
-p#weekDays			{margin:10px 20px;}
+p#weekDays			{margin:10px 20px;}**/
 
 
 /** for validate **/
@@ -118,8 +119,12 @@ table#tbl_incidents th  {text-align:left;}
 .incidentsSubject		{text-decoration:underline; cursor:hand;}
 .incidentsDetails		{padding-top:10px; background-color:white; padding-bottom:10px;}
 
-	
-	
+
+/** shop and order **/
+div.wrapSelect			{}	
+div.orderStatus 		{margin-top:-40px; margin-bottom:30px; margin-left:25em;}
+
+
 /** for home **/
 div#menuTable table 	{border:0px solid black;}
 div#menuTable table td 	{padding:20px 30px; text-align:center;}
@@ -149,6 +154,25 @@ div#mainReportListing .report_email 		{display:none;}
 /** for account report **/
 div#account_listing				{width:100%;}
 div#cashbox_listing				{width:100%; clear:both;}
+
+
+
+/** for de-activate products table **/
+.table_datesOrderableProducts td				{background:#EBEBEB; padding:5px;}
+.table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
+.table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
+.table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
+.dateTableMonthYear								{margin:0px 20px;}
+.tfootDateGenerate								{cursor:pointer}
+ .infoTdLine									{font-size:0.8em; background-color:white; margin-bottom:-0.2em; padding-bottom:0px;}
+h3#providerName									{font-size:1.5em; padding-left:10px;}
+div#colActionIcons  		{width:280px; padding:4px;}
+.tfIcon						{margin-right:6px; float:left;}
+.tdIconCenter				{margin:1px auto;}
+.tdIconRight				{float:right; padding:2px; margin-bottom:-12px;}
+.tfIconCol					{padding:5px;}
+.iconContainer				{padding:4px; margin:0px auto; width:16px; height:16px; cursor:pointer;}
+.tfIconCol a, a:hover 		{text-decoration:none;}
 
 
 /** three column layout for: manager_orders, activate roles, activate products**/
@@ -200,23 +224,7 @@ form table td input 	{line-height:1.2em; font-size:.8em;}
 .product_list td								{text-align:right; background:#EBEBEB; padding:5px 5px;}
 .purchase_listing td							{text-align:right; padding-right:5px;}
 .table_listing_cashbox td						{text-align:left; padding:2px;}
-.table_datesOrderableProducts td				{background:#EBEBEB; padding:5px;}
-.table_datesOrderableProducts th.pastDates		{background:#f0f0f0; padding:5px;}
-.table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
-.table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
-.table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
-.table_datesOrderableProducts	.highlight		{border:solid 5px red;}
-.dateTableMonthYear								{margin:0px 20px;}
-.tfootDateGenerate								{cursor:pointer}
- .infoTdLine									{font-size:0.8em; background-color:white; margin-bottom:-0.2em; padding-bottom:0px;}
-h3#providerName									{font-size:1.5em; padding-left:10px;}
-div#rowActionIcons  		{width:280px; padding:4px;}
-.tfIcon						{margin-right:6px; float:left;}
-.tdIconCenter				{margin:1px auto;}
-.tdIconRight				{float:right; padding:2px; margin-bottom:-12px;}
-.tfIconRow					{padding:5px;}
-.iconContainer				{padding:4px; margin:0px auto; width:16px; height:16px; cursor:pointer;}
-.tfIconRow a, a:hover 		{text-decoration:none;}
+
 
 
 

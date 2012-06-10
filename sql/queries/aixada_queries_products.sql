@@ -143,11 +143,16 @@ end|
 
 /**
  * sets the active status of a product. this is usually set automatically within the table_manapge jqgrid stuff
- * but can also be manipulated when the user sets the orderable status of the product
+ * but can also be manipulated when the user sets the orderable status of the product.
+ * If a product gets deactivated, this will also delete all entries from aixada_product_orderable_for_date that 
+ * don't have any items ordered yet. 
  */
 drop procedure if exists change_active_status_product|
 create procedure change_active_status_product (in the_active_state boolean, in the_product_id int)
 begin
+	
+	declare today date default date(sysdate());
+	
 	update 
 		aixada_product
 	set
@@ -155,12 +160,46 @@ begin
 	where
 		id = the_product_id;
 		
+		
 	if the_active_state = 0 then
-		delete from aixada_product_orderable_for_date
+		delete 
+			po.* 
+		from 
+			aixada_product_orderable_for_date po 
+		left join 
+			aixada_order_item oi on 
+			po.date_for_order = oi.date_for_order
 		where 
-			product_id = the_product_id;
+			po.date_for_order > today
+			and po.product_id = the_product_id
+			and oi.date_for_order is null;
+			
+	
+		/** same with subselect **/
+		/*
+		delete from
+			aixada_product_orderable_for_date
+		where
+			date_for_order > today
+			and product_id = the_product_id
+			and date_for_order not in 
+			(select
+				oi.date_for_order
+			 from
+			 	aixada_order_item oi
+			 where 
+			 	oi.product_id = the_product_id
+			 	and oi.date_for_order > today
+			);*/
+			
 	end if;
 end|
+
+
+
+
+
+
 
 
 /**
@@ -252,7 +291,7 @@ begin
     	set wherec = 	" and p.orderable_type_id = 1 and p.unit_measure_shop_id = u.id ";
     /** otherwise search for products with orderable dates **/
     else 
-    	set fieldc = concat(" datediff(po.closing_date, '",today,"') as time_left");
+    	set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");
        	set fromc = 	"aixada_product_orderable_for_date po, ";
     	set wherec = 	concat(" and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
     end if;
@@ -286,7 +325,7 @@ begin
 		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,
-		t.rev_tax_percent,
+		t.rev_tax_percent
 		",fieldc,"
 	from
 		",fromc,"

@@ -35,7 +35,7 @@
 			$('#tbl_FutureOrders tbody').xml2html('init',{
 				url : 'ctrlReport.php',
 				params : 'oper=getFutureShopTimes', 
-				loadOnInit : true
+				loadOnInit : false
 			});
 
 		
@@ -43,7 +43,7 @@
 			$('#tbl_PastValidated tbody').xml2html('init',{
 				url : 'ctrlReport.php',
 				params : 'oper=getAllShopTimes', 
-				loadOnInit : true, 
+				loadOnInit : false, 
 				rowComplete : function(rowIndex, row){	
 					var last_td = $(row).children().last(); //change the text displayed when purchse has not been validated 
 					if (last_td.text() == '0000-00-00 00:00:00') {

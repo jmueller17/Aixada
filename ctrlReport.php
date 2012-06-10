@@ -114,14 +114,12 @@ try{
 
 
   case 'getFutureShopTimes':
-      //printXML(stored_query_XML_fields('future_shop_times_for_uf', $uf_for_shops));
-printXML('<row></row>');
-  	
+    printXML(stored_query_XML_fields('future_shop_times_for_uf', $uf_for_shops));    	
   	exit;
       
   case 'getAllShopTimes':
-      printXML('<row></row>');
-  	  //printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
+      //printXML('<row></row>');
+  	  printXML(stored_query_XML_fields('shop_times_for_uf', $uf_for_shops));
       exit;
       
   case 'getShoppedItems':

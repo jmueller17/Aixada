@@ -33,6 +33,9 @@
 		//default number of dates at display
 		var seekDateSteps = 20;
 
+		//counter if provider has deactivated products 
+		var counterNotActive = 0; 
+
 		
 		/**
 		 * retrieve dates for a given time period and constructs the table header
@@ -64,18 +67,14 @@
 						var dd = new Date(gdates[i]); 
 						var date = $.datepicker.formatDate(outDateFormat, dd);
 						var dateclass = "Date-"+gdates[i];
-						
-						if (dd < today) {
-							apstr += '<th class="dateth pastDates '+dateclass+'">'+date+'</th>';
-						} else {
-							apstr += '<th class="dateth '+dateclass+'">'+date+'</th>';
-						}
-						tfoot += '<td class="tfootDateGenerate" colDate="'+gdates[i]+'"></td>';	
+						var pastclass = (dd < today)? 'dim40':'';
+					
+						apstr += '<th class="dateth '+ pastclass +' '+dateclass+'" colDate="'+gdates[i]+'">'+date+'</th>';
+						tfoot += '<td class="tfootDateGenerate '+pastclass+' tf'+dateclass+'" colDate="'+gdates[i]+'"></td>';	
 
 						if (dd.getMonth() != visMonthYear[visMonthYear.length-1].getMonth()){
 							visMonthYear.push(dd);
 						} 
- 
 					}
 
 					//construct month year str for title bar of widget
@@ -85,7 +84,7 @@
 					var monthYearStr = visMonthYear.join("/ "); 
 					$('.dateTableMonthYear').html(monthYearStr);
 
-					$('#btn_rowActions').appendTo('#btn_rowActionsLimbo');
+					$('#btn_colActions').appendTo('#btn_colActionsLimbo');
 					
 					//remove previous dates and table cells if any
 					$('#dot thead tr .dateth').empty().remove();
@@ -125,12 +124,14 @@
 					var apstr = '';
 					
 					for (var i=0; i<gdates.length; i++){
-						var dateidclass = "Date-"+gdates[i] + " P-"+id;
-						var tdid		= gdates[i]+"_"+id; 
+						var dateidclass = "Date-"+gdates[i] + " P-"+id; //construct two classes to easily select column (date) or row (product id)
+						dateidclass += ($(".Date-"+gdates[i]).hasClass("dim40"))? " dim40":""; //dim past dates
+						var tdid		= gdates[i]+"_"+id; 			//construct id selector of td-cell
 						apstr += '<td title="'+gdates[i]+'" id="'+tdid+'" class="'+dateidclass+' interactiveCell '+cellStyle+'"></td>';
 					}
 					$(row).append(apstr);
 
+					
 					//revise checkboxe attribute for each product row
 					if (ckbox.attr("isactive") == 1){
 						ckbox.attr("checked", "checked")
@@ -138,6 +139,7 @@
 						ckbox.removeAttr("checked");
 						if (!$('#showInactiveProducts').children('span:first').hasClass('ui-icon-check')){
 							$(row).hide();
+							counterNotActive++;
 						}
 						
 					}
@@ -145,6 +147,9 @@
 				},
 				//finally retrieve if products are orderable for given dates
 				complete: function(rowCount){
+					//indicate deactivated products for this provider
+					
+					
 					var provider_id = getProviderId();
 				
 					$.ajax({
@@ -184,6 +189,9 @@
 				}
 			});
 
+
+		/* possibility for editing the closing date of each product
+		var tdTmp = null; 
 		$('span.editClosingDate')
 			.live('click', function(e){
 				var td = $(this).parent().parent();
@@ -205,84 +213,57 @@
 			.live('mouseleave', function(e){
 				$(this).parent().removeClass('ui-state-hover');
 			});
+		*/
+		
 
-		
-		
 		/**
-		 *	activate / deactive a given product for a given date
+		 *	interactivity for the column actions button
 		 */
-		function toggleCell(id){
-			if ($(id).hasClass('isOrderable')){
-				$(id)
-				.removeClass('isOrderable')
-				.addClass('notOrderable')
-				.empty();
-			} else {
-				$(id)
-				.removeClass('notOrderable deactivated')
-				.addClass('isOrderable')
-				.append('<span class="ui-icon ui-icon-check tdIconCenter"></span>');
-			}
-		}
-
+		 $('.dateth')
+			.live('mouseover', function(e){
+				$('#colActionIcons').hide();
+				if (!$(this).hasClass('dim40')){
+					var coldate = $(this).attr('colDate');
+					$('#btn_colActions').appendTo($('tfoot td.tfDate-'+coldate)).show(); //does not work for opera
+				}		
+			})
+			.live('mouseleave', function(e){
+				//$('#btn_colActions').hide(); // .deltach($(this));
+			})	
+			
+		$('.tfootDateGenerate')
+			.live('mouseover', function(e){
+				$('#colActionIcons').hide();
+				if (!$(this).hasClass('dim40')){
+					$('#btn_colActions').appendTo($(this)).show(); //does not work for opera
+				}		
+			})
+			.live('mouseleave', function(e){
+				//$('#btn_colActions').hide(); // .detach($(this));
+			})
 		
-		/**
-		 *	sends off the request to deactivate or activate a product in general
-		 */
-		function changeProductStatus(product_id, oper){
-			$.ajax({
-				type: "POST",
-				url: "ctrlActivateProducts.php?oper="+oper+"&product_id="+product_id,
-				success: function(msg){
-					if (oper == 'activateProduct'){
-						$('td.P-'+product_id).each(function(){
-							$(this).removeClass('deactivated isOrderable').addClass('notOrderable');
-						});
-						$('#ckbox_'+product_id).attr('checked','checked');
+			
+					
 
-					} else if (oper == 'deactivateProduct'){
-						$('td.P-'+product_id).each(function(){
-							$(this).removeClass('notOrderable isOrderable').addClass('deactivated').empty();
-						});
-						$('#ckbox_'+product_id).removeAttr('checked');
-					}
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-				}
-			});
-		}
-
-		
-		/**
-		 *	utility function to retrieve the provider_id from the select
-		 */
-		function getProviderId(){
-			var id = $("#providerSelect option:selected").val(); 
-			if (id <= 0){
-				return false;
-			} else {
-				return id; 
-			}
-		}
-
-		var tdTmp = null; 
-
-		
-		
+	
 		/**
 		 *	event handler for each table cell
 		 */
 		$('td.interactiveCell')
 			.live('mouseover', function(e){
+				$('#btn_colActions').appendTo('#btn_colActionsLimbo');
 			})
 			.live('mouseout', function(e){
 			})
 			.live('click', function(e){
-				
-				if($(this).hasClass('deactivated')){
+
+				if ($(this).hasClass('dim40')){
+					$.showMsg({
+						msg:'This is the past! <br/> Too late to change anything here.',
+						type: 'warning'});
+					return false;
+			
+				} else if ($(this).hasClass('deactivated')){
 					$.showMsg({
 						msg:'This product is currently deactive. In order to set an orderable date, you have to activate this product first by clicking its "active" checkbox.',
 						type: 'warning'});
@@ -360,6 +341,7 @@
 		}).change(function(){
 			var provider_id = getProviderId();
 			var provider_name = $("option:selected", this).text();
+			counterNotActive = 0; //reset the counter for the deactivated products
 			
 			if (provider_id){ 
 				//reload the products 
@@ -377,7 +359,7 @@
 
 
 		/**
-		 *	detect clicks for deactivating or activating the product as such (not for specific dates)  
+		 *	detect checkbox clicks for deactivating or activating the product as such (not for specific dates)  
 		 */
 		$('input[name="toggleDeActivateProducts"]').live('click', function(e){
 			var isDeactivated = ($(this).attr('checked') != 'checked')? false:true;
@@ -403,19 +385,7 @@
 		});
 
 
-		/**
-		 *	interactivity for the date generate buttons
-		 */
-		$('.tfootDateGenerate')
-			.live('mouseover', function(e){
-				$('#rowActionIcons').hide();
-				$('#btn_rowActions').appendTo($(this)).show();
-			
-			})
-			.live('mouseleave', function(e){
-				//$('#btn_rowActions').hide(); // .detach($(this));
-				})			
-	
+		
 
 		/**
 		 *	dialog generate date pattern
@@ -431,7 +401,7 @@
 							},
 					
 						"<?=$Text['btn_cancel'];?>"	: function(){
-							$('td, th').removeClass('highlight');
+							$('td, th').removeClass('ui-state-hover');
 							$( this ).dialog( "close" );
 							} 
 					}
@@ -453,7 +423,7 @@
 					},
 			
 				"<?=$Text['btn_cancel'];?>"	: function(){
-					$('td, th').removeClass('highlight');
+					$('td, th').removeClass('ui-state-hover');
 					$( this ).dialog( "close" );
 					} 
 			}
@@ -484,7 +454,7 @@
 				},
 				complete : function(msg){
 					$('#blip').dialog("close");
-					$('td, th').removeClass('highlight');
+					$('td, th').removeClass('ui-state-hover');
 				}
 			}); //end ajax	
 
@@ -517,13 +487,17 @@
 				},
 				complete : function(msg){
 					$('#dialog-generateDates').dialog("close");
-					$('td, th').removeClass('highlight');
+					$('td, th').removeClass('ui-state-hover');
 				}
 			}); //end ajax	
 			
 		}
 
 
+		/**
+		 *	checks if product is active in general 
+		 *  and if the column has an active product, otherwise there is nothing to repeat! 
+		 */
 		function checkRepeat(selDate){
 			var hasActive = false; 
 			$("td.Date-"+selDate).each(function(){
@@ -534,21 +508,111 @@
 			if(hasActive){
 				$("#dialog-generateDates").data('tmpData', {selectedDate:selDate})
 				$("#dialog-generateDates").dialog("open");
-				$(".Date-"+selDate).addClass('highlight');
+				$(".Date-"+selDate).addClass('ui-state-hover');
 			} else {
 				$.showMsg({
-					msg:'The selected column/date has no orderable products! You have to make at least one product orderable first in order to be able to generate a date pattern.',
+					msg:'The selected column/date has no orderable products! You have to make at least one product orderable in order to be able to generate a date pattern.',
 					type: 'warning'});
 			
 			}
 		}
 
 
-		
+		/**
+		 *	checks if product is active in general 
+		 *  and if the column has an active product, otherwise there is nothing to repeat! 
+		 */
+		function checkSetClosing(selDate){
+			var hasActive = false; 
+			$("td.Date-"+selDate).each(function(){
+				hasActive = $(this).hasClass('isOrderable')
+				if (hasActive) return false;
+			});
 
+			if(hasActive){
+				var closingDate = $('.Date-'+selDate +'.isOrderable').attr('closingdate');
+				//var dd = new Date(closingDate); 
+				//var fdate = $.datepicker.formatDate('DD, d MM, yy', dd);
+				
+				$('#infoCurrentClosing').text(closingDate);
+				$("#blip").data('tmpData', {orderDate:selDate})
+				$("#blip").dialog("open");				
+				$(".Date-"+selDate).addClass('ui-state-hover');
+			} else {
+				$.showMsg({
+					msg:'In order to modify the closing date, you need to make at least one product orderable.',
+					type: 'warning'});
+			
+			}
+		}
+
+		
+		
+		/**
+		 *	activate / deactive a given product for a given date
+		 */
+		function toggleCell(id){
+			if ($(id).hasClass('isOrderable')){
+				$(id)
+				.removeClass('isOrderable')
+				.addClass('notOrderable')
+				.empty();
+			} else {
+				$(id)
+				.removeClass('notOrderable deactivated')
+				.addClass('isOrderable')
+				.append('<span class="ui-icon ui-icon-check tdIconCenter"></span>');
+			}
+		}
+
+		
+		/**
+		 *	sends off the request to deactivate or activate a product in general
+		 */
+		function changeProductStatus(product_id, oper){
+			$.ajax({
+				type: "POST",
+				url: "ctrlActivateProducts.php?oper="+oper+"&product_id="+product_id,
+				success: function(msg){
+					if (oper == 'activateProduct'){
+						$('td.P-'+product_id).each(function(){
+							$(this).removeClass('deactivated isOrderable').addClass('notOrderable');
+						});
+						$('#ckbox_'+product_id).attr('checked','checked');
+
+					} else if (oper == 'deactivateProduct'){
+						$('td.P-'+product_id).each(function(){
+							$(this).removeClass('notOrderable isOrderable').addClass('deactivated').empty();
+						});
+						$('#ckbox_'+product_id).removeAttr('checked');
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					$.showMsg({
+						msg:XMLHttpRequest.responseText,
+						type: 'error'});
+				}
+			});
+		}
+
+		
+		/**
+		 *	utility function to retrieve the provider_id from the select
+		 */
+		function getProviderId(){
+			var id = $("#providerSelect option:selected").val(); 
+			if (id <= 0){
+				return false;
+			} else {
+				return id; 
+			}
+		}
+
+
+	
 
 		/**
-		 *	options button
+		 *	view options button
 		 */
 		
 		$("#tblOptions")
@@ -564,44 +628,60 @@
 				flyOut: true, 
 				itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
 					//show hide deactivated products
-					if ($(item).attr('id') == "showInactiveProducts"){
-						if ($(item).children('span').hasClass('ui-icon-check')){
-							$(item).children('span').removeClass('ui-icon ui-icon-check');
-						} else {
-							$(item).children('span').addClass('ui-icon ui-icon-check');
-						}
-						$('input[name="toggleDeActivateProducts"]').each(function(){
-							if ($(this).attr('checked') != 'checked'){
-								if ($(item).children('span').hasClass('ui-icon-check')){
-									$(this).parent().parent().show();
-								} else {
-									$(this).parent().parent().hide();
-								}
+					switch ($(item).attr('id')){
+						case 'showInactiveProducts':
+							if ($(item).children('span').hasClass('ui-icon-check')){
+								$(item).children('span').removeClass('ui-icon ui-icon-check');
+							} else {
+								$(item).children('span').addClass('ui-icon ui-icon-check');
+							}
+							$('input[name="toggleDeActivateProducts"]').each(function(){
+								if ($(this).attr('checked') != 'checked'){
+									if ($(item).children('span').hasClass('ui-icon-check')){
+										$(this).parent().parent().show();
+									} else {
+										$(this).parent().parent().hide();
+									}
+								} 
+							});
+							break;
+						case 'plus7':
+							seekDateSteps += 7; 
+							$("#nextDates").trigger('click');
+							break;
+						case 'minus7':
+							if (seekDateSteps > 7 && seekDateSteps < 14) {
+								seekDateSteps = 7;
+							} else if (seekDateSteps > 14) {
+								seekDateSteps -= 7;
 							} 
-						});
-					}; //end if show/hide incative products
+							$("#prevDates").trigger('click');
+							break;
+							
+					}; //end switch
 				}//end item selected 
 			});//end menu
 
-			
+
+				
 		/**
-		 *	row actions button
+		 *	col actions button
 		 */
-		$('#btn_rowActions')
+		$('#btn_colActions')
 			.click(function(e){
-		    	$( "#rowActionIcons" )
+		    	$( "#colActionIcons" )
 		    		.hide()
 		    		.show()
 		    		.position({
-						of: $('#btn_rowActions'),
+						of: $('#btn_colActions'),
 						my: 'left top',
 						at: 'left bottom',
-						offset: '10 0',
+						offset: '-10 0',
 						collision: 'flip'
 
 					})
 					.bind('mouseleave', function(e){
-						$( "#rowActionIcons" ).hide();
+						$( "#colActionIcons" ).hide();
 					});
 				
 				e.stopPropagation();
@@ -609,9 +689,9 @@
 			});
 
 		/**
-		 *	row actions menu
+		 *	col actions menu
 		 */
-		$('.tfIconRow')
+		$('.tfIconCol')
 			.hover(
 				function(){
 					$(this).addClass('ui-state-hover');
@@ -623,31 +703,22 @@
 			.bind('click', function(e){
 				var action = $('a',this).attr('id');
 				switch (action){
-					case 'tfIconRow-repeat':
-						var selDate = $('#btn_rowActions').parent().attr("colDate");
+					case 'tfIconCol-repeat':
+						var selDate = $('#btn_colActions').parent().attr("colDate");
 						checkRepeat(selDate);
 						break;
-					case 'tfIconRow-selrow':
+					case 'tfIconCol-selrow':
 						break;
-					case 'tfIconRow-close':
-						var selDate = $('#btn_rowActions').parent().attr("colDate");
-						$(".Date-"+selDate).addClass('highlight');
-						var closingDate = $('.Date-'+selDate +'.isOrderable').attr('closingdate');
-						
-						//var dd = new Date(closingDate); 
-						//var fdate = $.datepicker.formatDate('DD, d MM, yy', dd);
-						
-						$('#infoCurrentClosing').text(closingDate);
-						$("#blip").data('tmpData', {orderDate:selDate})
-						$("#blip").dialog("open");
+					case 'tfIconCol-close':
+						var selDate = $('#btn_colActions').parent().attr("colDate");
+						checkSetClosing(selDate);
 						break;
 				}
 		});
 
-		$('#rowActionIcons').hide();
+		$('#colActionIcons').hide();
 		$('#closingDatePicker').datepicker();
 			
-
 		makeDateHeader("Yesterday", seekDateSteps+" days");
 
 			
@@ -681,8 +752,8 @@
 						<li><a href="javascript:void(null)" id="showInactiveProducts"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
 						<li><a href="javascript:void(null)">&nbsp;&nbsp;Number of dates at display</a>
 							<ul>
-								<li><a href="javascript:void(null)" id="plusTen">+ 10 Dates</a></li>
-								<li><a href="javascript:void(null)" id="minusTen">- 10 Dates</a></li></ul>
+								<li><a href="javascript:void(null)" id="plus7">Show +7 days</a></li>
+								<li><a href="javascript:void(null)" id="minus7">Show -7 days</a></li></ul>
 						</li>
 						
 					</ul>
@@ -727,7 +798,7 @@
 				<tfoot>
 					<tr>
 						<td>&nbsp;</td>
-						<td></td>
+						<td><!-- a href="javascript:void(null)" id=""><span class="ui-icon ui-icon-plus-thick"></span> Show deactivated products</a--></td>
 						<td></td>
 					</tr>
 				</tfoot>
@@ -774,12 +845,12 @@
 	<div id="closingDatePicker"></div>
 </div>
 
-<div id="btn_rowActionsLimbo" class="hidden"></div>
-<div id="btn_rowActions"> Row <span class="ui-icon ui-icon-triangle-1-s floatLeft" ></span></div>
-<div id="rowActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" >
-	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
-	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
-	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
+<div id="btn_colActionsLimbo" class="hidden"></div>
+<div id="btn_colActions">Col<span class="ui-icon ui-icon-triangle-1-s floatLeft" ></span></div>
+<div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" >
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
 </div>
 
 

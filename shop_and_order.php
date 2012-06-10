@@ -46,8 +46,11 @@
 		return false; 
 	});			
 
-	//init tabs
 	$("#tabs").tabs();
+
+	//layer inform that provider has passed closing date for order
+	var counterClosed = 0; 
+	$("#providerClosedStatus").hide();
 
 
 	//init cart 
@@ -71,7 +74,7 @@
 			loadOnInit : true
 	});
 	
-
+	
 	/**
 	 * build Provider SELECT
 	 */
@@ -80,6 +83,8 @@
 				}).change(function(){
 					var id = $("option:selected", this).val();					//get the id of the provider
 					$('#product_list_provider tbody').xml2html('removeAll');	//empty the list
+					$('#providerClosedStatus').hide();
+					counterClosed = 0;
 					
 					if (id < 0) { return true;}
 
@@ -95,7 +100,12 @@
 								$.showMsg({
 									msg:"<?php echo $Text['msg_no_active_products'];?>",
 									type: 'info'});
+							} else if (rowCount == counterClosed){
+
+								$('#providerClosedStatus').show();
 							}
+
+							
 						}						
 					});							
 	}); //end select change
@@ -344,6 +354,9 @@
 		$('#product_list_category tbody').xml2html("removeAll");
 		$('#product_list_search tbody').xml2html("removeAll");
 
+		$('#providerClosedStatus').hide();
+		counterClosed = 0; 
+
 	};
 
 
@@ -361,6 +374,7 @@
 			$(row).addClass('dim60');
 			$('td', row).addClass('ui-state-error');
 			$('input', row).attr('disabled','disabled');
+			counterClosed++;
 		}
 
 	}
@@ -424,6 +438,7 @@
 					</select>
 
 				</div>
+				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight">Order is closed for this provider <span class="ui-icon ui-icon-locked floatRight"></span></p></div> 
 				<div class="product_list_wrap">
 					<table id="product_list_provider" class="product_list" >
 						<thead>
