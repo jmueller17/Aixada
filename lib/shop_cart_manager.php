@@ -21,21 +21,37 @@ require_once('abstract_cart_manager.php');
 
 class shop_item extends abstract_cart_row {
   
+	
+	protected $_iva_percent = 0; 
+	
+	protected $_rev_tax_percent = 0; 
+	
+	protected $_order_item_id = 0; 
+ 
+	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id){
+		$this->_iva_percent = $iva; 
+		$this->_rev_tax_percent = $revtax;
+		$this->_order_item_id = $order_item_id;
+		
+		 
+		$this->_product_id = $product_id;
+        $this->_quantity = $quantity;
+        $this->_cart_id = $cart_id; 
+		
+		//parent::__construct(0, 0, $product_id, $quantity, $cart_id);
+	}
 
-  /**
-   * deducts stock if possible, and calculates the price of the row. The function Insert can throw an InsufficientStockException.
-   * @see DBWrap::Insert
-   * @see InsufficientStockException
-   */
-  public function commit_string()
-  {
-    return '(' 
-      . $this->_uf_id . ','
-      . "'" . $this->_date . "',"
-      . $this->_product_id . ','
-      . $this->_quantity
-      . ')';
-  }
+	 //(cart_id, order_item_id, product_id, quantity, iva_percent, rev_tax_percent)
+	public function commit_string()
+	{
+	   return '('
+	   			. $this->_cart_id 		. ','
+	   			. $this->_order_item_id . ','
+	   			. $this->_product_id 	. ','
+	   			. $this->_quantity 		. ','
+	   			. $this->_iva_percent	. ','
+	   			. $this->_rev_tax_percent . ')';
+	}
 }
 
 /**
@@ -57,9 +73,9 @@ class shop_cart_manager extends abstract_cart_manager {
   {
     $this->_id_string = 'shop';
     $this->_commit_rows_prefix = 
-      'INSERT INTO aixada_shop_item' .
-      ' (uf_id, date_for_shop, product_id, quantity)' .
-      ' VALUES ';
+      'insert into aixada_shop_item' .
+      ' (cart_id, order_item_id, product_id, quantity, iva_percent, rev_tax_percent)' .
+      ' values ';
     parent::__construct($uf_id, $date_for_shop);
   }  
 
@@ -67,14 +83,61 @@ class shop_cart_manager extends abstract_cart_manager {
   /**
    * Overloaded function to make sale_item rows
    */
-  protected function _make_rows($arrQuant, $arrPrice, $arrProdId)
-  {
-    for ($i=0; $i < count($arrQuant); ++$i)
-      $this->_rows[] = new shop_item($this->_date, 
-				     $this->_uf_id, 
-				     $arrProdId[$i], 
-				     $arrQuant[$i], 
-				     $arrPrice[$i]);
+  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $arrPreorder)
+    {
+
+    	$this->_cart_id = (isset($cartId) && $cartId>0)? $cartId:0; 
+    	
+    	
+    	$db = DBWrap::get_instance();
+    	
+    	//create a new one if it doesn't exist. 
+		if ($this->_cart_id == 0){
+    		
+    		try {
+	    		$rs = $db->Execute('insert into aixada_cart (uf_id, date_for_shop) values (:1q, :2q)', $this->_uf_id, $this->_date);
+	        	$this->_cart_id = $db->get_last_id();
+	        	
+    		} catch(Exception $e) {
+    			header('HTTP/1.0 401 ' . $e->getMessage());
+    			die ($e->getMessage());
+			}  
+    		    
+    	//check if cart is already validated
+		} else if ($this->_cart_id > 0){
+    		
+    		$rs = $db->Execute('select * from aixada_cart where id=:1q and ts_validated=0', $this->_cart_id);
+    		
+    		global $firephp;
+            $firephp->log($rs->num_rows, "not validated? num_rows=1 true");
+    		
+    		if ($rs->num_rows == 0) {
+    		 throw new Exception('shop_cart_manager::_make_rows: shop cart has already been validated!!');
+            	exit;
+    		}
+    		$db->free_next_results();
+    		
+    	}
+    	
+    	
+    	
+    	
+    	//$date, $uf_id, $product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id
+    	for ($i=0; $i < count($arrQuant); ++$i){
+    		
+    		//if item is stock, set order_item_id to null	    	
+    		$order_item_id = (isset($arrOrderItemId[$i]) && $arrOrderItemId[$i]>0)? $arrOrderItemId[$i]:'null';
+    		
+    		$this->_rows[] = new shop_item(
+					     				 $arrProdId[$i], 
+					     				 $arrQuant[$i],
+					     				 $this->_cart_id, 
+					     				 0, //$arrIva[$i],
+					     				 3, //$arrRevTax[$i],
+					     				 $order_item_id
+					     				 );
+    	}
+
   }
 
 
@@ -84,11 +147,8 @@ class shop_cart_manager extends abstract_cart_manager {
   protected function _delete_rows()
   {
     $db = DBWrap::get_instance();
-    $db->Execute('DELETE FROM ' 
-		 . $this->_item_table_name 
-		 . ' WHERE uf_id=:1q AND date_for_'
-		 . $this->_id_string 
-		 . '=:2q AND ts_validated=0', $this->_uf_id, $this->_date);
+		 
+    $db->Execute('DELETE FROM ' . $this->_item_table_name . ' WHERE cart_id=:1q', $this->_cart_id);
   }
 
   /**

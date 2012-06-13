@@ -435,6 +435,14 @@
 		function setClosingDate(orderDate){
 			var closingDate = $.getSelectedDate('#closingDatePicker'); 
 			var provider_id = getProviderId();
+
+			if (closingDate > orderDate){
+				$.showMsg({
+					msg:'The closing date cannot be later than the order date!',
+					type: 'error'});
+				return false; 
+			}
+			
 			var urlStr = 'ctrlActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+provider_id+'&order_date='+orderDate+'&closing_date='+closingDate;
 
 			$.ajax({
@@ -737,7 +745,7 @@
 	
 		<div id="titlewrap">
 			<div id="titleLeftCol">
-		    	<h1><?php echo $Text['ti_mng_activate_products'];  ?>
+		    	<h1><?php echo $Text['ti_mng_activate_products'];  ?></h1>
 		    </div>
 		   <div id="titleRightCol">
 		   		<div class="wrapSelect textAlignRight">

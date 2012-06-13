@@ -156,7 +156,20 @@ class DBWrap {
   {
     return $this->do_Execute($strSQL);
   } 
+  
+  /**
+   * If the last sql command executed was an insert, returns
+   * the id generate by auto_increment. 
+   */
+  public function get_last_id()
+  {
+  		return $this->mysqli->insert_id; 
+  }
 
+  
+  /** 
+   * Clean / free up mysql results. 
+   */
   public function free_next_results()
   {
       while ($this->mysqli->more_results()) {
@@ -167,6 +180,7 @@ class DBWrap {
       }
   }
 
+  
   /**
    * This function accepts an SQL query string with placeholders of
    * the form :1, :2, ..., :999, and substitutes the placeholders by

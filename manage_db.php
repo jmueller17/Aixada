@@ -27,65 +27,10 @@
 	
 	$(function(){
 
-				
-		//init the uf listing
-		$('#uf_list tbody').xml2html('init',{
-			url: 		'smallqueries.php',
-			params : 	'oper=getAllUFs',
-			loadOnInit:	true,
-			resultsPerPage:20,
-			paginationNav : '#uf_list tfoot td',
-			beforeLoad : function(){
-				$('#uf_listing .loadAnim').show();
-			},
-			rowComplete: function(index, row){
-				var ckbx = row.children().first().find('input');
-				if (ckbx.val() == "1") ckbx.attr('checked',true); //set the checkbox if uf is active or not
-			},
-			complete : function(){
-				$('#uf_listing .loadAnim').hide();
-			}
-		});	
-
-		 
-
-
-		
-		
+						
 
 		/**
-		 *	edit ufs
-		 */
-		$('.btn_edit_uf').live('click',function(e){
-			//if we are editing, save it
-			if ($(this).hasClass('ui-icon-disk')){
-				$('#uf_edit').submit();
-				//$('#uf_list tbody').xml2html('reload'); 				
-			//if we click pencil, make fields editable
-			} else {
-				var id = $(this).parent().parent().attr('ufid');
-
-				if (id != prev_id){
-					resetPreviousRow();
-					highlightCurrentRow($(this).parent().parent());
-				}
-				prev_id = id; 
-				
-				$(this).removeClass('ui-icon-pencil').addClass('ui-icon-disk');
-				makeEditable($(this).parent().prev().prev(),'uf_name','uf_name');
-				return false; //prevent event propagation to uf table row click
-
-			}
-		});
-
-			
-		
-
-		
-		
-
-		/**
-		 *	assign stuff
+		 *	backup button!
 		 */
 		$('#btn_backup')
 			.button({
@@ -117,11 +62,6 @@
 				
 			});
 
-		
-			
-            
-            
-                    
 		
 				
 			

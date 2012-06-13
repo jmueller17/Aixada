@@ -1,8 +1,8 @@
 <?php
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//$firephp = FirePHP::getInstance(true);
-//ob_start(); // Starts FirePHP output buffering
+require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+$firephp = FirePHP::getInstance(true);
+ob_start(); // Starts FirePHP output buffering
 
 require_once("local_config/config.php");
 require_once("inc/database.php");
@@ -149,45 +149,48 @@ try{
 
   
     // now come  the requests that need a cart manager
-	$what = get_param('what', $default='');
-    switch ($what) {
-    case 'Shop':
-        require_once("lib/shop_cart_manager.php");
-        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
-        break;
-      
-    case 'Order':
-        require_once("lib/order_cart_manager.php");
-        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
-        break;
-      
-    case 'favorite_order':
-        require_once("lib/favorite_order_cart_manager.php");
-        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
-        break;
-      
-    default:
-        throw new Exception("ctrlShopAndOrder: request what={$_REQUEST['what']} not supported");
+    switch (get_param('what', $default='')) {
+	    case 'Shop':
+	        require_once("lib/shop_cart_manager.php");
+	        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
+	        break;
+	      
+	    case 'Order':
+	        require_once("lib/order_cart_manager.php");
+	        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
+	        break;
+	      
+	    case 'favorite_order':
+	        require_once("lib/favorite_order_cart_manager.php");
+	        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
+	        break;
+	      
+	    default:
+	        throw new Exception("ctrlShopAndOrder: request what={$_REQUEST['what']} not supported");
     }
   
 
 
     switch($_REQUEST['oper']) {
     
-    case 'commit':
-        try {
-            $cm->commit($_REQUEST['quantity'], $_REQUEST['price'], $_REQUEST['product_id'], $_REQUEST['preorder']);
-        }
-        catch(Exception $e) {
-            header('HTTP/1.0 401 ' . $e->getMessage());
-            die ($e->getMessage());
-        }  
-        break;
-
-    default:
-        throw new Exception("ctrlShopAndOrder: variable oper not set in query");
-    
-    }
+	    case 'commit':
+	    	
+	        try {
+	        	//_commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $arrCartId, $arrPreorder) 
+	            //$cm->commit($_REQUEST['order_id'], $_REQUEST['quantity'], $_REQUEST['price'], $_REQUEST['product_id'], $_REQUEST['preorder']);
+	            $cid = $cm->commit($_REQUEST['quantity'], $_REQUEST['product_id'], $_REQUEST['iva_percent'], $_REQUEST['rev_tax_percent'], $_REQUEST['order_item_id'], $_REQUEST['cart_id'], $_REQUEST['preorder']);
+	            echo ($cid);
+	        }
+	        catch(Exception $e) {
+	            header('HTTP/1.0 401 ' . $e->getMessage());
+	            die ($e->getMessage());
+	        }  
+	        break;
+	
+	    default:
+	        throw new Exception("ctrlShopAndOrder: variable oper not set in query");
+	    
+	    }
 } 
 
 catch(Exception $e) {

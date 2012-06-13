@@ -59,7 +59,7 @@
 		loadCartURL : 'ctrlShopAndOrder.php?oper=get'+what+'Cart',
 		cartType	: (what=='Shop')? 'standalone':'standalone_preorder',
 		btnType		: 'save',
-		autoSave	: 5000,
+		autoSave	: 0,
 		loadSuccess : updateCartLabel,
 		submitComplete : updateCartLabel
 	});
@@ -217,6 +217,14 @@
 	} else {
 		
 		$.getAixadaDates('getAllOrderableDates', function (dates){
+			//if no dates are available, products have to be activated first!! 
+			if (dates.length == 0){
+				$.showMsg({
+					msg:"<?php echo $Text['msg_no_active_products'];?>",
+					type: 'error'});
+				return false; 
+			}
+		
 			availableDates = dates;
 			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', availableDates[0]));
 			$("#datepicker").datepicker("refresh");
@@ -312,7 +320,8 @@
 					price 			: parseFloat($("td.item_price", row).text()),
 					quantity 		: $(this).val(),
 					unit 			: $("td.item_unit", row).text(),
-					rev_tax_percent : parseFloat( $("td.item_rev_tax_percent", row).text())
+					rev_tax_percent : $("td.item_rev_tax_percent", row).text(),
+					iva_percent		: $("td.item_iva_percent", row).text()
 
 			}); //end addItem to cart
 
@@ -450,6 +459,7 @@
 								<th><?php echo $Text['unit'];?></th>
 								<th><?php echo $Text['revtax_abbrev'];?></th>
 								<th><?php echo $Text['price'];?></th>
+								<th>iva</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -461,7 +471,8 @@
 								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
 								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>			
+								<td class="item_price">{unit_price}</td>	
+								<td class="item_iva_percent">{iva_percent}</td>		
 							</tr>						
 						</tbody>
 					</table>

@@ -13,15 +13,19 @@ begin
     p.id,
     p.name,
     p.description,
+    c.id as cart_id,
     si.quantity as quantity,
-    si.cart_id,
+    si.iva_percent, 
+    si.order_item_id,
     p.provider_id,  
     pv.name as provider_name,
     p.category_id, 
-    p.unit_price * (1 + iva.percent/100) as unit_price, 
+    p.unit_price * (1 + si.iva_percent/100) as unit_price, 
+    iva.percent as iva_percent,
     rev.rev_tax_percent,
     um.unit
-  from 
+  from
+  	aixada_cart c, 
   	aixada_shop_item si,
   	aixada_product p, 
   	aixada_provider pv, 
@@ -29,9 +33,10 @@ begin
   	aixada_iva_type iva, 
   	aixada_unit_measure um
   where
-  	si.uf_id = the_uf_id
-  	and si.date_for_shop = the_date
-  	and si.ts_validated = 0
+  	c.uf_id = the_uf_id
+  	and c.date_for_shop = the_date
+  	and c.ts_validated = 0
+  	and c.id = si.cart_id
   	and si.product_id = p.id
   	and pv.id = p.provider_id
   	and rev.id = p.rev_tax_type_id
@@ -54,26 +59,29 @@ begin
     p.name,
     p.description,
     oi.quantity as quantity,
-    oi.cart_id,
     p.provider_id,  
     pv.name as provider_name,
     p.category_id, 
-    oi.closing_date, 
+    po.closing_date, 
+    oi.order_id as order_id,
     p.unit_price * (1 + iva.percent/100) as unit_price, 
     if (p.orderable_type_id = 4 and oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
     rev.rev_tax_percent,
     um.unit
   from 
   	aixada_order_item oi,
+  	aixada_product_orderable_for_date po,
   	aixada_product p, 
   	aixada_provider pv, 
   	aixada_rev_tax_type rev, 
   	aixada_iva_type iva, 
   	aixada_unit_measure um
   where
-  	oi.date_for_order in (the_date, '1234-01-23')	
+  	oi.date_for_order in (the_date, '1234-01-23')
   	and oi.uf_id = the_uf_id
   	and oi.product_id = p.id
+  	and po.product_id = oi.product_id
+  	and po.date_for_order = oi.date_for_order
   	and pv.id = p.provider_id
   	and rev.id = p.rev_tax_type_id
   	and iva.id = p.iva_percent_id

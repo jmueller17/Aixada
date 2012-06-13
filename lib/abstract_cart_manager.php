@@ -22,55 +22,52 @@ require_once('inc/database.php');
 class abstract_cart_row {
 
     /**
-     * @var int the unique id
-     */
+	* @var int the unique id
+	*/
     protected $_row_id = 0;
 
     /**
-     * @var date the date when the cart is processed
-     */
+	* @var date the date when the cart is processed
+	*/
     protected $_date = 0;
 
     /**
-     * @var int the unique id of the uf buying or ordering
-     */
+	* @var int the unique id of the uf buying or ordering
+	*/
     protected $_uf_id = 0;
 
     /**
-     * @var int the unique id of the product that the row stores
-     */
+	* @var int the unique id of the product that the row stores
+	*/
     protected $_product_id = 0;
 
     /**
-     * @var float the quantity of the product
-     */
+	* @var float the quantity of the product
+	*/
     protected $_quantity = 0;
-
+    
+    
     /**
-     * @var float the price of the row
+     * Enter description here ...
+     * @var unknown_type
      */
-    protected $_price = 0;
-
+    protected $_cart_id = 0; 
+    
     /**
      * The constructor takes the id of the containing cart, of the
      * product, the quantity and the price
      */
-    public function __construct($date, $uf_id, $product_id, $quantity, $price) 
+    public function __construct($date, $uf_id, $product_id, $quantity, $cart_id)
     {
-        $this->_date        = $date;
-        $this->_uf_id       = $uf_id;
-        $this->_product_id  = $product_id;
-        $this->_quantity    = $quantity;
-        $this->_price       = $price;
+        $this->_date = $date;
+        $this->_uf_id = $uf_id;
+        $this->_product_id = $product_id;
+        $this->_quantity = $quantity;
+        $this->_cart_id = $cart_id; 
     }
 
-    /**
-     * return the price
-     */
-    public function get_price()
-    {
-        return $this->_price;
-    }
+    
+
 
     /**
      * return the product id
@@ -112,17 +109,18 @@ class abstract_cart_manager {
      * @var date stores the current date 
      */
     protected $_date;
-
+    
+    /**
+     * @var int the cart id
+     */
+    protected $_cart_id; 
+    
     /**
      * @var array_of_rows 
      */
     protected $_rows;
 
-    /**
-     * @var float stores the total amount in the cart
-     */
-    protected $_total_price = 0;
-
+    
     /**
      * @var boolean Has the cart been successfully committed?
      */
@@ -134,12 +132,18 @@ class abstract_cart_manager {
     protected $_item_table_name = '';
 
     /**
-     * @var string this is 'shop', 'order' or 'favorite_order'
+     * @var string this is 'shop', 'order'
      */
     protected $_id_string = '';
 
+    /**
+     * mysql commit prefix 
+     * @var string
+     */
     protected $_commit_rows_prefix = '';
 
+ 
+       
     public function __construct($uf_id, $date=0)
     {
         if (!$uf_id) {
@@ -148,34 +152,34 @@ class abstract_cart_manager {
         }
         $this->_uf_id = $uf_id;
         $this->_date = $date;
+        $this->_cart_id = 0;
         $this->_rows = array();
         $this->_item_table_name = 'aixada_' . $this->_id_string . '_item';
     }
 
 
-    public function commit($arrQuant, $arrPrice, $arrProdId, $arrPreorder) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder) 
     {
-	// pre-empt double validations
-	if (count($arrQuant)==0) 
-	    return;
-
-	// are the input array sizes consistent?
+		// pre-empt double validations
+		if (count($arrQuant)==0) 
+		    return;
+		    
         $this->_rows = array();
-        if (count($arrQuant)!=count($arrPrice) or count($arrPrice)!=count($arrProdId))
-            throw new Exception($this->_id_string . "_cart_manager::commit: mismatched array sizes: " . $arrQuant . ', ' . $arrPrice . ',' . $arrProdId);
-
-	// convert commas to decimal points in prices
-	$arrPrice = str_replace(',', '.', $arrPrice);
-    
-	// now proceed to commit
+        
+		// are the input array sizes consistent?        
+        if ( count($arrQuant)!=count($arrProdId) )
+            throw new Exception($this->_id_string . "_cart_manager::commit: mismatched array sizes: " . $arrQuant . ', ' . $arrProdId);
+            
+            
+        	// now proceed to commit
         $db = DBWrap::get_instance();
         try {
             $db->Execute('START TRANSACTION');
-            $this->_make_rows($arrQuant, $arrPrice, $arrProdId, $arrPreorder);
+            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
             $this->_check_rows();
             $this->_delete_rows();
             $this->_commit_rows();
-            $this->_postprocessing($arrQuant, $arrPrice, $arrProdId, $arrPreorder);
+            $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
             $db->Execute('COMMIT');
             clear_cache($this->_item_table_name);
         }
@@ -186,7 +190,10 @@ class abstract_cart_manager {
             $db->Execute('ROLLBACK');
             throw($e);
         }
-        $this->_commit_succeeded = true;
+        $this->_commit_succeeded = true;    
+        
+        return $this->_cart_id; 
+
     }
 
 
@@ -194,7 +201,7 @@ class abstract_cart_manager {
     /**
      * abstract function to make the row classes
      */ 
-    protected function _make_rows($arrQuant, $arrPrice, $arrProdId)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
     {
     }
 
@@ -231,6 +238,11 @@ class abstract_cart_manager {
             $commitSQL .= $row->commit_string() . ',';
         }
         $commitSQL = rtrim($commitSQL, ',') . ';';
+        
+        global $firephp;
+        $firephp->log($commitSQL, "commitSQL");
+    		
+        
         DBWrap::get_instance()->Execute($commitSQL);
     }
 
@@ -241,14 +253,6 @@ class abstract_cart_manager {
     {
     }
 
-
-    /**
-     * Read products using grep. Only products with active=1 are listed.
-     * @return mysqli_recordset a record set of available products, grouped by provider
-     */
-    protected function list_products_like($like)
-    {
-    }
 
 
     /**

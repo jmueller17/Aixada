@@ -124,7 +124,8 @@
   							   beforeSend : function(){
   							 		$('#cart .cartLoadAnim').show();
   								},
-  							   success: function(msg){
+  							   success: function(txt){
+  								    $('#global_cart_id').val(txt);
   									$this.data('aixadacart').submitSuccess.call($this);
   									$this.data('aixadacart').unsavedItems = false;
   									updateCartTips.call($this,'success',$.aixadacart.msg.saveSuccess,2000);
@@ -198,15 +199,26 @@
 					str += '<td class="item_name">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name">'+itemObj.provider_name+'</td>';
 					str += '<td class="item_quantity">	 <input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" />'; 
+					str +=								'<input type="hidden" name="order_item_id[] value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
-					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
+					//str += 								'<input type="hidden" name="cart_id[]" value="'+itemObj.cart_id+'" />';
+					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" />'
+					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" /></td>';
 					str += '<td>' + itemObj.unit + '</td>';
 					str += '<td class="item_total" id="item_total_'+itemObj.id+'"></td>';
 					str += '</tr>';
+/*
+$cm->commit($_REQUEST['quantity'], OK
+		$_REQUEST['product_id'],  OK
+		$_REQUEST['iva_percent'], OK
+		$_REQUEST['rev_tax_percent'], OK 
+		$_REQUEST['order_item_id'], OK
+		$_REQUEST['cart_id'], OK
+		$_REQUEST['preorder']); OK
 					
-					$this.prepend(str);
+*/					$this.prepend(str);
 
 					//event listener to remove items from cart
 					$("#del_"+itemObj.id, $this)
@@ -327,17 +339,24 @@
  				url: $this.data('aixadacart').loadCartURL,
  				dataType: "xml",
  				success: function(xml){
-    			 	
+ 					
+ 					var lastCartId = -1;
+ 					
     			 	$(xml).find('row').each(function(){
 			  			var objItem = $this.aixadacart("getRowData", {
 			  				type : 'xml',
 			  				row : $(this)			  				
 			  			});
-			  			
+			  			if (lastCartId > 0 && lastCartId != objItem.cart_id){
+			  				updateCartTips.call($this,'error','cart_id mismatch: ' + lastCartId + " and " + objItem.cart_id);
+			  				return false; 
+			  			}
+			  			lastCartId = objItem.cart_id; 
 			  			$this.aixadacart("addItem",objItem);
 			  		 
 			  		});// end each row	
-    			 
+    			 	
+    			 	$('#global_cart_id').val(lastCartId);
     			 	$this.data('aixadacart').loadSuccess.call(this);
     			 	$this.data('aixadacart').unsavedItems = false;
     			 	
@@ -425,7 +444,8 @@
 	  
 	  /**
 	   * retrieves the data fields / values from a given table or xml row 
-	   * breaks the chain?!!!!
+	   * some values are retrieved from the shop/order item listing, others
+	   * always come directly from the server such as order_item_id, cart_id
 	   */
 	  getRowData : function(options){
 		  
@@ -439,10 +459,12 @@
 					provider_name 		: $(row).find('provider_name').text(),
 					name 				: $(row).find('name').text(),
 					quantity 			: $(row).find('quantity').text(),
-					//unit 				: $(row).find('unit_measure_id_order').text(),
 					unit 				: $(row).find('unit').text(),
 					price 				: parseFloat($(row).find('unit_price').text()),
-					rev_tax_percent		: parseFloat($(row).find('rev_tax_percent').text())
+					rev_tax_percent		: $(row).find('rev_tax_percent').text(),
+					iva_percent			: $(row).find('iva_percent').text(),
+					order_item_id		: $(row).find('order_item_id').text(),
+					cart_id 			: $(row).find('cart_id').text()
 				};
 			 
 		  } else if (options.type == "table"){
@@ -456,7 +478,10 @@
 					quantity 		: formatNumInput($("#cart_quantity_"+id).val()),
 					unit 			: $("td.item_unit", row).text(),
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
-					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
+					rev_tax_percent	: $("td.item_rev_tax_percent", row).val(),
+					iva_percent		: $("td.item_iva_percent", row).text(),
+					order_item_id	: $("#cart_order_item_id_"+id).val(),
+					cart_id 		: $("#global_cart_id").val()
 				};
 			  //alert(objItem.id + " qu: " + objItem.quantity + " price: " + objItem.price + " tax: " + objItem.rev_tax_percent);
 			  
@@ -535,7 +560,7 @@
 	function updateCartTips (type, msg, timing ) {
 		
 		var style = 'ui-state-highlight';
-		var milsecs = (timing >= 0)? timing:8000;
+		var milsecs = (timing >= 0)? timing:10000;
 			
 		if (type == 'success'){
 			style = 'cart_success_msg';
@@ -601,6 +626,7 @@
 		if(which == 'simple'){
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
+			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<table id="aixada_cart_list" class="cart_product_list">';
 			str += tbl_head;
 			str += '<tbody></tbody>';
@@ -618,6 +644,7 @@
 			
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
+			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<div id="cart_tabs">';
 			str += '<ul>';
 			str += '<li><a href="#tabsx-1" style="font-size:1.6em;">'+$.aixadacart.title.order+'</a></li>';
@@ -646,6 +673,7 @@
 
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
+			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<div class="cart_container ui-widget-content ui-corner-all">';
 			str += '<h2 class="ui-widget-header ui-corner-all"> '+$.aixadacart.title.shop+'<span class="cartLoadAnim cart_floatRight cart_hidden"><img src="img/ajax-loader.gif"/></span></h2>';
 			str += '<table id="aixada_cart_list" class="cart_product_list">';

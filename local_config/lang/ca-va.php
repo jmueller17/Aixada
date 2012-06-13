@@ -291,6 +291,7 @@ $Text['nav_mng'] = "Gestiona";
 	$Text['nav_mng_orders'] = "Comandes";
 		$Text['nav_mng_setorderable'] = "Set orderable dates";
 		$Text['nav_mng_move'] = "Canvia la data de la comanda";
+		$Text['nav_mng_orders_overview'] = "Gestiona comandes";
 		$Text['nav_mng_preorder'] = "Converteix la comanda acumulativa en comanda";
 	$Text['nav_mng_db'] = "Backup db";
 	
@@ -415,7 +416,7 @@ $Text['msg_deposit_success'] = "El dipòsit s'ha fet correctament!";
 $Text['msg_withdrawal_success'] = "El pagament s'ha fet correctament!";
 $Text['msg_select_cart_first'] = "Per afegir articles per validar abans heu de seleccionar una UF o una compra!";
 $Text['msg_err_move_date'] = "S'ha produït un error mentre es canviava la data de la comanda. Intenteu-ho de nou.";
-$Text['msg_no_active_products'] = "En aquests moments no hi ha productes actius per a aquest proveïdor!";
+$Text['msg_no_active_products'] = "En aquests moments no hi ha productes actius per fer la comanda!";
 $Text['msg_no_movements'] = "No hi ha moviments per al compte i la data seleccionats!"; 
 $Text['msg_delete_incident'] = "Segur que voleu eliminar aquest incident?";
 $Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases."; //ADDED JAN 2012

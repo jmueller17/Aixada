@@ -87,6 +87,7 @@ function dateRange( $first, $last, $outDateFormat='Y-m-d', $dataFormat='xml', $s
 function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 {
 	if ($from_date == 0){
+		//TODO server - client difference in time/date?!
 		$from_date = date('Y-m-d', strtotime("Today")); 
 	}
 	

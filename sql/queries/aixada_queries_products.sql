@@ -160,45 +160,25 @@ begin
 	where
 		id = the_product_id;
 		
-		
-	if the_active_state = 0 then
-		delete 
-			po.* 
-		from 
-			aixada_product_orderable_for_date po 
-		left join 
-			aixada_order_item oi on 
-			po.date_for_order = oi.date_for_order
-		where 
-			po.date_for_order > today
-			and po.product_id = the_product_id
-			and oi.date_for_order is null;
-			
 	
-		/** same with subselect **/
-		/*
-		delete from
-			aixada_product_orderable_for_date
-		where
-			date_for_order > today
-			and product_id = the_product_id
-			and date_for_order not in 
-			(select
-				oi.date_for_order
-			 from
-			 	aixada_order_item oi
-			 where 
-			 	oi.product_id = the_product_id
-			 	and oi.date_for_order > today
-			);*/
-			
+	/** 
+	 * product has been deactivated in general, i.e.: delete all those entries in po 
+	 * that have no ordered items 
+	 */	
+	if the_active_state = 0 then		
+			delete
+				po.*
+			from
+				aixada_product_orderable_for_date po
+			left join
+				aixada_order_item oi on
+				po.date_for_order = oi.date_for_order
+			where
+				po.date_for_order > today
+				and po.product_id = the_product_id
+				and oi.date_for_order is null;	
 	end if;
 end|
-
-
-
-
-
 
 
 
@@ -249,7 +229,7 @@ begin
 		 from 
 		 	aixada_order_item oi 
 		 where 
-		 	p.id=oi.product_id 
+		 	p.id=oi.product_id
 		 	and oi.date_for_order = po.date_for_order) as has_ordered_items
 	from 
 		aixada_product_orderable_for_date po,
@@ -325,6 +305,7 @@ begin
 		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,
+		iva.percent as iva_percent,
 		t.rev_tax_percent
 		",fieldc,"
 	from

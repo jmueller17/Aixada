@@ -27,26 +27,12 @@ class configuration_vars {
    */
   public $db_type = 'mysqli';
   public $db_host = 'localhost';
-  public $db_name = 'aixadat';
+  public $db_name = 'aixadac';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
 
 
-  /**
-   *  the next variable must be in English; will be called by PHP's strtotime() 
-   *  in next_shop_dates() in utilities_shop_and_order.php
-   */
-  public $shopping_day = 'Wednesday';  
-  
-  
-  /**
-   * These are the days of the week that people can come in and pick up their stuff. These 
-   * days are usually orderable, i.e. people can make orders for these days. Names have to be in English 
-   * @var array
-   */
-  //public $orderable_days = array('Wednesday');
-  
-
+ 
   /**
    * 
    * Sets the max. time scale for activating orderable dates into the future. E.g. 48 means that max. the orderable dates 
@@ -68,6 +54,8 @@ class configuration_vars {
    * 
    */
   public $development = true; 
+  
+  
   
   /**
    * Code optimizations
