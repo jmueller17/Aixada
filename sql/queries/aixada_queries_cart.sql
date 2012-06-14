@@ -59,14 +59,16 @@ begin
     p.name,
     p.description,
     oi.quantity as quantity,
+    oi.cart_id,
+    oi.order_id,
     p.provider_id,  
     pv.name as provider_name,
     p.category_id, 
     po.closing_date, 
-    oi.order_id as order_id,
     p.unit_price * (1 + iva.percent/100) as unit_price, 
     if (p.orderable_type_id = 4 and oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
     rev.rev_tax_percent,
+    iva.percent as iva_percent,
     um.unit
   from 
   	aixada_order_item oi,

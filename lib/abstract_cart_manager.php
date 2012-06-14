@@ -67,8 +67,6 @@ class abstract_cart_row {
     }
 
     
-
-
     /**
      * return the product id
      */
@@ -85,6 +83,10 @@ class abstract_cart_row {
         return $this->_quantity;
     }
 
+    /**
+     * To be overwritten by shop/order cart managers. Constructs the commit string
+     * for items. 
+     */
     public function commit_string() {}
 }
 
@@ -158,33 +160,54 @@ class abstract_cart_manager {
     }
 
 
+    /**
+     * Commits the cart content to the database, either aixada_shop_item or aixada_order_item. 
+     * Returns the current cart_id.
+     * 
+     * @param array $arrQuant
+     * @param array $arrProdId
+     * @param array $arrIva
+     * @param array $arrRevTax
+     * @param array $arrOrderItemId
+     * @param int $cart_id
+     * @param array $arrPreOrder
+     * @return int cart_id
+     */
     public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder) 
     {
-		// pre-empt double validations
-		if (count($arrQuant)==0) 
-		    return;
+    	global $firephp;
+    	$hasItems = true; 
+    	
+    	// are the input array sizes consistent?        
+        if (  count($arrQuant)!= count($arrProdId) || count($arrProdId) != count($arrIva) || count($arrProdId) != count($arrRevTax)   )
+            throw new Exception($this->_id_string . "_cart_manager::commit: mismatched array sizes: " . $arrQuant . ', ' . $arrProdId);
+    	
+		//if cart is empty, delete it
+		if (count($arrQuant)==0) {
+			$hasItems = false; 
+		}
+
 		    
         $this->_rows = array();
         
-		// are the input array sizes consistent?        
-        if ( count($arrQuant)!=count($arrProdId) )
-            throw new Exception($this->_id_string . "_cart_manager::commit: mismatched array sizes: " . $arrQuant . ', ' . $arrProdId);
-            
-            
-        	// now proceed to commit
+		
+        // now proceed to commit
         $db = DBWrap::get_instance();
         try {
             $db->Execute('START TRANSACTION');
             $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
             $this->_check_rows();
             $this->_delete_rows();
-            $this->_commit_rows();
+            if ($hasItems) {
+            	$this->_commit_rows();
+            } else {
+            	$this->_delete_cart();
+            }
             $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
             $db->Execute('COMMIT');
             clear_cache($this->_item_table_name);
         }
         catch (Exception $e) {
-            global $firephp;
             $firephp->log($e);
             $this->_commit_succeeded = false;
             $db->Execute('ROLLBACK');
@@ -217,14 +240,18 @@ class abstract_cart_manager {
      */ 
     protected function _delete_rows()
     {
-        $db = DBWrap::get_instance();
-        $db->Execute('delete from ' 
-                     . $this->_item_table_name 
-                     . ' where uf_id=:1q and date_for_'
-                     . $this->_id_string 
-                     . '=:2q', $this->_uf_id, $this->_date);
+    
     }
   
+    /**
+     * a cart can be deleted if all items have been removed before. 
+     */
+    protected function _delete_cart()
+    {
+    
+    }
+    
+    
     /**
      * Commits the rows of the order to the database. 
      */
@@ -238,11 +265,7 @@ class abstract_cart_manager {
             $commitSQL .= $row->commit_string() . ',';
         }
         $commitSQL = rtrim($commitSQL, ',') . ';';
-        
-        global $firephp;
-        $firephp->log($commitSQL, "commitSQL");
-    		
-        
+         
         DBWrap::get_instance()->Execute($commitSQL);
     }
 

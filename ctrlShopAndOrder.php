@@ -176,9 +176,9 @@ try{
 	    case 'commit':
 	    	
 	        try {
-	        	//_commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $arrCartId, $arrPreorder) 
-	            //$cm->commit($_REQUEST['order_id'], $_REQUEST['quantity'], $_REQUEST['price'], $_REQUEST['product_id'], $_REQUEST['preorder']);
-	            $cid = $cm->commit($_REQUEST['quantity'], $_REQUEST['product_id'], $_REQUEST['iva_percent'], $_REQUEST['rev_tax_percent'], $_REQUEST['order_item_id'], $_REQUEST['cart_id'], $_REQUEST['preorder']);
+				$emptyArr = array();
+	        	$cid = $cm->commit(get_param('quantity',$emptyArr), get_param('product_id',$emptyArr), get_param('iva_percent',$emptyArr), get_param('rev_tax_percent',$emptyArr), get_param('order_item_id',$emptyArr), get_param('cart_id',0), get_param('preorder',$emptyArr));
+	            //$cid = $cm->commit($_REQUEST['quantity'], $_REQUEST['product_id'], $_REQUEST['iva_percent'], $_REQUEST['rev_tax_percent'], $_REQUEST['order_item_id'], $_REQUEST['cart_id'], $_REQUEST['preorder']);
 	            echo ($cid);
 	        }
 	        catch(Exception $e) {

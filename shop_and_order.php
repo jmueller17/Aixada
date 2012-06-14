@@ -128,9 +128,6 @@
 					$('#product_list_category tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker'),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-							/*var id =  $(row).attr("id"); 
-							var qu = $("#cart_quantity_"+id).val();
-							$("#quantity_"+id).val(qu);*/
 							formatRow(row);
 						},
 						complete : function (rowCount){
@@ -157,9 +154,6 @@
 				  	$('#product_list_search tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-							/*var id =  $(row).attr("id"); 
-							var qu = $("#cart_quantity_"+id).val();
-							$("#quantity_"+id).val(qu);*/
 							formatRow(row);
 						}, 
 						complete : function(rowCount){
@@ -272,6 +266,8 @@
 				if (what == 'Shop') itemInfo += '<li><?=$Text["curStock"];?>: ' + $(this).attr("stock") + '</li>';
 				//add description of product
 				itemInfo += '<li><?=$Text['description'];?>: '+$(this).attr("description")+'</li>';
+				itemInfo += '<li>IVA: '+$(this).attr("iva_percent")+'%</li>';
+				itemInfo += '<li><?=$Text['revtax_abbrev'];?>: '+$(this).attr("rev_tax_percent")+'%</li>'
 				itemInfo += '</ul>';
 	
 				//init the context menu
@@ -322,7 +318,6 @@
 					unit 			: $("td.item_unit", row).text(),
 					rev_tax_percent : $("td.item_rev_tax_percent", row).text(),
 					iva_percent		: $("td.item_iva_percent", row).text()
-
 			}); //end addItem to cart
 
 			//sets nr of items in cart hide/view button
@@ -377,8 +372,10 @@
 		var days2Closing = $(row).attr("closingdate");
 		var id =  $(row).attr("id"); 
 		var qu = $("#cart_quantity_"+id).val();
+		qu = (qu > 0)? qu:0;
 		$("#quantity_"+id).val(qu);
 
+		
 		if (!days2Closing || days2Closing <0){
 			$(row).addClass('dim60');
 			$('td', row).addClass('ui-state-error');
@@ -457,22 +454,22 @@
 								<th><?php echo $Text['name_item'];?></th>						
 								<th><?php echo $Text['quantity'];?></th>
 								<th><?php echo $Text['unit'];?></th>
-								<th><?php echo $Text['revtax_abbrev'];?></th>
+								<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 								<th><?php echo $Text['price'];?></th>
-								<th>iva</th>
+								
 							</tr>
 						</thead>
 						<tbody>
 							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
+								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name hidden">{provider_name}</td>
 								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>	
-								<td class="item_iva_percent">{iva_percent}</td>		
+								<td class="item_iva_percent hidden">{iva_percent}</td>
 							</tr>						
 						</tbody>
 					</table>
@@ -496,20 +493,21 @@
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['quantity'];?></th>
 							<th><?php echo $Text['unit'];?></th>
-							<th><?php echo $Text['revtax_abbrev'];?></th>
+							<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 							<th><?php echo $Text['price'];?></th>
 						</tr>
 						</thead>
 						<tbody>
 							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
+								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>			
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
+								<td class="item_price">{unit_price}</td>	
+								<td class="item_iva_percent hidden">{iva_percent}</td>
 							</tr>						
 						</tbody>
 					</table>
@@ -531,21 +529,22 @@
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['quantity'];?></th>
 							<th><?php echo $Text['unit'];?></th>
-							<th><?php echo $Text['revtax_abbrev'];?></th>
+							<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 							<th><?php echo $Text['price'];?></th>
 						</tr>
 						</thead>
 						<tbody>
 							<tr id="{id}" closingdate="{time_left}">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
+								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="ui-widget-content ui-corner-all" name="{id}" value="0.00"  size="5" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>			
-							</tr>						
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
+								<td class="item_price">{unit_price}</td>	
+								<td class="item_iva_percent hidden">{iva_percent}</td>
+							</tr>							
 						</tbody>
 					</table>
 				</div>
@@ -562,20 +561,21 @@
 								<th><?php echo $Text['name_item'];?></th>
 								<th><?php echo $Text['quantity'];?></th>
 								<th><?php echo $Text['unit'];?></th>
-								<th><?php echo $Text['revtax_abbrev'];?></th>
+								<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 								<th><?php echo $Text['price'];?></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr id="{id}" preorder="true">
 								<td class="item_it">{id}</td>
-								<td class="item_stock"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
-								<td class="item_provider_name">{provider_name}</td>
+								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
-								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
+								<td class="item_provider_name">{provider_name}</td>
+								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>			
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
+								<td class="item_price">{unit_price}</td>	
+								<td class="item_iva_percent hidden">{iva_percent}</td>
 							</tr>						
 						</tbody>
 					</table>

@@ -39,7 +39,7 @@ function get_param($param_name, $default=null, $transform = ''){
 			$value = $value;
 			break;
 		default: 
-			throw new Exception("get_param: transform {$transform} on URL parameter not supported. ");
+			throw new Exception("get_param: transform '{$transform}' on URL parameter not supported. ");
 			break;
 	}
 	return $value;

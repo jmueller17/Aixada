@@ -30,12 +30,8 @@ class order_item extends abstract_cart_row {
             . $this->_product_id . ','
             . $this->_quantity 
             . ')';
-            
-     //        (order_id, cart_id, date_for_order, uf_id, product_id, quantity)
     }
 }
-
-//replace into aixada_order_item (date_for_order, uf_id, product_id, quantity) values (2012-06-21,'82',860,2,12.5); 
 
 
 /**
@@ -80,7 +76,7 @@ class order_cart_manager extends abstract_cart_manager {
     protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
     {
     	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favorite" cart
-    	$this->_cart_id = (isset($cart_id) && is_int($cart_id))? $cart_id:'null';
+    	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
     	
         for ($i=0; $i < count($arrQuant); ++$i) {
             if ($arrPreOrder[$i] == 'false'){
@@ -96,6 +92,17 @@ class order_cart_manager extends abstract_cart_manager {
     }
 
     /**
+     * deletes rows in aixada_order_item for given uf and date. 
+     * On every commit all order items are delete and then rewritten. 
+     */
+    protected function _delete_rows()
+    {
+    	$db = DBWrap::get_instance();
+        $db->Execute("delete from aixada_order_item where uf_id=:1q and (date_for_order=:2q or date_for_order='1234-01-23')", $this->_uf_id, $this->_date);	
+    }
+    
+    
+    /**
      * Overloaded function to commit the cart to the database
      */
     protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
@@ -110,24 +117,14 @@ class order_cart_manager extends abstract_cart_manager {
                                                 $this->_uf_id,
                                                 $arrProdId[$i], 
                                                 $arrQuant[$i],  
-                                                'null');
+                                                $this->_cart_id);
+             
                                                 
         }
         $this->_commit_rows();
     }
 
-    /**
-     * Read products for an order. Only products with active=1, status>1 are listed.
-     * @return string an XML string of available products, grouped by provider
-     */
-    public function products_for_order_XML()
-    {
-        /*$strXML = '<aixada_product_row_set>';
-        $strXML .= $this->rowset_to_XML($this->get_products_for_order());
-        $strXML .= '</aixada_product_row_set>';
-        return $strXML;*/
-    }
-
+ 
 
 }
 

@@ -119,10 +119,7 @@ class shop_cart_manager extends abstract_cart_manager {
     		
     	}
     	
-    	
-    	
-    	
-    	//$date, $uf_id, $product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id
+   
     	for ($i=0; $i < count($arrQuant); ++$i){
     		
     		//if item is stock, set order_item_id to null	    	
@@ -137,18 +134,30 @@ class shop_cart_manager extends abstract_cart_manager {
 					     				 $order_item_id
 					     				 );
     	}
-
-  }
+  	}
 
 
   /**
-   * abstract function to delete the rows of a cart from an *_item table
+   * abstract function to delete the rows of a cart from an aixada_shop_item
    */ 
   protected function _delete_rows()
   {
     $db = DBWrap::get_instance();
 		 
-    $db->Execute('DELETE FROM ' . $this->_item_table_name . ' WHERE cart_id=:1q', $this->_cart_id);
+    $db->Execute('DELETE FROM aixada_shop_item WHERE cart_id=:1q', $this->_cart_id);
+  }
+  
+  
+  /**
+   * 
+   */
+  protected function _delete_cart()
+  {
+  	if ($this->_cart_id > 0){
+  		$db = DBWrap::get_instance(); 
+    	$db->Execute('delete from aixada_cart where id=:1q', $this->_cart_id);
+    	$this->_cart_id = 0; 
+  	}  	
   }
 
   /**

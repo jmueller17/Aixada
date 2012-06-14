@@ -203,22 +203,14 @@
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
-					//str += 								'<input type="hidden" name="cart_id[]" value="'+itemObj.cart_id+'" />';
 					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" />'
-					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" /></td>';
+					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
 					str += '<td>' + itemObj.unit + '</td>';
 					str += '<td class="item_total" id="item_total_'+itemObj.id+'"></td>';
 					str += '</tr>';
-/*
-$cm->commit($_REQUEST['quantity'], OK
-		$_REQUEST['product_id'],  OK
-		$_REQUEST['iva_percent'], OK
-		$_REQUEST['rev_tax_percent'], OK 
-		$_REQUEST['order_item_id'], OK
-		$_REQUEST['cart_id'], OK
-		$_REQUEST['preorder']); OK
+
 					
-*/					$this.prepend(str);
+					$this.prepend(str);
 
 					//event listener to remove items from cart
 					$("#del_"+itemObj.id, $this)
@@ -461,7 +453,7 @@ $cm->commit($_REQUEST['quantity'], OK
 					quantity 			: $(row).find('quantity').text(),
 					unit 				: $(row).find('unit').text(),
 					price 				: parseFloat($(row).find('unit_price').text()),
-					rev_tax_percent		: $(row).find('rev_tax_percent').text(),
+					rev_tax_percent		: parseFloat($(row).find('rev_tax_percent').text()),
 					iva_percent			: $(row).find('iva_percent').text(),
 					order_item_id		: $(row).find('order_item_id').text(),
 					cart_id 			: $(row).find('cart_id').text()
@@ -478,7 +470,7 @@ $cm->commit($_REQUEST['quantity'], OK
 					quantity 		: formatNumInput($("#cart_quantity_"+id).val()),
 					unit 			: $("td.item_unit", row).text(),
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
-					rev_tax_percent	: $("td.item_rev_tax_percent", row).val(),
+					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
 					iva_percent		: $("td.item_iva_percent", row).text(),
 					order_item_id	: $("#cart_order_item_id_"+id).val(),
 					cart_id 		: $("#global_cart_id").val()
