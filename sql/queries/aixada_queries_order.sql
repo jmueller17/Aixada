@@ -39,7 +39,7 @@ begin
 		oi.date_for_order, 
 		pv.name as provider_name,
 		po.closing_date,
-		/** get_order_total(oi.order_id) as order_total, quite intensive... **/
+		get_order_total(oi.order_id) as order_total, /**quite intensive... **/
 		datediff(po.closing_date, today) as time_left
 	from 
 		aixada_provider pv,

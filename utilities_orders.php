@@ -11,7 +11,7 @@ function get_orders_in_range($time_period='today', $limit=117111451111)
 	
 	//TODO server - client difference in time/date?!
 	$today = date('Y-m-d', strtotime("Today"));
-	$prev3month = date('Y-m-d', strtotime('Today - 3 month'));
+	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
 	
@@ -27,8 +27,8 @@ function get_orders_in_range($time_period='today', $limit=117111451111)
 			break;
 
 		//last 100
-		case 'prev3month':
-			printXML(stored_query_XML_fields('get_orders_listing', $prev3month, $very_distant_future, $limit));
+		case 'prevMonth':
+			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $very_distant_future, $limit));
 			break;
 		
 		//all orders without a shop date assigned
