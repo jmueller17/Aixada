@@ -31,11 +31,37 @@
 
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
-				params : 'oper=getOrdersListing&filter=all&limit=100', 
-				loadOnInit : true
+				params : 'oper=getOrdersListing&filter=prev3month', 
+				loadOnInit : true, 
+				rowComplete : function (rowIndex, row){
+					var orderId = $(row).attr("id");
+
+					if (orderId > 0){ // order is closed
+						$('#orderClosedIcon'+orderId).removeClass('ui-icon-unlocked').addClass('ui-icon-locked');
+					} else {
+						//while open and not send off, no order_id exists
+						$(row).children(':first').html('<p>-</p>');
+						$(row).children().eq(5).html('<p class="ui-state-highlight minPadding"><span class="ui-icon ui-icon-alert floatLeft"></span>not yet send to provider</p>');
+					}
+					 	
+				}
 			});
 
-					
+
+			$('.iconContainer')
+				.live('mouseover', function(e){
+					$(this).addClass('ui-state-hover');
+				})
+				.live('mouseout', function (e){
+					$(this).removeClass('ui-state-hover').addClass('ui-state-default');
+				});
+
+			$('.ui-icon-cart')
+				.live('click', function(e){
+					var id = $(this).parents('tr').attr('id');
+					alert(id);
+				});
+						
 			
 	});  //close document ready
 </script>
@@ -71,23 +97,28 @@
 						<th>id</th>
 						<th>Ordered for</th>
 						<th>Provider</th>
+						<th>Days left</th>
 						<th>&nbsp;</th>
-						<th>Status</th>
+						<th>Send off to provider</th>
 						<th>Shop date</th>
 						<th>Total</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr id="{id}">
 						<td>{id}</td>
 						<td>{date_for_order}</td>
 						<td>{provider_name}</td>
-						<td class="textAlignCenter"><span class="ui-icon ui-icon-locked"></span>{time_left}</td>
-						<td>{order_status}</td>
+						<td><p class="textAlignCenter">{time_left}</p></td>
+						<td><span id="orderClosedIcon{id}" class="tdIconCenter ui-icon ui-icon-unlocked"></span></td>
+						<td><span class="floatRight">{ts_send_off}</span> <span class="ui-icon ui-icon-check floatRight"></span>&nbsp;</td>
 						<td>{date_for_shop}</td>
 						<td>{order_total}</td>
-						<td></td>
+						<td>
+							<p class="ui-corner-all iconContainer ui-state-default floatLeft"><span class="ui-icon ui-icon-cart" title="Set shop date"></span></p>
+							<p class="ui-corner-all iconContainer ui-state-default floatLeft"><span class="ui-icon ui-icon-pencil" title="Revise order"></span></p>
+						</td>
 					</tr>
 				</tbody>
 				<tfoot>

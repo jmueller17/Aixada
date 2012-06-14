@@ -20,16 +20,6 @@ begin
 		and po.product_id = p.id
 		and p.provider_id = the_provider_id;
 		
-		
-	/** do the same for aixada_order **/
-	update 
-		aixada_order o
-	set 
-		o.closing_date = the_closing_date
-	where 
-		o.date_for_order = the_order_date
-		and o.provider_id = the_provider_id;
-		
 end |
 
 
@@ -43,110 +33,138 @@ begin
 	
 	declare today date default date(sysdate()); 
 	
-	select distinct 
-		o.id, 
-		o.provider_id, 
-		o.date_for_order,
-		o.date_for_shop,
-		o.closing_date,
-		datediff(o.closing_date, today) as time_left,
-		pv.name as provider_name
+	/** open orders, that have no order_id yet **/
+	select distinct
+		o.*,
+		oi.date_for_order, 
+		pv.name as provider_name,
+		po.closing_date,
+		/** get_order_total(oi.order_id) as order_total, quite intensive... **/
+		datediff(po.closing_date, today) as time_left
 	from 
-		aixada_order o,
-		aixada_provider pv
-	where 
-		o.date_for_order >= from_date
-		and o.date_for_order <= to_date
-		and o.provider_id = pv.id
-	order by
-		o.date_for_order desc
-	limit the_limit;
-		
+		aixada_provider pv,
+		aixada_product p,
+		aixada_product_orderable_for_date po,
+		aixada_order_item oi left join 
+		aixada_order o on oi.order_id = o.id
+	where
+		oi.date_for_order >= from_date
+		and oi.date_for_order <= to_date
+		and oi.product_id = p.id
+		and p.provider_id = pv.id
+		and oi.date_for_order = po.date_for_order
+		and po.product_id = p.id
+	order by 
+		oi.date_for_order desc
+	limit 
+		the_limit;
+	
 end |
 
 
 
 
+drop function if exists get_order_total|
+create function get_order_total(the_order_id int)
+returns decimal(10,2)
+begin
+	
+	declare order_total decimal(10,2) default 0.00; 
+	
+	/** needs iva included ?? **/
+	set order_total = (select
+    	convert(sum(oi.quantity * p.unit_price), decimal(10,2))
+  	from 
+  		aixada_product p,
+  		aixada_order_item oi
+  	where
+  		oi.order_id = the_order_id
+  		and oi.product_id = p.id);
+  		
+  	return order_total;
+end|
 
+
+
+
+
+drop procedure if exists activate_preorder_products|
+create procedure activate_preorder_products(in the_date date, in product_id_list varchar(255))
+begin
+  set @q = 
+  concat("update aixada_order_item
+          set date_for_order = '", the_date,
+         "' where date_for_order = '1234-01-23'
+	    and product_id in ", product_id_list, ";");
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;  
+end|
+
+
+drop procedure if exists deactivate_preorder_products|
+create procedure deactivate_preorder_products(in the_date date, in product_id_list varchar(255))
+begin
+  set @q = 
+  concat("update aixada_order_item 
+          set date_for_order = '1234-01-23' 
+          where date_for_order = '", the_date,
+	   "' and product_id in ", product_id_list, ";");
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;  
+end|
+
+
+drop procedure if exists list_preorder_providers|
+create procedure list_preorder_providers()
+begin
+   select distinct pv.id, pv.name
+   from aixada_product p
+   left join aixada_provider pv
+   on p.provider_id = pv.id
+   left join aixada_order_item i
+   on p.id = i.product_id
+   where p.orderable_type_id = 4 
+     and i.date_for_order = '1234-01-23'
+   order by pv.name;
+end|
+
+drop procedure if exists list_preorder_products|
+create procedure list_preorder_products(in prov_id int)
+begin
+   select 
+        p.id, 
+        p.name, 
+        p.description,
+        sum(i.quantity) as total
+   from aixada_product p
+   left join aixada_order_item i
+   on p.id = i.product_id
+   where p.provider_id = prov_id
+   and p.orderable_type_id = 4
+   and i.date_for_order = '1234-01-23'
+   group by p.id;
+end|
 
 
 
 /**
- * A query that returns all products corresponding to a given favorite order
+ * Convert ordered items to shop items
  */
-drop procedure if exists products_for_favorite_order|
-create procedure products_for_favorite_order (in the_uf_id int, in the_favorite_cart_id int)
+drop procedure if exists convert_order_to_shop|
+create procedure convert_order_to_shop(IN uf int, IN order_date date)
 begin
-  select
-      p.id,
-      p.name,
-      p.description,
-      p.provider_id,  
-      p.category_id, 
-      p.unit_price * (1 + p.iva_percent/100) as unit_price, 
-      p.unit_measure_order_id,
-      rev_tax_percent,
-      fi.quantity
-  from 
-      aixada_product p
-      left join aixada_favorite_order_item fi
-      on p.id = fi.product_id
-      left join aixada_provider pv
-      on p.provider_id = pv.id
-      left join aixada_rev_tax_type t
-      on p.rev_tax_type_id = t.id
-  where 
-      fi.uf_id = the_uf_id and 
-      fi.favorite_order_cart_id = the_favorite_cart_id and
-      p.active = 1 and
-      pv.active = 1
-  order by p.name;				    
+  replace into aixada_shop_item (
+    uf_id, date_for_shop, product_id, quantity
+  ) select i.uf_id, i.date_for_order, i.product_id, i.quantity
+    from aixada_order_item i
+    where date_for_order = order_date 
+      and uf_id = uf;
 end|
 
-drop procedure if exists get_favorite_order_carts|
-create procedure get_favorite_order_carts(in the_uf_id int)
-begin
-   select id, name from aixada_favorite_order_cart 
-   where uf_id = the_uf_id;
-end|
 
-/**
- * Make a new favorite order cart and output its contents
- */
-drop procedure if exists make_favorite_order_cart|
-create procedure make_favorite_order_cart(in the_uf_id int, in the_date date, in the_name varchar(255))
-begin
-  declare cart_id int;
-  insert into aixada_favorite_order_cart 
-      (uf_id, name)
-    values 
-      (the_uf_id, the_name);
 
-  select last_insert_id() into cart_id;
-
-  insert into aixada_favorite_order_item 
-      (favorite_order_cart_id, uf_id, product_id, quantity, ts_ordered)
-    select 
-      cart_id, the_uf_id, o.product_id, o.quantity, the_date
-    from aixada_order_item o
-    where 
-      o.date_for_order = the_date and
-      o.uf_id = the_uf_id;
-
-  call products_for_favorite_order(the_uf_id, cart_id);
-end|
-
-drop procedure if exists delete_favorite_order_cart|
-create procedure delete_favorite_order_cart(in the_uf_id int, in cart_id int)
-begin
-  delete from aixada_favorite_order_item 
-  where uf_id = the_uf_id and
-        favorite_order_cart_id = cart_id;
-
-  delete from aixada_favorite_order_cart
-  where uf_id = the_uf_id and
-        id = cart_id;
-end|
 
 
 /**
@@ -154,6 +172,9 @@ end|
  *  In case an order already exists at to_date, the
  *  quantity(to_date) is updated with 
  *  max( quantity(from_date), quantity(to_date) ) .
+ * 
+ * 
+ *  still necessary???
  */
 
 drop procedure if exists move_all_orders|
@@ -225,79 +246,6 @@ begin
            where i.date_for_shop = to_date;
 end|
 
-
-drop procedure if exists activate_preorder_products|
-create procedure activate_preorder_products(in the_date date, in product_id_list varchar(255))
-begin
-  set @q = 
-  concat("update aixada_order_item
-          set date_for_order = '", the_date,
-         "' where date_for_order = '1234-01-23'
-	    and product_id in ", product_id_list, ";");
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;  
-end|
-
-drop procedure if exists deactivate_preorder_products|
-create procedure deactivate_preorder_products(in the_date date, in product_id_list varchar(255))
-begin
-  set @q = 
-  concat("update aixada_order_item 
-          set date_for_order = '1234-01-23' 
-          where date_for_order = '", the_date,
-	   "' and product_id in ", product_id_list, ";");
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;  
-end|
-
-
-drop procedure if exists list_preorder_providers|
-create procedure list_preorder_providers()
-begin
-   select distinct pv.id, pv.name
-   from aixada_product p
-   left join aixada_provider pv
-   on p.provider_id = pv.id
-   left join aixada_order_item i
-   on p.id = i.product_id
-   where p.orderable_type_id = 4 
-     and i.date_for_order = '1234-01-23'
-   order by pv.name;
-end|
-
-drop procedure if exists list_preorder_products|
-create procedure list_preorder_products(in prov_id int)
-begin
-   select 
-        p.id, 
-        p.name, 
-        p.description,
-        sum(i.quantity) as total
-   from aixada_product p
-   left join aixada_order_item i
-   on p.id = i.product_id
-   where p.provider_id = prov_id
-   and p.orderable_type_id = 4
-   and i.date_for_order = '1234-01-23'
-   group by p.id;
-end|
-
-
-/**
- * Convert ordered items to shop items
- */
-drop procedure if exists convert_order_to_shop|
-create procedure convert_order_to_shop(IN uf int, IN order_date date)
-begin
-  replace into aixada_shop_item (
-    uf_id, date_for_shop, product_id, quantity
-  ) select i.uf_id, i.date_for_order, i.product_id, i.quantity
-    from aixada_order_item i
-    where date_for_order = order_date 
-      and uf_id = uf;
-end|
 
 
 

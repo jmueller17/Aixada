@@ -78,7 +78,7 @@ create table aixada_provider (
   notes  			text 			default null,
   active     	  	tinyint 		default 1,
   responsible_uf_id	int     		default null,
-  offset_order_close int			default 1, 			/* default offset closing of order in days*/
+  offset_order_close int			default 4, 			/* default offset closing of order in days*/
   ts			  	timestamp 		not null default current_timestamp,
   primary key (id),
   key (active),

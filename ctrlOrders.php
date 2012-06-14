@@ -14,8 +14,6 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-//DBWrap::get_instance()->debug = true;
-
 try{
 	
 	

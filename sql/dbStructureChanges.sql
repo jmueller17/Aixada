@@ -212,7 +212,7 @@ alter table aixada_shop_item
 alter table 
 	aixada_provider 
 	add picture varchar(255) default null after web, 
-	add offset_order_close int default 1 after responsible_uf_id,
+	add offset_order_close int default 4 after responsible_uf_id,
 	add bank_name varchar(255) default null after web, 
 	add bank_account varchar(40) default null after bank_name;
 
