@@ -39,6 +39,14 @@
 
 			var global_oder_id = 0; 
 
+			var today = 0; 
+
+			
+			$.post('ctrlDates.php?oper=getToday', function(data) {
+					today = eval(data)[0];
+					alert(today);		 
+			});
+
 
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
@@ -54,6 +62,9 @@
 							theadStr += '<th class="'+colClass+' hidden col">'+id+'</th>'
 						});
 
+						theadStr += '<th>Total</th>';
+						theadStr += '<th>Revised</th>';
+						
 						$('#tbl_reviseOrder thead tr').last().append(theadStr);
 
 						tblHeaderComplete = true; 
@@ -80,13 +91,17 @@
 					var product_id = $(row).children(':first').text();
 					
 					for (var i=0; i<header.length; i++){
-						
 						var colClass = 'Col-'+header[i];
 						var rowClass = 'Row-'+product_id;
 						//var tdid 	 = header[i] + "_" + product_id
-						tbodyStr += '<td class="'+colClass+' '+rowClass+' hidden interactiveCell"></td>';
-
+						tbodyStr += '<td class="'+colClass+' '+rowClass+' hidden interactiveCell toRevise" col="'+header[i]+'" row="'+product_id+'"></td>';
 					}
+
+					//product total quantities
+					tbodyStr += '<td id="total_'+product_id+'"></td>';
+					
+					//revised checkbox for product
+					tbodyStr += '<td class="textAlignCenter"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
 					$(row).last().append(tbodyStr);
 					
 				},
@@ -99,6 +114,8 @@
 					dataType:"xml",
 					success: function(xml){
 
+						var quTotal = 0;
+						var lastId = -1;  
 						$(xml).find('row').each(function(){
 							
 							var product_id = $(this).find('product_id').text();
@@ -108,15 +125,27 @@
 							var tblRow = '.Row-'+product_id;
 							var pid	= product_id + '_' + uf_id; 
 							
-							$(tblCol+tblRow).append('<p id="'+pid+'">'+qu+'</p>')
+							//$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+'</p><p><input type="checkbox" class="floatLeft" /></p>')
+							$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+'</p>')
 
 							
 							$(tblCol).show();
+
+							if (lastId == -1) {lastId = product_id}; 
 							
+							if (lastId != product_id){
+								var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
+								$('#total_'+lastId).text(total);
+								quTotal = 0; 
+							}
+							
+							quTotal += parseFloat(qu); 
+							lastId = product_id; 
 
 						});
 
-						$('#tbl_reviseOrder tbody tr:even').addClass('highlight');
+						var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
+						$('#total_'+lastId).text(total);
 
 
 					},
@@ -133,7 +162,7 @@
 
 			
 			/**
-			 *	returns user to order overview
+			 *	returns to order overview
 			 */
 			$("#btn_overview").button({
 				 icons: {
@@ -148,6 +177,7 @@
 
         		}).hide();
 
+			
 			/**
 			 *	copies order_items after revision into aixada_shop_item only if not already
 			 *	validated items exist;  
@@ -158,43 +188,55 @@
 		        	}
 				 })
        			.click(function(e){
-       				$.showMsg({
-						msg:"Are you sure you all products have been revised and that you want to put the current items into people's cart?",
-						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
-								//changeProductStatus(product_id,'deactivateProduct');
-								$(this).dialog("close");
+           			var allRevised = true;
+					$('input:checkbox[name="revised"]').each(function(){
+						if (!$(this).is(':checked')){
+							allRevised = false; 
+							return false; 
+						}
+
+					});
+
+					if (allRevised){
+
+           			
+	       				$.showMsg({
+							msg:"Are you sure to move these items into people's cart for today?!",
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){	
+									//checkProductsRevised();	
+									$(this).dialog("close");
+								},
+								"<?=$Text['btn_cancel'];?>" : function(){
+									$( this ).dialog( "close" );
+								}
 							},
-							"<?=$Text['btn_cancel'];?>" : function(){
-								$( this ).dialog( "close" );
-							}
-						},
-						type: 'confirm'});
+							type: 'confirm'});
+					} else {
+						$.showMsg({
+							msg:"There are still unrevised items in this order. Please make sure all 'revised' checkboxes are checked!",
+							type: "error"
+						});
 
-       			})
-       			.hide()
-       			.addClass('ui-state-highlight');
+					}
+       			}).hide();
 
 			
 			
-			
-
+		
 			//interactivity for editing cells
 			$('td.interactiveCell')
-				.live('click', function(e){
-										
-				
-										
+				.live('mouseover', function(e){						//make each cell editable on mouseover. 
+					var col = $(this).attr('col');
+					var row = $(this).attr('row');
 
-				})
-				//make each cell editable on mouseover. 
-				.live('mouseover', function(e){
-
+					$('.Row-'+row).addClass('editHighlightRow');
+					$('.Col-'+col).addClass('editHighlightCol');
+					
 					if (!$(this).hasClass('editable')){
-
 						$(this).children(':first')
 							.addClass('editable')
-							.editable('ctrlOrders.php', {
+							.editable('ctrlOrders.php', {			//init the jeditable plugin
 									submitdata : {
 										oper: 'editQuantity',
 										order_id : global_order_id
@@ -207,37 +249,53 @@
 
 					}
 
-				})
+			})
+			.live('mouseout', function(e){
+				var col = $(this).attr('col');
+				var row = $(this).attr('row');
+
+				$('.Row-'+row).removeClass('editHighlightRow');
+				$('.Col-'+col).removeClass('editHighlightCol');
+
+			});
 				
 				
-				//uncheck an entire product row (did not arrive)
-				$('input:checkbox[name="hasArrived"]').live('click', function(e){
-					var product_id = $(this).attr('hasArrivedId');
-					var has_arrived = ($(this).is(':checked'))? 1:0;
-
-					$.ajax({
-						type: "POST",
-						url: 'ctrlOrders.php?oper=toggleProduct&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived,
-						success: function(txt){
-
-							if (has_arrived){
-								$('.Row-'+product_id).removeClass('deactivated'); //not working yet...?!
-							} else {
-								$('.Row-'+product_id).addClass('deactivated');
-							}
-						},
-						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
-							
-						},
-						complete : function(msg){
+			//uncheck an entire product row (did not arrive)
+			$('input:checkbox[name="hasArrived"]').live('click', function(e){
+				var product_id = $(this).attr('hasArrivedId');
+				var has_arrived = ($(this).is(':checked'))? 1:0;
+				$.ajax({
+					type: "POST",
+					url: 'ctrlOrders.php?oper=toggleProduct&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived,
+					success: function(txt){
+						if (has_arrived){
+							$('.Row-'+product_id).removeClass('missing'); //not working yet...?!
+						} else {
+							$('.Row-'+product_id).addClass('missing');
+							$('#ckboxRevised_'+product_id).attr('checked','checked');
 							
 						}
-
-					});
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
+					}
 				});
+			});
+
+			
+			//mark an entire product row as revised
+			$('input:checkbox[name="revised"]').live('click', function(e){
+				var product_id = $(this).attr('isRevisedId');	
+				if ($(this).is(':checked')){
+					$(this).attr('checked','checked');
+					$('.Row-'+product_id).removeClass('toRevise').addClass('revised');
+				} else {
+					$('.Row-'+product_id).removeClass('revised').addClass('toRevise');
+				}
+			});
 					
 			
 
@@ -403,8 +461,8 @@
 						<th>&nbsp;</th>
 						<th>Send off to provider</th>
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable">Total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th>Actions</th>
+						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th>Revise</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -417,8 +475,7 @@
 						<td class="textAlignCenter">{ts_send_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €</td>
-						<td class="textAlignCenter">
-							<p class="ui-corner-all iconContainer ui-state-default floatLeft"><span class="ui-icon ui-icon-cart" title="Set shop date"></span></p>							
+						<td class="textAlignCenter">				
 							<p class="ui-corner-all iconContainer ui-state-default floatRight"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
 					</tr>
@@ -433,7 +490,7 @@
 		
 		<div id="reviseOrder" class="ui-widget detailElements">
 			<div class="ui-widget-header ui-corner-all textAlignCenter">
-				<h3 id="orderInfoDate">No shopping date set yet!! </h3>
+				<h3 id="orderInfoDate"></h3>
 			</div>
 			<div class="ui-widget-content">
 				<table id="tbl_reviseOrder" class="tblReviseOrder">
@@ -441,14 +498,16 @@
 						<tr>
 							<th>id</th>
 							<th>Name</th>
+							<th>Unit</th>
 							<th>Arrived</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
+						<tr>							
 							<td>{id}</td>
 							<td>{name}</td>
-							<td class="textAlignCenter"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" checked="checked" /></td>
+							<td id="unit_{id}">{unit}</td>
+							<td class="textAlignCenter"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" id="ckboxArrived_{id}" checked="checked" /></td>
 						</tr>
 					</tbody>
 					<tfoot>

@@ -13,6 +13,7 @@ option 				{padding:1px 5px;}
 
 
 /** generic styles **/
+.boldStuff			{font-weight:bold;}
 .textAlignRight		{text-align:right;}
 .textAlignLeft		{text-align:left;}
 .textAlignCenter	{text-align:center;}
@@ -40,6 +41,7 @@ option 				{padding:1px 5px;}
 .minPadding			{padding:3px;}
 .padding5x10		{padding:5px 10px;}
 .padding10x5		{padding:10px 5px;}
+.dim80				{opacity:0.8; }
 .dim60				{opacity:0.6; }
 .dim40				{opacity:0.4; }
 .clickable			{cursor:pointer;}
@@ -160,9 +162,9 @@ div#cashbox_listing				{width:100%; clear:both;}
 
 /** for de-activate products table **/
 .table_datesOrderableProducts td				{background:#EBEBEB; padding:5px;}
-td.isOrderable	{background:#D1F3D1; cursor:pointer;}
-td.notOrderable	{background:#FFEDA1; cursor:pointer;}
-td.deactivated	{background:#FFCCCA;}
+.table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
+.table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
+.table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
 .dateTableMonthYear								{margin:0px 20px;}
 .tfootDateGenerate								{cursor:pointer}
  .infoTdLine									{font-size:0.8em; background-color:white; margin-bottom:-0.2em; padding-bottom:0px;}
@@ -178,10 +180,15 @@ div#colActionIcons  		{width:280px; padding:4px;}
 
 /** for manage orders **/
 h3#orderInfoDate			{font-size:1.5em;}
-#btn_setShopDate			{margin-top:1em;}
+#btn_setShopDate			{margin-top:0.8em; margin-right:-2em;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
-.tblReviseOrder	td			{background:#EBEBEB; padding:4px;}
-.tblReviseOrder	td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0; padding:0;}
+.tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
+.tblReviseOrder	td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
+.tblReviseOrder td.revised	{background:#D1F3D1;}
+.tblReviseOrder td.toRevise	{background:#FFEDA1;}
+.tblReviseOrder td.missing	{background:#FFCCCA;}
+.editHighlightRow			{opacity:.6}
+.editHighlightCol			{opacity:.6}
 
 
 

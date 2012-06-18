@@ -12,13 +12,16 @@ begin
 	
 	select distinct
 		p.id, 
-		p.name
+		p.name, 
+		um.unit
 	from 
 		aixada_order_item oi,
-		aixada_product p
+		aixada_product p,
+		aixada_unit_measure um
 	where
 		oi.order_id = the_order_id
 		and oi.product_id = p.id
+		and p.unit_measure_order_id = um.id
 	order by
 		p.name;
 	
@@ -27,7 +30,9 @@ end|
 
 /**
  * modifies an order item quantity. This is needed for revising orders and adjusting the quantities 
- * for each item and uf. 
+ * for each item and uf. operates with a sort of temporary table aixada_order_to_shop where
+ * the whole revision process is stored. This table (and not aixada_order_item) will then be 
+ * copied to aixada_shop_item
  */
 drop procedure if exists modify_order_item_detail|
 create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4), in did_arrive int)
@@ -86,6 +91,20 @@ end |
 
 
 /**
+ * converts an order into something shopable, i.e. 
+ * ordered items will appear in people's cart for the given date. 
+ */
+drop procedure if exists order_to_shop |
+create procedure order_to_shop (in the_order_id int, in the_shop_date date)
+begin
+
+	
+	
+	
+end |
+
+
+/**
  * returns for a given order_id, all products, and ordered quanties per uf. 
  * need for revise order tables 
  */
@@ -94,12 +113,13 @@ create procedure get_order_item_detail (in the_order_id int)
 begin
 	
 	select 
-		*
+		oi.*
 	from
 		aixada_order_item oi
 	where 
-		oi.order_id = the_order_id;
-		
+		oi.order_id = the_order_id
+	order by
+		oi.product_id;
 end |
 
 
