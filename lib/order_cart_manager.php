@@ -28,7 +28,8 @@ class order_item extends abstract_cart_row {
             . "'" . $this->_date . "',"
             . $this->_uf_id . ','
             . $this->_product_id . ','
-            . $this->_quantity 
+            . $this->_quantity . ','
+            . $this->_unit_price_stamp 
             . ')';
     }
 }
@@ -55,11 +56,35 @@ class order_cart_manager extends abstract_cart_manager {
         $this->_id_string = 'order';
         $this->_commit_rows_prefix = 
             'replace into aixada_order_item' .
-            ' (order_id, cart_id, date_for_order, uf_id, product_id, quantity)' .
+            ' (order_id, favorite_cart_id, date_for_order, uf_id, product_id, quantity, unit_price_stamp)' .
             ' values ';
         parent::__construct($uf_id, $date_for_order); 
     }
 
+    /**
+     * 
+   		replace into aixada_order_item 
+   			(order_id, 
+   			favorite_cart_id, 
+   			date_for_order, 
+   			uf_id, 
+   			product_id, 
+   			quantity, 
+   			unit_price_stamp)
+   			
+		select
+			order_id, 
+			favorite_cart_id,
+			date_for_order,
+			uf_id, 
+			product_id,
+			quantity,
+			(select p.unit_price from aixada_product p where p.id = product_id);
+				    
+     * 
+     * 
+     */
+   
     
 
 	/**
@@ -73,7 +98,7 @@ class order_cart_manager extends abstract_cart_manager {
 	 * @param array $arrCartId		the id of aixada_cart(id). If set, this indicates favorite cart
 	 * @param array $arrPreOrder		true/false if item is preorder
 	 */
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
     {
     	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favorite" cart
     	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
@@ -85,11 +110,13 @@ class order_cart_manager extends abstract_cart_manager {
                                                 $this->_uf_id,
                                                 $arrProdId[$i], 
                                                 $arrQuant[$i],  
-                                                $this->_cart_id);
+                                                $this->_cart_id, 
+                                                $arrPrice[$i]);
             } 
                                                 
         }
     }
+    
 
     /**
      * deletes rows in aixada_order_item for given uf and date. 
@@ -105,7 +132,7 @@ class order_cart_manager extends abstract_cart_manager {
     /**
      * Overloaded function to commit the cart to the database
      */
-    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
     {
         //do_stored_query('convert_order_to_shop', $this->_uf_id, $this->_date);
 
@@ -117,7 +144,8 @@ class order_cart_manager extends abstract_cart_manager {
                                                 $this->_uf_id,
                                                 $arrProdId[$i], 
                                                 $arrQuant[$i],  
-                                                $this->_cart_id);
+                                                $this->_cart_id, 
+                                                $arrPrice[$i]);
              
                                                 
         }

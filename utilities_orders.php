@@ -26,7 +26,7 @@ function get_orders_in_range($time_period='today', $limit=117111451111)
 			printXML(stored_query_XML_fields('get_orders_listing', $very_distant_past, $very_distant_future, $limit));
 			break;
 
-		//last 100
+		//last month
 		case 'prevMonth':
 			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $very_distant_future, $limit));
 			break;

@@ -186,8 +186,8 @@ create table aixada_iva_type (
   orderable_type_id	tinyint				default 2,
   category_id	      	int				default 1,
   rev_tax_type_id		tinyint			default 1,
-  unit_price       		decimal(10,2) 	default 0.0,
   iva_percent_id  	    smallint 		default 1,
+  unit_price       		decimal(10,2) 	default 0.0,
   unit_measure_order_id	tinyint			default 1,
   unit_measure_shop_id	tinyint			default 1,
   stock_min    	      	decimal(10,4) 	default 0, 
@@ -288,8 +288,9 @@ create table aixada_cart (
 create table aixada_order_item (
   id  	     		int		  	not null auto_increment,
   uf_id     	  	int 		not null,	
-  cart_id			int			default null,
+  favorite_cart_id	int			default null,
   order_id			int 		default null,
+  unit_price_stamp	decimal(10,2)	default 0,
   date_for_order 	date		not null,
   product_id	  	int 		not null,	
   quantity 	  		float(10,4) default 0.0,				
@@ -298,7 +299,7 @@ create table aixada_order_item (
   foreign key (order_id) references aixada_order(id),
   foreign key (uf_id) references aixada_uf(id),
   foreign key (product_id) references aixada_product(id),
-  foreign key (cart_id)	references aixada_cart(id),
+  foreign key (favorite_cart_id) references aixada_cart(id),
   foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
   unique  key (order_id, uf_id, product_id)
 ) engine=InnoDB default character set utf8;  
@@ -329,6 +330,7 @@ create table aixada_shop_item (
   id 	          	int				not null auto_increment,
   cart_id			int				not null,
   order_item_id		int				default null,
+  unit_price_stamp	decimal(10,2)	default 0,
   product_id  		int 			not null,
   quantity      	float(10,4) 	default 0.0,
   iva_percent		decimal(10,2)	default 0,
@@ -360,6 +362,26 @@ create table aixada_shop_item (
   foreign key (operator_id) references aixada_user(id) 	
 ) ENGINE=InnoDB default character set utf8;
 */
+
+
+
+/**
+ * temporary table where order items gets stored during revision of
+ * products. once revision is finished, items get copied into aixada_shop_item
+ * and deleted here. 
+ */
+create table aixada_order_to_shop (
+  order_item_id  	int		  	not null,
+  uf_id     	  	int 		not null,	
+  order_id			int 		default null,
+  unit_price_stamp	decimal(10,2)	default 0,
+  product_id	  	int 		not null,	
+  quantity 	  		float(10,4) default 0.0,
+  has_arrived		tinyint		default 1,
+  foreign key (order_id) references aixada_order(id),
+  foreign key (product_id) references aixada_product(id),
+  foreign key (uf_id) references aixada_uf(id),
+)engine=InnoDB default character set utf8;
 
 
 

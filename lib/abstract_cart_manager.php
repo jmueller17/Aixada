@@ -46,6 +46,12 @@ class abstract_cart_row {
 	*/
     protected $_quantity = 0;
     
+    /**
+     * @var int the unit price at the moment of ordering/shopping. need to keep track of price changes between 
+     * orders or to reconstruct shopping in time (taking into account product price changes over time.  
+     */
+    protected $_unit_price_stamp = 0; 
+    
     
     /**
      * Enter description here ...
@@ -57,13 +63,14 @@ class abstract_cart_row {
      * The constructor takes the id of the containing cart, of the
      * product, the quantity and the price
      */
-    public function __construct($date, $uf_id, $product_id, $quantity, $cart_id)
+    public function __construct($date, $uf_id, $product_id, $quantity, $cart_id, $unit_price_stamp)
     {
         $this->_date = $date;
         $this->_uf_id = $uf_id;
         $this->_product_id = $product_id;
         $this->_quantity = $quantity;
         $this->_cart_id = $cart_id; 
+        $this->_unit_price_stamp = $unit_price_stamp;
     }
 
     
@@ -173,7 +180,7 @@ class abstract_cart_manager {
      * @param array $arrPreOrder
      * @return int cart_id
      */
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice) 
     {
     	global $firephp;
     	$hasItems = true; 
@@ -195,7 +202,7 @@ class abstract_cart_manager {
         $db = DBWrap::get_instance();
         try {
             $db->Execute('START TRANSACTION');
-            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
+            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice);
             $this->_check_rows();
             $this->_delete_rows();
             if ($hasItems) {
@@ -203,7 +210,7 @@ class abstract_cart_manager {
             } else {
             	$this->_delete_cart();
             }
-            $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder);
+            $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice);
             $db->Execute('COMMIT');
             clear_cache($this->_item_table_name);
         }
@@ -224,7 +231,7 @@ class abstract_cart_manager {
     /**
      * abstract function to make the row classes
      */ 
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
     {
     }
 
@@ -272,7 +279,7 @@ class abstract_cart_manager {
     /**
      * abstract function for postprocessing
      */ 
-    protected function _postprocessing()
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
     {
     }
 
@@ -284,7 +291,7 @@ class abstract_cart_manager {
      * @param string $selected_option the option actually selected 
      * @return string the corresponding XML string
      */
-    protected function _key_cache_to_XML (array $cache, string $selected_option)
+    /*protected function _key_cache_to_XML (array $cache, string $selected_option)
     {
         $strXML = '<choices>';
         foreach($cache as $value => $field) 
@@ -292,7 +299,7 @@ class abstract_cart_manager {
         $strXML .= "<s>$selected_option</s>";
         $strXML .= '</choices>';
         return $strXML;
-    }
+    }*/
 
 }
 

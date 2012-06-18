@@ -17,10 +17,11 @@ begin
     si.quantity as quantity,
     si.iva_percent, 
     si.order_item_id,
+    si.unit_price_stamp as unit_price,
     p.provider_id,  
     pv.name as provider_name,
     p.category_id, 
-    p.unit_price * (1 + si.iva_percent/100) as unit_price, 
+    -- p.unit_price * (1 + si.iva_percent/100) as unit_price, 
     iva.percent as iva_percent,
     rev.rev_tax_percent,
     um.unit
@@ -59,13 +60,14 @@ begin
     p.name,
     p.description,
     oi.quantity as quantity,
-    oi.cart_id,
+    oi.favorite_cart_id,
     oi.order_id,
+    oi.unit_price_stamp as unit_price,
     p.provider_id,  
     pv.name as provider_name,
     p.category_id, 
     po.closing_date, 
-    p.unit_price * (1 + iva.percent/100) as unit_price, 
+    --p.unit_price * (1 + iva.percent/100) as unit_price, 
     if (p.orderable_type_id = 4 and oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
     rev.rev_tax_percent,
     iva.percent as iva_percent,
@@ -110,7 +112,7 @@ begin
 		aixada_order_item oi
 	where 
 		oi.uf_id = the_uf_id
-		and oi.cart_id = c.id;
+		and oi.favorite_cart_id = c.id;
 	
 end |
 
@@ -138,7 +140,7 @@ begin
 	
 	/** delete from aixada_cart **/
 	
-	/** set oi.cart_id to null ... automatic with foreign key constraint **/
+	/** set oi.favorite_cart_id to null ... automatic with foreign key constraint **/
 	
 end |
 

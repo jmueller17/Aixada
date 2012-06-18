@@ -1,5 +1,109 @@
 delimiter |
 
+
+
+/**
+ *	Returns the list or products that have been ordered. No quantities are returned at this point.   
+ *  This query is used to construct the basic report table on orders. 
+ */
+drop procedure if exists get_ordered_products_list|
+create procedure get_ordered_products_list (in the_order_id int)
+begin
+	
+	select distinct
+		p.id, 
+		p.name
+	from 
+		aixada_order_item oi,
+		aixada_product p
+	where
+		oi.order_id = the_order_id
+		and oi.product_id = p.id
+	order by
+		p.name;
+	
+end|
+
+
+/**
+ * modifies an order item quantity. This is needed for revising orders and adjusting the quantities 
+ * for each item and uf. 
+ */
+drop procedure if exists modify_order_item_detail|
+create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4), in did_arrive int)
+begin
+
+	declare is_edited int default 0; 
+	
+	-- check if this order has been compied to the temp table aixada_order_to_shop --
+	set is_edited = (select
+		count(order_id)
+	from 
+		aixada_order_to_shop
+	where 
+		order_id = the_order_id);
+		
+		
+	-- if it is not edited, then copy the order from aixada_order_item --
+	if is_edited = 0 then
+		insert into
+			aixada_order_to_shop (order_item_id, uf_id, order_id, unit_price_stamp, product_id, quantity)
+		select
+			oi.id, 
+			oi.uf_id,
+			oi.order_id,
+			oi.unit_price_stamp,
+			oi.product_id,
+			oi.quantity
+		from
+			aixada_order_item oi
+		where
+			oi.order_id = the_order_id; 
+	end if; 
+		
+	
+	if did_arrive = null then
+		-- update quantity --
+		update
+			aixada_order_to_shop os
+		set
+			os.quantity = the_quantity
+		where
+			os.product_id = the_product_id
+			and os.order_id = the_order_id
+			and os.uf_id = the_uf_id; 
+	else 
+		-- de-/activate entire product row
+		update 
+			aixada_order_to_shop os
+		set 
+			os.has_arrived = did_arrive
+		where
+			os.product_id = the_product_id
+			and os.order_id = the_order_id;
+	end if;
+end |
+
+
+/**
+ * returns for a given order_id, all products, and ordered quanties per uf. 
+ * need for revise order tables 
+ */
+drop procedure if exists get_order_item_detail|
+create procedure get_order_item_detail (in the_order_id int)
+begin
+	
+	select 
+		*
+	from
+		aixada_order_item oi
+	where 
+		oi.order_id = the_order_id;
+		
+end |
+
+
+
 /**
  * modify the closing date of an order. The closing date is calculated on
  * a default basis for each provider. However, once an order date exists for a 
@@ -25,7 +129,7 @@ end |
 
 
 /**
- * returns all orders within a certain date range
+ * returns all orders for all providers within a certain date range
  */
 drop procedure if exists get_orders_listing|
 create procedure get_orders_listing(in from_date date, in to_date date, in the_limit int)
@@ -72,14 +176,13 @@ begin
 	declare order_total decimal(10,2) default 0.00; 
 	
 	/** needs iva included ?? **/
-	set order_total = (select
-    	convert(sum(oi.quantity * p.unit_price), decimal(10,2))
+	set order_total = 
+	(select
+    	convert(sum(oi.quantity * oi.unit_price_stamp), decimal(10,2))
   	from 
-  		aixada_product p,
   		aixada_order_item oi
   	where
-  		oi.order_id = the_order_id
-  		and oi.product_id = p.id);
+  		oi.order_id = the_order_id);
   		
   	return order_total;
 end|

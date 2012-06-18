@@ -243,7 +243,11 @@ end|
 
 
 /**
- *  returns all products (with details). 
+ *  returns all products (with details). This query is needed for the shop/order pages and its
+ *  different mechanismos for searching: by provider, by category, or direct search. 
+ *  As such this query shows available products for ordering or for purchase but does not handle any real 
+ *  ordered or bought products. 
+ * 
  *  If a provider_id is set, it returns the associated products for the provider. If date is set, then these
  *  are orderable products, otherwise stock. 
  * 

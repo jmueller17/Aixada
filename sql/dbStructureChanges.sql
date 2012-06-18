@@ -1,6 +1,7 @@
 
 /**
- * create iva types table, associated then to different products
+ * IVA_TYPE
+ * table, associated then to different products
  */
 create table aixada_iva_type (
   id   				smallint 		not null auto_increment,
@@ -20,6 +21,28 @@ from
 	aixada_product p
 order by p.iva_percent asc;
 
+
+/**
+ *		PRODUCT 
+ */
+alter table 
+	aixada_product
+	add iva_percent_id smallint default 1 after rev_tax_type_id,
+	add picture varchar(255) after description_url,
+	add foreign key (iva_percent_id) references aixada_iva_type(id);
+
+/* replace iva_percent with iva_percent_id */
+update 
+	aixada_product p,
+	aixada_iva_type it
+set 
+	p.iva_percent_id = it.id
+where 
+	p.iva_percent = it.percent;
+	
+alter table
+	aixada_product
+	drop iva_percent;
 
 
 
@@ -49,7 +72,7 @@ from
 	
 	
 /**
- * create table AIXADA_ORDER
+ * create new table AIXADA_ORDER
  */
 create table aixada_order (
 	id 				int 			not null auto_increment,
@@ -71,6 +94,23 @@ create table aixada_order (
 	unique key (date_for_order, provider_id, ts_send_off)
 ) engine=InnoDB default character set utf8;      	
 
+
+
+/**
+ * create new table AIXADA_ORDER_TO_SHOP
+ */
+create table aixada_order_to_shop (
+  order_item_id   	int 		not null,
+  uf_id       	  	int  		not null,	
+  order_id 			int  		default null,
+  unit_price_stamp 	decimal(10,2) default 0,
+  product_id 	  	int  		not null,	
+  quantity  	  	float(10,4)  default 0.0,
+  has_arrived		tinyint		default 1,
+  foreign key (order_id) references aixada_order(id),
+  foreign key (product_id) references aixada_product(id),
+  foreign key (uf_id) references aixada_uf(id)
+)engine=InnoDB default character set utf8;
 
 
 /**
@@ -97,7 +137,8 @@ create table aixada_cart (
 alter table 
 	aixada_order_item 	
 add order_id int default null after id,
-add cart_id	int default null after order_id,
+add favorite_cart_id int default null after uf_id,
+add unit_price_stamp decimal(10,2) default 0 after order_id,
 drop key date_for_order,
 drop key product_id,
 drop key uf_id;
@@ -139,13 +180,26 @@ where
 	and o.provider_id = p.provider_id;
 	
 	
+/** copy the unit_price to the unit_price_stamp. This ignores all past iva and price changes and uses the current price!! **/
+update
+	aixada_order_item oi,
+	aixada_product p,
+	aixada_iva_type iva
+set
+	oi.unit_price_stamp = p.unit_price * (1 + iva.percent/100)
+where
+	oi.product_id = p.id
+	and p.iva_percent_id = iva.id;
+	
+		
+	
 /** add the keys to order_item **/
 alter table 
 	aixada_order_item
 add foreign key (order_id) references aixada_order(id),
 add foreign key (uf_id) references aixada_uf(id),
 add foreign key (product_id) references aixada_product(id),
-add foreign key (cart_id) references aixada_cart(id),
+add foreign key (favorite_cart_id) references aixada_cart(id),
 add foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
 add unique key (order_id, uf_id, product_id );
 
@@ -158,6 +212,7 @@ alter table
 	aixada_shop_item
 	add cart_id int not null after id,
 	add order_item_id int default null after cart_id,
+	add unit_price_stamp	decimal(10,2)	default 0 after order_item_id,
 	add iva_percent decimal(10,2) default 0.00 after quantity,
 	add rev_tax_percent decimal(10,2) default 3.0 after iva_percent;
 	
@@ -184,7 +239,22 @@ where
 	si.uf_id = c.uf_id
 	and si.date_for_shop = c.date_for_shop
 	and si.ts_validated = c.ts_validated;
+	
 
+/** copy te price info into aixada_shop_item. This is based on the current price since we did not keep
+ *  track of price changes!!
+ */
+update
+	aixada_shop_item si,
+	aixada_product p,
+	aixada_iva_type iva
+set
+	si.unit_price_stamp = p.unit_price * (1 + iva.percent/100)
+where
+	si.product_id = p.id
+	and p.iva_percent_id = iva.id;	
+	
+	
 
 alter table aixada_shop_item
 	drop key date_for_shop,
@@ -232,27 +302,7 @@ alter table
 	change color_scheme_id gui_theme varchar(50) default null;
 
 	
-/**
- *		PRODUCT 
- */
-alter table 
-	aixada_product 
-	add iva_percent_id smallint default 1 after iva_percent,
-	add picture varchar(255) after description_url,
-	add foreign key (iva_percent_id) references aixada_iva_type(id);
 
-/* replace iva_percent with iva_percent_id */
-update 
-	aixada_product p,
-	aixada_iva_type it
-set 
-	p.iva_percent_id = it.id
-where 
-	p.iva_percent = it.percent;
-	
-alter table
-	aixada_product
-	drop iva_percent;
 	
 
 
@@ -262,6 +312,10 @@ drop table if exists aixada_account_balance;
 drop table aixada_distributor;
 drop table aixada_favorite_order_item;
 drop table aixada_favorite_order_cart;
+
+
+
+
 
 
 

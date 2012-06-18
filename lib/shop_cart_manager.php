@@ -28,7 +28,7 @@ class shop_item extends abstract_cart_row {
 	
 	protected $_order_item_id = 0; 
  
-	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id){
+	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id, $unit_price_stamp){
 		$this->_iva_percent = $iva; 
 		$this->_rev_tax_percent = $revtax;
 		$this->_order_item_id = $order_item_id;
@@ -37,6 +37,7 @@ class shop_item extends abstract_cart_row {
 		$this->_product_id = $product_id;
         $this->_quantity = $quantity;
         $this->_cart_id = $cart_id; 
+        $this->_unit_price_stamp = $unit_price_stamp;
 		
 		//parent::__construct(0, 0, $product_id, $quantity, $cart_id);
 	}
@@ -50,7 +51,8 @@ class shop_item extends abstract_cart_row {
 	   			. $this->_product_id 	. ','
 	   			. $this->_quantity 		. ','
 	   			. $this->_iva_percent	. ','
-	   			. $this->_rev_tax_percent . ')';
+	   			. $this->_rev_tax_percent . ','
+	   			. $this->_unit_price_stamp . ')';
 	}
 }
 
@@ -74,7 +76,7 @@ class shop_cart_manager extends abstract_cart_manager {
     $this->_id_string = 'shop';
     $this->_commit_rows_prefix = 
       'insert into aixada_shop_item' .
-      ' (cart_id, order_item_id, product_id, quantity, iva_percent, rev_tax_percent)' .
+      ' (cart_id, order_item_id, product_id, quantity, iva_percent, rev_tax_percent, unit_price_stamp)' .
       ' values ';
     parent::__construct($uf_id, $date_for_shop);
   }  
@@ -83,7 +85,7 @@ class shop_cart_manager extends abstract_cart_manager {
   /**
    * Overloaded function to make sale_item rows
    */
-  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $arrPreorder)
+  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $arrPreorder, $arrPrice)
     {
 
     	$this->_cart_id = (isset($cartId) && $cartId>0)? $cartId:0; 
@@ -129,9 +131,10 @@ class shop_cart_manager extends abstract_cart_manager {
 					     				 $arrProdId[$i], 
 					     				 $arrQuant[$i],
 					     				 $this->_cart_id, 
-					     				 0, //$arrIva[$i],
-					     				 3, //$arrRevTax[$i],
-					     				 $order_item_id
+					     				 $arrIva[$i],
+					     				 $arrRevTax[$i],
+					     				 $order_item_id,
+					     				 $arrPrice[$i]
 					     				 );
     	}
   	}
