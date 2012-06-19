@@ -43,8 +43,7 @@
 
 			
 			$.post('ctrlDates.php?oper=getToday', function(data) {
-					today = eval(data)[0];
-					alert(today);		 
+					today = eval(data)[0];		 
 			});
 
 
@@ -73,11 +72,7 @@
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
 							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						
-					},
-					complete : function(msg){
-						
+							type: 'error'});	
 					}
 			}); //end ajax	
 
@@ -131,8 +126,8 @@
 							
 							$(tblCol).show();
 
-							if (lastId == -1) {lastId = product_id}; 
-							
+							//calculate total quantities and update last table cell
+							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
 								var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
 								$('#total_'+lastId).text(total);
@@ -170,11 +165,7 @@
 		        	}
 				 })
         		.click(function(e){
-    				$('.detailElements').hide();
-    				$('.overviewElements').fadeIn(1000);
-					
-    				global_order_id = 0; 
-
+    				switchTo('overview'); 
         		}).hide();
 
 			
@@ -198,14 +189,30 @@
 					});
 
 					if (allRevised){
-
-           			
 	       				$.showMsg({
 							msg:"Are you sure to move these items into people's cart for today?!",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){	
-									//checkProductsRevised();	
-									$(this).dialog("close");
+									var $this = $(this);
+									$.ajax({
+										type: "POST",
+										url: 'ctrlOrders.php?oper=moveOrderToShop&order_id='+global_order_id+'&date='+today,
+										success: function(txt){
+											$this.dialog( "close" );
+											$('.interactiveCell').hide();
+											switchTo('overview');
+										},
+										error : function(XMLHttpRequest, textStatus, errorThrown){
+											$.showMsg({
+												msg:XMLHttpRequest.responseText,
+												type: 'error'});
+											
+										}
+									});
+
+
+										
+									//$(this).dialog("close");
 								},
 								"<?=$Text['btn_cancel'];?>" : function(){
 									$( this ).dialog( "close" );
@@ -263,7 +270,7 @@
 			//uncheck an entire product row (did not arrive)
 			$('input:checkbox[name="hasArrived"]').live('click', function(e){
 				var product_id = $(this).attr('hasArrivedId');
-				var has_arrived = ($(this).is(':checked'))? 1:0;
+				var has_arrived = $(this).is(':checked'); // )? 1:0;
 				$.ajax({
 					type: "POST",
 					url: 'ctrlOrders.php?oper=toggleProduct&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived,
@@ -326,11 +333,14 @@
 				},
 				complete : function (rowCount){
 					$("#tbl_orderOverview").trigger("update"); 
-					$('#tbl_orderOverview tbody tr:even').addClass('highlight');
+					$('#tbl_orderOverview tbody tr:even').addClass('highlight'); //TODO update highlight after sorting!! 
+					
 				}
 			});
 
 
+
+			
 			$("#tbl_orderOverview").tablesorter(); 
 
 			
@@ -347,6 +357,8 @@
 			$('.ui-icon-check')
 				.live('click', function(e){
 					global_order_id = $(this).parents('tr').attr('id');
+					var shopDate 	= $(this).parents('tr').children().eq(6).text();
+					var provider_name = $(this).parents('tr').children().eq(2).text();
 
 					$('.col').hide();
 
@@ -358,36 +370,53 @@
 						return false; 
 					}
 
-					//if table header ajax call has not finished, wait
+					//need the order id
 					if (global_order_id <= 0){
 						$.showMsg({
 							msg:'No valid ID for order found!',
 							type: 'error'});
 						return false; 
 					}
-					
-
-					//set info
-					var provider_name = $(this).parents('tr').children().eq(2).text();
-					$('#providerName').text(provider_name);
-					
-					
-					$('.overviewElements').hide();
-					$('.detailElements').fadeIn(1000);
-					
-					
 
 					
-					
-					$('#tbl_reviseOrder tbody').xml2html("reload", {
-						params : 'oper=getOrderedProductsList&order_id='+global_order_id
-					})
-					
-					//$("#dialog_setShopDate").data('tmpData', {orderID:id});
-					//$('#dialog_setShopDate').dialog('open');					
-					
+					//if shop date exists, check if it items have been validated
+					if (shopDate != ''){
+						$.post('ctrlOrders.php?oper=checkValidationStatus&order_id='+global_order_id, function(xml) {
+							if ($(xml).find('validated').text() > 0){
+								$.showMsg({
+									msg:'Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!',
+									type: 'warning'});
+							} else {
+								switchTo('details', {name:provider_name});
+							}		 
+						});
+					} else {
+						switchTo('details', {name:provider_name});
+					}
 				});
 
+
+				/**
+				 *	switch between the order overview page and the revision/detail page
+				 */
+				function switchTo(page, options){
+					switch (page){
+						case 'overview':
+							$('.detailElements').hide();
+		    				$('.overviewElements').fadeIn(1000);
+		    				global_order_id = 0;
+							break;
+
+						case 'details':
+							$('#providerName').text(options.name);							
+							$('.overviewElements').hide();
+							$('.detailElements').fadeIn(1000);
+							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
+								params : 'oper=getOrderedProductsList&order_id='+global_order_id
+							})
+							break;
+					}
+				}
 			
 			
 
@@ -408,16 +437,7 @@
 				}
 			});*/
 
-			
-			/*$('tbody tr')
-				.live('mouseover', function(e){
-					$(this).addClass('ui-state-hover');
-				})
-				.live('mouseout', function(e){
-					$(this).removeClass('ui-state-hover');
-				});*/
-			
-			
+		
 			
 			
 	});  //close document ready

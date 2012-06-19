@@ -28,6 +28,44 @@ begin
 end|
 
 
+
+/**
+ * returns for a given order_id, all products, and ordered quanties per uf. 
+ * need for revise order tables. 
+ * If order info is currently edited, the info comes from aixada_order_to_shop, otherwise
+ * directly from aixada_order_item 
+ */
+drop procedure if exists get_order_item_detail|
+create procedure get_order_item_detail (in the_order_id int)
+begin
+	
+	declare edited boolean default is_under_revision(the_order_id);
+	
+	-- if the order items are edited, retrieve them from aixada_order_to_shop--
+	if (edited is true) then 
+		select 
+			*
+		from 
+			aixada_order_to_shop
+		where
+			order_id = the_order_id
+		order by
+			product_id; 
+	-- otherwise get them from the order_item table		
+	else 
+		select 
+			oi.*
+		from
+			aixada_order_item oi
+		where 
+			oi.order_id = the_order_id
+		order by
+			oi.product_id;
+	end if;
+end |
+
+
+
 /**
  * modifies an order item quantity. This is needed for revising orders and adjusting the quantities 
  * for each item and uf. operates with a sort of temporary table aixada_order_to_shop where
@@ -35,22 +73,14 @@ end|
  * copied to aixada_shop_item
  */
 drop procedure if exists modify_order_item_detail|
-create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4), in did_arrive int)
+create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4), in did_arrive boolean)
 begin
-
-	declare is_edited int default 0; 
 	
-	-- check if this order has been compied to the temp table aixada_order_to_shop --
-	set is_edited = (select
-		count(order_id)
-	from 
-		aixada_order_to_shop
-	where 
-		order_id = the_order_id);
-		
-		
-	-- if it is not edited, then copy the order from aixada_order_item --
-	if is_edited = 0 then
+	declare edited boolean default is_under_revision(the_order_id);
+	
+	
+	-- if not under revision, then copy the order from aixada_order_item --
+	if (edited is not true) then
 		insert into
 			aixada_order_to_shop (order_item_id, uf_id, order_id, unit_price_stamp, product_id, quantity)
 		select
@@ -67,8 +97,8 @@ begin
 	end if; 
 		
 	
-	if did_arrive = null then
-		-- update quantity --
+	if (the_uf_id > 0) then
+		-- update quantity if uf_id is set--
 		update
 			aixada_order_to_shop os
 		set
@@ -77,12 +107,12 @@ begin
 			os.product_id = the_product_id
 			and os.order_id = the_order_id
 			and os.uf_id = the_uf_id; 
-	else 
-		-- de-/activate entire product row
+	else  
+		-- otherwise set the arrived status flag de-/activate entire product row
 		update 
 			aixada_order_to_shop os
 		set 
-			os.has_arrived = did_arrive
+			os.arrived = did_arrive
 		where
 			os.product_id = the_product_id
 			and os.order_id = the_order_id;
@@ -90,38 +120,147 @@ begin
 end |
 
 
+
+/**
+ * checks if a given order_id is edited, i.e. its entires exist
+ * in aixada_order_to_shop
+ */
+drop function if exists is_under_revision|
+create function is_under_revision(the_order_id int)
+returns boolean
+begin
+	declare is_edited int default 0; 
+	
+	-- check if this order has been copied to the temp table aixada_order_to_shop --
+	set is_edited = (select
+		count(order_id)
+	from 
+		aixada_order_to_shop
+	where 
+		order_id = the_order_id);
+	
+	return if(is_edited, true, false);
+end|
+
+
+
 /**
  * converts an order into something shopable, i.e. 
  * ordered items will appear in people's cart for the given date. 
  */
-drop procedure if exists order_to_shop |
-create procedure order_to_shop (in the_order_id int, in the_shop_date date)
+drop procedure if exists move_order_to_shop |
+create procedure move_order_to_shop (in the_order_id int, in the_shop_date date)
 begin
 
+	declare is_validated int default 0; 
+	declare done int default 0; 
+	declare the_uf_id int default 0; 
+	declare the_cart_id int default 0;
 	
+	-- get ufs for order--	
+	declare uf_cursor cursor for 
+	select distinct
+		uf_id
+	from
+		aixada_order_to_shop 
+	where
+		order_id = the_order_id; 
+	declare continue handler for not found
+		set done = 1; 
+	
+	
+	
+	open uf_cursor;
+	set done = 0; 
+	
+	
+	/**
+	 * loop through each uf of order, 
+	 * check if non-validated cart is available for given date
+	 * if available use it, if not, create a new cart
+	 */
+	read_loop: loop
+		fetch uf_cursor into the_uf_id;
+		if done then 
+			leave read_loop; 
+		end if;
+		
+		set @the_cart_id = -1; 
+		set @is_validated = 0; 
+		
+		select 
+			@the_cart_id:=id, 
+			@is_validated:=ts_validated
+		from 
+			aixada_cart
+		where 
+			uf_id=the_uf_id 
+			and date_for_shop=the_shop_date
+		limit 1;
+			
+		
+		if (@the_cart_id = -1) then
+			insert into aixada_cart (uf_id, date_for_shop)
+			values (the_uf_id, the_shop_date);
+			
+			set @the_cart_id = last_insert_id();
+		end if; 
+		
+		
+		-- move order items to shop table
+		if (@the_cart_id > 0 and @is_validated = 0) then
+			replace into
+				aixada_shop_item (cart_id, order_item_id, unit_price_stamp, product_id, quantity, iva_percent, rev_tax_percent)
+			select
+				@the_cart_id, 
+				os.order_item_id,
+				os.unit_price_stamp,
+				os.product_id,
+				os.quantity, 
+				p.iva_percent_id,
+				p.rev_tax_type_id
+			from
+				aixada_order_to_shop os,
+				aixada_product p
+			where 
+				os.order_id = the_order_id
+				and p.id = os.product_id;
+		end if; 
+	end loop;
+	close uf_cursor;
 	
 	
 end |
 
 
 /**
- * returns for a given order_id, all products, and ordered quanties per uf. 
- * need for revise order tables 
+ * determines if order_items of a given order have already been 
+ * validated. returns the nr of validate items. Accepts either order_id or cart_id
  */
-drop procedure if exists get_order_item_detail|
-create procedure get_order_item_detail (in the_order_id int)
+drop procedure if exists get_validated_status|
+create procedure get_validated_status(in the_order_id int, in the_cart_id int) 
 begin
 	
-	select 
-		oi.*
-	from
-		aixada_order_item oi
-	where 
-		oi.order_id = the_order_id
-	order by
-		oi.product_id;
+	if the_order_id > 0 then
+		select 
+			count(si.id) as validated
+		from 
+			aixada_shop_item si, 
+			aixada_order_item oi,
+			aixada_cart c
+		where 
+			oi.id = si.order_item_id
+			and si.cart_id = c.id
+			and c.ts_validated > 0;
+	elseif the_cart_id > 0 then
+		select
+			if (ts_validated>0, 1, 0) as validated 
+		from 
+			aixada_cart 
+		where 
+			id = the_cart_id; 
+	end if; 
 end |
-
 
 
 /**
@@ -149,7 +288,8 @@ end |
 
 
 /**
- * returns all orders for all providers within a certain date range
+ * returns all orders for all providers within a certain date range.
+ * also provides info about status of order and order_items: if available for sale, validate. 
  */
 drop procedure if exists get_orders_listing|
 create procedure get_orders_listing(in from_date date, in to_date date, in the_limit int)
@@ -157,13 +297,18 @@ begin
 	
 	declare today date default date(sysdate()); 
 	
-	/** open orders, that have no order_id yet **/
+
 	select distinct
 		o.*,
 		oi.date_for_order, 
 		pv.name as provider_name,
 		po.closing_date,
-		get_order_total(oi.order_id) as order_total, /**quite intensive... **/
+		(select
+    		sum(ois.quantity * ois.unit_price_stamp)
+  		from 
+  			aixada_order_item ois
+  		where
+  			ois.order_id = oi.order_id) as order_total,
 		datediff(po.closing_date, today) as time_left
 	from 
 		aixada_provider pv,
@@ -186,16 +331,15 @@ begin
 end |
 
 
-
-
-drop function if exists get_order_total|
+/**
+ * 
+ drop function if exists get_order_total|
 create function get_order_total(the_order_id int)
 returns decimal(10,2)
 begin
 	
 	declare order_total decimal(10,2) default 0.00; 
 	
-	/** needs iva included ?? **/
 	set order_total = 
 	(select
     	convert(sum(oi.quantity * oi.unit_price_stamp), decimal(10,2))
@@ -205,7 +349,7 @@ begin
   		oi.order_id = the_order_id);
   		
   	return order_total;
-end|
+end|*/
 
 
 

@@ -16,22 +16,25 @@ if (!isset($_SESSION)) {
 
 try{
 	
-	
-    // first we process those requests that don't need to construct a cart manager
+
     switch (get_param('oper')) {
     	
+    	//returns a list of all orders summarized by provider within a given date range
     	case 'getOrdersListing':
     		echo get_orders_in_range(get_param('filter'), get_param('limit',117111451111));
     		exit; 
-    	    		
+
+    	//retrieves list of products that have been ordered
     	case 'getOrderedProductsList':
     		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id')));
     		exit;
-    		
+
+    	//retrieves the order detail uf/quantities for given order
     	case 'getProductQuantiesForUfs':
     		printXML(stored_query_XML_fields('get_order_item_detail', get_param('order_id')));
     		exit;
     		
+    	//edits, modifies individual product quanties for order
     	case 'editQuantity':
     		$splitParams = explode("_", get_param('product_uf'));
     		$ok = do_stored_query('modify_order_item_detail', get_param('order_id'), $splitParams[0], $splitParams[1] , get_param('quantity'), 'null');
@@ -41,9 +44,20 @@ try{
     			throw new Exception("An error occured during saving the new quantity!!");      			
     		}
     		exit;
-    		
+
+    	//marks an entire product as "not arrived /arrived" during revision of order 	
     	case 'toggleProduct':
     		echo do_stored_query('modify_order_item_detail', get_param('order_id'), get_param('product_id'), 0, 0, get_param('has_arrived')  ); 
+    		exit;
+
+    	//has the given order items that are already validated?
+    	case 'checkValidationStatus':
+    		printXML(stored_query_XML_fields('get_validated_status', get_param('order_id',0), get_param('cart_id',0)));
+    		exit;
+    		
+		//moves an order from revision to shop_item (into people's cart for the given date) 
+    	case 'moveOrderToShop':
+    		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
     		
     default:  

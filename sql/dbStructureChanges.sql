@@ -106,7 +106,8 @@ create table aixada_order_to_shop (
   unit_price_stamp 	decimal(10,2) default 0,
   product_id 	  	int  		not null,	
   quantity  	  	float(10,4)  default 0.0,
-  has_arrived		tinyint		default 1,
+  arrived  			boolean 		default true,
+  revised 			boolean  	default false,
   foreign key (order_id) references aixada_order(id),
   foreign key (product_id) references aixada_product(id),
   foreign key (uf_id) references aixada_uf(id)
@@ -114,7 +115,7 @@ create table aixada_order_to_shop (
 
 
 /**
- * NEW TABLE: AIXADA_CART
+ * create new table AIXADA_CART
  */
 create table aixada_cart (
 	id 				int 			not null auto_increment,
@@ -178,6 +179,16 @@ where
 	o.date_for_order = oi.date_for_order
 	and p.id = oi.product_id
 	and o.provider_id = p.provider_id;
+	
+/** set date_for_shop for past orders assuming that shop conicides with date_for_order date! **/
+declare today date default date(sysdate()); 
+update
+	aixada_order o
+set
+	o.date_for_shop = o.date_for_order
+where
+	o.date_for_order < today;
+	
 	
 	
 /** copy the unit_price to the unit_price_stamp. This ignores all past iva and price changes and uses the current price!! **/
