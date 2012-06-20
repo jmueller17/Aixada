@@ -37,17 +37,16 @@ try{
     	//edits, modifies individual product quanties for order
     	case 'editQuantity':
     		$splitParams = explode("_", get_param('product_uf'));
-    		$ok = do_stored_query('modify_order_item_detail', get_param('order_id'), $splitParams[0], $splitParams[1] , get_param('quantity'), 'null');
+    		$ok = do_stored_query('modify_order_item_detail', get_param('order_id'), $splitParams[0], $splitParams[1] , get_param('quantity'));
     		if ($ok){
 	    		echo get_param('quantity');
     		} else {
     			throw new Exception("An error occured during saving the new quantity!!");      			
     		}
     		exit;
-
-    	//marks an entire product as "not arrived /arrived" during revision of order 	
-    	case 'toggleProduct':
-    		echo do_stored_query('modify_order_item_detail', get_param('order_id'), get_param('product_id'), 0, 0, get_param('has_arrived')  ); 
+    		
+    	case 'setOrderItemStatus':
+    		echo do_stored_query('set_order_item_status', get_param('order_id'), get_param('product_id'), get_param('has_arrived'), get_param('is_revised')  ); 
     		exit;
 
     	//has the given order items that are already validated?

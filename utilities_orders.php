@@ -1,11 +1,23 @@
 <?php
 
+
+//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+//$firephp = FirePHP::getInstance(true);
+//ob_start(); // Starts FirePHP output buffering
+
+
 require_once('inc/database.php');
 require_once('local_config/config.php');
 require_once ('utilities.php');
 
 
-
+/**
+ * 
+ * custom interface for order listing which converts most common query params into 
+ * calls to stored procedures. 
+ * @param str $time_period today | all | prevMonth
+ * @param int $limit sql limit 
+ */
 function get_orders_in_range($time_period='today', $limit=117111451111)
 {
 	

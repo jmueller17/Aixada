@@ -73,11 +73,10 @@ end |
  * copied to aixada_shop_item
  */
 drop procedure if exists modify_order_item_detail|
-create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4), in did_arrive boolean)
+create procedure modify_order_item_detail (in the_order_id int, in the_product_id int, in the_uf_id int,  in the_quantity float(10,4))
 begin
 	
 	declare edited boolean default is_under_revision(the_order_id);
-	
 	
 	-- if not under revision, then copy the order from aixada_order_item --
 	if (edited is not true) then
@@ -102,22 +101,52 @@ begin
 		update
 			aixada_order_to_shop os
 		set
-			os.quantity = the_quantity
+			os.quantity = the_quantity,
+			os.revised = 1
 		where
 			os.product_id = the_product_id
 			and os.order_id = the_order_id
 			and os.uf_id = the_uf_id; 
-	else  
-		-- otherwise set the arrived status flag de-/activate entire product row
-		update 
-			aixada_order_to_shop os
-		set 
-			os.arrived = did_arrive
-		where
-			os.product_id = the_product_id
-			and os.order_id = the_order_id;
-	end if;
+	end if; 
 end |
+
+
+/**
+ * the revision table stores if a given item has been revised and has arrived in general. 
+ * This flags can be set here. 
+ */
+drop procedure if exists set_order_item_status|
+create procedure set_order_item_status (in the_order_id int, in the_product_id int, in has_arrived boolean, in is_revised boolean)
+begin
+	
+	declare edited boolean default is_under_revision(the_order_id);
+	
+	-- if not under revision, then copy the order from aixada_order_item --
+	if (edited is not true) then
+		insert into
+			aixada_order_to_shop (order_item_id, uf_id, order_id, unit_price_stamp, product_id, quantity)
+		select
+			oi.id, 
+			oi.uf_id,
+			oi.order_id,
+			oi.unit_price_stamp,
+			oi.product_id,
+			oi.quantity
+		from
+			aixada_order_item oi
+		where
+			oi.order_id = the_order_id; 
+	end if; 
+	
+	update 
+		aixada_order_to_shop os
+	set 
+		os.arrived = has_arrived,
+		os.revised = is_revised
+	where
+		os.product_id = the_product_id
+		and os.order_id = the_order_id;	
+end|
 
 
 
@@ -142,77 +171,56 @@ begin
 	return if(is_edited, true, false);
 end|
 
-
+	
 
 /**
- * converts an order into something shopable, i.e. 
+ * converts an order into something shoppable, i.e. 
  * ordered items will appear in people's cart for the given date. 
  */
 drop procedure if exists move_order_to_shop |
 create procedure move_order_to_shop (in the_order_id int, in the_shop_date date)
 begin
 
-	declare is_validated int default 0; 
 	declare done int default 0; 
 	declare the_uf_id int default 0; 
 	declare the_cart_id int default 0;
-	
-	-- get ufs for order--	
+	declare the_validated int default 0; 
 	declare uf_cursor cursor for 
-	select distinct
-		uf_id
-	from
-		aixada_order_to_shop 
-	where
-		order_id = the_order_id; 
+		select distinct
+			os.uf_id,
+			c.id, 
+			c.ts_validated
+		from
+			aixada_order_to_shop os
+			left join aixada_cart c on
+			os.uf_id = c.uf_id;
+		
 	declare continue handler for not found
 		set done = 1; 
-	
-	
-	
-	open uf_cursor;
+		
+	open uf_cursor;	
 	set done = 0; 
-	
-	
-	/**
-	 * loop through each uf of order, 
-	 * check if non-validated cart is available for given date
-	 * if available use it, if not, create a new cart
-	 */
+
 	read_loop: loop
-		fetch uf_cursor into the_uf_id;
+		fetch uf_cursor into the_uf_id, the_cart_id, the_validated;
 		if done then 
 			leave read_loop; 
 		end if;
 		
-		set @the_cart_id = -1; 
-		set @is_validated = 0; 
-		
-		select 
-			@the_cart_id:=id, 
-			@is_validated:=ts_validated
-		from 
-			aixada_cart
-		where 
-			uf_id=the_uf_id 
-			and date_for_shop=the_shop_date
-		limit 1;
-			
-		
-		if (@the_cart_id = -1) then
+		/** create new cart if none exists for uf and date**/
+		if (the_cart_id is null) then
 			insert into aixada_cart (uf_id, date_for_shop)
 			values (the_uf_id, the_shop_date);
 			
-			set @the_cart_id = last_insert_id();
+			set the_cart_id = last_insert_id();
 		end if; 
 		
-		
-		-- move order items to shop table
-		if (@the_cart_id > 0 and @is_validated = 0) then
+		/** copy the revised items into shop_item **/
+		if (the_cart_id > 0 and (the_validated = 0 or the_validated is null)) then
 			replace into
 				aixada_shop_item (cart_id, order_item_id, unit_price_stamp, product_id, quantity, iva_percent, rev_tax_percent)
 			select
-				@the_cart_id, 
+				the_cart_id, 
 				os.order_item_id,
 				os.unit_price_stamp,
 				os.product_id,
@@ -224,11 +232,23 @@ begin
 				aixada_product p
 			where 
 				os.order_id = the_order_id
-				and p.id = os.product_id;
+				and p.id = os.product_id
+				and os.uf_id = the_uf_id
+				and os.arrived = 1;
 		end if; 
 	end loop;
 	close uf_cursor;
 	
+	/**remove tmp revison items**/
+	delete from 
+		aixada_order_to_shop
+	where 
+		order_id=the_order_id; 
+		
+	/**update the shop_date in the order listing**/
+	update aixada_order
+	set date_for_shop = the_shop_date
+	where id = the_order_id; 
 	
 end |
 

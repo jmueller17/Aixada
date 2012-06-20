@@ -32,6 +32,7 @@
 	$(function(){
 
 			$('.detailElements').hide();
+			$('.success_msg').hide();
 
 			var header = [];
 
@@ -39,13 +40,27 @@
 
 			var global_oder_id = 0; 
 
-			var today = 0; 
 
-			
-			$.post('ctrlDates.php?oper=getToday', function(data) {
-					today = eval(data)[0];		 
+			$("#datepicker").datepicker({
+				dateFormat 	: 'DD, d MM, yy',
+				onSelect : function (dateText, instance){
+					$('#indicateShopDate').text(dateText);
+				}
+			}).hide();
+
+			$('#showDatePicker').click(function(){
+				$('#datepicker').toggle();
 			});
 
+			$.getAixadaDates('getToday', function (date){
+				var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
+				$("#datepicker").datepicker('setDate', today);
+				$("#datepicker").datepicker( "option", "minDate", today);
+				$("#datepicker").datepicker("refresh");		
+				$('#indicateShopDate').text(date[0]);		
+			});	
+			
+	
 
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
@@ -189,36 +204,10 @@
 					});
 
 					if (allRevised){
-	       				$.showMsg({
-							msg:"Are you sure to move these items into people's cart for today?!",
-							buttons: {
-								"<?=$Text['btn_ok'];?>":function(){	
-									var $this = $(this);
-									$.ajax({
-										type: "POST",
-										url: 'ctrlOrders.php?oper=moveOrderToShop&order_id='+global_order_id+'&date='+today,
-										success: function(txt){
-											$this.dialog( "close" );
-											$('.interactiveCell').hide();
-											switchTo('overview');
-										},
-										error : function(XMLHttpRequest, textStatus, errorThrown){
-											$.showMsg({
-												msg:XMLHttpRequest.responseText,
-												type: 'error'});
-											
-										}
-									});
 
-
-										
-									//$(this).dialog("close");
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'confirm'});
+						$('#dialog_setShopDate').dialog("open");
+						
+	       				
 					} else {
 						$.showMsg({
 							msg:"There are still unrevised items in this order. Please make sure all 'revised' checkboxes are checked!",
@@ -228,7 +217,43 @@
 					}
        			}).hide();
 
-			
+			$('#dialog_setShopDate').dialog({
+				autoOpen:false,
+				width:450,
+				height:360,
+				buttons: {  
+					"<?=$Text['btn_ok'];?>" : function(){
+						
+						var $this = $(this);
+						$.ajax({
+							type: "POST",
+							url: 'ctrlOrders.php?oper=moveOrderToShop&order_id='+global_order_id+'&date='+$.getSelectedDate('#datepicker'),
+							success: function(txt){
+								$('.success_msg').show().next().hide();
+								setTimeout(function(){
+									$this.dialog( "close" )
+									$('.interactiveCell').hide();
+									switchTo('overview');
+								},3000);
+							},
+							error : function(XMLHttpRequest, textStatus, errorThrown){
+								$.showMsg({
+									msg:XMLHttpRequest.responseText,
+									type: 'error'});
+								
+							}
+						});
+	
+						
+						},
+				
+					"<?=$Text['btn_cancel'];?>"	: function(){
+						
+						$( this ).dialog( "close" );
+						} 
+				}
+			});
+				
 			
 		
 			//interactivity for editing cells
@@ -248,10 +273,13 @@
 										oper: 'editQuantity',
 										order_id : global_order_id
 										},
-									id : 'product_uf',
-									name : 'quantity',
+									id 		: 'product_uf',
+									name 	: 'quantity',
 									indicator: 'Saving',
-									tooltip: 	'click to edit'
+									tooltip	: 	'click to edit',
+									callback: function(value, settings){
+										$(this).parent().removeClass('toRevise').addClass('revised');
+									} 
 						});
 
 					}
@@ -267,18 +295,21 @@
 			});
 				
 				
-			//uncheck an entire product row (did not arrive)
+			/**
+			 *	uncheck an entire product row (product did not arrive). 
+			 */
 			$('input:checkbox[name="hasArrived"]').live('click', function(e){
 				var product_id = $(this).attr('hasArrivedId');
-				var has_arrived = $(this).is(':checked'); // )? 1:0;
+				var has_arrived = $(this).is(':checked')? 1:0; 
+				var is_revised = 1; 
 				$.ajax({
 					type: "POST",
-					url: 'ctrlOrders.php?oper=toggleProduct&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived,
+					url: 'ctrlOrders.php?oper=setOrderItemStatus&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
 					success: function(txt){
 						if (has_arrived){
-							$('.Row-'+product_id).removeClass('missing'); //not working yet...?!
+							$('.Row-'+product_id).removeClass('missing'); 
 						} else {
-							$('.Row-'+product_id).addClass('missing');
+							$('.Row-'+product_id).removeClass('toRevise revised').addClass('missing');
 							$('#ckboxRevised_'+product_id).attr('checked','checked');
 							
 						}
@@ -293,17 +324,39 @@
 			});
 
 			
-			//mark an entire product row as revised
+			/**
+			 *	mark an entire product row as revised. the status is saved in 
+			 *  the order_to_shop table.  
+			 */
 			$('input:checkbox[name="revised"]').live('click', function(e){
 				var product_id = $(this).attr('isRevisedId');	
-				if ($(this).is(':checked')){
-					$(this).attr('checked','checked');
-					$('.Row-'+product_id).removeClass('toRevise').addClass('revised');
-				} else {
-					$('.Row-'+product_id).removeClass('revised').addClass('toRevise');
-				}
+				var is_revised = $(this).is(':checked')? 1:0;
+				var has_arrived = $('#ckboxArrived_'+product_id).is(':checked')? 1:0;
+				$this = $(this);
+				$.ajax({
+					type: "POST",
+					url: 'ctrlOrders.php?oper=setOrderItemStatus&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
+					success: function(txt){
+						if (is_revised){
+							$this.attr('checked','checked');
+							$('.Row-'+product_id).removeClass('toRevise').addClass('revised');
+						} else {
+							$('.Row-'+product_id).removeClass('revised').addClass('toRevise');
+						}
+
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+					}
+				});
+				
+				
 			});
-					
+
+
+			
 			
 
 			
@@ -333,13 +386,22 @@
 				},
 				complete : function (rowCount){
 					$("#tbl_orderOverview").trigger("update"); 
-					$('#tbl_orderOverview tbody tr:even').addClass('highlight'); //TODO update highlight after sorting!! 
+					//$('#tbl_orderOverview tbody tr:even').addClass('highlight'); 
 					
 				}
 			});
 
 
-
+			$('#tbl_orderOverview tbody tr')
+			.live('mouseover', function(){
+				$(this).removeClass('highlight').addClass('ui-state-highlight');
+				
+			})
+			.live('mouseout',function(){
+				$(this).removeClass('ui-state-highlight');
+				
+			});
+			
 			
 			$("#tbl_orderOverview").tablesorter(); 
 
@@ -356,9 +418,10 @@
 			//revise order icon 
 			$('.ui-icon-check')
 				.live('click', function(e){
-					global_order_id = $(this).parents('tr').attr('id');
-					var shopDate 	= $(this).parents('tr').children().eq(6).text();
-					var provider_name = $(this).parents('tr').children().eq(2).text();
+					global_order_id 	= $(this).parents('tr').attr('id');
+					var shopDate 		= $(this).parents('tr').children().eq(6).text();
+					var order_id 		= $(this).parents('tr').children().eq(0).text();
+					var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+order_id+')' ;
 
 					$('.col').hide();
 
@@ -417,27 +480,11 @@
 							break;
 					}
 				}
-			
-			
 
-			/*$('#dialog_setShopDate').dialog({
-				autoOpen:false,
-				width:500,
-				height:540,
-				buttons: {  
-					"<?=$Text['btn_ok'];?>" : function(){
-						
-						//setClosingDate($(this).data('tmpData').orderDate); 
-						},
 				
-					"<?=$Text['btn_cancel'];?>"	: function(){
-						//$('td, th').removeClass('ui-state-hover');
-						$( this ).dialog( "close" );
-						} 
-				}
-			});*/
+			
 
-		
+
 			
 			
 	});  //close document ready
@@ -543,16 +590,19 @@
 <!-- end of wrap -->
 
 
-<!-- div id="dialog_setShopDate" title="Set shopping date">
+<div id="dialog_setShopDate" title="Set shopping date">
 	<p>&nbsp;</p>
-	<p>If the current order has arrived, you can set a shopping date. This will place the corresponding products 
-	into the shopping cart. 
+	<p class="success_msg">The items have been successfully moved to the shopping carts of the corresponding date.</p>
+	<p>Are you sure you want to make this order available for shopping? All corresponding products will be  
+	placed into the shopping cart for the following date: 
 	</p>
 	<br/>
-	<p>Select new closing date: </p>
+	<p class="textAlignCenter boldStuff" id="indicateShopDate"></p> 
 	<br/>
-	<div id="closingDatePicker"></div>
-</div-->
+	<p>You can also <a href="javascript:void(null)" id="showDatePicker">choose an alternative date</a> </p>
+	<br/>
+	<div id="datepicker"></div>
+</div>
 
 <!-- / END -->
 </body>
