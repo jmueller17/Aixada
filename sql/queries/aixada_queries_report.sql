@@ -1,9 +1,12 @@
 delimiter |
 
+
+
+
+
 /**
 * return all orders for a given date and provider
 */
-
 drop procedure if exists orders_for_date_and_provider|
 create procedure orders_for_date_and_provider(IN order_date DATE, IN the_provider_id int) 
 begin

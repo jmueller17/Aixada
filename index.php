@@ -30,7 +30,9 @@
 	$(function(){
 
 			$('#loadingMsg').hide();
-	
+
+
+			$( "#rightSummaryCol" ).tabs();
 
 			$('#tbl_FutureOrders tbody').xml2html('init',{
 				url : 'ctrlReport.php',
@@ -125,10 +127,13 @@
 				</div>
 			</div>
 			<div id="rightSummaryCol">
-				<div id="FutureOrders" class="ui-widget ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['purchase_future'];?></h2>
-					<div><br/></div>
-					<table id="tbl_FutureOrders" class="purchase_listing">
+				<ul>
+					<li><a href="#tabs-1">My Order(s)</a></li>
+					<li><a href="#tabs-2">My Purchase(s)</a></li>	
+				</ul>
+			
+				<div id="tabs-1">
+					<table id="tbl_Orders" >
 						<thead>
 							<tr>
 								<th>id</th>
@@ -144,35 +149,16 @@
 							</tr>
 						</tbody>
 					</table>
-				</div><br/>
-				<div id="PastValidated" class="ui-widget ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['purchase_current'];?></h2>
-					<div><br/></div>
-					<table id="tbl_PastValidated" class="purchase_listing">
-						<thead>
-							<tr>
-								<th>id</th>
-								<th><?php echo $Text['purchase_date'];?></th>
-								<th><?php echo $Text['status'];?></th>
-								<th><?php echo $Text['purchase_validated'];?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{id}</td>
-								<td><a href="javascript:void(null)" class="shopId">{date_for_shop}</a></td>
-								<td class="floatRight"><span class="ui-icon ui-icon-check"></span></td>
-								<td>{validated}</td>
-							</tr>
-						</tbody>
-					</table>
 				</div>
+				
+				<div id="tabs-2">
+				
+				
+				</div>
+			
+		
 			</div>			
 		</div>
-		
-	
-	
-		
 	</div>
 	<!-- end of stage wrap -->
 </div>

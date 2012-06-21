@@ -21,7 +21,12 @@ try{
     	
     	//returns a list of all orders summarized by provider within a given date range
     	case 'getOrdersListing':
-    		echo get_orders_in_range(get_param('filter'), get_param('limit',117111451111));
+    		echo get_orders_in_range(get_param('filter'), get_param('uf_id',0));
+    		exit; 
+    	
+    	//returns a list of all orders for the given uf
+    	case 'getOrdersListingForUf':
+    		echo get_orders_in_range(get_param('filter'), get_param('uf_id'));
     		exit; 
 
     	//retrieves list of products that have been ordered
@@ -49,7 +54,7 @@ try{
     		echo do_stored_query('set_order_item_status', get_param('order_id'), get_param('product_id'), get_param('has_arrived'), get_param('is_revised')  ); 
     		exit;
 
-    	//has the given order items that are already validated?
+    	//have the given order items be already validated?
     	case 'checkValidationStatus':
     		printXML(stored_query_XML_fields('get_validated_status', get_param('order_id',0), get_param('cart_id',0)));
     		exit;

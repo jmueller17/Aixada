@@ -367,49 +367,6 @@ end|
 
 
 
-
-
-
-
-drop procedure if exists get_arrived_products|
-create procedure get_arrived_products(in the_provider_id int, in the_date date)
-begin
-  select distinct
-        i.product_id, 
-        p.name,
-        p.description
-  from aixada_shop_item i
-  left join aixada_product p 
-     on p.id = i.product_id 
-  where i.date_for_shop = the_date
-    and p.provider_id = the_provider_id and 
-        p.active = true 
-  order by p.name;
-end|
-
-drop procedure if exists get_not_arrived_products|
-create procedure get_not_arrived_products(in the_provider_id int, in the_date date)
-begin
-  select distinct
-        i.product_id, 
-        p.name,
-        p.description
-  from aixada_order_item i
-  left join aixada_product p 
-     on p.id = i.product_id 
-  where i.date_for_order = the_date
-    and p.provider_id = the_provider_id 
-    and p.active = true 
-    and not exists (
-       select si.product_id
-       from aixada_shop_item si
-       where si.date_for_shop = the_date
-         and si.product_id = i.product_id
-    )
-  order by p.name;
-end|
-
-
 drop procedure if exists add_stock|
 create procedure add_stock(in the_product_id int, in delta_amount decimal(10,4), in the_operator_id int, in the_description varchar(255))
 begin

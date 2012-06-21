@@ -133,7 +133,7 @@ div#menuTable table 	{border:0px solid black;}
 div#menuTable table td 	{padding:20px 30px; text-align:center;}
 div#menuTable a			{font-size:1.2em; text-decoration:none;}
 div#menuTable a:hover	{font-size:1.2em; text-decoration:underline;}
-div#homeWrap			{margin:0 auto; max-width:800px;}
+div#homeWrap			{margin:0 auto; max-width:1000px;}
 div#leftIconCol			{width:30%; float:left; margin-right:30px;}
 div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}
 .homeIcon				{margin-bottom:20px; text-align:center;}

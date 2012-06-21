@@ -115,7 +115,7 @@ end |
 
 /**
  * the revision table stores if a given item has been revised and has arrived in general. 
- * This flags can be set here. 
+ * These flags can be set here. 
  */
 drop procedure if exists set_order_item_status|
 create procedure set_order_item_status (in the_order_id int, in the_product_id int, in has_arrived boolean, in is_revised boolean)
@@ -317,24 +317,31 @@ end |
  * also provides info about status of order and order_items: if available for sale, validate. 
  */
 drop procedure if exists get_orders_listing|
-create procedure get_orders_listing(in from_date date, in to_date date, in the_limit int)
+create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int)
 begin
-	
-	declare today date default date(sysdate()); 
-	
 
-	select distinct
+	declare today date default date(sysdate()); 
+	declare outer_wherec varchar(255) default "";
+    declare inner_wherec varchar(255) default "";
+    
+    if (the_uf_id > 0) then
+    	set outer_wherec = concat("oi.uf_id = ", the_uf_id ," and");
+    	set inner_wherec = concat(" and ois.uf_id = '", the_uf_id ,"'");
+    end if; 
+
+	set @q = concat("select distinct
 		o.*,
 		oi.date_for_order, 
 		pv.name as provider_name,
 		po.closing_date,
-		(select
-    		sum(ois.quantity * ois.unit_price_stamp)
-  		from 
-  			aixada_order_item ois
-  		where
-  			ois.order_id = oi.order_id) as order_total,
-		datediff(po.closing_date, today) as time_left
+		datediff(po.closing_date, '",today,"') as time_left,
+			(select
+	    		sum(ois.quantity * ois.unit_price_stamp)
+	  		from 
+	  			aixada_order_item ois
+	  		where
+	  			ois.order_id = oi.order_id
+				",inner_wherec,") as order_total
 	from 
 		aixada_provider pv,
 		aixada_product p,
@@ -342,40 +349,64 @@ begin
 		aixada_order_item oi left join 
 		aixada_order o on oi.order_id = o.id
 	where
-		oi.date_for_order >= from_date
-		and oi.date_for_order <= to_date
+		",outer_wherec,"
+		oi.date_for_order >= '",from_date,"'
+		and oi.date_for_order <= '",to_date,"'
 		and oi.product_id = p.id
 		and p.provider_id = pv.id
 		and oi.date_for_order = po.date_for_order
 		and po.product_id = p.id
 	order by 
-		oi.date_for_order desc
-	limit 
-		the_limit;
-	
+		oi.date_for_order desc;");
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 end |
 
 
-/**
- * 
- drop function if exists get_order_total|
-create function get_order_total(the_order_id int)
-returns decimal(10,2)
+
+drop procedure if exists get_orders_listing_for_uf|
+create procedure get_orders_listing_for_uf (in from_date date, in to_date date, in the_uf_id int)
 begin
 	
-	declare order_total decimal(10,2) default 0.00; 
+	declare today date default date(sysdate()); 
 	
-	set order_total = 
-	(select
-    	convert(sum(oi.quantity * oi.unit_price_stamp), decimal(10,2))
-  	from 
-  		aixada_order_item oi
-  	where
-  		oi.order_id = the_order_id);
-  		
-  	return order_total;
-end|*/
-
+	select distinct
+		o.id as order_id,
+		pv.name as provider_name, 
+		oi.date_for_order,
+		o.date_for_shop,
+		o.status,
+		o.ts_send_off,
+		po.closing_date,
+		datediff(po.closing_date, today) as time_left,
+			(select
+	    		sum(ois.quantity * ois.unit_price_stamp)
+	  		from 
+	  			aixada_order_item ois
+	  		where
+	  			ois.order_id = oi.order_id
+	  			and ois.uf_id = the_uf_id) as order_total
+	from 
+		
+		aixada_provider pv, 
+		aixada_product p, 
+		aixada_product_orderable_for_date po,
+		aixada_order_item oi left join 
+		aixada_order o on oi.order_id = o.id
+	where 
+		oi.uf_id = the_uf_id
+		and oi.date_for_order >= from_date
+		and oi.date_for_order <= to_date
+		and oi.product_id = p.id
+		and p.provider_id = pv.id
+		and oi.date_for_order = po.date_for_order
+		and po.product_id = p.id
+	order by
+		oi.date_for_order desc;
+	
+end |
 
 
 
@@ -439,21 +470,6 @@ begin
    group by p.id;
 end|
 
-
-
-/**
- * Convert ordered items to shop items
- */
-drop procedure if exists convert_order_to_shop|
-create procedure convert_order_to_shop(IN uf int, IN order_date date)
-begin
-  replace into aixada_shop_item (
-    uf_id, date_for_shop, product_id, quantity
-  ) select i.uf_id, i.date_for_order, i.product_id, i.quantity
-    from aixada_order_item i
-    where date_for_order = order_date 
-      and uf_id = uf;
-end|
 
 
 

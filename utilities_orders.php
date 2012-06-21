@@ -18,10 +18,11 @@ require_once ('utilities.php');
  * @param str $time_period today | all | prevMonth
  * @param int $limit sql limit 
  */
-function get_orders_in_range($time_period='today', $limit=117111451111)
+function get_orders_in_range($time_period='today', $uf_id=0)
 {
 	
 	//TODO server - client difference in time/date?!
+	
 	$today = date('Y-m-d', strtotime("Today"));
 	$tomorrow = date('Y-m-d', strtotime("Tomorrow"));
 	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
@@ -31,17 +32,17 @@ function get_orders_in_range($time_period='today', $limit=117111451111)
 	switch ($time_period) {
 		// all orders where date_for_order = today
 		case 'ordersForToday':
-			printXML(stored_query_XML_fields('get_orders_listing', $today, $today, $limit));
+			printXML(stored_query_XML_fields('get_orders_listing', $today, $today, $uf_id));
 			break;
 		
 		//all orders 
 		case 'all':
-			printXML(stored_query_XML_fields('get_orders_listing', $very_distant_past, $very_distant_future, $limit));
+			printXML(stored_query_XML_fields('get_orders_listing', $very_distant_past, $very_distant_future, $uf_id));
 			break;
 
 		//last month
 		case 'prevMonth':
-			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $very_distant_future, $limit));
+			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $very_distant_future, $uf_id));
 			break;
 		
 		//all orders that have been send off, but have no shop date assigned
@@ -50,7 +51,7 @@ function get_orders_in_range($time_period='today', $limit=117111451111)
 			break;
 		
 		case 'futureOrders':
-			printXML(stored_query_XML_fields('get_orders_listing', $tomorrow, $very_distant_future, $limit));
+			printXML(stored_query_XML_fields('get_orders_listing', $tomorrow, $very_distant_future, $uf_id));
 			break;
 		
 		
