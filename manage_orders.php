@@ -55,7 +55,7 @@
 			$.getAixadaDates('getToday', function (date){
 				var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
 				$("#datepicker").datepicker('setDate', today);
-				$("#datepicker").datepicker( "option", "minDate", today);
+				//$("#datepicker").datepicker( "option", "minDate", today);
 				$("#datepicker").datepicker("refresh");		
 				$('#indicateShopDate').text(date[0]);		
 			});	
@@ -131,6 +131,8 @@
 							var product_id = $(this).find('product_id').text();
 							var uf_id = $(this).find('uf_id').text();
 							var qu = $(this).find('quantity').text();
+							var revised = $(this).find('revised').text();
+							var arrived = $(this).find('arrived').text();
 							var tblCol = '.Col-'+uf_id;
 							var tblRow = '.Row-'+product_id;
 							var pid	= product_id + '_' + uf_id; 
@@ -138,6 +140,15 @@
 							//$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+'</p><p><input type="checkbox" class="floatLeft" /></p>')
 							$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+'</p>')
 
+							if (revised == true) {
+								$(tblCol+tblRow).removeClass('toRevise').addClass('revised');
+							} 
+
+							if (arrived == false && !$(tblRow).hasClass('missing')){
+								$(tblRow).removeClass('toRevise revised').addClass('missing');
+								$('#ckboxRevised_'+product_id).attr('checked','checked');
+								$('#ckboxArrived_'+product_id).attr('checked',false);
+							}
 							
 							$(tblCol).show();
 
@@ -172,7 +183,7 @@
 
 			
 			/**
-			 *	returns to order overview
+			 *	returns to order overview  TODO: check for unsaved changes
 			 */
 			$("#btn_overview").button({
 				 icons: {
@@ -307,9 +318,9 @@
 					url: 'ctrlOrders.php?oper=setOrderItemStatus&order_id='+global_order_id+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
 					success: function(txt){
 						if (has_arrived){
-							$('.Row-'+product_id).removeClass('missing'); 
+							$('.Row-'+product_id).removeClass('missing').addClass('toRevise'); 
 						} else {
-							$('.Row-'+product_id).removeClass('toRevise revised').addClass('missing');
+							$('.Row-'+product_id).removeClass('toRevise').addClass('missing');
 							$('#ckboxRevised_'+product_id).attr('checked','checked');
 							
 						}
@@ -376,18 +387,17 @@
 					} else {
 						//while open and not send off, no order_id exists
 						$(row).children(':first').html('<p>-</p>');
-						$(row).children().eq(5).html('<p class="minPadding iconContainer"><span class="ui-icon ui-icon-alert ui-state-highlight floatLeft"></span>not yet send to provider</p>');
+						$(row).children().eq(5).html('<p><p class="minPadding iconContainer floatLeft ui-state-highlight ui-corner-all"><span class="ui-icon ui-icon-alert"></span></p> not yet send to provider</p>');
 					}
-
-					//set shopping date
-
-				
-					 	
 				},
 				complete : function (rowCount){
 					$("#tbl_orderOverview").trigger("update"); 
-					//$('#tbl_orderOverview tbody tr:even').addClass('highlight'); 
-					
+					if (rowCount == 0){
+						$.showMsg({
+							msg:'Sorry, no orders match the selected criteria. ',
+							type: 'warning'});
+					}
+					//$('#tbl_orderOverview tbody tr:even').addClass('highlight'); 					
 				}
 			});
 
@@ -442,13 +452,39 @@
 					}
 
 					
-					//if shop date exists, check if it items have been validated
+					//if shop date exists, check if it items have already been moved to shop_item and/or validated
 					if (shopDate != ''){
 						$.post('ctrlOrders.php?oper=checkValidationStatus&order_id='+global_order_id, function(xml) {
-							if ($(xml).find('validated').text() > 0){
+							//alert($(xml).find('validated').text())
+							
+							var hasCart = false; 
+							var isValidated = false; 
+							$(xml).find('row').each(function(){
+
+								 if ($(this).find('cart_id').text() > 0) hasCart = true; 
+								 if ($(this).find('validated').text() > 0) isValidated = true; 
+								 
+
+							});
+
+							if (hasCart && !isValidated){
+								$.showMsg({
+									msg:'The items of this order have already been revised and placed into people\'s carts. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?!',
+									buttons: {
+										"<?=$Text['btn_ok'];?>":function(){						
+											switchTo('details', {name:provider_name});
+											$(this).dialog("close");
+										},
+										"<?=$Text['btn_cancel'];?>" : function(){
+											$( this ).dialog( "close" );
+										}
+									},
+									type: 'warning'});
+
+							} else if (isValidated){
 								$.showMsg({
 									msg:'Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!',
-									type: 'warning'});
+									type: 'error'});
 							} else {
 								switchTo('details', {name:provider_name});
 							}		 
@@ -481,7 +517,26 @@
 					}
 				}
 
-				
+				$("#tblOptions")
+				.button({
+					icons: {
+			        	secondary: "ui-icon-triangle-1-s"
+					}
+			    })
+			    .menu({
+					content: $('#tblOptionsItems').html(),	
+					showSpeed: 50, 
+					width:280,
+					flyOut: true, 
+					itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
+						//show hide deactivated products
+						var filter = $(item).attr('id');
+						$('#tbl_orderOverview tbody').xml2html('reload',{
+							params : 'oper=getOrdersListing&filter='+filter,
+						});
+						
+					}//end item selected 
+				});//end menu
 			
 
 
@@ -508,8 +563,16 @@
 		    	<h1 class="overviewElements">Manage orders</h1>
 		    </div>
 		   	<div id="titleRightCol">
-		   		<button id="btn_setShopDate" class="detailElements floatRight">Activate for today's shopping!</button>
-								
+		   		<button id="btn_setShopDate" class="detailElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
+				<button	id="tblOptions" class="overviewElements btn_right">Filter orders</button>
+				<div id="tblOptionsItems" class="hidden">
+					<ul>
+						<li><a href="javascript:void(null)" id="ordersForToday">Expected today</a></li>
+						<li><a href="javascript:void(null)" id="futureOrders">Upcoming: next week + beyond</a></li>
+						<li><a href="javascript:void(null)" id="prevMonth">Last month</a></li>
+						<li><a href="javascript:void(null)" id="limboOrders">That never arrived</a></li>
+					</ul>
+				</div>				
 		   	</div> 	
 		</div> <!--  end of title wrap -->
 	

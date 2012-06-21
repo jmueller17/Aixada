@@ -180,14 +180,14 @@ where
 	and p.id = oi.product_id
 	and o.provider_id = p.provider_id;
 	
-/** set date_for_shop for past orders assuming that shop conicides with date_for_order date! **/
+/** set date_for_shop for past orders assuming that shop conicides with date_for_order date! 
 declare today date default date(sysdate()); 
 update
 	aixada_order o
 set
 	o.date_for_shop = o.date_for_order
 where
-	o.date_for_order < today;
+	o.date_for_order < today;**/
 	
 	
 	

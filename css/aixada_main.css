@@ -180,7 +180,7 @@ div#colActionIcons  		{width:280px; padding:4px;}
 
 /** for manage orders **/
 h3#orderInfoDate			{font-size:1.5em;}
-#btn_setShopDate			{margin-top:0.8em; margin-right:-2em;}
+.btn_right				{margin-top:0.8em; margin-right:-2em; float:right;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
 .tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
 .tblReviseOrder	td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}

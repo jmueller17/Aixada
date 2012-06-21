@@ -54,7 +54,9 @@ begin
 	-- otherwise get them from the order_item table		
 	else 
 		select 
-			oi.*
+			oi.*,
+			1 as arrived, 
+			0 as revised
 		from
 			aixada_order_item oi
 		where 
@@ -254,7 +256,7 @@ end |
 
 
 /**
- * determines if order_items of a given order have already been 
+ * determines if order_items of a given order have already been moved to aixada_shop_item and if they have been
  * validated. returns the nr of validate items. Accepts either order_id or cart_id
  */
 drop procedure if exists get_validated_status|
@@ -263,17 +265,20 @@ begin
 	
 	if the_order_id > 0 then
 		select 
-			count(si.id) as validated
-		from 
-			aixada_shop_item si, 
+			c.id as cart_id, 
+			if (c.ts_validated>0, 1, 0) as validated
+		from
 			aixada_order_item oi,
+			aixada_shop_item si, 
 			aixada_cart c
 		where 
-			oi.id = si.order_item_id
-			and si.cart_id = c.id
-			and c.ts_validated > 0;
+			oi.order_id = the_order_id
+			and oi.id = si.order_item_id
+			and si.cart_id = c.id; 
+				
 	elseif the_cart_id > 0 then
 		select
+			id as cart_id,
 			if (ts_validated>0, 1, 0) as validated 
 		from 
 			aixada_cart 
