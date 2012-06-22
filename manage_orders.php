@@ -397,7 +397,7 @@
 							msg:'Sorry, no orders match the selected criteria. ',
 							type: 'warning'});
 					}
-					//$('#tbl_orderOverview tbody tr:even').addClass('highlight'); 					
+					//$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
 				}
 			});
 

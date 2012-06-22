@@ -1,7 +1,33 @@
 delimiter |
 
 
-
+/**
+ * returns the order_item info and shop_item info reflecting eventual modifications
+ * (products that did not arrive, quantities that changed). 
+ */
+drop procedure if exists diff_order_shop|
+create procedure diff_order_shop (in the_order_id int, in the_uf_id int)
+begin
+	
+	select 
+		p.id as product_id,
+		p.name as product_name, 
+		oi.order_id, 
+		oi.quantity as order_quantity,
+		si.quantity as shop_quantity, 
+		oi.unit_price_stamp as unit_price
+	from 
+		aixada_order_item oi, 
+		aixada_shop_item si,
+		aixada_product p
+	where 
+		oi.order_id = the_order_id
+		and oi.uf_id = the_uf_id
+		and si.order_item_id = oi.id
+		and p.id = oi.product_id
+	order by
+		p.id;
+end |
 
 
 /**
@@ -265,48 +291,6 @@ begin
   order by date_for_shop desc;
 end|
 
-
-drop procedure if exists future_shop_times_for_uf|
-create procedure future_shop_times_for_uf(in the_uf int)
-begin
-  declare first_future_date date default date_add(date(sysdate()), interval 1 day);
-  select 
-  	id, 
-  	date_for_shop
-  from 
-  	aixada_shop_item 
-  where 
-  	uf_id = the_uf
-  	and   date_for_shop >= first_future_date
-  	and   ts_validated = 0
-  group by 
-  	date_for_shop
-  order by 
-  	date_for_shop desc;
-end|
-
-
-drop procedure if exists shop_times_for_uf|
-create procedure shop_times_for_uf(in the_uf int)
-begin
-  declare first_past_date date default date_add(date(sysdate()), interval -6 month);
-  declare  last_past_date date default date_add(date(sysdate()), interval -2 day);
-  select 
-  	id, 
-  	date_for_shop, 
-  	ts_validated as validated
-  from 
-  	aixada_shop_item 
-  where 
-  	uf_id = the_uf
-  	and   (date_for_shop between first_past_date and last_past_date
-  	and   (ts_validated > 0 
-  	or    ts_validated = 0))
-  group by 
-  	date_for_shop
-  order by 
-  	date_for_shop desc;
-end|
 
 
 drop procedure if exists shopped_items_by_id|

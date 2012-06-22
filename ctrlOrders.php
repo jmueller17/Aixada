@@ -26,7 +26,7 @@ try{
     	
     	//returns a list of all orders for the given uf
     	case 'getOrdersListingForUf':
-    		echo get_orders_in_range(get_param('filter'), get_param('uf_id'));
+    		echo get_orders_in_range(get_param('filter'), get_session_user_id());
     		exit; 
 
     	//retrieves list of products that have been ordered
@@ -63,6 +63,12 @@ try{
     	case 'moveOrderToShop':
     		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
+    		
+    	
+  		case 'getDiffOrderShop':
+    		printXML(stored_query_XML_fields('diff_order_shop', get_param('order_id'), get_session_user_id()));    	
+  			exit;
+    		
     		
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  

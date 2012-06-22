@@ -249,8 +249,9 @@ create table aixada_order (
 	ts_send_off		timestamp		default 0,	
 	date_received	date			default null,
 	date_for_shop	date			default null,
+	total			decimal(10,2)	default 0,
 	notes			varchar(255)	default null,	
-	status			int				default 1,
+	revision_status	int				default 1,
 	delivery_ref	varchar(255)	default null,
 	payment_ref		varchar(255)	default null,
 	primary key (id),
@@ -264,7 +265,7 @@ create table aixada_order (
 
 
 /**
- * used for grouping either entries in aixada_order_items or aixada_shop_cart. Order items can
+ * used for grouping either entries in aixada_order_items or aixada_shop_items. Order items can
  * be grouped for favorite order carts. Shop items are always grouped through the aixada_cart(id)
  */
 create table aixada_cart (

@@ -34,12 +34,83 @@
 
 			$( "#rightSummaryCol" ).tabs();
 
-			$('#tbl_FutureOrders tbody').xml2html('init',{
-				url : 'ctrlReport.php',
-				params : 'oper=getFutureShopTimes', 
-				loadOnInit : false
+			$('#tmp').hide();
+
+
+
+			/********************************************************
+			 *      My ORDERS
+			 ********************************************************/
+			 
+			var lastDate = '';
+			$('#tbl_Orders tbody').xml2html('init',{
+				url : 'ctrlOrders.php',
+				params : 'oper=getOrdersListingForUf&filter=prevMonth', 
+				loadOnInit : true, 
+				rowComplete : function(rowIndex, row){
+					var order_id = $(row).attr('orderId');
+					if (order_id == ''){
+						 $(row).children().eq(0).addClass('dim40');
+						 $(row).children().eq(4).text('not yet sent');		
+					}
+					
+					var date = $(row).children().eq(2).text();
+					if (date != lastDate) $(row).before('<tr><td colspan="6" class="dateRow">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
+					lastDate=date; 	
+				}
 			});
 
+			//tmp table to load the order - shop comparison
+			$('#tbl_diffOrderShop tbody').xml2html('init',{
+				url : 'ctrlOrders.php',
+				params : 'oper=getDiffOrderShop', 
+				loadOnInit : false, 
+				complete : function(rowCount){
+					if (rowCount >0){
+						var header = $('#tbl_diffOrderShop thead tr').clone()
+						var itemRows = $('#tbl_diffOrderShop tbody tr').clone();
+						$('#order_'+global_order_id).after(itemRows).after(header);
+					} else {
+						$('#order_'+global_order_id+' span').removeClass('ui-icon-minus').addClass('ui-icon-plus');
+						$.showMsg({
+							msg:'Sorry, no items have been found for your Uf and this order.',
+							type: 'error'});
+					}
+				}
+			});
+			
+
+			var global_order_id = 0; 
+			$('.expandOrderIcon').live('click', function(){
+
+				global_order_id = $(this).parents('tr').attr('orderId');
+				if (global_order_id == '') return false; 
+				
+				if ($('span',this).hasClass('ui-icon-plus')){
+					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
+
+					if ($('.detail_'+global_order_id).exists()){
+						$('.detail_'+global_order_id).show().prev().show();
+					} else {
+						$('#tbl_diffOrderShop tbody').xml2html('reload', {
+							params : 'oper=getDiffOrderShop&order_id='+global_order_id, 
+						});						
+					}
+
+					
+				} else {
+					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
+					$('.detail_'+global_order_id).hide().prev().hide();
+					
+				}
+
+				
+				
+				
+				
+			})
+
+			
 		
 			//show purchases, validate and non validated
 			$('#tbl_PastValidated tbody').xml2html('init',{
@@ -96,7 +167,14 @@
 					}
 				}
 			});
-				
+
+			$('.iconContainer')
+			.live('mouseover', function(e){
+				$(this).addClass('ui-state-hover');
+			})
+			.live('mouseout', function (e){
+				$(this).removeClass('ui-state-hover');
+			});
 			
 	});  //close document ready
 </script>
@@ -128,24 +206,28 @@
 			</div>
 			<div id="rightSummaryCol">
 				<ul>
-					<li><a href="#tabs-1">My Order(s)</a></li>
-					<li><a href="#tabs-2">My Purchase(s)</a></li>	
+					<li><a href="#tabs-1"><h2>My Order(s)</h2></a></li>
+					<li><a href="#tabs-2"><h2>My Purchase(s)</h2></a></li>	
 				</ul>
 			
 				<div id="tabs-1">
-					<table id="tbl_Orders" >
+					<table id="tbl_Orders" class="">
 						<thead>
 							<tr>
-								<th>id</th>
-								<th><?php echo $Text['ordered_for'];?></th>
-								<th><?php echo $Text['status'];?></th>
+								<th colspan="2"></th>
+								<th>Closes in #days</th>
+								<th>Status</th>
+								<th>Total</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>{id}</td>
-								<td><a href="javascript:void(null)" class="shopId">{date_for_shop}</a></td>
-								<td class="floatRight">open/closed</td>
+							<tr id="order_{id}" orderId="{id}">
+								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+								<td>{provider_name}</td>
+								<td class="hidden">{date_for_order}</td>
+								<td class="textAlignCenter">{time_left}</td>
+								<td  class="textAlignCenter">not revised</td>
+								<td class="textAlignRight">{order_total}€</td>
 							</tr>
 						</tbody>
 					</table>
@@ -156,12 +238,43 @@
 				
 				</div>
 			
+			
+				
+			
 		
 			</div>			
 		</div>
 	</div>
 	<!-- end of stage wrap -->
 </div>
+
+<div id="tmp">
+<table id="tbl_diffOrderShop" class="">
+	<thead>
+		<tr>
+			<th>id</th>
+			<th>Product</th>
+			<th>Order-qu</th>
+			<th>Shop-qua</th>
+			<th>Price</th>		
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="detail_{order_id}">
+			<td>{product_id}</td>
+			<td>{product_name}</td>
+			<td>{order_quantity}</td>
+			<td>{shop_quantity}</td>
+			<td>{unit_price}</td>
+			
+		</tr>
+	</tbody>
+</table>
+				
+</div>
+
+
+
 <!-- end of wrap -->
 <div id="dialog-message" title="">
 		 <p id="loadingMsg" class="ui-state-highlight"><?php echo $Text['loading'];?></p>

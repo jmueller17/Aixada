@@ -81,8 +81,9 @@ create table aixada_order (
 	ts_send_off		timestamp		default 0,	
 	date_received	date			default null,
 	date_for_shop	date			default null,
+	total			decimal(10,2)  	default 0,
 	notes			varchar(255)	default null,	
-	status			int				default 1,
+	revision_status int				default 1,
 	delivery_ref	varchar(255)	default null,
 	payment_ref		varchar(255)	default null,
 	primary key (id),
@@ -180,7 +181,9 @@ where
 	and p.id = oi.product_id
 	and o.provider_id = p.provider_id;
 	
-/** set date_for_shop for past orders assuming that shop conicides with date_for_order date! 
+	
+/** set date_for_shop for past orders assuming that shop conicides with date_for_order date!
+ *  produces error... best done by hand.  
 declare today date default date(sysdate()); 
 update
 	aixada_order o
@@ -200,8 +203,7 @@ set
 	oi.unit_price_stamp = p.unit_price * (1 + iva.percent/100)
 where
 	oi.product_id = p.id
-	and p.iva_percent_id = iva.id;
-	
+	and p.iva_percent_id = iva.id;	
 		
 	
 /** add the keys to order_item **/
@@ -213,6 +215,21 @@ add foreign key (product_id) references aixada_product(id),
 add foreign key (favorite_cart_id) references aixada_cart(id),
 add foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
 add unique key (order_id, uf_id, product_id );
+
+
+/** calculate the order total for each order and update aixada_order **/
+update 
+	aixada_order o, 
+	aixada_order_item oi
+set
+	o.total = 	(select
+	    		sum(ois.quantity * ois.unit_price_stamp)
+	  		from 
+	  			aixada_order_item ois
+	  		where
+	  			ois.order_id = oi.order_id)
+where 
+	oi.order_id = o.id; 
 
 
 

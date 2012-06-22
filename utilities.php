@@ -7,12 +7,35 @@ $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata'
 require_once('local_config/lang/' . $language . '.php');
 
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output bufferin
-//$firephp = FirePHP::getInstance(true);
-//DBWrap::get_instance()->debug = true;
 
 
+
+/**
+ * 
+ * Returns the user_id of the logged user; wraps a check around this, in order to make sure
+ * the value is set. 
+ * @throws Exception
+ */
+function get_session_user_id(){
+	
+	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ){
+		
+		return $_SESSION['userdata']['uf_id'];
+	} else {
+		throw new Exception("$_Session data uf_id is not set!! ");
+	}
+}
+
+
+
+/**
+ * 
+ * Provides some basic logic to retrieve values from URL parameters. 
+ * @param str $param_name the name of the parameter passed along 
+ * @param $default a default value. if the parameter is not set, the default value will be used
+ * @param str $transform basic string transforms applied to the value of the parameter
+ * @throws Exception
+ */
 function get_param($param_name, $default=null, $transform = ''){
 	$value; 
 	

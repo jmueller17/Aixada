@@ -31,6 +31,10 @@ $(function(){
 		
 	});
 	
+	$.fn.exists = function () {
+	    return this.length !== 0;
+	};
+	
 	$.extend({
 			updateTips: function(where, type, msg, timing ) {
 					

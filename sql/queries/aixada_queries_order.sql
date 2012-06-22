@@ -322,11 +322,19 @@ begin
 
 	declare today date default date(sysdate()); 
 	declare outer_wherec varchar(255) default "";
-    declare inner_wherec varchar(255) default "";
+    declare totalc varchar(255) default "";
     
     if (the_uf_id > 0) then
-    	set outer_wherec = concat("oi.uf_id = ", the_uf_id ," and");
-    	set inner_wherec = concat(" and ois.uf_id = '", the_uf_id ,"'");
+    	set outer_wherec = 	concat("oi.uf_id = ", the_uf_id ," and");
+    	set totalc = 		concat("(select
+	    								sum(ois.quantity * ois.unit_price_stamp)
+	  								from 
+	  									aixada_order_item ois
+	  								where
+	  									ois.order_id = oi.order_id
+										and ois.uf_id =",the_uf_id,")");
+	else 
+		set totalc = "o.total "; 
     end if; 
 
 	set @q = concat("select distinct
@@ -335,13 +343,7 @@ begin
 		pv.name as provider_name,
 		po.closing_date,
 		datediff(po.closing_date, '",today,"') as time_left,
-			(select
-	    		sum(ois.quantity * ois.unit_price_stamp)
-	  		from 
-	  			aixada_order_item ois
-	  		where
-	  			ois.order_id = oi.order_id
-				",inner_wherec,") as order_total
+		",totalc," as order_total
 	from 
 		aixada_provider pv,
 		aixada_product p,
@@ -362,50 +364,6 @@ begin
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
-end |
-
-
-
-drop procedure if exists get_orders_listing_for_uf|
-create procedure get_orders_listing_for_uf (in from_date date, in to_date date, in the_uf_id int)
-begin
-	
-	declare today date default date(sysdate()); 
-	
-	select distinct
-		o.id as order_id,
-		pv.name as provider_name, 
-		oi.date_for_order,
-		o.date_for_shop,
-		o.status,
-		o.ts_send_off,
-		po.closing_date,
-		datediff(po.closing_date, today) as time_left,
-			(select
-	    		sum(ois.quantity * ois.unit_price_stamp)
-	  		from 
-	  			aixada_order_item ois
-	  		where
-	  			ois.order_id = oi.order_id
-	  			and ois.uf_id = the_uf_id) as order_total
-	from 
-		
-		aixada_provider pv, 
-		aixada_product p, 
-		aixada_product_orderable_for_date po,
-		aixada_order_item oi left join 
-		aixada_order o on oi.order_id = o.id
-	where 
-		oi.uf_id = the_uf_id
-		and oi.date_for_order >= from_date
-		and oi.date_for_order <= to_date
-		and oi.product_id = p.id
-		and p.provider_id = pv.id
-		and oi.date_for_order = po.date_for_order
-		and po.product_id = p.id
-	order by
-		oi.date_for_order desc;
-	
 end |
 
 
