@@ -1,7 +1,5 @@
 <?php
 
- require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
- ob_start(); // Starts FirePHP output buffering
 
 require_once("local_config/config.php");
 require_once("inc/database.php");
@@ -10,17 +8,14 @@ require_once("utilities_report.php");
 require_once("utilities_dates.php");
 require_once("lib/report_manager.php");
 
-$firephp = FirePHP::getInstance(true);
 
 $use_session_cache = true; 
-// This controls if the table_manager objects are stored in $_SESSION or not.
-// It looks like doing it cuts down considerably on execution time.
+
 
 if (!isset($_SESSION)) {
     session_start();
  }
 
-DBWrap::get_instance()->debug = true;
 
 try{ 
     $uf_logged_in = $_SESSION['userdata']['uf_id'];
@@ -50,7 +45,6 @@ try{
     $rm = new report_manager;
     $next_order = get_dates('get_orderable_dates', $format='array', $limit=1);
 
-    //$the_date = ((isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : get_next_shop_date());
     
     $the_date = (isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : $next_order[0];
     

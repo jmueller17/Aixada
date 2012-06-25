@@ -66,7 +66,6 @@
 
 <div id="navWizardItems" class="hidden">
 	<ul>
-		<li><a href="arrived_products.php"><?php echo $Text['nav_wiz_arrived'];?></a></li>
 		<li><a href="validate.php"><?php echo $Text['nav_wiz_validate'];?></a></li>
 		<li><a href="report_order.php?what=Report"><?php echo $Text['nav_report_order'];?></a></li>
 		<li><a href="report_torn.php"><?php echo $Text['nav_wiz_torn'];?></a></li>

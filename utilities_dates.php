@@ -10,6 +10,24 @@ ob_start(); // Starts FirePHP output buffering
 
 /**
  * 
+ * Returns dates that have unvalidated shopping carts. If among the dates
+ * is "today", gets true mark. 
+ */
+function get_dates_for_validation()
+{
+	$xml = stored_query_XML_fields('dates_with_unvalidated_shop_carts');
+	$today = strftime('%Y-%m-%d', strtotime('today'));
+	$pos = strpos($xml, $today);
+	if ($pos !== false) {
+	  	$xml = substr_replace($xml, ' today="true"', $pos-10, 0);
+	}
+	return $xml; 
+}
+
+
+
+/**
+ * 
  * For a given provider and a given date, all orderable products for this date will be set orderable
  * depending on weekly frequency and duration 
  * @param int $provider_id
@@ -121,8 +139,6 @@ function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 	    	throw new Exception("utility_dates: \"format=" . $format . "\" not a valid output format");			
 	
 	}
-	
-
 }
 
 

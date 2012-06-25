@@ -1,30 +1,50 @@
 delimiter |
 
 
+/**
+ * returns listing of aixada_cart's for given uf and date range. 
+ */
+drop procedure if exists get_purchase_listing|
+create procedure get_purchase_listing(in from_date date, in to_date date, in the_uf_id int)
+begin
+	
+	select 
+		c.id,
+		c.uf_id, 
+		c.date_for_shop, 
+		c.ts_validated, 
+		get_purchase_total(c.id) as purchase_total
+	from 
+		aixada_cart c
+	where 
+		c.date_for_shop between from_date and to_date
+		and c.uf_id = the_uf_id; 
+end |
 
 
 
-/*
- * A query that calculates the total of all sales items for a given uf and date
+/**
+ * returns the total of a given purchase (cart). 
+ * Important: the unit_price_stamp of the shop item
+ * already contains IVA and Rev-tax!
  */ 
-drop function if exists total_price_of_shop_items|
-create function total_price_of_shop_items(the_date date, the_uf_id int)
+drop function if exists get_purchase_total|
+create function get_purchase_total(the_cart_id int)
 returns float(10,2)
 reads sql data
 begin
   declare total_price decimal(10,2);
+  
   select 
-    sum(i.quantity * p.unit_price * (1 + p.iva_percent/100) * (1 + t.rev_tax_percent/100)) 
-    into total_price
-    from aixada_shop_item i
-      left join aixada_product p
-        on i.product_id = p.id
-      left join aixada_rev_tax_type t
-        on t.id = p.rev_tax_type_id
-    where i.date_for_shop = the_date
-      and uf_id = the_uf_id
-      and i.ts_validated = 0;
+	sum(si.quantity * si.unit_price_stamp) into total_price
+  from 
+	aixada_shop_item si
+  where
+	si.cart_id = the_cart_id;
+      
   return total_price;
 end|
+
+
 
 delimiter ;

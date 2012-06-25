@@ -69,11 +69,11 @@ try{
 	   	 * retrieves the shop | order items for the logged in user. 
 	   	 */
   		case 'getOrderCart':
-  			printXML(stored_query_XML_fields('get_order_cart', get_param('date'), $_SESSION['userdata']['uf_id']));
+  			printXML(stored_query_XML_fields('get_order_cart', get_param('date'), get_session_uf_id()));
   			exit;
   			
   		case 'getShopCart':
-  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), $_SESSION['userdata']['uf_id'])); 
+  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_session_uf_id())); 
 			exit; 
 
  	
@@ -177,7 +177,6 @@ try{
 	        try {
 				$emptyArr = array();
 	        	$cid = $cm->commit(get_param('quantity',$emptyArr), get_param('product_id',$emptyArr), get_param('iva_percent',$emptyArr), get_param('rev_tax_percent',$emptyArr), get_param('order_item_id',$emptyArr), get_param('cart_id',0), get_param('preorder',$emptyArr), get_param('price', $emptyArr));
-	            //$cid = $cm->commit($_REQUEST['quantity'], $_REQUEST['product_id'], $_REQUEST['iva_percent'], $_REQUEST['rev_tax_percent'], $_REQUEST['order_item_id'], $_REQUEST['cart_id'], $_REQUEST['preorder']);
 	            echo ($cid);
 	        }
 	        catch(Exception $e) {

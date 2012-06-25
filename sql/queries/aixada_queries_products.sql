@@ -246,7 +246,7 @@ end|
  *  returns all products (with details). This query is needed for the shop/order pages and its
  *  different mechanismos for searching: by provider, by category, or direct search. 
  *  As such this query shows available products for ordering or for purchase but does not handle any real 
- *  ordered or bought products. 
+ *  ordered or bought products. The search functionality is also called from the validate page. 
  * 
  *  If a provider_id is set, it returns the associated products for the provider. If date is set, then these
  *  are orderable products, otherwise stock. 
@@ -255,6 +255,9 @@ end|
  *  orderable, otherwise stock.
  * 
  * 	if provider_id and category_id = 0 and the_like is set, then searches for product 
+ * 
+ *  Furthermore it is important to note that the price delivered includes IVA and Rev Tax!! There is no 
+ *  need to calcuate this at a later point in time (upon validation for example). 
  */
 drop procedure if exists get_products_detail|
 create procedure get_products_detail(	in the_provider_id int, 
@@ -296,7 +299,6 @@ begin
     	set wherec 	= concat (wherec, " and p.name LIKE '%", the_like,"%' ");
     end if;
     
-    
   
 	set @q = concat("
 	select
@@ -305,7 +307,7 @@ begin
 		p.description,
 		p.category_id,
 		p.stock_actual,
-		p.unit_price * (1 + iva.percent/100) as unit_price,
+		(p.unit_price * (1 + iva.percent/100) * (1+t.rev_tax_percent/100)) as unit_price,
 		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,

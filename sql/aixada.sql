@@ -326,6 +326,7 @@ create table aixada_order_item (
 
 /**
  *	stores the individual product items, quantity, price for a given sale. 
+ *  the unit_price_stamp field stores price incl. iva + rev tax! 
  */
 create table aixada_shop_item (
   id 	          	int				not null auto_increment,

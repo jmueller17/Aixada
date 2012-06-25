@@ -1,11 +1,5 @@
 <?php
 
-
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//$firephp = FirePHP::getInstance(true);
-//ob_start(); // Starts FirePHP output buffering
-
-
 require_once('inc/database.php');
 require_once('local_config/config.php');
 require_once ('utilities.php');

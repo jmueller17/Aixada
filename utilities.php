@@ -14,12 +14,24 @@ require_once('local_config/lang/' . $language . '.php');
  * 
  * Returns the user_id of the logged user; wraps a check around this, in order to make sure
  * the value is set. 
- * @throws Exception
  */
 function get_session_user_id(){
 	
+	if (isset($_SESSION['userdata']['user_id']) && $_SESSION['userdata']['user_id'] > 0 ){
+		return $_SESSION['userdata']['user_id'];
+	} else {
+		throw new Exception("$_Session data user_id is not set!! ");
+	}
+}
+
+
+/**
+ * 
+ * returns the uf of the logged user. 
+ */
+function get_session_uf_id(){
+	
 	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ){
-		
 		return $_SESSION['userdata']['uf_id'];
 	} else {
 		throw new Exception("$_Session data uf_id is not set!! ");

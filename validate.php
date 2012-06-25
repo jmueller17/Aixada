@@ -85,8 +85,7 @@
 					params 	: 'oper=GetUFsForValidation',
 					rowComplete : function(rowIndex, row){
 						if ($(row).val() == torn_uf_id){	//cannot validate yourself
-							//$(row).attr("disabled","disabled");
-							$(row).addClass('grayed');
+							$(row).addClass('dim60');
 						}
 					}, 
 					loadOnInit:true
@@ -120,14 +119,14 @@
 				
 				//set the uf_id for the saveCartURL when submitting
 				$('#cartLayer').aixadacart('options',{
-					date : getSelectedDate(),
 					saveCartURL : 'ctrlValidate.php?oper=commit&uf_id='+uf_id
 				});
 
 				$('#cartAnim').show();
 				//the url to load the items for given uf/date
 				$('#cartLayer').aixadacart('loadCart',{
-					loadCartURL : 'ctrlValidate.php?oper=getShopItemsForDateAndUf&date='+getSelectedDate()+'&uf_id='+uf_id,
+					loadCartURL		: 'ctrlValidate.php?oper=getShopCart&date='+getSelectedDate() + '&uf_id='+uf_id,
+					//loadCartURL : 'ctrlValidate.php?oper=getShopItemsForDateAndUf&date='+getSelectedDate()+'&uf_id='+uf_id,
 					loadSuccess : function (){
 						$('#cartAnim').hide();
 					}
@@ -153,6 +152,7 @@
 						}
 				
 			}).change(function(){
+				$('#cartLayer').aixadacart('setDate',getSelectedDate());
 				reloadValidationUfs();
 			});
 			
@@ -176,15 +176,14 @@
 					//empty the cart
 					$(this).aixadacart("resetCart");	
 
-					$('#list_account tbody').xml2html('reload',{
+					/*$('#list_account tbody').xml2html('reload',{
 						params	: 'oper=latest_movements'
-					});				
+					});*/				
 				}
 			});
 
 		    //init xml2html product search
 			$('#product_list_search tbody').xml2html('init',{
-					//url : 'ctrlValidate.php'
 					url : 'ctrlShopAndOrder.php'
 				});
 
@@ -251,7 +250,7 @@
 			 $('#list_account tbody').xml2html('init',{
 					url		: 'ctrlReport.php',
 					params	: 'oper=latest_movements',
-					loadOnInit: true
+					loadOnInit: false
 			});
 
 
@@ -381,8 +380,7 @@
 					
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
-								//params: 'oper=listProductsLike&date='+getSelectedDate()+'&like='+searchStr,
-								params: 'oper=listProductsLike&what=Shop&date='+getSelectedDate()+'&like='+searchStr,
+								params: 'oper=getShopProducts&date='+$.getSelectedDate()+'&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();

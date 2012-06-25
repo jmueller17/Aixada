@@ -275,10 +275,9 @@
     		 data = $(this).data('aixadacart');
     		 
     		 //if the new date is different from the current one, emtpy the cart!
-    		 if (data.date != options.date) {
+    		 if (options.date != undefined && data.date != options.date) {
     			 $(this).aixadacart("setDate",options.date);
     		 }
-    		 
     		 
     		 if (options) { 
     			$.extend(data, options );

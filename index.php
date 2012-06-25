@@ -31,7 +31,6 @@
 
 			$('#loadingMsg').hide();
 
-
 			$( "#rightSummaryCol" ).tabs();
 
 			$('#tmp').hide();
@@ -103,70 +102,25 @@
 					$('.detail_'+global_order_id).hide().prev().hide();
 					
 				}
-
-				
-				
-				
-				
 			})
 
 			
-		
-			//show purchases, validate and non validated
-			$('#tbl_PastValidated tbody').xml2html('init',{
-				url : 'ctrlReport.php',
-				params : 'oper=getAllShopTimes', 
-				loadOnInit : false, 
-				rowComplete : function(rowIndex, row){	
-					var last_td = $(row).children().last(); //change the text displayed when purchse has not been validated 
-					if (last_td.text() == '0000-00-00 00:00:00') {
-						last_td.text('<?php echo $Text["not_validated"];?>');
-						last_td.prev().html('<span class="ui-icon ui-icon-minus"></span>');
+			
+			/********************************************************
+			 *      My PURCHASE
+			 ********************************************************/
+			$('#tbl_Orders tbody').xml2html('init',{
+					url : 'ctrlShop.php',
+					params : 'oper=getShopListingForUf&filter=prevMonth', 
+					loadOnInit : true, 
+					rowComplete : function(rowIndex, row){
+
 					}
-				},
 			});
+			
+
 
 			
-			//load the purchase details and show in dialog box
-			$('.shopId').live('click',function(){	
-				$('#loadingMsg').show();
-				
-				$('#cartLayer').aixadacart('resetCart');
-				var shop_id = $(this).parent().prev().html();
-				
-				//reload the list
-				$('#cartLayer').aixadacart('loadCart',{
-					loadCartURL : 'ctrlReport.php?oper=getShoppedItems&shop_id='+shop_id
-				}); //end loadCart
-
-				$( "#dialog-message" )
-					.dialog({ title: shop_id })
-					.dialog("open");
-			});	
-			
-			//init cart 
-			$('#cartLayer').aixadacart("init",{
-				saveCartURL : 'ctrlValidate.php',
-				cartType	: 'simple',
-				btnType		: 'hidden',
-				loadSuccess : function(){
-					$('input').attr('disabled','disabled');
-					$('#loadingMsg').hide();
-					$('.ui-icon-close').hide();
-				}
-			});
-
-			$( "#dialog-message" ).dialog({
-				modal: true,
-				width:600,
-				height:480,
-				autoOpen:false,
-				buttons: {
-					Ok: function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
 
 			$('.iconContainer')
 			.live('mouseover', function(e){
@@ -181,7 +135,6 @@
 
 
 </head>
-<?php flush(); ?>
 <body>
 <div id="wrap">
 	<div id="headwrap">
@@ -234,7 +187,24 @@
 				</div>
 				
 				<div id="tabs-2">
-				
+					<table id="tbl_Shop" class="">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Date</th>
+								<th>Validated</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="shop_{id}">
+								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+								<td>{date_for_shop}</td>
+								<td>{ts_validated}</td>
+								<td class="textAlignRight">{purchase_total}€</td>
+							</tr>
+						</tbody>
+					</table>
 				
 				</div>
 			

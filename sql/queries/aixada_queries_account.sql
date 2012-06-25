@@ -1,5 +1,37 @@
 delimiter |
 
+
+/**
+ * retrieves all ufs with negative balance
+ */
+drop procedure if exists negative_accounts|
+create procedure negative_accounts()
+begin
+  select 
+	uf.id as uf, 
+	uf.name, 
+	a.balance, 
+	a.ts as last_update 
+  from (select 
+			account_id, max(ts) as MaxDate 
+		from 
+			aixada_account 
+		group by 
+			account_id) r, aixada_account a, aixada_uf uf
+  where 
+	a.account_id = r.account_id 
+	and a.ts = r.MaxDate
+	and a.balance < 0
+    and uf.active = 1
+    and uf.id = a.account_id -1000
+  order by
+	a.balance;
+end|
+
+
+/**
+ * retrieves account info 
+ */
 drop procedure if exists account_extract|
 create procedure account_extract(in the_account_id int, in tmp_start_date date, in num_rows int)
 begin
@@ -33,6 +65,8 @@ begin
   execute st;
   deallocate prepare st;
 end|
+
+
 
 drop procedure if exists latest_movements|
 create procedure latest_movements()
@@ -68,34 +102,42 @@ begin
  order by a.ts desc limit 10;
 end|
 
+
+/**
+ * make a deposit into aixada_account for a given uf. 
+ */
 drop procedure if exists deposit_for_uf|
 create procedure deposit_for_uf(in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in op int)
 begin
   declare current_balance decimal(10,2);
 
-  select balance
-  into current_balance
-  from aixada_account
-  where account_id = the_account_id 
+  select 
+  	balance 
+  into 
+  	current_balance
+  from 
+  	aixada_account
+  where 
+  	account_id = the_account_id
   order by ts desc
-  limit 1;
+  limit 1; 
+  
         
-  insert into aixada_account (
-    account_id, quantity, description, operator_id, balance
-  ) values (
-    the_account_id, qty, the_description, op, current_balance + qty
-  );
+  insert into 
+  	aixada_account (account_id, quantity, description, operator_id, balance) 
+  values 
+  	(the_account_id, qty, the_description, op, current_balance + qty);
 
-  update aixada_account_balance
-  set balance = current_balance + qty
-  where account_id = the_account_id;
-
+  /** Account 3 is Caixa. So we update Caixa whenever we haven't inserted directly into Caixa. */
   if the_account_id != -3 then  
-  /* Account 3 is Caixa. So we update Caixa whenever we haven't inserted directly into Caixa. */
-    select balance
-    into current_balance
-    from aixada_account
-    where account_id = -3
+    select 
+    	balance
+    into 
+    	current_balance
+    from 
+    	aixada_account
+    where 
+    	account_id = -3
     order by ts desc
     limit 1;
 
@@ -107,53 +149,12 @@ begin
           current_balance + if(the_account_id > 0, qty, -qty)
     );
 
-    update aixada_account_balance
-    set balance = current_balance + if(the_account_id > 0, qty, -qty)
-    where account_id = -3;
   end if;
 
 end|
 
-/* old version of negative_accounts*/
-/*drop procedure if exists negative_accounts|
-create procedure negative_accounts()
-begin
-  select u.id as UF,
-        u.name as name,
-        balance, 
-        last_update
-  from aixada_account_balance b
-  left join aixada_uf u
-  on u.id = account_id-1000
-  where u.active = 1
-  and  account_id between 1000 and 2000
-  and balance < 0
-  order by balance;
-end|*/
 
-drop procedure if exists negative_accounts|
-create procedure negative_accounts()
-begin
-  select 
-	uf.id as uf, 
-	uf.name, 
-	a.balance, 
-	a.ts as last_update 
-  from (select 
-			account_id, max(ts) as MaxDate 
-		from 
-			aixada_account 
-		group by 
-			account_id) r, aixada_account a, aixada_uf uf
-  where 
-	a.account_id = r.account_id 
-	and a.ts = r.MaxDate
-	and a.balance < 0
-    and uf.active = 1
-    and uf.id = a.account_id -1000
-  order by
-	a.balance;
-end|
+
 
 
 delimiter ;

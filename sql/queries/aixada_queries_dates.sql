@@ -27,4 +27,22 @@ end|
 
 
 
+/**
+ * returns dates that have unvalidated shopping carts. 
+ */
+drop procedure if exists dates_with_unvalidated_shop_carts|
+create procedure dates_with_unvalidated_shop_carts ()
+begin
+  select distinct 
+  	date_for_shop as date_for_validation
+  from 
+  	aixada_cart 
+  where 
+  	ts_validated = 0
+  order by 
+  	date_for_shop desc;
+end|
+
+
+
 delimiter ;

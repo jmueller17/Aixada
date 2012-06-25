@@ -61,19 +61,6 @@ try{
 	  	echo do_stored_query('modify_order_closing_date', get_param('provider_id'), get_param('order_date'), get_param('closing_date'));
 	    exit;    
 
-  /** TODO **/
-  case 'getArrivedProducts':
-      printXML(stored_query_XML('get_arrived_products', 'products', 'name', get_param('provider_id'), get_param('date')));
-      exit;
-
-  case 'getNotArrivedProducts':
-      printXML(stored_query_XML('get_not_arrived_products', 'products', 'name',  get_param('provider_id'), get_param('date')));
-    exit;
-
-  case 'productsHaveArrived':
-    printXML(arrived_products(get_param('provider_id'), get_param('product_ids'), get_param('date')));
-    exit;
-
   default:
     throw new Exception("ctrlActivateProducts: variable oper not set in query");
     
