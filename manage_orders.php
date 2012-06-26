@@ -387,7 +387,15 @@
 					} else {
 						//while open and not send off, no order_id exists
 						$(row).children(':first').html('<p>-</p>');
-						$(row).children().eq(5).html('<p><p class="minPadding iconContainer floatLeft ui-state-highlight ui-corner-all"><span class="ui-icon ui-icon-alert"></span></p> not yet send to provider</p>');
+						$(row).children().eq(5).html('<p><button id="btn_finalize_'+orderId+'" orderId="'+orderId+'">Finalize now</button></p>');
+
+						$('#btn_finalize_'+orderId).button({
+							icons: {
+					        	secondary: "ui-icon-mail-closed"
+							}
+
+						}).click();
+						
 					}
 				},
 				complete : function (rowCount){
@@ -587,7 +595,7 @@
 						<th class="clickable">id <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th>Days left</th>
+						<th>Closes in days</th>
 						<th>&nbsp;</th>
 						<th>Send off to provider</th>
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>

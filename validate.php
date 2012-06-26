@@ -176,9 +176,9 @@
 					//empty the cart
 					$(this).aixadacart("resetCart");	
 
-					/*$('#list_account tbody').xml2html('reload',{
+					$('#list_account tbody').xml2html('reload',{
 						params	: 'oper=latest_movements'
-					});*/				
+					});				
 				}
 			});
 
@@ -250,7 +250,7 @@
 			 $('#list_account tbody').xml2html('init',{
 					url		: 'ctrlReport.php',
 					params	: 'oper=latest_movements',
-					loadOnInit: false
+					loadOnInit: true
 			});
 
 
@@ -380,7 +380,7 @@
 					
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
-								params: 'oper=getShopProducts&date='+$.getSelectedDate()+'&like='+searchStr,
+								params: 'oper=getShopProducts&date='+getSelectedDate()+'&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();
@@ -424,8 +424,9 @@
 												price 			: parseFloat($("td.item_price", row).text()),
 												quantity 		: $(this).val(),
 												unit 			: $("td.item_unit", row).text(),
-												rev_tax_percent : parseFloat( $("td.item_rev_tax_percent", row).text())
-			
+												rev_tax_percent : parseFloat( $("td.item_rev_tax_percent", row).text()),
+												iva_percent		: $("td.item_iva_percent", row).text()
+												
 										}); //end addItem to cart	
 										
 

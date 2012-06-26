@@ -18,7 +18,8 @@ if (!isset($_SESSION)) {
 
 
 try{ 
-    $uf_logged_in = $_SESSION['userdata']['uf_id'];
+
+	/*$uf_logged_in = $_SESSION['userdata']['uf_id'];
     $uf_for_shops = (isset($_SESSION['userdata']) and
                      ( $_SESSION['userdata']['current_role'] == 'Checkout' or
                        $_SESSION['userdata']['current_role'] == 'Hacker Commission') and
@@ -46,74 +47,74 @@ try{
     $next_order = get_dates('get_orderable_dates', $format='array', $limit=1);
 
     
-    $the_date = (isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : $next_order[0];
+  $the_date = (isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : $next_order[0];
     
-  	$provider_id = (isset($_REQUEST['provider_id']) ? $_REQUEST['provider_id'] : 0);
+  $provider_id = (isset($_REQUEST['provider_id']) ? $_REQUEST['provider_id'] : 0);*/
 
   switch ($_REQUEST['oper']) {
 
-  case 'listSummarizedOrdersForDate':
-    printXML(stored_query_XML_fields('summarized_orders_for_date', $the_date));
-    exit;
-    
-  case 'listSummarizedPreOrders':
-    printXML(stored_query_XML_fields('summarized_preorders'));
-    exit;
-    
-  case 'listCompactOrdersForProviderAndDate':
-    echo $rm->compact_orders_for_provider_and_dateHTML($provider_id, $the_date, false);
-    exit;
-
-  case 'listExtendedOrdersForProviderAndDate':
-    echo $rm->extended_orders_for_provider_and_dateHTML($provider_id, $the_date, false);
-    exit;
-    
-  case 'listCompactPreOrderProductsForProvider':
-      echo $rm->compact_preorders_for_provider($provider_id);
-      exit;
-    
-  case 'listExtendedPreOrderProductsForProvider':
-      echo $rm->extended_preorders_for_provider($provider_id);
-      exit;
-
-  case 'bundleOrdersForDate':
-      $zipfile = $rm->bundle_orders_for_date($the_date);
-      echo $zipfile;
-      exit;
-        
-  case 'total_orders_for_next_sale':
-    $strHTML = $rm->total_orders_for_dateHTML(get_next_shop_date(), false);
-    HTMLwrite($strHTML, 'the_report.html');
-    echo $strHTML;
-    exit;
-
-  case 'total_orders_for_date':
-    $strHTML = $rm->total_orders_for_dateHTML($the_date, false);
-    HTMLwrite($strHTML, 'the_report.html');
-    echo $strHTML;
-    exit;
-
-  case 'latest_movements':
-    printXML(latest_movements());
-    exit;
-
-  case 'accountList':
-    printXML(account_list());
-    exit;
-
-  case 'spending_per_provider':
-      $the_date = ((isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : date("Y").'-01-01');
-      echo spending_per_provider_JSON($the_date);
-      exit;
-
-  	
-  case 'getShoppedItems':
-      $the_id = (isset($_REQUEST['shop_id']) ? $_REQUEST['shop_id'] : '');
-      printXML(stored_query_XML_fields('shopped_items_by_id', $the_id));
-      exit;
-
-  default:
-    throw new Exception("ctrlReport: operation {$_REQUEST['oper']} not supported");
+	  case 'listSummarizedOrdersForDate':
+	    printXML(stored_query_XML_fields('summarized_orders_for_date', $the_date));
+	    exit;
+	    
+	  case 'listSummarizedPreOrders':
+	    printXML(stored_query_XML_fields('summarized_preorders'));
+	    exit;
+	    
+	  case 'listCompactOrdersForProviderAndDate':
+	    echo $rm->compact_orders_for_provider_and_dateHTML($provider_id, $the_date, false);
+	    exit;
+	
+	  case 'listExtendedOrdersForProviderAndDate':
+	    echo $rm->extended_orders_for_provider_and_dateHTML($provider_id, $the_date, false);
+	    exit;
+	    
+	  case 'listCompactPreOrderProductsForProvider':
+	      echo $rm->compact_preorders_for_provider($provider_id);
+	      exit;
+	    
+	  case 'listExtendedPreOrderProductsForProvider':
+	      echo $rm->extended_preorders_for_provider($provider_id);
+	      exit;
+	
+	  case 'bundleOrdersForDate':
+	      $zipfile = $rm->bundle_orders_for_date($the_date);
+	      echo $zipfile;
+	      exit;
+	        
+	  case 'total_orders_for_next_sale':
+	    $strHTML = $rm->total_orders_for_dateHTML(get_next_shop_date(), false);
+	    HTMLwrite($strHTML, 'the_report.html');
+	    echo $strHTML;
+	    exit;
+	
+	  case 'total_orders_for_date':
+	    $strHTML = $rm->total_orders_for_dateHTML($the_date, false);
+	    HTMLwrite($strHTML, 'the_report.html');
+	    echo $strHTML;
+	    exit;
+	
+	  case 'latest_movements':
+	    printXML(latest_movements());
+	    exit;
+	
+	  case 'accountList':
+	    printXML(account_list());
+	    exit;
+	
+	  case 'spending_per_provider':
+	      $the_date = ((isset($_REQUEST['date']) and $_REQUEST['date'] != '0') ? $_REQUEST['date'] : date("Y").'-01-01');
+	      echo spending_per_provider_JSON($the_date);
+	      exit;
+	
+	  	
+	  case 'getShoppedItems':
+	      $the_id = (isset($_REQUEST['shop_id']) ? $_REQUEST['shop_id'] : '');
+	      printXML(stored_query_XML_fields('shopped_items_by_id', $the_id));
+	      exit;
+	
+	  default:
+	    throw new Exception("ctrlReport: operation {$_REQUEST['oper']} not supported");
     
   }
 

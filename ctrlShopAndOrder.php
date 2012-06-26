@@ -76,13 +76,7 @@ try{
   			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_session_uf_id())); 
 			exit; 
 
- 	
- 	/* 
-    case 'getShopItemsForDateAndUf':
-        printXML(stored_query_XML_fields('products_for_shopping', $the_date, $_REQUEST['uf']));
-        exit;
-	*/
-	    	
+ 		    	
 	    	
 	/*
     case 'makeFavoriteOrderCart':
