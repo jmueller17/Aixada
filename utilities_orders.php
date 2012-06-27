@@ -7,6 +7,21 @@ require_once ('utilities.php');
 
 /**
  * 
+ * Finalizes an order which means, that an order is send to the provider (email, printed out, fetched by provider directly).
+ * No more modifications are possible and the ordered items receive an order_id
+ * @param int $provider_id
+ * @param date $date_for_order
+ */
+function finalize_order($provider_id, $date_for_order)
+{
+	
+	return do_stored_query('finalize_order', $provider_id, $date_for_order);
+	
+	
+}
+
+/**
+ * 
  * custom interface for order listing which converts most common query params into 
  * calls to stored procedures. 
  * @param str $time_period today | all | prevMonth

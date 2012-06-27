@@ -60,11 +60,16 @@ try{
     		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
     		
-    	
+    	//retrieves info about originally ordered quanties and available items after received orders have been revised and distributed in carts. 
   		case 'getDiffOrderShop':
     		printXML(stored_query_XML_fields('diff_order_shop', get_param('order_id'), get_session_uf_id()));    	
   			exit;
-    		
+  			
+  		//finalizes an order; no more modifications possible	
+  		case 'finalizeOrder':
+  			echo finalize_order(get_param('provider_id'), get_param('date'));
+  			exit;
+  			
     		
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  

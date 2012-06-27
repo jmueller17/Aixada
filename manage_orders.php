@@ -384,17 +384,16 @@
 					
 					if (orderId > 0 || timeLeft <= 0){ // order is closed
 						$('#orderClosedIcon'+orderId).removeClass('ui-icon-unlocked').addClass('ui-icon-locked');
+						$(row).children().eq(3).text("-");
 					} else {
+						//don't have an order id yet. construct one with date + provider_id
+						var date_pvid = $(row).children().eq(1).text() + "_" + $(row).children().eq(2).attr("providerId");
+						
 						//while open and not send off, no order_id exists
 						$(row).children(':first').html('<p>-</p>');
-						$(row).children().eq(5).html('<p><button id="btn_finalize_'+orderId+'" orderId="'+orderId+'">Finalize now</button></p>');
+						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
+						//$(row).children().eq(5).html('<p><button id="btn_finalize_'+orderId+'" orderId="'+orderId+'">Finalize now</button></p>');
 
-						$('#btn_finalize_'+orderId).button({
-							icons: {
-					        	secondary: "ui-icon-mail-closed"
-							}
-
-						}).click();
 						
 					}
 				},
@@ -409,7 +408,51 @@
 				}
 			});
 
+			$('.finalizeOrder').live('click', function(e){
+				var tmp = $(this).attr("datePvId").split("_");
+				var timeLeft = $(this).parents('tr').children().eq(3).text();
+				var msgt = 'You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?';
+				
+				if (timeLeft > 0){
+					msgt = 'This order is still open. Finalizing it now means that no further items can be ordered for this date and provider. Are you sue you want to continue?'
+				}
+				
+				$.showMsg({
+					msg: msgt,
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){						
+							finalizeOrder(tmp[1], tmp[0]);
+							$(this).dialog("close");
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+			
+			});
 
+			/**
+			 *	Finalizes an order: synon. for sending it to the provider: an order ID is assigned, no more modifications are possible. 
+			 */
+			function finalizeOrder (providerId, orderDate){
+				$.ajax({
+					type: "POST",
+					url: 'ctrlOrders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
+					success: function(txt){
+						$('#tbl_orderOverview tbody').xml2html('reload');
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
+					}
+				});			
+			}
+			
+
+			
 			$('#tbl_orderOverview tbody tr')
 			.live('mouseover', function(){
 				$(this).removeClass('highlight').addClass('ui-state-highlight');
@@ -607,7 +650,7 @@
 					<tr id="{id}">
 						<td>{id}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
-						<td class="textAlignRight minPadding">{provider_name}</td>
+						<td class="textAlignRight minPadding" providerId="{provider_id}">{provider_name}</td>
 						<td class="textAlignCenter">{time_left}</td>
 						<td class="textAlignCenter"><span id="orderClosedIcon{id}" class="tdIconCenter ui-icon ui-icon-unlocked"></span></td>
 						<td class="textAlignCenter">{ts_send_off}</td>

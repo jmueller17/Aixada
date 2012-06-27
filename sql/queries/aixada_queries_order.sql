@@ -311,6 +311,76 @@ begin
 end |
 
 
+drop procedure if exists finalize_order|
+create procedure finalize_order (in the_provider_id int, in the_date_for_order date)
+begin
+	
+	declare order_total decimal(10,2) default 0;
+	declare fix_closing_date date default date(sysdate());
+	
+	set fix_closing_date = date_sub(fix_closing_date, interval 1 day);
+	
+	/** calc the order total **/
+	set order_total = 
+		(select 
+			sum(oi.quantity * oi.unit_price_stamp)
+		 from 
+		 	aixada_order_item oi,
+		 	aixada_product p
+		 where
+		 	oi.date_for_order = the_date_for_order
+		 	and oi.product_id = p.id
+		 	and p.provider_id = the_provider_id);
+	
+	
+	/** new order_id **/
+	insert into
+		aixada_order (provider_id, date_for_order, ts_send_off, total)
+	values
+		(the_provider_id, the_date_for_order, now(), order_total);
+		
+		
+	/** set order id to order_items **/
+	update 
+		aixada_order_item oi,
+		aixada_product p
+	set 
+		oi.order_id = last_insert_id()
+	where
+		oi.date_for_order = the_date_for_order
+		and oi.product_id = p.id
+		and p.provider_id = the_provider_id; 
+		
+	/** update closing date for this product **/
+	update 
+		aixada_product_orderable_for_date po,
+		aixada_product p
+	set
+		po.closing_date = fix_closing_date
+	where
+		closing_date > fix_closing_date
+		and po.date_for_order = the_date_for_order
+		and p.id = po.product_id
+		and p.provider_id = the_provider_id;
+		
+		/*select 
+		closing_date 
+	into	
+		the_closing_date
+	from 
+		aixada_product_orderable_for_date po,
+		aixada_product p
+	where
+		po.date_for_order = the_date_for_order
+		and p.id = po.product_id
+		and p.provider_id = the_provider_id; */
+	
+		
+	
+	
+end |
+
+
 
 /**
  * returns all orders for all providers within a certain date range.
@@ -338,8 +408,17 @@ begin
     end if; 
 
 	set @q = concat("select distinct
-		o.*,
+		o.id,
+		o.ts_send_off,
+		o.date_for_shop,
+		o.date_received,
+		o.total,
+		o.notes, 
+		o.revision_status, 
+		o.delivery_ref,
+		o.payment_ref,
 		oi.date_for_order, 
+		pv.id as provider_id,
 		pv.name as provider_name,
 		po.closing_date,
 		datediff(po.closing_date, '",today,"') as time_left,
@@ -365,6 +444,10 @@ begin
   	execute st;
   	deallocate prepare st;
 end |
+
+
+
+
 
 
 

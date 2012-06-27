@@ -55,6 +55,8 @@ end|
 drop procedure if exists get_order_cart| 
 create procedure get_order_cart(in the_date date, in the_uf_id int)
 begin
+  declare today date default date(sysdate());	
+	
   select 
     p.id,
     p.name,
@@ -67,6 +69,7 @@ begin
     pv.name as provider_name,
     p.category_id, 
     po.closing_date, 
+    datediff(po.closing_date, today) as time_left,
     --p.unit_price * (1 + iva.percent/100) as unit_price, 
     if (p.orderable_type_id = 4 and oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
     rev.rev_tax_percent,
