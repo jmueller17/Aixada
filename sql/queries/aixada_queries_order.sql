@@ -311,6 +311,82 @@ begin
 end |
 
 
+/**
+ * retrieves order status. expects either a date and provider_id or product_id, OR order_id. In case the order has
+ * not yet finalized, no order_id will exist and the corresponding fields of aixada_order will return null. 
+ */
+drop procedure if exists get_order_status|
+create procedure get_order_status (in the_date_for_order date, in the_provider_id int, in the_product_id int, in the_order_id int)
+begin
+	
+	if the_order_id > 0 then
+		select 
+			o.*
+		from 
+			aixada_order o
+		where
+			o.id = the_order_id; 
+	elseif (the_provider_id > 0 and the_date_for_order > 0) then
+		
+		select
+			oi.order_id,
+			oi.date_for_order,
+			oi.quantity,
+			p.provider_id,
+			o.ts_send_off,
+			o.date_received,
+			o.date_for_shop,
+			o.total,
+			o.revision_status
+		from 
+			aixada_product p,
+			aixada_order_item oi
+		left join
+			aixada_order o
+		on 
+			oi.order_id = o.id
+		where 
+			p.provider_id = the_provider_id
+			and p.id = oi.product_id
+			and oi.date_for_order = the_date_for_order
+		group by
+			p.provider_id; 
+	
+	elseif (the_product_id > 0 and the_date_for_order > 0) then
+		
+		select
+			oi.order_id,
+			oi.date_for_order,
+			oi.quantity,
+			p.provider_id,
+			o.ts_send_off,
+			o.date_received,
+			o.date_for_shop,
+			o.total,
+			o.revision_status
+		from 
+			aixada_product p,
+			aixada_order_item oi
+		left join
+			aixada_order o
+		on 
+			oi.order_id = o.id
+		where 
+			oi.product_id = the_product_id
+			and oi.date_for_order = the_date_for_order
+			and p.id = the_product_id
+		group by
+			p.provider_id; 
+			
+	end if;
+
+end |
+
+
+/**
+ * finalizes an order, i.e. no further changes in date, quantity can be made. a order_id is assigned 
+ * and an entry in aixada_order made
+ */
 drop procedure if exists finalize_order|
 create procedure finalize_order (in the_provider_id int, in the_date_for_order date)
 begin

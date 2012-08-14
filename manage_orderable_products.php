@@ -257,6 +257,8 @@
 			})
 			.live('click', function(e){
 
+				
+				
 				if ($(this).hasClass('dim40')){
 					$.showMsg({
 						msg:'This is the past! <br/> Too late to change anything here.',
@@ -268,32 +270,17 @@
 						msg:'This product is currently deactive. In order to set an orderable date, you have to activate this product first by clicking its "active" checkbox.',
 						type: 'warning'});
 					return false;
-				}				
 
-				var tdid = $(this).attr('id');
-				var dateID = tdid.split("_");
-				var urlStr = "ctrlActivateProducts.php?oper=toggleOrderableProduct&product_id="+dateID[1]+"&date="+dateID[0]; 
-
-				$.ajax({
-					type: "POST",
-					url: urlStr,	
-					beforeSend : function (){
-						//$('#deposit .loadAnim').show();
-					},	
-					success: function(txt){
-						toggleCell('#'+tdid); 
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						
-					},
-					complete : function(msg){
-						
-					}
-				}); //end ajax	
 					
+				} else {  //check if product is part of a finalized order. If not, this triggers deactivation of product
+
+					var tdid = $(this).attr('id');		//table cell id
+					var dateID = tdid.split("_");		//date for order and product_id
+					
+					checkOrderStatus(tdid, dateID[1], dateID[0]); 
+					
+				} 
+	
 			});
 			
 	
@@ -429,6 +416,83 @@
 			}
 		});
 
+
+		/**
+		 *	utility function called before a given product can be deactivated for the given date. 
+		 * 	if the product forms part of an order that already has been send off, no further
+		 *  changes are possible
+		 */
+		function checkOrderStatus(tdid, productId, orderDate){
+
+			 $.ajax({
+					type: "POST",
+					dataType:"xml",
+					url: 'ctrlOrders.php?oper=checkOrderStatus&product_id='+productId+'&date='+orderDate,	
+					beforeSend : function (){
+						//$('#deposit .loadAnim').show();
+					},	
+					success: function(xml){
+						var allowDeactivate = true; 
+						var hasItems = false;  
+						$(xml).find('row').each(function(){
+							var orderId = $(this).find('order_id').text(); 
+							var orderedItems = $(this).find('quantity').text();
+
+							if (orderId > 0){
+								$.showMsg({
+										msg:'The given product cannot be deactivated because the corresponding order has already been sent to the provider. You can check the detailed status of this order #'+orderId + ' under Manage > Order' ,
+										type: 'warning'});
+								allowDeactivate = false; 
+							} else if (orderedItems > 0){
+								$.showMsg({
+									msg:'The given product cannot be deactivated because items have already been ordered!' ,
+									type: 'warning'});
+								allowDeactivate = false; 
+							} 
+
+						});
+						if (allowDeactivate){
+							toggleOrderableProduct(tdid, productId, orderDate);
+						}
+						 
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						return false; 
+						
+					}
+				}); //end ajax	
+		}
+
+
+		/**
+		 *	changes the orderable status of a given product for a given date. triggered
+		 *  from checkOrderStatus 
+		 */
+		function toggleOrderableProduct(id, productId, orderDate){
+				$.ajax({
+					type: "POST",
+					url:  "ctrlActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate,	
+					beforeSend : function (){
+						//$('#deposit .loadAnim').show();
+					},	
+					success: function(txt){
+						toggleCell('#'+id);
+
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
+					}
+				}); 
+			
+		}
+		
+
 		/**
 		 *	modifies the closing date for given provider and order
 		 */
@@ -527,8 +591,7 @@
 
 
 		/**
-		 *	checks if product is active in general 
-		 *  and if the column has an active product, otherwise there is nothing to repeat! 
+		 *	checks the closing date of a product
 		 */
 		function checkSetClosing(selDate){
 			var hasActive = false; 
@@ -571,9 +634,10 @@
 				.addClass('isOrderable')
 				.append('<span class="ui-icon ui-icon-check tdIconCenter"></span>');
 			}
-		}
 
-		
+		}	
+
+	
 		/**
 		 *	sends off the request to deactivate or activate a product in general
 		 */

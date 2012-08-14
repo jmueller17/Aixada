@@ -225,7 +225,7 @@ begin
 		po.closing_date,
 		datediff(po.closing_date, today) as time_left,
 		(select 
-			count(oi.id) 
+			count(oi.id)
 		 from 
 		 	aixada_order_item oi 
 		 where 
@@ -240,6 +240,7 @@ begin
 		and po.date_for_order >= fromDate
 		and po.date_for_order <= toDate;
 end|
+
 
 
 /**
