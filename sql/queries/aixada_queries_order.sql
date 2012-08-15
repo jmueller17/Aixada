@@ -326,12 +326,26 @@ begin
 			aixada_order o
 		where
 			o.id = the_order_id; 
-	elseif (the_provider_id > 0 and the_date_for_order > 0) then
+			
+	end if; 
+	
+	
+	if the_product_id > 0 then
+	
+		set the_provider_id = 
+			(select
+				p.provider_id
+			 from 
+				aixada_product p
+			where 
+				p.id = the_product_id);
+	end if; 
+	
+	if (the_provider_id > 0 and the_date_for_order > 0) then
 		
 		select
 			oi.order_id,
 			oi.date_for_order,
-			oi.quantity,
 			p.provider_id,
 			o.ts_send_off,
 			o.date_received,
@@ -349,32 +363,6 @@ begin
 			p.provider_id = the_provider_id
 			and p.id = oi.product_id
 			and oi.date_for_order = the_date_for_order
-		group by
-			p.provider_id; 
-	
-	elseif (the_product_id > 0 and the_date_for_order > 0) then
-		
-		select
-			oi.order_id,
-			oi.date_for_order,
-			oi.quantity,
-			p.provider_id,
-			o.ts_send_off,
-			o.date_received,
-			o.date_for_shop,
-			o.total,
-			o.revision_status
-		from 
-			aixada_product p,
-			aixada_order_item oi
-		left join
-			aixada_order o
-		on 
-			oi.order_id = o.id
-		where 
-			oi.product_id = the_product_id
-			and oi.date_for_order = the_date_for_order
-			and p.id = the_product_id
 		group by
 			p.provider_id; 
 			

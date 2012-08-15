@@ -211,7 +211,10 @@ end|
 /**
  * returns all products that have been marked "orderable" for a given provider within a given date range
  * This corresponds basically to the entries in aixada_products_orderable_for_date
- * It also calculates the remaining days before the order closes. 
+ * It also calculates the remaining days before the order closes, the quantity of the ordered products and if the order has been 
+ * finalized (send off to the provider). 
+ * 
+ * TODO: maybe the two sub-selects (especially the order_id) is not the most elegant and the query could be simplified?!!
  */
 drop procedure if exists get_orderable_products_for_dates|
 create procedure get_orderable_products_for_dates(in fromDate date, in toDate date, in the_provider_id int)
@@ -224,6 +227,16 @@ begin
 		po.date_for_order,
 		po.closing_date,
 		datediff(po.closing_date, today) as time_left,
+		(select
+			o.id
+		 from
+		 	aixada_order o,
+		 	aixada_product pp
+		 where
+		 	o.provider_id = p.provider_id
+		 	and pp.id = p.id
+		 	and o.date_for_order = po.date_for_order) as order_id,
+
 		(select 
 			count(oi.id)
 		 from 

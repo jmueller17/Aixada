@@ -124,9 +124,9 @@
 					var apstr = '';
 					
 					for (var i=0; i<gdates.length; i++){
-						var dateidclass = "Date-"+gdates[i] + " P-"+id; //construct two classes to easily select column (date) or row (product id)
-						dateidclass += ($(".Date-"+gdates[i]).hasClass("dim40"))? " dim40":""; //dim past dates
-						var tdid		= gdates[i]+"_"+id; 			//construct id selector of td-cell
+						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)
+						dateidclass += ($(".Date-"+gdates[i]).hasClass("dim40"))? " dim40":""; 	//dim past dates
+						var tdid		= gdates[i]+"_"+id; 									//construct id selector of td-cell
 						apstr += '<td title="'+gdates[i]+'" id="'+tdid+'" class="'+dateidclass+' interactiveCell '+cellStyle+'"></td>';
 					}
 					$(row).append(apstr);
@@ -162,11 +162,14 @@
 								var date = $(this).find('date_for_order').text();
 								var days2Closing = $(this).find('time_left').text();
 								var closingDate = $(this).find('closing_date').text();
+								var orderId		= $(this).find('order_id').text();
 								//var fclosingDate = $.datepicker.formatDate('DD, d MM, yy',new Date(closingDate));
 								var hasItems = $(this).find('has_ordered_items').text();
 
 								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
+								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
 								var closingTitle = (days2Closing > 0)? "Closes " + closingDate + ". \n " +days2Closing + " days left for ordering": "order is closed";
+								closingTitle = (orderId > 0)? "Order has been finalized and send to provider: #" + orderId: closingTitle;
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
@@ -175,8 +178,29 @@
 								toggleCell(selector);
 
 								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight">'+hasItems+'</span></p>');
+
+								if (closingIcon == 'ui-icon-mail-closed'){
+									$('.Date-'+date).addClass('dim60');
+																		
+								}
 								
 							});
+
+							//modifies closing icons to "finalized/ send off" icons for the whole column. 
+							/*$('.ui-icon-mail-closed').each(function(){
+
+								var tdid = $(this).parents('td').attr('id');
+								var dateID = tdid.split("_");
+								var title = $(this).attr('title');
+
+								$('.Date-'+dateID[0]+'.isOrderable')
+									.find('span.ui-icon-locked, span.ui-icon-unlocked')
+									.removeClass('ui-icon-locked ui-icon-unlocked')
+									.addClass('ui-icon-mail-closed')
+									.attr('title', title);
+
+							});*/
+							
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.showMsg({
@@ -220,16 +244,52 @@
 		 *	interactivity for the column actions button
 		 */
 		 $('.dateth')
-			.live('mouseover', function(e){
-				$('#colActionIcons').hide();
-				if (!$(this).hasClass('dim40')){
+			.live('mouseenter', function(e){
+				$( "#colActionIcons" ).hide();
+				var colDate = $(this).attr('colDate');
+
+
+				$(".Date-"+colDate).addClass('ui-state-hover');
+				
+				//$('#colActionIcons').hide();
+				/*if (!$(this).hasClass('dim40')){
 					var coldate = $(this).attr('colDate');
 					$('#btn_colActions').appendTo($('tfoot td.tfDate-'+coldate)).show(); //does not work for opera
-				}		
+				}*/		
 			})
 			.live('mouseleave', function(e){
+				var colDate = $(this).attr('colDate');
+
+				$(".Date-"+colDate).removeClass('ui-state-hover');
 				//$('#btn_colActions').hide(); // .deltach($(this));
-			})	
+			})
+			.live('click', function(e){
+				var colDate = $(this).attr('colDate');
+				if ($(".Date-"+colDate).hasClass("dim60")){
+					return false; 
+				}
+				var selector = ".dateth.Date-"+colDate;
+				$('#colActionIcons').attr('currentColDate',colDate);
+				$( "#colActionIcons" )
+		    		.hide()
+		    		.show()
+		    		.position({
+						of: $(selector),
+						my: 'left top',
+						at: 'left bottom',
+						offset: '0 -10',
+						collision: 'flip'
+	
+					})
+				.bind('mouseleave', function(e){
+					$( "#colActionIcons" ).hide();
+				});
+			
+			//e.stopPropagation();
+
+				
+			});
+				
 			
 		$('.tfootDateGenerate')
 			.live('mouseover', function(e){
@@ -272,14 +332,20 @@
 					return false;
 
 					
-				} else {  //check if product is part of a finalized order. If not, this triggers deactivation of product
+				} else if ($(this).hasClass('dim60')) {  //check if product is part of a finalized order. If not, this triggers deactivation of product
+
+					$.showMsg({
+						msg:'The given product cannot be de/activated because the corresponding order has already been sent to the provider. No further changes are possible! ',
+						type: 'warning'});
+				   	return false; 
+					
+				} else {
 
 					var tdid = $(this).attr('id');		//table cell id
-					var dateID = tdid.split("_");		//date for order and product_id
+					var dateID = tdid.split("_");	
+					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
 					
-					checkOrderStatus(tdid, dateID[1], dateID[0]); 
-					
-				} 
+				}
 	
 			});
 			
@@ -288,7 +354,7 @@
 		/**
 		 *	date forward backward buttons
 		 */
-		$("#prevDates").button({
+		$("#prevDates").button({6
 			icons:{
 				primary: "ui-icon-circle-triangle-w"
 			}
@@ -422,6 +488,7 @@
 		 * 	if the product forms part of an order that already has been send off, no further
 		 *  changes are possible
 		 */
+		 /*
 		function checkOrderStatus(tdid, productId, orderDate){
 
 			 $.ajax({
@@ -436,19 +503,14 @@
 						var hasItems = false;  
 						$(xml).find('row').each(function(){
 							var orderId = $(this).find('order_id').text(); 
-							var orderedItems = $(this).find('quantity').text();
-
+							//var orderedItems = $(this).find('quantity').text();
+							
 							if (orderId > 0){
 								$.showMsg({
-										msg:'The given product cannot be deactivated because the corresponding order has already been sent to the provider. You can check the detailed status of this order #'+orderId + ' under Manage > Order' ,
+										msg:'The given product cannot be de/activated because the corresponding order has already been sent to the provider. You can check the detailed status of this order #'+orderId + ' under Manage > Order' ,
 										type: 'warning'});
 								allowDeactivate = false; 
-							} else if (orderedItems > 0){
-								$.showMsg({
-									msg:'The given product cannot be deactivated because items have already been ordered!' ,
-									type: 'warning'});
-								allowDeactivate = false; 
-							} 
+							}
 
 						});
 						if (allowDeactivate){
@@ -464,7 +526,7 @@
 						
 					}
 				}); //end ajax	
-		}
+		}*/
 
 
 		/**
@@ -738,7 +800,7 @@
 				
 		/**
 		 *	col actions button
-		 */
+		 
 		$('#btn_colActions')
 			.click(function(e){
 		    	$( "#colActionIcons" )
@@ -758,34 +820,37 @@
 				
 				e.stopPropagation();
 
-			});
+			});*/
 
 		/**
 		 *	col actions menu
 		 */
 		$('.tfIconCol')
-			.hover(
-				function(){
-					$(this).addClass('ui-state-hover');
-				},
-				function(){
-					$(this).removeClass('ui-state-hover');
-				}
-			)
+			.bind('mouseenter', function(e){
+				$(this).addClass('ui-state-hover');
+				e.stopPropagation();
+
+			})
+			.bind('mouseleave', function(e){
+				$(this).removeClass('ui-state-hover');
+				e.stopPropagation();
+			})
 			.bind('click', function(e){
 				var action = $('a',this).attr('id');
 				switch (action){
 					case 'tfIconCol-repeat':
-						var selDate = $('#btn_colActions').parent().attr("colDate");
+						
+						var selDate = $('#colActionIcons').attr('currentColDate');
 						checkRepeat(selDate);
 						break;
 					case 'tfIconCol-selrow':
 						break;
 					case 'tfIconCol-close':
-						var selDate = $('#btn_colActions').parent().attr("colDate");
+						var selDate = $('#colActionIcons').attr('currentColDate');
 						checkSetClosing(selDate);
 						break;
 				}
+				$('#colActionIcons').hide();
 		});
 
 		$('#colActionIcons').hide();
@@ -919,7 +984,7 @@
 
 <div id="btn_colActionsLimbo" class="hidden"></div>
 <div id="btn_colActions">Col<span class="ui-icon ui-icon-triangle-1-s floatLeft" ></span></div>
-<div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" >
+<div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" currentColDate="">
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
