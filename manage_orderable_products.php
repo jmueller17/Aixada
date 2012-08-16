@@ -163,7 +163,7 @@
 								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
 								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
 								var closingTitle = (days2Closing > 0)? "Closes " + closingDate + ". \n " +days2Closing + " days left for ordering": "order is closed";
-								closingTitle = (orderId > 0)? "Order has been finalized  \n and send to provider: #" + orderId: closingTitle;
+								closingTitle = (orderId > 0)? "Order has been finalized  \n and send to provider. Ref. number is: #" + orderId: closingTitle;
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;

@@ -113,6 +113,7 @@
   						$('#btn_submit').button({
   								label: $.aixadacart.saving,
   								disabled:true});
+  					
   						
   						var btn_label = ($this.data('aixadacart').btnType == 'validate')? $.aixadacart.validate:$.aixadacart.save;
   						
@@ -193,20 +194,30 @@
 					
 					itemObj.quantity = formatNumInput(itemObj.quantity);
 					
+					//deactivates items whose provider/order has been already closed
+					var deaTr = (itemObj.time_left < 0)? 'dim60':'';
+					var deaTd = (itemObj.time_left < 0)? 'ui-state-error':'';
+					var deaIn = (itemObj.time_left < 0)? 'disabled':'';
+					
 					//add it as row
-					var str = '<tr id="'+itemObj.id+'">'; 
-					str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close"></span></td>';
-					str += '<td class="item_name">'+itemObj.name+'</td>';
-					str += '<td class="item_provider_name">'+itemObj.provider_name+'</td>';
-					str += '<td class="item_quantity">	 <input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" />'; 
+					var str = '<tr id="'+itemObj.id+'" class="'+deaTr+'" >'; 
+					if (itemObj.time_left < 0){
+						str += '<td class="'+deaTd+'"></td>';
+					} else {
+						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close"></span></td>';
+					}
+					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
+					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
+					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" />'; 
 					str +=								'<input type="hidden" name="order_item_id[] value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" />'
 					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
-					str += '<td>' + itemObj.unit + '</td>';
-					str += '<td class="item_total" id="item_total_'+itemObj.id+'"></td>';
+					//str += 								'<input type="hidden" name="time_left"  value="'+itemObj.time_left+'" id="cart_time_left_'+itemObj.id+'" /> ';
+					str += '<td class="'+deaTd+'">' + itemObj.unit + '</td>';
+					str += '<td class="item_total '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
 					str += '</tr>';
 
 					
@@ -228,7 +239,19 @@
 			
 					
 					//event listener to detect quantity changes in cart
-					$("#cart_quantity_"+itemObj.id, $this).bind("change", function(e){
+					$("#cart_quantity_"+itemObj.id, $this)
+						.bind("focus", function(e){
+							if($(this).parent().hasClass('ui-state-error')){
+								alert('Order is closed!');
+								$(this).blur();
+								return false; 
+							}
+						
+							
+						})
+						.bind("change", function(e){
+												
+						
 						//retrieve all the info of the current cart item
 						var objItem = $this.aixadacart("getRowData", {
 			  												type : 'table',
@@ -455,7 +478,8 @@
 					rev_tax_percent		: parseFloat($(row).find('rev_tax_percent').text()),
 					iva_percent			: $(row).find('iva_percent').text(),
 					order_item_id		: $(row).find('order_item_id').text(),
-					cart_id 			: $(row).find('cart_id').text()
+					cart_id 			: $(row).find('cart_id').text(),
+					time_left			: $(row).find('time_left').text()
 				};
 			 
 		  } else if (options.type == "table"){
