@@ -63,7 +63,7 @@ try{
 
   default:
     throw new Exception("ctrlActivateProducts: variable oper not set in query");
-    
+        
   }
 } 
 

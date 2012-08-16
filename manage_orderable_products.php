@@ -69,8 +69,8 @@
 						var dateclass = "Date-"+gdates[i];
 						var pastclass = (dd < today)? 'dim40':'';
 					
-						apstr += '<th class="dateth '+ pastclass +' '+dateclass+'" colDate="'+gdates[i]+'">'+date+'</th>';
-						tfoot += '<td class="tfootDateGenerate '+pastclass+' tf'+dateclass+'" colDate="'+gdates[i]+'"></td>';	
+						apstr += '<th class="dateth clickable '+ pastclass +' '+dateclass+'" colDate="'+gdates[i]+'">'+date+'</th>';
+						//tfoot += '<td class="tfootDateGenerate '+pastclass+' tf'+dateclass+'" colDate="'+gdates[i]+'"></td>';	
 
 						if (dd.getMonth() != visMonthYear[visMonthYear.length-1].getMonth()){
 							visMonthYear.push(dd);
@@ -84,17 +84,14 @@
 					var monthYearStr = visMonthYear.join("/ "); 
 					$('.dateTableMonthYear').html(monthYearStr);
 
-					$('#btn_colActions').appendTo('#btn_colActionsLimbo');
 					
 					//remove previous dates and table cells if any
 					$('#dot thead tr .dateth').empty().remove();
 					$('#dot tbody tr .interactiveCell').empty().remove();
-					$('#dot tfoot tr .tfootDateGenerate').empty().remove();
 					
 
 					//append the new header/footer with the fresh dates
 					$('#dot thead tr').last().append(apstr);
-					$('#dot tfoot tr').last().append(tfoot);
 
 					//load the products 
 					if (provider_id){
@@ -137,7 +134,7 @@
 						ckbox.attr("checked", "checked")
 					} else {
 						ckbox.removeAttr("checked");
-						if (!$('#showInactiveProducts').children('span:first').hasClass('ui-icon-check')){
+						if (!$('#limbo').html()){
 							$(row).hide();
 							counterNotActive++;
 						}
@@ -147,11 +144,8 @@
 				},
 				//finally retrieve if products are orderable for given dates
 				complete: function(rowCount){
-					//indicate deactivated products for this provider
-					
-					
 					var provider_id = getProviderId();
-				
+					
 					$.ajax({
 						type: "POST",
 						dataType:"xml",
@@ -169,7 +163,7 @@
 								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
 								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
 								var closingTitle = (days2Closing > 0)? "Closes " + closingDate + ". \n " +days2Closing + " days left for ordering": "order is closed";
-								closingTitle = (orderId > 0)? "Order has been finalized and send to provider: #" + orderId: closingTitle;
+								closingTitle = (orderId > 0)? "Order has been finalized  \n and send to provider: #" + orderId: closingTitle;
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
@@ -180,32 +174,18 @@
 								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight">'+hasItems+'</span></p>');
 
 								if (closingIcon == 'ui-icon-mail-closed'){
-									$('.Date-'+date).addClass('dim60');
-																		
+									$('.Date-'+date).addClass('dim60');																		
 								}
 								
 							});
-
-							//modifies closing icons to "finalized/ send off" icons for the whole column. 
-							/*$('.ui-icon-mail-closed').each(function(){
-
-								var tdid = $(this).parents('td').attr('id');
-								var dateID = tdid.split("_");
-								var title = $(this).attr('title');
-
-								$('.Date-'+dateID[0]+'.isOrderable')
-									.find('span.ui-icon-locked, span.ui-icon-unlocked')
-									.removeClass('ui-icon-locked ui-icon-unlocked')
-									.addClass('ui-icon-mail-closed')
-									.attr('title', title);
-
-							});*/
 							
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.showMsg({
 								msg:XMLHttpRequest.responseText,
 								type: 'error'});
+						}, 
+						complete : function(msg){
 						}
 					}); //end ajax		
 					
@@ -247,31 +227,25 @@
 			.live('mouseenter', function(e){
 				$( "#colActionIcons" ).hide();
 				var colDate = $(this).attr('colDate');
-
-
 				$(".Date-"+colDate).addClass('ui-state-hover');
 				
-				//$('#colActionIcons').hide();
-				/*if (!$(this).hasClass('dim40')){
-					var coldate = $(this).attr('colDate');
-					$('#btn_colActions').appendTo($('tfoot td.tfDate-'+coldate)).show(); //does not work for opera
-				}*/		
 			})
 			.live('mouseleave', function(e){
 				var colDate = $(this).attr('colDate');
-
 				$(".Date-"+colDate).removeClass('ui-state-hover');
-				//$('#btn_colActions').hide(); // .deltach($(this));
+				e.stopPropagation();
 			})
 			.live('click', function(e){
+				
 				var colDate = $(this).attr('colDate');
-				if ($(".Date-"+colDate).hasClass("dim60")){
+
+				if ($(".Date-"+colDate).hasClass("dim60") || !getProviderId()){
 					return false; 
 				}
+
 				var selector = ".dateth.Date-"+colDate;
 				$('#colActionIcons').attr('currentColDate',colDate);
 				$( "#colActionIcons" )
-		    		.hide()
 		    		.show()
 		    		.position({
 						of: $(selector),
@@ -285,39 +259,16 @@
 					$( "#colActionIcons" ).hide();
 				});
 			
-			//e.stopPropagation();
-
+			
 				
 			});
 				
-			
-		$('.tfootDateGenerate')
-			.live('mouseover', function(e){
-				$('#colActionIcons').hide();
-				if (!$(this).hasClass('dim40')){
-					$('#btn_colActions').appendTo($(this)).show(); //does not work for opera
-				}		
-			})
-			.live('mouseleave', function(e){
-				//$('#btn_colActions').hide(); // .detach($(this));
-			})
-		
-			
-					
-
 	
 		/**
 		 *	event handler for each table cell
 		 */
 		$('td.interactiveCell')
-			.live('mouseover', function(e){
-				$('#btn_colActions').appendTo('#btn_colActionsLimbo');
-			})
-			.live('mouseout', function(e){
-			})
 			.live('click', function(e){
-
-				
 				
 				if ($(this).hasClass('dim40')){
 					$.showMsg({
@@ -354,7 +305,7 @@
 		/**
 		 *	date forward backward buttons
 		 */
-		$("#prevDates").button({6
+		$("#prevDates").button({
 			icons:{
 				primary: "ui-icon-circle-triangle-w"
 			}
@@ -399,6 +350,7 @@
 			if (provider_id){ 
 				//reload the products 
 				$('#dot tbody').xml2html('reload',{
+					url : 'ctrlActivateProducts.php',
 					params:'oper=getTypeOrderableProducts&provider_id='+provider_id,
 				});
 			} else {
@@ -482,51 +434,6 @@
 			}
 		});
 
-
-		/**
-		 *	utility function called before a given product can be deactivated for the given date. 
-		 * 	if the product forms part of an order that already has been send off, no further
-		 *  changes are possible
-		 */
-		 /*
-		function checkOrderStatus(tdid, productId, orderDate){
-
-			 $.ajax({
-					type: "POST",
-					dataType:"xml",
-					url: 'ctrlOrders.php?oper=checkOrderStatus&product_id='+productId+'&date='+orderDate,	
-					beforeSend : function (){
-						//$('#deposit .loadAnim').show();
-					},	
-					success: function(xml){
-						var allowDeactivate = true; 
-						var hasItems = false;  
-						$(xml).find('row').each(function(){
-							var orderId = $(this).find('order_id').text(); 
-							//var orderedItems = $(this).find('quantity').text();
-							
-							if (orderId > 0){
-								$.showMsg({
-										msg:'The given product cannot be de/activated because the corresponding order has already been sent to the provider. You can check the detailed status of this order #'+orderId + ' under Manage > Order' ,
-										type: 'warning'});
-								allowDeactivate = false; 
-							}
-
-						});
-						if (allowDeactivate){
-							toggleOrderableProduct(tdid, productId, orderDate);
-						}
-						 
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						return false; 
-						
-					}
-				}); //end ajax	
-		}*/
 
 
 		/**
@@ -766,8 +673,10 @@
 						case 'showInactiveProducts':
 							if ($(item).children('span').hasClass('ui-icon-check')){
 								$(item).children('span').removeClass('ui-icon ui-icon-check');
+								$('#limbo').html(0);
 							} else {
 								$(item).children('span').addClass('ui-icon ui-icon-check');
+								$('#limbo').html(1);
 							}
 							$('input[name="toggleDeActivateProducts"]').each(function(){
 								if ($(this).attr('checked') != 'checked'){
@@ -886,7 +795,7 @@
 		   		<div class="textAlignRight"><button	id="tblOptions">View Options</button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="showInactiveProducts"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
+						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
 						<li><a href="javascript:void(null)">&nbsp;&nbsp;Number of dates at display</a>
 							<ul>
 								<li><a href="javascript:void(null)" id="plus7">Show +7 days</a></li>
@@ -932,13 +841,7 @@
 									
 					</tr>						
 				</tbody>
-				<tfoot>
-					<tr>
-						<td>&nbsp;</td>
-						<td><!-- a href="javascript:void(null)" id=""><span class="ui-icon ui-icon-plus-thick"></span> Show deactivated products</a--></td>
-						<td></td>
-					</tr>
-				</tfoot>
+
 			</table>
 		</div>
 		<br/>
@@ -981,9 +884,7 @@
 	<br/>
 	<div id="closingDatePicker"></div>
 </div>
-
-<div id="btn_colActionsLimbo" class="hidden"></div>
-<div id="btn_colActions">Col<span class="ui-icon ui-icon-triangle-1-s floatLeft" ></span></div>
+<div id="limbo" class="hidden">0</div>
 <div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" currentColDate="">
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
