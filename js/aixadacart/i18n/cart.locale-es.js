@@ -24,7 +24,10 @@
 				unit : "Unidad",
 			},
 			msg : {
-				saveSuccess : "Tus productos se han guardado correctamente"
+				saveSuccess : "Tus productos se han guardado correctamente",
+				errInput	: "La cuantidad tiene que ser numerico!",
+				orderClosed : "El producto pertenece a un pedido que ya se ha cerrado. No se puede modificar."
+
 				
 			}
 		

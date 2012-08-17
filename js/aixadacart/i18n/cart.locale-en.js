@@ -25,7 +25,8 @@
 			},
 			msg : {
 				saveSuccess : "Your items have been successfully saved!",
-				errInput	: "Input has to be numeric!"
+				errInput	: "The quantity has to be numeric!",
+				orderClosed : "This item belongs to an order that has already been closed. No further changes are possible!"
 				
 			}
 		

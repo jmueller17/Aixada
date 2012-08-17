@@ -134,7 +134,7 @@
 						ckbox.attr("checked", "checked")
 					} else {
 						ckbox.removeAttr("checked");
-						if (!$('#limbo').html()){
+						if ($('#limbo').html() == 0){ //sort of patch for saving "show inactive products" state
 							$(row).hide();
 							counterNotActive++;
 						}

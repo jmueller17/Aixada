@@ -242,7 +242,10 @@
 					$("#cart_quantity_"+itemObj.id, $this)
 						.bind("focus", function(e){
 							if($(this).parent().hasClass('ui-state-error')){
-								alert('Order is closed!');
+				    			$("#cart_dialog")
+				    				.html($.aixadacart.msg.orderClosed)
+				    				.dialog('option','title','Warning')
+				    				.dialog("open");
 								$(this).blur();
 								return false; 
 							}
@@ -516,10 +519,14 @@
   		var fmtInput = null;
   		//alert(" ... " + $(this).data('aixadacart').decimalsQu );
 		fmtInput = parseFloat(value.replace(",","."));
+				
 		if (isNaN(fmtInput)){
-			//updateCartTips.call('error',$.aixadacart.msg.errInput);
-			//alert($.aixadacart.msg.errInput);
-			return 0.00;
+			$("#cart_dialog")
+			.html($.aixadacart.msg.errInput)
+			.dialog('option','title','Warning')
+			.dialog("open");
+			var nv = new Number(0);
+			return nv.toFixed(2);
 		} else {
 			return fmtInput; 
 		}

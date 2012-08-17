@@ -24,7 +24,9 @@
 				unit : "Unitat",
 			},
 			msg : {
-				saveSuccess : "S'han desat correctement els productes!"
+				saveSuccess : "S'han desat correctement els productes!",
+				errInput	: "La cantidad ha de ser numeric!",
+				orderClosed : "Aquet producto forma part de una comanda ya tancada y no es pot modificar mes."
 				
 			}
 		

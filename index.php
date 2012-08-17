@@ -222,11 +222,11 @@
 <table id="tbl_diffOrderShop" class="">
 	<thead>
 		<tr>
-			<th>id</th>
-			<th>Product</th>
-			<th>Order-qu</th>
-			<th>Shop-qua</th>
-			<th>Price</th>		
+			<td>id</td>
+			<td>Product</td>
+			<td>Order-qu</td>
+			<td>Shop-qua</td>
+			<td>Price</td>		
 		</tr>
 	</thead>
 	<tbody>
