@@ -187,15 +187,30 @@ begin
 	declare the_uf_id int default 0; 
 	declare the_cart_id int default 0;
 	declare the_validated int default 0; 
+	declare the_date_for_shop date; 
+	
 	declare uf_cursor cursor for 
+		/** get list of uf_ids for order **/
+		
 		select distinct
+			os.uf_id
+		from
+			aixada_order_to_shop os
+		where 
+			os.order_id = the_order_id;	
+	
+		/**select
 			os.uf_id,
 			c.id, 
-			c.ts_validated
+			c.ts_validated, 
+			c.date_for_shop
 		from
 			aixada_order_to_shop os
 			left join aixada_cart c on
-			os.uf_id = c.uf_id;
+			os.uf_id = c.uf_id
+		where 
+			os.order_id = the_order_id;**/
+	
 		
 	declare continue handler for not found
 		set done = 1; 
@@ -204,21 +219,35 @@ begin
 	set done = 0; 
 
 	read_loop: loop
-		fetch uf_cursor into the_uf_id, the_cart_id, the_validated;
+		fetch uf_cursor into the_uf_id; /**the_cart_id, the_validated, the_date_for_shop;**/
 		if done then 
 			leave read_loop; 
 		end if;
 		
+		/** check if uf already has a non validated cart for the same shop date **/
+		set the_cart_id = (
+			select 
+				c.id 
+			from 
+				aixada_cart c
+			where
+				c.uf_id = the_uf_id
+				and c.ts_validated = 0
+				and c.date_for_shop = the_shop_date); 
+		
+		
 		/** create new cart if none exists for uf and date**/
-		if (the_cart_id is null) then
-			insert into aixada_cart (uf_id, date_for_shop)
-			values (the_uf_id, the_shop_date);
+		if (the_cart_id is null or the_cart_id = 0) then
+			insert into 
+				aixada_cart (uf_id, date_for_shop)
+			values 
+				(the_uf_id, the_shop_date);
 			
 			set the_cart_id = last_insert_id();
 		end if; 
 		
 		/** copy the revised items into shop_item **/
-		if (the_cart_id > 0 and (the_validated = 0 or the_validated is null)) then
+		if (the_cart_id > 0) then
 			replace into
 				aixada_shop_item (cart_id, order_item_id, unit_price_stamp, product_id, quantity, iva_percent, rev_tax_percent)
 			select
@@ -248,9 +277,12 @@ begin
 		order_id=the_order_id; 
 		
 	/**update the shop_date in the order listing**/
-	update aixada_order
-	set date_for_shop = the_shop_date
-	where id = the_order_id; 
+	update 
+		aixada_order
+	set 
+		date_for_shop = the_shop_date
+	where 
+		id = the_order_id; 
 	
 end |
 

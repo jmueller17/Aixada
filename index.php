@@ -47,14 +47,23 @@
 				params : 'oper=getOrdersListingForUf&filter=prevMonth', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
-					var order_id = $(row).attr('orderId');
-					if (order_id == ''){
-						 $(row).children().eq(0).addClass('dim40');
+					var orderId = $(row).attr('orderId');
+					var timeLeft = $(row).children().eq(3).text();
+					//var revisionStatus = $(row).attr('revision_status');
+					
+					if (orderId > 0){ //order has been send
+						$(row).children().eq(4).text('sent off');
+					} else {
+						 $(row).children().addClass('dim40');
 						 $(row).children().eq(4).text('not yet sent');		
 					}
+
+					if (timeLeft <= 0){
+						$(row).children().eq(3).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
+					} 
 					
 					var date = $(row).children().eq(2).text();
-					if (date != lastDate) $(row).before('<tr><td colspan="6" class="dateRow">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="6" class="dateRow">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
 					lastDate=date; 	
 				}
 			});
@@ -64,6 +73,9 @@
 				url : 'ctrlOrders.php',
 				params : 'oper=getDiffOrderShop', 
 				loadOnInit : false, 
+				rowComplete : function(rowIndex, row){
+					
+				},
 				complete : function(rowCount){
 					if (rowCount >0){
 						var header = $('#tbl_diffOrderShop thead tr').clone()
@@ -222,21 +234,20 @@
 <table id="tbl_diffOrderShop" class="">
 	<thead>
 		<tr>
-			<td>id</td>
-			<td>Product</td>
-			<td>Order-qu</td>
-			<td>Shop-qua</td>
-			<td>Price</td>		
+			<td class="tdMyOrder">id</td>
+			<td class="tdMyOrder">Product</td>
+			<td class="tdMyOrder">Ordered</td>
+			<td class="tdMyOrder">Delivered</td>
+			<td class="tdMyOrder">Price</td>		
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="detail_{order_id}">
-			<td>{product_id}</td>
-			<td>{product_name}</td>
-			<td>{order_quantity}</td>
-			<td>{shop_quantity}</td>
-			<td>{unit_price}</td>
-			
+			<td class="MyOrderItem">{product_id}</td>
+			<td class="MyOrderItem">{product_name}</td>
+			<td class="MyOrderItem">{order_quantity}</td>
+			<td class="MyOrderItem">{shop_quantity}</td>
+			<td class="MyOrderItem">{unit_price}</td>
 		</tr>
 	</tbody>
 </table>

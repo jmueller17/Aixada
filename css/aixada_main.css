@@ -130,7 +130,7 @@ div.wrapSelect			{}
 div.orderStatus 		{margin-top:-40px; margin-bottom:30px; margin-left:25em;}
 
 
-/** for home **/
+/** for home / index pGE **/
 div#menuTable table 	{border:0px solid black;}
 div#menuTable table td 	{padding:20px 30px; text-align:center;}
 div#menuTable a			{font-size:1.2em; text-decoration:none;}
@@ -141,7 +141,9 @@ div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}
 .homeIcon				{margin-bottom:20px; text-align:center;}
 div#tabs-1 table		{width:100%}
 div#tabs-1 table td		{padding:2px 4px;}
-table td.dateRow		{padding-top:10px; background:#EBEBEB; }
+table td.dateRow		{padding-top:10px; background:#EBEBEB; border-bottom:solid black 1px}
+.tdMyOrder				{font-size:0.75em; background-color:#efefef; border-bottom:solid black 1px;}
+.MyOrderItem			{font-size:0.75em; background-color:#eeeeee;}
 
 
 /** for report page **/

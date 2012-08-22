@@ -231,7 +231,7 @@
 			$('#dialog_setShopDate').dialog({
 				autoOpen:false,
 				width:450,
-				height:360,
+				height:460,
 				buttons: {  
 					"<?=$Text['btn_ok'];?>" : function(){
 						
@@ -382,9 +382,14 @@
 					var orderId = $(row).attr("id");
 					var timeLeft = parseInt($(row).children().eq(3).text());
 					
-					if (orderId > 0 || timeLeft <= 0){ // order is closed
-						$('#orderClosedIcon'+orderId).removeClass('ui-icon-unlocked').addClass('ui-icon-locked');
+					if (timeLeft <= 0){ // order is closed
+						$(row).children().eq(4).children().first().removeClass('ui-icon-unlocked').addClass('ui-icon-locked')
 						$(row).children().eq(3).text("-");
+					} 
+
+					
+					if (orderId > 0){ 
+
 					} else {
 						//don't have an order id yet. construct one with date + provider_id
 						var date_pvid = $(row).children().eq(1).text() + "_" + $(row).children().eq(2).attr("providerId");

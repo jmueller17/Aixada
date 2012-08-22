@@ -23,9 +23,9 @@ begin
 	where 
 		oi.order_id = the_order_id
 		and oi.uf_id = the_uf_id
-		and si.order_item_id = oi.id
+		and oi.id = si.order_item_id
 		and p.id = oi.product_id
-	order by
+	group by
 		p.id;
 end |
 
