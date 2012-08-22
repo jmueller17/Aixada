@@ -272,6 +272,7 @@
 				.live('mouseover', function(e){						//make each cell editable on mouseover. 
 					var col = $(this).attr('col');
 					var row = $(this).attr('row');
+					var product = $(this).parent().children().eq(1).text();
 
 					$('.Row-'+row).addClass('editHighlightRow');
 					$('.Col-'+col).addClass('editHighlightCol');
@@ -287,7 +288,7 @@
 									id 		: 'product_uf',
 									name 	: 'quantity',
 									indicator: 'Saving',
-									tooltip	: 	'click to edit',
+								    tooltip	: 	'UF ' + col + '\n' + product + '\nClick to edit!',
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
 									} 
