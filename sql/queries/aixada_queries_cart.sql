@@ -3,13 +3,28 @@ delimiter |
 
 /**
  * returns all items in aixada_shop_item for 
- * a specific date and an uf
- * 
+ * a specific date and an uf OR a given cart_id,
+ * The validated parameter specifies if we are interested in validated carts or only those
+ * that have not a ts_validated timestamp.
  */
 drop procedure if exists get_shop_cart| 
-create procedure get_shop_cart(in the_date date, in the_uf_id int)
+create procedure get_shop_cart(in the_date_for_shop date, in the_uf_id int, in the_cart_id int, in validated boolean)
 begin
-  select 
+
+  declare wherec varchar(255) default "";
+
+  if (the_cart_id > 0) then
+		set wherec = concat("c.id = ", the_cart_id); 
+  else
+		set wherec = concat("c.date_for_shop='",the_date_for_shop,"' and c.uf_id=",the_uf_id);
+  end if; 
+  
+  -- retrieve only non-validated carts (for aixada cart). for report retrieve all including validated ones -- 
+  if (validated is false) then
+  	set wherec = concat(wherec, " and c.ts_validated = 0"); 
+  end if;
+	
+  set @q = concat("select 
     p.id,
     p.name,
     p.description,
@@ -20,8 +35,7 @@ begin
     si.unit_price_stamp as unit_price,
     p.provider_id,  
     pv.name as provider_name,
-    p.category_id, 
-    -- p.unit_price * (1 + si.iva_percent/100) as unit_price, 
+    p.category_id,  
     iva.percent as iva_percent,
     rev.rev_tax_percent,
     um.unit
@@ -34,16 +48,19 @@ begin
   	aixada_iva_type iva, 
   	aixada_unit_measure um
   where
-  	c.uf_id = the_uf_id
-  	and c.date_for_shop = the_date
-  	and c.ts_validated = 0
-  	and c.id = si.cart_id
+  	",wherec,"
+  	and si.cart_id = c.id
   	and si.product_id = p.id
   	and pv.id = p.provider_id
   	and rev.id = p.rev_tax_type_id
   	and iva.id = p.iva_percent_id
   	and um.id = p.unit_measure_shop_id
-  order by p.provider_id, p.name; 
+  order by p.provider_id, p.name; ");
+  
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+  
 end|
 
 

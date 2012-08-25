@@ -215,10 +215,7 @@
 					});
 
 					if (allRevised){
-
 						$('#dialog_setShopDate').dialog("open");
-						
-	       				
 					} else {
 						$.showMsg({
 							msg:"There are still unrevised items in this order. Please make sure all 'revised' checkboxes are checked!",
@@ -367,9 +364,59 @@
 			});
 
 
+			/***********************************************************
+			 *		ORDER REVISION STATUS
+			 **********************************************************/
+			 $("#btn_revision").button({
+				 icons: {
+		        		primary: "ui-icon-check"
+		        	}
+				 })
+       			.click(function(e){
+					$("#dialog_orderStatus").dialog("close");
+       			});
 			
-			
+			 $("#btn_cancel").button({
+				 icons: {
+		        		primary: "ui-icon-cancel"
+		        	}
+				 })
+       			.click(function(e){
+					setOrderStatus(4);
+       			});
+    			
+			 $("#btn_pospone").button({
+				 icons: {
+		        		primary: "ui-icon-info"
+		        	}
+				 })
+       			.click(function(e){
+					setOrderStatus(3);
+       			});
 
+			 $('#dialog_orderStatus').dialog({
+					autoOpen:false,
+					width:450,
+					height:420,
+					modal:true
+				});
+
+			function setOrderStatus(status){
+				$.ajax({
+					type: "POST",
+					url: 'ctrlOrders.php?oper=setOrderStatus&order_id='+global_order_id+'&status='+status,
+					success: function(txt){
+						$("#dialog_orderStatus").dialog("close");
+						switchTo('overview');
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+					}
+				});
+
+			}
 			
 			/***********************************************************
 			 *		ORDER OVERVIEW FUNCTIONALITY
@@ -381,23 +428,41 @@
 				rowComplete : function (rowIndex, row){
 					var orderId = $(row).attr("id");
 					var timeLeft = parseInt($(row).children().eq(3).text());
+					var status = $(row).children().eq(7).text();
 					
-					if (timeLeft <= 0){ // order is closed
-						$(row).children().eq(4).children().first().removeClass('ui-icon-unlocked').addClass('ui-icon-locked')
-						$(row).children().eq(3).text("-");
-					} 
+					if (timeLeft > 0){ 	// order is still open
+						$(row).children().eq(7).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
+						//$(row).children().eq(3).text("-");
+						
+					} else {			//order is closed
+						$(row).children().eq(3).text("closed");
+						var statusTd = $(row).children().eq(7); 
+						switch(status){
+							case "1": 
+								statusTd.html('<span class="tdIconCenter ui-icon ui-icon-mail-closed" title="Order has been send to provider"></span>');
+								break;
+							case "2": 
+								statusTd.addClass('revised').html('<span class="tdIconCenter ui-icon ui-icon-check" title="Order has been revised"></span>');
+								break;
+							case "3": 
+								statusTd.addClass('posponed').html('<span class="tdIconCenter ui-icon ui-icon-info" title="Order has been posponed"></span>');
+								break;
+							case "4": 
+								statusTd.addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel" title="Order has been canceled"></span>');
+								break;
+						}
+					}
 
 					
 					if (orderId > 0){ 
 
 					} else {
 						//don't have an order id yet. construct one with date + provider_id
-						var date_pvid = $(row).children().eq(1).text() + "_" + $(row).children().eq(2).attr("providerId");
-						
+						var date_pvid = $(row).children().eq(2).text() + "_" + $(row).children().eq(1).attr("providerId");
 						//while open and not send off, no order_id exists
 						$(row).children(':first').html('<p>-</p>');
-						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
-						//$(row).children().eq(5).html('<p><button id="btn_finalize_'+orderId+'" orderId="'+orderId+'">Finalize now</button></p>');
+						$(row).children().eq(4).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
+						
 
 						
 					}
@@ -484,6 +549,9 @@
 			//revise order icon 
 			$('.ui-icon-check')
 				.live('click', function(e){
+
+					
+					
 					global_order_id 	= $(this).parents('tr').attr('id');
 					var shopDate 		= $(this).parents('tr').children().eq(6).text();
 					var order_id 		= $(this).parents('tr').children().eq(0).text();
@@ -566,6 +634,7 @@
 							$('#providerName').text(options.name);							
 							$('.overviewElements').hide();
 							$('.detailElements').fadeIn(1000);
+							$('#dialog_orderStatus').dialog("open");
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsList&order_id='+global_order_id
 							})
@@ -626,7 +695,8 @@
 						<li><a href="javascript:void(null)" id="ordersForToday">Expected today</a></li>
 						<li><a href="javascript:void(null)" id="futureOrders">Upcoming: next week + beyond</a></li>
 						<li><a href="javascript:void(null)" id="prevMonth">Last month</a></li>
-						<li><a href="javascript:void(null)" id="limboOrders">That never arrived</a></li>
+						<li><a href="javascript:void(null)" id="prevYear">Last year</a></li>
+						<li><a href="javascript:void(null)" id="limboOrders">Posponed</a></li>
 					</ul>
 				</div>				
 		   	</div> 	
@@ -641,26 +711,29 @@
 				<thead>
 					<tr>
 						<th class="clickable">id <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Closes in days</th>
-						<th>&nbsp;</th>
+						
 						<th>Send off to provider</th>
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th>Status</th>
+						
 						<th>Revise</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr id="{id}">
 						<td>{id}</td>
-						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignRight minPadding" providerId="{provider_id}">{provider_name}</td>
+						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
-						<td class="textAlignCenter"><span id="orderClosedIcon{id}" class="tdIconCenter ui-icon ui-icon-unlocked"></span></td>
+						<!-- td class="textAlignCenter"><span id="orderClosedIcon{id}" class="tdIconCenter ui-icon ui-icon-unlocked"></span></td-->
 						<td class="textAlignCenter">{ts_send_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
-						<td class="textAlignRight">{order_total} €</td>
+						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
+						<td class="textAlignCenter">{revision_status}</td>
 						<td class="textAlignCenter">				
 							<p class="ui-corner-all iconContainer ui-state-default floatRight"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
@@ -701,12 +774,24 @@
 					</tfoot>
 				</table>
 			</div>
-		</div>		
+		</div>	
+		
 	
 	</div>
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
+
+<div id="dialog_orderStatus" title="Set Order Status">
+	<p>&nbsp;</p>
+	<table>
+		<tr><td class="textAlignCenter"><button id="btn_revision">Arrived!</button></td><td>&nbsp;</td><td>Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...</td></tr>					
+		<tr><td colspan="2">&nbsp;</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_pospone">Pospone</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
+		<tr><td colspan="2">&nbsp;</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_cancel">Cancel</button></td><td>&nbsp;</td><td>Order did and will not arrive.</td></tr>
+	</table>
+</div>	
 
 
 <div id="dialog_setShopDate" title="Set shopping date">

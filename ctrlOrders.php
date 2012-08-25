@@ -25,14 +25,14 @@ try{
     		echo get_orders_in_range(get_param('filter'), get_session_uf_id());
     		exit; 
 
-    	//retrieves list of products that have been ordered
+    	//retrieves list of products that have been ordered. Needed to construct order revision table
     	case 'getOrderedProductsList':
     		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id')));
     		exit;
 
-    	//retrieves the order detail uf/quantities for given order
+    	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf if needed. 
     	case 'getProductQuantiesForUfs':
-    		printXML(stored_query_XML_fields('get_order_item_detail', get_param('order_id')));
+    		printXML(stored_query_XML_fields('get_order_item_detail', get_param('order_id',0), get_param('uf_id',0), get_param('provider_id',0), get_param('date_for_order',0) ));
     		exit;
     		
     	//edits, modifies individual product quanties for order
@@ -42,10 +42,16 @@ try{
     		if ($ok){
 	    		echo get_param('quantity');
     		} else {
-    			throw new Exception("An error occured during saving the new quantity!!");      			
+    			throw new Exception("An error occured during saving the new product quantity!!");      			
     		}
     		exit;
     		
+    	//set the global revisio status of the order
+    	case 'setOrderStatus':
+    		echo do_stored_query('set_order_status', get_param('order_id'), get_param('status')  );
+    		exit; 
+    		
+    	//revise individual items of order
     	case 'setOrderItemStatus':
     		echo do_stored_query('set_order_item_status', get_param('order_id'), get_param('product_id'), get_param('has_arrived'), get_param('is_revised')  ); 
     		exit;
@@ -70,7 +76,7 @@ try{
   			echo finalize_order(get_param('provider_id'), get_param('date'));
   			exit;
   			
-  		//retrieves for a given provider- or product id, and date if order is open, closed, send-off...
+  		//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
   		case 'checkOrderStatus':
   			printXML(stored_query_XML_fields('get_order_status', get_param('date',0), get_param('provider_id',0), get_param('product_id',0), get_param('order_id',0)  ));
   			exit;

@@ -73,7 +73,7 @@ try{
   			exit;
   			
   		case 'getShopCart':
-  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_session_uf_id())); 
+  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_session_uf_id(),0,0)); 
 			exit; 
 
  		    	

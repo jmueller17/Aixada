@@ -22,6 +22,11 @@ begin
 end |
 
 
+/**
+ * for retrieving shop details (purchased products, quantities), see aixada_queries_cart.sql > procedure get_shop_cart
+ *
+ */
+
 
 /**
  * returns the total of a given purchase (cart). 

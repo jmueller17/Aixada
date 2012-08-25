@@ -11,19 +11,21 @@ begin
 	
 	select 
 		p.id as product_id,
-		p.name as product_name, 
+		p.name, 
 		oi.order_id, 
-		oi.quantity as order_quantity,
+		oi.quantity,
 		si.quantity as shop_quantity, 
 		oi.unit_price_stamp as unit_price
 	from 
-		aixada_order_item oi, 
-		aixada_shop_item si,
-		aixada_product p
+		aixada_product p,
+		aixada_order_item oi
+	left join 
+		aixada_shop_item si
+	on 
+		oi.id = si.order_item_id
 	where 
 		oi.order_id = the_order_id
 		and oi.uf_id = the_uf_id
-		and oi.id = si.order_item_id
 		and p.id = oi.product_id
 	group by
 		p.id;

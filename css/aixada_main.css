@@ -143,7 +143,7 @@ div#tabs-1 table		{width:100%}
 div#tabs-1 table td		{padding:2px 4px;}
 table td.dateRow		{padding-top:10px; background:#EBEBEB; border-bottom:solid black 1px}
 .tdMyOrder				{font-size:0.75em; background-color:#efefef; border-bottom:solid black 1px;}
-.MyOrderItem			{font-size:0.75em; background-color:#eeeeee;}
+.MyOrderItem, .MyShopItem {font-size:0.75em; background-color:#f1f1f1;}
 
 
 /** for report page **/
@@ -187,15 +187,20 @@ div#colActionIcons  		{width:280px; padding:4px;}
 
 /** for manage orders **/
 h3#orderInfoDate			{font-size:1.5em;}
-.btn_right				{margin-top:0.8em; margin-right:-2em; float:right;}
+.btn_right					{margin-top:0.8em; margin-right:-2em; float:right;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
 .tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
-.tblReviseOrder	td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
-.tblReviseOrder td.revised	{background:#D1F3D1;}
-.tblReviseOrder td.toRevise	{background:#FFEDA1;}
-.tblReviseOrder td.missing	{background:#FFCCCA;}
+td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
+td.revised	{background:#D1F3D1;}
+td.toRevise	{background:#FFEDA1;}
+td.missing	{background:#FFCCCA;}
 .editHighlightRow			{opacity:.6}
 .editHighlightCol			{opacity:.6}
+
+.asOrdered		{background:#D1F3D1;}
+.withChanges	{background:#FFEDA1;}
+.orderCanceled	{background:#FFCCCA;}
+
 
 
 
@@ -243,7 +248,7 @@ form table td input 	{line-height:1.2em; font-size:.8em;}
 
 .product_list_wrap					{margin-top:10px;}
 
-.product_list, .table_listing, .purchase_listing, .tblOverviewOrders, .table_listing_cashbox, .table_datesOrderableProducts		{width:100%;}
+.product_list, .table_listing, .purchase_listing, .tblOverviewOrders, .table_listing_cashbox, .table_datesOrderableProducts, .table_overviewShop {width:100%;}
 .product_list_mng td, th			{padding:2px 5px;}
 .table_listing td					{text-align:right; padding:1px;}
 .product_list td					{text-align:right; background:#EBEBEB; padding:5px 5px;}

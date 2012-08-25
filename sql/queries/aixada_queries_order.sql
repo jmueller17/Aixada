@@ -30,40 +30,86 @@ end|
 
 
 /**
- * returns for a given order_id, all products, and ordered quanties per uf. 
- * need for revise order tables. 
+ * Returns for a given order_id, all products, and ordered quanties per uf. Order_id can be replaced
+ * by date_for_order and provider_id.  
+ * Needed e.g. for revise order tables. 
  * If order info is currently edited, the info comes from aixada_order_to_shop, otherwise
- * directly from aixada_order_item 
+ * directly from aixada_order_item.
  */
 drop procedure if exists get_order_item_detail|
-create procedure get_order_item_detail (in the_order_id int)
+create procedure get_order_item_detail (in the_order_id int, in the_uf_id int, in the_provider_id int, in the_date_for_order date)
 begin
 	
 	declare edited boolean default is_under_revision(the_order_id);
+	declare wherec varchar(255) default ""; 
+	
+	-- filter for ufs
+	if (the_uf_id > 0 and edited is true) then
+		set wherec = concat(" and ots.uf_id=", the_uf_id);
+	elseif (the_uf_id > 0 and edited is false) then
+		set wherec = concat(" and oi.uf_id=", the_uf_id);
+	end if;
 	
 	-- if the order items are edited, retrieve them from aixada_order_to_shop--
 	if (edited is true) then 
-		select 
-			*
-		from 
-			aixada_order_to_shop
-		where
-			order_id = the_order_id
-		order by
-			product_id; 
-	-- otherwise get them from the order_item table		
+		set @q = concat("select 
+				ots.*
+			from 
+				aixada_order_to_shop ots
+			where
+				ots.order_id = ",the_order_id,"
+				",whereuf,"
+			order by
+				product_id;");
+ 
+	-- otherwise get them from the order_item table, depending on the params available 	
 	else 
-		select 
-			oi.*,
-			1 as arrived, 
-			0 as revised
-		from
-			aixada_order_item oi
-		where 
-			oi.order_id = the_order_id
-		order by
-			oi.product_id;
+		
+		-- if no order_id is given, retrieve items by date and provider
+		if (the_provider_id > 0 and the_date_for_order > 0) then
+		set @q = concat("select
+					oi.*,
+					p.name,
+					p.provider_id,
+					1 as arrived, 
+					0 as revised
+				from
+					aixada_order_item oi, 
+					aixada_product p
+				where
+					oi.date_for_order = '",the_date_for_order,"'
+					and oi.product_id = p.id
+					and p.provider_id = ",the_provider_id,"
+					", wherec ,"
+				order by
+					oi.product_id;"); 
+		
+		elseif (the_order_id > 0) then
+				set @q = concat("select
+					oi.*,
+					p.name,
+					p.provider_id,
+					1 as arrived, 
+					0 as revised
+				from
+					aixada_order_item oi, 
+					aixada_product p
+				where
+					oi.order_id = ",the_order_id,"
+					and oi.product_id = p.id
+					", wherec ,"
+				order by
+					oi.product_id;");
+			
+		end if;
+		
 	end if;
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+  	set @q = ""; 
+	
 end |
 
 
@@ -111,6 +157,26 @@ begin
 			and os.uf_id = the_uf_id; 
 	end if; 
 end |
+
+
+/**
+ * set the revision status flag for each order. 
+ * 		1 : default value. Finalized, send off to provider 
+ * 		2 : arrived and items have been revised. This is set automatically once items have been copied from order to shop. 
+ * 		3 : posponed. Did not arrive for the originally ordered date but could arrive in the near future
+ * 		4 : canceled. Did not arrive for the originally ordered date and it is pretty sure that it will never arrive
+ */
+drop procedure if exists set_order_status|
+create procedure set_order_status (in the_order_id int, in the_status int)
+begin
+	update
+		aixada_order
+	set
+		revision_status = the_status
+	where
+		id = the_order_id; 
+end|
+
 
 
 /**
@@ -199,18 +265,6 @@ begin
 		where 
 			os.order_id = the_order_id;	
 	
-		/**select
-			os.uf_id,
-			c.id, 
-			c.ts_validated, 
-			c.date_for_shop
-		from
-			aixada_order_to_shop os
-			left join aixada_cart c on
-			os.uf_id = c.uf_id
-		where 
-			os.order_id = the_order_id;**/
-	
 		
 	declare continue handler for not found
 		set done = 1; 
@@ -219,7 +273,7 @@ begin
 	set done = 0; 
 
 	read_loop: loop
-		fetch uf_cursor into the_uf_id; /**the_cart_id, the_validated, the_date_for_shop;**/
+		fetch uf_cursor into the_uf_id;
 		if done then 
 			leave read_loop; 
 		end if;
@@ -276,11 +330,12 @@ begin
 	where 
 		order_id=the_order_id; 
 		
-	/**update the shop_date in the order listing**/
+	/**update the shop_date and revision status  in the order listing**/
 	update 
 		aixada_order
 	set 
-		date_for_shop = the_shop_date
+		date_for_shop = the_shop_date,
+		revision_status = 2
 	where 
 		id = the_order_id; 
 	
@@ -458,21 +513,6 @@ begin
 		and po.date_for_order = the_date_for_order
 		and p.id = po.product_id
 		and p.provider_id = the_provider_id;
-		
-		/*select 
-		closing_date 
-	into	
-		the_closing_date
-	from 
-		aixada_product_orderable_for_date po,
-		aixada_product p
-	where
-		po.date_for_order = the_date_for_order
-		and p.id = po.product_id
-		and p.provider_id = the_provider_id; */
-	
-		
-	
 	
 end |
 
@@ -483,12 +523,13 @@ end |
  * also provides info about status of order and order_items: if available for sale, validate. 
  */
 drop procedure if exists get_orders_listing|
-create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int)
+create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int, in revision_filter int)
 begin
 
 	declare today date default date(sysdate()); 
 	declare outer_wherec varchar(255) default "";
     declare totalc varchar(255) default "";
+    declare filter_wherec varchar(255) default "";
     
     if (the_uf_id > 0) then
     	set outer_wherec = 	concat("oi.uf_id = ", the_uf_id ," and");
@@ -501,6 +542,11 @@ begin
 										and ois.uf_id =",the_uf_id,")");
 	else 
 		set totalc = "o.total "; 
+    end if; 
+    
+    -- filter according to revision_status --
+    if (revision_filter > 0) then
+    	set filter_wherec = concat("and o.revision_status = ", revision_filter);
     end if; 
 
 	set @q = concat("select distinct
@@ -533,6 +579,7 @@ begin
 		and p.provider_id = pv.id
 		and oi.date_for_order = po.date_for_order
 		and po.product_id = p.id
+		",filter_wherec,"
 	order by 
 		oi.date_for_order desc;");
 		

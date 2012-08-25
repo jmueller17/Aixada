@@ -44,75 +44,176 @@
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
-				params : 'oper=getOrdersListingForUf&filter=prevMonth', 
+				params : 'oper=getOrdersListingForUf&filter=pastMonth2Future', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
-					var timeLeft = $(row).children().eq(3).text();
+					var timeLeft = $(row).children().eq(2).text();
+					
 					//var revisionStatus = $(row).attr('revision_status');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(4).text('sent off');
+						$(row).children().eq(3).text('expected');
 					} else {
-						 $(row).children().addClass('dim40');
-						 $(row).children().eq(4).text('not yet sent');		
+						 $(row).children().eq(3).text('not yet send');		
 					}
 
 					if (timeLeft <= 0){
-						$(row).children().eq(3).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
+						$(row).children().eq(2).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
 					} 
 					
-					var date = $(row).children().eq(2).text();
+					var date = $(row).attr('dateForOrder');
 					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="6" class="dateRow">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
 					lastDate=date; 	
+
+				},
+				complete : function(rowCount){
+					
+					loadOrderDetails();
 				}
 			});
 
+
+			
+			var globalRowIndex = 0; 
+		
+			function loadOrderDetails(){
+
+				//get either order_id OR date and provider for those orders that are still open/not finalized
+				var orderId = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('orderId');
+				var dateForOrder = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('dateForOrder');
+				var providerId = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('providerId');
+				
+				if (orderId > 0) {
+					$('#tbl_diffOrderShop').attr('currentOrderId',orderId);
+					$('#tbl_diffOrderShop tbody').xml2html('reload', {
+						params : 'oper=getDiffOrderShop&order_id='+orderId, 
+					});	
+
+				} else if (providerId > 0){
+					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
+					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
+					$('#tbl_diffOrderShop tbody').xml2html('reload', {
+						params : 'oper=getProductQuantiesForUfs&uf_id=takeFromSession&provider_id='+providerId + '&date_for_order='+dateForOrder, 
+					});	
+					
+				} else {
+					$('#tbl_diffOrderShop').attr('currentOrderId','');
+					$('#tbl_diffOrderShop').attr('currentDateForOrder','');
+					$('#tbl_diffOrderShop').attr('currentProviderId','');
+					
+					globalRowIndex++;
+					if (globalRowIndex <= $('#tbl_Orders tbody').children().length) loadOrderDetails();
+				
+				}
+
+
+			}
+
+			
 			//tmp table to load the order - shop comparison
 			$('#tbl_diffOrderShop tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
 				params : 'oper=getDiffOrderShop', 
 				loadOnInit : false, 
-				rowComplete : function(rowIndex, row){
-					
+				rowComplete : function (rowIndex, row){
+					var qu = $(row).children().eq(3).text();
+					if (isNaN(qu)) $(row).children().eq(3).text("-");
 				},
 				complete : function(rowCount){
 					if (rowCount >0){
-						var header = $('#tbl_diffOrderShop thead tr').clone()
+						
+						var orderId = $('#tbl_diffOrderShop').attr('currentOrderId');
+						var dateForOrder = $('#tbl_diffOrderShop').attr('currentDateForOrder');
+						var providerId = $('#tbl_diffOrderShop').attr('currentProviderId');
+						
+						var header = $('#tbl_diffOrderShop thead tr').clone();
 						var itemRows = $('#tbl_diffOrderShop tbody tr').clone();
-						$('#order_'+global_order_id).after(itemRows).after(header);
-					} else {
-						$('#order_'+global_order_id+' span').removeClass('ui-icon-minus').addClass('ui-icon-plus');
-						$.showMsg({
-							msg:'Sorry, no items have been found for your Uf and this order.',
-							type: 'error'});
-					}
+
+						if (orderId > 0){
+							var revision = $('#order_'+orderId).attr('revisionStatus');
+							$('#order_'+orderId).after(itemRows).after(header);
+							$('.detail_'+orderId).hide().prev().hide();
+
+							
+							var modClass = '';
+							var modTxt = ''; 
+
+							
+							if (revision == 1){ 		//default state; send off and awaited for delivery
+								modTxt = 'not yet received';
+								
+							} else if (revision == 2){	//arrived and has been revised
+
+								var modifications = false; 
+								
+								//check if ordered quantities and delivered are the same
+								$('#tbl_diffOrderShop tbody').children('tr').each(function(){
+									//each row
+									var id = $(this).children().eq(1).text();
+									var orderedQu = $(this).children().eq(2).text();
+									var deliveredQu = $(this).children().eq(3).text();
+
+									if (orderedQu != deliveredQu) modifications = true; 
+									
+								});
+
+								if (modifications){
+									modClass = "withChanges";
+									modTxt = "with changes";
+								} else {
+									modClass = "asOrdered";
+									modTxt = "is complete"; 
+								}
+								
+							} else if (revision == 3){ //posponed
+								modTxt = "posponed";	
+								
+							} else if (revision == 4){ //canceled. Will never arrive
+								modClass="orderCanceled";
+								modTxt = "canceled";
+							}
+
+
+							$('#order_'+orderId).children().eq(3).addClass(modClass).text(modTxt);
+							
+
+						} else if (providerId > 0){  //not yet send / closed order
+							$('.Date_'+dateForOrder+'.Provider_'+providerId).after(itemRows).after(header);
+							$('.detail_date_'+dateForOrder+'.detail_provider_'+providerId).hide().prev().hide();
+							//$('.Date_'+dateForOrder+'.Provider_'+providerId).children().eq(4).text("-");
+
+						}
+
+						globalRowIndex++;
+						if (globalRowIndex <= $('#tbl_Orders tbody').children().length) {
+							loadOrderDetails();
+						}
+						
+					} 
+
+					
+					
 				}
 			});
 			
-
-			var global_order_id = 0; 
+			
 			$('.expandOrderIcon').live('click', function(){
 
-				global_order_id = $(this).parents('tr').attr('orderId');
-				if (global_order_id == '') return false; 
-				
+				var orderId = $(this).parents('tr').attr('orderId');
+				var dateForOrder =  $(this).parents('tr').attr('dateForOrder');
+				var providerId =  $(this).parents('tr').attr('providerId');
+
+				var selector = (orderId > 0)? '.detail_'+orderId:'.detail_date_'+dateForOrder+'.detail_provider_'+providerId; 
+							
 				if ($('span',this).hasClass('ui-icon-plus')){
 					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
-
-					if ($('.detail_'+global_order_id).exists()){
-						$('.detail_'+global_order_id).show().prev().show();
-					} else {
-						$('#tbl_diffOrderShop tbody').xml2html('reload', {
-							params : 'oper=getDiffOrderShop&order_id='+global_order_id, 
-						});						
-					}
-
-					
+					$(selector).show().prev().show();
+					$(this).parents('tr').children().addClass('ui-state-highlight');
 				} else {
 					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
-					$('.detail_'+global_order_id).hide().prev().hide();
-					
+					$(selector).hide().prev().hide();
+					$(this).parents('tr').children().removeClass('ui-state-highlight');
 				}
 			})
 
@@ -121,16 +222,76 @@
 			/********************************************************
 			 *      My PURCHASE
 			 ********************************************************/
-			$('#tbl_Orders tbody').xml2html('init',{
+			//load purchase listing
+			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'ctrlShop.php',
 					params : 'oper=getShopListingForUf&filter=prevMonth', 
+					//params : 'oper=getShopListingForUf&filter=exact&fromDate=2012-04-01&toDate=2012-08-30', 
 					loadOnInit : true, 
 					rowComplete : function(rowIndex, row){
+						var validated = $(row).children().eq(2).text();
 
+						if (validated == '0000-00-00 00:00:00'){
+							$(row).children().eq(2).html("-");	
+						} else {
+							$(row).children().eq(2).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
+						}
+
+						
 					}
+			});
+
+			//load purchase detail (products and quantities)
+			$('#tbl_purchaseDetail tbody').xml2html('init',{
+				url : 'ctrlShop.php',
+				params : 'oper=getPurchaseDetail', 
+				loadOnInit : false, 
+				rowComplete : function (rowIndex, row){
+					var price = new Number($(row).children().eq(5).text());
+					var qu = new Number($(row).children().eq(3).text());
+					var totalPrice = price * qu;
+					totalPrice = totalPrice.toFixed(2);
+					$(row).children().eq(5).text(totalPrice);
+					
+				},
+				complete : function(rowCount){
+
+					var shopId = $('#tbl_purchaseDetail').attr('currentShopId');
+					var header = $('#tbl_purchaseDetail thead tr').clone();
+					var itemRows = $('#tbl_purchaseDetail tbody tr').clone();
+
+					$('#shop_'+shopId).after(itemRows).after(header);
+					
+				}
 			});
 			
 
+			$('.expandShopIcon').live('click', function(){
+
+				var shopId = $(this).parents('tr').attr('shopId');
+				var dateForShop = $(this).parents('tr').attr('dateForShop');
+
+				$('#tbl_purchaseDetail').attr('currentShopId', shopId);
+				$('#tbl_purchaseDetail').attr('currentDateForShop', dateForShop);
+				
+				
+							
+				if ($('span',this).hasClass('ui-icon-plus')){
+					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
+					$(this).parents('tr').children().addClass('ui-state-highlight');
+
+					$('#tbl_purchaseDetail tbody').xml2html('reload',{
+						params : 'oper=getShopDetail&shop_id='+shopId
+					});
+
+					
+				} else {
+					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
+					$(this).parents('tr').children().removeClass('ui-state-highlight');
+					$('#shop_'+shopId).next().hide();
+					$('.detail_shop_'+shopId).hide();
+				}
+			})
 
 			
 
@@ -176,22 +337,13 @@
 				</ul>
 			
 				<div id="tabs-1">
-					<table id="tbl_Orders" class="">
-						<thead>
-							<tr>
-								<th colspan="2"></th>
-								<th>Closes in #days</th>
-								<th>Status</th>
-								<th>Total</th>
-							</tr>
-						</thead>
+					<table id="tbl_Orders">
 						<tbody>
-							<tr id="order_{id}" orderId="{id}">
+							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
 								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td>{provider_name}</td>
-								<td class="hidden">{date_for_order}</td>
 								<td class="textAlignCenter">{time_left}</td>
-								<td  class="textAlignCenter">not revised</td>
+								<td  class="textAlignCenter">Loading status info...</td>
 								<td class="textAlignRight">{order_total}€</td>
 							</tr>
 						</tbody>
@@ -199,20 +351,20 @@
 				</div>
 				
 				<div id="tabs-2">
-					<table id="tbl_Shop" class="">
+					<table id="tbl_Shop" class="table_overviewShop">
 						<thead>
 							<tr>
 								<th></th>
-								<th>Date</th>
-								<th>Validated</th>
-								<th>Total</th>
+								<th class="textAlignCenter">Date of purchase</th>
+								<th class="textAlignCenter" colspan="3">Validated</th>
+								<th class="textAlignRight">Total</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr id="shop_{id}">
-								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td>{date_for_shop}</td>
-								<td>{ts_validated}</td>
+							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}">
+								<td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+								<td class="textAlignCenter">{date_for_shop}</td>
+								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
 								<td class="textAlignRight">{purchase_total}€</td>
 							</tr>
 						</tbody>
@@ -231,26 +383,54 @@
 </div>
 
 <div id="tmp">
-<table id="tbl_diffOrderShop" class="">
+<table id="tbl_diffOrderShop" currentOrderId="" currentDateForOrder="" currentProviderId="">
 	<thead>
 		<tr>
 			<td class="tdMyOrder">id</td>
-			<td class="tdMyOrder">Product</td>
+			<td class="tdMyOrder" colspan="2">Product</td>
 			<td class="tdMyOrder">Ordered</td>
 			<td class="tdMyOrder">Delivered</td>
-			<td class="tdMyOrder">Price</td>		
+			<!-- td class="tdMyOrder">Price</td-->		
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="detail_{order_id}">
+		<tr class="detail_{order_id} detail_date_{date_for_order} detail_provider_{provider_id}">
 			<td class="MyOrderItem">{product_id}</td>
-			<td class="MyOrderItem">{product_name}</td>
-			<td class="MyOrderItem">{order_quantity}</td>
+			<td class="MyOrderItem" colspan="2">{name}</td>
+			<td class="MyOrderItem">{quantity}</td>
 			<td class="MyOrderItem">{shop_quantity}</td>
-			<td class="MyOrderItem">{unit_price}</td>
+			<!-- td class="MyOrderItem">{unit_price}</td-->
 		</tr>
 	</tbody>
 </table>
+
+<table id="tbl_purchaseDetail" currentShopId="" currenShopDate="">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><?php echo $Text['name_item'];?></th>	
+			<th><?php echo $Text['provider_name'];?></th>					
+			<th class="textAlignCenter">Qu</th>
+			<th><?php echo $Text['unit'];?></th>
+			<th class="textAlignRight">Price</th>
+			
+			
+			
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="detail_shop_{cart_id}">
+			<td></td>
+			<td class="MyShopItem">{name}</td>
+			<td class="MyShopItem">{provider_name}</td>
+			<td class="MyShopItem textAlignCenter">{quantity}</td>
+			<td class="MyShopItem">{unit}</td>
+			<td class="MyShopItem textAlignRight">{unit_price}</td>	
+			
+		</tr>						
+	</tbody>
+</table>
+
 				
 </div>
 
