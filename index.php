@@ -94,7 +94,7 @@
 					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
 					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getProductQuantiesForUfs&uf_id=takeFromSession&provider_id='+providerId + '&date_for_order='+dateForOrder, 
+						params : 'oper=getProductQuantiesForUfs&uf_id=82&provider_id='+providerId + '&date_for_order='+dateForOrder, 
 					});	
 					
 				} else {

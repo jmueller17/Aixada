@@ -66,11 +66,11 @@ function get_param($param_name, $default=null, $transform = ''){
 	}
 	
 	
-	if ($param_name == "uf_id" && $value=='takeFromSession'){
+	/*if ($param_name == "uf_id" && $value== "takeFromSession"){
 		$value = get_session_uf_id();	
 	} else if ($param_name == "user_id" && $value=="takeFromSession"){
 		$value = get_session_user_id();
-	}
+	}*/
 	
 	switch ($transform){
 		case 'lowercase':

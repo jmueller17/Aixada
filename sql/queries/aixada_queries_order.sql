@@ -58,7 +58,7 @@ begin
 				aixada_order_to_shop ots
 			where
 				ots.order_id = ",the_order_id,"
-				",whereuf,"
+				",wherec,"
 			order by
 				product_id;");
  
