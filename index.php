@@ -259,8 +259,9 @@
 					var shopId = $('#tbl_purchaseDetail').attr('currentShopId');
 					var header = $('#tbl_purchaseDetail thead tr').clone();
 					var itemRows = $('#tbl_purchaseDetail tbody tr').clone();
+					var footer = $('#tbl_purchaseDetail tfoot tr').clone();
 
-					$('#shop_'+shopId).after(itemRows).after(header);
+					$('#shop_'+shopId).after(footer).after(itemRows).after(header);
 					
 				}
 			});
@@ -429,6 +430,13 @@
 			
 		</tr>						
 	</tbody>
+	<tfoot>
+		<tr>
+			<td>&nbsp;</td>
+			<td colspan="5">			
+				<p class="ui-corner-all iconContainer ui-state-default floatRight"><span class="ui-icon ui-icon-print" title="Print bill"></span></p>
+		</tr>
+	</tfoot>
 </table>
 
 				
