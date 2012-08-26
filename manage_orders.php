@@ -385,7 +385,7 @@
 					setOrderStatus(4);
        			});
     			
-			 $("#btn_pospone").button({
+			 $("#btn_postpone").button({
 				 icons: {
 		        		primary: "ui-icon-info"
 		        	}
@@ -445,7 +445,7 @@
 								statusTd.addClass('revised').html('<span class="tdIconCenter ui-icon ui-icon-check" title="Order has been revised"></span>');
 								break;
 							case "3": 
-								statusTd.addClass('posponed').html('<span class="tdIconCenter ui-icon ui-icon-info" title="Order has been posponed"></span>');
+								statusTd.addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-info" title="Order has been postponed"></span>');
 								break;
 							case "4": 
 								statusTd.addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel" title="Order has been canceled"></span>');
@@ -696,7 +696,7 @@
 						<li><a href="javascript:void(null)" id="futureOrders">Upcoming: next week + beyond</a></li>
 						<li><a href="javascript:void(null)" id="prevMonth">Last month</a></li>
 						<li><a href="javascript:void(null)" id="prevYear">Last year</a></li>
-						<li><a href="javascript:void(null)" id="limboOrders">Posponed</a></li>
+						<li><a href="javascript:void(null)" id="limboOrders">postponed</a></li>
 					</ul>
 				</div>				
 		   	</div> 	
@@ -787,7 +787,7 @@
 	<table>
 		<tr><td class="textAlignCenter"><button id="btn_revision">Arrived!</button></td><td>&nbsp;</td><td>Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...</td></tr>					
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_pospone">Pospone</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_postpone">Postpone</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
 		<tr><td colspan="2">&nbsp;</td></tr>
 		<tr><td class="textAlignCenter"><button id="btn_cancel">Cancel</button></td><td>&nbsp;</td><td>Order did and will not arrive.</td></tr>
 	</table>

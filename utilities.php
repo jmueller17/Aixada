@@ -65,12 +65,12 @@ function get_param($param_name, $default=null, $transform = ''){
 		throw new Exception("get_param: Missing or wrong parameter name: {$param_name} in URL");
 	}
 	
-	
-	/*if ($param_name == "uf_id" && $value== "takeFromSession"){
+	//utility hack to retrieve uf_id or user_id from session. e.g. &uf_id=-1
+	if ($param_name == "uf_id" && $value==-1){
 		$value = get_session_uf_id();	
-	} else if ($param_name == "user_id" && $value=="takeFromSession"){
+	} else if ($param_name == "user_id" && $value==-1){
 		$value = get_session_user_id();
-	}*/
+	}
 	
 	switch ($transform){
 		case 'lowercase':

@@ -100,11 +100,9 @@
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
 			</ul>
 		</li>
-		<li><a href="#"><?php echo $Text['nav_mng_orders'];?></a>
+		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a>
 			<ul>
-				<!--  li><a href="manage_dates.php?what=Setdates"><?php echo $Text['nav_mng_setorderable']; ?></a></li-->
-				<!--  li><a href="manage_dates.php?what=Move"><?php echo $Text['nav_mng_move'];?></a></li-->
-				<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders_overview'];?></a></li>
+
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
 		</li>

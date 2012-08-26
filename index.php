@@ -94,7 +94,7 @@
 					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
 					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getProductQuantiesForUfs&uf_id=82&provider_id='+providerId + '&date_for_order='+dateForOrder, 
+						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder, 
 					});	
 					
 				} else {
@@ -166,8 +166,8 @@
 									modTxt = "is complete"; 
 								}
 								
-							} else if (revision == 3){ //posponed
-								modTxt = "posponed";	
+							} else if (revision == 3){ //postponed
+								modTxt = "postponed";	
 								
 							} else if (revision == 4){ //canceled. Will never arrive
 								modClass="orderCanceled";
