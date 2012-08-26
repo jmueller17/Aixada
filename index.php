@@ -244,7 +244,7 @@
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
 				url : 'ctrlShop.php',
-				params : 'oper=getPurchaseDetail', 
+				params : 'oper=getShopDetail', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
 					var price = new Number($(row).children().eq(5).text());
