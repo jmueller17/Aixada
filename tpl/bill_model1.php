@@ -34,19 +34,26 @@
 	</style>
 	
 	<script type="text/javascript" src="../js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="../js/jqueryui/jqueryui.js"></script>
 
    	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaUtilities.js" ></script>
  
 
 	<script type="text/javascript">
 		$(function(){
 
+			var shopId = $.getUrlVar('shopId');
+			var date = $.getUrlVar('date');
+			
+			$('#cart_id').text(shopId);
+			$('#date_for_shop').text(date);
 			
 			
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseList tbody').xml2html('init',{
 				url : '../ctrlShop.php',
-				params : 'oper=getShopDetail&shop_id=2468', 
+				params : 'oper=getShopDetail&shop_id='+shopId, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
 					var price = new Number($(row).children().eq(4).text());
@@ -55,7 +62,6 @@
 					totalPrice = totalPrice.toFixed(2);
 					$(row).children().eq(5).text(totalPrice);
 
-					if (rowIndex == 1) $('#cart_id').text($(row).children().eq(6).text()) 
 				},
 				complete : function(rowCount){
 					var total = 0; 
@@ -79,8 +85,8 @@
 				rowComplete : function (rowIndex, row){ 
 				}
 			});
-				
 
+			
 
 		}); //close document ready
 	</script>

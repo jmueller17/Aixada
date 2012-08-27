@@ -293,8 +293,21 @@
 					$('.detail_shop_'+shopId).hide();
 				}
 			})
-
 			
+			//print purchase / order
+			$('.printIcon').live('click', function(){
+
+				var shopId = $(this).parents('tr').prev().attr('shopId');
+				var date = $(this).parents('tr').prev().attr('dateForShop');
+
+				
+				billWin = window.open('tpl/bill_model1.php?shopId='+shopId+'&date='+date);
+				billWin.focus();
+
+				
+			});
+
+			var billWin = null;
 
 			$('.iconContainer')
 			.live('mouseover', function(e){
@@ -408,7 +421,7 @@
 <table id="tbl_purchaseDetail" currentShopId="" currenShopDate="">
 	<thead>
 		<tr>
-			<th>&nbsp;</th>
+			<td><p class="ui-corner-all iconContainer ui-state-default printIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
 			<th><?php echo $Text['name_item'];?></th>	
 			<th><?php echo $Text['provider_name'];?></th>					
 			<th class="textAlignCenter">Qu</th>
@@ -434,7 +447,7 @@
 		<tr>
 			<td>&nbsp;</td>
 			<td colspan="5">			
-				<p class="ui-corner-all iconContainer ui-state-default floatRight"><span class="ui-icon ui-icon-print" title="Print bill"></span></p>
+
 		</tr>
 	</tfoot>
 </table>
