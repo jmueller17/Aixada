@@ -382,54 +382,34 @@ drop procedure if exists get_member_info|
 create procedure get_member_info(in the_member_id int)
 begin
   declare the_uf int;
-  select m.uf_id into the_uf 
-  from aixada_member m 
-  where m.id = the_member_id;
+  
+  select 
+  	m.uf_id into the_uf 
+  from 
+  	aixada_member m 
+  where 
+  	m.id = the_member_id;
 
   select distinct
-        m.id, 
-        m.uf_id,
-        m.name,
-        u.login,
-        m.address,
-        m.zip,
-        m.city,  
-        m.phone1,
-        m.phone2,
-        u.email,
-        m.active,
-        m.participant,
-        m.adult,
-        m.notes,
-        u.last_login_attempt,
-        u.last_successful_login as last_login,
-        u.language,
-        get_roles_of_member(the_member_id) as roles,
-        get_providers_of_member(the_member_id) as providers,
-        get_products_of_member(the_member_id) as products
-        
-/*
-        group_concat(r.role) as roles
-        group_concat(distinct prov.name) as providers
-        group_concat(distinct prod.name) as products
-*/
-  from aixada_user u
-  left join aixada_member m
-  on u.member_id = m.id
-  left join aixada_user_role r
-  on u.id = r.user_id
-/*
-  left join aixada_provider prov
-  on prov.responsible_uf_id = m.uf_id
-  left join aixada_product prod
-  on prod.responsible_uf_id = m.uf_id
-*/
+  	m.*,
+  	u.*,
+    get_roles_of_member(the_member_id) as roles,
+    get_providers_of_member(the_member_id) as providers,
+    get_products_of_member(the_member_id) as products
+  from 
+  	aixada_user u
+  left join 
+  	aixada_member m
+  on 
+  	u.member_id = m.id
+  left join 
+  	aixada_user_role r
+  on 
+  	u.id = r.user_id
   where m.id = the_member_id;
-/*
-  and prov.active=1;
-  and prod.active=1;
-*/
 end|
+
+
 
 drop procedure if exists member_id_of_user_id|
 create procedure member_id_of_user_id(in the_user_id int)

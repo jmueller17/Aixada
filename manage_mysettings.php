@@ -141,7 +141,7 @@
 		//get info of current user
 		$.ajax({
 			   type: "POST",
-			   url: "smallqueries.php?oper=getMemberInfo&member_id=<?php echo $_SESSION['userdata']['member_id'];?>",
+			   url: "smallqueries.php?oper=getMemberInfo&member_id=-1",
 			   dataType: "xml", 
 			   success: function(xml){
 				   $(xml).find('row:first').children().each(function(){

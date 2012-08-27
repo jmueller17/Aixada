@@ -39,6 +39,19 @@ function get_session_uf_id(){
 }
 
 
+/**
+ * 
+ * Returns the member_id of the logged user. 
+ */
+function get_session_member_id(){
+	
+	if (isset($_SESSION['userdata']['member_id']) && $_SESSION['userdata']['member_id'] > 0 ){
+		return $_SESSION['userdata']['member_id'];
+	} else {
+		throw new Exception("$_Session data member_id is not set!! ");
+	}	
+}
+
 
 /**
  * 
@@ -70,7 +83,10 @@ function get_param($param_name, $default=null, $transform = ''){
 		$value = get_session_uf_id();	
 	} else if ($param_name == "user_id" && $value==-1){
 		$value = get_session_user_id();
+	} else if ($param_name == "member_id" && $value==-1){
+		$value = get_session_member_id();
 	}
+	
 	
 	switch ($transform){
 		case 'lowercase':

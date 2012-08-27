@@ -60,7 +60,7 @@ try{
         exit;
 
     case 'getMemberInfo':
-        printXML(stored_query_XML_fields('get_member_info', $_REQUEST['member_id']));
+        printXML(stored_query_XML_fields('get_member_info', get_param('member_id') ));
         exit;
 
     case 'getProductsBelowMinStock':
