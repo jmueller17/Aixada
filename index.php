@@ -68,7 +68,7 @@
 
 				},
 				complete : function(rowCount){
-					
+					globalRowIndex = 0; 
 					loadOrderDetails();
 				}
 			});
