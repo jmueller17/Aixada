@@ -29,6 +29,10 @@
      
 	   
 	<script type="text/javascript">
+	function getTable(){
+		return document.getElementById('tbl_reviseOrder');
+	}
+	
 	$(function(){
 
 			$('.detailElements').hide();
@@ -38,7 +42,11 @@
 
 			var tblHeaderComplete = false; 
 
-			var global_oder_id = 0; 
+			//the order_id that is currently revised or viewed
+			var global_order_id = 0; 
+
+			//indicates page subsection: overview | details | view
+			var global_section = 'overview';
 
 
 			$("#datepicker").datepicker({
@@ -77,7 +85,7 @@
 						});
 
 						theadStr += '<th>Total</th>';
-						theadStr += '<th>Revised</th>';
+						theadStr += '<th class="revisedCol">Revised</th>';
 						
 						$('#tbl_reviseOrder thead tr').last().append(theadStr);
 
@@ -111,7 +119,7 @@
 					tbodyStr += '<td id="total_'+product_id+'"></td>';
 					
 					//revised checkbox for product
-					tbodyStr += '<td class="textAlignCenter"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
+					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
 					$(row).last().append(tbodyStr);
 					
 				},
@@ -167,6 +175,16 @@
 
 						var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
 						$('#total_'+lastId).text(total);
+
+						//printWin = window.open('tpl/report_order1.php');
+						//printWin.focus();
+
+						//don't need revised and arrived column for viewing order
+						if (global_section == 'view'){
+							$('.revisedCol, .arrivedCol').hide();
+						} else {
+							$('.revisedCol, .arrivedCol').show();
+						}
 
 
 					},
@@ -271,10 +289,10 @@
 					var row = $(this).attr('row');
 					var product = $(this).parent().children().eq(1).text();
 
-					$('.Row-'+row).addClass('editHighlightRow');
-					$('.Col-'+col).addClass('editHighlightCol');
+					//$('.Row-'+row).addClass('editHighlightRow');
+					//$('.Col-'+col).addClass('editHighlightCol');
 					
-					if (!$(this).hasClass('editable')){
+					if (!$(this).hasClass('editable') && global_section == 'details'){
 						$(this).children(':first')
 							.addClass('editable')
 							.editable('ctrlOrders.php', {			//init the jeditable plugin
@@ -298,8 +316,8 @@
 				var col = $(this).attr('col');
 				var row = $(this).attr('row');
 
-				$('.Row-'+row).removeClass('editHighlightRow');
-				$('.Col-'+col).removeClass('editHighlightCol');
+				//$('.Row-'+row).removeClass('editHighlightRow');
+				//$('.Col-'+col).removeClass('editHighlightCol');
 
 			});
 				
@@ -428,16 +446,15 @@
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
 					var orderId = $(row).attr("id");
-					var timeLeft = parseInt($(row).children().eq(3).text());
-					var status = $(row).children().eq(7).text();
+					var timeLeft = parseInt($(row).children().eq(4).text());
+					var status = $(row).children().eq(8).text();
 					
 					if (timeLeft > 0){ 	// order is still open
-						$(row).children().eq(7).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
-						//$(row).children().eq(3).text("-");
+						$(row).children().eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
 						
 					} else {			//order is closed
-						$(row).children().eq(3).text("closed");
-						var statusTd = $(row).children().eq(7); 
+						$(row).children().eq(4).text("closed");
+						var statusTd = $(row).children().eq(8); 
 						switch(status){
 							case "1": 
 								statusTd.html('<span class="tdIconCenter ui-icon ui-icon-mail-closed" title="Order has been send to provider"></span>');
@@ -459,10 +476,10 @@
 
 					} else {
 						//don't have an order id yet. construct one with date + provider_id
-						var date_pvid = $(row).children().eq(2).text() + "_" + $(row).children().eq(1).attr("providerId");
+						var date_pvid = $(row).children().eq(3).text() + "_" + $(row).children().eq(2).attr("providerId");
 						//while open and not send off, no order_id exists
-						$(row).children(':first').html('<p>-</p>');
-						$(row).children().eq(4).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
+						$(row).children().eq(1).html('<p>-</p>');
+						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
 						
 
 						
@@ -481,7 +498,7 @@
 
 			$('.finalizeOrder').live('click', function(e){
 				var tmp = $(this).attr("datePvId").split("_");
-				var timeLeft = $(this).parents('tr').children().eq(3).text();
+				var timeLeft = $(this).parents('tr').children().eq(4).text();
 				var msgt = 'You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?';
 				
 				if (timeLeft > 0){
@@ -548,14 +565,11 @@
 			
 
 			//revise order icon 
-			$('.ui-icon-check')
+			$('.reviseOrderBtn')
 				.live('click', function(e){
-
-					
-					
 					global_order_id 	= $(this).parents('tr').attr('id');
 					var shopDate 		= $(this).parents('tr').children().eq(6).text();
-					var order_id 		= $(this).parents('tr').children().eq(0).text();
+					var order_id 		= $(this).parents('tr').children().eq(1).text();
 					var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+order_id+')' ;
 
 					$('.col').hide();
@@ -620,15 +634,30 @@
 				});
 
 
+				$('.viewOrderBtn')
+					.live('click', function(e){
+						global_order_id 	= $(this).parents('tr').attr('id');
+						var shopDate 		= $(this).parents('tr').children().eq(6).text();
+						var order_id 		= $(this).parents('tr').children().eq(1).text();
+						var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+order_id+')' ;
+
+						$('.col').hide();
+						
+						switchTo('view', {name:provider_name});
+
+					});
+
+			
 				/**
 				 *	switch between the order overview page and the revision/detail page
 				 */
 				function switchTo(page, options){
+
 					switch (page){
 						case 'overview':
 							$('.detailElements').hide();
 		    				$('.overviewElements').fadeIn(1000);
-		    				global_order_id = 0;
+		    				global_order_id = 0;		
 							break;
 
 						case 'details':
@@ -640,7 +669,18 @@
 								params : 'oper=getOrderedProductsList&order_id='+global_order_id
 							})
 							break;
+							
+						case 'view':
+							$('#providerName').text(options.name);							
+							$('.overviewElements').hide();
+							$('.detailElements').fadeIn(1000);
+							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
+								params : 'oper=getOrderedProductsList&order_id='+global_order_id
+							})
+							$('#btn_setShopDate').hide();
+							break;
 					}
+					global_section = page; 
 				}
 
 				$("#tblOptions")
@@ -664,7 +704,18 @@
 					}//end item selected 
 				});//end menu
 			
+				var printWin;
+				$('#bulkActions').change(function(){
 
+					var sel = $("option:selected", this).val();
+
+					if (sel == "print"){
+
+						printWin = window.open('tpl/report_orders1.php');
+						printWin.focus();
+					}
+
+				});
 
 			
 			
@@ -694,7 +745,8 @@
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="ordersForToday">Expected today</a></li>
-						<li><a href="javascript:void(null)" id="futureOrders">Upcoming: next week + beyond</a></li>
+						<li><a href="javascript:void(null)" id="nextWeek">Next week</a></li>
+						<li><a href="javascript:void(null)" id="futureOrders">All future orders</a></li>
 						<li><a href="javascript:void(null)" id="prevMonth">Last month</a></li>
 						<li><a href="javascript:void(null)" id="prevYear">Last year</a></li>
 						<li><a href="javascript:void(null)" id="limboOrders">postponed</a></li>
@@ -711,37 +763,46 @@
 			<table id="tbl_orderOverview" class="tblOverviewOrders">
 				<thead>
 					<tr>
+						<th></th>
 						<th class="clickable">id <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Closes in days</th>
-						
 						<th>Send off to provider</th>
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Status</th>
-						
 						<th>Revise</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr id="{id}">
+						<td><input type="checkbox" name="bulkOrderList"/>
 						<td>{id}</td>
 						<td class="textAlignRight minPadding" providerId="{provider_id}">{provider_name}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
-						<!-- td class="textAlignCenter"><span id="orderClosedIcon{id}" class="tdIconCenter ui-icon ui-icon-unlocked"></span></td-->
 						<td class="textAlignCenter">{ts_send_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>
-						<td class="textAlignCenter">				
-							<p class="ui-corner-all iconContainer ui-state-default floatRight"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
+						<td>				
+							<p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon" title="View order"></span></p>
+							<p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
-				
+					<tr>
+						<td></td>
+						<td colspan="6">
+							<select id="bulkActions">
+								<option value="-1">With selected...</option>
+								<option value="print">Print</option>
+								<option value="download">Download as zip</option>
+							</select>
+						</td>
+					</tr>
 				</tfoot>
 			</table>
 			</div> <!-- widget content -->
@@ -759,7 +820,7 @@
 							<th>id</th>
 							<th>Name</th>
 							<th>Unit</th>
-							<th>Arrived</th>
+							<th class="arrivedCol">Arrived</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -767,7 +828,7 @@
 							<td>{id}</td>
 							<td>{name}</td>
 							<td id="unit_{id}">{unit}</td>
-							<td class="textAlignCenter"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" id="ckboxArrived_{id}" checked="checked" /></td>
+							<td class="textAlignCenter arrivedCol"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" id="ckboxArrived_{id}" checked="checked" /></td>
 						</tr>
 					</tbody>
 					<tfoot>

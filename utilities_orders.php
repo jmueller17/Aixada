@@ -32,13 +32,14 @@ function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_d
 	//TODO server - client difference in time/date?!
 	$today = date('Y-m-d', strtotime("Today"));
 	$tomorrow = date('Y-m-d', strtotime("Tomorrow"));
-	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
-	$prevYear = date('Y-m-d', strtotime('Today - 1 year'));
+	$next_week =  date('Y-m-d', strtotime('Today + 8 days'));
+	$prev_month = date('Y-m-d', strtotime('Today - 1 month'));
+	$prev_year = date('Y-m-d', strtotime('Today - 1 year'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
 	
-	$stepsFromDate 	 = date('Y-m-d', strtotime("Today -". ($steps--) . " " .$range));
-	$stepsToDate	 = date('Y-m-d', strtotime("Today -". ($steps) . " " .$range));	
+	$steps_from_date 	 = date('Y-m-d', strtotime("Today -". ($steps--) . " " .$range));
+	$steps_to_date	 = date('Y-m-d', strtotime("Today -". ($steps) . " " .$range));	
 	
 
 	
@@ -54,30 +55,34 @@ function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_d
 			break;
 
 		case 'pastMonth2Future':
-			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $very_distant_future, $uf_id,0));
+			printXML(stored_query_XML_fields('get_orders_listing', $prev_month, $very_distant_future, $uf_id,0));
 			break;
 			
 		//last month
 		case 'prevMonth':
-			printXML(stored_query_XML_fields('get_orders_listing', $prevMonth, $tomorrow, $uf_id,0));
+			printXML(stored_query_XML_fields('get_orders_listing', $prev_month, $tomorrow, $uf_id,0));
 			break;
 			
 		//last year
 		case 'prevYear':
-			printXML(stored_query_XML_fields('get_orders_listing', $prevYear, $tomorrow, $uf_id,0));
+			printXML(stored_query_XML_fields('get_orders_listing', $prev_year, $tomorrow, $uf_id,0));
 			break;
 		
 		//all orders that have been send off, but have no shop date assigned
 		case 'limboOrders':
-			printXML(stored_query_XML_fields('get_orders_listing', $prevYear, $very_distant_future, $uf_id, 3));
+			printXML(stored_query_XML_fields('get_orders_listing', $prev_year, $very_distant_future, $uf_id, 3));
 			break;
-		
+			
+		case 'nextWeek':
+			printXML(stored_query_XML_fields('get_orders_listing', $today, $next_week, $uf_id, 0));
+			break;
+					
 		case 'futureOrders':
 			printXML(stored_query_XML_fields('get_orders_listing', $today, $very_distant_future, $uf_id,0));
 			break;
 			
 		case 'steps':
-			printXML(stored_query_XML_fields('get_orders_listing', $stepsFromDate, $stepsToDate, $uf_id,0));
+			printXML(stored_query_XML_fields('get_orders_listing', $steps_from_date, $steps_to_date, $uf_id,0));
 			break;
 			
 		case 'exact':
