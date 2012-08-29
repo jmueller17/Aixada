@@ -63,7 +63,7 @@
 					} 
 					
 					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="6" class="dateRow ui-corner-all">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5" class="dateRow ui-corner-all"><p>Ordered for <span class="boldStuff">'+date+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
 					lastDate=date; 	
 
 				},
@@ -216,6 +216,16 @@
 					$(this).parents('tr').children().removeClass('ui-state-highlight');
 				}
 			})
+			
+			
+			var billWin = null;
+			$('.printOrderIcon').live('click', function(){
+
+				var dateForOrder = $(this).attr('dateForOrder');
+				
+				billWin = window.open('tpl/order_model1.php?date='+dateForOrder);
+				billWin.focus();
+			});
 
 			//show older orders dates
 			var orderDateSteps = 2;
@@ -332,8 +342,7 @@
 			})
 			
 			//print purchase / order
-			var billWin = null;
-			$('.printIcon').live('click', function(){
+			$('.printShopIcon').live('click', function(){
 
 				var shopId = $(this).parents('tr').prev().attr('shopId');
 				var date = $(this).parents('tr').prev().attr('dateForShop');
@@ -428,8 +437,9 @@
 								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td>{provider_name}</td>
 								<td class="textAlignCenter">{time_left}</td>
-								<td  class="textAlignCenter">Loading status info...</td>
+								<td class="textAlignCenter">Loading status info...</td>
 								<td class="textAlignRight">{order_total}€</td>
+								<td>&nbsp;</td>
 							</tr>
 						</tbody>
 						<tfoot>
@@ -516,7 +526,7 @@
 <table id="tbl_purchaseDetail" currentShopId="" currenShopDate="">
 	<thead>
 		<tr>
-			<td><p class="ui-corner-all iconContainer ui-state-default printIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
+			<td><p class="ui-corner-all iconContainer ui-state-default printShopIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
 			<th><?php echo $Text['name_item'];?></th>	
 			<th><?php echo $Text['provider_name'];?></th>					
 			<th class="textAlignCenter">Qu</th>
