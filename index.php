@@ -44,7 +44,7 @@
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
-				params : 'oper=getOrdersListingForUf&filter=pastMonth2Future', 
+				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonth2Future', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
@@ -239,8 +239,7 @@
 					orderDateSteps++;	
 					$('#tbl_Orders tbody').xml2html('reload',{
 						url : 'ctrlOrders.php',
-						//params : 'oper=getOrdersListingForUf&filter=pastMonth2Future',
-						params : 'oper=getOrdersListingForUf&filter=steps&steps='+orderDateSteps+'&range='+orange
+						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 					});
 
 			});
@@ -255,8 +254,7 @@
 				orderDateSteps--;	
 				$('#tbl_Orders tbody').xml2html('reload',{
 					url : 'ctrlOrders.php',
-					//params : 'oper=getOrdersListingForUf&filter=pastMonth2Future',
-					params : 'oper=getOrdersListingForUf&filter=steps&steps='+orderDateSteps+'&range='+orange
+					params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 				});
 
 			});
@@ -272,9 +270,7 @@
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'ctrlShop.php',
-					//params : 'oper=getShopListingForUf&filter=prevMonth', 
-					params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange,
-					//params : 'oper=getShopListingForUf&filter=exact&fromDate=2012-04-01&toDate=2012-08-30', 
+					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
 					loadOnInit : true, 
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
@@ -365,7 +361,7 @@
 					shopDateSteps++;	
 					$('#tbl_Shop tbody').xml2html('reload',{
 						url : 'ctrlShop.php',
-						params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange
+						params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 					});
 
 			});
@@ -380,7 +376,7 @@
 				shopDateSteps--;	
 				$('#tbl_Shop tbody').xml2html('reload',{
 					url : 'ctrlShop.php',
-					params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange
+					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 				});
 
 			});
