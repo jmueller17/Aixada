@@ -63,7 +63,7 @@
 					} 
 					
 					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="6" class="dateRow">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="6" class="dateRow ui-corner-all">Ordered for <span class="boldStuff">'+date+'</span></td></tr>');
 					lastDate=date; 	
 
 				},
@@ -209,7 +209,7 @@
 				if ($('span',this).hasClass('ui-icon-plus')){
 					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
 					$(selector).show().prev().show();
-					$(this).parents('tr').children().addClass('ui-state-highlight');
+					$(this).parents('tr').children().addClass('ui-state-highlight ui-corner-all');
 				} else {
 					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
 					$(selector).hide().prev().hide();
@@ -217,15 +217,53 @@
 				}
 			})
 
+			//show older orders dates
+			var orderDateSteps = 2;
+			var orange = 'month';
+			$('#btn_prevOrders').button({
+				icons : {
+					primary:"ui-icon-seek-prev"
+					}
+			})
+			.click( function(e){
+					orderDateSteps++;	
+					$('#tbl_Orders tbody').xml2html('reload',{
+						url : 'ctrlOrders.php',
+						//params : 'oper=getOrdersListingForUf&filter=pastMonth2Future',
+						params : 'oper=getOrdersListingForUf&filter=steps&steps='+orderDateSteps+'&range='+orange
+					});
+
+			});
+
+			//show more recent order dates
+			$('#btn_nextOrders').button({
+				icons : {
+					secondary:"ui-icon-seek-next"
+					}
+			})
+			.click( function(e){
+				orderDateSteps--;	
+				$('#tbl_Orders tbody').xml2html('reload',{
+					url : 'ctrlOrders.php',
+					//params : 'oper=getOrdersListingForUf&filter=pastMonth2Future',
+					params : 'oper=getOrdersListingForUf&filter=steps&steps='+orderDateSteps+'&range='+orange
+				});
+
+			});
+			
 			
 			
 			/********************************************************
 			 *      My PURCHASE
 			 ********************************************************/
+			var shopDateSteps = 1;
+			var srange = 'year';
+
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'ctrlShop.php',
-					params : 'oper=getShopListingForUf&filter=prevMonth', 
+					//params : 'oper=getShopListingForUf&filter=prevMonth', 
+					params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange,
 					//params : 'oper=getShopListingForUf&filter=exact&fromDate=2012-04-01&toDate=2012-08-30', 
 					loadOnInit : true, 
 					rowComplete : function(rowIndex, row){
@@ -259,9 +297,8 @@
 					var shopId = $('#tbl_purchaseDetail').attr('currentShopId');
 					var header = $('#tbl_purchaseDetail thead tr').clone();
 					var itemRows = $('#tbl_purchaseDetail tbody tr').clone();
-					var footer = $('#tbl_purchaseDetail tfoot tr').clone();
 
-					$('#shop_'+shopId).after(footer).after(itemRows).after(header);
+					$('#shop_'+shopId).after(itemRows).after(header);
 					
 				}
 			});
@@ -279,7 +316,7 @@
 							
 				if ($('span',this).hasClass('ui-icon-plus')){
 					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
-					$(this).parents('tr').children().addClass('ui-state-highlight');
+					$(this).parents('tr').children().addClass('ui-state-highlight ui-corner-all');
 
 					$('#tbl_purchaseDetail tbody').xml2html('reload',{
 						params : 'oper=getShopDetail&shop_id='+shopId
@@ -295,20 +332,54 @@
 			})
 			
 			//print purchase / order
+			var billWin = null;
 			$('.printIcon').live('click', function(){
 
 				var shopId = $(this).parents('tr').prev().attr('shopId');
 				var date = $(this).parents('tr').prev().attr('dateForShop');
+				var op_name = $(this).parents('tr').prev().attr('operatorName');
+				var op_uf = $(this).parents('tr').prev().attr('operatorUf');
+				
 
 				
-				billWin = window.open('tpl/bill_model1.php?shopId='+shopId+'&date='+date);
+				billWin = window.open('tpl/bill_model1.php?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
 				billWin.focus();
-
-				
 			});
 
-			var billWin = null;
+			//show older purchase dates
+			$('#btn_prevPurchase').button({
+				icons : {
+					primary:"ui-icon-seek-prev"
+					}
+			})
+			.click( function(e){
+					shopDateSteps++;	
+					$('#tbl_Shop tbody').xml2html('reload',{
+						url : 'ctrlShop.php',
+						params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange
+					});
 
+			});
+
+			//show older purchase dates
+			$('#btn_nextPurchase').button({
+				icons : {
+					secondary:"ui-icon-seek-next"
+					}
+			})
+			.click( function(e){
+				shopDateSteps--;	
+				$('#tbl_Shop tbody').xml2html('reload',{
+					url : 'ctrlShop.php',
+					params : 'oper=getShopListingForUf&filter=steps&steps='+shopDateSteps+'&range='+srange
+				});
+
+			});
+			
+
+
+			
+			
 			$('.iconContainer')
 			.live('mouseover', function(e){
 				$(this).addClass('ui-state-hover');
@@ -361,13 +432,28 @@
 								<td class="textAlignRight">{order_total}€</td>
 							</tr>
 						</tbody>
+						<tfoot>
+						<tr>
+								<td colspan="6">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="6">
+									<p class="textAlignCenter">
+										<button id="btn_prevOrders">Previous</button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_nextOrders">Next</button></p>
+									</td>
+								
+								
+							</tr>
+						
+						</tfoot>
 					</table>
 				</div>
 				
 				<div id="tabs-2">
 					<table id="tbl_Shop" class="table_overviewShop">
 						<thead>
-							<tr>
+							<tr >
 								<th></th>
 								<th class="textAlignCenter">Date of purchase</th>
 								<th class="textAlignCenter" colspan="3">Validated</th>
@@ -375,24 +461,33 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}">
+							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" operatorName="{operator_name}" operatorUf="{operator_uf}">
 								<td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td class="textAlignCenter">{date_for_shop}</td>
 								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
 								<td class="textAlignRight">{purchase_total}€</td>
 							</tr>
 						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="6">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="6">
+									<p class="textAlignCenter">
+										<button id="btn_prevPurchase">Previous</button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_nextPurchase">Next</button></p>
+									</td>
+								
+								
+							</tr>
+						</tfoot>
 					</table>
-				
 				</div>
-			
-			
-				
-			
-		
 			</div>			
 		</div>
 	</div>
+	
 	<!-- end of stage wrap -->
 </div>
 
@@ -447,7 +542,6 @@
 		<tr>
 			<td>&nbsp;</td>
 			<td colspan="5">			
-
 		</tr>
 	</tfoot>
 </table>

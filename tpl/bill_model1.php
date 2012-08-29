@@ -45,10 +45,18 @@
 
 			var shopId = $.getUrlVar('shopId');
 			var date = $.getUrlVar('date');
+			var operatorName = $.getUrlVar('operatorName');
+			var operatorUf = $.getUrlVar('operatorUf');
+
 			
 			$('#cart_id').text(shopId);
 			$('#date_for_shop').text(date);
-			
+
+			if (operatorUf == ''){
+				$('#operator').text('not yet validated');
+			} else {
+				$('#operator').text(operatorName + " (Uf"+operatorUf+")");
+			}		
 			
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseList tbody').xml2html('init',{
@@ -59,18 +67,30 @@
 					var price = new Number($(row).children().eq(4).text());
 					var qu = new Number($(row).children().eq(2).text());
 					var totalPrice = price * qu;
+					
 					totalPrice = totalPrice.toFixed(2);
 					$(row).children().eq(5).text(totalPrice);
+					
 
 				},
 				complete : function(rowCount){
 					var total = 0; 
+					var totalIva = 0; 
+					var totalRevTax = 0; 
 					$('.itemPrice').each(function(){
 						var price = new Number($(this).text());
 						total += price; 
+
+						var iva = $(this).attr('iva');
+						var rev = $(this).attr('revTax');
+						var tax = (price * (iva + rev))/100; 
+						totalIva += (tax*iva)/100;
+						totalRevTax += (tax*rev)/100;
+						
 					});
 					$('#total').text(total.toFixed(2));
-
+					$('#total_iva').text(totalIva.toFixed(2));
+					$('#total_revTax').text(totalRevTax.toFixed(2));
 					
 				}
 			});
@@ -95,7 +115,9 @@
 <body>
 	
 	<div id="header" class="section">
-		<div id="logo"></div>
+		<div id="logo">
+			<img alt="coop logo" width="500" height="180"/>
+		</div>
 		<div id="address">
 			<h2 class="txtAlignRight">COOPERATIVA XXXXXX</h2>
 			<h2 class="txtAlignRight">CIF/NIF: F650000000</h2>
@@ -162,12 +184,8 @@
 					<td class="width-80 txtAlignRight">{quantity}</td>
 					<td class="width-80 txtAlignCenter">{unit}</td>
 					<td class="width-80 txtAlignRight">{unit_price}</td>
-					<td class="txtAlignRight itemPrice"></td>
-					<td class="hidden">{cart_id}</td>
-					<td class="hidden">{iva_percent}</td>
-					<td class="hidden">{rev_tax_percent}</td>
-					
-					
+					<td class="txtAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></td>
+					<td class="hidden">{cart_id}</td>					
 				</tr>
 			</tbody>
 						
@@ -187,10 +205,14 @@
 				<tr>
 					<td></td>
 					<td></td>
+					<td colspan="3" class="txtAlignRight">included IVA</td>
+					<td id="total_iva" class="txtAlignRight"></td>
+				</tr>
+				<tr>
 					<td></td>
 					<td></td>
-					<td class="txtAlignRight">IVA</td>
-					<td id="iva"></td>
+					<td colspan="3" class="txtAlignRight">included RevTax</td>
+					<td id="total_revTax" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>

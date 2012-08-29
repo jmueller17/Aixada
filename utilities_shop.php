@@ -13,7 +13,7 @@ require_once ('utilities.php');
  * @param str $filter  prevMonth | steps | exact  
  *  
  */
-function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_date=0, $steps=0, $range="month")
+function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month")
 {
 	
 	//TODO server - client difference in time/date?!

@@ -26,17 +26,20 @@ function finalize_order($provider_id, $date_for_order)
  * calls to stored procedures. 
  * @param str $time_period today | all | prevMonth | etc. 
  */
-function get_orders_in_range($time_period='today', $uf_id=0)
+function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month")
 {
 	
 	//TODO server - client difference in time/date?!
-	
 	$today = date('Y-m-d', strtotime("Today"));
 	$tomorrow = date('Y-m-d', strtotime("Tomorrow"));
 	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
 	$prevYear = date('Y-m-d', strtotime('Today - 1 year'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
+	
+	$stepsFromDate 	 = date('Y-m-d', strtotime("Today -". ($steps--) . " " .$range));
+	$stepsToDate	 = date('Y-m-d', strtotime("Today -". ($steps) . " " .$range));	
+	
 
 	
 	switch ($time_period) {
@@ -71,6 +74,14 @@ function get_orders_in_range($time_period='today', $uf_id=0)
 		
 		case 'futureOrders':
 			printXML(stored_query_XML_fields('get_orders_listing', $today, $very_distant_future, $uf_id,0));
+			break;
+			
+		case 'steps':
+			printXML(stored_query_XML_fields('get_orders_listing', $stepsFromDate, $stepsToDate, $uf_id,0));
+			break;
+			
+		case 'exact':
+			printXML(stored_query_XML_fields('get_orders_listing', $from_date, $to_date, $uf_id,0));
 			break;
 		
 		

@@ -17,12 +17,12 @@ try{
     	
     	//returns a list of all orders summarized by provider within a given date range
     	case 'getOrdersListing':
-    		echo get_orders_in_range(get_param('filter'), get_param('uf_id',0));
+    		echo get_orders_in_range(get_param('filter'), get_param('uf_id',0), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0));
     		exit; 
     	
     	//returns a list of all orders for the given uf
     	case 'getOrdersListingForUf':
-    		echo get_orders_in_range(get_param('filter'), get_session_uf_id());
+    		echo get_orders_in_range(get_param('filter'), get_session_uf_id(), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0));
     		exit; 
 
     	//retrieves list of products that have been ordered. Needed to construct order revision table
