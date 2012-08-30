@@ -8,29 +8,33 @@
 	<style type="text/css">
 		table 				{width:100%;}
 		
+		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
 		.txtAlignRight		{text-align:right;}
 		.txtAlignCenter		{text-align:center;}
 		.tdAlignTop			{vertical-align:top;}
 		.bold				{font-weight:bold;}
-		.halfWidth			{width:48%; float:left;}
-		.width-50			{width:50px;}	
-		.width-80			{width:80px;}	
-		.memberTitle		{background-color:#efefef; text-align:center; margin-top:0px; padding:2px; font-weight:bold; margin-bottom:-5px;}	
+
+
 		.b4					{border:2px solid black;}	 
 		.p4-5				{padding:5px;}
 		.hidden				{display:none;}
-		.cellBorderList td	{border:solid 1px black; border-collapse:collapse; padding:2px 4px;}
-		.cellBorderList th	{border:solid 1px black; background:#efefef;}
+		.pBreak 			{border-bottom:dashed 1px gray; margin-bottom:40px; display:block;}
+		td	{border:solid 1px black; border-collapse:collapse; padding:1px 1px;}
+		th	{border:solid 1px black; background:#efefef;}
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
 		div#address			{}
 		div#member_info		{width:48%; margin-bottom:10px;}
-		
-		
+
+		@media print {
+	  		.pBreak  { display:block; page-break-before: always; }
+		}
+
 		
 	</style>
+	
 	
 	<script type="text/javascript" src="../js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../js/jqueryui/jqueryui.js"></script>
@@ -40,16 +44,56 @@
  
 
 	<script type="text/javascript">
+
+		
+	
 		$(function(){
 
+
+		window.opener.$('input:checkbox[name="bulkAction"]').each(function(){
+			if ($(this).is(':checked')){
+				
+				//var orderId = $(this).parents('tr').attr('orderId');
 			
-		 var tbl = $(opener.getTable()).clone();
+				//var orderDate 		= $(this).parents('tr').children().eq(3).text();
+
+				//var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+orderId+')' ;
+				
+				//global_print_list[i][1] = $(this).parents('tr').attr('dateForOrder');
+				//global_print_list[i][2] = $(this).parents('tr').attr('providerId');
+				//i++;
+			} 
+		});
+
+		$('.clickPageBreak')
+			.live('click', function(e){
+
+				if ($(this).hasClass('pBreak')){
+					$(this).removeClass('pBreak');
+					$(this).find('span').text('add');
+				} else {
+					$(this).addClass('pBreak');
+					$(this).find('span').text('remove');
+				}
+
+					
+
+			})
+		
+		//var p1 = $.getUrlVar('dates');
+		//var p2 = $.getUrlVar('provider_ids');
+
+		//var dates = 
+		
+		 /*var tbl = $(opener.getTable()).clone();
 
 		 $(tbl).addClass('cellBorderList');
 		 $('.revisedCol, .arrivedCol', tbl).hide();
 		 		 
-		 $(stage).after(tbl);
-					
+		 $(stage).after(tbl);*/
+
+			//alert(opener.global_print_list);
+			
 
 		}); //close document ready
 	</script>
@@ -75,7 +119,7 @@
 		
 	</div>
 
-	<div id="stage" class="section">
+	<div id="orderWrap" class="section">
 		
 	</div>
 </body>

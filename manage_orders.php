@@ -29,13 +29,16 @@
      
 	   
 	<script type="text/javascript">
-	function getTable(){
+	/*function getTable(){
 		return document.getElementById('tbl_reviseOrder');
-	}
+	}*/
+
+	//list of order to be bulk-printed
+	var global_print_list = [];
 	
 	$(function(){
 
-			$('.detailElements').hide();
+			$('.reviewElements, .viewElements').hide();
 			$('.success_msg').hide();
 
 			var header = [];
@@ -45,9 +48,16 @@
 			//the order_id that is currently revised or viewed
 			var global_order_id = 0; 
 
-			//indicates page subsection: overview | details | view
+			//indicates page subsection: overview | review | view
 			var global_section = 'overview';
 
+			//new window for printing
+			var printWin;
+
+			
+			
+
+			
 
 			$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
@@ -63,7 +73,6 @@
 			$.getAixadaDates('getToday', function (date){
 				var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
 				$("#datepicker").datepicker('setDate', today);
-				//$("#datepicker").datepicker( "option", "minDate", today);
 				$("#datepicker").datepicker("refresh");		
 				$('#indicateShopDate').text(date[0]);		
 			});	
@@ -176,14 +185,24 @@
 						var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
 						$('#total_'+lastId).text(total);
 
-						//printWin = window.open('tpl/report_order1.php');
-						//printWin.focus();
 
 						//don't need revised and arrived column for viewing order
-						if (global_section == 'view'){
+						if (global_section == 'view' || global_section == 'print'){
 							$('.revisedCol, .arrivedCol').hide();
 						} else {
 							$('.revisedCol, .arrivedCol').show();
+						}
+
+						//if we print, copy the table to the printWindow
+						if (global_section == 'print' && printWin != null){
+
+							var orderInfo = "<h2>Order for " + global_print_list[global_pindex].children().eq(2).text(); //provider name
+							orderInfo += " for "+  global_print_list[global_pindex].children().eq(3).text() + "</h2>";
+							var tbl = $('#tbl_reviseOrder').clone();	
+							var pBreak = '<p class="clickPageBreak pBreak txtAlignCenter">Click to <span id="pBreakAction">remove</span> page break while printing</p>';
+								
+							$('#orderWrap', printWin.document).append(orderInfo).append(tbl).append(pBreak);
+							loadPrintOrder();
 						}
 
 
@@ -292,7 +311,7 @@
 					//$('.Row-'+row).addClass('editHighlightRow');
 					//$('.Col-'+col).addClass('editHighlightCol');
 					
-					if (!$(this).hasClass('editable') && global_section == 'details'){
+					if (!$(this).hasClass('editable') && global_section == 'review'){
 						$(this).children(':first')
 							.addClass('editable')
 							.editable('ctrlOrders.php', {			//init the jeditable plugin
@@ -475,11 +494,9 @@
 					if (orderId > 0){ 
 
 					} else {
-						//don't have an order id yet. construct one with date + provider_id
-						var date_pvid = $(row).children().eq(3).text() + "_" + $(row).children().eq(2).attr("providerId");
 						//while open and not send off, no order_id exists
 						$(row).children().eq(1).html('<p>-</p>');
-						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder" datePvId="'+date_pvid+'">Finalize now</a></p>');
+						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder">Finalize now</a></p>');
 						
 
 						
@@ -496,28 +513,29 @@
 				}
 			});
 
-			$('.finalizeOrder').live('click', function(e){
-				var tmp = $(this).attr("datePvId").split("_");
-				var timeLeft = $(this).parents('tr').children().eq(4).text();
-				var msgt = 'You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?';
-				
-				if (timeLeft > 0){
-					msgt = 'This order is still open. Finalizing it now means that no further items can be ordered for this date and provider. Are you sue you want to continue?'
-				}
-				
-				$.showMsg({
-					msg: msgt,
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
-							finalizeOrder(tmp[1], tmp[0]);
-							$(this).dialog("close");
+			$('.finalizeOrder')
+				.live('click', function(e){
+					var date = $(this).parents('tr').attr('dateForOrder');
+					var providerId = $(this).parents('tr').attr('providerId');
+					var timeLeft = $(this).parents('tr').children().eq(4).text();
+					var msgt = 'You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?';
+					
+					if (timeLeft > 0){
+						msgt = 'This order is still open. Finalizing it now means that no further items can be ordered for this date and provider. Are you sue you want to continue?'
+					}
+					
+					$.showMsg({
+						msg: msgt,
+						buttons: {
+							"<?=$Text['btn_ok'];?>":function(){						
+								finalizeOrder(providerId, date);
+								$(this).dialog("close");
+							},
+							"<?=$Text['btn_cancel'];?>" : function(){
+								$( this ).dialog( "close" );
+							}
 						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
-						}
-					},
-					type: 'confirm'});
-			
+						type: 'confirm'});
 			});
 
 			/**
@@ -611,7 +629,7 @@
 									msg:'The items of this order have already been revised and placed into people\'s carts. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?!',
 									buttons: {
 										"<?=$Text['btn_ok'];?>":function(){						
-											switchTo('details', {name:provider_name});
+											switchTo('review', {name:provider_name});
 											$(this).dialog("close");
 										},
 										"<?=$Text['btn_cancel'];?>" : function(){
@@ -625,11 +643,11 @@
 									msg:'Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!',
 									type: 'error'});
 							} else {
-								switchTo('details', {name:provider_name});
+								switchTo('review', {name:provider_name});
 							}		 
 						});
 					} else {
-						switchTo('details', {name:provider_name});
+						switchTo('review', {name:provider_name});
 					}
 				});
 
@@ -655,15 +673,15 @@
 
 					switch (page){
 						case 'overview':
-							$('.detailElements').hide();
+							$('.reviewElements, .viewElements').hide();
 		    				$('.overviewElements').fadeIn(1000);
 		    				global_order_id = 0;		
 							break;
 
-						case 'details':
+						case 'review':
 							$('#providerName').text(options.name);							
 							$('.overviewElements').hide();
-							$('.detailElements').fadeIn(1000);
+							$('.reviewElements').fadeIn(1000);
 							$('#dialog_orderStatus').dialog("open");
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsList&order_id='+global_order_id
@@ -673,7 +691,7 @@
 						case 'view':
 							$('#providerName').text(options.name);							
 							$('.overviewElements').hide();
-							$('.detailElements').fadeIn(1000);
+							$('.viewElements').fadeIn(1000);
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsList&order_id='+global_order_id
 							})
@@ -703,23 +721,63 @@
 						
 					}//end item selected 
 				});//end menu
-			
-				var printWin;
-				$('#bulkActions').change(function(){
 
-					var sel = $("option:selected", this).val();
+				
+				var global_pindex  = -1; 
+				
+				//do selected stuff with bunch of orders (from overview)
+				$('#bulkActions')
+					.change(function(){
+						
+						var sel = $("option:selected", this).val();
+	
+						if (sel == "print"){
+							global_pindex = 0; 
+							global_print_list = [];
+							global_order_id = 0; 
+							
+							var i = 0;  						
+							$('input:checkbox[name="bulkAction"]').each(function(){
+								if ($(this).is(':checked')){
+									global_print_list[i++] = $(this).parents('tr');
+								} 
+							});
+	
+							printWin = window.open('tpl/report_order1.php');
+							printWin.focus();
 
-					if (sel == "print"){
-
-						printWin = window.open('tpl/report_orders1.php');
-						printWin.focus();
-					}
+							loadPrintOrder();							
+						}
 
 				});
 
+				
+				function loadPrintOrder(){
+
+					global_pindex++;
+					
+					if (global_pindex == global_print_list.length) return false; 
+					
+					$('.col').hide();
+					global_section = 'print';
+					global_order_id = global_print_list[global_pindex].attr('orderId'); 
+					
+					$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for printing
+						params : 'oper=getOrderedProductsList&order_id='+global_order_id
+					})
+
+					
+
+				}
+
+				
 			
 			
 	});  //close document ready
+
+
+	
+	
 </script>
 
 
@@ -735,12 +793,12 @@
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
-				<button id="btn_overview" class="floatLeft detailElements">Overview</button>
-				<h1 class="detailElements">Manager order detail for <span id="providerName"></span></h1>
+				<button id="btn_overview" class="floatLeft reviewElements viewElements">Overview</button>
+				<h1 class="reviewElements viewElements">Manager order detail for <span id="providerName"></span></h1>
 		    	<h1 class="overviewElements">Manage orders</h1>
 		    </div>
 		   	<div id="titleRightCol">
-		   		<button id="btn_setShopDate" class="detailElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
+		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
 				<button	id="tblOptions" class="overviewElements btn_right">Filter orders</button>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
@@ -776,10 +834,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr id="{id}">
-						<td><input type="checkbox" name="bulkOrderList"/>
+					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}">
+						<td><input type="checkbox" name="bulkAction"/>
 						<td>{id}</td>
-						<td class="textAlignRight minPadding" providerId="{provider_id}">{provider_name}</td>
+						<td class="textAlignRight minPadding">{provider_name}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
 						<td class="textAlignCenter">{ts_send_off}</td>
@@ -808,8 +866,16 @@
 			</div> <!-- widget content -->
 		</div>
 		
-		
-		<div id="reviseOrder" class="ui-widget detailElements">
+		<div id="viewOrderInfo" class="ui-widget viewElements">
+			<div class="ui-widget-header ui-corner-all textAlignCenter">
+				<h3>Order info</h3>
+			</div>
+			<div class="ui-widget-content ui-corner-all">
+			order info...
+			</div>
+		</div>
+		<p>&nbsp;</p>
+		<div id="reviseOrder" class="ui-widget reviewElements viewElements">
 			<div class="ui-widget-header ui-corner-all textAlignCenter">
 				<h3 id="orderInfoDate"></h3>
 			</div>
