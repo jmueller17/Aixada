@@ -845,14 +845,14 @@
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>
 						<td>				
-							<p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon" title="View order"></span></p>
+							<p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p>
 							<p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td></td>
+						<td><span class="ui-icon ui-icon-arrowreturnthick-1-e"></span></td>
 						<td colspan="6">
 							<select id="bulkActions">
 								<option value="-1">With selected...</option>
