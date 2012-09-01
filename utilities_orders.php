@@ -32,8 +32,9 @@ function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_d
 	//TODO server - client difference in time/date?!
 	$today = date('Y-m-d', strtotime("Today"));
 	$tomorrow = date('Y-m-d', strtotime("Tomorrow"));
-	$next_week =  date('Y-m-d', strtotime('Today + 8 days'));
+	$next_week =  date('Y-m-d', strtotime('Today + 7 days'));
 	$prev_month = date('Y-m-d', strtotime('Today - 1 month'));
+	$prev_2month = date('Y-m-d', strtotime('Today - 2 month'));
 	$prev_year = date('Y-m-d', strtotime('Today - 1 year'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
@@ -54,17 +55,17 @@ function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_d
 			printXML(stored_query_XML_fields('get_orders_listing', $very_distant_past, $very_distant_future, $uf_id,0));
 			break;
 
-		case 'pastMonth2Future':
-			printXML(stored_query_XML_fields('get_orders_listing', $prev_month, $very_distant_future, $uf_id,0));
+		case 'pastMonths2Future':
+			printXML(stored_query_XML_fields('get_orders_listing', $prev_2month, $very_distant_future, $uf_id,0));
 			break;
 			
 		//last month
-		case 'prevMonth':
+		case 'pastMonth':
 			printXML(stored_query_XML_fields('get_orders_listing', $prev_month, $tomorrow, $uf_id,0));
 			break;
 			
 		//last year
-		case 'prevYear':
+		case 'pastYear':
 			printXML(stored_query_XML_fields('get_orders_listing', $prev_year, $tomorrow, $uf_id,0));
 			break;
 		

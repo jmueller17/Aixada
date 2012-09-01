@@ -6,8 +6,12 @@
 
 
 	<style type="text/css">
-		table 				{width:100%;}
-		
+		body 				{font-size:0.8em; font-family:arial, helvetica;}
+		table 				{width:100%; margin-bottom:10px;}
+		td					{border:solid 1px black; border-collapse:collapse; padding:2px 2px;}
+		th					{border:solid 1px black; background:#efefef;}
+		p 					{margin:0px;}
+		th h2				{margin:4px;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
 		.txtAlignRight		{text-align:right;}
@@ -19,17 +23,24 @@
 		.b4					{border:2px solid black;}	 
 		.p4-5				{padding:5px;}
 		.hidden				{display:none;}
-		.pBreak 			{border-bottom:dashed 1px gray; margin-bottom:40px; display:block;}
-		td	{border:solid 1px black; border-collapse:collapse; padding:1px 1px;}
-		th	{border:solid 1px black; background:#efefef;}
+		
+
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
 		div#address			{}
-		div#member_info		{width:48%; margin-bottom:10px;}
 
+		.loadingMsg			{font-weight:bold; font-size:2em; text-align:center; display:block;}
+		
+
+		.clickPageBreak 	{display:block; margin-bottom:50px;}
+		.pageBreakBtn		{padding:5px; border:solid 1px black; background-color:#f9f9f9; cursor:pointer;}
+		.pageBreak 			{display:block;border-bottom:dashed 1px gray;}
+	
 		@media print {
-	  		.pBreak  { display:block; page-break-before: always; }
+	  		.pageBreak  	{display:block; page-break-before:always; border-bottom:dashed 1px gray; margin-bottom:50px;}
+	  		.pageBreakBtn 	{display:none;}
+	  		.loadingMsg		{display:none;}
 		}
 
 		
@@ -38,7 +49,6 @@
 	
 	<script type="text/javascript" src="../js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../js/jqueryui/jqueryui.js"></script>
-
    	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaUtilities.js" ></script>
  
@@ -50,49 +60,26 @@
 		$(function(){
 
 
-		window.opener.$('input:checkbox[name="bulkAction"]').each(function(){
-			if ($(this).is(':checked')){
-				
-				//var orderId = $(this).parents('tr').attr('orderId');
-			
-				//var orderDate 		= $(this).parents('tr').children().eq(3).text();
-
-				//var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+orderId+')' ;
-				
-				//global_print_list[i][1] = $(this).parents('tr').attr('dateForOrder');
-				//global_print_list[i][2] = $(this).parents('tr').attr('providerId');
-				//i++;
-			} 
-		});
-
-		$('.clickPageBreak')
-			.live('click', function(e){
-
-				if ($(this).hasClass('pBreak')){
-					$(this).removeClass('pBreak');
-					$(this).find('span').text('add');
-				} else {
-					$(this).addClass('pBreak');
-					$(this).find('span').text('remove');
-				}
-
+			//for the moment being does nothing...
+			window.opener.$('input:checkbox[name="bulkAction"]').each(function(){
+				if ($(this).is(':checked')){
 					
+				} 
+			});
 
-			})
-		
-		//var p1 = $.getUrlVar('dates');
-		//var p2 = $.getUrlVar('provider_ids');
 
-		//var dates = 
-		
-		 /*var tbl = $(opener.getTable()).clone();
-
-		 $(tbl).addClass('cellBorderList');
-		 $('.revisedCol, .arrivedCol', tbl).hide();
-		 		 
-		 $(stage).after(tbl);*/
-
-			//alert(opener.global_print_list);
+			//add remove page breaks for printing
+			$('.clickPageBreak')
+				.live('click', function(e){
+	
+					if ($(this).hasClass('pageBreak')){
+						$(this).removeClass('pageBreak');
+						$(this).find('span').text('Click to ADD here a page break while printing');
+					} else {
+						$(this).addClass('pageBreak');
+						$(this).find('span').text('Click to REMOVE this page break');
+					}
+				})
 			
 
 		}); //close document ready
@@ -115,12 +102,18 @@
 		</div>
 	</div>
 
-	<div id="info" class="section">
-		
-	</div>
-
+	<p>&nbsp</p>
+	<p>&nbsp</p>
+	<p>&nbsp</p>
+	<p>&nbsp</p>
+	
+	<h2 class="loadingMsg">Please wait while loading...</h2>
+	
 	<div id="orderWrap" class="section">
 		
+		<div class="anOrder">
+			<p class="clickPageBreak txtAlignCenter"><span class="pageBreakBtn">Click to ADD here a page break while printing</span></p>
+		</div>
 	</div>
 </body>
 

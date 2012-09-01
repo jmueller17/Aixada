@@ -27,7 +27,7 @@ try{
 
     	//retrieves list of products that have been ordered. Needed to construct order revision table
     	case 'getOrderedProductsList':
-    		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id')));
+    		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id',0), get_param('provider_id',0), get_param('date',0) ));
     		exit;
 
     	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf if needed. 

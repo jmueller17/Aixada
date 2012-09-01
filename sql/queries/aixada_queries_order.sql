@@ -5,25 +5,47 @@ delimiter |
 /**
  *	Returns the list or products that have been ordered. No quantities are returned at this point.   
  *  This query is used to construct the basic report table on orders. 
+ *  Either requires an order_id OR a provider and date_for_order
  */
 drop procedure if exists get_ordered_products_list|
-create procedure get_ordered_products_list (in the_order_id int)
+create procedure get_ordered_products_list (in the_order_id int, in the_provider_id int, in the_date date)
 begin
 	
-	select distinct
-		p.id, 
-		p.name, 
-		um.unit
-	from 
-		aixada_order_item oi,
-		aixada_product p,
-		aixada_unit_measure um
-	where
-		oi.order_id = the_order_id
-		and oi.product_id = p.id
-		and p.unit_measure_order_id = um.id
-	order by
-		p.name;
+	if (the_order_id > 0) then
+		select distinct
+			p.id, 
+			p.name, 
+			um.unit
+		from 
+			aixada_order_item oi,
+			aixada_product p,
+			aixada_unit_measure um
+		where
+			oi.order_id = the_order_id
+			and oi.product_id = p.id
+			and p.unit_measure_order_id = um.id
+		order by
+			p.name;
+	else 
+		select distinct
+			p.id, 
+			p.name, 
+			um.unit
+		from 
+			aixada_order_item oi,
+			aixada_product p,
+			aixada_unit_measure um
+		where
+			oi.date_for_order = the_date
+			and oi.product_id = p.id
+			and p.provider_id = the_provider_id
+			and p.unit_measure_order_id = um.id
+		order by
+			p.name;
+		
+	end if; 
+	
+	
 	
 end|
 
