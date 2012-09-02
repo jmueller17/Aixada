@@ -6,7 +6,7 @@
 
 
 	<style type="text/css">
-		table 				{width:100%;}
+		table 				{width:100%; border-collapse:collapse;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
 		.txtAlignRight		{text-align:right;}
@@ -20,13 +20,14 @@
 		.b4					{border:2px solid black;}	 
 		.p4-5				{padding:5px;}
 		.hidden				{display:none;}
-		.cellBorderList td	{border:solid 1px black; border-collapse:collapse; padding:2px 4px;}
+		.cellBorderList td	{border:solid 1px black; padding:2px 4px;}
 		.cellBorderList th	{border:solid 1px black; background:#efefef;}
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
 		div#address			{}
 		div#member_info		{width:48%; margin-bottom:10px;}
+		table#memberAddress {border:none;}
 		
 		
 		
@@ -128,7 +129,7 @@
 		<div id="member_info" class="b4">
 			<h2 class="memberTitle">Order for <span id="orderDate"></span></h2>
 			<div class="p4-5">
-				<table id="memberAddress" border="1">
+				<table id="memberAddress">
 					<tr>
 						<td class="tdAlignTop">{name}<br/>
 							{address}<br/>
@@ -168,7 +169,7 @@
 					<td>{name}</td>
 					<td>{provider_name}</td>
 					<td class="width-80 txtAlignRight">{quantity}</td>
-					<td class="width-80 txtAlignCenter">{unit}</td>
+					<td class="width-80">{unit}</td>
 					<td class="width-80 txtAlignRight">{unit_price}</td>
 					<td class="txtAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></td>				
 				</tr>

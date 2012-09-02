@@ -31,7 +31,14 @@
 
 			$('#loadingMsg').hide();
 
-			$( "#rightSummaryCol" ).tabs();
+			$( "#rightSummaryCol" ).tabs({
+				select : function (e, ui){
+					if ($(this).tabs( "option", "selected" ) == 0){
+						$('#tbl_Shop tbody').xml2html('reload'); //load purchase list when switching tabs
+					}
+				}
+	
+			});
 
 			$('#tmp').hide();
 
@@ -44,7 +51,7 @@
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
-				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonth2Future', 
+				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
@@ -265,13 +272,13 @@
 			 *      My PURCHASE
 			 ********************************************************/
 			var shopDateSteps = 1;
-			var srange = 'year';
+			var srange = 'month';
 
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'ctrlShop.php',
 					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
-					loadOnInit : true, 
+					loadOnInit : false, 
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
 

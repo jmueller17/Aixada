@@ -7,8 +7,8 @@
 
 	<style type="text/css">
 		body 				{font-size:0.8em; font-family:arial, helvetica;}
-		table 				{width:100%; margin-bottom:10px;}
-		td					{border:solid 1px black; border-collapse:collapse; padding:2px 2px;}
+		table 				{width:100%; margin-bottom:10px; border-collapse:collapse;}
+		td					{border:solid 1px black; padding:2px 2px;}
 		th					{border:solid 1px black; background:#efefef;}
 		p 					{margin:0px;}
 		th h2				{margin:4px;}

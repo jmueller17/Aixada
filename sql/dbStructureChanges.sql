@@ -155,7 +155,10 @@ where
 	product_id not in (select id from aixada_product);
 
 
-/** group and assign order_items to aixada_order **/
+/** 
+ * group and assign order_items to aixada_order 
+ * many of which before 2011 are actually not order items but stock?! 
+ *  **/
 insert into 
 	aixada_order (date_for_order, provider_id)
 select distinct
