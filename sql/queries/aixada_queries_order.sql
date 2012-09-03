@@ -151,27 +151,8 @@ begin
 	-- otherwise get them from the order_item table, depending on the params available 	
 	else 
 		
-		-- if no order_id is given, retrieve items by date and provider
-		if (the_provider_id > 0 and the_date_for_order > 0) then
-		set @q = concat("select
-					oi.*,
-					p.name,
-					p.provider_id,
-					1 as arrived, 
-					0 as revised
-				from
-					aixada_order_item oi, 
-					aixada_product p
-				where
-					oi.date_for_order = '",the_date_for_order,"'
-					and oi.product_id = p.id
-					and p.provider_id = ",the_provider_id,"
-					", wherec ,"
-				order by
-					oi.product_id;"); 
-		
-		elseif (the_order_id > 0) then
-				set @q = concat("select
+		if (the_order_id > 0) then
+			set @q = concat("select
 					oi.*,
 					p.name,
 					p.provider_id,
@@ -186,6 +167,25 @@ begin
 					", wherec ,"
 				order by
 					oi.product_id;");
+
+		
+		elseif (the_provider_id > 0 and the_date_for_order > 0) then
+			set @q = concat("select
+					oi.*,
+					p.name,
+					p.provider_id,
+					1 as arrived, 
+					0 as revised
+				from
+					aixada_order_item oi, 
+					aixada_product p
+				where
+					oi.date_for_order = '",the_date_for_order,"'
+					and oi.product_id = p.id
+					and p.provider_id = ",the_provider_id,"
+					", wherec ,"
+				order by
+					oi.product_id;"); 				
 			
 		end if;
 		
