@@ -10,6 +10,10 @@ require_once('local_config/config.php');
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 $default_theme = configuration_vars::get_instance()->default_theme; 
 $dev = configuration_vars::get_instance()->development;
+$tpl_print_orders = configuration_vars::get_instance()->print_order_template;
+$tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_template;
+$tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
+
 
 require_once('local_config/lang/' . $language . '.php');
 

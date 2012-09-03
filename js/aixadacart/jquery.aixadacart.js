@@ -140,6 +140,7 @@
   							    },
   							   error : function(XMLHttpRequest, textStatus, errorThrown){
   							    	$this.data('aixadacart').submitError.call($this,textStatus);
+  							    	alert(errorThrown);
   							    	updateCartTips.call($this,'error',XMLHttpRequest.responseText);
   							    	//upon saving/validating error, try again :)
   							    	$('#btn_submit').button({
@@ -380,6 +381,7 @@
     			 	
      		 	},//end success ajax
      		 	error : function(XMLHttpRequest, textStatus, errorThrown){
+     		 		alert(errorThrown);
      		 		updateCartTips.call('error',XMLHttpRequest.responseText);
 					
      		 	},

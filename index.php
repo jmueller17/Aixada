@@ -225,13 +225,13 @@
 			})
 			
 			
-			var billWin = null;
+			var printWin = null;
 			$('.printOrderIcon').live('click', function(){
 
 				var dateForOrder = $(this).attr('dateForOrder');
 				
-				billWin = window.open('tpl/order_model1.php?date='+dateForOrder);
-				billWin.focus();
+				printWin = window.open('tpl/<?=$tpl_print_myorders;?>?date='+dateForOrder);
+				printWin.focus();
 			});
 
 			//show older orders dates
@@ -354,8 +354,8 @@
 				
 
 				
-				billWin = window.open('tpl/bill_model1.php?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
-				billWin.focus();
+				printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
+				printWin.focus();
 			});
 
 			//show older purchase dates

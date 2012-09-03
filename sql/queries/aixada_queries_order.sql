@@ -1,5 +1,69 @@
 delimiter |
 
+/**
+ * delivers detailed info about an order: provider stuff, resposible uf stuff, etc. 
+ */
+drop procedure if exists get_detailed_order_info|
+create procedure get_detailed_order_info (in the_order_id int, in the_provider_id int, in the_date date)
+begin
+	
+	declare delivered_total decimal(10,2) default 0;
+	declare validated_income decimal(10,2) default 0;
+	
+	-- if there have been revisions, calc the new order total -- 
+	set delivered_total = 		
+		(select
+			sum(si.unit_price_stamp * si.quantity)
+		from
+			aixada_shop_item si,
+			aixada_order_item oi
+		where 
+			oi.order_id = the_order_id
+			and oi.id = si.order_item_id);
+	
+	-- show how much of the order has been validated as uf carts. if people pay this is real income --
+	set validated_income = 
+		(select
+			sum(si.unit_price_stamp * si.quantity)
+		from
+			aixada_cart c,
+			aixada_shop_item si,
+			aixada_order_item oi
+		where
+			oi.order_id = the_order_id
+			and oi.id = si.order_item_id
+			and si.cart_id = c.id
+			and c.ts_validated > 0);
+	
+	if (the_order_id > 0) then 
+	
+		select 
+			o.id,
+			o.date_for_order,
+			o.ts_send_off, 
+			o.date_for_shop,
+			o.total,
+			delivered_total,
+			validated_income,
+			o.notes, 
+			o.revision_status,
+			o.delivery_ref,
+			o.payment_ref,
+			pv.*,
+			uf.id as uf_id,
+			uf.name as uf_name
+		from
+			aixada_order o,
+			aixada_provider pv, 
+			aixada_uf uf
+		where
+			o.id = the_order_id
+			and o.provider_id = pv.id
+			and pv.responsible_uf_id = uf.id;
+	
+	end if; 
+end|
+	
 
 
 /**
@@ -184,9 +248,10 @@ end |
 /**
  * set the revision status flag for each order. 
  * 		1 : default value. Finalized, send off to provider 
- * 		2 : arrived and items have been revised. This is set automatically once items have been copied from order to shop. 
+ * 		2 : arrived and items have been revised: everything is complete. This is set automatically once items have been copied from order to shop. 
  * 		3 : posponed. Did not arrive for the originally ordered date but could arrive in the near future
- * 		4 : canceled. Did not arrive for the originally ordered date and it is pretty sure that it will never arrive
+ * 		4 : canceled. Did not arrive for the originally ordered date and we are pretty sure that it will never arrive
+ * 		5 : arrived and revised but with changes in quantities. Automaticall set in move_order_to_shop
  */
 drop procedure if exists set_order_status|
 create procedure set_order_status (in the_order_id int, in the_status int)
@@ -352,7 +417,7 @@ begin
 	where 
 		order_id=the_order_id; 
 		
-	/**update the shop_date and revision status  in the order listing**/
+	/**update the shop_date and revision status  in the order listing. TODO: check if quantities have changed!!**/
 	update 
 		aixada_order
 	set 
@@ -360,6 +425,9 @@ begin
 		revision_status = 2
 	where 
 		id = the_order_id; 
+		
+	/** todo: if we re-distribute an already distributed order (e.g. change its shop date), the items have to be deleted from the cart **/
+	/** also: if an order has been revised and changed what do you want to view: original or changed quantities? **/
 	
 end |
 

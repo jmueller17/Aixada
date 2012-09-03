@@ -41,7 +41,7 @@ try{
 	    	exit;
 
 	    case 'getShopCart':
-  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_param('uf_id'),0,0)); 
+  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_param('uf_id'),get_param('cart_id',0),get_param('validated',0))); 
 			exit; 
 	    	
 		case 'DepositForUF':

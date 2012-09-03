@@ -274,8 +274,8 @@
 
 			$('#dialog_setShopDate').dialog({
 				autoOpen:false,
-				width:450,
-				height:460,
+				width:480,
+				height:600,
 				buttons: {  
 					"<?=$Text['btn_ok'];?>" : function(){
 						
@@ -411,6 +411,19 @@
 				
 			});
 
+
+			/***********************************************************
+			 *		ORDER VIEW  / DETAILED INFO
+			 **********************************************************/
+			 $('#tbl_orderDetailInfo tbody').xml2html('init',{
+					url : 'ctrlOrders.php',
+					loadOnInit : false
+			 });
+
+
+
+
+				
 
 			/***********************************************************
 			 *		ORDER REVISION STATUS
@@ -601,11 +614,7 @@
 			$('.reviseOrderBtn')
 				.live('click', function(e){
 					gSelRow = $(this).parents('tr'); 
-					
-
 					var shopDate 		= $(this).parents('tr').children().eq(6).text();
-					/*var order_id 		= $(this).parents('tr').children().eq(1).text();
-					var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+order_id+')' ;*/
 
 					$('.col').hide();
 
@@ -669,23 +678,49 @@
 				});
 
 
+				//view selected order (no editing)
 				$('.viewOrderBtn')
 					.live('click', function(e){
 						gSelRow = $(this).parents('tr'); 
-						
-						/*global_order_id 	= $(this).parents('tr').attr('id');
-						var order_id 		= $(this).parents('tr').children().eq(1).text();
-						var provider_name 	= $(this).parents('tr').children().eq(2).text() + ' (#'+order_id+')' ;*/
-						//global_order_id = $(this).parents('tr').attr('orderId');
-						
-						
-						$('.col').hide();
-						
+						$('.col').hide();	
 						switchTo('view',{});
-
 					});
 
-			
+				
+				//prit the selected order. If more than one is selected, confirm bulk print
+				$('.printOrderBtn')
+				.live('click', function(e){
+					$this = $(this);
+					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
+						$.showMsg({
+							msg:'There is more than one order currently selected. Do you want to print them all in one go?',
+							width:500,
+							buttons: {
+								"Yes, print all":function(){						
+									printQueue();
+									$(this).dialog("close");
+								},
+								
+								"No, just one" : function(){
+									$('input:checkbox[name="bulkAction"]').attr('checked', false);
+									$this.parents('tr').children('td:first').find('input').attr('checked','checked');
+									printQueue();
+									$( this ).dialog( "close" );
+								},
+								"Cancel" : function(){
+									$( this ).dialog( "close" );
+								}
+							},
+							type: 'warning'});
+
+					} else {
+						$(this).parents('tr').children('td:first').find('input').attr('checked','checked');
+						printQueue();
+					}
+				});
+
+
+				
 			
 				$("#tblOptions")
 				.button({
@@ -713,27 +748,53 @@
 				//do selected stuff with bunch of orders (from overview)
 				$('#bulkActions')
 					.change(function(){
-						
-						var sel = $("option:selected", this).val();
-	
-						if (sel == "print"){
-							gPrintIndex = -1; 
-							gPrintList = [];
-							gSelRow = null;  
-							
-							var i = 0;  						
-							$('input:checkbox[name="bulkAction"]').each(function(){
-								if ($(this).is(':checked')){
-									gPrintList[i++] = $(this).parents('tr');
-								} 
-							});
-	
-							printWin = window.open('tpl/report_order1.php');
-							printWin.focus();
 
-							loadPrintOrder();							
+						switch ($("option:selected", this).val()){
+							case "print": 
+								printQueue();
+								break;
+							case "download":
+								alert("todo");
+								break;						
 						}
 				});
+
+
+
+				/**
+				 *	prepares the printing queue of the selected orders. 
+				 */
+				function printQueue(){
+					gPrintIndex = -1; 
+					gPrintList = [];
+					gSelRow = null;  
+
+					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+						$.showMsg({
+							msg:'There are no orders selected!',
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){						
+									$(this).dialog("close");
+								}
+							},
+							type: 'warning'});
+					} else {
+
+						printWin = window.open('tpl/<?=$tpl_print_orders;?>');
+						printWin.focus();
+										
+						var i = 0;  						
+						$('input:checkbox[name="bulkAction"]').each(function(){
+							if ($(this).is(':checked')){
+								gPrintList[i++] = $(this).parents('tr');
+							} 
+						});
+						
+	
+						loadPrintOrder();
+					}
+				}
+				
 
 				/**
 				 *  part of a call sequence to load the marked orders one after
@@ -790,6 +851,11 @@
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
+							
+							$('#tbl_orderDetailInfo tbody').xml2html('reload',{
+								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
+			 				});
+							
 							$('#btn_setShopDate').hide();
 							break;
 					}
@@ -797,20 +863,6 @@
 				}
 
 
-				/**
-				 *	convenience function to extract data from the table rows of each order
-				 */
-				function getRowDetails(row){
-					var orderRow = [];
-					var i = 0; 
-					
-					orderRow[0] = $(row).children().eq(0).text(); //order_id 
-					orderRow[1] = $(row).children().eq(2).text(); //provider name
-					orderRow[2] = $(row).children().eq(3).text(); //date for order
-					orderRow[3] = $(row).children().eq(7).text(); //total
-					
-					return orderRow; 
-				}
 				
 			
 			
@@ -886,8 +938,9 @@
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>
-						<td>				
+						<td class="maxwidth-100">				
 							<p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p>
+							<p class="ui-corner-all iconContainer ui-state-default floatLeft printOrderBtn"><span class="ui-icon ui-icon-print" title="Print order"></span></p>							
 							<p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
 					</tr>
@@ -913,7 +966,52 @@
 				<h3>Order info</h3>
 			</div>
 			<div class="ui-widget-content ui-corner-all">
-			order info...
+				<table id="tbl_orderDetailInfo">
+					<tbody>
+						<tr>
+							<td>Provider</td>
+							<td><em>{name}</em><br/>
+								{contact}<br/>
+								{address}<br/>
+								{zip} {city}
+							</td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td>Responsible UF</td>
+							<td>{uf_id} {uf_name}</td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td>Ordered total</td>
+							<td>{total}</td>
+						</tr>
+						<tr>
+							<td>Ordered for</td>
+							<td>{date_for_order}</td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td colspan="2"></td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td>Delivered total</td>
+							<td>{delivered_total}</td>
+						</tr>
+						<tr>
+							<td>Shop date</td>
+							<td>{date_for_shop}</td>
+							<td class="maxwidth-100">&nbsp;</td>
+						</tr>
+						<tr>
+							<td>Notes</td>
+							<td>{notes}</td>
+							<td class="maxwidth-100">&nbsp;</td>
+						</tr>
+						<tr>
+							<td>Status</td>
+							<td>{revision_status}</td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td colspan="2"></td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td>Validated income</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<p>&nbsp;</p>
@@ -977,6 +1075,7 @@
 	<br/>
 	<div id="datepicker"></div>
 </div>
+
 
 <!-- / END -->
 </body>

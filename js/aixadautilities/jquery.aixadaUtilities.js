@@ -96,6 +96,7 @@ $(function(){
 				msg : '',
 				title : '',
 				width: 400,
+				height:300,
 				type: "default", 
 				buttons :  [
 						     {
