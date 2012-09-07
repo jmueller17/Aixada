@@ -2,6 +2,7 @@ delimiter |
 
 /**
  * delivers detailed info about an order: provider stuff, resposible uf stuff, etc. 
+ * usually called from manage order detail view. 
  */
 drop procedure if exists get_detailed_order_info|
 create procedure get_detailed_order_info (in the_order_id int, in the_provider_id int, in the_date date)
@@ -38,7 +39,7 @@ begin
 	if (the_order_id > 0) then 
 	
 		select 
-			o.id,
+			o.id as order_id,
 			o.date_for_order,
 			o.ts_send_off, 
 			o.date_for_shop,
@@ -59,6 +60,30 @@ begin
 		where
 			o.id = the_order_id
 			and o.provider_id = pv.id
+			and pv.responsible_uf_id = uf.id;
+			
+	-- if we have no order_id, the whole info associated with the order is not available yet. --
+	else 
+		select 
+			0 as order_id,
+			the_date as date_for_order,
+			0 as ts_send_off, 
+			0 as date_for_shop,
+			0 as total,
+			0 as delivered_total,
+			0 as validated_income,
+			0 as notes, 
+			0 as revision_status,
+			0 as delivery_ref,
+			0 as payment_ref,
+			pv.*,
+			uf.id as uf_id,
+			uf.name as uf_name
+		from
+			aixada_provider pv, 
+			aixada_uf uf
+		where
+			pv.id = the_provider_id
 			and pv.responsible_uf_id = uf.id;
 	
 	end if; 
@@ -108,9 +133,6 @@ begin
 			p.name;
 		
 	end if; 
-	
-	
-	
 end|
 
 
@@ -151,8 +173,29 @@ begin
 	-- otherwise get them from the order_item table, depending on the params available 	
 	else 
 		
-		if (the_order_id > 0) then
-			set @q = concat("select
+		if (the_order_id > 0) then		
+			set @q = concat("select 
+					oi.*,
+					p.name, 
+					p.provider_id, 
+					1 as arrived, 
+					0 as revised, 
+					si.quantity as shop_quantity
+				from
+					aixada_product p,
+					aixada_order_item oi 
+				left join 
+					aixada_shop_item si
+				on 
+					oi.id = si.order_item_id
+				where
+					oi.order_id = ",the_order_id," 
+					and oi.product_id = p.id
+					",wherec,"
+				order by 
+					oi.product_id;");
+					
+				set @s = concat("select
 					oi.*,
 					p.name,
 					p.provider_id,
@@ -175,10 +218,15 @@ begin
 					p.name,
 					p.provider_id,
 					1 as arrived, 
-					0 as revised
+					0 as revised,
+					si.quantity as shop_quantity
 				from
-					aixada_order_item oi, 
-					aixada_product p
+					aixada_product p,
+					aixada_order_item oi
+				left join 
+					aixada_shop_item si
+				on 
+					oi.id = si.order_item_id 	
 				where
 					oi.date_for_order = '",the_date_for_order,"'
 					and oi.product_id = p.id

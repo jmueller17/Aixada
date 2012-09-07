@@ -29,9 +29,6 @@
      
 	   
 	<script type="text/javascript">
-	/*function getTable(){
-		return document.getElementById('tbl_reviseOrder');
-	}*/
 
 	//list of order to be bulk-printed
 	var gPrintList = [];
@@ -143,9 +140,19 @@
 					success: function(xml){
 
 						var quTotal = 0;
-						var lastId = -1;  
+						var quShopTotal = 0; 
+						var quShop = 0; 
+						var lastId = -1; 
+						var quShopHTML = '';  
+						
 						$(xml).find('row').each(function(){
-							
+						
+							//for the view section, ordered quantities and revised (shop) quantities are shown
+							if (gSection == 'view' && gSelRow.attr('orderId') > 0){
+								quShop = $(this).find('shop_quantity').text();
+								quShop = (quShop == '')? 0:quShop;  //items that did not arrived produce a null value. 
+								quShopHTML = (gSection == 'view')? '<span class="shopQuantity" title="Delivered quantity">(' +quShop +')</span>':'';
+							}
 							var product_id = $(this).find('product_id').text();
 							var uf_id = $(this).find('uf_id').text();
 							var qu = $(this).find('quantity').text();
@@ -155,8 +162,8 @@
 							var tblRow = '.Row-'+product_id;
 							var pid	= product_id + '_' + uf_id; 
 							
-							$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+'</p>')
-
+							$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+''+quShopHTML+'</p>')
+							
 							if (revised == true) {
 								$(tblCol+tblRow).removeClass('toRevise').addClass('revised');
 							} 
@@ -172,12 +179,14 @@
 							//calculate total quantities and update last table cell
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
-								var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
+								var total = quTotal.toFixed(2) + " ("+quShopTotal.toFixed(2)+") " + $('#unit_'+lastId).text();
 								$('#total_'+lastId).text(total);
 								quTotal = 0; 
+								quShopTotal = 0; 
 							}
 							
 							quTotal += parseFloat(qu); 
+							quShopTotal += parseFloat(quShop);
 							lastId = product_id; 
 
 						});
@@ -189,6 +198,7 @@
 						//don't need revised and arrived column for viewing order
 						if (gSection == 'view' || gSection == 'print'){
 							$('.revisedCol, .arrivedCol').hide();
+							$('tr, td').removeClass('toRevise revised missing');
 						} else {
 							$('.revisedCol, .arrivedCol').show();
 						}
@@ -888,7 +898,7 @@
 			<div id="titleLeftCol">
 				<button id="btn_overview" class="floatLeft reviewElements viewElements">Overview</button>
 				<h1 class="reviewElements">Manage order detail for <span class="providerName"></span></h1>
-				<h1 class="viewElements">View order detail for <span class="providerName"></span></h1>
+				<h1 class="viewElements">Order detail for <span class="providerName"></span></h1>
 		    	<h1 class="overviewElements">Manage orders</h1>
 		    </div>
 		   	<div id="titleRightCol">
@@ -963,53 +973,70 @@
 		
 		<div id="viewOrderInfo" class="ui-widget viewElements">
 			<div class="ui-widget-header ui-corner-all textAlignCenter">
-				<h3>Order info</h3>
+				<h3>&nbsp;</h3>
 			</div>
 			<div class="ui-widget-content ui-corner-all">
 				<table id="tbl_orderDetailInfo">
+					<thead>
+						<tr>
+							<th colspan="2">Provider</th>
+							<th colspan="3">Order</th>
+							<th colspan="3">Money</th>
+							<th colspan="2">Responsible UF</th>
+						</tr>
+					</thead>
 					<tbody>
 						<tr>
-							<td>Provider</td>
 							<td><em>{name}</em><br/>
+								NIE/NIF: {nif}<br/><br/>
+								Contact:<br/> 
 								{contact}<br/>
 								{address}<br/>
-								{zip} {city}
+								{zip} {city}<br/>
+								Email:&nbsp;{email}<br/>
+								Phone: {phone1} / {phone2}<br/>
+								Bank: {bank_name}<br/>
+								Account number: {bank_account}
 							</td>
 							<td class="maxwidth-100">&nbsp;</td>
-							<td>Responsible UF</td>
-							<td>{uf_id} {uf_name}</td>
+							<td>
+								Order id: <br/>
+								Ordered for: <br/>
+								Finalized : <br/>
+								Shop date: <br/><br/>
+								Status: <br/>
+								Notes: <br/>
+								Delivery reference: <br/>
+								Payment reference
+							</td>
+							<td>
+								{order_id}<br/>
+								{date_for_order} <br/>
+								{ts_send_off} <br/>
+								{date_for_shop} <br/><br/>
+								{revision_status}<br/>
+								{notes}<br/>
+								{delivery_ref}<br/>
+								{payment_ref}
+								
+							</td>
 							<td class="maxwidth-100">&nbsp;</td>
-							<td>Ordered total</td>
-							<td>{total}</td>
+							<td>
+								Total (original order): <br/>
+								Total (after revision): <br/>
+								Total (validated income): 
+							</td>
+							<td>
+								{total}<br/>
+								{delivered_total}<br/>
+								{validated_income}
+							</td>
+							<td class="maxwidth-100">&nbsp;</td>
+							<td>
+								{uf_name} ({uf_id})
+							</td>
 						</tr>
-						<tr>
-							<td>Ordered for</td>
-							<td>{date_for_order}</td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td colspan="2"></td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td>Delivered total</td>
-							<td>{delivered_total}</td>
-						</tr>
-						<tr>
-							<td>Shop date</td>
-							<td>{date_for_shop}</td>
-							<td class="maxwidth-100">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>Notes</td>
-							<td>{notes}</td>
-							<td class="maxwidth-100">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>Status</td>
-							<td>{revision_status}</td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td colspan="2"></td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td>Validated income</td>
-							<td></td>
-						</tr>
+						
 					</tbody>
 				</table>
 			</div>
