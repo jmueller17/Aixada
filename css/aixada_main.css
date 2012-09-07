@@ -120,6 +120,7 @@ table#tbl_incidents th  {text-align:left;}
 .width-400				{width:400px;}
 .width-280				{width:280px;}
 .maxwidth-30			{width:30px;}
+.maxwidth-100			{width:100px;}
 
 .incidentsSubject		{text-decoration:underline; cursor:hand;}
 .incidentsDetails		{padding-top:10px; background-color:white; padding-bottom:10px;}

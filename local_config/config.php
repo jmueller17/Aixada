@@ -56,6 +56,29 @@ class configuration_vars {
   public $development = true; 
   
   
+  /**
+   * The default template for generating the print layout of the orders
+   */
+  public $print_order_template = 'report_order1.php';
+  
+  
+  /**
+   * 
+   * Default template for printing personal orders of household ...
+   * @var string
+   */
+  public $print_my_orders_template = 'order_model1.php';
+  
+  
+  
+  /**
+   * 
+   * Default template for printing bills of cooperative to members
+   * @var unknown_type
+   */
+  public $print_bill_template = 'bill_model1.php';
+  
+  
   
   /**
    * Code optimizations

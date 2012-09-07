@@ -6,7 +6,7 @@
 
 
 	<style type="text/css">
-		table 				{width:100%;}
+		table 				{width:100%; border-collapse:collapse;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
 		.txtAlignRight		{text-align:right;}
@@ -20,7 +20,7 @@
 		.b4					{border:2px solid black;}	 
 		.p4-5				{padding:5px;}
 		.hidden				{display:none;}
-		.cellBorderList td	{border:solid 1px black; border-collapse:collapse; padding:2px 4px;}
+		.cellBorderList td	{border:solid 1px black; padding:2px 4px;}
 		.cellBorderList th	{border:solid 1px black; background:#efefef;}
 		
 		

@@ -1,30 +1,138 @@
 delimiter |
 
+/**
+ * delivers detailed info about an order: provider stuff, resposible uf stuff, etc. 
+ * usually called from manage order detail view. 
+ */
+drop procedure if exists get_detailed_order_info|
+create procedure get_detailed_order_info (in the_order_id int, in the_provider_id int, in the_date date)
+begin
+	
+	declare delivered_total decimal(10,2) default 0;
+	declare validated_income decimal(10,2) default 0;
+	
+	-- if there have been revisions, calc the new order total -- 
+	set delivered_total = 		
+		(select
+			sum(si.unit_price_stamp * si.quantity)
+		from
+			aixada_shop_item si,
+			aixada_order_item oi
+		where 
+			oi.order_id = the_order_id
+			and oi.id = si.order_item_id);
+	
+	-- show how much of the order has been validated as uf carts. if people pay this is real income --
+	set validated_income = 
+		(select
+			sum(si.unit_price_stamp * si.quantity)
+		from
+			aixada_cart c,
+			aixada_shop_item si,
+			aixada_order_item oi
+		where
+			oi.order_id = the_order_id
+			and oi.id = si.order_item_id
+			and si.cart_id = c.id
+			and c.ts_validated > 0);
+	
+	if (the_order_id > 0) then 
+	
+		select 
+			o.id as order_id,
+			o.date_for_order,
+			o.ts_send_off, 
+			o.date_for_shop,
+			o.total,
+			delivered_total,
+			validated_income,
+			o.notes, 
+			o.revision_status,
+			o.delivery_ref,
+			o.payment_ref,
+			pv.*,
+			uf.id as uf_id,
+			uf.name as uf_name
+		from
+			aixada_order o,
+			aixada_provider pv, 
+			aixada_uf uf
+		where
+			o.id = the_order_id
+			and o.provider_id = pv.id
+			and pv.responsible_uf_id = uf.id;
+			
+	-- if we have no order_id, the whole info associated with the order is not available yet. --
+	else 
+		select 
+			0 as order_id,
+			the_date as date_for_order,
+			0 as ts_send_off, 
+			0 as date_for_shop,
+			0 as total,
+			0 as delivered_total,
+			0 as validated_income,
+			0 as notes, 
+			0 as revision_status,
+			0 as delivery_ref,
+			0 as payment_ref,
+			pv.*,
+			uf.id as uf_id,
+			uf.name as uf_name
+		from
+			aixada_provider pv, 
+			aixada_uf uf
+		where
+			pv.id = the_provider_id
+			and pv.responsible_uf_id = uf.id;
+	
+	end if; 
+end|
+	
 
 
 /**
  *	Returns the list or products that have been ordered. No quantities are returned at this point.   
  *  This query is used to construct the basic report table on orders. 
+ *  Either requires an order_id OR a provider and date_for_order
  */
 drop procedure if exists get_ordered_products_list|
-create procedure get_ordered_products_list (in the_order_id int)
+create procedure get_ordered_products_list (in the_order_id int, in the_provider_id int, in the_date date)
 begin
 	
-	select distinct
-		p.id, 
-		p.name, 
-		um.unit
-	from 
-		aixada_order_item oi,
-		aixada_product p,
-		aixada_unit_measure um
-	where
-		oi.order_id = the_order_id
-		and oi.product_id = p.id
-		and p.unit_measure_order_id = um.id
-	order by
-		p.name;
-	
+	if (the_order_id > 0) then
+		select distinct
+			p.id, 
+			p.name, 
+			um.unit
+		from 
+			aixada_order_item oi,
+			aixada_product p,
+			aixada_unit_measure um
+		where
+			oi.order_id = the_order_id
+			and oi.product_id = p.id
+			and p.unit_measure_order_id = um.id
+		order by
+			p.name;
+	else 
+		select distinct
+			p.id, 
+			p.name, 
+			um.unit
+		from 
+			aixada_order_item oi,
+			aixada_product p,
+			aixada_unit_measure um
+		where
+			oi.date_for_order = the_date
+			and oi.product_id = p.id
+			and p.provider_id = the_provider_id
+			and p.unit_measure_order_id = um.id
+		order by
+			p.name;
+		
+	end if; 
 end|
 
 
@@ -65,27 +173,29 @@ begin
 	-- otherwise get them from the order_item table, depending on the params available 	
 	else 
 		
-		-- if no order_id is given, retrieve items by date and provider
-		if (the_provider_id > 0 and the_date_for_order > 0) then
-		set @q = concat("select
+		if (the_order_id > 0) then		
+			set @q = concat("select 
 					oi.*,
-					p.name,
-					p.provider_id,
+					p.name, 
+					p.provider_id, 
 					1 as arrived, 
-					0 as revised
+					0 as revised, 
+					si.quantity as shop_quantity
 				from
-					aixada_order_item oi, 
-					aixada_product p
+					aixada_product p,
+					aixada_order_item oi 
+				left join 
+					aixada_shop_item si
+				on 
+					oi.id = si.order_item_id
 				where
-					oi.date_for_order = '",the_date_for_order,"'
+					oi.order_id = ",the_order_id," 
 					and oi.product_id = p.id
-					and p.provider_id = ",the_provider_id,"
-					", wherec ,"
-				order by
-					oi.product_id;"); 
-		
-		elseif (the_order_id > 0) then
-				set @q = concat("select
+					",wherec,"
+				order by 
+					oi.product_id;");
+					
+				set @s = concat("select
 					oi.*,
 					p.name,
 					p.provider_id,
@@ -100,6 +210,30 @@ begin
 					", wherec ,"
 				order by
 					oi.product_id;");
+
+		
+		elseif (the_provider_id > 0 and the_date_for_order > 0) then
+			set @q = concat("select
+					oi.*,
+					p.name,
+					p.provider_id,
+					1 as arrived, 
+					0 as revised,
+					si.quantity as shop_quantity
+				from
+					aixada_product p,
+					aixada_order_item oi
+				left join 
+					aixada_shop_item si
+				on 
+					oi.id = si.order_item_id 	
+				where
+					oi.date_for_order = '",the_date_for_order,"'
+					and oi.product_id = p.id
+					and p.provider_id = ",the_provider_id,"
+					", wherec ,"
+				order by
+					oi.product_id;"); 				
 			
 		end if;
 		
@@ -162,9 +296,10 @@ end |
 /**
  * set the revision status flag for each order. 
  * 		1 : default value. Finalized, send off to provider 
- * 		2 : arrived and items have been revised. This is set automatically once items have been copied from order to shop. 
+ * 		2 : arrived and items have been revised: everything is complete. This is set automatically once items have been copied from order to shop. 
  * 		3 : posponed. Did not arrive for the originally ordered date but could arrive in the near future
- * 		4 : canceled. Did not arrive for the originally ordered date and it is pretty sure that it will never arrive
+ * 		4 : canceled. Did not arrive for the originally ordered date and we are pretty sure that it will never arrive
+ * 		5 : arrived and revised but with changes in quantities. Automaticall set in move_order_to_shop
  */
 drop procedure if exists set_order_status|
 create procedure set_order_status (in the_order_id int, in the_status int)
@@ -330,7 +465,7 @@ begin
 	where 
 		order_id=the_order_id; 
 		
-	/**update the shop_date and revision status  in the order listing**/
+	/**update the shop_date and revision status  in the order listing. TODO: check if quantities have changed!!**/
 	update 
 		aixada_order
 	set 
@@ -338,6 +473,9 @@ begin
 		revision_status = 2
 	where 
 		id = the_order_id; 
+		
+	/** todo: if we re-distribute an already distributed order (e.g. change its shop date), the items have to be deleted from the cart **/
+	/** also: if an order has been revised and changed what do you want to view: original or changed quantities? **/
 	
 end |
 

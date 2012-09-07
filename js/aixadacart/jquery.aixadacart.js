@@ -140,6 +140,7 @@
   							    },
   							   error : function(XMLHttpRequest, textStatus, errorThrown){
   							    	$this.data('aixadacart').submitError.call($this,textStatus);
+  							    	alert(errorThrown);
   							    	updateCartTips.call($this,'error',XMLHttpRequest.responseText);
   							    	//upon saving/validating error, try again :)
   							    	$('#btn_submit').button({
@@ -380,6 +381,7 @@
     			 	
      		 	},//end success ajax
      		 	error : function(XMLHttpRequest, textStatus, errorThrown){
+     		 		alert(errorThrown);
      		 		updateCartTips.call('error',XMLHttpRequest.responseText);
 					
      		 	},
@@ -595,6 +597,7 @@
 			style = 'ui-state-highlight';
 		}
 
+		msg = (!msg)? 'error during cart loading/saving':msg; 
 		
 		$('#cartMsg').html(msg).addClass(style);
 		setTimeout(function() {
@@ -643,7 +646,7 @@
 		
 		var tbl_foot = 	'<tfoot>';
 		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="subtotal cart_dblBorderTop">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="rev_tax_label">'+$.aixadacart.revTaxAbbrev+' incl.</td><td class="rev_tax_total">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="5" class="rev_tax_label">'+$.aixadacart.revTaxAbbrev+' incl.</td><td class="rev_tax_total">0.00</td></tr>';
 		tbl_foot += '		<!--tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr-->';
 		tbl_foot += '		<tr><td colspan="3"><p id="cartMsg"></p></td><td colspan="3"><button type="submit" id="btn_submit">'+$.aixadacart.submit+'</button></td></tr>';
 		tbl_foot += '	</tfoot>';
@@ -682,7 +685,7 @@
 			str += '	<tbody></tbody>';
 			str += tbl_foot;
 			str += '</table>';
-			str += '<p id="cartMsg"></p>';
+			//str += '<p id="cartMsg"></p>';
 			str += '</div>';
 			str += '<div id="tabsx-2">';
 			str += '		<table id="aixada_cart_list_preorder" class="cart_product_list">';

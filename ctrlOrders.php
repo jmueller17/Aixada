@@ -27,7 +27,7 @@ try{
 
     	//retrieves list of products that have been ordered. Needed to construct order revision table
     	case 'getOrderedProductsList':
-    		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id')));
+    		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id',0), get_param('provider_id',0), get_param('date',0) ));
     		exit;
 
     	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf if needed. 
@@ -79,6 +79,10 @@ try{
   		//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
   		case 'checkOrderStatus':
   			printXML(stored_query_XML_fields('get_order_status', get_param('date',0), get_param('provider_id',0), get_param('product_id',0), get_param('order_id',0)  ));
+  			exit;
+  			
+  		case 'orderDetailInfo':
+  			printXML(stored_query_XML_fields('get_detailed_order_info', get_param('order_id',0), get_param('provider_id'), get_param('date',0) ));
   			exit;
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  
