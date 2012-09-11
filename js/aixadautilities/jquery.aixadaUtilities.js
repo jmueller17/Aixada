@@ -27,7 +27,12 @@ $(function(){
 		getSelectedDate: function(selector, format){
 			formatDate = (format != null && format != '')? format:'yy-mm-dd';
 			return $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
-		}		
+		}, 
+		//util function that receives a date string as 'yy-mm-dd' and returns extended french format
+		getCustomDate: function(dateString){
+			var date = $.datepicker.parseDate('yy-mm-dd', dateString);
+			return $.datepicker.formatDate('DD, d MM, yy', date);
+		}
 		
 	});
 	
@@ -96,7 +101,6 @@ $(function(){
 				msg : '',
 				title : '',
 				width: 400,
-				height:300,
 				type: "default", 
 				buttons :  [
 						     {

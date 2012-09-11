@@ -76,6 +76,10 @@ try{
   			echo finalize_order(get_param('provider_id'), get_param('date'));
   			exit;
   			
+  		case 'resetOrder':
+  			echo do_stored_query('reset_order_revision', get_param('order_id'));
+  			exit;
+  			
   		//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
   		case 'checkOrderStatus':
   			printXML(stored_query_XML_fields('get_order_status', get_param('date',0), get_param('provider_id',0), get_param('product_id',0), get_param('order_id',0)  ));

@@ -389,6 +389,8 @@ begin
 	declare the_cart_id int default 0;
 	declare the_validated int default 0; 
 	declare the_date_for_shop date; 
+	declare qu_diff float(10,4) default 0;
+	declare the_revision_status int default 2; 
 	
 	declare uf_cursor cursor for 
 		/** get list of uf_ids for order **/
@@ -435,7 +437,7 @@ begin
 			set the_cart_id = last_insert_id();
 		end if; 
 		
-		/** copy the revised items into shop_item **/
+		/** copy the revised items into aixada_shop_item with its corresponding cart **/
 		if (the_cart_id > 0) then
 			replace into
 				aixada_shop_item (cart_id, order_item_id, unit_price_stamp, product_id, quantity, iva_percent, rev_tax_percent)
@@ -457,7 +459,40 @@ begin
 				and os.arrived = 1;
 		end if; 
 	end loop;
-	close uf_cursor;
+	close uf_cursor;	
+	
+	
+	/**checks if quantities have changed between original order and revised one by computing difference for each quantity row **/
+	set qu_diff = ( select
+						sum(abs(oi.quantity - ( select 
+													os.quantity 
+												from 
+													aixada_order_to_shop os
+												where 
+													os.order_id = the_order_id
+													and os.order_item_id = oi.id)))
+					from
+						aixada_order_item oi
+					where
+						oi.order_id = the_order_id);
+	
+						
+	/** if quantities have changed, revision status is 5; otherwise it is 2. **/
+	if (qu_diff > 0 ) then
+		set the_revision_status = 5;  
+	end if; 					
+	
+	
+	/**update the shop_date and revision status  in the order listing.**/
+	update 
+		aixada_order
+	set 
+		date_for_shop = the_shop_date,
+		revision_status = the_revision_status
+	where 
+		id = the_order_id;
+	
+	
 	
 	/**remove tmp revison items**/
 	delete from 
@@ -465,19 +500,12 @@ begin
 	where 
 		order_id=the_order_id; 
 		
-	/**update the shop_date and revision status  in the order listing. TODO: check if quantities have changed!!**/
-	update 
-		aixada_order
-	set 
-		date_for_shop = the_shop_date,
-		revision_status = 2
-	where 
-		id = the_order_id; 
+	 
 		
 	/** todo: if we re-distribute an already distributed order (e.g. change its shop date), the items have to be deleted from the cart **/
-	/** also: if an order has been revised and changed what do you want to view: original or changed quantities? **/
 	
 end |
+
 
 
 /**
@@ -502,6 +530,7 @@ begin
 			and si.cart_id = c.id; 
 				
 	elseif the_cart_id > 0 then
+	
 		select
 			id as cart_id,
 			if (ts_validated>0, 1, 0) as validated 
@@ -509,8 +538,13 @@ begin
 			aixada_cart 
 		where 
 			id = the_cart_id; 
+	
 	end if; 
 end |
+
+
+
+
 
 
 /**
@@ -598,7 +632,9 @@ end |
 
 /**
  * finalizes an order, i.e. no further changes in date, quantity can be made. a order_id is assigned 
- * and an entry in aixada_order made
+ * and an entry in aixada_order made. 
+ * while an order is open there does not exist an order_id because this would imply to query each time an item is added, if
+ * an order for this provider/date already exists.  
  */
 drop procedure if exists finalize_order|
 create procedure finalize_order (in the_provider_id int, in the_date_for_order date)
@@ -654,6 +690,44 @@ begin
 	
 end |
 
+
+
+drop procedure if exists reset_order_revision|
+create procedure reset_order_revision (in the_order_id int)
+begin
+	/** TODO check that only non-validated items can be deleted **/
+	/** delete the shop_items of this order that have been distributed from people's carts **/
+	delete from
+		aixada_shop_item
+	where
+		order_item_id in 
+		   (select
+				id
+			from
+				aixada_order_item
+			where 
+				order_id = the_order_id);
+	
+	/**reset the shop_date and revision status for this order**/
+	update 
+		aixada_order
+	set 
+		date_for_shop = null,
+		revision_status = 1
+	where 
+		id = the_order_id;
+	
+	
+	
+	/**make sure that tmp revison items have been deleted**/
+	delete from 
+		aixada_order_to_shop
+	where 
+		order_id=the_order_id; 
+	
+
+	
+end |
 
 
 /**
@@ -791,91 +865,6 @@ begin
    and i.date_for_order = '1234-01-23'
    group by p.id;
 end|
-
-
-
-
-
-
-/**
- *  Move all orders from from_date to to_date.
- *  In case an order already exists at to_date, the
- *  quantity(to_date) is updated with 
- *  max( quantity(from_date), quantity(to_date) ) .
- * 
- * 
- *  still necessary???
- */
-
-drop procedure if exists move_all_orders|
-create procedure move_all_orders(in from_date date, in to_date date)
-begin
-  /* Start with orders */
-  /* first, update existing entries at to_date with the larger quantity */
-  update aixada_order_item i1,
-    ( select uf_id, product_id, quantity from aixada_order_item
-      where date_for_order = from_date ) i2
-  set i1.quantity = if(i1.quantity > i2.quantity, i1.quantity, i2.quantity)
-  where i1.product_id = i2.product_id
-  and i1.uf_id = i2.uf_id
-  and i1.date_for_order = to_date;
-
-  /* Then, insert new products into to_date without clobbering what's already there */
-  insert ignore into aixada_order_item (
-     date_for_order, uf_id, product_id, quantity, ts_ordered      
-  ) select * from 
-    (select to_date, uf_id, product_id, quantity, ts_ordered      
-    from aixada_order_item 
-    where date_for_order = from_date ) i1;
-
-  /* ... and remove old orders */
-  delete from aixada_order_item
-  where date_for_order = from_date;
-
-
-  /* Then, _almost_ the same code with shop items; the difference is the 
-     clause "and ts_validated = 0".
-     Ugly but apparently necessary, since mysql doesn't permit variable table names */
-
-  /* first, update existing entries at to_date with the larger quantity */
-  update aixada_shop_item i1,
-    ( select uf_id, product_id, quantity from aixada_shop_item
-      where date_for_shop = from_date ) i2
-  set i1.quantity = if(i1.quantity > i2.quantity, i1.quantity, i2.quantity)
-  where i1.product_id = i2.product_id
-  and i1.uf_id = i2.uf_id
-  and i1.date_for_shop = to_date;
-
-  /* Then, insert new products into to_date without clobbering what's already there */
-  insert ignore into aixada_shop_item (
-     date_for_shop, uf_id, product_id, quantity, ts_validated
-  ) select distinct * from 
-    (select to_date, uf_id, product_id, quantity, ts_validated    
-    from aixada_shop_item 
-    where date_for_shop = from_date 
-    and ts_validated = 0) i1;
-
-  /* ... and remove old shops */
-  delete from aixada_shop_item
-  where date_for_shop = from_date
-  and ts_validated = 0;
-
-
-  /* Finally, activate the products for the new day */
-  delete from aixada_product_orderable_for_date 
-  where date_for_order = to_date 
-    and product_id in 
-        (select distinct product_id 
-           from aixada_shop_item i
-           where i.date_for_shop = to_date);
-
-  insert into aixada_product_orderable_for_date (
-     date_for_order, product_id 
-  ) select distinct to_date, i.product_id 
-           from aixada_shop_item i
-           where i.date_for_shop = to_date;
-end|
-
 
 
 

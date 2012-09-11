@@ -200,7 +200,8 @@ td.missing	{background:#FFCCCA;}
 
 .asOrdered		{background:#D1F3D1;}
 .withChanges	{background:#FFEDA1;}
-.orderCanceled	{background:#FFCCCA;}
+.orderCanceled	{background:#ff7a75;}
+.postponed		{background:#efd2f8;}
 
 
 

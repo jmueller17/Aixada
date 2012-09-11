@@ -146,44 +146,29 @@
 							var modClass = '';
 							var modTxt = ''; 
 
-							
-							if (revision == 1){ 		//default state; send off and awaited for delivery
-								modTxt = 'not yet received';
-								
-							} else if (revision == 2){	//arrived and has been revised
-
-								var modifications = false; 
-								
-								//check if ordered quantities and delivered are the same
-								$('#tbl_diffOrderShop tbody').children('tr').each(function(){
-									//each row
-									var id = $(this).children().eq(1).text();
-									var orderedQu = $(this).children().eq(2).text();
-									var deliveredQu = $(this).children().eq(3).text();
-
-									if (orderedQu != deliveredQu) modifications = true; 
-									
-								});
-
-								if (modifications){
-									modClass = "withChanges";
-									modTxt = "with changes";
-								} else {
+							switch (revision){
+								case "1":
+									modTxt = 'not yet received';
+									break;
+								case "2": 
 									modClass = "asOrdered";
 									modTxt = "is complete"; 
-								}
-								
-							} else if (revision == 3){ //postponed
-								modTxt = "postponed";	
-								
-							} else if (revision == 4){ //canceled. Will never arrive
-								modClass="orderCanceled";
-								modTxt = "canceled";
+									break;
+								case "3": 
+									modClass = 'postponed'
+									modTxt = "postponed";
+									break;
+								case "4": 
+									modClass="orderCanceled";
+									modTxt = "canceled";
+									break;
+								case "5": 
+									modClass = "withChanges";
+									modTxt = "with changes";
+									break;	
 							}
-
-
-							$('#order_'+orderId).children().eq(3).addClass(modClass).text(modTxt);
-							
+					
+							$('#order_'+orderId).children().eq(3).addClass(modClass).text(modTxt);		
 
 						} else if (providerId > 0){  //not yet send / closed order
 							$('.Date_'+dateForOrder+'.Provider_'+providerId).after(itemRows).after(header);

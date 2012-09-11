@@ -53,6 +53,9 @@
 
 			//index for current order that is loaded/printed during bulk actions
 			var gPrintIndex  = -1; 
+
+			//order revision status states. 
+			var gRevStatus = [null, 'finalized','revised','postponed','canceled','revisedMod'];
 			
 
 			
@@ -60,6 +63,7 @@
 			$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
 				onSelect : function (dateText, instance){
+					//var nd = $.getCustomDate(dateText)
 					$('#indicateShopDate').text(dateText);
 				}
 			}).hide();
@@ -72,7 +76,7 @@
 				var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
 				$("#datepicker").datepicker('setDate', today);
 				$("#datepicker").datepicker("refresh");		
-				$('#indicateShopDate').text(date[0]);		
+				$('#indicateShopDate').text($.getCustomDate(date[0]));		
 			});	
 			
 	
@@ -151,7 +155,7 @@
 							if (gSection == 'view' && gSelRow.attr('orderId') > 0){
 								quShop = $(this).find('shop_quantity').text();
 								quShop = (quShop == '')? 0:quShop;  //items that did not arrived produce a null value. 
-								quShopHTML = (gSection == 'view')? '<span class="shopQuantity" title="Delivered quantity">(' +quShop +')</span>':'';
+								quShopHTML = (gSection == 'view')? '<span class="shopQuantity">(' +quShop +')</span>':'';
 							}
 							var product_id = $(this).find('product_id').text();
 							var uf_id = $(this).find('uf_id').text();
@@ -179,8 +183,10 @@
 							//calculate total quantities and update last table cell
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
-								var total = quTotal.toFixed(2) + " ("+quShopTotal.toFixed(2)+") " + $('#unit_'+lastId).text();
-								$('#total_'+lastId).text(total);
+								
+								var total = quTotal + "<span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
+								
+								$('#total_'+lastId).html(total);
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
@@ -191,16 +197,20 @@
 
 						});
 
-						var total = quTotal.toFixed(2) + " " + $('#unit_'+lastId).text();
-						$('#total_'+lastId).text(total);
+						
+							var total = quTotal + "<span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
+						
+						$('#total_'+lastId).html(total);
 
 
 						//don't need revised and arrived column for viewing order
 						if (gSection == 'view' || gSection == 'print'){
 							$('.revisedCol, .arrivedCol').hide();
+							$('.shopQuantity').show();
 							$('tr, td').removeClass('toRevise revised missing');
 						} else {
 							$('.revisedCol, .arrivedCol').show();
+							$('.shopQuantity').hide();
 						}
 
 						//if we print, copy the table to the printWindow
@@ -212,7 +222,7 @@
 							var tbl = $('#tbl_reviseOrder').clone();			//clone the table with the current order data
 							
 							$(tbl).attr('id', 'print_order_'+gPrintIndex);	
-							$('thead', tbl).prepend('<tr><th colspan="100"><h2>Order for (#'+gSelRow.attr('orderId')+') for '+pname+'. Foreseen delivery date: '+odate+' </h2></th></tr>');	
+							$('thead', tbl).prepend('<tr><th colspan="100"><h2>Order for (#'+gSelRow.attr('orderId')+') for '+pname+' for: '+odate+' </h2></th></tr>');	
 							$(wrapDiv).prepend(tbl); //add the table to the wrapper							
 							$('#orderWrap', printWin.document).append(wrapDiv); //and add the wrapper to the doc in the new window
 
@@ -438,7 +448,7 @@
 			/***********************************************************
 			 *		ORDER REVISION STATUS
 			 **********************************************************/
-			 $("#btn_revision").button({
+			 $("#btn_revised").button({
 				 icons: {
 		        		primary: "ui-icon-check"
 		        	}
@@ -447,7 +457,7 @@
 					$("#dialog_orderStatus").dialog("close");
        			});
 			
-			 $("#btn_cancel").button({
+			 $("#btn_canceled").button({
 				 icons: {
 		        		primary: "ui-icon-cancel"
 		        	}
@@ -456,9 +466,8 @@
 					setOrderStatus(4);
        			});
     			
-			 $("#btn_postpone").button({
+			 $("#btn_postponed").button({
 				 icons: {
-		        		primary: "ui-icon-info"
 		        	}
 				 })
        			.click(function(e){
@@ -510,19 +519,22 @@
 					} else {			//order is closed
 						$(row).children().eq(4).text("closed");
 						var statusTd = $(row).children().eq(8); 
+						statusTd.attr('revisionStatus',status);
 						switch(status){
 							case "1": 
-								statusTd.html('<span class="tdIconCenter ui-icon ui-icon-mail-closed" title="Order has been send to provider"></span>');
+								statusTd.attr('title','Order has been send to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 								break;
 							case "2": 
-								statusTd.addClass('revised').html('<span class="tdIconCenter ui-icon ui-icon-check" title="Order has been revised"></span>');
+								statusTd.attr('title','Revised and distributed without changes').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 								break;
 							case "3": 
-								statusTd.addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-info" title="Order has been postponed"></span>');
+								statusTd.attr('title','Order has been postponed').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
 								break;
 							case "4": 
-								statusTd.addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel" title="Order has been canceled"></span>');
+								statusTd.attr('title','Order has been canceled').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
 								break;
+							case "5":
+								statusTd.attr('title','Revised with some modifications').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 						}
 					}
 
@@ -576,26 +588,6 @@
 			});
 
 			
-			/**
-			 *	Finalizes an order: synon. for sending it to the provider: an order ID is assigned, no more modifications are possible. 
-			 */
-			function finalizeOrder (providerId, orderDate){
-				$.ajax({
-					type: "POST",
-					url: 'ctrlOrders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
-					success: function(txt){
-						$('#tbl_orderOverview tbody').xml2html('reload');
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						
-					}
-				});			
-			}
-			
-
 			
 			$('#tbl_orderOverview tbody tr')
 			.live('mouseover', function(){
@@ -639,7 +631,7 @@
 					//need the order id
 					if (gSelRow.attr('orderId') <= 0){
 						$.showMsg({
-							msg:'No valid ID for order found!',
+							msg:'No valid ID for order found! This order has not been send off to the provider!!',
 							type: 'error'});
 						return false; 
 					}
@@ -648,7 +640,6 @@
 					//if shop date exists, check if it items have already been moved to shop_item and/or validated
 					if (shopDate != ''){
 						$.post('ctrlOrders.php?oper=checkValidationStatus&order_id='+gSelRow.attr('orderId'), function(xml) {
-							
 							
 							var hasCart = false; 
 							var isValidated = false; 
@@ -662,11 +653,21 @@
 
 							if (hasCart && !isValidated){
 								$.showMsg({
-									msg:'The items of this order have already been revised and placed into people\'s carts. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?!',
+									msg:'The items of this order have already been revised and placed into people\'s carts for the indicated shop date. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?! <br/><br/>Pressing OK will delete the items from the existing shopping carts and start the order-revision process again.',
 									buttons: {
-										"<?=$Text['btn_ok'];?>":function(){						
-											switchTo('review', {});
-											$(this).dialog("close");
+										"<?=$Text['btn_ok'];?>":function(){	
+											//reset this order to "finalized"
+											$(this).html('Please wait while the order is being reset....');
+											gSelRow.children().eq(8).attr('revisionStatus',1);
+											var $this = $(this);
+											resetOrder(gSelRow.attr('orderId'), function(){
+												$this.html('Done!');
+												setTimeout(function(){
+													switchTo('review', {});
+													$this.dialog("close");
+												}, 1000);
+												
+											});					
 										},
 										"<?=$Text['btn_cancel'];?>" : function(){
 											$( this ).dialog( "close" );
@@ -697,7 +698,7 @@
 					});
 
 				
-				//prit the selected order. If more than one is selected, confirm bulk print
+				//print the selected order. If more than one is selected, confirm bulk print
 				$('.printOrderBtn')
 				.live('click', function(e){
 					$this = $(this);
@@ -831,6 +832,50 @@
 
 
 				/**
+				 *	Finalizes an order: synon. for sending it to the 
+				 * 	provider: an order ID is assigned, no more modifications are possible. 
+				 */
+				function finalizeOrder(providerId, orderDate){
+					$.ajax({
+						type: "POST",
+						url: 'ctrlOrders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
+						success: function(txt){
+							$('#tbl_orderOverview tbody').xml2html('reload');
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							$.showMsg({
+								msg:XMLHttpRequest.responseText,
+								type: 'error'});
+							
+						}
+					});			
+				}
+				
+					
+
+				/**
+				 *	if an already revised order is changed in its status (again revised, postponed, etc.) 
+				 *  need to make sure that already distributed items get deleted. 
+				 */
+				function resetOrder(orderId, callbackfn){
+					$.ajax({
+						type: "POST",
+						url: 'ctrlOrders.php?oper=resetOrder&order_id='+orderId,
+						success: function(txt){
+							callbackfn.call(this);
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							$.showMsg({
+								msg:XMLHttpRequest.responseText,
+								type: 'error'});
+							
+						}
+					});		
+
+				}
+
+				
+				/**
 				 *	switch between the order overview page and the revision/detail page
 				 */
 				function switchTo(page, options){
@@ -839,14 +884,21 @@
 						case 'overview':
 							$('.reviewElements, .viewElements').hide();
 		    				$('.overviewElements').fadeIn(1000);
-		    				gSelRow = null;		
+		    				gSelRow = null;	
+		    				$('#tbl_orderOverview tbody').xml2html('reload');	
 							break;
 
 						case 'review':
-							var title = gSelRow.children().eq(2).text() + " (#"+gSelRow.attr('orderId')+") for " + gSelRow.attr('dateForOrder');
+							var title = gSelRow.children().eq(2).text() + " (#"+gSelRow.attr('orderId')+") for " + $.getCustomDate(gSelRow.attr('dateForOrder'));
+							var sindex = gSelRow.children().eq(8).attr('revisionStatus');
+							
 							$('.providerName').text(title);							
 							$('.overviewElements').hide();
 							$('.reviewElements').fadeIn(1000);
+
+							$('#dialog_orderStatus button').button('enable');
+							$('#btn_'+gRevStatus[sindex]).button('disable');
+							$('#currentOrderStatus').html(gRevStatus[sindex]);
 							$('#dialog_orderStatus').dialog("open");
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
@@ -854,7 +906,8 @@
 							break;
 							
 						case 'view':
-							var title = gSelRow.children().eq(2).text() + " (#"+gSelRow.attr('orderId')+") for " + gSelRow.attr('dateForOrder');
+							var title = gSelRow.children().eq(2).text() + " for " + $.getCustomDate(gSelRow.attr('dateForOrder'));
+							//$('#viewOrderRevisionStatus') set the order status here. 
 							$('.providerName').text(title);							
 							$('.overviewElements').hide();
 							$('.viewElements').fadeIn(1000);
@@ -862,8 +915,11 @@
 								params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
 							
-							$('#tbl_orderDetailInfo tbody').xml2html('reload',{
-								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
+							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
+								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
+								complete : function(rowCount){
+
+								}
 			 				});
 							
 							$('#btn_setShopDate').hide();
@@ -1014,7 +1070,7 @@
 								{date_for_order} <br/>
 								{ts_send_off} <br/>
 								{date_for_shop} <br/><br/>
-								{revision_status}<br/>
+								<span id="viewOrderRevisionStatus">{revision_status}</span><br/>
 								{notes}<br/>
 								{delivery_ref}<br/>
 								{payment_ref}
@@ -1026,7 +1082,7 @@
 								Total (after revision): <br/>
 								Total (validated income): 
 							</td>
-							<td>
+							<td class="textAlignRight">
 								{total}<br/>
 								{delivered_total}<br/>
 								{validated_income}
@@ -1079,12 +1135,14 @@
 
 <div id="dialog_orderStatus" title="Set Order Status">
 	<p>&nbsp;</p>
+	<p>You are about to change the status of this order. Currently your order is marked as "<span id="currentOrderStatus" class="boldStuff"></span>". Change it to one of the following options: </p>
+	<p>&nbsp;</p>
 	<table>
-		<tr><td class="textAlignCenter"><button id="btn_revision">Arrived!</button></td><td>&nbsp;</td><td>Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...</td></tr>					
+		<tr><td class="textAlignCenter"><button id="btn_revised">Arrived!</button></td><td>&nbsp;</td><td>Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...</td></tr>					
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_postpone">Postpone</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_postponed">Postpone!</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_cancel">Cancel</button></td><td>&nbsp;</td><td>Order did and will not arrive.</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_canceled">Cancel!</button></td><td>&nbsp;</td><td>Ordered items will never arrive.</td></tr>
 	</table>
 </div>	
 
