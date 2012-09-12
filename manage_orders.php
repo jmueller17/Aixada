@@ -84,7 +84,7 @@
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
 					type: "POST",
-					url: 'smallqueries.php?oper=getActiveUFs',
+					url: 'ctrlUserAndUf.php?oper=getActiveUFs',
 					dataType:"xml",
 					success: function(xml){
 						var theadStr = ''; 
@@ -229,6 +229,7 @@
 							if (gPrintIndex == gPrintList.length-1){
 								$('.loadingMsg', printWin.document).html("<p>Finished loading</p>").fadeOut(2000);
 								$('#orderWrap', printWin.document).children(':first').hide();
+								//printWin.print();
 							} else {
 								$('.loadingMsg', printWin.document).html("<p>Please wait while loading " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
 							}
@@ -733,7 +734,7 @@
 
 				
 			
-				$("#tblOptions")
+				$("#tblViewOptions")
 				.button({
 					icons: {
 			        	secondary: "ui-icon-triangle-1-s"
@@ -952,14 +953,14 @@
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
-				<button id="btn_overview" class="floatLeft reviewElements viewElements">Overview</button>
+				<button id="btn_overview" class="floatLeft reviewElements viewElements"><?php echo $Text['overview'];?></button>
 				<h1 class="reviewElements">Manage order detail for <span class="providerName"></span></h1>
 				<h1 class="viewElements">Order detail for <span class="providerName"></span></h1>
 		    	<h1 class="overviewElements">Manage orders</h1>
 		    </div>
 		   	<div id="titleRightCol">
 		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
-				<button	id="tblOptions" class="overviewElements btn_right">Filter orders</button>
+				<button	id="tblViewOptions" class="overviewElements btn_right">Filter orders</button>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="ordersForToday">Expected today</a></li>
@@ -967,7 +968,7 @@
 						<li><a href="javascript:void(null)" id="futureOrders">All future orders</a></li>
 						<li><a href="javascript:void(null)" id="pastMonth">Last month</a></li>
 						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
-						<li><a href="javascript:void(null)" id="limboOrders">postponed</a></li>
+						<li><a href="javascript:void(null)" id="limboOrders">Postponed</a></li>
 					</ul>
 				</div>				
 		   	</div> 	

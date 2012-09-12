@@ -7,19 +7,12 @@ require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
 
-//$firephp = FirePHP::getInstance(true);
 
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-
-// This controls if the table_manager objects are stored in $_SESSION or not.
-// It looks like doing it cuts down considerably on execution time.
 
 if (!isset($_SESSION)) {
     session_start();
  }
 
-//$firephp->log($_SESSION, 'session');
-DBWrap::get_instance()->debug = true;
 
 function extract_data($what) {
     return (isset($_REQUEST[$what]) ? $_REQUEST[$what] : '');
@@ -54,7 +47,45 @@ try{
 
 
   switch ($_REQUEST['oper']) {
+  	    
+  		case 'getAllUFs':
+        	printXML(stored_query_XML_fields('get_all_ufs'));
+        	exit;
 
+    	case 'getActiveUFs':
+        	printXML(stored_query_XML('get_active_ufs', 'ufs', 'name'));
+        	exit;
+
+	        
+    case 'getMembersOfUF':
+        printXML(stored_query_XML_fields('get_members_of_uf', $_REQUEST['uf_id']));
+        exit;
+
+    case 'getMemberInfo':
+        printXML(stored_query_XML_fields('get_member_info', get_param('member_id') ));
+        exit;
+        	
+        
+        
+   case 'getUsersWithoutUF':
+        printXML(stored_query_XML_fields('users_without_uf'));
+        exit;
+
+    case 'getUsersWithoutMember':
+        printXML(stored_query_XML_fields('users_without_member'));
+        exit;
+
+    case 'assignUsersToUF':
+        foreach ($_REQUEST['user_id'] as $id) {
+            do_stored_query('assign_user_to_uf', $id, $_REQUEST['uf_id']);
+        }
+        exit;
+
+    case 'assignUserToMember':
+        printXML(stored_query_XML_fields('assign_user_to_member', $_REQUEST['user_id']));
+        exit;
+        	
+        	
   case 'createUF':
       $rs = do_stored_query('find_uf_by_name', $name);
       if ($rs->fetch_assoc()) {

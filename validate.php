@@ -344,7 +344,7 @@
 			
 			 
 			$('#uf_account_select').xml2html('init',{
-						url 	: 'smallqueries.php',
+						url 	: 'ctrlSmallQ.php',
 						params 	: 'oper=getAllAccounts', 
 						offSet	: 1, 
 						loadOnInit : true

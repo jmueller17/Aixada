@@ -61,11 +61,12 @@ add closing_date datetime default null after date_for_order,
 add unique key (product_id, date_for_order);
 
 
-/* insert existing dates, based on order items; required due to foreign key constraints */
+/* insert existing dates, based on order items; required due to foreign key constraints. For these old entries, set closing_date = date_for_order */
 insert into 
-	aixada_product_orderable_for_date (product_id, date_for_order)
+	aixada_product_orderable_for_date (product_id, date_for_order, closing_date)
 select distinct
     oi.product_id,
+	oi.date_for_order,
 	oi.date_for_order
 from
 	aixada_order_item oi;

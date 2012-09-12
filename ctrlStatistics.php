@@ -21,19 +21,19 @@ if (!isset($_SESSION)) {
 try{
     
     switch ($_REQUEST['oper']) {
-    case 'uf':
-        echo make_active_time_lines('uf');
-        exit;
-    case 'provider':
-        echo make_active_time_lines('provider');
-        exit;
-    case 'product':
-        echo make_active_time_lines('product');
-        exit;
-
-    case 'balances':
-        echo make_balances();
-        exit;
+	    case 'uf':
+	        echo make_active_time_lines('uf');
+	        exit;
+	    case 'provider':
+	        echo make_active_time_lines('provider');
+	        exit;
+	    case 'product':
+	        echo make_active_time_lines('product');
+	        exit;
+	
+	    case 'balances':
+	        echo make_balances();
+	        exit;
 
     default:
         throw new Exception("ctrlStatistics: operation {$_REQUEST['oper']} not supported");

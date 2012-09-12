@@ -74,7 +74,7 @@ $(function(){
 	//function to retrieve menu access rights
 	$.ajax({
 		type: "POST",
-            url: "smallqueries.php?oper=configMenu&user_role="+role,
+            url: "ctrlSmallQ.php?oper=configMenu&user_role="+role,
             dataType: "xml", 
             success:  function(xml){
 			$(xml).find('navigation').children().each(function(){

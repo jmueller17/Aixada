@@ -176,7 +176,7 @@
 	$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
 				showAnim	: '',
-				beforeShowDay: function(date){		//activate only those dates that are available for ordering. smallqueries.php order retrieval does not work...
+				beforeShowDay: function(date){		//activate only those dates that are available for ordering.
 					if (what == 'Order'){
 						var ymd = $.datepicker.formatDate('yy-mm-dd', date);
 						if ($.inArray(ymd, availableDates) == -1) {

@@ -61,7 +61,7 @@ div#headwrap		{width:100%; background-color:#fff;}
 
 div#titlewrap		{width:100%; overflow:hidden; margin-bottom:20px;}
 div#titleLeftCol	{width:70%; float:left;}
-div#titleRightCol	{width:28%; float:left; padding-top:10px; line-height:2em;}
+div#titleRightCol	{width:28%; float:right; padding-top:10px; padding-right:5px; line-height:2em;}
 div#titleLeftCol50	{width:40%; float:left;}
 div#titleRightCol50	{width:58%; float:left; padding-top:15px; line-height:2em;}
 div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
@@ -106,13 +106,12 @@ div#withdraw_cash, #deposit_cash 		{margin-bottom:60px;}
 .highlight-withdrawl	{background-color:red; padding:12px;}
 
 /** for incidents **/
-div#tbl_div				{max-height:200px; overflow:scroll;}
 div#incidents_listing a	{font-size:0.8em; margin-right:20px;}
-.spacingEnd				{background-color:#d3d3d3; padding:0px;}
+.spacingEnd				{background:#d3d3d3; padding:0px;}
 
 table#tbl_incidents		{width:100%; } /* also for incidents page */
-table#tbl_incidents td  {padding-top:1px; padding-right:20px;}
-table#tbl_incidents th  {text-align:left;}
+table#tbl_incidents td  {padding-top:1px; padding-right:20px; padding-left:5px;}
+table#tbl_incidents th  {background:#f3f3f3;}
 .minwidth-50			{min-width:50px;}
 .minwidth-30			{min-width:30px;}
 .minwidth-180			{min-width:180px;}

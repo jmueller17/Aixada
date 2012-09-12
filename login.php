@@ -235,10 +235,10 @@ if (!isset($_SESSION)) {
 			 *	incidents
 			 */
 			$('#tbl_incidents tbody').xml2html('init',{
-					url: 'smallqueries.php',
-					params : 'oper=latestIncidents',
+					url: 'ctrlIncidents.php',
+					params : 'oper=getIncidentsListing&filter=pastWeek',
 					loadOnInit: true,
-					paginationNav : '#tbl_incidents tfoot td'
+					//paginationNav : '#tbl_incidents tfoot td'
 			});
 
 
@@ -247,7 +247,7 @@ if (!isset($_SESSION)) {
 			 */
 			 $("#pref_lang")
 				.xml2html("init", {
-						url: "smallqueries.php",
+						url: "ctrlSmallQ.php",
 						params : "oper=getExistingLanguages",
 						rowName : "language",
 						loadOnInit: true,

@@ -26,25 +26,31 @@
 	
 	$(function(){
 
-		
+		$('.detailElements').hide();		
 		
 		function switchTo(section){
-			resetDetails();
-			if (section == 'new_incident'){
-				$('#incident_id').val('');
-				$('#incidents_listing').hide();
-				$('#incidents_id_info').hide();
-				$('#h3_new_incident').show(); 
-				$('#btn_cancel').show();
-			} else {
-				$('#incidents_listing').show();
-				$('#incidents_id_info').show();
-				$('#h3_new_incident').hide(); 
-				$('#btn_cancel').hide();
+			switch (section){
+				case 'detail':
+					$('.overviewElements, .detailCreateElements').hide();
+					$('.detailElements, .detailEditElements').fadeIn(1000); 
+					break;
+					
+				case 'new':
+					resetDetails();
+					$('.overviewElements, .detailEditElements').hide();
+					$('.detailElements, .detailCreateElements').fadeIn(1000); 
+					break;
+					
+				case 'overview':
+					$('.detailElements, .detailEditElements, .detailCreateElements').hide(); 
+					$('.overviewElements').fadeIn(1000);
 			}
 		}
 		
-		
+
+		/** 
+		 *	resets the incidents form when creating a new one. 
+		 */
 		function resetDetails(){
 			$('#subject, #incidents_text, #ufs_concerned').val('');
 			$('#statusSelect option:first').attr('selected',true);
@@ -53,18 +59,34 @@
 			$('#providerSelect  option:first').attr('selected',true);
 			$('#commissionSelect  option:first').attr('selected',true);
 			$('#ufs_concerned option:first').attr('selected',true);
-			
-				
 			$('#incident_id').val('');
 			$('#incident_id_info').html('');
 
 		}
+
+
+		//returns to incident overview. 
+		$("#btn_overview").button({
+			 icons: {
+	        		primary: "ui-icon-circle-arrow-w"
+	        	}
+			 })
+    		.click(function(e){
+				switchTo('overview'); 
+    		}).hide();
+
 		
 		$('#btn_new_incident')
+			.button({
+				icons: {
+	        		primary: "ui-icon-plus"
+	        	}
+
+			})
 			.click(function(){
-				switchTo('new_incident');
+				switchTo('new');
 		});
-		
+
 		
 		$('#btn_cancel')
 			.button({
@@ -72,7 +94,7 @@
 				primary: "ui-icon-close"}
 			})
 			.click(function(){
-				switchTo('listing');
+				switchTo('overview');
 		});
 
 
@@ -82,18 +104,42 @@
 				primary: "ui-icon-check"}
 			});
 
+		
+		$('.btn_view_incident')
+			.live('click', function(){
+				switchTo('detail');
+				//$('#tbl_incidents tbody tr').trigger("click");
+			});
+
+
+		$("#tblIncidentsViewOptions")
+		.button({
+			icons: {
+	        	secondary: "ui-icon-triangle-1-s"
+			}
+	    })
+	    .menu({
+			content: $('#tblIncidentsOptionsItems').html(),	
+			showSpeed: 50, 
+			width:280,
+			flyOut: true, 
+			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
+				//show hide deactivated products
+				var filter = $(item).attr('id');
+				$('#tbl_incidents tbody').xml2html('reload',{
+					params : 'oper=getIncidentsListing&filter='+filter
+				});
+				
+			}//end item selected 
+		});//end menu
+		
+
+		
 		//DELETE incidents
 		$('.btn_del_incident')
-			.live("mouseenter", function(){
-				$(this).removeClass('ui-icon-close').addClass('ui-icon-circle-close');
-			})
-			.live("mouseleave", function(){
-				$(this).removeClass('ui-icon-circle-close').addClass('ui-icon-close');
-			})
-			.live("click", function(){
-				var incident_id = $(this).parent().next().text();
-				$this = $(this).parent().parent();
-				$.showMsg({
+			.live("click", function(e){
+					var incidentId = $(this).parents('tr').attr('incidentId'); 
+					$.showMsg({
 								msg: '<?php echo $Text['msg_delete_incident'];?>',
 								type: 'confirm',
 								buttons : {
@@ -101,17 +147,16 @@
 											
 											$.ajax({
 											    type: "POST",
-											    url: "smallqueries.php?oper=delIncident&incident_id="+incident_id,
+											    url: "ctrlIncidents.php?oper=delIncident&incident_id="+incidentId,
 											    success: function(msg){
-													$this.empty();
 													resetDetails();
+													$('#tbl_incidents tbody').xml2html('reload');
 											    	
 											    },
 											    error : function(XMLHttpRequest, textStatus, errorThrown){
-												    
-											    },
-											    complete : function(msg){
-											    	
+											    	$.showMsg({
+														msg:XMLHttpRequest.responseText,
+														type: 'error'});
 											    }
 											}); //end ajax
 											$(this).dialog( "close" );
@@ -123,6 +168,8 @@
 									  	}
 									}
 					});
+
+					e.stopPropagation();
 			});
 
 		
@@ -133,17 +180,16 @@
 			
 			$('button').button( "option", "disabled", true );
 
-			var curUrl = ($('#h3_new_incident').is(':visible'))? "smallqueries.php?oper=newIncident":"smallqueries.php?oper=editIncident";
 			
 			$.ajax({
 				    type: "POST",
-				    url: curUrl,
+				    url: "ctrlIncidents.php?oper=mngIncident",
 				    data: dataSerial,
 				    beforeSend: function(){
 				   		$('#editorWrap .loadAnim').show();
 					},
 				    success: function(msg){
-						switchTo('listing');
+						switchTo('overview');
 						resetDetails();
 				    },
 				    error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -166,30 +212,36 @@
 		 *	incidents
 		 */
 		$('#tbl_incidents tbody').xml2html('init',{
-				url: 'smallqueries.php',
-				params : 'oper=latestIncidents&',
-				loadOnInit: true,
-				paginationNav : '#tbl_incidents tfoot td'
+				url: 'ctrlIncidents.php',
+				params : 'oper=getIncidentsListing&filter=past2Month',
+				loadOnInit: true, 
+				complete : function(rowCount){
+					$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 	
+				}
 		});
 
 
 		
 		$('#tbl_incidents tbody tr')
 			.live('mouseenter', function(){
-				$(this).children().addClass('ui-state-highlight');
+				$(this).addClass('ui-state-highlight');
 			})
 			.live('mouseleave',function(){
 				if (!$(this).hasClass('active_row')){
-					$(this).children().removeClass('ui-state-highlight');
+					$(this).removeClass('ui-state-highlight');
 				}
 			})
 			//click on uf table row
-			.live("click", function(){
-							
+			.live("click", function(e){
+
+				resetDetails();
+				
 				//populate the form
-				$(this).closest('tr').find('td:gt(0)').each(function(){
+				$(this).children('td[field_name]').each(function(){
+					
 					var input_name = $(this).attr('field_name');
 					var value = $(this).text();
+
 	
 					if (input_name == 'incident_id') $('#incident_id_info').html('#'+value);
 			
@@ -203,8 +255,13 @@
 					} else {
 						$('#'+input_name).val(value);
 					}
+
+					switchTo('detail');
+					e.stopPropagation();
+					
 	
 				});
+				
 		});
 		
 		
@@ -212,8 +269,8 @@
 		//build provider select
 		$("#providerSelect")
 			.xml2html("init", {
-				url: 'ctrlShopAndOrder.php',
-				params:'oper=listProviders&what=Shop',
+				url: 'ctrlSmallQ.php',
+				params:'oper=getActiveProviders',
 				offSet:1,
 				loadOnInit:true
 		});
@@ -221,7 +278,7 @@
 		//build ufs select
 		$("#ufs_concerned")
 			.xml2html("init", {
-				url: 'smallqueries.php',
+				url: 'ctrlUserAndUf.php',
 				params:'oper=getActiveUFs',
 				offSet:1,
 				loadOnInit:true
@@ -230,7 +287,7 @@
 		//build type select
 		$("#typeSelect")
 			.xml2html("init", {
-				url: 'smallqueries.php',
+				url: 'ctrlIncidents.php',
 				params:'oper=getIncidentTypes',
 				loadOnInit:true,
 				complete: function(){
@@ -241,13 +298,16 @@
 		//build commission select
 		$("#commissionSelect")
 			.xml2html("init", {
-				url: 'smallqueries.php',
+				url: 'ctrlSmallQ.php',
 				params : 'oper=getCommissions',
 				offSet : 1,
 				loadOnInit: true
 		});
 
-		switchTo('listing');
+
+		
+		
+		switchTo('overview');
 						
 			
 	});  //close document ready
@@ -266,46 +326,66 @@
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
+				<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
+		    </div>
+		    <div id="titleRightCol">
+		    	<button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint">Filter incidents</button>
+		    	<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
+					<ul>
+						<li><a href="javascript:void(null)" id="incidentsForToday">Today's</a></li>
+						<li><a href="javascript:void(null)" id="past2Month">Recent ones</a></li>
+						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
+					</ul>
+				</div>		
+		    	<button id="btn_new_incident" class="overviewElements floatLeft hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
 		    </div>
 		</div>
 		
-		<div id="incidents_listing" class="ui-widget">
+		<div id="incidents_listing" class="ui-widget overviewElements">
 			<div class="ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?> <a href="javascript:void(null)" class="floatRight" id="btn_new_incident"><span class="ui-icon ui-icon-plus floatLeft"></span><?php echo $Text['btn_new_incident'];?></a> &nbsp;&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
+					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?>&nbsp;&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
 					<div id="tbl_div">
 					<table id="tbl_incidents">
 					<thead>
 						<tr>
-							<th class="mwidth-50 hideInPrint"></th>
 							<th class="mwidth-30"><?php echo $Text['id'];?></th>
 							<th class="width-280 hideInPrint"><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?></th>
 							<th class="mwidth-150"><?php echo $Text['created_by'];?></th>
 							<th class="mwidth-150"><?php echo $Text['created'];?></th>
-							<th><?php echo $Text['status'];?></th>
+							<th class="textAlignCenter"><?php echo $Text['status'];?></th>
 							<th class="hidden"><?php echo $Text['incident_type'];?></th>
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>
 							<th class="hidden"><?php echo $Text['ufs_concerned'];?></th>
 							<th class="hidden"><?php echo $Text['comi_concerned'];?></th>
 							<th class="hidden hideInPrint">Details</th>
+							<th class="maxwidth-100 hideInPrint">Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="hideInPrint"><span style="float:left" class="btn_del_incident ui-icon ui-icon-close"></span>&nbsp;&nbsp;</td>
+						<tr class="clickable" incidentId="{id}">
 							<td field_name="incident_id">{id}</td>
 							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
-							
 							<td field_name="priority">{priority}</td>
 							<td field_name="operator">{uf} {user}</td>
 							<td field_name="date_posted">{date_posted}</td>
-							<td field_name="status">{status}</td>
+							<td field_name="status" class="textAlignCenter">{status}</td>
+							<td field_name="type_id" class="hidden hideInPrint">{type_id}</td>
 							<td field_name="type" class="hidden">{type}</td>
-							<td field_name="provider" class="hidden">{provider_concerned}</td>
+							<td field_name="provider" class="hidden hideInPrint">{provider}</td>
+							<td field_name="provider_name" class="hidden">{provider_name}</td>
 							<td field_name="ufs_concerned" class="hidden">{ufs_concerned}</td>
 							<td field_name="commission" class="hidden">{commission_concerned}</td>
 							<td field_name="incidents_text" class="hidden hideInPrint">{details}</td>
+							<td class="hideInPrint">
+								<p class="ui-corner-all iconContainer ui-state-default floatRight" title="Delete incident">
+									<span class="btn_del_incident ui-icon ui-icon-trash"></span>
+								</p>
+								<!--  p class="ui-corner-all iconContainer ui-state-default" title="View incident">
+									<span class="btn_view_incident ui-icon ui-icon-zoomin"></span>
+								</p-->
+							</td>
 						</tr>
 						<tr class="hidden">
 							<td class="noBorder"></td>
@@ -313,26 +393,26 @@
 						</tr>
 						<tr class="hidden">
 							<td class="noBorder"></td>
-							<td colspan="11" class="hidden noBorder">{details}</td>
-							
+							<td colspan="11" class="hidden noBorder">{details}<p>&nbsp;</p></td>
 						</tr>
-						<tr><td colspan="12" class="spacingEnd"></td></tr>
 					</tbody>
-					<tfoot>
-				<tr>
-					<td colspan="3"></td>
-				</tr>
-				</tfoot>
-					</table>
-					</div>
+					
+				</table>
+			</div>
 					
 					
 			</div>	
 		</div>
 
-		<div id="editorWrap" class="ui-widget hideInPrint">
+		<div id="editorWrap" class="ui-widget hideInPrint detailElements">
 			<div class="ui-widget-content ui-corner-all">
-				<h3 class="ui-widget-header ui-corner-all">&nbsp;<span id="h3_new_incident"><?php echo $Text['create_incident'];?></span> <span id="incident_id_info">#</span><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+				<h3 class="ui-widget-header ui-corner-all">
+					&nbsp;
+					<span class="detailCreateElements"><?php echo $Text['create_incident'];?></span>
+					<span class="detailEditElements">Incident details</span> 
+					<span id="incident_id_info" class="detailEditElements">#</span>
+					<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span>
+				</h3>
 				<p id="incidentsMsg" class="user_tips"></p>
 				<form>
 					<input type="hidden" id="incident_id" name="incident_id" value=""/>
@@ -383,7 +463,7 @@
 							<td>
 								<select id="providerSelect" name="providerSelect" class="mediumSelect">
 	                    			<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>                     
-	                    			<option value="{id}"> {id} {name}</option>
+	                    			<option value="{id}"> {name}</option>
 								</select>
 							</td>
 						</tr>

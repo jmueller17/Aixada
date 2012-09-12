@@ -41,11 +41,11 @@ table.printStats td	 			{font-size:10px; font-family:Arial, Helvetica, sans-seri
 table.printStats .negativeBalance{color:red;}
 
 /** for incidents page **/
-table#tbl_incidents 				{border:1px solid #ccc; width:100%;}
-table#tbl_incidents th				{font-size:10px; font-weight:bold;  font-family:Arial, Helvetica, sans-serif; background-color:#f3f3f3;}
-table#tbl_incidents td				{font-size:10px; font-family:Arial, Helvetica, sans-serif;  text-align:left; padding:2px; border:1px solid #ccc; border-collapse:collapse;}
+table#tbl_incidents 				{border:1px solid #ccc; width:100%; border-collapse:collapse;}
+table#tbl_incidents th				{font-size:10px; font-weight:bold;  font-family:Arial, Helvetica, sans-serif; background:#f3f3f3; border:1px solid #ccc;}
+table#tbl_incidents td				{font-size:10px; font-family:Arial, Helvetica, sans-serif;  text-align:left; padding:2px; border:1px solid #ccc; }
 table#tbl_incidents td.incidentsDetails		{margin-bottom:2px; border-bottom:2px black solid; text-align:left;}
-.spacingEnd	{background-color:#d3d3d3; padding:0px;}
+.spacingEnd	{background:#d3d3d3; padding:0px;}
 table#tbl_incidents td.noBorder		{border:0px solid #fff;}
 
 /** for products and provider manage page **/
