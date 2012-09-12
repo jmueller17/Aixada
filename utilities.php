@@ -8,8 +8,6 @@ require_once('local_config/lang/' . $language . '.php');
 
 
 
-
-
 /**
  * 
  * Returns the user_id of the logged user; wraps a check around this, in order to make sure

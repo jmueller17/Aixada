@@ -30,44 +30,45 @@ end|
 
 
 /**
- * retrieves account info 
+ * retrieves account movements for a given date range
  */
-drop procedure if exists account_extract|
-create procedure account_extract(in the_account_id int, in tmp_start_date date, in num_rows int)
+drop procedure if exists get_extract_in_range|
+create procedure get_extract_in_range(in the_account_id int, in from_date date, in to_date date)
 begin
-  declare start_date datetime default if(tmp_start_date=0, date(sysdate()), date_add(tmp_start_date, interval 1 day)); 
-        /* This is to also catch movements on the same day as the start date */
-		/*  if tmp_start_date = 0 then set start_date = date_add(sysdate(), interval -3 month); end if; */
-  set @q = concat("select
-    a.id,
-    a.ts, 
-    a.quantity,
-    a.description as description,
-    a.account_id as account,
-    p.description as method,
-    c.name as currency,
-    ifnull(mem.name, 'default') as operator,
-    balance
- from aixada_account a
- left join aixada_currency c
-   on a.currency_id = c.id
- left join aixada_payment_method p
-   on a.payment_method_id = p.id
- left join aixada_user u
-   on a.operator_id = u.id
- left join aixada_member mem
-   on u.member_id = mem.id
- where 
-   a.account_id = ", the_account_id, " and
-   a.ts <= '", start_date, "'
- order by ts desc limit ", num_rows);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
+	select
+    	a.id,
+	    a.ts, 
+	    a.quantity,
+	    a.description as description,
+	    a.account_id as account,
+	    p.description as method,
+	    c.name as currency,
+	    ifnull(mem.name, 'default') as operator,
+	    a.balance
+ 	from 
+ 		aixada_account a,
+ 		aixada_payment_method p,
+ 		aixada_user u,
+ 		aixada_member mem,
+ 		aixada_currency c
+ 	where 
+ 		a.account_id = the_account_id
+ 		and a.ts >= from_date 
+ 		and a.ts <= to_date 
+ 		and a.currency_id = c.id
+ 		and a.payment_method_id = p.id
+ 		and a.operator_id = u.id
+ 		and u.member_id = mem.id
+ 	order by 
+ 		a.ts desc; 
+ 
 end|
 
 
-
+/**
+ * retrieves latest account movements 
+ * could and should be integrated into get_extract_in_range()
+ */
 drop procedure if exists latest_movements|
 create procedure latest_movements()
 begin
@@ -75,11 +76,7 @@ begin
 
   select
     a.id,
-/*
-    case a.account_id 
-      when -3 then 'Caixa' when -2 then 'Consum' when -1 then 'Manteniment' else a.account_id
-    end as account_id,
-*/  a.account_id,
+  	a.account_id,
     time(a.ts) as time, 
     a.quantity,
     p.description as method,

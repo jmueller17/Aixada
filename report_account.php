@@ -35,18 +35,16 @@
 			
 			
 			if (what == 'my_account'){
-				$('#titleRightCol50').children().last().hide();
-				$('#titleLeftCol50').children().first().hide(); 
-				$('#titleLeftCol50').children().last().show(); 
-				//.last().show();
-			} else {
-				$('#titleRightCol50').children().last().show();
-				$('#titleLeftCol50').children().first().show(); 
-				$('#titleLeftCol50').children().last().hide(); 
+				$('.myAccountElements').show();
+				$('.reportAccountElements').hide();				
+			} else { 
+				$('.myAccountElements').hide();
+				$('.reportAccountElements').show();
 			}
 
+			
 			/**
-			 * 	account listing
+			 * 	account extract
 			 */
 			 $('#list_account tbody').xml2html('init',{
 					url		: 'ctrlReport.php',
@@ -57,73 +55,33 @@
 					},
 					complete : function(rowCount){
 						$('#account_listing .loadAnim').hide();
-						if (rowCount == 0){
+						
+						if ($('#list_account tbody tr').length == 0){
 							$.showMsg({
-								msg:"<?=$Text['msg_no_movements'];?>",
-								type: 'info'});
+								msg:"Sorry, there are no movements for the selected account and date. Try to widen the consulted time period with the filter button.",
+								type: 'warning'});
+						} else {
+
+							$('#list_account tbody tr:even').addClass('rowHighlight'); 
 						}
 					}
 			});
 			
-			/*				
-			   -1          Manteniment
-			   -2           Consum
+			/**				
+			   -1          	Manteniment
+			   -2          	Consum
+			   -3 			Cashbox
 			   1..999      Uf cash sources (money that comes out of our pockets or goes in)
 			   1001..1999  regular UF accounts  (1000 + uf.id)
 			   2001..2999  regular provider account (2000 + provider.id)
 			*/				
 							
 
-			$("#datepicker").datepicker({
-				dateFormat 	: 'DD, d MM, yy',
-				showAnim	: '',
-				onSelect : function (dateText, instance){
-				 
-					var id = (what == 'my_account')? $.getUrlVar('uf_id'): $("option:selected", '#account_select').val(); 
-					
-					
-					if (id > -100) {
-						$('#list_account tbody').xml2html('reload',{
-							params	: 'oper=accountExtract&account_id='+id+'&start_date='+getSelectedDate()+'&num_rows=100',
-						});
-					}
-						
-					
-				}//end select
-			}).show();//end date pick
-			
-			//util function to retrieve and format selected date
-			function getSelectedDate(){
-				return $.datepicker.formatDate('yy-mm-dd', $("#datepicker").datepicker('getDate'));
-			}
-			
-			//retrieve today
-			$.ajax({
-				type: "GET",
-				url: "smallqueries.php?oper=getNextDate",		
-				dataType: "xml", 
-				success: function(xml){
-					date = $(xml).find('date_for_order').text();
-					$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date));
-
-					if (what == 'my_account'){
-						var uf_id = $.getUrlVar('uf_id');
-						$('#list_account tbody').xml2html('reload',{
-							params	: 'oper=accountExtract&account_id='+uf_id+'&start_date='+date+'&num_rows=100',
-						});
-					}
-					
-				} //end success
-			});  //end ajax retrieve date
-
-
-			
-
 			/**
 			 * build account SELECT
 			 */
 			$("#account_select").xml2html("init", {
-									url: 'smallqueries.php',
+									url: 'ctrlSmallQ.php',
 									params : 'oper=getAllAccounts',
 									offSet : 1,
 									loadOnInit: true
@@ -140,10 +98,53 @@
 							
 							
 							$('#list_account tbody').xml2html('reload',{
-								params	: 'oper=accountExtract&account_id='+id+'&start_date='+getSelectedDate()+'&num_rows=100',
+								params	: 'oper=accountExtract&account_id='+id+'&filter=pastYear',
 							});						
 			}); //end select change
-			
+
+
+			$("#tblAccountViewOptions")
+			.button({
+				icons: {
+		        	secondary: "ui-icon-triangle-1-s"
+				}
+		    })
+		    .menu({
+				content: $('#tblAccountOptionsItems').html(),	
+				showSpeed: 50, 
+				width:280,
+				flyOut: true, 
+				itemSelected: function(item){
+
+					var filter = $(item).attr('id');
+					var id = $("#account_select option:selected").val();
+					
+					if (id == -100 && what != 'my_account'){
+						$.showMsg({
+							msg:"There is currently no account selected! Choose an account first, then filter the results!",
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){	
+									$(this).dialog('close');
+								}
+							},
+							type: 'warning'});
+
+					} else {
+						id = (what == 'my_account')? '':id; 
+						$('#list_account tbody').xml2html('reload',{
+							params	: 'oper=accountExtract&account_id='+id+'&filter='+filter,
+						});
+					}
+					
+				}//end item selected 
+			});//end menu
+
+
+			if (what == 'my_account'){
+				$('#list_account tbody').xml2html('reload',{
+					params	: 'oper=accountExtract&filter=pastYear',
+				});
+			} 
 						
 			
 	});  //close document ready
@@ -161,15 +162,26 @@
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol50">
-		    	<h1><?php echo $Text['ti_report_account']; ?></h1>
-		    	<h1><?php echo $Text['ti_my_account_money'];?></h1>
+		    	<h1 class="reportAccountElements"><?php echo $Text['ti_report_account']; ?></h1>
+		    	<h1 class="myAccountElements"><?php echo $Text['ti_my_account_money'];?></h1>
 		    </div>
 		    <div id="titleRightCol50">
-		    	<p class="textAlignRight"><?php echo $Text['start_date']; ?> <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker"></p>
-		    	<p class="textAlignRight"> 	<select id="account_select" class="longSelect">
-                    											<option value="-100" selected="selected"><?php echo $Text['sel_account']; ?></option> 
-		    													<option value="{id}">{id} {name}</option>
-		    												</select>
+
+		    	<button	id="tblAccountViewOptions" class="hideInPrint floatRight">Filter</button>
+		    	<div id="tblAccountOptionsItems" class="hidden hideInPrint">
+					<ul>
+						<li><a href="javascript:void(null)" id="today">Today's movements</a></li>
+						<li><a href="javascript:void(null)" id="past2Month">Recent ones</a></li>
+						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
+						<li><a href="javascript:void(null)" id="all">All</a></li>
+					</ul>
+				</div>		
+				
+  				<p class="reportAccountElements textAlignCenter"> 
+  					<select id="account_select" class="longSelect">
+                    	<option value="-100" selected="selected"><?php echo $Text['sel_account']; ?></option> 
+		    			<option value="{id}">{id} {name}</option>
+		    		</select>
 		    	</p>
 		    </div>
 		</div>
@@ -184,19 +196,19 @@
 							<th><?php echo $Text['date'];?></th>
 							<th><?php echo $Text['operator']; ?></th>
 							<th><?php echo $Text['description']; ?></th>
-							<th><?php echo $Text['account']; ?></th>
-							<th><?php echo $Text['amount']; ?></th>
-							<th><?php echo $Text['balance']; ?></th>
+							<th class="textAlignRight"><?php echo $Text['account']; ?></th>
+							<th class="textAlignRight"><?php echo $Text['amount']; ?></th>
+							<th class="textAlignRight"><?php echo $Text['balance']; ?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr class="xml2html_tpl">
-							<td>{ts}</td>
-							<td>{operator}</td>
+							<td class="textAlignCenter">{ts}</td>
+							<td class="textAlignCenter">{operator}</td>
 							<td>{description}</td>
 							<td>{account}</td>
-							<td>{quantity}</td>
-							<td>{balance}</td>
+							<td>{quantity} {currency}</td>
+							<td>{balance} {currency}</td>
 						</tr>
 					</tbody>
 					<tfoot>

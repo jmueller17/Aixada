@@ -136,7 +136,7 @@
 	<ul>
 		<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
 		<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
-		<li><a href="report_account.php?what=my_account&uf_id=<? echo $_SESSION['userdata']['uf_id']; ?>"><?php echo $Text['nav_myaccount_account'];?></a></li>		
+		<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
 		<!-- li><a href="my_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li-->
 	</ul>
 </div>

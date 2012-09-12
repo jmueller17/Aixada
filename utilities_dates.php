@@ -110,6 +110,7 @@ function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 	}
 	
 
+	
 	switch ($format){
 		case 'xml':
 			if ($which == 'today'){
@@ -134,6 +135,7 @@ function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 				return rtrim($dates, ',') . ']';
 			}
 			exit;
+			 
 			
 		default: 
 	    	throw new Exception("utility_dates: \"format=" . $format . "\" not a valid output format");			
