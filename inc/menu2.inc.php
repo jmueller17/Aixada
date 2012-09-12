@@ -67,7 +67,6 @@
 <div id="navWizardItems" class="hidden">
 	<ul>
 		<li><a href="validate.php"><?php echo $Text['nav_wiz_validate'];?></a></li>
-		<li><a href="report_order.php?what=Report"><?php echo $Text['nav_report_order'];?></a></li>
 		<li><a href="report_torn.php"><?php echo $Text['nav_wiz_torn'];?></a></li>
 		<li><a href="all_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
 		<li><a href="manage_cashbox.php"><?php echo $Text['nav_wiz_cashbox'];?></a></li>
@@ -113,7 +112,6 @@
 
 <div id="navReportItems" class="hidden">
 	<ul>
-		<li><a href="report_order.php?what=Report"><?php echo $Text['nav_report_order'];?></a></li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
 		<li><a href="report_stats.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>
