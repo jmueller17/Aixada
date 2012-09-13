@@ -234,11 +234,10 @@ if (!isset($_SESSION)) {
 			/**
 			 *	incidents
 			 */
-			$('#tbl_incidents tbody').xml2html('init',{
+			$('#newsWrap').xml2html('init',{
 					url: 'ctrlIncidents.php',
-					params : 'oper=getIncidentsListing&filter=pastWeek',
+					params : 'oper=getIncidentsListing&filter=pastWeek&type=3',
 					loadOnInit: true,
-					//paginationNav : '#tbl_incidents tfoot td'
 			});
 
 
@@ -256,9 +255,7 @@ if (!isset($_SESSION)) {
 						}
 			});
 
-			$('a.toggleIncidentDetails').live('click',function(){
-				$(this).closest('tr').next().toggle();
-			});
+			
 
 
 			/**
@@ -290,39 +287,23 @@ if (!isset($_SESSION)) {
 	</div>
 
 	<div id="stagewrap">
-	
-		<div id="newsWrap" class="ui-widget">
-			<div class="ui-widget-content ui-corner-all">
-			<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['ti_login_news'];?></h2>
-			<table id="tbl_incidents">
-				<thead>
-					<tr>
-						<th><?php echo $Text['subject'];?></th>
-						<th><?php echo $Text['created_by'];?></th>
-						<th><?php echo $Text['created'];?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><a href="javascript:void(null)" class="toggleIncidentDetails">{subject}</a></td>
-						<td>{uf}-{user}</td>
-						<td>{date_posted}</td>
-					</tr>
-					<tr class="hidden">
-							<td colspan="3" class="noBorder incidentsDetails">{details}</td>
-							
-					</tr>
-				</tbody>
-				<tfoot>
-				<tr>
-					<td colspan="2"></td>
-				</tr>
-				</tfoot>
-			</table>
+		
+		<div class="oneQuarterCol floatLeft"></div>
+		
+		<div id="middleCol" class="floatLeft">
+			<h1>The Good News</h1>
+			<div id="newsWrap">
+				<div>
+					<h2>{subject}</h2>
+					<p>{details}</p>
+					<p class="dim40">Posted by: UF{uf_id} {user_name} on {ts} </p>
+					<p>&nbsp;</p>
+				</div>
 			</div>
 		</div>
+	
 		
-		<div id="logonWrap" class="ui-widget">
+		<div id="logonWrap" class="ui-widget oneQuarterCol">
 			<div class="ui-widget-content ui-corner-all">
 			<h4 class="ui-widget-header ui-corner-all"><?php echo $Text['login'];?></h4>
 			<p id="logonMsg" class="user_tips  minPadding"></p>
@@ -350,6 +331,8 @@ if (!isset($_SESSION)) {
 			</form>
 		</div>
 	</div><!-- end logonwrap -->
+	
+	
 	</div><!-- end stagewrap -->
 	
 	<div id="registerWrap" class="ui-widget ui-corner-all">

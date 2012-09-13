@@ -28,14 +28,6 @@ try{
 	    	printXML(query_XML_noparam('products_below_min_stock'));
 	    	exit;
 	
-	  	case 'getNegativeAccounts':
-	  		printXML(get_negative_accounts());
-	    	exit;
-	    
-	  	case 'getIncomeSpendingBalance': 
-	    	printXML(stored_query_XML_fields('income_spending_balance', get_param('date',0)));
-	    	exit;
-	
 	  	case 'GetUFsForValidation':
 	    	printXML(stored_query_XML('get_ufs_for_validation', 'ufs', 'name', get_param('date',0)));
 	    	exit;
@@ -43,10 +35,6 @@ try{
 	    case 'getShopCart':
   			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_param('uf_id'),get_param('cart_id',0),get_param('validated',0))); 
 			exit; 
-	    	
-		case 'DepositForUF':
-	   		return do_stored_query('deposit_for_uf', get_param('uf_id'), get_param('quantity'), get_param('description',''), get_session_user_id());
-	    	exit;
 	    
 	  	case 'commit':
        		$vm = new validation_cart_manager(get_session_user_id(), get_param('uf_id'), get_param('date')); 

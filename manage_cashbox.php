@@ -211,7 +211,7 @@
 						resetDeposit();
 								
 						$('#list_account tbody').xml2html('reload',{
-							params: 'oper=latest_movements'
+							params: 'oper=latestMovements'
 						});
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -250,7 +250,7 @@
 							resetWithdrawal();
 									
 							$('#list_account tbody').xml2html('reload',{
-								params	: 'oper=latest_movements'
+								params	: 'oper=latestMovements'
 							});
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){

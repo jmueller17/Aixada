@@ -73,37 +73,34 @@ end|
  *  retrieves listing of incidents
  */
 drop procedure if exists get_incidents_listing|
-create procedure get_incidents_listing(in from_date date, in to_date date, in the_limit int)
+create procedure get_incidents_listing(in from_date date, in to_date date, in the_type int)
 begin
 	
 	
 	select 
-	    i.id,
-	    t.id as type,
-	    t.description as type_description,
-	    i.subject,
-	    i.details,
-	    i.priority,
-	    i.ufs_concerned,
-	    i.commission_concerned,
-	    p.id as provider,
-	    p.name as provider_name,
-	    m.name as user,
-	    m.uf_id as uf,
-	    i.ts as date_posted,
-	    i.status
+		i.*, 
+	    mem.name as user_name,
+	    mem.uf_id as uf_id,		
+	    it.id as distribution_level,
+	    it.description as type_description,
+	    pv.id as provider_id,
+	    pv.name as provider_name
   	from 
-  		aixada_incident i, 
-  		aixada_incident_type t,
+  		aixada_incident_type it,
   		aixada_user u,
-  		aixada_member m,
-  		aixada_provider p
+  		aixada_member mem, 
+ 		aixada_incident i 
+  	left join 
+  		aixada_provider pv
+	on 
+		i.provider_concerned = pv.id
   	where
 	  	i.ts >= from_date and i.ts <= to_date
-	  	and i.incident_type_id = t.id
-	 	and i.operator_id = u.id
-	    and	u.member_id = m.id
-	   	and i.provider_concerned = p.id
+	  	and i.operator_id = u.id
+	    and	u.member_id = mem.id
+	    and i.incident_type_id >= the_type
+	    and it.id = i.incident_type_id
+	    
   order by 
   	i.ts desc;
 	

@@ -47,7 +47,7 @@
 			 * 	account extract
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url		: 'ctrlReport.php',
+					url		: 'ctrlAccount.php',
 					resultsPerPage : 20,
 					paginationNav : '#list_account tfoot td',
 					beforeLoad : function(){
@@ -81,8 +81,8 @@
 			 * build account SELECT
 			 */
 			$("#account_select").xml2html("init", {
-									url: 'ctrlSmallQ.php',
-									params : 'oper=getAllAccounts',
+									url: 'ctrlAccount.php',
+									params : 'oper=getActiveAccounts',
 									offSet : 1,
 									loadOnInit: true
 						}).change(function(){

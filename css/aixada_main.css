@@ -33,6 +33,7 @@ option 				{padding:1px 5px;}
 .grayed				{color:#E1E1E1;}
 
 .oneThirdCol		{width:30%; margin:2px 3px;}
+.oneQuarterCol		{width:20%; margin:2px 3px;}
 .splitCol			{width:48%; margin:4px 4px;}
 .minSidesMargin		{margin:0px 5px;}
 .loadAnim			{padding:3px 2px;}

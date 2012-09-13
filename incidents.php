@@ -54,7 +54,7 @@
 		function resetDetails(){
 			$('#subject, #incidents_text, #ufs_concerned').val('');
 			$('#statusSelect option:first').attr('selected',true);
-			$('#typeSelect option:last').attr('selected',true);
+			$('#typeSelect option:first').attr('selected',true);
 			$('#prioritySelect option:first').attr('selected',true);
 			$('#providerSelect  option:first').attr('selected',true);
 			$('#commissionSelect  option:first').attr('selected',true);
@@ -285,15 +285,15 @@
 		});
 
 		//build type select
-		$("#typeSelect")
+		/*$("#typeSelect")
 			.xml2html("init", {
 				url: 'ctrlIncidents.php',
 				params:'oper=getIncidentTypes',
-				loadOnInit:true,
+				loadOnInit:false,
 				complete: function(){
 					$("#typeSelect option:last").attr("selected",true);
 				}
-		});
+		});*/
 
 		//build commission select
 		$("#commissionSelect")
@@ -333,7 +333,7 @@
 		    	<button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint">Filter incidents</button>
 		    	<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
 					<ul>
-						<li><a href="javascript:void(null)" id="incidentsForToday">Today's</a></li>
+						<li><a href="javascript:void(null)" id="today">Today's</a></li>
 						<li><a href="javascript:void(null)" id="past2Month">Recent ones</a></li>
 						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
 					</ul>
@@ -350,10 +350,10 @@
 					<thead>
 						<tr>
 							<th class="mwidth-30"><?php echo $Text['id'];?></th>
-							<th class="width-280 hideInPrint"><?php echo $Text['subject'];?></th>
+							<th hideInPrint"><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?></th>
-							<th class="mwidth-150"><?php echo $Text['created_by'];?></th>
-							<th class="mwidth-150"><?php echo $Text['created'];?></th>
+							<th><?php echo $Text['created_by'];?></th>
+							<th><?php echo $Text['created'];?></th>
 							<th class="textAlignCenter"><?php echo $Text['status'];?></th>
 							<th class="hidden"><?php echo $Text['incident_type'];?></th>
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>
@@ -367,13 +367,13 @@
 						<tr class="clickable" incidentId="{id}">
 							<td field_name="incident_id">{id}</td>
 							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
-							<td field_name="priority">{priority}</td>
-							<td field_name="operator">{uf} {user}</td>
-							<td field_name="date_posted">{date_posted}</td>
+							<td field_name="priority" class="textAlignCenter">{priority}</td>
+							<td field_name="operator" class="textAlignCenter">{uf_id} {user_name}</td>
+							<td field_name="date_posted" class="textAlignCenter">{ts}</td>
 							<td field_name="status" class="textAlignCenter">{status}</td>
-							<td field_name="type_id" class="hidden hideInPrint">{type_id}</td>
-							<td field_name="type" class="hidden">{type}</td>
-							<td field_name="provider" class="hidden hideInPrint">{provider}</td>
+							<td field_name="type" class="hidden hideInPrint">{distribution_level}</td>
+							<td field_name="type_description" class="hidden">{type_description}</td>
+							<td field_name="provider" class="hidden hideInPrint">{provider_concerned}</td>
 							<td field_name="provider_name" class="hidden">{provider_name}</td>
 							<td field_name="ufs_concerned" class="hidden">{ufs_concerned}</td>
 							<td field_name="commission" class="hidden">{commission_concerned}</td>
@@ -439,10 +439,13 @@
 						<tr>
 							
 							<td></td>
-							<td><label for="typeSelect"><?php echo $Text['incident_type'];?></label></td>
+							<td><label for="typeSelect">Distribution level:</label></td>
 							<td>
 								<select id="typeSelect" name="typeSelect" class="mediumSelect">
-									<option value="{id}">{description}</option>
+									<option value="1">Internal (private)</option>
+									<option value="2">Internal + email (private)</option>
+									<option value="3">Internal + post to portal (public)</option>
+									<option value="4">Internal + email + post (public)</option>
 								</select></td>
 						</tr>
 						<tr>

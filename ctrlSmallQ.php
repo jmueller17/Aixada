@@ -4,7 +4,7 @@
 require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
-require_once("utilities_report.php");
+
 
 if (!isset($_SESSION)) {
     session_start();
@@ -23,11 +23,6 @@ try{
 	        
 	    case 'getFieldOptions':
 	        echo get_field_options_live($_REQUEST['table'], $_REQUEST['field1'], $_REQUEST['field2']);
-	        exit;
-	
-	
-	    case 'getAllAccounts':
-	        printXML(get_all_accounts());
 	        exit;
 	
 	        

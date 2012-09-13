@@ -37,7 +37,7 @@
 
   			 //balance
 			 $('#dailyStats').xml2html('init',{
-					url		: 'ctrlValidate.php',
+					url		: 'ctrlAccount.php',
 					params	: 'oper=getIncomeSpendingBalance&date=undefined',
 					loadOnInit: true,
                     autoReload: 100200, /*10000*/
@@ -45,7 +45,7 @@
 				
   			 //negative ufs
 			 $('#negative_ufs tbody').xml2html('init',{
-					url		: 'ctrlValidate.php',
+					url		: 'ctrlAccount.php',
 					params	: 'oper=getNegativeAccounts',
 					loadOnInit: true,
 					rowName : 'account',

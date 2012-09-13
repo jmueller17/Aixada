@@ -100,7 +100,7 @@ begin
   select 
    the_account_id,
     - total_price,
-    concat('venda uf ', (the_account_id-1000)),
+    concat('validate_cart_', the_cart_id),
     the_op_id,
     current_balance - total_price;
 

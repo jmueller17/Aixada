@@ -306,7 +306,49 @@ alter table aixada_shop_item
 	
 
 	
+/**
+ * incidents. since many incidents were concnerned with products and stock
+ * we can change their functionlity: incident type comes to specify distribution level 
+ * from private (internal) to public (portal, email, twitter?). 
+ * Set all incidents to internal(private) 
+ */
+update 
+	aixada_incident_type
+set
+	description = "internal",
+	definition = "incidents are restricted to loggon in users."
+where 
+	id=1; 
+	
+update 
+	aixada_incident_type
+set
+	description = "internal + email",
+	definition = "like 1 + incidents are send out as email if possible"
+where 
+	id=2; 
 
+update 
+	aixada_incident_type
+set
+	description = "internal + portal",
+	definition = "like 1 + incidents are posted on the portal"
+where 
+	id=3;
+	
+update 
+	aixada_incident_type
+set
+	description = "internal + email + portal",
+	definition = "incidents are posted internally, send out as email and posted on the portal"
+where 
+	id=4; 	
+	
+update 
+	aixada_incident
+set
+	incident_type_id = 1;
+	
 	
 	
 /**
@@ -333,10 +375,6 @@ alter table
 alter table 
 	aixada_user 
 	change color_scheme_id gui_theme varchar(50) default null;
-
-	
-
-	
 
 
 

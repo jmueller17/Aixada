@@ -44,7 +44,7 @@
 				$('#uf_cart_select').val(-10);
 
 				 $('#dailyStats').xml2html('reload',{
-						url		: 'ctrlValidate.php',
+						url		: 'ctrlAccount.php',
 						params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate()
 				 });				
 			}
@@ -217,7 +217,7 @@
 				
 					$.ajax({
 						type: "POST",
-						url: "ctrlValidate.php?oper=DepositForUF&uf_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
+						url: "ctrlAccount.php?oper=DepositForUF&uf_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
 						beforeSend : function (){
 							$('#deposit .loadAnim').show();
 						},	
@@ -248,15 +248,15 @@
 			 * 	MONITOR Money, daily stats, negative ufs, stock
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url		: 'ctrlReport.php',
-					params	: 'oper=latest_movements',
+					url		: 'ctrlAccount.php',
+					params	: 'oper=latestMovements',
 					loadOnInit: true
 			});
 
 
   			 //balance
 			 $('#dailyStats').xml2html('init',{
-					url		: 'ctrlValidate.php',
+					url		: 'ctrlAccount.php',
 					params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate(),
                     autoReload: 100200, 
                     beforeLoad : function(){
@@ -269,7 +269,7 @@
 				
   			 //negative ufs
 			 $('#negative_ufs tbody').xml2html('init',{
-					url		: 'ctrlValidate.php',
+					url		: 'ctrlAccount.php',
 					params	: 'oper=getNegativeAccounts',
 					loadOnInit: true,
 					rowName : 'account',
@@ -344,8 +344,8 @@
 			
 			 
 			$('#uf_account_select').xml2html('init',{
-						url 	: 'ctrlSmallQ.php',
-						params 	: 'oper=getAllAccounts', 
+						url 	: 'ctrlAccount.php',
+						params 	: 'oper=getActiveAccounts', 
 						offSet	: 1, 
 						loadOnInit : true
 				//event listener to load items for this uf to validate
