@@ -42,23 +42,52 @@ option 				{padding:1px 5px;}
 .minPadding			{padding:3px;}
 .padding5x10		{padding:5px 10px;}
 .padding10x5		{padding:10px 5px;}
+.padding5x5			{padding:5px 5px;}
+.padding15x10		{padding:15px 10px;}
 .dim80				{opacity:0.8; }
 .dim60				{opacity:0.6; }
 .dim40				{opacity:0.4; }
 .dim20				{opacity:0.2; }
 .clickable			{cursor:pointer;}
 .rowHighlight		{background:#EBEBEB;}
+.centerDiv			{margin:0px auto;}		
+
+.ui-widget-content h2 {padding-left:15px;}
+.member-info		{margin-bottom:20px; margin-left:25px; margin-right:25px;}
+.ui-state-success	{background-color:#d2f3d2; border:1px solid #7eca7e;}
+
+/** different table styles **/
+table.tblListingDefault		{width:100%;  border-collapse:collapse;}
+table.tblListingDefault th	{background:#f3f3f3; padding:4px 1px;}
+table.tblListingDefault td	{padding:4px 0px; text-align:center;}
+
+table.tblListingGrid		{width:100%;}
+table.tblListingGrid th		{background:#f3f3f3; padding:4px 1px;}
+table.tblListingGrid td		{padding:4px 1px; text-align:center;}
+
+table.tblListingBorder		{width:100%; border-collapse:collapse;}
+table.tblListingBorder th	{background:#f3f3f3; padding:4px 1px; border:1px solid black;}
+table.tblListingBorder td	{padding:4px 0px; text-align:center; border:1px solid black;}
+
+table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padding-top:4px; vertical-align:middle;}
+table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
+table.tblForms 	td label 	{float:right;}
 
 
 
+/** member uf user **/
 
 
 
+/** common layout **/
 div#wrap			{width:90%; margin: 0 auto; background-color:#fff;}
+div#stagewrap		{width:100%; background-color:#fff;}
 div#topMenu			{}
 div#menuBgBar		{padding:5px; margin-bottom:10px;}
 a#navMyAccount		{float:right;}
 div#headwrap		{width:100%; background-color:#fff;}
+div#logonStatus		{text-align:right; padding:6px 5px; color:#999; font-size:0.8em;}
+div#wrapUFSelect	{margin-top:140px;}
 
 div#titlewrap		{width:100%; overflow:hidden; margin-bottom:20px;}
 div#titleLeftCol	{width:70%; float:left;}
@@ -69,9 +98,6 @@ div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
 div#ViewChoice		{float:right; margin-top:10px;}
 
 
-div#logonStatus		{text-align:right; padding:6px 5px; color:#999; font-size:0.8em;}
-div#stagewrap		{width:100%; background-color:#fff;}
-div#wrapUFSelect	{margin-top:140px;}
 
 div#leftCol			{width:60%; float:left;}
 div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}
@@ -84,10 +110,15 @@ div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}
 div#logonWrap 			{min-width:280px; float:right;}
 div#registerWrap		{width:550px; margin:50px auto;}
 div#pwdWrap				{width:350px; margin:100px auto;}
-div#newsWrap			{float:left; margin-left:0px; max-width:800px;}
+div#newsWrap			{float:left; max-width:800px;}
 p#logonHeader			{width:100%; height:150px; margin:10px auto; background-color:#fff; background-image:url('../img/aixada_header1600.150.png');}
 .success_msg			{margin:20px; padding:15px; background-color:#72b42d; border:1px solid #72b42d; text-align:center; border-radius:10px;}
 sup						{color:red; font-size:0.6em; padding-top:3px;}
+
+div.portalPost			{border-bottom:3px solid #e4e4f1;}
+div.portalPost .subject {color:#365da0; margin-top:28px;}
+div.portalPost .info	{text-transform:uppercase; margin-bottom:10px; color:#9999a2; font-size:0.8em;} 
+div.portalPost .msg		{text-align:justify; margin-bottom:20px;} 
 
 
 /** for manage dates 
@@ -244,9 +275,7 @@ input 					{height:1.6em;}
 .datePickerInput		{font-size:.85em; width:17em;}
 .multipleSelect			{height:280px;}
 
-form table td 			{padding:2px 5px;}
-form table td label		{float:right;}
-form table td input 	{line-height:1.2em; font-size:.8em;}
+
 
 .product_list_wrap					{margin-top:10px;}
 

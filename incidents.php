@@ -279,7 +279,7 @@
 		$("#ufs_concerned")
 			.xml2html("init", {
 				url: 'ctrlUserAndUf.php',
-				params:'oper=getActiveUFs',
+				params:'oper=getUfListing&all=1',
 				offSet:1,
 				loadOnInit:true
 		});

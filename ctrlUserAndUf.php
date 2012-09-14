@@ -6,7 +6,7 @@
 require_once("local_config/config.php");
 require_once("inc/database.php");
 require_once("utilities.php");
-
+require_once("utilities_useruf.php");
 
 
 if (!isset($_SESSION)) {
@@ -14,62 +14,52 @@ if (!isset($_SESSION)) {
  }
 
 
-function extract_data($what) {
-    return (isset($_REQUEST[$what]) ? $_REQUEST[$what] : '');
-}
-
-
 try{
-    $a = extract_data('active');
-    $active = ($a == 'true' or $a == '1' ? 1 : 0);
-    $adult = (isset($_REQUEST['adult']) ? true : false);
-    $address = extract_data('address');
-    $city = extract_data('city');
-    $color_scheme = extract_data('color_scheme');
-    $email = extract_data('email');
-    $id = extract_data('id');
-    $language = extract_data('language');
-    $login = extract_data('login');
-    $member_id = extract_data('member_id');
-    $mentor_uf = extract_data('mentor_uf');
-    $name   = extract_data('name');
-    $notes   = extract_data('notes');
-    $participant = (isset($_REQUEST['participant']) ? true : false);
-    $password = extract_data('password');
-    $old_password = extract_data('old_password');
-    $new_password = extract_data('password');
-    $phone1 = extract_data('phone1');
-    $phone2 = extract_data('phone2');
-    $roles_select = extract_data('rolesSelect');
-    $uf_id = extract_data('uf_id');
-    $urls = extract_data('urls');
-    $zip = extract_data('zip');
-
+   
 
   switch ($_REQUEST['oper']) {
   	    
-  		case 'getAllUFs':
-        	printXML(stored_query_XML_fields('get_all_ufs'));
+  		
+  		case 'getUfListing':
+        	printXML(stored_query_XML_fields('get_uf_listing', get_param('all',0)));
         	exit;
-
-    	case 'getActiveUFs':
-        	printXML(stored_query_XML('get_active_ufs', 'ufs', 'name'));
-        	exit;
-
-	        
-    case 'getMembersOfUF':
-        printXML(stored_query_XML_fields('get_members_of_uf', $_REQUEST['uf_id']));
-        exit;
-
-    case 'getMemberInfo':
-        printXML(stored_query_XML_fields('get_member_info', get_param('member_id') ));
-        exit;
         	
-        
-        
-   case 'getUsersWithoutUF':
-        printXML(stored_query_XML_fields('users_without_uf'));
-        exit;
+         case 'createUF':
+		   printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0)));
+		   exit;
+
+        case 'getUsersWithoutUF':
+        	printXML(stored_query_XML_fields('users_without_uf'));
+        	exit;
+        	
+        case 'checkFormField':
+        	echo validate_field(get_param('table'), get_param('field'), get_param('value'));
+        	exit;
+
+        //listing of all/only active members. 	
+        case 'getMemberListing':
+        	printXML(stored_query_XML_fields('get_member_listing', get_param('all',0)));
+        	exit;
+		        	
+		//detailed info about member, if member_id is given, otherwise for all members of uf. 
+	    case 'getMemberInfo':
+	        printXML(stored_query_XML_fields('get_member_info', get_param('member_id',0), get_param('uf_id',0) ));
+	        exit;
+	        
+	    case 'updateMember':
+	    	echo update_member(get_param('member_id'));
+	    	exit;
+
+	    case 'mngUser':
+	    	echo manage_user(get_param('user_id',0));
+	    	exit;
+        	
+       
+	    	
+	    	
+	    	
+	    	
+   
 
     case 'getUsersWithoutMember':
         printXML(stored_query_XML_fields('users_without_member'));
@@ -86,14 +76,7 @@ try{
         exit;
         	
         	
-  case 'createUF':
-      $rs = do_stored_query('find_uf_by_name', $name);
-      if ($rs->fetch_assoc()) {
-          throw new Exception("An UF named {$name} already exists");
-      }
-      DBWrap::get_instance()->free_next_results();
-      printXML(stored_query_XML_fields('create_uf', $name, $active, $mentor_uf));
-      exit;
+  
 
   case 'updateUF':
       printXML(stored_query_XML_fields('update_uf', $uf_id, $name, $active, $mentor_uf));
@@ -139,7 +122,7 @@ try{
       exit;
 
   default:
-    throw new Exception("ctrlUser: \"oper=" . $_REQUEST['oper'] . "\" not valid in query");
+    throw new Exception("ctrlUserAndUf: oper=" . $_REQUEST['oper'] . " not valid in query");
   }
 } 
 

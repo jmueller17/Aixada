@@ -134,17 +134,6 @@ begin
 end|
 
 
-drop procedure if exists get_active_ufs|
-create procedure get_active_ufs()
-begin
-  select u.id, u.name
-  from aixada_uf u
-  where active = 1
-  order by u.id;
-end|
-
-
-
 
 
 drop procedure if exists income_spending_balance|

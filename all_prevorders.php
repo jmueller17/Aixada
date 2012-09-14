@@ -67,8 +67,8 @@
 			//uf select
 			$('#uf_select').xml2html('init',{
 				offSet	: 1,
-				url 	: 'smallqueries.php',
-				params 	: 'oper=getActiveUFs',
+				url 	: 'ctrlUserAndUf.php',
+				params 	: 'oper=getUfListing',
 				loadOnInit:true
 			//event listener to load items for this uf to validate
 			}).change(function(){

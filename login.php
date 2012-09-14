@@ -291,13 +291,11 @@ if (!isset($_SESSION)) {
 		<div class="oneQuarterCol floatLeft"></div>
 		
 		<div id="middleCol" class="floatLeft">
-			<h1>The Good News</h1>
 			<div id="newsWrap">
-				<div>
-					<h2>{subject}</h2>
-					<p>{details}</p>
-					<p class="dim40">Posted by: UF{uf_id} {user_name} on {ts} </p>
-					<p>&nbsp;</p>
+				<div class="portalPost">
+					<h2 class="subject">{subject}</h2>
+					<p class="info">By {user_name} (UF{uf_id}),  on {ts} </p>
+					<p class="msg">{details}</p>
 				</div>
 			</div>
 		</div>

@@ -140,7 +140,11 @@ $(function(){
 			} else if (settings.type == 'confirm')	{
 				settings.title = (settings.title == '')? 'Confirm':settings.title;
 					str = '<div class="ui-state-highlight ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
-				
+			
+			} else if (settings.type == 'success'){
+				settings.title = (settings.title == '')? 'Success':settings.title;
+				str = '<div class="ui-state-success ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-check" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';				
+					
 			} else {
 				str = '<div class="ui-corner-all" style="padding:0.7em;">'+settings.msg+'</div>';
 				

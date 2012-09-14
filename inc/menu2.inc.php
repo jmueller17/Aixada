@@ -77,7 +77,7 @@
 </div>
 <div id="navManageItems" class="hidden">
 	<ul>
-		<li><a href="manage_ufs.php"><?php echo $Text['nav_mng_uf'];?></a></li>
+		<li><a href="manage_ufmember.php"><?php echo $Text['nav_mng_uf'];?></a></li>
 		<li><a href="manage_user.php"><?php echo $Text['nav_mng_member'];?></a>
 			<ul>
 			<li>

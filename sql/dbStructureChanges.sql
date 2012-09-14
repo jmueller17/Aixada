@@ -367,7 +367,8 @@ alter table
  */		
 alter table 
 	aixada_member 	
-	add nif varchar(15) default null after address;
+	add nif varchar(15) default null after address,
+	add custom_member_ref varchar(100) default null after id;
 
 /**
  * USER

@@ -36,6 +36,7 @@ create table aixada_uf (
  */
 create table aixada_member (
   id 	       		int				not null auto_increment,
+  custom_member_ref	varchar(100)	default null,
   uf_id      		int,
   name	     		varchar(255) 	not null,
   address			varchar(255) 	not null,

@@ -84,7 +84,7 @@
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
 					type: "POST",
-					url: 'ctrlUserAndUf.php?oper=getActiveUFs',
+					url: 'ctrlUserAndUf.php?oper=getUfListing&all=0',
 					dataType:"xml",
 					success: function(xml){
 						var theadStr = ''; 
@@ -592,11 +592,11 @@
 			
 			$('#tbl_orderOverview tbody tr')
 			.live('mouseover', function(){
-				$(this).removeClass('highlight').addClass('ui-state-highlight');
+				$(this).removeClass('highlight').addClass('ui-state-hover');
 				
 			})
 			.live('mouseout',function(){
-				$(this).removeClass('ui-state-highlight');
+				$(this).removeClass('ui-state-hover');
 				
 			});
 			

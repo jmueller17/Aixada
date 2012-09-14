@@ -1,5 +1,6 @@
 delimiter |
 
+
 /**
  * delivers detailed info about an order: provider stuff, resposible uf stuff, etc. 
  * usually called from manage order detail view. 
@@ -493,19 +494,44 @@ begin
 		id = the_order_id;
 	
 	
-	
 	/**remove tmp revison items**/
 	delete from 
 		aixada_order_to_shop
 	where 
 		order_id=the_order_id; 
-		
-	 
-		
-	/** todo: if we re-distribute an already distributed order (e.g. change its shop date), the items have to be deleted from the cart **/
-	
+			
 end |
 
+
+/**
+ * returns the order_item info and shop_item info reflecting eventual modifications
+ * (products that did not arrive, quantities that changed). 
+ */
+drop procedure if exists diff_order_shop|
+create procedure diff_order_shop (in the_order_id int, in the_uf_id int)
+begin
+	
+	select 
+		p.id as product_id,
+		p.name, 
+		oi.order_id, 
+		oi.quantity,
+		si.quantity as shop_quantity, 
+		oi.unit_price_stamp as unit_price
+	from 
+		aixada_product p,
+		aixada_order_item oi
+	left join 
+		aixada_shop_item si
+	on 
+		oi.id = si.order_item_id
+	where 
+		oi.order_id = the_order_id
+		and oi.uf_id = the_uf_id
+		and p.id = oi.product_id
+	group by
+		p.id;
+end |
 
 
 /**
@@ -541,9 +567,6 @@ begin
 	
 	end if; 
 end |
-
-
-
 
 
 
@@ -691,12 +714,16 @@ begin
 end |
 
 
-
+/**
+ * resets the revision process for an order. This means that its revision_status is set to 1 (send off)
+ * and that already distributed items are delted from shop carts (only if the cart is not yet validated). 
+ */
 drop procedure if exists reset_order_revision|
 create procedure reset_order_revision (in the_order_id int)
 begin
 	/** TODO check that only non-validated items can be deleted **/
-	/** delete the shop_items of this order that have been distributed from people's carts **/
+
+	/** delete distributed shop items of this cart **/
 	delete from
 		aixada_shop_item
 	where
@@ -708,7 +735,7 @@ begin
 			where 
 				order_id = the_order_id);
 	
-	/**reset the shop_date and revision status for this order**/
+	/** reset the shop_date and revision status for this order**/
 	update 
 		aixada_order
 	set 
@@ -718,15 +745,11 @@ begin
 		id = the_order_id;
 	
 	
-	
 	/**make sure that tmp revison items have been deleted**/
 	delete from 
 		aixada_order_to_shop
 	where 
 		order_id=the_order_id; 
-	
-
-	
 end |
 
 

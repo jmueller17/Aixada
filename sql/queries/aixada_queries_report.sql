@@ -2,34 +2,9 @@ delimiter |
 
 
 /**
- * returns the order_item info and shop_item info reflecting eventual modifications
- * (products that did not arrive, quantities that changed). 
+ *  most queries here are used by lib/report_manager.php for generating the order reports 
+ *  for download. 
  */
-drop procedure if exists diff_order_shop|
-create procedure diff_order_shop (in the_order_id int, in the_uf_id int)
-begin
-	
-	select 
-		p.id as product_id,
-		p.name, 
-		oi.order_id, 
-		oi.quantity,
-		si.quantity as shop_quantity, 
-		oi.unit_price_stamp as unit_price
-	from 
-		aixada_product p,
-		aixada_order_item oi
-	left join 
-		aixada_shop_item si
-	on 
-		oi.id = si.order_item_id
-	where 
-		oi.order_id = the_order_id
-		and oi.uf_id = the_uf_id
-		and p.id = oi.product_id
-	group by
-		p.id;
-end |
 
 
 /**
