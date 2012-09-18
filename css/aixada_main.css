@@ -50,7 +50,8 @@ option 				{padding:1px 5px;}
 .dim20				{opacity:0.2; }
 .clickable			{cursor:pointer;}
 .rowHighlight		{background:#EBEBEB;}
-.centerDiv			{margin:0px auto;}		
+.centerDiv			{margin:0px auto;}
+.adaptHeight		{overflow:auto;}
 
 .ui-widget-content h2 {padding-left:15px;}
 .member-info		{margin-bottom:20px; margin-left:25px; margin-right:25px;}

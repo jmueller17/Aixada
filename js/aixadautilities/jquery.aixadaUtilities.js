@@ -3,6 +3,47 @@ $(function(){
 	
 	
 	$.extend({
+		
+		checkFormLength : function (input, min, max, callbackfn) {
+			if ( input.val().length > max || input.val().length < min ) {
+				input.addClass( "ui-state-error" );
+				//$.updateTips(where,'error', msg);
+				//callbackfn.call(this, false);
+				return false; 
+			} else {
+				//callbackfn.call(this, true);
+				return true; 
+			}
+		},
+		
+		checkRegexp : function ( o, regexp, n ) {
+			if ( !( regexp.test( o.val() ) ) ) {
+				o.addClass( "ui-state-error" );
+				//$.updateTips($('#registerMsg'), 'error', n );
+				return false;
+			} else {
+				return true;
+			}
+		},
+		
+		checkPassword: function (pwd, retyped){
+			
+			if (pwd.val() != retyped.val()){
+				pwd.addClass( "ui-state-error" );
+				//$.updateTips('#registerMsg','error', "<?php echo $Text['msg_err_pwdctrl']; ?>");
+				return false; 
+			} else {
+				return true; 
+			}
+		}
+
+		
+		
+	}); //end extend form stuff
+	
+	
+	
+	$.extend({
 		getAixadaDates : function(oper, callbackfn){
 			$.ajax({
 				type: "GET",

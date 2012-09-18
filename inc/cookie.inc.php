@@ -44,6 +44,7 @@ class Cookie {
   private $language_names;
   private $current_language_key;
   private $can_checkout = false;
+  private $theme; 
 
   // Cookie data
   private $created;
@@ -80,7 +81,8 @@ class Cookie {
                               $language_keys=false, 
                               $language_names=false, 
                               $current_language_key=false, 
-                              $can_checkout=false) {
+                              $can_checkout=false,
+                              $theme=false) {
       //    global $firephp;
     
   	$this->td = mcrypt_module_open(self::$cypher, '', self::$mode, '');
@@ -99,6 +101,7 @@ class Cookie {
         $this->language_names = $language_names;
         $this->current_language_key = $current_language_key;
         $this->can_checkout = $can_checkout;
+        $this->theme = $theme;
         return;
     } else {
         //    $firephp->log($_COOKIE, 'cookie');
@@ -127,7 +130,8 @@ class Cookie {
                     'language_keys' => $this->language_keys,
                     'language_names' => $this->language_names,
                     'language' => $this->current_language_key,
-                    'can_checkout' => $this->can_checkout);
+                    'can_checkout' => $this->can_checkout,
+    				'theme' => $this->theme);
     $_SESSION['userdata'] = $userdata;
     setcookie(self::$cookiename, $cookie);
   }
@@ -162,7 +166,8 @@ class Cookie {
                         'language_keys'     => $this->language_keys,
                         'language_names'     => $this->language_names,
                         'language' => $this->current_language_key,
-                        'can_checkout' => $this->can_checkout);
+                        'can_checkout' => $this->can_checkout,
+        				'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
     }
 //     global $firephp;
@@ -303,7 +308,7 @@ class Cookie {
   private function _package() {
     $parts = array(self::$myversion, 
 		   time(), 
-                   $this->logged_in,
+           $this->logged_in,
 		   $this->user_id, 
 		   $this->login,
 		   $this->uf_id, 
@@ -313,8 +318,9 @@ class Cookie {
 		   $this->current_role,
 		   implode(self::$array_glue, $this->language_keys),
 		   implode(self::$array_glue, $this->language_names),
-                   $this->current_language_key,
-                   $this->can_checkout);
+           $this->current_language_key,
+           $this->can_checkout,
+           $this->theme);
     $cookie = implode(self::$glue, $parts);
     //return $this->_encrypt($cookie);
     return $cookie;
@@ -323,20 +329,22 @@ class Cookie {
   private function _unpackage($cookie) {
     //$buffer = $this->_decrypt($cookie);
      $buffer = $cookie;
-    list($this->version, 
-	 $this->created, 
-         $this->logged_in,
-	 $this->user_id, 
-	 $this->login,
-	 $this->uf_id, 
-	 $this->member_id, 
-	 $this->provider_id, 
-	 $role_array,
-	 $this->current_role,
-         $lang_key_array,
-         $lang_name_array,
-         $this->current_language_key,
-         $this->can_checkout) = explode(self::$glue, $buffer);
+     list($this->version, 
+	 	$this->created, 
+        $this->logged_in,
+	 	$this->user_id, 
+	 	$this->login,
+	 	$this->uf_id, 
+	 	$this->member_id, 
+	 	$this->provider_id, 
+	 	$role_array,
+	 	$this->current_role,
+        $lang_key_array,
+        $lang_name_array,
+        $this->current_language_key,
+        $this->can_checkout,
+        $this->theme) = explode(self::$glue, $buffer);
+        
     $this->roles = explode(self::$array_glue, $role_array);
     $this->language_keys = explode(self::$array_glue, $lang_key_array);
     $this->language_names = explode(self::$array_glue, $lang_name_array);

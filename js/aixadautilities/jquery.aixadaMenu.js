@@ -22,6 +22,7 @@ $(function(){
 	}).menu({
 		content: $('#navManageItems').html(),	
 		showSpeed: 50, 
+		width:200,
 		flyOut: true
 	});
 

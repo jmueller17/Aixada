@@ -4,7 +4,11 @@ require_once('inc/database.php');
 require_once('local_config/config.php');
 
 
-
+/**
+ * 
+ * Updates database fields for given member
+ * @param int $member_id
+ */
 function update_member($member_id){
 	
 	$params = extract_user_form_values();
@@ -25,14 +29,49 @@ function update_member($member_id){
 			$params["adult"],
 			$params["language"],
 			$params["gui_theme"],
-			$params["email"]
-			
+			$params["email"]	
 	);
 	
 }
 
 
+/**
+ * 
+ * creates a new user and member for the given UF
+ * @param unknown_type $uf_id
+ */
+function create_user_member($uf_id){
+	
+	$params = extract_user_form_values();
+	
+	echo do_stored_query('new_user_member', 
+			$params["login"],
+			$params["password"],
+			$uf_id,
+			$params["custom_member_ref"],
+			$params["name"],
+			$params["nif"],
+			$params["address"],
+			$params["city"],
+			$params["zip"],
+			$params["phone1"],
+			$params["phone2"],
+			$params["web"],
+			$params["notes"],
+			$params["active"],
+			$params["participant"],
+			$params["adult"],
+			$params["language"],
+			$params["gui_theme"],
+			$params["email"]	
+	);
+}
+
+
 function extract_user_form_values(){
+	
+	$fields["login"] = get_param('login','');
+	$fields["password"] = crypt(get_param('password',''), "ax");
 	
 	
 	$fields["custom_member_ref"] = get_param('custom_member_ref','');
@@ -49,11 +88,11 @@ function extract_user_form_values(){
 	$fields["participant"] = get_param('participant',1);
 	$fields["adult"] = get_param('adult',1);	
 	
-	$fields["login"] = get_param('login','');
-	$fields["pwd"] = get_param('pwd','');
 	$fields["language"] = get_param('language','en');
 	$fields["gui_theme"] = get_param('gui_theme','start');
 	$fields["email"] = get_param('email','');
+	
+	$fields["uf_id"] = get_param('uf_id',0);
 	
 	return $fields;
 	

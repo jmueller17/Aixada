@@ -24,10 +24,14 @@ try{
         	printXML(stored_query_XML_fields('get_uf_listing', get_param('all',0)));
         	exit;
         	
-         case 'createUF':
-		   printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0)));
-		   exit;
-
+        case 'createUF':
+		   	printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0)));
+		   	exit;
+ 		
+	   	case 'editUF':
+      		echo do_stored_query('update_uf', get_param('uf_id'), get_param('name'), get_param('is_active'), get_param('mentor_uf',0));
+      		exit;
+		   
         case 'getUsersWithoutUF':
         	printXML(stored_query_XML_fields('users_without_uf'));
         	exit;
@@ -49,11 +53,11 @@ try{
 	    case 'updateMember':
 	    	echo update_member(get_param('member_id'));
 	    	exit;
-
-	    case 'mngUser':
-	    	echo manage_user(get_param('user_id',0));
-	    	exit;
-        	
+	    	
+	    //creates a new user and member
+	    case 'createUserMember':
+	    	echo create_user_member(get_param('uf_id'));
+			exit;
        
 	    	
 	    	
@@ -78,9 +82,7 @@ try{
         	
   
 
-  case 'updateUF':
-      printXML(stored_query_XML_fields('update_uf', $uf_id, $name, $active, $mentor_uf));
-      exit;
+ 
 
   case 'createMember':
       printXML(stored_query_XML_fields('create_member', $login, $password, $name, $uf_id, $language, $color_scheme, $address, $zip, $city, $phone1, $phone2, $email, $active));
@@ -120,6 +122,11 @@ try{
       do_stored_query('update_password', $user_id, crypt($new_password, "ax"));
       echo '1';
       exit;
+      
+       case 'usersWithoutUFs':
+	      printXML(stored_query_XML_fields('users_without_ufs'));
+	      exit;
+	
 
   default:
     throw new Exception("ctrlUserAndUf: oper=" . $_REQUEST['oper'] . " not valid in query");

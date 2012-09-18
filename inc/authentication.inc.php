@@ -7,13 +7,9 @@ require_once('local_config/config.php');
 require_once('utilities.php');
 require_once('inc/database.php');
 require_once('lib/table_with_ref.php');
-$language = ( (isset($_SESSION['userdata']['language']) and 
-               $_SESSION['userdata']['language'] != '') ? 
-              $_SESSION['userdata']['language'] : 
-              configuration_vars::get_instance()->default_language );
-require_once('local_config/lang/' . $language . '.php');
+require_once('local_config/lang/' . get_session_language() . '.php');
 require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+//ob_start(); // Starts FirePHP output buffering
 
 $firephp = FirePHP::getInstance(true);
 
@@ -74,10 +70,11 @@ class Authentication {
     $provider_id = $row['provider_id'];
     $language = $row['language'];
     $roles = $this->_ask_roles($db, $user_id);
+    $theme	= $row['gui_theme'];
     $current_role = ( in_array('Consumer', $roles) ? 'Consumer' 
                       : ( isset($roles[0]) ? $roles[0] : '' ) );
 
-    return array($user_id, $login, $uf_id, $member_id, $provider_id, $roles, $current_role, $language);
+    return array($user_id, $login, $uf_id, $member_id, $provider_id, $roles, $current_role, $language, $theme);
   }
 }
 ?>

@@ -96,7 +96,7 @@
 
 			//load purchase detail (products and quantities)
 			$('#memberAddress').xml2html('init',{
-				url : '../smallqueries.php',
+				url : '../ctrlUserAndUf.php',
 				params : 'oper=getMemberInfo&member_id=-1', 
 				loadOnInit : true,
 				rowComplete : function (rowIndex, row){ 
@@ -127,7 +127,7 @@
 
 	<div id="info" class="section">
 		<div id="member_info" class="b4">
-			<h2 class="memberTitle">Order for <span id="orderDate"></span></h2>
+			<h2 class="memberTitle">Items ordered for <span id="orderDate"></span></h2>
 			<div class="p4-5">
 				<table id="memberAddress">
 					<tr>
@@ -137,7 +137,7 @@
 						</td>
 						<td>
 							CIF/NIF: {nif}<br/>
-							Codi soci: {member_id}<br/>
+							Codi soci: {id} / {custom_member_ref}<br/>
 							EmaiL: {email}<br/>
 							Phone(s): {phone1} / {phone2}
 						</td>
