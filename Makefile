@@ -27,7 +27,7 @@ all: canned_responses.php $(config_dir)/config.php
 # js/all:
 # 	$(MAKE) -C js
 
-canned_responses.php: sql/aixada.sql utilities_tables.php $(wildcard $(config_dir)/lang/*) \
+canned_responses.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
 	lib/table_with_ref.php
 	php make_canned_responses.php
 
