@@ -71,7 +71,9 @@ try{
 	    	printXML(stored_query_XML_fields('search_members', get_param('like')));
 	    	exit;
 	    	
-	    	
+	    case 'changePassword':
+	    	echo change_password();
+	        exit; 	
 	    	
 	    	
 	    	
@@ -87,17 +89,7 @@ try{
   
 
 
-  case 'changePassword':
-      $user_id = $_SESSION['userdata']['user_id'];
-      $rs = do_stored_query('check_password', $user_id, crypt($old_password, 'ax'));
-      $row = $rs->fetch_assoc();
-      if (!$row or $row['id'] != $user_id) {
-          throw new Exception("Wrong username or password given");
-      }
-      DBWrap::get_instance()->free_next_results();      
-      do_stored_query('update_password', $user_id, crypt($new_password, 'ax'));
-      echo '1';
-      exit;
+ 
 
   case 'changeOtherPassword':
       $user_id = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
@@ -109,10 +101,7 @@ try{
       echo '1';
       exit;
       
-       case 'usersWithoutUFs':
-	      printXML(stored_query_XML_fields('users_without_ufs'));
-	      exit;
-	
+      	
 
   default:
     throw new Exception("ctrlUserAndUf: oper=" . $_REQUEST['oper'] . " not valid in query");

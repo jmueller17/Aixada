@@ -357,6 +357,38 @@ begin
 	commit;
 end|
 
+
+
+/**
+ * update an existing password
+ */
+drop procedure if exists update_password|
+create procedure update_password(in the_user_id int, in new_password varchar(255))
+begin
+  update 
+  	aixada_user
+  set 
+  	password = new_password
+  where 
+  	id = the_user_id;
+end|
+
+
+/**
+ * check if old password is matched for given user. 
+ */
+drop procedure if exists check_password|
+create procedure check_password(in the_user_id int, in the_password varchar(255))
+begin
+   select 
+   	id
+   from 
+   	aixada_user
+   where 
+   	id = the_user_id 
+   	and password = the_password;
+end|
+
 /*
 drop procedure if exists users_without_ufs|
 create procedure users_without_ufs()
@@ -437,13 +469,7 @@ end|
 
 
 
-drop procedure if exists check_password|
-create procedure check_password(in the_user_id int, in the_password varchar(255))
-begin
-   select id
-   from aixada_user
-   where id = the_user_id and password = the_password;
-end|
+
 
 
 
@@ -498,13 +524,7 @@ end|
 
 
 
-drop procedure if exists update_password|
-create procedure update_password(in the_user_id int, in new_password varchar(255))
-begin
-  update aixada_user
-  set password = new_password
-  where id = the_user_id;
-end|
+
 
 drop procedure if exists remove_user_roles|
 create procedure remove_user_roles(in the_user_id int)

@@ -135,5 +135,26 @@ function validate_field($table, $field, $value, $type='exists'){
 	
 }
 
+/**
+ * 
+ * change user password. Only logged users can change their own password. 
+ * @throws Exception
+ */
+function change_password(){
+
+	$user_id = get_session_user_id();
+	
+      $rs = do_stored_query('check_password', $user_id, crypt(get_param('old_password'), 'ax'));
+      $row = $rs->fetch_assoc();
+      if (!$row or $row['id'] != $user_id) {
+          throw new Exception("The old password did not match! Please try again.");
+      }
+      DBWrap::get_instance()->free_next_results();      
+      do_stored_query('update_password', $user_id, crypt(get_param('password'), 'ax'));
+      
+      return 1; 
+	
+}
+
 	
 ?>

@@ -50,23 +50,6 @@ if (!isset($_SESSION)) {
 		$(function(){
 
 
-			//detect form submit and prevent page navigation; we use ajax. 
- 			$('form').submit(function() { 
- 				return false; 
- 			});
-
-
-			
-
-			
-			
-
-			function resetForms(){
-				$('input').not(':submit, :button').val('').removeClass('ui-state-error');
-				$('.user_tips').removeClass('ui-state-error success_msg').text('');
-				$('#register').show();
-			}
-
 			
 			/**
 			 *	logno stuff
@@ -90,29 +73,6 @@ if (!isset($_SESSION)) {
 			});
 
 			
-					
-			/**
-			 * Error message dialog 
-			 */
-			$( "#dialog-message" ).dialog({
-				modal: false,
-				autoOpen:false,
-				buttons: {
-					Ok: function() {
-						$( this ).dialog( "close" );
-
-						if ($("p",this).hasClass('success_msg')){
-							resetForms();
-							$('#stagewrap').show();
-						}
-						
-						$("p",this)
-				    	.html('')
-				    	.removeClass('ui-state-error success_msg');
-					}
-				}
-			});
-
 			
 			
 	
@@ -126,20 +86,6 @@ if (!isset($_SESSION)) {
 					loadOnInit: true,
 			});
 
-
-			/**
-			 *	language
-			 */
-			 $("#pref_lang")
-				.xml2html("init", {
-						url: "ctrlSmallQ.php",
-						params : "oper=getExistingLanguages",
-						rowName : "language",
-						loadOnInit: true,
-						complete : function(){
-							$("#pref_lang").val("<?php echo $language; ?>"); 
-						}
-			});
 
 			
 
@@ -191,8 +137,8 @@ if (!isset($_SESSION)) {
 			<div class="ui-widget-content ui-corner-all">
 			<h4 class="ui-widget-header ui-corner-all"><?php echo $Text['login'];?></h4>
 			<p id="logonMsg" class="user_tips  minPadding"></p>
-			<form id="login" method="post">
-				<table>
+			<form id="login" method="post" class="padding15x10">
+				<table class="tblForms">
 					<tr>
 						<td><label class="formLabel" for="login"><?=$Text['logon'];?>:</label></td>
 						<td><input type="text" class="inputTxtSmall ui-widget-content ui-corner-all " name="login" id="login"/></td>
@@ -202,12 +148,14 @@ if (!isset($_SESSION)) {
 						<td><input type="password" class="inputTxtSmall ui-widget-content ui-corner-all" name="password" id="password"/></td>
 					</tr>
 					<tr>
-						<td>
-							&nbsp;	
-						</td>
-						<td class="textAlignRight">
-							<button name="submitted" id="btn_logon"><?=$Text['btn_login'];?></button>
-							
+						<td colspan="2"><div>&nbsp;</div></td>
+					</tr>
+					<tr>
+						
+						<td colspan="2">
+							<div class="textAlignLeft">
+								<button name="submitted" id="btn_logon"><?=$Text['btn_login'];?></button>
+							</div>
 						</td>
 					</tr>
 				</table>

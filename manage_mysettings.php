@@ -33,29 +33,17 @@
 
 		//preorder tab is only available for ordering
 		if (what == "pwd") { 
-			$('#pwdWrap').show();
-			$('#edit_member').hide();
+			$('.changePwdElements').show();
+			$('.editMemberElements').hide();
 			
 		} else {
-			$('#pwdWrap').hide();
-			$('#edit_member').show();
+			$('.changePwdElements').hide();
+			$('.editMemberElements').show();
 		}
 		
 			
-		$('#btn_mem_save')
-			.button({
-				icons: {
-				primary: "ui-icon-check"}
-			})
-			.click(function(){
-				//$('#member_form').submit();
-			});
-
-		/*$('#btn_mem_cancel')
-			.button({icons: {primary: "ui-icon-close"}})
-			.click(function(){
-	
-			});*/
+		
+		
 
 		$('#btn_pwd_save')
 			.button({
@@ -69,65 +57,192 @@
 		$('#btn_pwd_cancel')
 			.button({icons: {primary: "ui-icon-close"}});
 		
-		
-		/**
-		 *	language
-		 */
-		 $("#languageSelect")
-			.xml2html("init", {
-					url: "smallqueries.php",
-					params : "oper=getExistingLanguages",
-					rowName : "language",
-					loadOnInit: true
+
+
+		 /*******************************************
+		  *		EDIT MY SETTINGS
+		  *******************************************/
+			
+		//init the uf member listing
+		$('#edit_my_settings').xml2html('init',{
+				url : 'ctrlUserAndUf.php',
+				params: "oper=getMemberInfo&member_id="+<?php echo get_session_member_id();?>,
+				loadOnInit:true,
+				complete: function(){
+
+					constructSelects();
+
+					//set the checkboxes
+					$('.tblForms input:checkbox').each(function(){
+						var bool = $(this).val(); 
+						if (bool == "1") $(this).attr('checked',true);
+					});
+
+
+					//each member gets an edit button
+					$('.btn_save_edit_member').button({
+							icons: {primary: "ui-icon-disk"}
+						}).live('click', function(e){
+							submitMember('update','#detail_member_'+$(this).attr('memberid'));
+							return false; 
+						});
+				}
 		});
 
 
+		/**
+		 *	submits the create/edit member data
+		 * 	urlStr : either updateMember or createNewMember
+		 *  mi: is the selector string of the layer that contains the whole member form and info
+		 */
+		function submitMember(action, mi){
+
+			var urlStr = 'ctrlUserAndUf.php?oper=updateMember';
+			var isValid = true; 
+			var err_msg = ''; 
+
+			//run some local checks
+			if (action == 'pwd'){
+
+				urlStr = "ctrlUserAndUf.php?oper=changePassword";
+			
+				isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
+				if (!isValid){
+					err_msg += "<?=$Text['msg_err_usershort'];?>"; 
+				}
+	
+				isValid = isValid &&  $.checkFormLength($(mi+' input[name=password]'),4,15);
+				if (!isValid){
+					err_msg += "<br/><br/>" + "<?=$Text['msg_err_passshort'];?>"; 
+				}
+				
+				isValid = isValid &&  $.checkPassword($(mi+' input[name=password]'), $('input[name=password_ctrl]'));
+				if (!isValid){
+					err_msg += "<br/><br/>" + "<?=$Text['msg_err_pwdctrl']; ?>";
+				}
+
+				
+			}
+
+			
+			isValid = isValid &&  $.checkFormLength($(mi+' input[name="name"]'),4,15);
+			if (!isValid){
+				err_msg += "<br/><br/>" + "<?php echo $Text['name_person'] . $Text['msg_err_notempty']; ?>";
+			}
+			
+			isValid = isValid &&  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
+			if (!isValid){
+				err_msg += "<br/><br/>" + "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?>";
+			}
+
+			isValid = isValid &&  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+			if (!isValid){
+				err_msg += "<br/><br/>" + "<?=$Text['msg_err_email'] ?>";
+			}
+
+			if (isValid){
+
+				var sdata = $(mi + ' form').serialize();
+								
+				$.ajax({
+				   	url: urlStr,
+					data: sdata, 
+				   	beforeSend: function(){
+					   	//$('button',mi).button('disable');
+					   	//myButton.button('disable');
+					   //$('#uf_listing .loadAnim').show();
+					},
+				   	success: function(msg){
+				   	 	$.showMsg({
+							msg: "Your data has been successfully saved!",
+							type: 'success'});
+				   	},
+				   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					   $.showMsg({
+							msg: XMLHttpRequest.responseText,
+							type: 'error'});
+				   	},
+				   	complete : function(msg){
+					   	//$('button',mi).button('enable');
+					   //myButton.button('enable');
+					   //$('#uf_listing .loadAnim').hide();
+				   	}
+				}); //end ajax
+
+			//form is not valid		 
+			} else {
+				$.showMsg({
+					msg:err_msg,
+					type: 'error'});
+			}
+		}
+
+		/**
+		 *	construct and set language and theme select
+		 */
+		function constructSelects(){
+
+
+			//load available languages
+			 $("#languageSelect")
+				.xml2html("init", {
+						url: "ctrlSmallQ.php",
+						params : "oper=getExistingLanguages",
+						rowName : "language",
+						loadOnInit: true,
+						complete : function(s){
+							//copy the language select with the right option selected
+							var selectedLang = $('.memberLanguageSelect').prev().text();
+							var langSelect = $('#languageSelect').clone(); 
+							$(langSelect).val(selectedLang).attr('selected','selected');
+							$('.memberLanguageSelect').append(langSelect);
+						}
+			});
+
+			//load available themes
+			 $("#themeSelect")
+				.xml2html("init", {
+						url: "ctrlSmallQ.php",
+						params : "oper=getExistingThemes",
+						rowName : "theme",
+						loadOnInit: true,
+						complete : function(s){
+							//copy the theme select with the right option selected
+							var selectedTheme = $('.memberThemeSelect').prev().text();
+							var themeSelect = $('#themeSelect').clone(); 
+							$(themeSelect).val(selectedTheme).attr('selected','selected');
+							$('.memberThemeSelect').append(themeSelect);
+
+						}
+			});
+
+		}
 		
 
-		//send the member form
-		$('#member_form').submit(function(){
-			var dataSerial = $(this).serialize();
-			
-			$.ajax({
-				   type: "POST",
-				   url: "ctrlUser.php?oper=updateMember",
-				   data: dataSerial,
-				   beforeSend: function(){
-		   			$('#edit_member .loadAnim').show();
-					},
-				   success: function(msg){
-						$.updateTips("#memberMsg", "success", "<?=$Text['msg_edit_mysettings_success'];?>" );
-				   },
-				   error : function(XMLHttpRequest, textStatus, errorThrown){
-				    	$.updateTips("#memberMsg","error", XMLHttpRequest.responseText);
-				   },
-				   complete : function(msg){
-					   $('#edit_member .loadAnim').hide();
-				   }
-			}); //end ajax
-			return false; 
-		});//end submit
 
-
+		/*******************************************
+		 *		PASSWORD CHANGE
+		 *******************************************/
 		
 		//send pwd edit form
 		$('#change_pwd').submit(function(){
 			var dataSerial = $(this).serialize();
-
-
-			
 			$.ajax({
 				   type: "POST",
-				   url: "ctrlUser.php?oper=changePassword",
+				   url: "ctrlUserAndUf.php?oper=changePassword",
 				   data: dataSerial,
 				   beforeSend: function(){
 				   		$('#pwdWrap .loadAnim').show();
 					},
 				   success: function(msg){
-						$.updateTips("#pwdMsg", "success", "<?=$Text['msg_pwd_changed_success'];?>" );
+					   $.showMsg({
+							msg: "<?=$Text['msg_pwd_changed_success'];?>",
+							type: 'success'});
 				   },
 				   error : function(XMLHttpRequest, textStatus, errorThrown){
-				    	$.updateTips("#pwdMsg","error", XMLHttpRequest.responseText);
+					   $.showMsg({
+							msg: XMLHttpRequest.responseText,
+							type: 'error'});
 				   },
 				   complete : function(msg){
 					   $('#pwdWrap .loadAnim').hide();
@@ -137,53 +252,7 @@
 			return false; 
 		});//end submit
 
-			
-		//get info of current user
-		$.ajax({
-			   type: "POST",
-			   url: "smallqueries.php?oper=getMemberInfo&member_id=-1",
-			   dataType: "xml", 
-			   success: function(xml){
-				   $(xml).find('row:first').children().each(function(){
-						var input_name = $(this).attr('f');
-						var value = $(this).text();
-
-						if (input_name == 'active' || input_name == 'participant' ){
-								$('#'+input_name).attr('checked', parseInt(value));
-
-						} else if (input_name == 'language'){
-								$('#languageSelect').val(value).attr('selected',true);
-
-						} else if (input_name == 'roles'){
-							var active_roles = value.split(",");							
-							for (var i=0; i<active_roles.length; i++){
-								$("#rolesInfo").append("<p>"+active_roles[i]+"</p>");
-							}
-						} else if (input_name == 'providers'){
-							var active_providers = value.split(",");
-							if (active_providers.length > 1) $("#providersInfo").empty();							
-							for (var i=0; i<active_providers.length; i++){
-								$("#providersInfo").append("<p>"+active_providers[i]+"</p>");
-							}
-						} else if (input_name == 'products'){
-							var active_products = value.split(",");							
-							if (active_products.length > 1) $("#productsInfo").empty();							
-							for (var i=0; i<active_products.length; i++){
-								$("#productsInfo").append("<p>"+active_products[i]+"</p>");
-							}
-						} else {
-								$('#'+input_name).val(value);
-						}
-
-					});
-			   },
-			   error : function(XMLHttpRequest, textStatus, errorThrown){
-			    	$.updateTips("#memberMsg","error", XMLHttpRequest.responseText);
-			   },
-			   complete : function(msg){
-		
-			   }
-		}); //end ajax
+	
 				
 			
 	});  //close document ready
@@ -208,13 +277,12 @@
 		</div>
 
 
-			<div id="pwdWrap" class="ui-widget-content ui-corner-all" >
+			<div id="pwdWrap" class="ui-widget changePwdElements">
+				<div class="ui-widget-content ui-corner-all">
 				<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['nav_changepwd'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-				<p id="pwdMsg" class="user_tips"></p>
-				<form id="change_pwd">
-					
+				
+				<form id="change_pwd" class="padding15x10">
 					<table>
-						
 						<tr>
 							<td><label class="formLabel" for="old_password"><?=$Text['old_pwd'];?>:</label></td>
 							<td><input type="password" class="ui-widget-content ui-corner-all" name="old_password" id="old_password"></td>
@@ -241,139 +309,39 @@
 								
 						</tr>
 					</table>
-	
 				</form>
-			
+			</div>
 			</div>
 		
 		
-		<div id="edit_member" class="ui-widget-content ui-corner-all" >
-				<h3 class="ui-widget-header ui-corner-all"><?=$Text['edit_my_settings'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-				<p id="memberMsg"></p>
-				<form id="member_form">
-					<input type="hidden" name="login" id="login" value=""/>
-					<input type="hidden" name="id" id="member_id" value="<?php echo $_SESSION['userdata']['member_id'];?>"/>
-					<input type="hidden" name="uf_id" id="uf_id" value="<?php echo $_SESSION['userdata']['uf_id'];?>"/>
-					<div id="edit_member"><br/>
-						<p id="memberMsg" class="user_tips ui-corner-all"></p>
-						
-						<table>
-							<tr>
-								<td class="textAlignRight"><?php echo $Text['login'];?></td>
-								<td><span class="user_login"><?php echo $_SESSION['userdata']['login'];?></span></td>
-								<td class="textAlignRight"><?php echo $Text['uf_long'];?></td>
-								<td>#<span class="uf_id"><?php echo $_SESSION['userdata']['uf_id'];?></span></td>
-								
-							</tr>
-							<tr>
-								<td class="textAlignRight"><?php echo $Text['id'];?></td>
-								<td>#<span class="user_id"><?php echo $_SESSION['userdata']['member_id'];?></span></td>
-							</tr>
-							<tr>
-								<td><label for="name"><?php echo $Text['name_person'];?></label></td>
-								<td><input type="text" name="name" id="name" class="ui-widget-content ui-corner-all" /></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td><label for="address"><?php echo $Text['address'];?></label></td>
-								<td colspan="5"><input type="text" name="address" id="address" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-							</tr>
-							<tr>
-								<td><label for="city"><?php echo $Text['city'];?></label></td>
-								<td><input type="text" name="city" id="city" class="ui-widget-content ui-corner-all" /></td>
-								<td><label for="zip"><?php echo $Text['zip'];?></label></td>
-								<td><input type="text" name="zip" id="zip" class=" ui-widget-content ui-corner-all" /></td>
-								
-							</tr>
-							<tr>
-								<td><label for="phone1"><?php echo $Text['phone1'];?></label></td>
-								<td><input type="text" name="phone1" id="phone1" class="ui-widget-content ui-corner-all" /></td>
-							
-								<td><label for="phone2"><?php echo $Text['phone2'];?></label></td>
-								<td><input type="text" name="phone2" id="phone2" class="ui-widget-content ui-corner-all" /></td>
-							</tr>
-							<tr>
-								<td><label for="email"><?php echo $Text['email'];?></label></td>
-								<td><input type="text" name="email" id="email" class="ui-widget-content ui-corner-all" /></td>
-							</tr>
-							<tr>
-								<td><label for="urls"><?php echo $Text['web'];?></label></td>
-								<td colspan="5"><input type="text" name="urls" id="urls" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-							</tr>
-							<tr>
-								<td><label for="notes"><?php echo $Text['notes'];?></label></td>
-								<td colspan="5"><input type="text" name="notes" id="notes" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-							</tr>
-							<tr>
-								<td><label for="active"><?php echo $Text['active'];?></label></td>
-								<td><input type="checkbox" name="active" value="1" id="active"  /></td>
-								<td><label for="participant"><?php echo $Text['participant'];?></label></td>
-								<td><input type="checkbox" name="participant" value="1" id="participant"  /></td>
-							</tr>
-							<tr>
-								<td>&nbsp;
-								</td>
-							</tr>
-							<tr>
-								<td><?php echo $Text['active_roles'];?></td>
-								<td colspan="2">
-									<div id="rolesInfo">
-									</div>
-								</td>
-								
-								
-							</tr>
-							<tr>
-								<td><?php echo $Text['providers_cared_for'];?>:</td>
-								<td colspan="2">
-									<div id="providersInfo">
-										--
-									</div>
-								</td>
-								
-								
-							</tr>
-							<tr>
-								<td><?php echo $Text['products_cared_for'];?>:</td>
-								<td colspan="2">
-									<div id="productsInfo">
-										--
-									</div>
-								</td>
-								
-								
-							</tr>
-							<tr>
-								<td><label for="languageSelect"><?php echo $Text['lang']; ?></label></td>
-								<td colspan="2">
-									<select id="languageSelect" name="language">
-										<option value="{id}"> {description}</option>
-									</select>
-								</td>
-								
-							</tr>
-							<tr>
-								<td colspan="5"><p class="floatRight"><button id="btn_mem_save" type="submit"><?php echo $Text['btn_save'];?></button></p></td>
-								
-							</tr>
-						</table>
-						</div>
-						
-				</form>
-				
-		</div><!--  end edit member -->
-		
-		
-	
-		
-		
-		
+			<div id="edit_my_settings" class="ui-widget editMemberElements">
+					<div class="ui-widget-content ui-corner-all member-info" id="detail_member_{id}">
+					<h3 class="ui-widget-header ui-corner-all">&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+						<p>&nbsp;</p>
+						<form id="frm_save_member_{id}">
+							<input type="hidden" name="member_id" value="{id}"/>
+							<input type="hidden" name="user_id" value="{user_id}"/>
+							<input type="hidden" name="uf_id" value="{uf_id}"/>
+							<?php include('inc/memberuf.inc.php');?>
+						</form>
+					
+			</div><!--  end edit member -->
 	</div>
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
 
+<div id="loadLanguageSelect" class="hidden">
+<select id="languageSelect" name="language">
+	<option value="{id}"> {description}</option>
+</select>
+</div>
+
+<div id="loadThemeSelect" class="hidden">
+<select id="themeSelect" name="gui_theme">
+	<option value="{name}"> {name}</option>
+</select>
+</div>
 <!-- / END -->
 </body>
 </html>

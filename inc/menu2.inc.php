@@ -131,7 +131,6 @@
                  <li><a href="report_timelines.php?oper=product"><?php echo $Text['nav_report_timelines_product'];?></a></li>
                 </ul>
                 </li>
-		<li><a href="report_order.php?what=Preorder"><?php echo $Text['nav_report_preorder'];?></a></li>
 		<li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li>
 	</ul>
 </div>
