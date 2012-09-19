@@ -62,7 +62,7 @@ function get_session_language(){
 	 	return $_SESSION['userdata']['language'];
 	 	
 	 } else {
-	 		configuration_vars::get_instance()->default_language;
+	 	return	configuration_vars::get_instance()->default_language;
 	 }
 	 
 }
@@ -79,7 +79,7 @@ function get_session_theme(){
 	 	return $_SESSION['userdata']['theme'];
 	 	
 	 } else {
-	 		configuration_vars::get_instance()->default_theme;
+	 	return	configuration_vars::get_instance()->default_theme;
 	 }
 	 
 }

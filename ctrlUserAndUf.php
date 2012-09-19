@@ -58,48 +58,34 @@ try{
 	    case 'createUserMember':
 	    	echo create_user_member(get_param('uf_id'));
 			exit;
-       
+			
+	    case 'removeMember':
+	    	echo do_stored_query('remove_member_from_uf', get_param('member_id'));
+       		exit;
+	    	
+	    case 'getMembersWithoutUF':
+	    	printXML(stored_query_XML_fields('get_unassigned_members'));
+	    	exit;
+	    	
+	    case 'searchMember':
+	    	printXML(stored_query_XML_fields('search_members', get_param('like')));
+	    	exit;
+	    	
 	    	
 	    	
 	    	
 	    	
    
 
-    case 'getUsersWithoutMember':
-        printXML(stored_query_XML_fields('users_without_member'));
-        exit;
-
-    case 'assignUsersToUF':
+  
+  case 'assignUsersToUF':
         foreach ($_REQUEST['user_id'] as $id) {
             do_stored_query('assign_user_to_uf', $id, $_REQUEST['uf_id']);
         }
         exit;
 
-    case 'assignUserToMember':
-        printXML(stored_query_XML_fields('assign_user_to_member', $_REQUEST['user_id']));
-        exit;
-        	
-        	
   
 
- 
-
-  case 'createMember':
-      printXML(stored_query_XML_fields('create_member', $login, $password, $name, $uf_id, $language, $color_scheme, $address, $zip, $city, $phone1, $phone2, $email, $active));
-      exit;
-
-  case 'updateMember':
-      /* $firephp->log($active, 'active'); */
-      /* $firephp->log($participant, 'participant'); */
-      do_stored_query('update_member', $id, $name, $address, $zip, $city, $phone1, $phone2, $urls, $notes, $active, $participant, $adult);
-      do_stored_query('update_user_email_language_login', $id, $email, $language, $login);
-      echo('1');
-      exit;
-
-  case 'deactivateMember':
-      do_stored_query('deactivate_member', $id);
-      echo('1');
-      exit;
 
   case 'changePassword':
       $user_id = $_SESSION['userdata']['user_id'];

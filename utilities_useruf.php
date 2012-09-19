@@ -42,29 +42,38 @@ function update_member($member_id){
  */
 function create_user_member($uf_id){
 	
+	
 	$params = extract_user_form_values();
 	
-	echo do_stored_query('new_user_member', 
-			$params["login"],
-			$params["password"],
-			$uf_id,
-			$params["custom_member_ref"],
-			$params["name"],
-			$params["nif"],
-			$params["address"],
-			$params["city"],
-			$params["zip"],
-			$params["phone1"],
-			$params["phone2"],
-			$params["web"],
-			$params["notes"],
-			$params["active"],
-			$params["participant"],
-			$params["adult"],
-			$params["language"],
-			$params["gui_theme"],
-			$params["email"]	
-	);
+	$login_exists = validate_field('aixada_user', 'login', $params['login']);
+	
+	if($login_exists) {
+		throw new Exception("The login '" .$params['login']. "' already exists. Please choose another one");
+		exit; 
+		
+	} else {
+		echo do_stored_query('new_user_member', 
+				$params["login"],
+				$params["password"],
+				$uf_id,
+				$params["custom_member_ref"],
+				$params["name"],
+				$params["nif"],
+				$params["address"],
+				$params["city"],
+				$params["zip"],
+				$params["phone1"],
+				$params["phone2"],
+				$params["web"],
+				$params["notes"],
+				$params["active"],
+				$params["participant"],
+				$params["adult"],
+				$params["language"],
+				$params["gui_theme"],
+				$params["email"]	
+			);
+	}
 }
 
 
@@ -107,18 +116,18 @@ function extract_user_form_values(){
  * @param unknown_type $value
  * @param unknown_type $type
  */
-function validate_field($table, $field, $value, $type='unique'){
+function validate_field($table, $field, $value, $type='exists'){
 	
 
 	$db = DBWrap::get_instance(); 
     
 	switch ($type){
-		case 'unique':
+		case 'exists':
 			$rs = $db->Execute('select * from '.$table.' where '.$field.'=:1q', $value);
 			if ($rs->fetch_assoc()) {
-				echo 1;
+				return 1;
 		    } else {
-		    	echo 0;
+		    	return 0;
 		    }
 		    DBWrap::get_instance()->free_next_results();
 		break;	

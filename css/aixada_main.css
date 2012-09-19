@@ -54,21 +54,20 @@ option 				{padding:1px 5px;}
 .adaptHeight		{overflow:auto;}
 
 .ui-widget-content h2 {padding-left:15px;}
-.member-info		{margin-bottom:20px; margin-left:25px; margin-right:25px;}
 .ui-state-success	{background-color:#d2f3d2; border:1px solid #7eca7e;}
 
 /** different table styles **/
 table.tblListingDefault		{width:100%;  border-collapse:collapse;}
 table.tblListingDefault th	{background:#f3f3f3; padding:4px 1px;}
-table.tblListingDefault td	{padding:4px 0px; text-align:center;}
+table.tblListingDefault td	{padding:2px 8px; text-align:center;}
 
 table.tblListingGrid		{width:100%;}
 table.tblListingGrid th		{background:#f3f3f3; padding:4px 1px;}
-table.tblListingGrid td		{padding:4px 1px; text-align:center;}
+table.tblListingGrid td		{padding:2px 4px; text-align:center;}
 
 table.tblListingBorder		{width:100%; border-collapse:collapse;}
 table.tblListingBorder th	{background:#f3f3f3; padding:4px 1px; border:1px solid black;}
-table.tblListingBorder td	{padding:4px 0px; text-align:center; border:1px solid black;}
+table.tblListingBorder td	{padding:2px 8px; text-align:center; border:1px solid black;}
 
 table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padding-top:4px; vertical-align:middle;}
 table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
@@ -76,7 +75,6 @@ table.tblForms 	td label 	{float:right;}
 
 
 
-/** member uf user **/
 
 
 
@@ -125,6 +123,12 @@ div.portalPost .msg		{text-align:justify; margin-bottom:20px;}
 /** for manage dates 
 div#setOrderable		{margin-right:20px; margin-bottom:40px;}
 p#weekDays			{margin:10px 20px;}**/
+
+
+/** member uf user **/
+.member-info		{margin-bottom:20px; margin-left:25px; margin-right:25px;}
+.member-add			{margin-bottom:100px; margin-left:25px;}
+
 
 
 /** for validate **/
