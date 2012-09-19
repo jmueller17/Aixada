@@ -5,7 +5,7 @@ ob_start(); // Starts FirePHP output buffering
 
 require_once 'lib/table_manager.php';
 require_once 'inc/database.php';
-require_once 'utilities.php';
+require_once 'utilities_general.php';
 require 'utilities_tables.php';
 
 $db = DBWrap::get_instance();

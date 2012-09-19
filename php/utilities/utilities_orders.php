@@ -2,7 +2,7 @@
 
 require_once('inc/database.php');
 require_once('local_config/config.php');
-require_once ('utilities.php');
+require_once ('general.php');
 
 
 /**
