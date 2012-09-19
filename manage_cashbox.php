@@ -35,7 +35,7 @@
 			 * 	account listing
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url				: 'ctrlReport.php',
+					url				: 'ctrlAccount.php',
 					params			: 'oper=accountExtract&account_id=-3&start_date=2200-01-01&num_rows=400',
 					resultsPerPage 	: 20,
 					loadOnInit 		: true, 
@@ -56,7 +56,7 @@
 			 *	load ufs. make depost in cashbox and account. 
 			 */
 			 $('#uf_account_select').xml2html('init',{
-					url 	: 'smallqueries.php',
+					url 	: 'ctrlAccount.php',
 					params 	: 'oper=getAllAccounts', 
 					offSet	: 1, 
 					loadOnInit : true, 
@@ -75,7 +75,7 @@
 			$("#providerSelect").xml2html("init", {
 					params : 'oper=listProviders&what=Shop&date=2012-03-14',
 					offSet : 1, 
-					loadOnInit: true
+					loadOnInit: false
 				}).change(function(){
 					allowWithdraw();	
 			});

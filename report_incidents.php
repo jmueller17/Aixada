@@ -33,12 +33,15 @@
 		/**
 		 *	incidents
 		 */
-		$('#tbl_incidents tbody').xml2html('init',{
-				url: 'smallqueries.php',
-				params : 'oper=todaysIncidents',
-				loadOnInit: true
-		});
 
+		$('#tbl_incidents tbody').xml2html('init',{
+			url: 'ctrlIncidents.php',
+			params : 'oper=getIncidentsListing&filter=today',
+			loadOnInit: true, 
+			complete : function(rowCount){
+				//$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 	
+			}
+	});
 
 		
 						
@@ -74,7 +77,6 @@
 							<th class="mwidth-150"><?php echo $Text['created_by'];?></th>
 							<th class="mwidth-150"><?php echo $Text['created'];?></th>
 							<th><?php echo $Text['status'];?></th>
-							<th><?php echo $Text['incident_type'];?></th>
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['ufs_concerned'];?></th>
 							<th><?php echo $Text['comi_concerned'];?></th>
@@ -86,10 +88,9 @@
 
 							<td field_name="incident_id">{id}</td>
 							<td field_name="priority">{priority}</td>
-							<td field_name="operator">{uf} {user}</td>
-							<td field_name="date_posted">{date_posted}</td>
+							<td field_name="operator">{uf_id} {user_name}</td>
+							<td field_name="date_posted">{ts}</td>
 							<td field_name="status">{status}</td>
-							<td field_name="type">{type}</td>
 							<td field_name="provider">{provider_concerned}</td>
 							<td field_name="ufs_concerned">{ufs_concerned}</td>
 							<td field_name="commission">{commission_concerned}</td>

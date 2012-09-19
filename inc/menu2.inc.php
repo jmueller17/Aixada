@@ -77,8 +77,7 @@
 </div>
 <div id="navManageItems" class="hidden">
 	<ul>
-		<li><a href="manage_ufmember.php"><?php echo $Text['nav_mng_uf'];?></a></li>
-		<li><a href="manage_user.php"><?php echo $Text['nav_mng_member'];?></a>
+		<li><a href="manage_ufmember.php"><?php echo $Text['uf_short'];?> & <?php echo $Text['nav_mng_member'];?></a>
 			<ul>
 			<li>
             <?php 
@@ -97,6 +96,8 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
+				<li><a href="#">Add or correct stock </a></li>
+				
 			</ul>
 		</li>
 		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a>
@@ -105,7 +106,16 @@
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
 		</li>
-		<li><a href="manage_db.php"><?php echo $Text['nav_mng_db'];?></a></li>
+		<li><a href="manage_cashbox.php">Money</a>
+		</li>
+		<li><a href="#TODO">Admin</a>
+			<ul>
+				<li><a href="manage_db.php"><?php echo $Text['nav_mng_db'];?></a></li>
+				<li><a href="#TODO">Users </a></li>
+				<li><a href="#TODO">Access rights</a></li>
+			</ul>
+		</li>
+
 		
 	</ul>
 </div>
@@ -121,7 +131,6 @@
                  <li><a href="report_timelines.php?oper=product"><?php echo $Text['nav_report_timelines_product'];?></a></li>
                 </ul>
                 </li>
-		<li><a href="report_order.php?what=Preorder"><?php echo $Text['nav_report_preorder'];?></a></li>
 		<li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li>
 	</ul>
 </div>

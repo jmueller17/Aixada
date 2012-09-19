@@ -41,6 +41,10 @@ try{
 		case 'getActiveProviders':
 			printXML(stored_query_XML_fields('get_all_active_providers'));
 			exit;
+			
+		case 'getExistingThemes':
+			printXML(get_existing_themes_XML());
+			exit;
         
 
         

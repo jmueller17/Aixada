@@ -2,17 +2,19 @@
 
 
 //require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+//ob_start(); // Starts FirePHP output buffering
 //$firephp = FirePHP::getInstance(true);
 
 require_once 'inc/cookie.inc.php';
 require_once 'inc/authentication.inc.php';
 require_once 'lib/exceptions.php';
 require_once 'local_config/config.php';
-$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
-$default_theme = configuration_vars::get_instance()->default_theme; 
+require_once('utilities.php');
+
+$default_theme = get_session_theme();
+$language = get_session_language();
 $dev = configuration_vars::get_instance()->development;
-require_once('local_config/lang/' . $language . '.php');
+require_once('local_config/lang/' . $language  . '.php');
 
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
@@ -47,50 +49,6 @@ if (!isset($_SESSION)) {
 	<script type="text/javascript">
 		$(function(){
 
-			$('#registerWrap').hide();
-
-			//detect form submit and prevent page navigation; we use ajax. 
- 			$('form').submit(function() { 
- 				return false; 
- 			});
-
-
-			function checkLength(input, min, max, where, msg ) {
-				if ( input.val().length > max || input.val().length < min ) {
-					input.addClass( "ui-state-error" );
-					$.updateTips(where,'error', msg);
-					return false;
-				} else {
-					return true;
-				}
-			}
-
-			function checkRegexp( o, regexp, n ) {
-				if ( !( regexp.test( o.val() ) ) ) {
-					o.addClass( "ui-state-error" );
-					$.updateTips($('#registerMsg'), 'error', n );
-					return false;
-				} else {
-					return true;
-				}
-			}
-
-			function checkPassword(pwd, retyped){
-				
-				if (pwd.val() != retyped.val()){
-					pwd.addClass( "ui-state-error" );
-					$.updateTips('#registerMsg','error', "<?php echo $Text['msg_err_pwdctrl']; ?>");
-					return false; 
-				} else {
-					return true; 
-				}
-			}
-
-			function resetForms(){
-				$('input').not(':submit, :button').val('').removeClass('ui-state-error');
-				$('.user_tips').removeClass('ui-state-error success_msg').text('');
-				$('#register').show();
-			}
 
 			
 			/**
@@ -115,120 +73,8 @@ if (!isset($_SESSION)) {
 			});
 
 			
-			/**
-			 *	register stuff
-			 */
-			$('#btn_register').button({
-				icons: {
-				primary: "ui-icon-check"}
-			});
-
-			$('#switch2register').bind('click',function(){
-				$('#stagewrap').hide();
-				$('#registerWrap').show();
-				$('#registerMsg')
-					.removeClass('success_msg')
-					.text('');
-				$('#register').show();
-			});
 			
-					
-
-
-			//send the register form
-			$('#register').submit(function(){
-
-				var dataSerial = $(this).serialize();
-				var bValid = true; 
-
-				 
-				bValid = bValid && checkLength($('#reg_login'),3,50,'#registerMsg',"<?echo $Text['msg_err_usershort'];?>");
-				bValid = bValid && checkLength($('#reg_password'),4,15,'#registerMsg',"<?echo $Text['msg_err_passshort'];?>"); 
-				bValid = bValid && checkPassword($('#reg_password'), $('#reg_password_ctrl'));
-				bValid = bValid && checkLength($('#name'),1,50,'#registerMsg',"<?php echo $Text['name_person'] .  $Text['msg_err_notempty'];?>");
-				bValid = bValid && checkRegexp($('#phone1'),/^([0-9\s\+])+$/,"<?php echo $Text['phone1'] .  $Text['msg_err_only_num'];?>");
-								
-				// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-				bValid = bValid && checkRegexp( $('#email'), /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "<?=$Text['msg_err_email'];?>" );
-				//bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
 			
-				
-				 if (bValid){
-						
-						$.ajax({
-							type: "POST",
-							url: "ctrlLogin.php?oper=registerUser",	
-							data : dataSerial, 	
-							success: function(msg){	
-								//$.updateTips("#registerMsg", "success","", 600000 );	
-
-								 $( "#dialog-message p" )
-							    	.html("<?php echo $Text['msg_reg_success']; ?>")
-							    	.addClass('success_msg');
-							    
-								$( "#dialog-message" )
-									.dialog({ title: 'Succesful registratio' })
-									.dialog("open");
-									
-								$('#registerWrap').hide();
-								
-							},
-							error : function(XMLHttpRequest, textStatus, errorThrown){
-						 
-							    $( "#dialog-message p" )
-							    	.html(XMLHttpRequest.responseText)
-							    	.addClass('ui-state-error');
-							    
-								$( "#dialog-message" )
-									.dialog({ title: 'Error' })
-									.dialog("open");
-							},
-							complete : function(msg){
-								
-							}
-						}); //end ajax retrieve date
-
-				}
-
-				return false; 
-				
-				 
-			});//end submit
-
-			/**
-			 * Error message dialog 
-			 */
-			$( "#dialog-message" ).dialog({
-				modal: false,
-				autoOpen:false,
-				buttons: {
-					Ok: function() {
-						$( this ).dialog( "close" );
-
-						if ($("p",this).hasClass('success_msg')){
-							resetForms();
-							$('#stagewrap').show();
-						}
-						
-						$("p",this)
-				    	.html('')
-				    	.removeClass('ui-state-error success_msg');
-					}
-				}
-			});
-
-			
-			$('#btn_cancel')
-				.button({
-					icons: {
-					primary: "ui-icon-close"}
-				})
-				.click(function(){
-					resetForms();
-					$('#registerWrap').hide();
-					$('#stagewrap').show();
-					
-				});
 	
 				
 			/**
@@ -240,20 +86,6 @@ if (!isset($_SESSION)) {
 					loadOnInit: true,
 			});
 
-
-			/**
-			 *	language
-			 */
-			 $("#pref_lang")
-				.xml2html("init", {
-						url: "ctrlSmallQ.php",
-						params : "oper=getExistingLanguages",
-						rowName : "language",
-						loadOnInit: true,
-						complete : function(){
-							$("#pref_lang").val("<?php echo $language; ?>"); 
-						}
-			});
 
 			
 
@@ -305,8 +137,8 @@ if (!isset($_SESSION)) {
 			<div class="ui-widget-content ui-corner-all">
 			<h4 class="ui-widget-header ui-corner-all"><?php echo $Text['login'];?></h4>
 			<p id="logonMsg" class="user_tips  minPadding"></p>
-			<form id="login" method="post">
-				<table>
+			<form id="login" method="post" class="padding15x10">
+				<table class="tblForms">
 					<tr>
 						<td><label class="formLabel" for="login"><?=$Text['logon'];?>:</label></td>
 						<td><input type="text" class="inputTxtSmall ui-widget-content ui-corner-all " name="login" id="login"/></td>
@@ -316,12 +148,14 @@ if (!isset($_SESSION)) {
 						<td><input type="password" class="inputTxtSmall ui-widget-content ui-corner-all" name="password" id="password"/></td>
 					</tr>
 					<tr>
-						<td>
-							<a href="javascript:void(null)" id="switch2register"><?=$Text['register']; ?></a>	
-						</td>
-						<td class="textAlignRight">
-							<button name="submitted" id="btn_logon"><?=$Text['btn_login'];?></button>
-							
+						<td colspan="2"><div>&nbsp;</div></td>
+					</tr>
+					<tr>
+						
+						<td colspan="2">
+							<div class="textAlignLeft">
+								<button name="submitted" id="btn_logon"><?=$Text['btn_login'];?></button>
+							</div>
 						</td>
 					</tr>
 				</table>
@@ -333,84 +167,8 @@ if (!isset($_SESSION)) {
 	
 	</div><!-- end stagewrap -->
 	
-	<div id="registerWrap" class="ui-widget ui-corner-all">
-		<div class="ui-widget-content ui-corner-all">
-			<h4 class="ui-widget-header ui-corner-all"><?=$Text['register'];?></h4>
-			<p id="registerMsg" class="user_tips minPadding"></p>
-			<form id="register" method="post">
-				<table>
-					<tr>
-						<td><label class="formLabel" for="reg_login"><?=$Text['logon'];?>:</label></td>
-						<td><input type="text" class="ui-widget-content ui-corner-all " name="login" id="reg_login"> <sup>*</sup> &nbsp;</td>
-					</tr>
-					<tr>
-						<td><label class="formLabel" for="reg_password"><?=$Text['pwd'];?>:</label></td>
-						<td><input type="password" class="ui-widget-content ui-corner-all" name="password" id="reg_password"> <sup>*</sup> &nbsp;</td>
-					</tr>
-					<tr>
-						<td><label class="formLabel" for="reg_password_ctrl"><?=$Text['retype_pwd'];?>:</label></td>
-						<td><input type="password" class="ui-widget-content ui-corner-all " name="password_ctrl" id="reg_password_ctrl"> <sup>*</sup> &nbsp;</td>
-					</tr>
-					<tr>
-							<td><label for="name"><?php echo $Text['name_person'];?>:</label></td>
-							<td><input type="text" name="name" id="name" class="ui-widget-content ui-corner-all" /> <sup>*</sup> &nbsp;</td>
-						</tr>
-						<tr>
-							<td><label for="address"><?php echo $Text['address'];?>:</label></td>
-							<td colspan="4"><input type="text" name="address" id="address" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-						</tr>
-						<tr>
-							<td><label for="city"><?php echo $Text['city'];?>:</label></td>
-							<td><input type="text" name="city" id="city" class="ui-widget-content ui-corner-all" /></td>
-							<td><label for="zip"><?php echo $Text['zip'];?>:</label></td>
-							<td><input type="text" name="zip" id="zip" class="inputTxtSmall ui-widget-content ui-corner-all" /></td>
-							
-						</tr>
-						<tr>
-							<td><label for="phone1"><?php echo $Text['phone1'];?>:</label></td>
-							<td><input type="text" name="phone1" id="phone1" class="ui-widget-content ui-corner-all" /> <sup>*</sup> &nbsp;</td>
-						</tr>
-						<tr>
-							<td><label for="phone2"><?php echo $Text['phone2'];?>:</label></td>
-							<td><input type="text" name="phone2" id="phone2" class="ui-widget-content ui-corner-all" /></td>
-						</tr>
-						<tr>
-							<td><label for="email"><?php echo $Text['email'];?>:</label></td>
-							<td><input type="text" name="email" id="email" class="ui-widget-content ui-corner-all" /> <sup>*</sup> &nbsp;</td>
-						</tr>
-						<tr>
-							<td><label for="urls"><?php echo $Text['web'];?>:</label></td>
-							<td colspan="5"><input type="text" name="urls" id="urls" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-						</tr>
-						<tr>
-							<td><label for="notes"><?php echo $Text['notes'];?>:</label></td>
-							<td colspan="4"><textarea name="notes" id="notes" class="textareaMax ui-widget-content ui-corner-all"></textarea>
-							
-							</td>
-						</tr>
-					<tr>
-						<td><label class="formLabel" for="pref_lang"><?=$Text['lang'];?>:</label></td>
-						<td>
-							<select id="pref_lang" name="pref_lang">
-									<option value="{id}">{description}</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="3"><sup>*</sup><?=$Text['required_fields']; ?></td>
-					</tr>
-					<tr>
-						<td colspan="4" class="textAlignRight">
-							<button name="cancel_register" type="reset" id="btn_cancel"><?=$Text['btn_cancel'];?></button>
-							<button name="submitted" type="submit" id="btn_register"><?=$Text['btn_submit'];?></button>
-						</td>
-					</tr>
-				</table>
 
-			</form>
-		</div>	
-	</div>
+
 </div>
 <div id="dialog-message" title="">
 	<p class="minPadding ui-corner-all"></p>

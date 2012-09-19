@@ -1,120 +1,113 @@
-
-	<div id="wrapUFSelect">
-	<label for="UFSelect">Select an UF: </label>
-		<select id="UFSelect">
-			<option>Loading</option>
-		</select>
-	</div>
-
-
-
-
-	<form id="uf" action="" method="post">
-	<table>
-		<tr>
-			<td colspan="4"><h1>New UF</h1></td>
-		</tr>
-		<tr>
-			<td class="formLabel"><label for="name">Name</label></td>
-			<td colspan="3"><input class="inputTxtLong" type="text" name="name" id="name" /></td>
-		</tr>
-		<tr>
-			<td colspan="4">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="4">&nbsp;</td>
-		</tr>
-		<tr>
-			<td class="textAlignRight" colspan="4"><input type="reset" value="Reset"/>&nbsp;&nbsp;<input type="submit" value="Save"  /></td>
-		</tr>
-	</table>
-	</form>
-		
-		
-<form id="member_uf" action="ctrlTableManager.php" method="post">
-	<input type="hidden" name="id" id="id" value="" />
-	<input type="hidden" name="uf_id" id="uf_id" value="" />
-	<input type="hidden" name="action" id="action" value="" />
-	<input type="hidden" name="table" id="table" value="aixada_member" />
-	<table>
-			<tr>
-				<td colspan="4"><h1>New Member for UF:</h1></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="name">Name</label></td>
-				<td colspan="3"><input class="inputTxtLong" type="text" name="name" id="name" /></td>
-			</tr>
-			<tr>
-				<td colspan="4">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="login">Login</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="login" id="login" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="password">Password</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="password" id="password" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="password">Retype Password</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="retype_password" id="retype_password" /></td>
-			</tr>
-			<tr>
-				<td colspan="4"><h2>Address</h2></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="address">Adress</label></td>
-				<td colspan="3"><input class="inputTxtLong" type="text" name="address" id="address" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="zip">Zip</label></td>
-				<td><input class="inputTxtSmall" type="text" name="zip" id="zip" /></td>
-				<td class="formLabel"><label for="city">City</label></td>
-				<td><input class="inputTxtMiddle" type="text" name="city" id="city" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="phone1">Telephone 1</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="phone1" id="phone1" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="phone2">Telephone 2</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="phone2" id="phone2" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="email">Email</label></td>
-				<td colspan="3"><input class="inputTxtMiddle" type="text" name="email" id="email" /></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="notes">Notes</label></td>
-				<td colspan="3"><textarea class="textareaBig" name="notes" id="notes"></textarea></td>
-			</tr>
-			<tr>
-				<td colspan="4"><h2>Status</h2></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="active">Member is</label></td>
-				<td><select name="active" id="active"><option value="0">inactive</option><option value="1">active</option></select></td>
-				<td class="formLabel"><label for="participant">Participates:</label></td>
-				<td><select name="participant"><option value="0">passively</option><option value="1">actively</option></select></td>
-			</tr>
-			<tr>
-				<td class="formLabel"><label for="committee_id">Comission</label></td>
-				<td><select name="committee_id">
-					<option value="1">Cap</option><option value="2">Consum</option><option value="3">EconoLegal</option><option value="4">Informática</option></select></td>
-				<td><label for="member_type">Type</label></td>
-				<td><select name="member_type" id="member_type"><option value="0">Adult</option><option value="1">Child</option></select></td>
-				
-				
-			</tr>
-			<tr>
-				<td colspan="4">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="textAlignRight" colspan="4"><input type="reset" value="Reset"/>&nbsp;&nbsp;<input type="submit" value="Save"  /></td>
-			</tr>
-	</table>
-</form>
-		
-<p>&nbsp;</p>
+	<table class="tblForms">
+						<tr>
+							<td><label for="login"><?php echo $Text['login'];?></label></td>
+							<td>
+								<p class="textAlignLeft ui-corner-all">{login}</p>
+							</td>
+							<td><label for="member_id">Member id</label></td>
+							<td><p class="textAlignLeft ui-corner-all">{id}</p></td>
+							
+						</tr>
+						<tr>
+							<td colspan="2"></td>
+							<td><label for="custom_member_ref">Custom ref</label></td>
+							<td><input type="text" name="custom_member_ref" value="{custom_member_ref}" class="ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="name"><?php echo $Text['name_person'];?></label></td>
+							<td><input type="text" name="name"  value="{name}" class="ui-widget-content ui-corner-all" /></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><label for="nif">NIF</label></td>
+							<td><input type="text" name="nif" value="{nif}" class="ui-widget-content ui-corner-all" /></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><label for="address"><?php echo $Text['address'];?></label></td>
+							<td colspan="5"><input type="text" name="address" value="{address}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="city"><?php echo $Text['city'];?></label></td>
+							<td><input type="text" name="city" value="{city}" class="ui-widget-content ui-corner-all" /></td>
+							<td><label for="zip"><?php echo $Text['zip'];?></label></td>
+							<td><input type="text" name="zip"  value="{zip}" class=" ui-widget-content ui-corner-all" /></td>
+							
+						</tr>
+						<tr>
+							<td><label for="phone1"><?php echo $Text['phone1'];?></label></td>
+							<td><input type="text" name="phone1" value="{phone1}" class="ui-widget-content ui-corner-all" /></td>
+						
+							<td><label for="phone2"><?php echo $Text['phone2'];?></label></td>
+							<td><input type="text" name="phone2" value="{phone2}" class="ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="email"><?php echo $Text['email'];?></label></td>
+							<td colspan="5"><input type="text" name="email" value="{email}" class="ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="web"><?php echo $Text['web'];?></label></td>
+							<td colspan="5"><input type="text" name="web"value="{web}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="notes"><?php echo $Text['notes'];?></label></td>
+							<td colspan="5"><input type="text" name="notes" value="{notes}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
+						</tr>
+						<tr>
+							<td><label for="member_active"><?php echo $Text['active'];?></label></td>
+							<td><input type="checkbox" name="member_active" value="{active}" class="floatLeft" /></td>
+							<td><label for="participant"><?php echo $Text['participant'];?></label></td>
+							<td><input type="checkbox" name="participant" value="{participant}" class="floatLeft" /></td>
+						</tr>
+						<tr>
+							<td>&nbsp;
+							</td>
+						</tr>
+						<tr>
+							<td><label for="last_seen" >Last seen:</label></td>
+							<td colspan="2"><p class="textAlignLeft ui-corner-all">{last_successful_login}</p></td>
+						</tr>
+						<tr>
+							<td><label for="default_theme">Theme:</label></td>
+							<td colspan="2">
+								<p class="textAlignLeft ui-corner-all hidden">{gui_theme}</p>
+								<div class="memberThemeSelect"></div>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="languageSelect"><?php echo $Text['lang']; ?>:</label></td>
+							<td>
+								<p class="textAlignLeft ui-corner-all hidden">{language}</p>
+								<div class="memberLanguageSelect"></div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3"></td>
+							<td><p class="floatRight">
+									<button class="btn_save_edit_member" memberid="{id}">Save changes</button>
+								</p>
+							</td>
+						</tr>
+					</table>
+					</form>
+					<p>&nbsp;</p>
+					<table class="tblForms">
+						<tr>
+							<td><?php echo $Text['active_roles'];?></td>
+							<td><p class="textAlignLeft">{roles}</p></td>
+						</tr>
+						<tr>
+							<td><?php echo $Text['providers_cared_for'];?>:</td>
+							<td><p class="textAlignLeft">{providers}</p></td>
+							
+						</tr>
+						<tr>
+							<td><?php echo $Text['products_cared_for'];?>:</td>
+							<td><p class="textAlignLeft">{products}</p></td>
+						</tr>
+						<tr><td>&nbsp;</td></tr>
+					</table>
 		
 

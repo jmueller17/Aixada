@@ -53,6 +53,40 @@ function get_session_member_id(){
 
 /**
  * 
+ * returns the language for the logged user
+ */
+function get_session_language(){
+	
+	 if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
+	 	
+	 	return $_SESSION['userdata']['language'];
+	 	
+	 } else {
+	 	return	configuration_vars::get_instance()->default_language;
+	 }
+	 
+}
+
+
+/**
+ * 
+ * returns the theme for the logged user
+ */
+function get_session_theme(){
+	
+	 if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
+	 	
+	 	return $_SESSION['userdata']['theme'];
+	 	
+	 } else {
+	 	return	configuration_vars::get_instance()->default_theme;
+	 }
+	 
+}
+
+
+/**
+ * 
  * Provides some basic logic to retrieve values from URL parameters. 
  * @param str $param_name the name of the parameter passed along 
  * @param $default a default value. if the parameter is not set, the default value will be used
@@ -93,6 +127,10 @@ function get_param($param_name, $default=null, $transform = ''){
 			
 		case '':
 			$value = $value; 
+			break;
+			
+		case 'crypt':
+			$value = crypt($value, "ax");
 			break;
 			
 		default: 
@@ -380,6 +418,20 @@ function get_field_options_live($table, $field1, $field2)
     }
     return $strXML . '</select>';
 }
+
+
+function get_existing_themes_XML()
+{
+	$exclude_list = array(".", "..", "example.txt");
+	$folders = array_diff( scandir('css/ui-themes'), $exclude_list);
+     
+    $XML = '<themes>';
+    foreach ($folders as $theme) {
+        $XML .= "<theme><name>{$theme}</name></theme>";
+    }
+    return $XML . '</themes>';
+}
+
 
 function existing_languages()
 {
