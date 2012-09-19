@@ -55,8 +55,8 @@
 
 	//init cart 
 	$('#cartLayer').aixadacart("init",{
-		saveCartURL : 'ctrlShopAndOrder.php?what='+what+'&oper=commit',
-		loadCartURL : 'ctrlShopAndOrder.php?oper=get'+what+'Cart',
+		saveCartURL : 'php/ctrl/ShopAndOrder.php?what='+what+'&oper=commit',
+		loadCartURL : 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart',
 		cartType	: (what=='Shop')? 'standalone':'standalone_preorder',
 		btnType		: 'save',
 		autoSave	: 0,
@@ -69,7 +69,7 @@
 	$('#product_list_category tbody').xml2html("init");
 	$('#product_list_search tbody').xml2html("init");
 	$('#product_list_preorder tbody').xml2html("init",{
-			url: 'ctrlShopAndOrder.php',
+			url: 'php/ctrl/ShopAndOrder.php',
 			params : 'oper=getPreorderableProducts',
 			loadOnInit : true
 	});
@@ -338,7 +338,7 @@
 	function refreshSelects(dateText){
 		
 		$('#cartLayer').aixadacart('loadCart',{
-			loadCartURL		: 'ctrlShopAndOrder.php?oper=get'+what+'Cart&date='+dateText,
+			loadCartURL		: 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart&date='+dateText,
 			date 			: dateText
 		}); //end loadCart
 

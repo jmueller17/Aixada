@@ -86,26 +86,21 @@
     0 => 'aixada_user',
     1 => 'aixada_member',
   ),
-  'set_order_item_status' => 
+  'set_order_status' => 
   array (
-    0 => 'if',
+    0 => '*',
   ),
   'activate_preorder_products' => 
   array (
     0 => 'aixada_order_to_shop',
-    1 => 'aixada_order_item',
+    1 => '*/',
+    2 => 'aixada_shop_item',
+    4 => 'procedure',
+    5 => 'aixada_order_item',
   ),
   'deactivate_preorder_products' => 
   array (
     0 => 'aixada_order_item',
-  ),
-  'move_all_orders' => 
-  array (
-    0 => 'aixada_order_item',
-    3 => 'date_for_order',
-    4 => 'aixada_shop_item',
-    7 => 'date_for_shop',
-    8 => 'aixada_product_orderable_for_date',
   ),
   'repeat_orderable_product' => 
   array (

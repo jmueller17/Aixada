@@ -93,7 +93,7 @@ function get_model ($tm)
    if ($tm->is_foreign_key($field)) {
       $col_model 
 	.= ",edittype:'select',editoptions:{"
-	. "dataUrl:'ctrlSmallQ.php?oper=getFieldOptions&table="
+	. "dataUrl:'php/ctrl/SmallQ.php?oper=getFieldOptions&table="
 	. $keys[$field][0] 
 	. '&field1=' . $keys[$field][1] 
 	. '&field2=' . $keys[$field][2] 

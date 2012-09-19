@@ -61,7 +61,7 @@
 			 * 	account listing
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url		: 'ctrlReport.php',
+					url		: 'php/ctrl/Report.php',
 			});
 			
 						

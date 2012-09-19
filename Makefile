@@ -14,25 +14,27 @@ export FINAL = true
 
 config_dir:=local_config
 
-all: sql/all canned_responses.php css/all js/all $(config_dir)/config.php 
+all: canned_responses.php $(config_dir)/config.php 
+#sql/all js/all css/all
 
-sql/all:
-	$(MAKE) -C sql
 
-css/all:
-	$(MAKE) -C css
+# sql/all:
+# 	$(MAKE) -C sql
 
-js/all:
-	$(MAKE) -C js
+# css/all:
+# 	$(MAKE) -C css
+
+# js/all:
+# 	$(MAKE) -C js
 
 canned_responses.php: sql/aixada.sql utilities_tables.php $(wildcard $(config_dir)/lang/*) \
 	lib/table_with_ref.php
 	php make_canned_responses.php
 
-$(config_dir)/config.php: sql/setup/queries_reading.php \
-            sql/setup/tables_modified_by.php \
-            make_config.php
-	php make_config.php
+#$(config_dir)/config.php: sql/setup/queries_reading.php \
+#            sql/setup/tables_modified_by.php \
+#            make_config.php
+#	php make_config.php
 
 clean_ship:
 	rm -rf $(ship_dir)

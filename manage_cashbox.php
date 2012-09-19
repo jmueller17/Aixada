@@ -35,7 +35,7 @@
 			 * 	account listing
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url				: 'ctrlAccount.php',
+					url				: 'php/ctrl/Account.php',
 					params			: 'oper=accountExtract&account_id=-3&start_date=2200-01-01&num_rows=400',
 					resultsPerPage 	: 20,
 					loadOnInit 		: true, 
@@ -56,7 +56,7 @@
 			 *	load ufs. make depost in cashbox and account. 
 			 */
 			 $('#uf_account_select').xml2html('init',{
-					url 	: 'ctrlAccount.php',
+					url 	: 'php/ctrl/Account.php',
 					params 	: 'oper=getAllAccounts', 
 					offSet	: 1, 
 					loadOnInit : true, 
@@ -201,7 +201,7 @@
 
 				$.ajax({
 					type: "POST",
-					url: "ctrlCash.php?oper=deposit",
+					url: "php/ctrl/Cash.php?oper=deposit",
 					data: dataSerial,	
 					beforeSend : function (){
 						$('#depositAnim').show();
@@ -240,7 +240,7 @@
 
 					$.ajax({
 						type: "POST",
-						url: "ctrlCash.php?oper=withdrawal",
+						url: "php/ctrl/Cash.php?oper=withdrawal",
 						data: dataSerial,	
 						beforeSend : function (){
 							$('#withdrawAnim').show();
@@ -297,7 +297,7 @@
   							//function to create new uf
   							$.ajax({
   								type: "POST",
-								url : "ctrlCash.php?oper=correctBalance&amount="+amount,
+								url : "php/ctrl/Cash.php?oper=correctBalance&amount="+amount,
   								dataType : 'xml',
   						        success :  function(xml){
   									$("#dialog_c_balance").dialog( "close" );

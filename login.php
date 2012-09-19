@@ -59,7 +59,7 @@ if (!isset($_SESSION)) {
 				var dataSerial = $(this).serialize();
 				$.ajax({
 					type: "POST",
-                    url: "ctrlLogin.php?oper=login",
+                    url: "php/ctrl/Login.php?oper=login",
 					data:dataSerial,		
 					success: function(msg){			
                         top.location.href = 'index.php';
@@ -81,7 +81,7 @@ if (!isset($_SESSION)) {
 			 *	incidents
 			 */
 			$('#newsWrap').xml2html('init',{
-					url: 'ctrlIncidents.php',
+					url: 'php/ctrl/Incidents.php',
 					params : 'oper=getIncidentsListing&filter=pastWeek&type=3',
 					loadOnInit: true,
 			});

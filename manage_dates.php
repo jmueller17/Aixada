@@ -53,7 +53,7 @@
 					//send de/select date to db and retrieve / update array "available Dates"
 					$.ajax({
 						type: "POST",
-						url: "ctrlDates.php?oper="+oper+"&date="+date,		
+						url: "php/ctrl/Dates.php?oper="+oper+"&date="+date,		
 						dataType: "JSON", 
 						success: function(msg){
 							if (oper == "delOrderableDate"){
@@ -188,7 +188,7 @@
 							//move the dates
 							$.ajax({
 								type: "POST",
-								url: "ctrlShopAndOrder.php?oper=moveAllOrders&from_date="+from_date+"&to_date="+to_date,		
+								url: "php/ctrl/ShopAndOrder.php?oper=moveAllOrders&from_date="+from_date+"&to_date="+to_date,		
 								dataType: "xml", 
 								success: function(xml){
 									datesWithOrders = jQuery.grep(datesWithOrders, function(value) {
@@ -253,7 +253,7 @@
 				$.ajax({
 					type: "POST",
 					data: fdata,
-					url: "ctrlDates.php?oper=generateDates",	
+					url: "php/ctrl/Dates.php?oper=generateDates",	
 					beforeSend : function (){
 						//$('#deposit .loadAnim').show();
 					},	

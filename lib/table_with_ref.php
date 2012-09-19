@@ -305,10 +305,17 @@ class foreign_key_manager {
   private function _get_key_descriptions($desc)
   {
     $pos = strpos($desc, 'PRIMARY KEY');
-    if ($pos===false) throw new InternalException('No primary key found in table ' . $this->_table_name . '. with description=' . $desc);
-    $keys = explode('  ', substr($desc, $pos)); 
-    $this->_set_primary_key($keys[0]);
-    array_shift($keys);   // we already know about the primary key, so let's delete it
+    $keys = array();
+    if ($pos!==false) {
+	/*
+	  Primary key found in table ' . $this->_table_name . '. with description=' . $desc);
+	*/
+	$keys = explode('  ', substr($desc, $pos)); 
+	$this->_set_primary_key($keys[0]);
+	array_shift($keys);   // we already know about the primary key, so let's delete it
+    } else {
+	$keys = explode('  ', substr($desc, strpos($desc, 'KEY')));
+    }
     foreach ($keys as $keystr) {
       $this->_parse_foreign_key($keystr);
     }

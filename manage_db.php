@@ -40,7 +40,7 @@
 			.click(function(){
 
 				$.ajax({
-					   url: "ctrlValidate.php?oper=backupDatabase",
+					   url: "php/ctrl/Validate.php?oper=backupDatabase",
 					   beforeSend: function(){
 						   $('.loadAnim').show();
 						   $('#btn_backup').button( "option", "disabled", true );

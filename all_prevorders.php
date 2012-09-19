@@ -35,7 +35,7 @@
 
 			//retrieve all dates available
 			$('#shopTimes').xml2html('init',{
-						url : 'ctrlReport.php',
+						url : 'php/ctrl/Report.php',
 						offSet	: 1,
 			}).change(function(){
 
@@ -53,7 +53,7 @@
 				
 				//reload the list
 				$('#cartLayer').aixadacart('loadCart',{
-					loadCartURL : 'ctrlReport.php?oper=getShoppedItems&shop_id='+shop_id
+					loadCartURL : 'php/ctrl/Report.php?oper=getShoppedItems&shop_id='+shop_id
 				}); //end loadCart
 
 			});
@@ -67,7 +67,7 @@
 			//uf select
 			$('#uf_select').xml2html('init',{
 				offSet	: 1,
-				url 	: 'ctrlUserAndUf.php',
+				url 	: 'php/ctrl/UserAndUf.php',
 				params 	: 'oper=getUfListing',
 				loadOnInit:true
 			//event listener to load items for this uf to validate
@@ -96,7 +96,7 @@
 			
 			//init cart 
 			$('#cartLayer').aixadacart("init",{
-				saveCartURL : 'ctrlValidate.php',
+				saveCartURL : 'php/ctrl/Validate.php',
 				cartType	: 'simple',
 				btnType		: 'hidden',
 				loadSuccess : function(){

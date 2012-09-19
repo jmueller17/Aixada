@@ -33,7 +33,7 @@
 		        $("#userSelect").xml2html("init", {
 				loadOnInit  : true,
 				offSet		: 1,
-				url         : 'ctrlActivateRoles.php',				
+				url         : 'php/ctrl/ActivateRoles.php',				
 				params 		: 'oper=listUsers'
 			}).change(function(){
 				//get the id of the role
@@ -41,13 +41,13 @@
 				if (id < 0) return true; 
 				
 				$('#inactiveRoles').xml2html("reload",{
-					url     : 'ctrlActivateRoles.php',
+					url     : 'php/ctrl/ActivateRoles.php',
 					tpl		: '<option value="{role}">{role}</option>',
 					params	: 'oper=getDeactivatedRoles&user_id='+id
 				});	
 
 				$('#activeRoles').xml2html("reload",{
-					url     : 'ctrlActivateRoles.php',
+					url     : 'php/ctrl/ActivateRoles.php',
 					tpl		: '<option value="{role}">{role}</option>',
 					params	: 'oper=getActivatedRoles&user_id='+id					
 				});	
@@ -97,7 +97,7 @@
 				
 				$.ajax({
 					type: "GET",
-					url: "ctrlActivateRoles.php?oper=activateRoles",
+					url: "php/ctrl/ActivateRoles.php?oper=activateRoles",
 					data: dataSerial,
 					success: function(msg){
 						//$("input:submit").button( "option", "disabled", false);

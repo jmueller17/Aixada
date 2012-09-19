@@ -1,5 +1,9 @@
+/* 
+ * The contents of this file are generated automatically. 
+ * Do not edit it, but instead run
+ * php make_canned_responses.php
+ */
 delimiter |
-/* The contents of this file are generated automatically.  Do not edit it, but instead run php make_canned_responses.php */
 
 drop procedure if exists aixada_account_list_all_query|
 create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
@@ -11,32 +15,34 @@ begin
       aixada_account.id,
       aixada_account.account_id,
       aixada_account.quantity,
-      aixada_payment_method.description as payment_method,
-      aixada_currency.name as currency,
+      aixada_account.payment_method_id,
+      aixada_account.currency_id,
       aixada_account.description,
       aixada_account.operator_id,
       aixada_account.ts,
       aixada_account.balance 
-    from aixada_account 
-    left join aixada_payment_method as aixada_payment_method on aixada_account.payment_method_id=aixada_payment_method.id
-    left join aixada_currency as aixada_currency on aixada_account.currency_id=aixada_currency.id";
+    from aixada_account ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
   deallocate prepare st;
 end|
 
-drop procedure if exists aixada_account_balance_list_all_query|
-create procedure aixada_account_balance_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+drop procedure if exists aixada_cart_list_all_query|
+create procedure aixada_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
 begin
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
-      aixada_account_balance.account_id,
-      aixada_account_balance.balance,
-      aixada_account_balance.last_update 
-    from aixada_account_balance ";
+      aixada_cart.id,
+      aixada_cart.name,
+      aixada_uf.name as uf,
+      aixada_cart.date_for_shop,
+      aixada_cart.operator_id,
+      aixada_cart.ts_validated 
+    from aixada_cart 
+    left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -54,77 +60,6 @@ begin
       aixada_currency.name,
       aixada_currency.one_euro 
     from aixada_currency ";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
-drop procedure if exists aixada_distributor_list_all_query|
-create procedure aixada_distributor_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_distributor.id,
-      aixada_distributor.name,
-      aixada_distributor.contact,
-      aixada_distributor.address,
-      aixada_distributor.nif,
-      aixada_distributor.zip,
-      aixada_distributor.city,
-      aixada_distributor.phone1,
-      aixada_distributor.phone2,
-      aixada_distributor.fax,
-      aixada_distributor.email,
-      aixada_distributor.web,
-      aixada_distributor.notes,
-      aixada_distributor.active,
-      concat(aixada_uf.id, ' ', aixada_uf.name) as responsible_uf 
-    from aixada_distributor 
-    left join aixada_uf as aixada_uf on aixada_distributor.responsible_uf_id=aixada_uf.id";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
-drop procedure if exists aixada_favorite_order_cart_list_all_query|
-create procedure aixada_favorite_order_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_favorite_order_cart.id,
-      aixada_uf.name as uf,
-      aixada_favorite_order_cart.name 
-    from aixada_favorite_order_cart 
-    left join aixada_uf as aixada_uf on aixada_favorite_order_cart.uf_id=aixada_uf.id";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
-drop procedure if exists aixada_favorite_order_item_list_all_query|
-create procedure aixada_favorite_order_item_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_favorite_order_item.id,
-      aixada_favorite_order_cart.name as favorite_order_cart,
-      aixada_uf.name as uf,
-      aixada_product.name as product,
-      aixada_favorite_order_item.quantity,
-      aixada_favorite_order_item.ts_ordered 
-    from aixada_favorite_order_item 
-    left join aixada_favorite_order_cart as aixada_favorite_order_cart on aixada_favorite_order_item.favorite_order_cart_id=aixada_favorite_order_cart.id
-    left join aixada_uf as aixada_uf on aixada_favorite_order_item.uf_id=aixada_uf.id
-    left join aixada_product as aixada_product on aixada_favorite_order_item.product_id=aixada_product.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -174,6 +109,22 @@ begin
   deallocate prepare st;
 end|
 
+drop procedure if exists aixada_iva_type_list_all_query|
+create procedure aixada_iva_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_iva_type.id,
+      aixada_iva_type.percent 
+    from aixada_iva_type ";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
 drop procedure if exists aixada_member_list_all_query|
 create procedure aixada_member_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
 begin
@@ -185,6 +136,7 @@ begin
       aixada_uf.name as uf,
       aixada_member.name,
       aixada_member.address,
+      aixada_member.nif,
       aixada_member.zip,
       aixada_member.city,
       aixada_member.phone1,
@@ -194,9 +146,36 @@ begin
       aixada_member.notes,
       aixada_member.active,
       aixada_member.participant,
-      aixada_member.adult 
+      aixada_member.adult,
+      aixada_member.ts 
     from aixada_member 
     left join aixada_uf as aixada_uf on aixada_member.uf_id=aixada_uf.id";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_order_list_all_query|
+create procedure aixada_order_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_order.id,
+      aixada_provider.name as provider,
+      aixada_order.date_for_order,
+      aixada_order.ts_send_off,
+      aixada_order.date_received,
+      aixada_order.date_for_shop,
+      aixada_order.total,
+      aixada_order.notes,
+      aixada_order.revision_status,
+      aixada_order.delivery_ref,
+      aixada_order.payment_ref 
+    from aixada_order 
+    left join aixada_provider as aixada_provider on aixada_order.provider_id=aixada_provider.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -211,14 +190,45 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_order_item.id,
+      aixada_order_item.order_id,
+      aixada_order_item.unit_price_stamp,
       aixada_order_item.date_for_order,
       aixada_uf.name as uf,
+      aixada_cart.name as favorite_cart,
       aixada_product.name as product,
       aixada_order_item.quantity,
       aixada_order_item.ts_ordered 
     from aixada_order_item 
     left join aixada_uf as aixada_uf on aixada_order_item.uf_id=aixada_uf.id
+    left join aixada_cart as aixada_cart on aixada_order_item.favorite_cart_id=aixada_cart.id
     left join aixada_product as aixada_product on aixada_order_item.product_id=aixada_product.id";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_order_to_shop_list_all_query|
+create procedure aixada_order_to_shop_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_order_to_shop.order_item_id,
+      aixada_uf.name as uf,
+      aixada_order_to_shop.order_id,
+      aixada_order_to_shop.unit_price_stamp,
+      aixada_product.name as product,
+      aixada_order_to_shop.quantity,
+      aixada_order_to_shop.arrived,
+      aixada_order_to_shop.revised,
+      aixada_order_to_shop.aixada_order_to_shop_ibfk_1,
+      aixada_order_to_shop.aixada_order_to_shop_ibfk_2,
+      aixada_order_to_shop.aixada_order_to_shop_ibfk_3 
+    from aixada_order_to_shop 
+    left join aixada_uf as aixada_uf on aixada_order_to_shop.uf_id=aixada_uf.id
+    left join aixada_product as aixada_product on aixada_order_to_shop.product_id=aixada_product.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -275,14 +285,16 @@ begin
       aixada_orderable_type.description as orderable_type,
       aixada_product_category.description as category,
       aixada_rev_tax_type.description as rev_tax_type,
+      aixada_product.iva_percent_id,
       aixada_product.unit_price,
-      aixada_product.iva_percent,
       aixada_unit_measure_order.unit as unit_measure_order,
       aixada_unit_measure_shop.unit as unit_measure_shop,
       aixada_product.stock_min,
       aixada_product.stock_actual,
       aixada_product.delta_stock,
-      aixada_product.description_url 
+      aixada_product.description_url,
+      aixada_product.picture,
+      aixada_product.ts 
     from aixada_product 
     left join aixada_provider as aixada_provider on aixada_product.provider_id=aixada_provider.id
     left join aixada_uf as aixada_uf on aixada_product.responsible_uf_id=aixada_uf.id
@@ -321,10 +333,10 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_product_orderable_for_date.id,
-      aixada_product.name as product,
-      aixada_product_orderable_for_date.date_for_order 
-    from aixada_product_orderable_for_date 
-    left join aixada_product as aixada_product on aixada_product_orderable_for_date.product_id=aixada_product.id";
+      aixada_product_orderable_for_date.product_id,
+      aixada_product_orderable_for_date.date_for_order,
+      aixada_product_orderable_for_date.closing_date 
+    from aixada_product_orderable_for_date ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -350,30 +362,16 @@ begin
       aixada_provider.fax,
       aixada_provider.email,
       aixada_provider.web,
+      aixada_provider.bank_name,
+      aixada_provider.bank_account,
+      aixada_provider.picture,
       aixada_provider.notes,
       aixada_provider.active,
-      concat(aixada_uf.id, ' ', aixada_uf.name) as responsible_uf 
+      concat(aixada_uf.id, ' ', aixada_uf.name) as responsible_uf,
+      aixada_provider.offset_order_close,
+      aixada_provider.ts 
     from aixada_provider 
     left join aixada_uf as aixada_uf on aixada_provider.responsible_uf_id=aixada_uf.id";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
-drop procedure if exists aixada_providers_of_distributor_list_all_query|
-create procedure aixada_providers_of_distributor_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_providers_of_distributor.id,
-      aixada_distributor.name as distributor,
-      aixada_provider.name as provider 
-    from aixada_providers_of_distributor 
-    left join aixada_distributor as aixada_distributor on aixada_providers_of_distributor.distributor_id=aixada_distributor.id
-    left join aixada_provider as aixada_provider on aixada_providers_of_distributor.provider_id=aixada_provider.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -405,14 +403,15 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_shop_item.id,
-      aixada_uf.name as uf,
-      aixada_shop_item.date_for_shop,
+      aixada_cart.name as cart,
+      aixada_shop_item.order_item_id,
+      aixada_shop_item.unit_price_stamp,
       aixada_product.name as product,
       aixada_shop_item.quantity,
-      aixada_shop_item.ts_validated,
-      aixada_shop_item.operator_id 
+      aixada_shop_item.iva_percent,
+      aixada_shop_item.rev_tax_percent 
     from aixada_shop_item 
-    left join aixada_uf as aixada_uf on aixada_shop_item.uf_id=aixada_uf.id
+    left join aixada_cart as aixada_cart on aixada_shop_item.cart_id=aixada_cart.id
     left join aixada_product as aixada_product on aixada_shop_item.product_id=aixada_product.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
@@ -508,7 +507,7 @@ begin
       aixada_member.name as member,
       aixada_provider.name as provider,
       aixada_user.language,
-      aixada_user.color_scheme_id,
+      aixada_user.gui_theme,
       aixada_user.last_login_attempt,
       aixada_user.last_successful_login,
       aixada_user.created_on 

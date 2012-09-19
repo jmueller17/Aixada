@@ -146,7 +146,7 @@
   				var dataSerial = $(this).serialize();
   				var date =  $.getSelectedDate('#datepicker'); 
   				$.ajax({
-  					   url: 'ctrlShopAndOrder.php?oper=activatePreOrderProducts&date='+date,
+  					   url: 'php/ctrl/ShopAndOrder.php?oper=activatePreOrderProducts&date='+date,
   					   data: dataSerial,
   					   success: function(msg){
 		  					$.showMsg({

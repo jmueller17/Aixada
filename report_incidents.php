@@ -35,7 +35,7 @@
 		 */
 
 		$('#tbl_incidents tbody').xml2html('init',{
-			url: 'ctrlIncidents.php',
+			url: 'php/ctrl/Incidents.php',
 			params : 'oper=getIncidentsListing&filter=today',
 			loadOnInit: true, 
 			complete : function(rowCount){

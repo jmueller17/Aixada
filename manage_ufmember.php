@@ -47,7 +47,7 @@
 		//load available languages
 		 $("#languageSelect")
 			.xml2html("init", {
-					url: "ctrlSmallQ.php",
+					url: "php/ctrl/SmallQ.php",
 					params : "oper=getExistingLanguages",
 					rowName : "language",
 					loadOnInit: false,
@@ -60,7 +60,7 @@
 		//load available themes
 		 $("#themeSelect")
 			.xml2html("init", {
-					url: "ctrlSmallQ.php",
+					url: "php/ctrl/SmallQ.php",
 					params : "oper=getExistingThemes",
 					rowName : "theme",
 					loadOnInit: true,
@@ -79,7 +79,7 @@
 				
 		//init the uf listing
 		$('#uf_list tbody').xml2html('init',{
-			url: 		'ctrlUserAndUf.php',
+			url: 		'php/ctrl/UserAndUf.php',
 			params : 	'oper=getUfListing&all=1',
 			loadOnInit:	true,
 			//resultsPerPage:20,
@@ -129,7 +129,7 @@
 		
 		//load mentor uf select listing
 		$('#mentor_uf').xml2html('init',{
-			url: 'ctrlUserAndUf.php',
+			url: 'php/ctrl/UserAndUf.php',
 			params : 'oper=getUfListing&all=0',
 			loadOnInit:true,
 			offSet : 1,
@@ -203,7 +203,7 @@
 				//toggle active state of uf. 
 				$.ajax({
 					type: "POST",
-	                url: 'ctrlUserAndUf.php?oper=editUF&is_active='+is_active+'&uf_id='+$(this).parents('tr').attr('ufid')+'&name='+$(this).parents('tr').attr('ufname')+'&mentor_uf='+$(this).parents('tr').attr('mentoruf'), 
+	                url: 'php/ctrl/UserAndUf.php?oper=editUF&is_active='+is_active+'&uf_id='+$(this).parents('tr').attr('ufid')+'&name='+$(this).parents('tr').attr('ufname')+'&mentor_uf='+$(this).parents('tr').attr('mentoruf'), 
 			        success :  function(msg){
 			        	$.showMsg({
 							msg: 'The active state has been successful changed for HU'+$(this).parents('tr').attr('ufid'),
@@ -237,7 +237,7 @@
 			if (ufId > 0){
 		   		var isActive = $('#uf_info').find('input:checkbox').attr('checked')? 1:0;
 			   	var ufName = $('#uf_info').find('input:text').val();   							   	
-				var urlStr =  'ctrlUserAndUf.php?oper=editUF&uf_id='+ufId+'&is_active='+isActive+'&name='+ufName+'&mentor_uf='+mentorUf; 
+				var urlStr =  'php/ctrl/UserAndUf.php?oper=editUF&uf_id='+ufId+'&is_active='+isActive+'&name='+ufName+'&mentor_uf='+mentorUf; 
 				stupidHack = 's9328820398023948'; 
 				if (ufId == mentorUf){
 					$.showMsg({
@@ -250,13 +250,13 @@
 			//create 
 			} else {
 				var ufName = $('#create_uf_name').val(); 
-				var urlStr = 'ctrlUserAndUf.php?oper=createUF&name='+ufName+'&mentor_uf='+mentorUf;
+				var urlStr = 'php/ctrl/UserAndUf.php?oper=createUF&name='+ufName+'&mentor_uf='+mentorUf;
 				stupidHack = ''; 
 			}
 
 			$.ajax({
 				type: "POST",
-                url: 'ctrlUserAndUf.php?oper=checkFormField&table=aixada_uf&field=name&value='+ufName+stupidHack, 
+                url: 'php/ctrl/UserAndUf.php?oper=checkFormField&table=aixada_uf&field=name&value='+ufName+stupidHack, 
 		        success :  function(msg){
 		        	//check if uf name exists
 			       if (msg == 1){
@@ -314,7 +314,7 @@
 
 		//init the uf member listing
 		$('#member_list tbody').xml2html('init',{
-			url : "ctrlUserAndUf.php",
+			url : "php/ctrl/UserAndUf.php",
 			params: "oper=getMemberListing&all=1",
 			loadOnInit:true,
 			beforeLoad : function(){
@@ -357,7 +357,7 @@
 
 		//init the non / new member listing
 		$('#member_list_unassigned tbody').xml2html('init',{
-			url : "ctrlUserAndUf.php",
+			url : "php/ctrl/UserAndUf.php",
 			params : "oper=getMembersWithoutUF",
 			loadOnInit:true,
 			complete : function(){
@@ -367,7 +367,7 @@
 
 		//init search listing
 		$('#member_list_search tbody').xml2html('init',{
-			url : "ctrlUserAndUf.php",
+			url : "php/ctrl/UserAndUf.php",
 			params : "oper=searchMember",
 			complete : function(){
 				$('#member_list_search tbody tr:even').addClass('rowHighlight'); 
@@ -383,7 +383,7 @@
 					if (searchStr.length >= minLength){
 						//$('.loadAnimShop').show();
 						$('#member_list_search tbody').xml2html('reload',{
-							url : "ctrlUserAndUf.php",
+							url : "php/ctrl/UserAndUf.php",
 							params : "oper=searchMember&like="+searchStr,
 							
 						});
@@ -402,7 +402,7 @@
 		 *******************************************/
 
 		$('#uf_detail_member_list').xml2html('init',{
-			url : "ctrlUserAndUf.php",
+			url : "php/ctrl/UserAndUf.php",
 			params: "oper=getMemberInfo&uf_id=",
 			loadOnInit:false,
 			beforeLoad : function(){
@@ -456,7 +456,7 @@
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){
 									var dlog = $(this);
-									var urlStr = 'ctrlUserAndUf.php?oper=removeMember&member_id='+$this.attr('memberId'); 
+									var urlStr = 'php/ctrl/UserAndUf.php?oper=removeMember&member_id='+$this.attr('memberId'); 
 									$.post(urlStr, function(ok){
 										if (ok == '1'){
 											$('#detail_member_'+$this.attr('memberId')).fadeOut(1000, function(){$(this).remove()});
@@ -574,14 +574,14 @@
 		 */
 		function submitMember(action, mi){
 
-			var urlStr = 'ctrlUserAndUf.php?oper=updateMember';
+			var urlStr = 'php/ctrl/UserAndUf.php?oper=updateMember';
 			var isValid = true; 
 			var err_msg = ''; 
 
 			//run some local checks
 			if (action == 'create'){
 
-				urlStr = "ctrlUserAndUf.php?oper=createUserMember";
+				urlStr = "php/ctrl/UserAndUf.php?oper=createUserMember";
 			
 				isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
 				if (!isValid){

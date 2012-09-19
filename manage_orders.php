@@ -84,7 +84,7 @@
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
 					type: "POST",
-					url: 'ctrlUserAndUf.php?oper=getUfListing&all=0',
+					url: 'php/ctrl/UserAndUf.php?oper=getUfListing&all=0',
 					dataType:"xml",
 					success: function(xml){
 						var theadStr = ''; 
@@ -113,7 +113,7 @@
 			
 			//STEP 2: construct table structure: products and col-cells. 
 			$('#tbl_reviseOrder tbody').xml2html('init',{
-				url : 'ctrlOrders.php',
+				url : 'php/ctrl/Orders.php',
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
 					var tbodyStr = '';
@@ -139,7 +139,7 @@
 					//STEP 3: populate cells with product quantities
 					$.ajax({
 					type: "POST",
-					url: 'ctrlOrders.php?oper=getProductQuantiesForUfs&order_id='+ gSelRow.attr('orderId')+'&provider_id='+gSelRow.attr("providerId")+'&date_for_order='+gSelRow.attr("dateForOrder"),
+					url: 'php/ctrl/Orders.php?oper=getProductQuantiesForUfs&order_id='+ gSelRow.attr('orderId')+'&provider_id='+gSelRow.attr("providerId")+'&date_for_order='+gSelRow.attr("dateForOrder"),
 					dataType:"xml",
 					success: function(xml){
 
@@ -303,7 +303,7 @@
 						var $this = $(this);
 						$.ajax({
 							type: "POST",
-							url: 'ctrlOrders.php?oper=moveOrderToShop&order_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker'),
+							url: 'php/ctrl/Orders.php?oper=moveOrderToShop&order_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker'),
 							success: function(txt){
 								$('.success_msg').show().next().hide();
 								setTimeout(function(){
@@ -345,7 +345,7 @@
 					if (!$(this).hasClass('editable') && gSection == 'review'){
 						$(this).children(':first')
 							.addClass('editable')
-							.editable('ctrlOrders.php', {			//init the jeditable plugin
+							.editable('php/ctrl/Orders.php', {			//init the jeditable plugin
 									submitdata : {
 										oper: 'editQuantity',
 										order_id : gSelRow.attr('orderId')
@@ -381,7 +381,7 @@
 				var is_revised = 1; 
 				$.ajax({
 					type: "POST",
-					url: 'ctrlOrders.php?oper=setOrderItemStatus&order_id='+gSelRow.attr('orderId')+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
+					url: 'php/ctrl/Orders.php?oper=setOrderItemStatus&order_id='+gSelRow.attr('orderId')+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
 					success: function(txt){
 						if (has_arrived){
 							$('.Row-'+product_id).removeClass('missing').addClass('toRevise'); 
@@ -412,7 +412,7 @@
 				$this = $(this);
 				$.ajax({
 					type: "POST",
-					url: 'ctrlOrders.php?oper=setOrderItemStatus&order_id='+gSelRow.attr('orderId')+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
+					url: 'php/ctrl/Orders.php?oper=setOrderItemStatus&order_id='+gSelRow.attr('orderId')+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
 					success: function(txt){
 						if (is_revised){
 							$this.attr('checked','checked');
@@ -437,7 +437,7 @@
 			 *		ORDER VIEW  / DETAILED INFO
 			 **********************************************************/
 			 $('#tbl_orderDetailInfo tbody').xml2html('init',{
-					url : 'ctrlOrders.php',
+					url : 'php/ctrl/Orders.php',
 					loadOnInit : false
 			 });
 
@@ -485,7 +485,7 @@
 			function setOrderStatus(status){
 				$.ajax({
 					type: "POST",
-					url: 'ctrlOrders.php?oper=setOrderStatus&order_id='+gSelRow.attr('orderId')+'&status='+status,
+					url: 'php/ctrl/Orders.php?oper=setOrderStatus&order_id='+gSelRow.attr('orderId')+'&status='+status,
 					success: function(txt){
 						$("#dialog_orderStatus").dialog("close");
 						switchTo('overview');
@@ -506,7 +506,7 @@
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
 			$('#tbl_orderOverview tbody').xml2html('init',{
-				url : 'ctrlOrders.php',
+				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter=pastMonths2Future', 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
@@ -640,7 +640,7 @@
 					
 					//if shop date exists, check if it items have already been moved to shop_item and/or validated
 					if (shopDate != ''){
-						$.post('ctrlOrders.php?oper=checkValidationStatus&order_id='+gSelRow.attr('orderId'), function(xml) {
+						$.post('php/ctrl/Orders.php?oper=checkValidationStatus&order_id='+gSelRow.attr('orderId'), function(xml) {
 							
 							var hasCart = false; 
 							var isValidated = false; 
@@ -839,7 +839,7 @@
 				function finalizeOrder(providerId, orderDate){
 					$.ajax({
 						type: "POST",
-						url: 'ctrlOrders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
+						url: 'php/ctrl/Orders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
 						success: function(txt){
 							$('#tbl_orderOverview tbody').xml2html('reload');
 						},
@@ -861,7 +861,7 @@
 				function resetOrder(orderId, callbackfn){
 					$.ajax({
 						type: "POST",
-						url: 'ctrlOrders.php?oper=resetOrder&order_id='+orderId,
+						url: 'php/ctrl/Orders.php?oper=resetOrder&order_id='+orderId,
 						success: function(txt){
 							callbackfn.call(this);
 						},

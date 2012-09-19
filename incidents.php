@@ -147,7 +147,7 @@
 											
 											$.ajax({
 											    type: "POST",
-											    url: "ctrlIncidents.php?oper=delIncident&incident_id="+incidentId,
+											    url: "php/ctrl/Incidents.php?oper=delIncident&incident_id="+incidentId,
 											    success: function(msg){
 													resetDetails();
 													$('#tbl_incidents tbody').xml2html('reload');
@@ -183,7 +183,7 @@
 			
 			$.ajax({
 				    type: "POST",
-				    url: "ctrlIncidents.php?oper=mngIncident",
+				    url: "php/ctrl/Incidents.php?oper=mngIncident",
 				    data: dataSerial,
 				    beforeSend: function(){
 				   		$('#editorWrap .loadAnim').show();
@@ -212,7 +212,7 @@
 		 *	incidents
 		 */
 		$('#tbl_incidents tbody').xml2html('init',{
-				url: 'ctrlIncidents.php',
+				url: 'php/ctrl/Incidents.php',
 				params : 'oper=getIncidentsListing&filter=past2Month',
 				loadOnInit: true, 
 				complete : function(rowCount){
@@ -269,7 +269,7 @@
 		//build provider select
 		$("#providerSelect")
 			.xml2html("init", {
-				url: 'ctrlSmallQ.php',
+				url: 'php/ctrl/SmallQ.php',
 				params:'oper=getActiveProviders',
 				offSet:1,
 				loadOnInit:true
@@ -278,7 +278,7 @@
 		//build ufs select
 		$("#ufs_concerned")
 			.xml2html("init", {
-				url: 'ctrlUserAndUf.php',
+				url: 'php/ctrl/UserAndUf.php',
 				params:'oper=getUfListing&all=1',
 				offSet:1,
 				loadOnInit:true
@@ -287,7 +287,7 @@
 		//build type select
 		/*$("#typeSelect")
 			.xml2html("init", {
-				url: 'ctrlIncidents.php',
+				url: 'php/ctrl/Incidents.php',
 				params:'oper=getIncidentTypes',
 				loadOnInit:false,
 				complete: function(){
@@ -298,7 +298,7 @@
 		//build commission select
 		$("#commissionSelect")
 			.xml2html("init", {
-				url: 'ctrlSmallQ.php',
+				url: 'php/ctrl/SmallQ.php',
 				params : 'oper=getCommissions',
 				offSet : 1,
 				loadOnInit: true

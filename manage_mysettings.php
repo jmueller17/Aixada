@@ -65,7 +65,7 @@
 			
 		//init the uf member listing
 		$('#edit_my_settings').xml2html('init',{
-				url : 'ctrlUserAndUf.php',
+				url : 'php/ctrl/UserAndUf.php',
 				params: "oper=getMemberInfo&member_id="+<?php echo get_session_member_id();?>,
 				loadOnInit:true,
 				complete: function(){
@@ -97,14 +97,14 @@
 		 */
 		function submitMember(action, mi){
 
-			var urlStr = 'ctrlUserAndUf.php?oper=updateMember';
+			var urlStr = 'php/ctrl/UserAndUf.php?oper=updateMember';
 			var isValid = true; 
 			var err_msg = ''; 
 
 			//run some local checks
 			if (action == 'pwd'){
 
-				urlStr = "ctrlUserAndUf.php?oper=changePassword";
+				urlStr = "php/ctrl/UserAndUf.php?oper=changePassword";
 			
 				isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
 				if (!isValid){
@@ -186,7 +186,7 @@
 			//load available languages
 			 $("#languageSelect")
 				.xml2html("init", {
-						url: "ctrlSmallQ.php",
+						url: "php/ctrl/SmallQ.php",
 						params : "oper=getExistingLanguages",
 						rowName : "language",
 						loadOnInit: true,
@@ -202,7 +202,7 @@
 			//load available themes
 			 $("#themeSelect")
 				.xml2html("init", {
-						url: "ctrlSmallQ.php",
+						url: "php/ctrl/SmallQ.php",
 						params : "oper=getExistingThemes",
 						rowName : "theme",
 						loadOnInit: true,
@@ -229,7 +229,7 @@
 			var dataSerial = $(this).serialize();
 			$.ajax({
 				   type: "POST",
-				   url: "ctrlUserAndUf.php?oper=changePassword",
+				   url: "php/ctrl/UserAndUf.php?oper=changePassword",
 				   data: dataSerial,
 				   beforeSend: function(){
 				   		$('#pwdWrap .loadAnim').show();

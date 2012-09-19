@@ -38,13 +38,13 @@
             var theRole = <?php echo '"' . $the_role . '"'; ?>
 
             $('#inactiveUsers').xml2html("reload",{
-                                    url     : 'ctrlActivateRoles.php',
+                                    url     : 'php/ctrl/ActivateRoles.php',
                                     tpl		: '<option value="{user_id}">{name}</option>',
                                     params	: 'oper=getDeactivatedUsers&role='+theRole
             });	
 
             $('#activeUsers').xml2html("reload",{
-				    url     : 'ctrlActivateRoles.php',
+				    url     : 'php/ctrl/ActivateRoles.php',
 				    tpl		: '<option value="{user_id}">{name}</option>',
 				    params	: 'oper=getActivatedUsers&role='+theRole
             });	
@@ -90,7 +90,7 @@
 				var dataSerial = "user_ids="+user_id;
 				$.ajax({
 					type: "GET",
-					url: "ctrlActivateRoles.php?oper=activateUsers&role="+theRole,
+					url: "php/ctrl/ActivateRoles.php?oper=activateUsers&role="+theRole,
 					data: dataSerial,
 					success: function(msg){
 						//$("input:submit").button( "option", "disabled", false);

@@ -50,7 +50,7 @@
 			 
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
-				url : 'ctrlOrders.php',
+				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
@@ -120,7 +120,7 @@
 			
 			//tmp table to load the order - shop comparison
 			$('#tbl_diffOrderShop tbody').xml2html('init',{
-				url : 'ctrlOrders.php',
+				url : 'php/ctrl/Orders.php',
 				params : 'oper=getDiffOrderShop', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
@@ -230,7 +230,7 @@
 			.click( function(e){
 					orderDateSteps++;	
 					$('#tbl_Orders tbody').xml2html('reload',{
-						url : 'ctrlOrders.php',
+						url : 'php/ctrl/Orders.php',
 						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 					});
 
@@ -245,7 +245,7 @@
 			.click( function(e){
 				orderDateSteps--;	
 				$('#tbl_Orders tbody').xml2html('reload',{
-					url : 'ctrlOrders.php',
+					url : 'php/ctrl/Orders.php',
 					params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 				});
 
@@ -261,7 +261,7 @@
 
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
-					url : 'ctrlShop.php',
+					url : 'php/ctrl/Shop.php',
 					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
 					loadOnInit : false, 
 					rowComplete : function(rowIndex, row){
@@ -279,7 +279,7 @@
 
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
-				url : 'ctrlShop.php',
+				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopDetail', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
@@ -352,7 +352,7 @@
 			.click( function(e){
 					shopDateSteps++;	
 					$('#tbl_Shop tbody').xml2html('reload',{
-						url : 'ctrlShop.php',
+						url : 'php/ctrl/Shop.php',
 						params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 					});
 
@@ -367,7 +367,7 @@
 			.click( function(e){
 				shopDateSteps--;	
 				$('#tbl_Shop tbody').xml2html('reload',{
-					url : 'ctrlShop.php',
+					url : 'php/ctrl/Shop.php',
 					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 				});
 

@@ -37,7 +37,7 @@ function existing_languages_selectbox()
 <br/><br/><br/>
 	<div id="wrap">
 	
-		<form action="ctrlInstall.php" method="POST">
+		<form action="php/ctrl/Install.php" method="POST">
 			<h2>Install your Aixada platform</h2>	
 			<br/><br/><br/>
 			<p>What you need:

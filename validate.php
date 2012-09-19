@@ -44,7 +44,7 @@
 				$('#uf_cart_select').val(-10);
 
 				 $('#dailyStats').xml2html('reload',{
-						url		: 'ctrlAccount.php',
+						url		: 'php/ctrl/Account.php',
 						params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate()
 				 });				
 			}
@@ -66,7 +66,7 @@
 
 			function reloadValidationUfs(){
 				$('#uf_cart_select').xml2html('reload',{
-					url 	: 'ctrlValidate.php',
+					url 	: 'php/ctrl/Validate.php',
 					params 	: 'oper=GetUFsForValidation&date='+getSelectedDate()
 				});
 
@@ -81,7 +81,7 @@
 			 */
 			$('#uf_cart_select').xml2html('init',{
 					offSet	: 1,
-					url 	: 'ctrlValidate.php',
+					url 	: 'php/ctrl/Validate.php',
 					params 	: 'oper=GetUFsForValidation',
 					rowComplete : function(rowIndex, row){
 						if ($(row).val() == torn_uf_id){	//cannot validate yourself
@@ -119,14 +119,14 @@
 				
 				//set the uf_id for the saveCartURL when submitting
 				$('#cartLayer').aixadacart('options',{
-					saveCartURL : 'ctrlValidate.php?oper=commit&uf_id='+uf_id
+					saveCartURL : 'php/ctrl/Validate.php?oper=commit&uf_id='+uf_id
 				});
 
 				$('#cartAnim').show();
 				//the url to load the items for given uf/date
 				$('#cartLayer').aixadacart('loadCart',{
-					loadCartURL		: 'ctrlValidate.php?oper=getShopCart&date='+getSelectedDate() + '&uf_id='+uf_id,
-					//loadCartURL : 'ctrlValidate.php?oper=getShopItemsForDateAndUf&date='+getSelectedDate()+'&uf_id='+uf_id,
+					loadCartURL		: 'php/ctrl/Validate.php?oper=getShopCart&date='+getSelectedDate() + '&uf_id='+uf_id,
+					//loadCartURL : 'php/ctrl/Validate.php?oper=getShopItemsForDateAndUf&date='+getSelectedDate()+'&uf_id='+uf_id,
 					loadSuccess : function (){
 						$('#cartAnim').hide();
 					}
@@ -137,7 +137,7 @@
 
 			//retrieve all dates with available ufs for validation
 			$('#selDate4Validation').xml2html('init',{
-						url : 'ctrlValidate.php',
+						url : 'php/ctrl/Validate.php',
 						params : 'oper=getDatesForValidation',
 						loadOnInit:true,
 						complete : function(){
@@ -166,7 +166,7 @@
 			
 			//init cart 
 			$('#cartLayer').aixadacart("init",{
-				saveCartURL : 'ctrlValidate.php',
+				saveCartURL : 'php/ctrl/Validate.php',
 				cartType	: 'simple',
 				btnType		: 'validate',
 				saveOnDelete: false,
@@ -184,7 +184,7 @@
 
 		    //init xml2html product search
 			$('#product_list_search tbody').xml2html('init',{
-					url : 'ctrlShopAndOrder.php'
+					url : 'php/ctrl/ShopAndOrder.php'
 				});
 
 				
@@ -217,7 +217,7 @@
 				
 					$.ajax({
 						type: "POST",
-						url: "ctrlAccount.php?oper=DepositForUF&uf_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
+						url: "php/ctrl/Account.php?oper=DepositForUF&uf_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
 						beforeSend : function (){
 							$('#deposit .loadAnim').show();
 						},	
@@ -248,7 +248,7 @@
 			 * 	MONITOR Money, daily stats, negative ufs, stock
 			 */
 			 $('#list_account tbody').xml2html('init',{
-					url		: 'ctrlAccount.php',
+					url		: 'php/ctrl/Account.php',
 					params	: 'oper=latestMovements',
 					loadOnInit: true
 			});
@@ -256,7 +256,7 @@
 
   			 //balance
 			 $('#dailyStats').xml2html('init',{
-					url		: 'ctrlAccount.php',
+					url		: 'php/ctrl/Account.php',
 					params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate(),
                     autoReload: 100200, 
                     beforeLoad : function(){
@@ -269,7 +269,7 @@
 				
   			 //negative ufs
 			 $('#negative_ufs tbody').xml2html('init',{
-					url		: 'ctrlAccount.php',
+					url		: 'php/ctrl/Account.php',
 					params	: 'oper=getNegativeAccounts',
 					loadOnInit: true,
 					rowName : 'account',
@@ -284,7 +284,7 @@
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
-					url		: 'ctrlValidate.php',
+					url		: 'php/ctrl/Validate.php',
 					params	: 'oper=getProductsBelowMinStock',
 					loadOnInit: true,
                     autoReload: 100010, 
@@ -344,7 +344,7 @@
 			
 			 
 			$('#uf_account_select').xml2html('init',{
-						url 	: 'ctrlAccount.php',
+						url 	: 'php/ctrl/Account.php',
 						params 	: 'oper=getActiveAccounts', 
 						offSet	: 1, 
 						loadOnInit : true

@@ -207,7 +207,7 @@
 			
 			$.ajax({
 				   type: "POST",
-				   url: "ctrlUser.php?oper=updateMember",
+				   url: "php/ctrl/User.php?oper=updateMember",
 				   data: dataSerial,
 				   success: function(msg){
 						$.updateTips('#memberMsg', 'success', "<?=$Text['msg_edit_success'];?>" );
@@ -246,7 +246,7 @@
 
 			$.ajax({
 				   type: "POST",
-				   url: "ctrlUser.php?oper=changeOtherPassword",
+				   url: "php/ctrl/User.php?oper=changeOtherPassword",
 				   data: dataSerial,
 				   beforeSend: function(){
 				   		$('#pwdWrap .loadAnim').show();
@@ -287,7 +287,7 @@
 											$this = $(this);
 											$.ajax({
 												   type: "POST",
-												   url: "ctrlUser.php?oper=deactivateMember&id="+member_id,
+												   url: "php/ctrl/User.php?oper=deactivateMember&id="+member_id,
 												   success: function(msg){
 														$this.dialog( "close" );
 															

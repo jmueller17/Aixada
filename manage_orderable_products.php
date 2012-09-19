@@ -49,7 +49,7 @@
 			 
 			$.ajax({
 				type: "POST",
-				url: "ctrlDates.php?oper=getDateRangeAsArray&fromDate="+fromDate+"&toDate="+toDate,	
+				url: "php/ctrl/Dates.php?oper=getDateRangeAsArray&fromDate="+fromDate+"&toDate="+toDate,	
 				beforeSend : function (){
 					
 				},	
@@ -112,7 +112,7 @@
 		 *	generate the tables cells 
 		 */
 		$('#dot tbody').xml2html({
-				url:'ctrlActivateProducts.php',
+				url:'php/ctrl/ActivateProducts.php',
 				loadOnInit:false,
 				rowComplete : function(rowIndex, row){		//construct table cells with product id and date
 					var id =  $(row).attr("id"); 			//get the product id
@@ -149,7 +149,7 @@
 					$.ajax({
 						type: "POST",
 						dataType:"xml",
-						url: "ctrlActivateProducts.php?oper=getOrderableProducts4DateRange&fromDate="+gdates[0]+"&toDate="+gdates[gdates.length-1]+"&provider_id="+provider_id,	
+						url: "php/ctrl/ActivateProducts.php?oper=getOrderableProducts4DateRange&fromDate="+gdates[0]+"&toDate="+gdates[gdates.length-1]+"&provider_id="+provider_id,	
 						success: function(xml){
 							$(xml).find('row').each(function(){
 								var id = $(this).find('product_id').text();
@@ -340,7 +340,7 @@
 		$("#providerSelect").xml2html("init", {
 			loadOnInit  : true,
 			offSet		: 1,
-			url         : 'ctrlActivateProducts.php',				
+			url         : 'php/ctrl/ActivateProducts.php',				
 			params 		: 'oper=listAllOrderableProviders'
 		}).change(function(){
 			var provider_id = getProviderId();
@@ -350,7 +350,7 @@
 			if (provider_id){ 
 				//reload the products 
 				$('#dot tbody').xml2html('reload',{
-					url : 'ctrlActivateProducts.php',
+					url : 'php/ctrl/ActivateProducts.php',
 					params:'oper=getTypeOrderableProducts&provider_id='+provider_id,
 				});
 			} else {
@@ -443,7 +443,7 @@
 		function toggleOrderableProduct(id, productId, orderDate){
 				$.ajax({
 					type: "POST",
-					url:  "ctrlActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate,	
+					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate,	
 					beforeSend : function (){
 						//$('#deposit .loadAnim').show();
 					},	
@@ -476,7 +476,7 @@
 				return false; 
 			}
 			
-			var urlStr = 'ctrlActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+provider_id+'&order_date='+orderDate+'&closing_date='+closingDate;
+			var urlStr = 'php/ctrl/ActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+provider_id+'&order_date='+orderDate+'&closing_date='+closingDate;
 
 			$.ajax({
 				type: "POST",
@@ -509,7 +509,7 @@
 			var provider_id = getProviderId();
 			var nrMonth = $('#nrOfMonth option:selected').val();
 			var weeklyFreq = $('#weeklyFreq option:selected').val();
-			var urlStr = "ctrlActivateProducts.php?oper=generateDatePattern&date="+selectedDate+"&provider_id="+provider_id+"&nrMonth="+nrMonth+"&weeklyFreq="+weeklyFreq; 
+			var urlStr = "php/ctrl/ActivateProducts.php?oper=generateDatePattern&date="+selectedDate+"&provider_id="+provider_id+"&nrMonth="+nrMonth+"&weeklyFreq="+weeklyFreq; 
 
 			$.ajax({
 				type: "POST",
@@ -613,7 +613,7 @@
 		function changeProductStatus(product_id, oper){
 			$.ajax({
 				type: "POST",
-				url: "ctrlActivateProducts.php?oper="+oper+"&product_id="+product_id,
+				url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+product_id,
 				success: function(msg){
 					if (oper == 'activateProduct'){
 						$('td.P-'+product_id).each(function(){

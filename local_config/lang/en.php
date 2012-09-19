@@ -20,8 +20,15 @@ $Text['uf_short'] = "HU";
 $Text['uf_long'] = "Household";
 
 
-
-
+/** added 2012-09-19 */
+$Text['nif'] = "NIF";
+$Text['bank_name'] = "Bank";
+$Text['bank_account'] = "Bank Account";
+$Text['picture']  = "Picture";
+$Text['offset_order_close'] = "Processing time";
+$Text['iva_percent_id'] = "IVA type";
+$Text['percent'] = "Percent";
+$Text['adult'] = "Adult";
 
 /** 
  *  		misc

@@ -97,7 +97,7 @@ function navGrid_options() {
 		
 		$.ajax({
 			type: 'POST',
-	    	url: 'ctrlTableManager.php?table='+current_table+'&oper=getColumnsAsJSON',
+	    	url: 'php/ctrl/TableManager.php?table='+current_table+'&oper=getColumnsAsJSON',
 	    	dataType: 'json',
 	      	error: function(xhr, ajaxOptions, thrownError) {
               alert(xhr.statusText +" "+ thrownError);   
@@ -113,7 +113,7 @@ function navGrid_options() {
 			  		filter_text = "&filter=" + filter_cond;
 				}
 			$("#desc").jqGrid({
-			  url: "ctrlTableManager.php?table="+current_table+"&oper=listAll" + filter_text,
+			  url: "php/ctrl/TableManager.php?table="+current_table+"&oper=listAll" + filter_text,
 			      	height: 200,
 			      	datatype: 'xml',
 			      	colNames: eval(colN),
@@ -141,15 +141,15 @@ function navGrid_options() {
 							var details = $.getDetails();
 							//alert(details['table'] + " " + details['key'] + " " + ids);
 							$("#detail").jqGrid('clearGridData');
-							$("#detail").jqGrid('setGridParam',{url:"ctrlTableManager.php?table="+details['table']+"&oper=listAll&filter="+details['key']+"="+ids,page:1}); 	
+							$("#detail").jqGrid('setGridParam',{url:"php/ctrl/TableManager.php?table="+details['table']+"&oper=listAll&filter="+details['key']+"="+ids,page:1}); 	
 							$("#detail").jqGrid('setCaption', 'Detail for ' + current_table + ': ' +ids)
 														.trigger('reloadGrid'); 														
-							$("#detail").jqGrid('setGridParam',{editurl:"ctrlTableManager.php?table="+details['table']+"&oper=get_by_key"+"&key="+details['key']+"&val="+ids,page:1}); 
+							$("#detail").jqGrid('setGridParam',{editurl:"php/ctrl/TableManager.php?table="+details['table']+"&oper=get_by_key"+"&key="+details['key']+"&val="+ids,page:1}); 
 							}
 					}, //end on select row
 					
 	        		multiselect: false, 
-					editurl:"ctrlTableManager.php?table=" +  current_table,
+					editurl:"php/ctrl/TableManager.php?table=" +  current_table,
 					caption:  current_table,
 				}) // close jqgrid
 				
@@ -176,7 +176,7 @@ function navGrid_options() {
 		
 		$.ajax({
 			type: 'POST',
-		      url: "ctrlTableManager.php?table="+$.getDetails()['table']+"&oper=getColumnsAsJSON",
+		      url: "php/ctrl/TableManager.php?table="+$.getDetails()['table']+"&oper=getColumnsAsJSON",
 	    	dataType: 'json',
 	      	error: function(xhr, ajaxOptions, thrownError) {
               alert(xhr.statusText +" "+ thrownError);   
@@ -208,7 +208,7 @@ function navGrid_options() {
 			      	viewrecords: true,
 			      	sortorder: 'asc', 
 	        		multiselect: false, 
-				editurl:"ctrlTableManager.php?table=" + $.getDetails()['table']
+				editurl:"php/ctrl/TableManager.php?table=" + $.getDetails()['table']
 					
 				}) // close jqgrid
 				
