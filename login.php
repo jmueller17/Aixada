@@ -7,7 +7,7 @@
 
 require_once 'php/inc/cookie.inc.php';
 require_once 'php/inc/authentication.inc.php';
-require_once 'lib/exceptions.php';
+require_once 'php/lib/exceptions.php';
 require_once 'local_config/config.php';
 require_once('php/utilities/general.php');
 

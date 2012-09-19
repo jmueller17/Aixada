@@ -28,7 +28,7 @@ all: canned_responses.php $(config_dir)/config.php
 # 	$(MAKE) -C js
 
 canned_responses.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
-	lib/table_with_ref.php
+	php/lib/table_with_ref.php
 	php make_canned_responses.php
 
 #$(config_dir)/config.php: sql/setup/queries_reading.php \
