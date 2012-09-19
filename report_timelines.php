@@ -1,4 +1,4 @@
-<?php include "inc/header.inc.php" ?>
+<?php include "php/inc/header.inc.php" ?>
 <?php include "php/utilities/statistics.php"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -25,7 +25,7 @@
     <body>
         <div id="wrap">
       		<div id="headwrap">
-      			<?php include "inc/menu2.inc.php" ?>
+      			<?php include "php/inc/menu2.inc.php" ?>
       		</div>
       
 	

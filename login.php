@@ -5,8 +5,8 @@
 //ob_start(); // Starts FirePHP output buffering
 //$firephp = FirePHP::getInstance(true);
 
-require_once 'inc/cookie.inc.php';
-require_once 'inc/authentication.inc.php';
+require_once 'php/inc/cookie.inc.php';
+require_once 'php/inc/authentication.inc.php';
 require_once 'lib/exceptions.php';
 require_once 'local_config/config.php';
 require_once('php/utilities/general.php');

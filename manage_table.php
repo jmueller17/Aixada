@@ -1,4 +1,4 @@
-<?php include "inc/header.inc.php" ?>
+<?php include "php/inc/header.inc.php" ?>
 <?php 
 	/**
 	 * This function looks at the current_role written to the
@@ -240,7 +240,7 @@ function navGrid_options() {
    <body>
    	<div id="wrap">
    		<div id="headwrap">
-     		<?php include "inc/menu2.inc.php" ?>
+     		<?php include "php/inc/menu2.inc.php" ?>
    		</div>
 
 	   <br />
