@@ -4,9 +4,9 @@
  */ 
 
 require_once('local_config/config.php');
-require_once('utilities.php');
-require_once('inc/database.php');
-require_once('lib/table_with_ref.php');
+require_once('php/utilities/general.php');
+require_once('php/inc/database.php');
+require_once('php/lib/table_with_ref.php');
 require_once('local_config/lang/' . get_session_language() . '.php');
 require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 //ob_start(); // Starts FirePHP output buffering

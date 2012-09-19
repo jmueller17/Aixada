@@ -5,7 +5,7 @@ require_once("utilities.php");
 ob_start(); // Starts FirePHP output buffering
 //$firephp = FirePHP::getInstance(true);
 
-require_once('inc/cookie.inc.php');
+require_once('php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();

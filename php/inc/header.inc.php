@@ -4,9 +4,9 @@ ob_start(); // Starts FirePHP output buffering
 //require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 //$firephp = FirePHP::getInstance(true);
 
-require_once('inc/cookie.inc.php');
+require_once('php/inc/cookie.inc.php');
 require_once('local_config/config.php');
-require_once('utilities.php');
+require_once('php/utilities/general.php');
 
 $default_theme = get_session_theme();
 $dev = configuration_vars::get_instance()->development;

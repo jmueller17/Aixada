@@ -1,8 +1,8 @@
 <?php
 
-require_once('inc/database.php');
+require_once('php/inc/database.php');
 require_once('local_config/config.php');
-require_once('inc/caching.inc.php');
+require_once('php/inc/caching.inc.php');
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 require_once('local_config/lang/' . $language . '.php');
 

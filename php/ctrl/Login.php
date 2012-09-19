@@ -4,11 +4,11 @@
 //ob_start(); // Starts FirePHP output buffering
 
 require_once("local_config/config.php");
-require_once("inc/database.php");
-require_once("inc/authentication.inc.php");
+require_once("php/inc/database.php");
+require_once("php/inc/authentication.inc.php");
 require_once("utilities.php");
 require_once("lib/exceptions.php");
-require_once 'inc/cookie.inc.php';
+require_once 'php/inc/cookie.inc.php';
 
 if (!isset($_SESSION)) {
     session_start();

@@ -4,7 +4,7 @@ require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 
 require_once("local_config/config.php");
-require_once("inc/database.php");
+require_once("php/inc/database.php");
 require_once("utilities_dates.php");
 require_once("utilities.php");
 

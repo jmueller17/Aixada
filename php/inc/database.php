@@ -5,8 +5,8 @@
  */ 
 
 require_once('local_config/config.php');
-require_once('lib/exceptions.php');
-require_once('inc/caching.inc.php');
+require_once('php/lib/exceptions.php');
+require_once('php/inc/caching.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();

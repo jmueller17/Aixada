@@ -3,8 +3,8 @@
  * @package Aixada
  */ 
 
-require_once 'lib/exceptions.php';
-require_once 'inc/database.php';
+require_once 'php/lib/exceptions.php';
+require_once 'php/inc/database.php';
 // require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 // ob_start(); // Starts FirePHP output buffering
 // $firephp = FirePHP::getInstance(true);

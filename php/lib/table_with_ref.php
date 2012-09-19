@@ -1,6 +1,6 @@
 <?php
 
-require_once('inc/name_mangling.php');
+require_once('php/inc/name_mangling.php');
 
 /** 
  * @package Aixada
