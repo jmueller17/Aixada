@@ -119,7 +119,7 @@ $(function(){
 					var milsecs = (timing >= 0)? timing:10000;
 						
 					if (type == 'success'){
-						style = 'success_msg';
+						style = 'success_tips';
 					} else if (type == 'error'){
 						style = "ui-state-error" ;
 					} else if (type == 'notice'){

@@ -97,7 +97,7 @@ class shop_cart_manager extends abstract_cart_manager {
 		if ($this->_cart_id == 0){
     		
     		try {
-	    		$rs = $db->Execute('insert into aixada_cart (uf_id, date_for_shop) values (:1q, :2q)', $this->_uf_id, $this->_date);
+	    		$rs = $db->Execute('replace into aixada_cart (uf_id, date_for_shop) values (:1q, :2q)', $this->_uf_id, $this->_date);
 	        	$this->_cart_id = $db->get_last_id();
 	        	
     		} catch(Exception $e) {
@@ -126,6 +126,9 @@ class shop_cart_manager extends abstract_cart_manager {
     		
     		//if item is stock, set order_item_id to null	    	
     		$order_item_id = (isset($arrOrderItemId[$i]) && $arrOrderItemId[$i]>0)? $arrOrderItemId[$i]:'null';
+    		
+    		$arrIva[$i] = (isset($arrIva[$i]) && $arrIva[$i] != '')? $arrIva[$i]:0;
+    		$arrRevTax[$i] = (isset($arrRevTax[$i]) && $arrRevTax[$i] != '')? $arrRevTax[$i]:0;
     		
     		$this->_rows[] = new shop_item(
 					     				 $arrProdId[$i], 

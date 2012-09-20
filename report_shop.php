@@ -125,11 +125,12 @@
 				params : 'oper=getShopDetail', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
-					var price = new Number($(row).children().eq(5).text());
-					var qu = new Number($(row).children().eq(3).text());
+					var price = new Number($('.up',row).text());
+					$('.up',row).text(price.toFixed(2));
+					var qu = new Number($('.qu',row).text());
 					var totalPrice = price * qu;
 					totalPrice = totalPrice.toFixed(2);
-					$(row).children().eq(5).text(totalPrice);
+					$('.itemPrice',row).text(totalPrice);
 					
 				},
 				complete : function(rowCount){
@@ -282,7 +283,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr id="shop_{id}" shopId="{id}" ufId={uf_id} dateForShop="{date_for_shop}" validated="{ts_validated}" operatorName="{operator_name}" operatorUf="{operator_uf}">
+						<tr class="clickable" id="shop_{id}" shopId="{id}" ufId={uf_id} dateForShop="{date_for_shop}" validated="{ts_validated}" operatorName="{operator_name}" operatorUf="{operator_uf}">
 							<td></td>
 							<td><p class="textAlignLeft">{id}</p></td>
 							<td><p class="textAlignLeft">{uf_id} {uf_name}</p></td>
@@ -321,7 +322,8 @@
 							<th><?php echo $Text['provider_name'];?></th>					
 							<th><p class="textAlignRight">Qu</p></th>
 							<th><?php echo $Text['unit'];?></th>
-							<th class="textAlignRight width-180">Price</th>
+							<th><p class="textAlignRight"><?php echo $Text['unit_price'];?></p></th>
+							<th class="width-180"><p class="textAlignRight"><?php echo $Text['price'];?></p></th>
 							
 							
 							
@@ -330,27 +332,28 @@
 					<tbody>
 						<tr class="detail_shop_{cart_id}">
 							
-							<td >{name}</td>
-							<td >{provider_name}</td>
-							<td><p class="textAlignRight">{quantity}</p></td>
+							<td>{name}</td>
+							<td>{provider_name}</td>
+							<td><p class="textAlignRight qu">{quantity}</p></td>
 							<td>{unit}</td>
-							<td><p class="textAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}">{unit_price}</p></td>	
-							
+							<td><p class="textAlignRight up">{unit_price}</p></td>
+							<td><p class="textAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></p></td>	
+
 						</tr>						
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="4">included IVA</td>
+							<td colspan="5">included IVA</td>
 							<td id="total_iva" class="dblBorderTop"></td>
 						</tr>
 						<tr>
 						
-							<td colspan="4">included RevTax</td>
+							<td colspan="5">included RevTax</td>
 							<td id="total_revTax"></td>
 						</tr>
 						<tr>
 							
-							<td colspan="4" class="boldStuff">Total</td>
+							<td colspan="5" class="boldStuff">Total</td>
 							<td id="total" class="boldStuff dblBorderBottom"></td>
 						</tr>
 						<tr>

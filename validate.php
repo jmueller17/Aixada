@@ -176,9 +176,7 @@
 					//empty the cart
 					$(this).aixadacart("resetCart");	
 
-					$('#list_account tbody').xml2html('reload',{
-						params	: 'oper=latest_movements'
-					});				
+					$('#list_account tbody').xml2html('reload');				
 				}
 			});
 
@@ -225,9 +223,7 @@
 							$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
 							resetDeposit();
 									
-							$('#list_account tbody').xml2html('reload',{
-								params	: 'oper=latest_movements'
-							});
+							$('#list_account tbody').xml2html('reload');
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);
@@ -524,7 +520,8 @@
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>	
+								<td class="item_unit">{unit}</td>
+								<td class="item_iva_percent hidden">{iva_percent}</td>	
 								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>			
 							</tr>						

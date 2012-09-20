@@ -39,6 +39,11 @@
 			params : 'oper=getIncidentsListing&filter=today',
 			loadOnInit: true, 
 			complete : function(rowCount){
+				if (rowCount == 0){
+					$.showMsg({
+						msg:'No new is good news: no incidents have been posted for today!',
+						type: 'info'});
+				}
 				//$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 	
 			}
 	});

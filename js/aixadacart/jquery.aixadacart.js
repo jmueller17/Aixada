@@ -205,7 +205,7 @@
 					if (itemObj.time_left < 0){
 						str += '<td class="'+deaTd+'"></td>';
 					} else {
-						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close"></span></td>';
+						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close cart_clickable"></span></td>';
 					}
 					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
