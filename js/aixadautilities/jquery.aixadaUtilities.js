@@ -2,7 +2,36 @@
 $(function(){
 	
 	
+	$.extend({
+		
+			sumItems : function(sel){
+				
+				var sums = [];
+				
+				var total = 0; 
+				var totalIva = 0; 
+				var totalRevTax = 0; 
+				$(sel).each(function(){
+					var price = new Number($(this).text());
+					total += price; 
 
+					var iva = $(this).attr('iva');
+					var rev = $(this).attr('revTax');
+					var tax = (price * (iva + rev))/100; 
+					totalIva += (tax*iva)/100;
+					totalRevTax += (tax*rev)/100;
+					
+				});
+				
+				sums['total'] = total.toFixed(2); 
+				sums['totalIva'] = totalIva.toFixed(2); 
+				sums['totalRevTax'] = totalRevTax.toFixed(2); 
+				
+				return sums; 
+			}
+		
+	});
+	
 	
 	$.extend({
 		

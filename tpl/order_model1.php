@@ -71,23 +71,11 @@
 
 				},
 				complete : function(rowCount){
-					var total = 0; 
-					var totalIva = 0; 
-					var totalRevTax = 0; 
-					$('.itemPrice').each(function(){
-						var price = new Number($(this).text());
-						total += price; 
+					var totals = $.sumItems('.itemPrice');
 
-						var iva = $(this).attr('iva');
-						var rev = $(this).attr('revTax');
-						var tax = (price * (iva + rev))/100; 
-						totalIva += (tax*iva)/100;
-						totalRevTax += (tax*rev)/100;
-						
-					});
-					$('#total').text(total.toFixed(2));
-					$('#total_iva').text(totalIva.toFixed(2));
-					$('#total_revTax').text(totalRevTax.toFixed(2));
+					$('#total').text(totals['total']);
+					$('#total_iva').text(totals['totalIva']);
+					$('#total_revTax').text(totals['totalRevTax']);
 					
 				}
 			});

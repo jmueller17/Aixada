@@ -56,7 +56,7 @@ begin
 	  	id = the_cart_id
 	  limit 1); 
   	
-	
+  -- do the actual validation: set timestamp! --	
   update 
   	aixada_cart
   set 

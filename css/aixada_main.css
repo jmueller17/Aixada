@@ -26,11 +26,19 @@ option 				{padding:1px 5px;}
 .msg_dialog			{text-align:center;}
 .optionLink			{font-size:1.0em;}
 .negativeBalance	{color:red;}
-.dblBorderTop		{border-top:double #000 1px;}
+
 .greenBg			{background-color:green;}
 .lightGreenBg		{background-color:#72b42d;}
+.okGreen			{background:#D1F3D1;}
+.noRed				{background:#ff7a75;}
+
 .dateNum			{font-weight:bold; margin:1px; padding-right:2px;}
 .grayed				{color:#E1E1E1;}
+
+/** generic border style **/
+.dblBorderTop		{border-top:double #000 1px;}
+.dblBorderBottom	{border-bottom:double #000 2px;}
+
 
 .oneThirdCol		{width:30%; margin:2px 3px;}
 .oneQuarterCol		{width:20%; margin:2px 3px;}
@@ -58,12 +66,14 @@ option 				{padding:1px 5px;}
 
 /** different table styles **/
 table.tblListingDefault		{width:100%;  border-collapse:collapse;}
-table.tblListingDefault th	{background:#f3f3f3; padding:4px 1px;}
+table.tblListingDefault th	{background:#f3f3f3; padding:4px 2px;}
 table.tblListingDefault td	{padding:2px 8px; text-align:center;}
 
-table.tblListingGrid		{width:100%;}
-table.tblListingGrid th		{background:#f3f3f3; padding:4px 1px;}
-table.tblListingGrid td		{padding:2px 4px; text-align:center;}
+table.tblListingGrid			{width:100%;}
+table.tblListingGrid th			{background:#f3f3f3; padding:4px 4px; text-align:left;}
+table.tblListingGrid td			{padding:2px 4px; text-align:left;}
+table.tblListingGrid tfoot td	{padding:2px 4px; text-align:right;}
+
 
 table.tblListingBorder		{width:100%; border-collapse:collapse;}
 table.tblListingBorder th	{background:#f3f3f3; padding:4px 1px; border:1px solid black;}
@@ -155,6 +165,7 @@ table#tbl_incidents th  {background:#f3f3f3;}
 .minwidth-150			{min-width:150px;}
 .width-400				{width:400px;}
 .width-280				{width:280px;}
+.width-210				{width:210px;}
 .maxwidth-30			{width:30px;}
 .maxwidth-100			{width:100px;}
 
@@ -168,17 +179,18 @@ div.orderStatus 		{margin-top:-40px; margin-bottom:30px; margin-left:25em;}
 
 
 /** for home / index pGE **/
-div#menuTable table 	{border:0px solid black;}
+/**div#menuTable table 	{border:0px solid black;}
 div#menuTable table td 	{padding:20px 30px; text-align:center;}
 div#menuTable a			{font-size:1.2em; text-decoration:none;}
 div#menuTable a:hover	{font-size:1.2em; text-decoration:underline;}
+**/
 div#homeWrap			{margin:0 auto; max-width:1000px;}
 div#leftIconCol			{width:30%; float:left; margin-right:30px;}
 div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}
 .homeIcon				{margin-bottom:20px; text-align:center;}
-div#tabs-1 table		{width:100%}
-div#tabs-1 table td		{padding:2px 4px;}
-table td.dateRow		{background:#EBEBEB; border-bottom:solid black 1px}
+
+
+.overviewDateRow		{margin-bottom:5px; border-bottom:3px solid #cccccc;  }
 .tdMyOrder				{font-size:0.75em; background-color:#efefef; border-bottom:solid black 1px;}
 .MyOrderItem, .MyShopItem {font-size:0.75em; background-color:#f1f1f1;}
 

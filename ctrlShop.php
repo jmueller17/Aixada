@@ -16,8 +16,8 @@ try{
     switch (get_param('oper')) {
     	
     	//returns a list of all purchases for given uf. 
-    	case 'getShopListingForUf':
-    		echo get_purchase_in_range(get_param('filter'), get_param('uf_id'), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0)   );
+    	case 'getShopListing':
+    		echo get_purchase_in_range(get_param('filter'), get_param('uf_id',0), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0)   );
     		exit;   
 
     	case 'getShopDetail':

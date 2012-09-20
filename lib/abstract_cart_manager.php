@@ -260,7 +260,7 @@ class abstract_cart_manager {
     
     
     /**
-     * Commits the rows of the order to the database. 
+     * Commits the items to the database. 
      */
     protected function _commit_rows()
     {
@@ -284,22 +284,6 @@ class abstract_cart_manager {
     }
 
 
-
-    /**
-     * Convert foreign key cache to XML
-     * @param array $cache a foreign key cache
-     * @param string $selected_option the option actually selected 
-     * @return string the corresponding XML string
-     */
-    /*protected function _key_cache_to_XML (array $cache, string $selected_option)
-    {
-        $strXML = '<choices>';
-        foreach($cache as $value => $field) 
-            $strXML .= "<c>$field</c>"; 
-        $strXML .= "<s>$selected_option</s>";
-        $strXML .= '</choices>';
-        return $strXML;
-    }*/
 
 }
 

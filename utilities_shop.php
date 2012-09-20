@@ -24,6 +24,7 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 	
 
 	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
+	$prev3Month = date('Y-m-d', strtotime('Today - 3 month'));
 	$prevYear = date('Y-m-d', strtotime('Today - 1 year'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
@@ -35,8 +36,17 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 			printXML(stored_query_XML_fields('get_purchase_listing', $prevMonth, $today, $uf_id));
 			break;
 			
+		case 'prev3Month':
+			printXML(stored_query_XML_fields('get_purchase_listing', $prev3Month, $today, $uf_id));
+			break;
+			
+			
 		case 'steps':
 			printXML(stored_query_XML_fields('get_purchase_listing', $stepsFromDate, $stepsToDate, $uf_id));
+			break;
+			
+		case 'all':
+			printXML(stored_query_XML_fields('get_purchase_listing', $very_distant_past, $very_distant_future, $uf_id));
 			break;
 			
 		case 'exact':
