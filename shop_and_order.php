@@ -465,7 +465,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name hidden">{provider_name}</td>
-								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>	
@@ -503,7 +503,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input class="ui-corner-all"  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>	
@@ -539,7 +539,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>	
@@ -571,7 +571,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>	
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
 								<td class="item_price">{unit_price}</td>	

@@ -61,14 +61,12 @@
 					}		
 				},
 				complete : function(){
-					//$('#uf_list tbody tr:even').addClass('rowHighlight'); 
 					$('tr:even', this).addClass('rowHighlight');
 					$("#tbl_Shop").trigger("update"); 
-					
-
 				}
 		});
 
+		
 		$('#tbl_Shop tbody tr')
 			.live('mouseover', function(){
 				$(this).removeClass('highlight').addClass('ui-state-hover');

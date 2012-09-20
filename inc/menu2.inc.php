@@ -96,7 +96,7 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<li><a href="#">Add or correct stock </a></li>
+				<li><a href="manage_stock.php">Stock </a></li>
 				
 			</ul>
 		</li>

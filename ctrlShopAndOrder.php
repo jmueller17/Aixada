@@ -41,6 +41,10 @@ try{
 	    case 'getShopCategories':
 	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', get_param('date')));
 	    	exit;
+	    	
+	    case 'getStockProviders':
+	    	printXML(stored_query_XML_fields('get_stock_providers'));
+	    	exit;
     	
 
 	    /**

@@ -991,7 +991,7 @@
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Status</th>
-						<th>Revise</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>

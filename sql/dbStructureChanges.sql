@@ -1,4 +1,5 @@
 
+
 /**
  * IVA_TYPE
  * table, associated then to different products
@@ -20,6 +21,18 @@ select distinct
 from
 	aixada_product p
 order by p.iva_percent asc;
+
+
+/**
+ * PAYMENT METHOD 
+ */
+insert into
+	aixada_payment_method (description, details)
+values
+	('stock', 'register gain or loss of stock'),
+	('validation', 'register validation of cart'),
+	('deposit','register the inpayment of cash'),
+	('bill','register withdrawal for bill payment to provider');
 
 
 /**

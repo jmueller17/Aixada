@@ -24,6 +24,16 @@ try{
     		printXML(stored_query_XML_fields('get_shop_cart', get_param('date',0), get_session_uf_id(), get_param('shop_id',0),1));
     		exit;
     		
+    	case 'addStock':
+    		echo do_stored_query('add_stock', get_param('product_id'), get_param('delta_amount'), get_session_user_id(), get_param('description',''));
+			exit;
+
+    	case 'correctStock':
+    		echo do_stored_query('correct_stock', get_param('product_id'), get_param('current_stock'), get_session_user_id());
+			exit;
+    		
+    		
+    		
     default:  
     	 throw new Exception("ctrlShop: oper={$_REQUEST['oper']} not supported");  
         break;
