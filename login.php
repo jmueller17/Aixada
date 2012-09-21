@@ -1,20 +1,18 @@
 <?php
 
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
-
-require_once 'php/inc/cookie.inc.php';
-require_once 'php/inc/authentication.inc.php';
-require_once 'php/lib/exceptions.php';
-require_once 'local_config/config.php';
-require_once 'php/utilities/general.php';
+require_once($app . 'php/inc/cookie.inc.php');
+require_once($app . 'php/inc/authentication.inc.php');
+require_once($app . 'php/lib/exceptions.php');
+require_once($app . 'local_config/config.php');
+require_once($app . 'php/utilities/general.php');
 
 $default_theme = get_session_theme();
 $language = get_session_language();
 $dev = configuration_vars::get_instance()->development;
-require_once('local_config/lang/' . $language  . '.php');
+require_once($app . 'local_config/lang/' . $language  . '.php');
 
 
 // This controls if the table_manager objects are stored in $_SESSION or not.

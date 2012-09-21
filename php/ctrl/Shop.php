@@ -1,10 +1,13 @@
 <?php
 
 
-require_once("local_config/config.php");
-require_once("php/inc/database.php");
-require_once("utilities.php");
-require_once("utilities_shop.php");
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . "local_config/config.php");
+require_once($app . "php/inc/database.php");
+require_once($app . "php/utilities/general.php");
+require_once($app . "php/utilities/shop.php");
 
 
 if (!isset($_SESSION)) {

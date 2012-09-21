@@ -1,11 +1,10 @@
 <?php
 
-require_once("utilities.php");
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once('php/inc/cookie.inc.php');
+require_once($app . "php/utilities/general.php");
+require_once($app . 'php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
@@ -13,9 +12,7 @@ if (!isset($_SESSION)) {
 
 try {
     $cookie = new Cookie();
-    //    $firephp->log($cookie, 'cookie');
     $cookie->validate();
-    //   $firephp->log(true, 'validated');
     $uri = (isset($_REQUEST['originating_uri']) ? $_REQUEST['originating_uri'] : 'index.php');
 }   
 catch (AuthException $e) {

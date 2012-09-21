@@ -1,14 +1,12 @@
 <?php
 
-require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once("local_config/config.php");
-require_once("php/inc/database.php");
-require_once("utilities_dates.php");
-require_once("utilities.php");
-
-$firephp = FirePHP::getInstance(true);
+require_once($app . "local_config/config.php");
+require_once($app . "php/inc/database.php");
+require_once($app . "php/utilities/dates.php");
+require_once($app . "php/utilities/general.php");
 
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
 

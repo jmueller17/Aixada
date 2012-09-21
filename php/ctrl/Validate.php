@@ -1,11 +1,14 @@
 <?php
 
-require_once("local_config/config.php");
-require_once("php/inc/database.php");
-require_once("utilities.php");
-require_once("utilities_dates.php");
-require_once("utilities_shop_and_order.php");
-require_once("lib/validation_cart_manager.php");
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . "local_config/config.php");
+require_once($app . "php/inc/database.php");
+require_once($app . "php/utilities/general.php");
+require_once($app . "php/utilities/dates.php");
+require_once($app . "php/utilities/shop_and_order.php");
+require_once($app . "php/lib/validation_cart_manager.php");
 
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
 

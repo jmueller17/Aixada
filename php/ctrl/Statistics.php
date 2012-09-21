@@ -1,12 +1,10 @@
 <?php
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once("utilities_statistics.php");
+require_once($app . "php/utilities/statistics.php");
 
-
-//$firephp = FirePHP::getInstance(true);
 
 $use_session_cache = true; 
 // This controls if the table_manager objects are stored in $_SESSION or not.

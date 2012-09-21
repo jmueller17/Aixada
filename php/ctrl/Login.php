@@ -1,24 +1,20 @@
 <?php
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once("local_config/config.php");
-require_once("php/inc/database.php");
-require_once("php/inc/authentication.inc.php");
-require_once("utilities.php");
-require_once("lib/exceptions.php");
-require_once 'php/inc/cookie.inc.php';
+require_once($app . "local_config/config.php");
+require_once($app . "php/inc/database.php");
+require_once($app . "php/inc/authentication.inc.php");
+require_once($app . "php/utilities/general.php");
+require_once($app . "php/lib/exceptions.php");
+require_once($app . 'php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
  }
 
  
-
-//$firephp = FirePHP::getInstance(true);
-
-
 DBWrap::get_instance()->debug = true;
 
 

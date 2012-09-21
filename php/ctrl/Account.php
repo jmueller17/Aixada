@@ -1,11 +1,14 @@
 <?php
 
 
-require_once("local_config/config.php");
-require_once("php/inc/database.php");
-require_once("utilities.php");
-require_once("utilities_account.php");
-require_once("lib/report_manager.php");
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . "local_config/config.php");
+require_once($app . "php/inc/database.php");
+require_once($app . "php/utilities/general.php");
+require_once($app . "php/utilities/account.php");
+require_once($app . "lib/report_manager.php");
 
 
 $use_session_cache = true; 
@@ -65,6 +68,4 @@ catch(Exception $e) {
   header('HTTP/1.0 401 ' . $e->getMessage());
   die($e->getMessage());
 }  
-
-
 ?>
