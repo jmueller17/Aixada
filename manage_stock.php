@@ -18,7 +18,6 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_stock.min.js"></script>
     <?php }?>
@@ -64,7 +63,7 @@
 						$('.loadAnimShop').hide();
 						if (rowCount == 0){
 						$.showMsg({
-							msg:"<?php echo $Text['msg_no_active_products'];?>",
+							msg:"This provider seems to have no stock products! ",
 							type: 'info'});
 						} 
 							
@@ -106,71 +105,187 @@
 		}); //end autocomplete
 
 
-	
-
-		//attach event listeners for the product input fields; change of quantity will put the 
-		//item into the cart. 
-		$('.product_list tbody')
-			.find("input")
-			.live("change", function (e){						
-				var row = $(this).parents("tr");			
-	
-				var qu = $(this).val();													//don't add nonsense values
-				$(this).val(parseFloat(qu.replace(",",".")));
-	
-				if (isNaN($(this).val())) {
-					var $this = $(this);
-					$(this).addClass("ui-state-error");
-					$(this).effect('pulsate',{},100, function callback(){
-							var nv = new Number(0);
-							$this.val(nv.toFixed(2));
-							$this.removeClass("ui-state-error");
-						});
-					return false;
-				}
-				
-																				
-		});//end event listener for product list 
-
-
-		$('.iconContainer')
-			.live('mouseover', function(e){
-				$(this).addClass('ui-state-hover');
-			})
-			.live('mouseout', function (e){
-				$(this).removeClass('ui-state-hover');
-			});
-
-		$('.btn_correct_stock')
-			.live('click', function(e){
-
-			})
-
-		$('td.interactiveCell')
-			.live('mouseover', function(e){						//make each cell editable on mouseover. 
-				var pid = $(this).parent().attr('productId');
-				
-				if (!$(this).hasClass('editable')){
-					$(this).children(':first')
-						.addClass('editable')
-						.editable('ctrlShop.php', {			//init the jeditable plugin
-								submitdata : {
-									product_id : pid
-									},
-								id 		: 'oper',
-								name 	: 'current_stock',
-								indicator: 'Saving',
-							    tooltip	: 	'click to edit!',
-							    cssclass : 'inputTxtSmall',
-								callback: function(value, settings){
-									$('#product_list_provider tbody').xml2html("reload");
-									//alert(value);
-									//$(this).parent().removeClass('toRevise').addClass('revised');
-								} 
-						});	
-				}
 		
+		$('.iconContainer')
+		.live('mouseover', function(e){
+			$(this).addClass('ui-state-hover');
+		})
+		.live('mouseout', function (e){
+			$(this).removeClass('ui-state-hover');
+		});
+
+
+		//add stock 
+		$('.inputAddStock')
+			.live('focus', function(e){
+				
+				//hide other active field, buttons
+				$('.correctStock').show();
+				$('.inputCorrectStock').hide();
+				$('.btn_save_new_stock .btn_correct_stock').hide();
+				
+				 //init and show the save button
+				/*var btn = $(this).next();
+
+				if (!btn.hasClass('exists')){
+					btn.button({
+						icons:{secondary:'ui-icon-disk'}
+					})
+					.click(function(e){
+						var addQu = $.checkNumber($(this).prev(),'',3);	
+						submitStock('addStock',$(this).attr('productId'),addQu);
+					})
+					 .addClass('exists')
+					 .show();
+				} else {
+					btn.show();
+				}*/
+			})
+			.live('keyup',function(e){
+				//submit change on add stock
+				if (e.keyCode == 13){
+					
+					//var absStock = $.checkNumber($(this),'',3);	
+					var product_id = $(this).attr('productId'); 
+					
+					var addQu = $.checkNumber($(this),'',3);
+					if (addQu > 0){		
+						submitStock('addStock',$(this).attr('productId'),addQu);
+					} else {
+						$.showMsg({
+							msg: "Quantity needs to be numeric and bigger than 0!",
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){						
+									$(this).dialog("close");
+								},
+								"<?=$Text['btn_cancel'];?>" : function(){
+									$( this ).dialog( "close" );
+								}
+							},
+							type: 'warning'});
+					}
+					
+				}
+
+			})
+
+		
+
+		//correct stock
+		$('.inputCorrectStock')
+			.live('blur', function(e){
+				$(this).toggle();
+				$(this).prev().toggle();
+			})
+			.live('keyup', function(e){
+
+				//submit change on enter
+				if (e.keyCode == 13){
+					
+					var absStock = $.checkNumber($(this),'',3);	
+					var product_id = $(this).attr('productId'); 
+					
+					if (absStock > 0){
+						$.showMsg({
+							msg: "Adjusting stock this way should be the exception! New stock should always be ADDED. Are you sure to correct the stock for this product?",
+							buttons: {
+								"Yes, make correction!":function(){						
+									submitStock('correctStock',product_id,absStock);
+									$(this).dialog("close");
+								},
+								"<?=$Text['btn_cancel'];?>" : function(){
+									$( this ).dialog( "close" );
+								}
+							},
+							type: 'confirm'});
+					
+												
+					} else {
+						$.showMsg({
+							msg: "Quantity needs to be numeric and bigger than 0!",
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){						
+									$(this).dialog("close");
+								},
+								"<?=$Text['btn_cancel'];?>" : function(){
+									$( this ).dialog( "close" );
+								}
+							},
+							type: 'warning'});
+						return false; 
+					}
+
+						
+				}
+
+			})
+			
+			
+		$('td.interactiveCell')
+			.live('click',function(e){
+
+				$('.correctStock').show();
+				$('.inputCorrectStock').hide();
+				$('.btn_save_new_stock, .btn_correct_stock').hide();
+				
+				$(this).children(':last').toggle().focus();
+				$(this).children(':first').toggle();
+
+				
+
+
 			});
+			
+
+		/**
+		 *	saves the stock correction / add to the database
+		 * 	for "addStock" the current_stock = stock + quantity.
+		 * 	for "correctStock" current_stock = quantity; 
+		 */
+		function submitStock(oper, product_id, quantity){
+
+			var urlStr = 'ctrlShop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
+			
+			
+			$.ajax({
+				type: "POST",
+				url: urlStr,
+				beforeSend : function(){
+					$('.inputAddStock, .inputCorrectStock')
+						.attr('disabled','disabled')
+						.val('Saving...');
+					/*$('.btn_save_new_stock, .btn_correct_stock')
+						.button('option','Saving...')
+						.button('disable');*/
+					
+				},
+				success: function(txt){
+					/*$('#add_stock_'+product_id+ ', #correct_stock_'+product_id)
+						.addClass('ui-state-success')
+						.val('Ok!');*/
+
+					setTimeout(function(){
+						$('#product_list_provider tbody').xml2html("reload");						
+					},500)
+
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					$.showMsg({
+						msg:XMLHttpRequest.responseText,
+						type: 'error'});
+					
+				},
+				complete: function(){
+					$('.inputAddStock, .inputCorrectStock')
+						.removeAttr('disabled')
+						.val('');
+					/*$('.btn_save_new_stock, .btn_correct_stock')
+						.button('label','Save')
+						.button('enable');	*/
+				}
+			});
+		}
+
 							
 	});  //close document ready
 </script>
@@ -210,21 +325,35 @@
 									<th>Provider</th>						
 									<th>Current stock</th>
 									<th><?php echo $Text['unit'];?></th>
-									<th>Correct stock</th>
-									<th>Add stock</th>
+									<th class="width-280 textAlignLeft">Add stock</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr productId="{id}">
 									<td><p class="textAlignRight">{id}</p></td>
 									<td>{name}</td>
-									<td>{provider_name}</td>
-									<td class="interactiveCell"><p class="textAlignRight" id="correctStock">{stock_actual}</p></td>
+									<td><p class="textAlignCenter">{provider_name}</p></td>
+									<td class="interactiveCell">
+										<p class="textAlignRight correctStock">{stock_actual}</p>
+										<input type="text" class="ui-corner-all inputCorrectStock hidden textAlignRight floatRight" value="{stock_actual}" size="5" productId="{id}" id="correct_stock_{id}" />
+							
+									</td>
 									<td><p>{unit}</p></td>
-									<td><p class="ui-corner-all ui-state-default iconContainer btn_correct_stock" productId={id}><span class="ui-icon ui-icon-pencil"></span></p></td>
-									<td><p class="floatLeft iconContainerNull"><span class="ui-icon ui-icon-plusthick"></span></p>&nbsp;<input class="ui-corner-all" name="{id}" value="" size="4" id="add_stock_{id}"/></td>
+									<td>
+										<p class="floatLeft iconContainerNull"><span class="ui-icon ui-icon-plusthick"></span></p>
+										&nbsp;<input class="ui-corner-all inputAddStock textAlignRight" value=""  productId="{id}" id="add_stock_{id}" size="5"/>
+										&nbsp;&nbsp;&nbsp;<button class="btn_save_new_stock hidden" productId="{id}">Save</button>
+									</td>
 								</tr>						
 							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="3">&nbsp;</td>
+									<td><p class="textAlignCenter dim80 ui-state-highlight ui-corner-all">Click cells to correct stock!</p></td>
+									<td>&nbsp;</td>
+									<td></td>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
 				</div>		

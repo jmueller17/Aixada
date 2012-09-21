@@ -293,6 +293,8 @@
 		.live("change", function (e){						
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
 			var isPreorder = $(this).parents("tr").attr('preorder')? true:false; 	//check if this is a preorder item
+
+			//TODO should be replaced with global $.checkNumber...
 			var qu = $(this).val();													//don't add nonsense values
 			$(this).val(parseFloat(qu.replace(",",".")));
 

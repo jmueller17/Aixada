@@ -61,32 +61,6 @@ class order_cart_manager extends abstract_cart_manager {
         parent::__construct($uf_id, $date_for_order); 
     }
 
-    /**
-     * 
-   		replace into aixada_order_item 
-   			(order_id, 
-   			favorite_cart_id, 
-   			date_for_order, 
-   			uf_id, 
-   			product_id, 
-   			quantity, 
-   			unit_price_stamp)
-   			
-		select
-			order_id, 
-			favorite_cart_id,
-			date_for_order,
-			uf_id, 
-			product_id,
-			quantity,
-			(select p.unit_price from aixada_product p where p.id = product_id);
-				    
-     * 
-     * 
-     */
-   
-    
-
 	/**
 	 * Overload function of _make_rows of abstract cart manager. 
 	 * 

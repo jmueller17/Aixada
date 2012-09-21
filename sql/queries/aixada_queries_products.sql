@@ -383,7 +383,9 @@ end|
 
 
 /**
- * correct stock 
+ * correct stock. this should be the exception since stock is normally added
+ * and then sold which deduces automatically the correct amount. 
+ * However, stock disappears.... somehow
  */
 drop procedure if exists correct_stock|
 create procedure correct_stock(in the_product_id int, in the_current_stock decimal(10,4), in the_operator_id int)
@@ -456,7 +458,6 @@ begin
     commit; 
 	
 end|
-
 
 
 
