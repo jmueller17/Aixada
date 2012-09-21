@@ -80,7 +80,8 @@ end|
 
 
 /**
- * returns list of providers with stock only products
+ * returns list of providers with stock only products, 
+ * or cumulative order
  */
 drop procedure if exists get_stock_providers|
 create procedure get_stock_providers()
@@ -94,7 +95,7 @@ begin
   where  
     pv.active = 1
     and pv.id = p.provider_id
-    and p.orderable_type_id = 1
+    and (p.orderable_type_id = 1 or p.orderable_type_id = 4) 
   order by pv.name;
 end|
 

@@ -1,4 +1,5 @@
 
+
 /**
  * IVA_TYPE
  * table, associated then to different products
@@ -20,6 +21,18 @@ select distinct
 from
 	aixada_product p
 order by p.iva_percent asc;
+
+
+/**
+ * PAYMENT METHOD 
+ */
+insert into
+	aixada_payment_method (description, details)
+values
+	('stock', 'register gain or loss of stock'),
+	('validation', 'register validation of cart'),
+	('deposit','register the inpayment of cash'),
+	('bill','register withdrawal for bill payment to provider');
 
 
 /**
@@ -188,14 +201,14 @@ where
 	
 /** set date_for_shop for past orders assuming that shop conicides with date_for_order date!
  *  produces error... best done by hand.  
-declare today date default date(sysdate()); 
+declare today date default date(sysdate()); */
 update
 	aixada_order o
 set
 	o.date_for_shop = o.date_for_order,
 	o.revision_status = 2
 where
-	o.date_for_order < today;**/
+	o.date_for_order < '2012-09-16';
 	
 	
 	
@@ -377,7 +390,10 @@ alter table
 	aixada_user 
 	change color_scheme_id gui_theme varchar(50) default null;
 
-
+update 
+	aixada_user
+set
+	gui_theme = null;
 
 drop table if exists aixada_providers_of_distributor;
 drop table if exists aixada_account_balance;

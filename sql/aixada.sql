@@ -358,7 +358,7 @@ create table aixada_stock_movement (
 
 
 /**
- * Stores different payment methods
+ * Stores different payment and transfer methods
  */
 create table aixada_payment_method (
   id   	     	tinyint   not null auto_increment,
@@ -383,7 +383,7 @@ create table aixada_currency (
 /* 
  *   Account numbers:
  *  -1          Manteniment
- *  -2	       Consum
+ *  -2	       	Consum
  *  1001..1999  regular UF accounts of the form 1000 + uf_id
  *  2001..2999  regular provider account of the form 2000 + provider_id
  */   

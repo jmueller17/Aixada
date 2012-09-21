@@ -56,7 +56,7 @@ begin
 	  	id = the_cart_id
 	  limit 1); 
   	
-	
+  -- do the actual validation: set timestamp! --	
   update 
   	aixada_cart
   set 
@@ -96,11 +96,12 @@ begin
 
   /** new entry into account **/
   insert into 
-  	aixada_account (account_id, quantity, description, operator_id, balance) 
+  	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
   select 
    the_account_id,
     - total_price,
-    concat('validate_cart_', the_cart_id),
+    6,
+    concat('cart #', the_cart_id),
     the_op_id,
     current_balance - total_price;
 

@@ -96,7 +96,7 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<li><a href="#">Add or correct stock </a></li>
+				<li><a href="manage_stock.php">Stock </a></li>
 				
 			</ul>
 		</li>
@@ -110,7 +110,7 @@
 		</li>
 		<li><a href="#TODO">Admin</a>
 			<ul>
-				<li><a href="manage_db.php"><?php echo $Text['nav_mng_db'];?></a></li>
+				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
 				<li><a href="#TODO">Users </a></li>
 				<li><a href="#TODO">Access rights</a></li>
 			</ul>
@@ -122,6 +122,7 @@
 
 <div id="navReportItems" class="hidden">
 	<ul>
+		<li><a href="report_shop.php">Sales</a></li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
 		<li><a href="report_stats.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>

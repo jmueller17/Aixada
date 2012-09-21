@@ -190,25 +190,27 @@
 			<div class="ui-widget-content ui-corner-all">
 					
 					<h3 class="ui-widget-header ui-corner-all"><?=$Text['latest_movements'];?> <span class="account_id"></span> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-					<table id="list_account" class="table_listing">
+					<table id="list_account" class="tblListingGrid">
 					<thead>
 						<tr>
 							<th><?php echo $Text['date'];?></th>
 							<th><?php echo $Text['operator']; ?></th>
 							<th><?php echo $Text['description']; ?></th>
-							<th class="textAlignRight"><?php echo $Text['account']; ?></th>
-							<th class="textAlignRight"><?php echo $Text['amount']; ?></th>
-							<th class="textAlignRight"><?php echo $Text['balance']; ?></th>
+							<th>Type</th>
+							<th><p class="textAlignCenter"><?php echo $Text['account']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['amount']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['balance']; ?></p></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr class="xml2html_tpl">
-							<td class="textAlignCenter">{ts}</td>
-							<td class="textAlignCenter">{operator}</td>
+							<td>{ts}</td>
+							<td>{operator}</td>
 							<td>{description}</td>
-							<td>{account}</td>
-							<td>{quantity} {currency}</td>
-							<td>{balance} {currency}</td>
+							<td>{method}</td>
+							<td><p class="textAlignCenter">{account}</p></td>
+							<td><p class="textAlignRight">{quantity} {currency}</p></td>
+							<td><p class="textAlignRight">{balance} {currency}</p></td>
 						</tr>
 					</tbody>
 					<tfoot>

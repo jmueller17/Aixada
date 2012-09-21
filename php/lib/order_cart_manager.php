@@ -137,8 +137,7 @@ class order_cart_manager extends abstract_cart_manager {
      */
     protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
     {
-        //do_stored_query('convert_order_to_shop', $this->_uf_id, $this->_date);
-
+       
         // now store preorder items
        	$this->_rows = array();
         for ($i=0; $i < count($arrQuant); ++$i) {

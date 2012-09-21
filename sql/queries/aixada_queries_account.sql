@@ -121,9 +121,14 @@ begin
   
         
   insert into 
-  	aixada_account (account_id, quantity, description, operator_id, balance) 
+  	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
   values 
-  	(the_account_id, qty, the_description, op, current_balance + qty);
+  	(the_account_id, 
+  	 qty, 
+  	 7, 
+  	 the_description, 
+  	 op, 
+  	 current_balance + qty);
 
   /** Account 3 is Caixa. So we update Caixa whenever we haven't inserted directly into Caixa. */
   if the_account_id != -3 then  
@@ -139,11 +144,15 @@ begin
     limit 1;
 
   /* ufs make a positive deposit, movements to Consum(-2) make a negative deposit to caixa */
-    insert into aixada_account (
-      account_id, quantity, description, operator_id, balance
-    ) values (
-      -3, if(the_account_id > 0, qty, -qty), the_description, op, 
-          current_balance + if(the_account_id > 0, qty, -qty)
+    insert into 
+    	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
+    values 
+    	(-3, 
+    	 if(the_account_id > 0, qty, -qty), 
+    	 7, 
+    	 the_description, 
+    	 op, 
+         current_balance + if(the_account_id > 0, qty, -qty)
     );
 
   end if;

@@ -1,5 +1,5 @@
 /*Grid*/
-.ui-jqgrid {position: relative; font-size:11px;}
+.ui-jqgrid {position: relative; font-size:1em;}
 .ui-jqgrid .ui-jqgrid-view {position: relative;left:0px; top: 0px; padding: .0em;}
 /* caption*/
 .ui-jqgrid .ui-jqgrid-titlebar {padding: .3em .2em .2em .3em; position: relative; border-left: 0px none;border-right: 0px none; border-top: 0px none;}
@@ -56,8 +56,8 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqgrid .ui-pg-button span { display: block; margin: 1px; float:left;}
 .ui-jqgrid .ui-pg-button:hover { padding: 0px; }
 .ui-jqgrid .ui-state-disabled:hover {padding:1px;}
-.ui-jqgrid .ui-pg-input { height:13px;font-size:.8em; margin: 0em;}
-.ui-jqgrid .ui-pg-selbox {font-size:.8em; line-height:18px; display:block; height:18px; margin: 0em;}
+.ui-jqgrid .ui-pg-input { height:13px;font-size:1em; margin: 0em;}
+.ui-jqgrid .ui-pg-selbox {font-size:1em; line-height:18px; display:block; height:18px; margin: 0em;}
 .ui-jqgrid .ui-separator {height: 18px; border-left: 1px solid #ccc ; border-right: 1px solid #ccc ; margin: 1px; float: right;}
 .ui-jqgrid .ui-paging-info {font-weight: normal;height:19px; margin-top:3px;margin-right:4px;}
 .ui-jqgrid .ui-jqgrid-pager .ui-pg-div {padding:1px 0;float:left;list-style-image:none;list-style-position:outside;list-style-type:none;position:relative;}
@@ -83,7 +83,7 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 /* toolbar */
 .ui-jqgrid .ui-userdata {border-left: 0px none;	border-right: 0px none;	height : 21px;overflow: hidden;	}
 /*Modal Window */
-.ui-jqdialog { display: none; width: 300px; position: absolute; padding: .2em; font-size:11px; overflow:visible;}
+.ui-jqdialog { display: none; width: 300px; position: absolute; padding: .2em; font-size:1em; overflow:visible;}
 .ui-jqdialog .ui-jqdialog-titlebar { padding: .3em .2em; position: relative;  }
 .ui-jqdialog .ui-jqdialog-title { margin: .1em 0 .2em; } 
 .ui-jqdialog .ui-jqdialog-titlebar-close { position: absolute;  top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }

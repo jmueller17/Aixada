@@ -321,7 +321,7 @@ begin
 		p.description,
 		p.category_id,
 		p.stock_actual,
-		(p.unit_price * (1 + iva.percent/100) * (1+t.rev_tax_percent/100)) as unit_price,
+		round((p.unit_price * (1 + iva.percent/100) * (1+t.rev_tax_percent/100)),2) as unit_price,
 		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
 		pv.name as provider_name,	
 		u.unit,
@@ -382,28 +382,118 @@ end|
 
 
 
-
-drop procedure if exists add_stock|
-create procedure add_stock(in the_product_id int, in delta_amount decimal(10,4), in the_operator_id int, in the_description varchar(255))
+/**
+ * correct stock 
+ */
+drop procedure if exists correct_stock|
+create procedure correct_stock(in the_product_id int, in the_current_stock decimal(10,4), in the_operator_id int)
 begin
-   start transaction;
-   update aixada_product
-   set stock_actual = stock_actual + delta_amount,
-       delta_stock  = delta_stock + delta_amount /* delta_stock = stock_actual - stock_min */
-   where id = the_product_id;
+	
+	declare err_amount decimal(10,4);
+	declare current_balance decimal(10,2) default 0.0;
+	
+	start transaction;
+	
+	-- what's the difference in order to calculate the loss -- 
+	select
+		(the_current_stock - p.stock_actual) * p.unit_price
+	into 
+		err_amount
+	from
+		aixada_product p
+	where
+		p.id = the_product_id; 
+			
+		
+	-- get the current balance from consum account -- 
+	select 
+  		balance 
+  	into 
+  		current_balance
+  	from 
+  		aixada_account
+  	where 
+  		account_id = -2
+  	order by ts desc
+  		limit 1; 
+  		
+  	-- register the loss in the bank-- 
+  	insert into 
+  		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
+  	select 
+   		-2,
+    	err_amount,
+    	5,
+    	concat('Stocked corrected for product #',the_product_id),
+    	the_operator_id,
+ 		current_balance + err_amount;
+ 		
+ 	 
+ 		
+ 	-- reg the stock movement -- 	
+ 	insert into 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   	select
+     	the_product_id,
+     	the_operator_id,
+     	the_current_stock - p.stock_actual,
+     	concat('stock corrected. Delta amount: ',err_amount, 'Euros'),
+     	the_current_stock
+    from 
+    	aixada_product p
+    where 
+    	p.id = the_product_id;
+ 		
+ 	-- update the product quantity to the new value -- 
+ 	update
+ 		aixada_product
+ 	set
+ 		stock_actual = the_current_stock
+ 	where
+ 		id = the_product_id;
+    	
+    	
+    commit; 
+	
+end|
 
-   insert into aixada_stock_movement (
-     product_id, operator_id, amount_difference, description, resulting_amount
-   ) select
-     the_product_id,
-     the_operator_id,
-     delta_amount,
-     the_description,
-     p.stock_actual
-     from aixada_product p
-     where p.id = the_product_id;
+
+
+
+/**
+ * add stock
+ */
+drop procedure if exists add_stock|
+create procedure add_stock(	in the_product_id int, 
+							in delta_amount decimal(10,4), 
+							in the_operator_id int, 
+							in the_description varchar(255))
+begin
+   	start transaction;
+	   
+   	update 
+		aixada_product
+	set 
+		stock_actual = stock_actual + delta_amount,
+	    delta_stock  = delta_stock + delta_amount /* delta_stock = stock_actual - stock_min */
+	where 
+		id = the_product_id;
+
+   	insert into 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   	select
+     	the_product_id,
+     	the_operator_id,
+     	delta_amount,
+     	the_description,
+     	p.stock_actual
+    from 
+    	aixada_product p
+    where 
+    	p.id = the_product_id;
    commit;
 end|
+
 
 drop procedure if exists stock_movements|
 create procedure stock_movements(in product_id int, in tmp_start_date date, in num_rows int)

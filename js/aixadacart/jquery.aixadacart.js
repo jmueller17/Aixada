@@ -205,11 +205,11 @@
 					if (itemObj.time_left < 0){
 						str += '<td class="'+deaTd+'"></td>';
 					} else {
-						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close"></span></td>';
+						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close cart_clickable"></span></td>';
 					}
 					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
-					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" />'; 
+					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
 					str +=								'<input type="hidden" name="order_item_id[] value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';

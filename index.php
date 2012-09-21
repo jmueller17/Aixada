@@ -60,9 +60,9 @@
 					//var revisionStatus = $(row).attr('revision_status');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(3).text('expected');
+						$(row).children().eq(3).html('<p class="textAlignCenter">expected</p>');
 					} else {
-						 $(row).children().eq(3).text('not yet send');		
+						 $(row).children().eq(3).html('<p class="textAlignCenter">not yet send</p>');		
 					}
 
 					if (timeLeft <= 0){
@@ -70,7 +70,7 @@
 					} 
 					
 					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5" class="dateRow ui-corner-all"><p>Ordered for <span class="boldStuff">'+date+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow">Ordered for <span class="boldStuff">'+date+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
 					lastDate=date; 	
 
 				},
@@ -168,7 +168,7 @@
 									break;	
 							}
 					
-							$('#order_'+orderId).children().eq(3).addClass(modClass).text(modTxt);		
+							$('#order_'+orderId).children().eq(3).addClass(modClass).html('<p class="textAlignCenter">'+modTxt+'</p>');		
 
 						} else if (providerId > 0){  //not yet send / closed order
 							$('.Date_'+dateForOrder+'.Provider_'+providerId).after(itemRows).after(header);
@@ -262,7 +262,7 @@
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
+					params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
 					loadOnInit : false, 
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
@@ -353,7 +353,7 @@
 					shopDateSteps++;	
 					$('#tbl_Shop tbody').xml2html('reload',{
 						url : 'php/ctrl/Shop.php',
-						params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
+						params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 					});
 
 			});
@@ -368,7 +368,7 @@
 				shopDateSteps--;	
 				$('#tbl_Shop tbody').xml2html('reload',{
 					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListingForUf&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
+					params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 				});
 
 			});
@@ -419,14 +419,14 @@
 				</ul>
 			
 				<div id="tabs-1">
-					<table id="tbl_Orders">
+					<table id="tbl_Orders" class="tblListingGrid">
 						<tbody>
 							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
 								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td>{provider_name}</td>
-								<td class="textAlignCenter">{time_left}</td>
-								<td class="textAlignCenter">Loading status info...</td>
-								<td class="textAlignRight">{order_total}€</td>
+								<td>{time_left}</td>
+								<td>Loading status info...</td>
+								<td><p class="textAlignRight">{order_total}€</p></td>
 								<td>&nbsp;</td>
 							</tr>
 						</tbody>

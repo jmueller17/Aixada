@@ -10,7 +10,7 @@ $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 require_once($app . 'shop_cart_manager.php');
 
 /**
- * The class that manages a validation cart for the groceries bought from stock on a certain day.
+ * The class to validate a cart
  *
  * @package Aixada
  * @subpackage Validation

@@ -42,38 +42,7 @@ try{
         	$vm->commit(get_param('quantity',$emptyArr), get_param('product_id',$emptyArr), get_param('iva_percent',$emptyArr), get_param('rev_tax_percent',$emptyArr), get_param('order_item_id',$emptyArr), get_param('cart_id',0), get_param('preorder',$emptyArr), get_param('price', $emptyArr));      
     		break;
 	    
-	    
-	
-	  case 'backupDatabase':
-	      $cv = configuration_vars::get_instance();
-	      $filename = 'local_config/dbBkups/' . $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';
-	      $output = array();
-	      $retval = 0;
-	      $cmds = array('rm -f ' . $filename . '.bz2',
-	      				//if the path to the mysqldump is not included in the PHP environment variables a error code 127 is thrown!! 
-	      				//of course the path could be different on each machine?!!
-	      				//'/opt/lampp/bin/mysqldump --default-character-set=utf8'
-	                    'mysqldump --default-character-set=utf8'
-	                    . ' -u '. $cv->db_user
-	                    . ' -p' . $cv->db_password 
-	                    . ' --host=' . $cv->db_host
-	                    . ' ' . $cv->db_name 
-	                    . ' > ' . $filename,
-	                    'bzip2 ' . $filename);
-	      foreach ($cmds as $cmd) {
-	          exec($cmd . ' 2>&1', $output, $retval);
-	          if ($retval) {
-	              $errstr = $retval . ' ';
-	              foreach ($output as $out) {
-	                  $errstr .= $out . ';';
-	              }
-	              throw new InternalException('Could not execute "' . $cmd 
-	                                          . '". Error message: ' . $errstr
-	                                       	);
-	          }
-	      }
-	      echo $filename . '.bz2';
-	      exit;
+
 	      
 	  default:  
     	throw new Exception("ctrlValidate: oper={$_REQUEST['oper']} not supported");  

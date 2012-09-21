@@ -2,8 +2,38 @@
 $(function(){
 	
 	
-
+	/**
+	 * sums up shop/Order items in table list and 
+	 * extracts the included rev tax and iva amount. 
+	 */
+	$.extend({
+			sumItems : function(sel){
+				var sums = [];
+				var total = 0; 
+				var totalIva = 0; 
+				var totalRevTax = 0; 
+				$(sel).each(function(){
+					var price = new Number($(this).text());
+					total += price; 
+					var iva = $(this).attr('iva');
+					var rev = $(this).attr('revTax');
+					var tax = (price * (iva + rev))/100; 
+					totalIva += (tax*iva)/100;
+					totalRevTax += (tax*rev)/100;
+				});
+				
+				sums['total'] = total.toFixed(2); 
+				sums['totalIva'] = totalIva.toFixed(2); 
+				sums['totalRevTax'] = totalRevTax.toFixed(2); 
+				
+				return sums; 
+			}
+	});
 	
+	
+	/**
+	 * utility functions for checking form fields
+	 */
 	$.extend({
 		
 		checkFormLength : function (input, min, max, callbackfn) {
@@ -38,10 +68,8 @@ $(function(){
 				return true; 
 			}
 		}
-
-		
-		
 	}); //end extend form stuff
+	
 	
 	
 	
@@ -90,7 +118,7 @@ $(function(){
 					var milsecs = (timing >= 0)? timing:10000;
 						
 					if (type == 'success'){
-						style = 'success_msg';
+						style = 'success_tips';
 					} else if (type == 'error'){
 						style = "ui-state-error" ;
 					} else if (type == 'notice'){
