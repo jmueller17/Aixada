@@ -6,9 +6,13 @@ $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 require_once($app . 'php/inc/database.php');
 require_once($app . 'local_config/config.php');
 require_once($app . 'php/inc/caching.inc.php');
+
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 require_once($app . 'local_config/lang/' . $language . '.php');
 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
 
 
 /**
@@ -76,14 +80,17 @@ function get_session_language(){
  * returns the theme for the logged user
  */
 function get_session_theme(){
-	
-	 if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
-	 	
-	 	return $_SESSION['userdata']['theme'];
-	 	
-	 } else {
-	 	return	configuration_vars::get_instance()->default_theme;
-	 }
+    global $firephp;
+    if (isset($_SESSION['userdata']['theme']) 
+	and $_SESSION['userdata']['theme'] != ''
+	and $_SESSION['userdata']['theme'] != '1'
+	) {
+	$firephp->log($_SESSION['userdata'], 'userdata');
+	return $_SESSION['userdata']['theme'];
+    } else {
+	$firephp->log(configuration_vars::get_instance()->default_theme, 'default theme');
+	return	configuration_vars::get_instance()->default_theme;
+    }
 	 
 }
 

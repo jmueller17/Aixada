@@ -9,11 +9,16 @@ require_once($app . 'php/lib/exceptions.php');
 require_once($app . 'local_config/config.php');
 require_once($app . 'php/utilities/general.php');
 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 $default_theme = get_session_theme();
 $language = get_session_language();
 $dev = configuration_vars::get_instance()->development;
 require_once($app . 'local_config/lang/' . $language  . '.php');
 
+$firephp->log($default_theme, 'default_theme');
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.
