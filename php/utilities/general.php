@@ -1,10 +1,13 @@
 <?php
 
-require_once('php/inc/database.php');
-require_once('local_config/config.php');
-require_once('php/inc/caching.inc.php');
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . 'php/inc/database.php');
+require_once($app . 'local_config/config.php');
+require_once($app . 'php/inc/caching.inc.php');
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
-require_once('local_config/lang/' . $language . '.php');
+require_once($app . 'local_config/lang/' . $language . '.php');
 
 
 

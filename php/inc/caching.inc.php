@@ -3,9 +3,12 @@
  * @package Aixada
  */ 
 
-require_once('local_config/config.php');
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
- require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once($app . 'local_config/config.php');
+
+ require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
  ob_start(); // Starts FirePHP output buffering
 
  $firephp = FirePHP::getInstance(true);

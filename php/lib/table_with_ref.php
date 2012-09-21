@@ -1,6 +1,9 @@
 <?php
 
-require_once('php/inc/name_mangling.php');
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . 'php/inc/name_mangling.php');
 
 /** 
  * @package Aixada

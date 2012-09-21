@@ -4,7 +4,10 @@
  * @package Aixada
  */ 
 
-require_once('shop_cart_manager.php');
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . 'shop_cart_manager.php');
 
 /**
  * The class that manages a validation cart for the groceries bought from stock on a certain day.

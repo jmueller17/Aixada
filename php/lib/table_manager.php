@@ -14,7 +14,10 @@ ob_start(); // Starts FirePHP output buffering
  * include files
  */
 
-require_once 'table_with_ref.php';
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+
+require_once($app . 'table_with_ref.php');
 
 /**
  * The following class encapsulates a table.

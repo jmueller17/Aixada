@@ -9,7 +9,7 @@ require_once 'php/inc/cookie.inc.php';
 require_once 'php/inc/authentication.inc.php';
 require_once 'php/lib/exceptions.php';
 require_once 'local_config/config.php';
-require_once('php/utilities/general.php');
+require_once 'php/utilities/general.php';
 
 $default_theme = get_session_theme();
 $language = get_session_language();

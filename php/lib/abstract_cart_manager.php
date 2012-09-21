@@ -4,14 +4,12 @@
    * @package Aixada
    */ 
 
-require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-//ob_start(); // Starts FirePHP output buffering
-require_once('exceptions.php');
-require_once('local_config/config.php');
-require_once('php/inc/database.php');
+require_once($app . 'exceptions.php');
+require_once($app . 'local_config/config.php');
+require_once($app . 'php/inc/database.php');
 
 /**
  * This is the base class for rows of the tables.
@@ -302,7 +300,4 @@ class abstract_cart_manager {
     }*/
 
 }
-
-
-
 ?>

@@ -1,12 +1,11 @@
 <?php 
 	
-ob_start(); // Starts FirePHP output buffering
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//$firephp = FirePHP::getInstance(true);
+$slash = explode('/', getenv('SCRIPT_NAME'));
+$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once('php/inc/cookie.inc.php');
-require_once('local_config/config.php');
-require_once('php/utilities/general.php');
+require_once($app . 'php/inc/cookie.inc.php');
+require_once($app . 'local_config/config.php');
+require_once($app . 'php/utilities/general.php');
 
 $default_theme = get_session_theme();
 $dev = configuration_vars::get_instance()->development;
@@ -15,7 +14,7 @@ $tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_templa
 $tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
 
 
-require_once('local_config/lang/' . get_session_language() . '.php');
+require_once($app . 'local_config/lang/' . get_session_language() . '.php');
 
 //should be deleted in the end, and globally set. 
 $_SESSION['dev'] = true;
