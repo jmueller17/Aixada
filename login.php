@@ -18,8 +18,6 @@ $language = get_session_language();
 $dev = configuration_vars::get_instance()->development;
 require_once($app . 'local_config/lang/' . $language  . '.php');
 
-$firephp->log($default_theme, 'default_theme');
-
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
@@ -60,6 +58,7 @@ if (!isset($_SESSION)) {
 			$('#btn_logon').button();
 			$('#login').submit(function(){
 				var dataSerial = $(this).serialize();
+				alert(dataSerial);
 				$.ajax({
 					type: "POST",
                     url: "php/ctrl/Login.php?oper=login",

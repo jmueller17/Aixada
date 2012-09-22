@@ -80,15 +80,12 @@ function get_session_language(){
  * returns the theme for the logged user
  */
 function get_session_theme(){
-    global $firephp;
     if (isset($_SESSION['userdata']['theme']) 
 	and $_SESSION['userdata']['theme'] != ''
 	and $_SESSION['userdata']['theme'] != '1'
 	) {
-	$firephp->log($_SESSION['userdata'], 'userdata');
 	return $_SESSION['userdata']['theme'];
     } else {
-	$firephp->log(configuration_vars::get_instance()->default_theme, 'default theme');
 	return	configuration_vars::get_instance()->default_theme;
     }
 	 

@@ -13,6 +13,10 @@ if (!isset($_SESSION)) {
     session_start();
  }
 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 /**
  * The following class implements cookies, based on an
  * implementation from George Schlossnagle, Advanced PHP Programming, p.341
@@ -142,6 +146,10 @@ class Cookie {
    * also set.
    */
   public function validate() {
+     global $firephp;
+     $firephp->log($_SESSION['userdata']);
+     exit();
+
     if (!$this->version || !$this->created || !$this->user_id) {
       throw new AuthException("Malformed cookie");
     }
@@ -170,9 +178,6 @@ class Cookie {
         				'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
     }
-//     global $firephp;
-//     $firephp->log($_SESSION['userdata']);
-//     exit();
   }
 
   /**

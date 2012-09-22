@@ -11,9 +11,9 @@ require_once($app . 'php/utilities/general.php');
 require_once($app . 'php/inc/database.php');
 require_once($app . 'php/lib/table_with_ref.php');
 require_once($app . 'local_config/lang/' . get_session_language() . '.php');
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
 DBWrap::get_instance()->debug = true;
