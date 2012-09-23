@@ -99,7 +99,7 @@ $(function(){
 		getAixadaDates : function(oper, callbackfn){
 			$.ajax({
 				type: "GET",
-				url: "ctrlDates.php?oper="+oper+"&responseFormat=array",		
+				url: "php/ctrl/Dates.php?oper="+oper+"&responseFormat=array",		
 				dataType: "JSON", 
 				success: function(data){
 					var availableDates = eval(data);

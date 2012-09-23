@@ -6,8 +6,8 @@
      	init : function( options ) {
   		
 	  		var settings = {
-	  				loadCartURL		: 'ctrlShopAndOrder.php',
-	  				saveCartURL		: 'ctrlShopAndOrder.php',
+	  				loadCartURL		: 'php/ctrl/ShopAndOrder.php',
+	  				saveCartURL		: 'php/ctrl/ShopAndOrder.php',
 	  				autoSave		: 0,						//0 means never. Value should be above 3000 miliseconds, like min. time to add stuff and move away. 
 	  	  			date			: 0, 
 	  	  			preOrder		: false,

@@ -9,7 +9,7 @@
 			  init : function( options ) {
 
 		 		var settings = {
-					url         	: 'ctrlShopAndOrder.php',				
+					url         	: 'php/ctrl/ShopAndOrder.php',				
 					params 			: 'oper=listProviders',
 					rowName			: 'row', 
 					xml 			: null,							//the xml once loaded/received

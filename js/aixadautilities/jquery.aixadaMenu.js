@@ -62,7 +62,7 @@ $(function(){
 		var rq_uri = window.location;
    		$.ajax({
    			type: "POST",
-            url: "ctrlCookie.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
+            url: "php/ctrl/Cookie.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
             dataType: "xml",
             success:  function(xml){
             window.location.href = $(xml).find('navigation').text(); 				
@@ -75,7 +75,7 @@ $(function(){
 	//function to retrieve menu access rights
 	$.ajax({
 		type: "POST",
-            url: "ctrlSmallQ.php?oper=configMenu&user_role="+role,
+            url: "php/ctrl/SmallQ.php?oper=configMenu&user_role="+role,
             dataType: "xml", 
             success:  function(xml){
 			$(xml).find('navigation').children().each(function(){
@@ -91,7 +91,7 @@ $(function(){
 		var rq_uri = window.location;
    		$.ajax({
    			type: "POST",
-            url: "ctrlCookie.php?change_lang_to=" + new_lang + "&originating_uri=" + rq_uri,
+            url: "php/ctrl/Cookie.php?change_lang_to=" + new_lang + "&originating_uri=" + rq_uri,
             dataType: "xml",
             success:  function(xml){
             window.location.href = $(xml).find('navigation').text();
