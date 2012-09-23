@@ -47,7 +47,6 @@ class Cookie {
   private $language_keys;
   private $language_names;
   private $current_language_key;
-  private $can_checkout = false;
   private $theme; 
 
   // Cookie data
@@ -72,8 +71,6 @@ class Cookie {
   static $array_glue = '~';
   //  static $array_glue1 = '*';
 
-  static $checkout_config_file = 'local_config/who.can.checkout';
-
   public function __construct($logged_in=false, 
                               $user_id=false, 
                               $login = false, 
@@ -85,7 +82,6 @@ class Cookie {
                               $language_keys=false, 
                               $language_names=false, 
                               $current_language_key=false, 
-                              $can_checkout=false,
                               $theme=false) {
       //    global $firephp;
     
@@ -106,7 +102,6 @@ class Cookie {
         $this->language_keys = $language_keys;
         $this->language_names = $language_names;
         $this->current_language_key = $current_language_key;
-        $this->can_checkout = $can_checkout;
         $this->theme = $theme;
         return;
     } else {
@@ -139,8 +134,7 @@ class Cookie {
                     'language_keys' => $this->language_keys,
                     'language_names' => $this->language_names,
                     'language' => $this->current_language_key,
-                    'can_checkout' => $this->can_checkout,
-    				'theme' => $this->theme);
+		    'theme' => $this->theme);
     $_SESSION['userdata'] = $userdata;
     global $firephp;
     $firephp->log($_SESSION, "_SESSION");
@@ -181,112 +175,17 @@ class Cookie {
                         'language_keys'     => $this->language_keys,
                         'language_names'     => $this->language_names,
                         'language' => $this->current_language_key,
-                        'can_checkout' => $this->can_checkout,
-        				'theme' => $this->theme);
+			'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
     }
   }
 
-  /**
-   * This function writes a checkout control file
-   */
-  private function write_checkout_control_file($s) {
-      $filename = self::$checkout_config_file;
-      $handle = @fopen($filename, 'w');
-      if (!$handle)
-          throw new Exception("Could not write to local configuration file $filename for managing checkouts. Is the directory universally writable?");
-      fwrite($handle, "<?php {$s} ?>");
-      fclose($handle);
-  }
-
-  private function do_enable_checkout() {
-      if (!file_exists(self::$checkout_config_file)) {
-          $who_can_checkout = array($this->login => time());
-          $s = var_export($who_can_checkout, true);
-          $this->write_checkout_control_file($s);
-          return true;
-      }
-      include self::$checkout_config_file;
-      if (!isset($who_can_checkout))
-          $who_can_checkout = array();
-      if (isset($who_can_checkout[$this->login])) {
-          $who_can_checkout[$this->login] = time();
-          $s = var_export($who_can_checkout, true);
-          $this->write_checkout_control_file($s);
-          return true;
-      }
-      $n_users = configuration_vars::get_instance()->n_checkout_enabled_users;
-      if (count($who_can_checkout) >= $n_users) {
-          // then we check to see whether we kick out anybody
-          $now = time();
-          $max_time= configuration_vars::get_instance()->n_seconds_enabled_for_checkout;
-          foreach($who_can_checkout as $login => $when) {
-              if ($now - $when > $max_time) {
-                  unset($who_can_checkout[$login]);
-                  $who_can_checkout[$this->login] = $now;
-                  $s = var_export($who_can_checkout, true);
-                  $this->write_checkout_control_file($s);
-                  return true;
-              }
-          }
-          return false;
-      }
-      $who_can_checkout[$this->login] = time();
-      $s = var_export($who_can_checkout, true);
-      $this->write_checkout_control_file($s);
-      return true;
-  }
-
-  /** 
-   * This function tries to enable the user to check out goods
-   */
-  private function enable_checkout() {
-      $this->can_checkout = $_SESSION['userdata']['can_checkout']   
-          = $this->do_enable_checkout();
-      //      $this->set();
-//       global $firephp;
-//       $firephp->log($this, 'cookie');
-      return $this->can_checkout;
-  }
-
-  private function do_disable_checkout($strict_check = false) {
-      if ((include self::$checkout_config_file) != 'OK' and $strict_check) {
-      //      if ((include 'local_config/test') != 'OK' and $strict_check) {
-          throw new Exception("Could not read local configuration file for managing checkouts");
-      } 
-      if (!isset($who_can_checkout))
-          $who_can_checkout = array();
-      if (isset($who_can_checkout[$this->login]))
-          unset($who_can_checkout[$this->login]);
-      $s = var_export($who_can_checkout, true);
-      $this->write_checkout_control_file($s);
-      return true;
-  }
-
-  /** 
-   * This function disables the user from checking out goods
-   */
-  private function disable_checkout($strict_check = false) {
-      $this->can_checkout = $_SESSION['userdata']['can_checkout']   
-          = !$this->do_disable_checkout($strict_check);
-      //      $this->set();
-      return $this->can_checkout;
-  }
 
   /**
    * Call this function to change the role of a user. The information
    * is written to the cookie and to $_SESSION['userdata'].
    */
   public function change_role($new_role) {
-      if ($new_role == 'Checkout') {
-          if (!$this->enable_checkout()) {
-              throw new Exception("Could not change role to checkout.");
-          }
-          DBWrap::get_instance()->do_stored_query('call initialize_caixa()');
-      }
-      if ($this->current_role == 'Checkout') {
-          $this->disable_checkout();
-      }
       $this->current_role   = $new_role;
       $_SESSION['userdata']['current_role']   = $this->current_role;
       $this->set();
@@ -307,7 +206,6 @@ class Cookie {
       //    setcookie(self::$cookiename, "", 0);
     unset($_SESSION['userdata']);
     $this->logged_in = false;
-    $this->can_checkout = !$this->disable_checkout(false);
     $this->set();
 //     global $firephp;
 //     $firephp->log($this);
@@ -331,7 +229,6 @@ class Cookie {
 		   implode(self::$array_glue, $this->language_keys),
 		   implode(self::$array_glue, $this->language_names),
            $this->current_language_key,
-           $this->can_checkout,
            $this->theme);
     $cookie = implode(self::$glue, $parts);
     return $this->_encrypt($cookie);
@@ -354,7 +251,6 @@ class Cookie {
         $lang_key_array,
         $lang_name_array,
         $this->current_language_key,
-        $this->can_checkout,
         $this->theme) = explode(self::$glue, $buffer);
         
     $this->roles = explode(self::$array_glue, $role_array);
