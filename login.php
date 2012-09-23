@@ -64,7 +64,9 @@ if (!isset($_SESSION)) {
                     url: "php/ctrl/Login.php?oper=login",
 					data:dataSerial,		
 					success: function(msg){			
-                        top.location.href = 'index.php';
+					    alert(msg);
+					    document.cookie = 'USERAUTH=' + escape(msg);
+					    top.location.href = 'index.php';
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.updateTips('#logonMsg','error',XMLHttpRequest.responseText);

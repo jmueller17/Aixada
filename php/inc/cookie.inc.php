@@ -11,7 +11,7 @@ require_once($app . 'php/inc/database.php');
 
 if (!isset($_SESSION)) {
     session_start();
- }
+}
 
 require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
@@ -93,6 +93,8 @@ class Cookie {
     if (!$this->td) 
       die("<br>Error in opening mcrypt with cypher=".self::$cypher .", mode=".self::$mode."<br>");
     if ($logged_in) {
+	global $firephp;
+	$firephp->log('logged in');
         $this->logged_in = true;
         $this->user_id = $user_id;
         $this->login = $login;
@@ -108,13 +110,16 @@ class Cookie {
         $this->theme = $theme;
         return;
     } else {
-        //    $firephp->log($_COOKIE, 'cookie');
-        //    $firephp->log(self::$cookiename, 'cookie');
-    
+	global $firephp;
+	$firephp->log($_COOKIE, 'cookie');
+	$firephp->log(self::$cookiename, 'cookie');
+	$firephp->log(array_key_exists(self::$cookiename, $_COOKIE));
       if (array_key_exists(self::$cookiename, $_COOKIE)) {
 	$buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
       } else {
-          header("Location: login.php?originating_uri=".$_SERVER['REQUEST_URI']);
+	  global $firephp;
+	  $firephp->log($_COOKIE, 'cookie 2');
+	  header("Location: login.php?originating_uri=".$_SERVER['REQUEST_URI']);
       }
     }
   }
@@ -123,7 +128,7 @@ class Cookie {
    * it copies all relevant data into $_SESSION['userdata'] 
    */
   public function set() {
-    $cookie = $this->_package();
+    $cookie = $this->package();
     $userdata=array('user_id'      => $this->user_id, 
 		    'login'         => $this->login, 
 		    'uf_id'        => $this->uf_id, 
@@ -137,6 +142,8 @@ class Cookie {
                     'can_checkout' => $this->can_checkout,
     				'theme' => $this->theme);
     $_SESSION['userdata'] = $userdata;
+    global $firephp;
+    $firephp->log($_SESSION, "_SESSION");
     setcookie(self::$cookiename, $cookie);
   }
 
@@ -148,7 +155,7 @@ class Cookie {
   public function validate() {
      global $firephp;
      $firephp->log($_SESSION['userdata']);
-     exit();
+     //     exit();
 
     if (!$this->version || !$this->created || !$this->user_id) {
       throw new AuthException("Malformed cookie");
@@ -310,7 +317,7 @@ class Cookie {
   /**
    *  Package the cookie. 
    */
-  private function _package() {
+  public function package() {
     $parts = array(self::$myversion, 
 		   time(), 
            $this->logged_in,

@@ -12,9 +12,12 @@ require_once($app . 'php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
- }
+}
 
- 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 DBWrap::get_instance()->debug = true;
 
 
@@ -42,7 +45,6 @@ try{
 	      }
 	      
 	      try {
-	          //          global $firephp;
 	          $auth = new Authentication();
 	          list($user_id, 
 	               $login, 
@@ -71,10 +73,15 @@ try{
 	                               $theme);
 
 	          $cookie->set();
+		  $firephp->log($cookie, 'cookie in Login');
 	      }	catch (AuthException $e) {
 	          header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
 	          die($e->getMessage());
 	      }	
+	      global $firephp;
+	      $firephp->log($cookie->package());
+	      print $cookie->package();
+	      //	      header("Location: " . $slash[1] . "/index.php");
 	      exit; 
 	      	 
 	

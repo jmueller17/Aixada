@@ -7,6 +7,10 @@ require_once($app . 'php/inc/cookie.inc.php');
 require_once($app . 'local_config/config.php');
 require_once($app . 'php/utilities/general.php');
 
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 $default_theme = get_session_theme();
 $dev = configuration_vars::get_instance()->development;
 $tpl_print_orders = configuration_vars::get_instance()->print_order_template;
@@ -20,27 +24,31 @@ require_once($app . 'local_config/lang/' . get_session_language() . '.php');
 $_SESSION['dev'] = true;
 
    try {
-     $cookie = new Cookie();
-     $cookie->validate();
-     
-     if (isset($_SESSION['userdata']) and isset($_SESSION['userdata']['current_role'])) {
-         $fp = configuration_vars::get_instance()->forbidden_pages;
-         $uri = $_SERVER['REQUEST_URI'];
-         $role = $_SESSION['userdata']['current_role'];
-         $forbidden = false;
-         foreach($fp[$role] as $page) {
-             if (strpos($uri, $page) !== false) {
-                 $forbidden = true;
-                 break;
-             }
-         }
-         if ($forbidden) {
-             /* $firephp->log($uri, 'uri'); */
-             /* $firephp->log($role, 'role'); */
-             /* $firephp->log($_SESSION, 'session'); */
-             /* $firephp->log($_SERVER, 'server'); */
-             header("Location: index.php");
-         }
+       global $firephp;
+       $firephp->log('header.inc');
+       $cookie = new Cookie();
+       $firephp->log('cookie created');
+       $cookie->validate();
+       $firephp->log('cookie validated');
+       if (isset($_SESSION['userdata']) and isset($_SESSION['userdata']['current_role'])) {
+	   $fp = configuration_vars::get_instance()->forbidden_pages;
+	   $uri = $_SERVER['REQUEST_URI'];
+	   $role = $_SESSION['userdata']['current_role'];
+	   $forbidden = false;
+	   foreach($fp[$role] as $page) {
+	       if (strpos($uri, $page) !== false) {
+		   $forbidden = true;
+		   break;
+	       }
+	   }
+	   if ($forbidden) {
+	       $firephp->log('forbidden');
+	       $firephp->log($uri, 'uri');
+	       $firephp->log($role, 'role');
+	       $firephp->log($_SESSION, 'session');
+	       $firephp->log($_SERVER, 'server');
+	       header("Location: index.php");
+	   }
      }
      
    }   
