@@ -63,15 +63,13 @@ function get_session_member_id(){
  * returns the language for the logged user
  */
 function get_session_language(){
-	
-	 if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
-	 	
-	 	return $_SESSION['userdata']['language'];
-	 	
-	 } else {
-	 	return	configuration_vars::get_instance()->default_language;
-	 }
-	 
+    global $firephp;
+    $firephp->log($_SESSION, 'SESSION');
+    if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
+	return $_SESSION['userdata']['language'];
+    } else {
+	return	configuration_vars::get_instance()->default_language;
+    }
 }
 
 
@@ -446,7 +444,10 @@ function existing_languages()
     // $Text['es_es'] = 'Español'
     // exists in each language file
     $languages = array();
-    foreach (glob("local_config/lang/*.php") as $lang_file) {
+    global $firephp;
+    $firephp->log('existing_languages');
+    foreach (glob($app . "local_config/lang/*.php") as $lang_file) {
+	$firephp->log($lang_file);
         $a = strpos($lang_file, 'lang/');
         $lang = substr($lang_file, $a+5, strpos($lang_file, '.')-$a-5);
         $handle = @fopen($lang_file, "r");

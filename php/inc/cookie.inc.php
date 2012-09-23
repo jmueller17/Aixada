@@ -89,8 +89,6 @@ class Cookie {
     if (!$this->td) 
       die("<br>Error in opening mcrypt with cypher=".self::$cypher .", mode=".self::$mode."<br>");
     if ($logged_in) {
-	global $firephp;
-	$firephp->log('logged in');
         $this->logged_in = true;
         $this->user_id = $user_id;
         $this->login = $login;
@@ -105,18 +103,9 @@ class Cookie {
         $this->theme = $theme;
         return;
     } else {
-	global $firephp;
-	$firephp->log($_COOKIE, 'cookie');
-	$firephp->log(self::$cookiename, 'cookie');
-	$firephp->log(array_key_exists(self::$cookiename, $_COOKIE));
 	if (array_key_exists(self::$cookiename, $_COOKIE)) {
-	    $firephp->log($_COOKIE[self::$cookiename], 'ake');
 	    $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
-	    $firephp->log($buffer, 'buffer');
 	} else {
-	    global $firephp;
-	    $firephp->log($_COOKIE, 'cookie 2');
-	    $firephp->log($app);
 	  //	  header("Location: " . $app . "login.php?originating_uri=".$_SERVER['REQUEST_URI']);
       }
     }
@@ -210,9 +199,6 @@ class Cookie {
     unset($_SESSION['userdata']);
     $this->logged_in = false;
     $this->set();
-//     global $firephp;
-//     $firephp->log($this);
-//     exit();
   }
 
   /**
@@ -221,7 +207,7 @@ class Cookie {
   public function package() {
     $parts = array(self::$myversion, 
 		   time(), 
-           $this->logged_in,
+		   $this->logged_in,
 		   $this->user_id, 
 		   $this->login,
 		   $this->uf_id, 
@@ -231,8 +217,8 @@ class Cookie {
 		   $this->current_role,
 		   implode(self::$array_glue, $this->language_keys),
 		   implode(self::$array_glue, $this->language_names),
-           $this->current_language_key,
-           $this->theme);
+		   $this->current_language_key,
+		   $this->theme);
     $cookie = implode(self::$glue, $parts);
     return urlencode($this->_encrypt($cookie));
   }
@@ -254,35 +240,35 @@ class Cookie {
 	   $this->current_language_key,
 	   $this->theme) = explode(self::$glue, $buffer);
         
-    $this->roles = explode(self::$array_glue, $role_array);
-    $this->language_keys = explode(self::$array_glue, $lang_key_array);
-    $this->language_names = explode(self::$array_glue, $lang_name_array);
-    if ($this->version != self::$myversion || !$this->created || ! $this->user_id) {
-      throw new AuthException();
-    }
+      $this->roles = explode(self::$array_glue, $role_array);
+      $this->language_keys = explode(self::$array_glue, $lang_key_array);
+      $this->language_names = explode(self::$array_glue, $lang_name_array);
+      if ($this->version != self::$myversion || !$this->created || ! $this->user_id) {
+	  throw new AuthException();
+      }
   }
 
   protected function _encrypt($plaintext) {
-    $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($this->td), MCRYPT_RAND);
-    if (!$iv) throw new AuthException("error in iv ");
-    mcrypt_generic_init($this->td, self::$key, $iv);
-    $crypttext = mcrypt_generic($this->td, $plaintext);
-    mcrypt_generic_deinit($this->td);
-    return $iv.$crypttext;
+      $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($this->td), MCRYPT_RAND);
+      if (!$iv) throw new AuthException("error in iv ");
+      mcrypt_generic_init($this->td, self::$key, $iv);
+      $crypttext = mcrypt_generic($this->td, $plaintext);
+      mcrypt_generic_deinit($this->td);
+      return $iv.$crypttext;
   }
 
   protected function _decrypt($crypttext) {
-    $ivsize = mcrypt_enc_get_iv_size($this->td);
-    $iv = substr($crypttext, 0, $ivsize);
-    $subtext = substr($crypttext, $ivsize);
-    mcrypt_generic_init($this->td, self::$key, $iv);
-    $plaintext = mdecrypt_generic ($this->td, $subtext);
-    mcrypt_generic_deinit($this->td);
-    return $plaintext;
+      $ivsize = mcrypt_enc_get_iv_size($this->td);
+      $iv = substr($crypttext, 0, $ivsize);
+      $subtext = substr($crypttext, $ivsize);
+      mcrypt_generic_init($this->td, self::$key, $iv);
+      $plaintext = mdecrypt_generic ($this->td, $subtext);
+      mcrypt_generic_deinit($this->td);
+      return $plaintext;
   }
 
   private function _reissue() {
-    $this->created = time();
+      $this->created = time();
   }
 
 }
