@@ -28,9 +28,12 @@ try{
 	
 	  case 'logout':
 	      try {
+		  global $firephp;
 	          $cookie=new Cookie();
+		  $firephp->log($cookie, 'Login.php');
 	          $cookie->logout();
-	          header("Location:login.php");
+		  $firephp->log($cookie, 'Login.php logged out');
+		  //		  header("Location:login.php");
 	          exit;
 	      } 
 	      catch (AuthException $e) {
@@ -78,10 +81,7 @@ try{
 	          header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
 	          die($e->getMessage());
 	      }	
-	      global $firephp;
-	      $firephp->log($cookie->package());
 	      print $cookie->package();
-	      //	      header("Location: " . $slash[1] . "/index.php");
 	      exit; 
 	      	 
 	

@@ -109,12 +109,15 @@ class Cookie {
 	$firephp->log($_COOKIE, 'cookie');
 	$firephp->log(self::$cookiename, 'cookie');
 	$firephp->log(array_key_exists(self::$cookiename, $_COOKIE));
-      if (array_key_exists(self::$cookiename, $_COOKIE)) {
-	$buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
-      } else {
-	  global $firephp;
-	  $firephp->log($_COOKIE, 'cookie 2');
-	  header("Location: login.php?originating_uri=".$_SERVER['REQUEST_URI']);
+	if (array_key_exists(self::$cookiename, $_COOKIE)) {
+	    $firephp->log($_COOKIE[self::$cookiename], 'ake');
+	    $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
+	    $firephp->log($buffer, 'buffer');
+	} else {
+	    global $firephp;
+	    $firephp->log($_COOKIE, 'cookie 2');
+	    $firephp->log($app);
+	  //	  header("Location: " . $app . "login.php?originating_uri=".$_SERVER['REQUEST_URI']);
       }
     }
   }
@@ -231,27 +234,25 @@ class Cookie {
            $this->current_language_key,
            $this->theme);
     $cookie = implode(self::$glue, $parts);
-    return $this->_encrypt($cookie);
-    //    return $cookie;
+    return urlencode($this->_encrypt($cookie));
   }
 
   private function _unpackage($cookie) {
-    $buffer = $this->_decrypt($cookie);
-     $buffer = $cookie;
-     list($this->version, 
-	 	$this->created, 
-        $this->logged_in,
-	 	$this->user_id, 
-	 	$this->login,
-	 	$this->uf_id, 
-	 	$this->member_id, 
-	 	$this->provider_id, 
-	 	$role_array,
-	 	$this->current_role,
-        $lang_key_array,
-        $lang_name_array,
-        $this->current_language_key,
-        $this->theme) = explode(self::$glue, $buffer);
+      $buffer = $this->_decrypt(urldecode($cookie));
+      list($this->version, 
+	   $this->created, 
+	   $this->logged_in,
+	   $this->user_id, 
+	   $this->login,
+	   $this->uf_id, 
+	   $this->member_id, 
+	   $this->provider_id, 
+	   $role_array,
+	   $this->current_role,
+	   $lang_key_array,
+	   $lang_name_array,
+	   $this->current_language_key,
+	   $this->theme) = explode(self::$glue, $buffer);
         
     $this->roles = explode(self::$array_glue, $role_array);
     $this->language_keys = explode(self::$array_glue, $lang_key_array);

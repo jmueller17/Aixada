@@ -66,12 +66,15 @@ if (!isset($_SESSION)) {
 					success: function(returned_cookie){
 					    /*
 					      FIXME
-					      there is a very basic security issue here:
-					      the dataSerial is posted unencrypted, and so is visible to everyone!
+					      there are two very basic security issues here:
+					      1. the dataSerial is posted unencrypted, and so is visible to everyone!
 					      The solution could be to implement an SSL protocol.
+					      2. The cookie never expires.
 					     */
 					    document.cookie = 'USERAUTH=' + escape(returned_cookie);
+					    
 					    top.location.href = 'index.php';
+					    
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.updateTips('#logonMsg','error',XMLHttpRequest.responseText);
