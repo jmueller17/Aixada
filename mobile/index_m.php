@@ -31,7 +31,7 @@
 	
 		<p><a href="order_m.php" data-role="button" data-ajax="false">Make an order</a></p>
 	
-		<p><a href="ctrlLogin.php?oper=logout" data-role="button" data-ajax="false">Logout</a></p>
+		<p><a href="php/ctrl/Login.php?oper=logout" data-role="button" data-ajax="false">Logout</a></p>
 			
 	</div><!-- /content -->
 

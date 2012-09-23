@@ -31,7 +31,7 @@
 	
 		$(document).delegate('#shop', 'pageinit', function(){
 			$('#cartLayer').aixadacart("init",{
-				saveCartURL : 'ctrlShopAndOrder.php?what=Shop&oper=commit',
+				saveCartURL : 'php/ctrl/ShopAndOrder.php?what=Shop&oper=commit',
 				loadCartURL : 'shopAndOrder?what=Shop',
 				cartType	: 'simple',
 				btnType		: 'save',
@@ -86,7 +86,7 @@
 
 		$( document ).delegate("#cart", "pageinit", function() {
 			$('#cartLayer').aixadacart('loadCart',{
-				loadCartURL		: 'ctrlShopAndOrder.php?oper=getShopItemsForDate&what=Shop&date=2012-04-04',
+				loadCartURL		: 'php/ctrl/ShopAndOrder.php?oper=getShopItemsForDate&what=Shop&date=2012-04-04',
 				date 			: '2012-04-04'
 			}); //end loadCart
 		});
@@ -104,7 +104,7 @@
 			});
 
 			$('#product_list tbody').xml2html("init",{
-				url         	: 'ctrlShopAndOrder.php'					
+				url         	: 'php/ctrl/ShopAndOrder.php'					
 			});
 		});
 
@@ -117,7 +117,7 @@
 			});
 
 			$('#product_list tbody').xml2html("init",{
-				url         	: 'ctrlShopAndOrder.php'					
+				url         	: 'php/ctrl/ShopAndOrder.php'					
 			});
 		});
 

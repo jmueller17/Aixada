@@ -29,14 +29,14 @@
            echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
        } 
      echo '</select> ';
-     echo " | <a href='ctrlLogin.php?oper=logout'>".$Text['nav_logout']."</a>";
+     echo " | <a href='php/ctrl/Login.php?oper=logout'>".$Text['nav_logout']."</a>";
        /*
        if (!isset($_SESSION['userdata']['can_checkout']) or 
            !$_SESSION['userdata']['can_checkout']) {
-           echo " | <a href='ctrlCookie.php?oper=try_to_checkout'>"
+           echo " | <a href='php/ctrl/Cookie.php?oper=try_to_checkout'>"
                . $Text['nav_try_to_checkout'] . "</a>";
        } else {
-           echo " | <a href='ctrlCookie.php?oper=stop_checkout'>"
+           echo " | <a href='php/ctrl/Cookie.php?oper=stop_checkout'>"
                . $Text['nav_stop_checkout'] . "</a>";
        }
        */

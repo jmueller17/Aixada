@@ -53,7 +53,7 @@ if (!isset($_SESSION)) {
 
 			
 			/**
-			 *	logno stuff
+			 *	logon stuff
 			 */
 			$('#btn_logon').button();
 			$('#login').submit(function(){
@@ -63,9 +63,14 @@ if (!isset($_SESSION)) {
 					type: "POST",
                     url: "php/ctrl/Login.php?oper=login",
 					data:dataSerial,		
-					success: function(msg){			
-					    alert(msg);
-					    document.cookie = 'USERAUTH=' + escape(msg);
+					success: function(returned_cookie){
+					    /*
+					      FIXME
+					      there is a very basic security issue here:
+					      the dataSerial is posted unencrypted, and so is visible to everyone!
+					      The solution could be to implement an SSL protocol.
+					     */
+					    document.cookie = 'USERAUTH=' + escape(returned_cookie);
 					    top.location.href = 'index.php';
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){

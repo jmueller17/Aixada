@@ -153,9 +153,9 @@ class Cookie {
    * also set.
    */
   public function validate() {
-     global $firephp;
-     $firephp->log($_SESSION['userdata']);
-     //     exit();
+      global $firephp;
+      $firephp->log($_SESSION['userdata']);
+      //exit();
 
     if (!$this->version || !$this->created || !$this->user_id) {
       throw new AuthException("Malformed cookie");
@@ -334,12 +334,12 @@ class Cookie {
            $this->can_checkout,
            $this->theme);
     $cookie = implode(self::$glue, $parts);
-    //return $this->_encrypt($cookie);
-    return $cookie;
+    return $this->_encrypt($cookie);
+    //    return $cookie;
   }
 
   private function _unpackage($cookie) {
-    //$buffer = $this->_decrypt($cookie);
+    $buffer = $this->_decrypt($cookie);
      $buffer = $cookie;
      list($this->version, 
 	 	$this->created, 
