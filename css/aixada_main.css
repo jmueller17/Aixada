@@ -67,6 +67,8 @@ option 				{padding:1px 5px;}
 	
 /*.success_tips			{margin:20px; padding:15px; background-color:#d2f3d2; border:1px solid #72b42d; text-align:center; border-radius:10px;}*/
 
+
+	
 /** different table styles **/
 table.tblListingDefault		{width:100%;  border-collapse:collapse;}
 table.tblListingDefault th	{background:#f3f3f3; padding:4px 2px;}
@@ -88,9 +90,6 @@ table.tblForms 	td label 	{float:right;}
 
 
 
-
-
-
 /** common layout **/
 div#wrap			{width:90%; margin: 0 auto; background-color:#fff;}
 div#stagewrap		{width:100%; background-color:#fff;}
@@ -108,6 +107,18 @@ div#titleLeftCol50	{width:40%; float:left;}
 div#titleRightCol50	{width:58%; float:left; padding-top:15px; line-height:2em;}
 div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
 div#ViewChoice		{float:right; margin-top:10px;}
+
+
+.aix-layout-center80 {width:80%; margin:5px auto;}
+.aix-layout-center60 {width:60%; margin:5px auto;}
+
+.aix-layout-fixW150	 {width:150px;}
+.aix-layout-fixW250	 {width:250px;}
+
+.aix-style-torn-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
+.aix-style-torn-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
+.aix-style-torn-widget table	{padding:15px;}
+.aix-style-torn-widget table td	{padding:15px;}
 
 
 

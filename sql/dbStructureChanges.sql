@@ -7,6 +7,7 @@
 create table aixada_iva_type (
   id   				smallint 		not null auto_increment,
   percent 			decimal(10,2)  	default 0, 
+  description 		varchar(100)	default null,
   primary key (id)
 ) engine=InnoDB default character set utf8;  
 

@@ -149,7 +149,7 @@
 					var product_id = $(this).attr('productId'); 
 					
 					var addQu = $.checkNumber($(this),'',3);
-					if (addQu > 0){		
+					if (addQu >= 0){		
 						submitStock('addStock',$(this).attr('productId'),addQu);
 					} else {
 						$.showMsg({
@@ -185,7 +185,7 @@
 					var absStock = $.checkNumber($(this),'',3);	
 					var product_id = $(this).attr('productId'); 
 					
-					if (absStock > 0){
+					if (absStock >= 0){
 						$.showMsg({
 							msg: "Adjusting stock this way should be the exception! New stock should always be ADDED. Are you sure to correct the stock for this product?",
 							buttons: {
@@ -314,7 +314,7 @@
 		    		</div>
 				</div><!-- end titlewrap -->
  
-				<div class="ui-widget">
+				<div class="ui-widget aix-layout-center80">
 					<div class="ui-widget-content ui-corner-all">
 						<h3 class="ui-widget-header">&nbsp;</h3>
 						<table id="product_list_provider" class="tblListingBorder" >

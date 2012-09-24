@@ -3,7 +3,7 @@ $(function(){
 	
 	
 	$("#navHome").button();
-	$("#navWizard").button({
+	/*$("#navWizard").button({
 		icons: {
         	secondary: "ui-icon-triangle-1-s"
 		}
@@ -11,7 +11,9 @@ $(function(){
 		content: $('#navWizardItems').html(),	
 		showSpeed: 50, 
 		flyOut: true
-	});
+	});*/
+	
+	$("#navWizard").button();
 	$("#navShop").button();
 	$("#navOrder").button();
     
