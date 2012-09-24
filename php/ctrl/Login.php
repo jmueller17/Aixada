@@ -24,6 +24,7 @@ DBWrap::get_instance()->debug = true;
 
 try{
     $firephp->log($_REQUEST, 'REQUEST');
+
   switch ($_REQUEST['oper']) {
 	
 	  case 'logout':
@@ -42,7 +43,7 @@ try{
 		  header('Location:' . $app . 'login.php');
 	          //echo "Already logged out"; 
 	      }
-	      
+	      exit;
 	
 	  case 'login':
 	      $uri = get_param('originating_uri',''); 

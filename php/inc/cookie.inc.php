@@ -235,7 +235,7 @@ class Cookie {
 			 $this->theme);
 	  $cookie = implode(self::$glue, $parts);
       } else {
-	  $cookie = '';
+	  $cookie = 'x';
       }
       return urlencode($this->_encrypt($cookie));
   }
