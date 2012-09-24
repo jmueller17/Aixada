@@ -40,13 +40,13 @@
 			.click(function(){
 
 				$.ajax({
-					   url: "php/ctrl/Validate.php?oper=backupDatabase",
+					   url: "php/ctrl/Admin.php?oper=backupDatabase",
 					   beforeSend: function(){
 						   $('.loadAnim').show();
 						   $('#btn_backup').button( "option", "disabled", true );
 						},
 					   success: function(msg){
-							 $('#msg_link').html("<a href='"+msg+"'>Download db-zipped</a>");
+					    $('#msg_link').html("<a href='"+msg+"'>"+<?=$Text['download_db_zipped'];?>+"</a>");
 					   },
 					   error : function(XMLHttpRequest, textStatus, errorThrown){
 						   $.showMsg({
@@ -84,7 +84,7 @@
 			
 		<p id="msg_link"><?php echo $Text['confirm_db_backup'];?></p>
 		<br/><br/>
-		<p><span class="loadAnim floatLeft hidden"><img src="img/ajax-loader_fff.gif"/></span>&nbsp;&nbsp; <button id="btn_backup">OK, backup!</button></p>
+		<p><span class="loadAnim floatLeft hidden"><img src="img/ajax-loader_fff.gif"/></span>&nbsp;&nbsp; <button id="btn_backup"><?=$Text['backup'];?></button></p>
 		<br/><br/>
 		<p id="dbError" class="width-280"></p>
 		

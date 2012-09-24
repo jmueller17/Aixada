@@ -514,4 +514,38 @@ $Text['purchase_date'] = 'Date of purchase';
 $Text['purchase_validated'] = 'Date of validation';
 $Text['ordered_for'] = 'Items ordered for';
 $Text['not_validated'] = 'not validated';
+
+
+/* new stuff */
+$Text['download_db_zipped'] = 'Download Zipped Database';
+$Text['backup'] = 'Ok, back up the database!';
+$Text['filter_incidents'] = 'Filter incidents';
+$Text['todays'] = "Today's";
+$Text['recent_ones'] = 'Recent ones';
+$Text['last_year'] = 'Last year';
+$Text['details'] = 'Details';
+$Text['actions'] = 'Actions';
+$Text['incident_details'] = 'Incident details';
+$Text['distribution_level'] = 'Distribution level';
+$Text['internal_private'] = 'Internal (private)';
+$Text['internal_email_private'] = 'Internal + email (private)';
+$Text['internal_post'] = 'Internal + post to portal (public)';
+$Text['internal_email_post'] = 'Internal + email + post (public)';
+
+$Text['expected'] = 'Expected';
+$Text['not_yet_sent'] = 'Not yet sent';
+$Text['ordered_for'] = 'Ordered for';
+$Text['my_orders'] = 'My Order(s)';
+$Text['my_purchases'] = 'My Purchase(s)';
+$Text['loading_status_info'] = 'Loading status info...';
+$Text['previous'] = 'Previous';
+$Text['next'] = 'Next';
+$Text['date_of_purchase'] = 'Date of purchase';
+$Text['validated'] = 'Validated';
+$Text['total'] = 'Total';
+$Text['ordered'] = 'Ordered';
+$Text['delivered'] = 'Delivered';
+$Text['price'] = 'Price';
+$Text['qu'] = 'Qu';
+
 ?>

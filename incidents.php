@@ -330,12 +330,12 @@
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
 		    </div>
 		    <div id="titleRightCol">
-		    	<button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint">Filter incidents</button>
+		 <button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint"><?=$Text['filter_incidents'];?></button>
 		    	<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
 					<ul>
-						<li><a href="javascript:void(null)" id="today">Today's</a></li>
-						<li><a href="javascript:void(null)" id="past2Month">Recent ones</a></li>
-						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
+		 <li><a href="javascript:void(null)" id="today"><?=$Text['todays'];?></a></li>
+		 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['recent_ones'];?></a></li>
+		 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['last_year'];?></a></li>
 					</ul>
 				</div>		
 		    	<button id="btn_new_incident" class="overviewElements floatLeft hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
@@ -359,8 +359,8 @@
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>
 							<th class="hidden"><?php echo $Text['ufs_concerned'];?></th>
 							<th class="hidden"><?php echo $Text['comi_concerned'];?></th>
-							<th class="hidden hideInPrint">Details</th>
-							<th class="maxwidth-100 hideInPrint">Actions</th>
+							<th class="hidden hideInPrint"><?=$Text['details'];?></th>
+							<th class="maxwidth-100 hideInPrint"><?=$Text['actions'];?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -409,7 +409,7 @@
 				<h3 class="ui-widget-header ui-corner-all">
 					&nbsp;
 					<span class="detailCreateElements"><?php echo $Text['create_incident'];?></span>
-					<span class="detailEditElements">Incident details</span> 
+					<span class="detailEditElements"><?=$Text['incident_details'];?></span> 
 					<span id="incident_id_info" class="detailEditElements">#</span>
 					<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span>
 				</h3>
@@ -439,13 +439,13 @@
 						<tr>
 							
 							<td></td>
-							<td><label for="typeSelect">Distribution level:</label></td>
+							<td><label for="typeSelect"><?=$Text['distribution_level'];?></label></td>
 							<td>
 								<select id="typeSelect" name="typeSelect" class="mediumSelect">
-									<option value="1">Internal (private)</option>
-									<option value="2">Internal + email (private)</option>
-									<option value="3">Internal + post to portal (public)</option>
-									<option value="4">Internal + email + post (public)</option>
+									<option value="1"><?=$Text['internal_private'];?></option>
+									<option value="2"><?=$Text['internal_email_private'];?></option>
+									<option value="3"><?=$Text['internal_post'];?></option>
+									<option value="4"><?=$Text['internal_email_post'];?></option>
 								</select></td>
 						</tr>
 						<tr>

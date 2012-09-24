@@ -60,9 +60,9 @@
 					//var revisionStatus = $(row).attr('revision_status');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(3).html('<p class="textAlignCenter">expected</p>');
+						$(row).children().eq(3).html('<p class="textAlignCenter">' + <?=$Text['expected'];?></p>');
 					} else {
-						 $(row).children().eq(3).html('<p class="textAlignCenter">not yet send</p>');		
+						 $(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text['not_yet_sent'];?></p>');		
 					}
 
 					if (timeLeft <= 0){
@@ -70,7 +70,7 @@
 					} 
 					
 					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow">Ordered for <span class="boldStuff">'+date+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow"><?=$Text['ordered_for'];?><span class="boldStuff">'+date+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
 					lastDate=date; 	
 
 				},
@@ -414,8 +414,8 @@
 			</div>
 			<div id="rightSummaryCol">
 				<ul>
-					<li><a href="#tabs-1"><h2>My Order(s)</h2></a></li>
-					<li><a href="#tabs-2"><h2>My Purchase(s)</h2></a></li>	
+					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
+					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
 				</ul>
 			
 				<div id="tabs-1">
@@ -425,7 +425,7 @@
 								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td>{provider_name}</td>
 								<td>{time_left}</td>
-								<td>Loading status info...</td>
+								<td><?=$Text['loading_status_info'];?></td>
 								<td><p class="textAlignRight">{order_total}€</p></td>
 								
 							</tr>
@@ -437,8 +437,8 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevOrders">Previous</button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
-										<button id="btn_nextOrders">Next</button></p>
+										<button id="btn_prevOrders"><?=$Text['previous'];?></button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_nextOrders"><?=$Text['next'];?></button></p>
 									</td>
 								
 								
@@ -453,9 +453,9 @@
 						<thead>
 							<tr >
 								<th></th>
-								<th class="textAlignCenter">Date of purchase</th>
-								<th class="textAlignCenter" colspan="3">Validated</th>
-								<th class="textAlignRight">Total</th>
+								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
+								<th class="textAlignCenter" colspan="3"><?=$Text['validated'];?></th>
+								<th class="textAlignRight"><?=$Text['total'];?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -473,8 +473,8 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevPurchase">Previous</button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
-										<button id="btn_nextPurchase">Next</button></p>
+										<button id="btn_prevPurchase"><?=$Text['previous'];?></button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_nextPurchase"><?=$Text['next'];?></button></p>
 									</td>
 								
 								
@@ -493,11 +493,11 @@
 <table id="tbl_diffOrderShop" currentOrderId="" currentDateForOrder="" currentProviderId="">
 	<thead>
 		<tr>
-			<td class="tdMyOrder">id</td>
-			<td class="tdMyOrder" colspan="2">Product</td>
-			<td class="tdMyOrder">Ordered</td>
-			<td class="tdMyOrder">Delivered</td>
-			<!-- td class="tdMyOrder">Price</td-->		
+			<td class="tdMyOrder"><?=$Text['id'];?></td>
+			<td class="tdMyOrder" colspan="2"><?=$Text['product_name'];?></td>
+			<td class="tdMyOrder"><?=$Text['ordered'];?></td>
+			<td class="tdMyOrder"><?=$Text['delivered'];?></td>
+			<!-- td class="tdMyOrder"><?=$Text['price'];?></td-->		
 		</tr>
 	</thead>
 	<tbody>
@@ -517,9 +517,9 @@
 			<td><p class="ui-corner-all iconContainer ui-state-default printShopIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
 			<th><?php echo $Text['name_item'];?></th>	
 			<th><?php echo $Text['provider_name'];?></th>					
-			<th class="textAlignCenter">Qu</th>
+			<th class="textAlignCenter"><?=$Text['qu']?></th>
 			<th><?php echo $Text['unit'];?></th>
-			<th class="textAlignRight">Price</th>
+			<th class="textAlignRight"><?=$Text['price'];?></th>
 			
 			
 			

@@ -68,8 +68,13 @@ if (!isset($_SESSION)) {
 					      FIXME
 					      there are two very basic security issues here:
 					      1. the dataSerial is posted unencrypted, and so is visible to everyone!
+					      Even encrypting the username/password is no solution, because anyone who intercepts the communication
+					      can just send the encrypted text without knowing what it decrypts to, but can log in anyways.
 					      The solution could be to implement an SSL protocol.
 					      2. The cookie never expires.
+					      This has two parts: here in document.cookie we could set an expiry date;
+					      on the other hand, if the cookie is seen to have expired in cookie.inc.php, 
+					      it is just renewed without any consequence.
 					     */
 					    document.cookie = 'USERAUTH=' + escape(returned_cookie);
 					    
