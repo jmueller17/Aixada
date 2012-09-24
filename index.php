@@ -427,7 +427,7 @@
 								<td>{time_left}</td>
 								<td>Loading status info...</td>
 								<td><p class="textAlignRight">{order_total}€</p></td>
-								<td>&nbsp;</td>
+								
 							</tr>
 						</tbody>
 						<tfoot>

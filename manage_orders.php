@@ -56,6 +56,14 @@
 
 			//order revision status states. 
 			var gRevStatus = [null, 'finalized','revised','postponed','canceled','revisedMod'];
+
+
+			//if this page has been called from torn...
+			var gLastPage = $.getUrlVar('lastPage');
+
+			//order overview filter option
+			var gFilter = $.getUrlVar('filter');
+			
 			
 
 			
@@ -505,9 +513,10 @@
 			/***********************************************************
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
+			var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'ctrlOrders.php',
-				params : 'oper=getOrdersListing&filter=pastMonths2Future', 
+				params : 'oper=getOrdersListing&filter='+timePeriod, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
 					var orderId = $(row).attr("id");

@@ -316,7 +316,13 @@
   						$( this ).dialog( "close" );
   					}
   				}
-  			});			
+  			});		
+
+
+  			
+  			$('button').button();	
+			$('.detailElements').hide();
+  			
 			
 	});  //close document ready
 	</script>
@@ -332,13 +338,74 @@
 	
 	<div id="stagewrap" class="ui-widget">
 	
-		<div id="titlewrap">
+		<div id="titlewrap" class="hidden">
 		    	<h2 class="floatRight"><?=$Text['current_balance'];?>: <span id="balance"></span> <button id="correct_balance" title="<?=$Text['correct_balance'];?>"></button></h2>
 		    	<h1><?=$Text['ti_mng_cashbox'];?></h1>
 		</div><!-- end titlewrap -->
 		
+		<div class="aix-layout-center60 ui-widget"> 
+		<div id="account_overview" class="overviewElements aix-style-torn-widget">
+		
+			<h2>Cashbox <span class="setTotalCashbox floatRight">Current balance: 1234.45€</span></h2>
+			<table>
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
+					</td>
+					<td><p>Make a cash deposite</p></td>
+				</tr>
+				
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
+					</td>
+					<td><p>Withdraw cash from the cashbox</p></td>
+				</tr>
+			</table>
+			<p>&nbsp;</p>
+	
+			<h2>Consumption<span class="setTotalCashbox"></span></h2>
+			<table>
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
+					</td>
+					<td><p></p></td>
+				</tr>
+				
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
+					</td>
+					<td><p></p></td>
+				</tr>
+			</table>
+	
+			<p>&nbsp;</p>
+	
+			<h2>Maintenance <span class="setTotalCashbox"></span></h2>
+			<table>
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
+					</td>
+					<td><p>Make a cash deposite</p></td>
+				</tr>
+				
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
+					</td>
+					<td><p>Withdraw cash from the cashbox</p></td>
+				</tr>
+			</table>
+	
+	
+		
+		</div>
+		</div>
 
-		<div id="deposit_cash" class="ui-widget floatLeft">
+		<div id="deposit_cash" class="ui-widget floatLeft detailElements">
 		<div class="highlight-deposit ui-corner-all" >
 			<div class="ui-widget-content ui-corner-all" >
 				<h2 class="ui-widget-header ui-corner-all minPadding"><?=$Text['deposit_cashbox'];?> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
@@ -400,7 +467,7 @@
 		</div>
 		
 		
-		<div id="withdraw_cash" class="ui-widget floatRight">
+		<div id="withdraw_cash" class="ui-widget floatRight detailElements">
 			<div class="highlight-withdrawl ui-corner-all"> 
 			<div class="ui-widget-content ui-corner-all" >
 				<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['widthdraw_cashbox'];?> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
@@ -466,7 +533,7 @@
 		</div>
 		
 
-		<div id="cashbox_listing" class="ui-widget">
+		<div id="cashbox_listing" class="ui-widget detailElements">
 			<div class="ui-widget-content ui-corner-all">
 					<h2 class="ui-widget-header ui-corner-all minPadding"><?=$Text['latest_movements'];?> <?php echo $Text['name_cash_account'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
 					<table id="list_account"  class="table_listing">

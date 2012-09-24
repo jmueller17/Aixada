@@ -887,7 +887,7 @@
 <div id="limbo" class="hidden">0</div>
 <div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" currentColDate="">
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
-	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p>
+	<!-- p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p-->
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
 </div>
 

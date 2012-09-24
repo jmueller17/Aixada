@@ -53,7 +53,7 @@
 <div class="ui-widget-header ui-corner-all" id="menuBgBar">
 <div  id="topMenu">
 <a tabindex="0" href="index.php" 	id="navHome" class="menuTop"><?php echo $Text['nav_home'];?></a>
-<a tabindex="1" href="#" 			id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
+<a tabindex="1" href="torn.php" 	id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
 <a tabindex="2" href="shop_and_order.php?what=Shop" 	id="navShop" class="menuTop"><?php echo $Text['nav_shop'];?></a>
 <a tabindex="3" href="shop_and_order.php?what=Order" 		id="navOrder" class="menuTop"><?php echo $Text['nav_order'];?></a>
 <a tabindex="4" href="#" 			id="navManage" class="menuTop"><?php echo $Text['nav_mng'];?></a>
@@ -70,9 +70,6 @@
 		<li><a href="report_torn.php"><?php echo $Text['nav_wiz_torn'];?></a></li>
 		<li><a href="all_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
 		<li><a href="manage_cashbox.php"><?php echo $Text['nav_wiz_cashbox'];?></a></li>
-		
-		<!-- li><a href="#"><?php echo $Text['nav_wiz_open'] . ' ' . $Text['coop_name'];?></a></li>
-		<li><a href="#"><?php echo $Text['nav_wiz_close'] . ' ' . $Text['coop_name'];?></a></li-->
 	</ul>
 </div>
 <div id="navManageItems" class="hidden">
@@ -106,7 +103,7 @@
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
 		</li>
-		<li><a href="manage_cashbox.php">Money</a>
+		<li><a href="manage_money.php">Money</a>
 		</li>
 		<li><a href="#TODO">Admin</a>
 			<ul>

@@ -169,6 +169,7 @@ create table aixada_rev_tax_type (
 create table aixada_iva_type (
   id   				smallint		not null auto_increment,
   percent			decimal(10,2) 	not null, 
+  description 		varchar(100)	default null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
 
