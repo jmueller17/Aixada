@@ -100,7 +100,9 @@ function get_session_theme(){
  */
 function get_param($param_name, $default=null, $transform = ''){
 	$value; 
-	
+	global $firephp;
+	$firephp->log($param_name, 'parameter');
+	$firephp->log($default, 'default');
 	if (isset($_REQUEST[$param_name])) {
 		$value = $_REQUEST[$param_name];
 		if (($value == '' || $value == 'undefined') && isset($default)){
@@ -109,7 +111,7 @@ function get_param($param_name, $default=null, $transform = ''){
 			throw new Exception("get_param: Parameter: {$param_name} has no value and $default value is not set either");
 		}	
 			
-	} else if (isset($default)){
+	} else if (isset($default) and $default !== null){
 		$value= $default;
 	} else {
 		throw new Exception("get_param: Missing or wrong parameter name: {$param_name} in URL");
@@ -427,8 +429,9 @@ function get_field_options_live($table, $field1, $field2)
 
 function get_existing_themes_XML()
 {
-	$exclude_list = array(".", "..", "example.txt");
-	$folders = array_diff( scandir('css/ui-themes'), $exclude_list);
+    global $app;
+    $exclude_list = array(".", "..", "example.txt");
+    $folders = array_diff( scandir($app . 'css/ui-themes'), $exclude_list);
      
     $XML = '<themes>';
     foreach ($folders as $theme) {
@@ -444,10 +447,8 @@ function existing_languages()
     // $Text['es_es'] = 'Español'
     // exists in each language file
     $languages = array();
-    global $firephp;
-    $firephp->log('existing_languages');
+    global $app;
     foreach (glob($app . "local_config/lang/*.php") as $lang_file) {
-	$firephp->log($lang_file);
         $a = strpos($lang_file, 'lang/');
         $lang = substr($lang_file, $a+5, strpos($lang_file, '.')-$a-5);
         $handle = @fopen($lang_file, "r");

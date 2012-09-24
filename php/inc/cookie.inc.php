@@ -197,7 +197,20 @@ class Cookie {
   public function logout() {
       //    setcookie(self::$cookiename, "", 0);
     unset($_SESSION['userdata']);
+
     $this->logged_in = false;
+    $this->user_id=false; 
+    $this->login = false; 
+    $this->uf_id=false; 
+    $this->member_id=false; 
+    $this->provider_id=false; 
+    $this->roles=false; 
+    $this->current_role=false; 
+    $this->language_keys=false; 
+    $this->language_names=false; 
+    $this->current_language_key=false; 
+    $this->theme=false;
+
     $this->set();
   }
 
@@ -205,25 +218,35 @@ class Cookie {
    *  Package the cookie. 
    */
   public function package() {
-    $parts = array(self::$myversion, 
-		   time(), 
-		   $this->logged_in,
-		   $this->user_id, 
-		   $this->login,
-		   $this->uf_id, 
-		   $this->member_id, 
-		   $this->provider_id,
-		   implode(self::$array_glue, $this->roles),
-		   $this->current_role,
-		   implode(self::$array_glue, $this->language_keys),
-		   implode(self::$array_glue, $this->language_names),
-		   $this->current_language_key,
-		   $this->theme);
-    $cookie = implode(self::$glue, $parts);
-    return urlencode($this->_encrypt($cookie));
+      if ($this->logged_in) {
+	  $parts = array(self::$myversion, 
+			 time(), 
+			 $this->logged_in,
+			 $this->user_id, 
+			 $this->login,
+			 $this->uf_id, 
+			 $this->member_id, 
+			 $this->provider_id,
+			 implode(self::$array_glue, $this->roles),
+			 $this->current_role,
+			 implode(self::$array_glue, $this->language_keys),
+			 implode(self::$array_glue, $this->language_names),
+			 $this->current_language_key,
+			 $this->theme);
+	  $cookie = implode(self::$glue, $parts);
+      } else {
+	  $cookie = '';
+      }
+      return urlencode($this->_encrypt($cookie));
   }
 
   private function _unpackage($cookie) {
+      global $firephp;
+      $firephp->log('cookie');
+      if ($cookie == '') {
+	  $this->logout();
+	  return;
+      }
       $buffer = $this->_decrypt(urldecode($cookie));
       list($this->version, 
 	   $this->created, 

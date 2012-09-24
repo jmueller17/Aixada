@@ -30,7 +30,9 @@ $_SESSION['dev'] = true;
        $firephp->log('cookie created');
        $cookie->validate();
        $firephp->log('cookie validated');
-       if (isset($_SESSION['userdata']) and isset($_SESSION['userdata']['current_role'])) {
+       if (isset($_SESSION['userdata']) 
+	   and isset($_SESSION['userdata']['current_role']) 
+	   and $_SESSION['userdata']['current_role'] !== false) {
 	   $fp = configuration_vars::get_instance()->forbidden_pages;
 	   $uri = $_SERVER['REQUEST_URI'];
 	   $role = $_SESSION['userdata']['current_role'];

@@ -23,7 +23,7 @@ DBWrap::get_instance()->debug = true;
 
 
 try{
-
+    $firephp->log($_REQUEST, 'REQUEST');
   switch ($_REQUEST['oper']) {
 	
 	  case 'logout':
@@ -33,10 +33,13 @@ try{
 		  $firephp->log($cookie, 'Login.php');
 	          $cookie->logout();
 		  $firephp->log($cookie, 'Login.php logged out');
-		  //		  header("Location:login.php");
-	          exit;
+		  $h = 'Location:' . $app . 'login.php';
+		  $firephp->log($h);
+		  //		  header($h);
+		  //	          exit;
 	      } 
 	      catch (AuthException $e) {
+		  header('Location:' . $app . 'login.php');
 	          //echo "Already logged out"; 
 	      }
 	      
