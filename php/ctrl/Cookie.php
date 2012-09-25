@@ -37,12 +37,6 @@ try {
                 $uri = 'index.php';
         }
         $cookie->change_role($new_role);
-        /*
-             $firephp->log($uri, 'uri');
-             $firephp->log($new_role, 'role');
-             $firephp->log($_SESSION, 'session');
-             $firephp->log($_SERVER, 'server');
-        */
         printXML('<navigation>' . $uri . '</navigation>');
         exit;
     }

@@ -67,8 +67,6 @@ function get_session_member_id(){
  * returns the language for the logged user
  */
 function get_session_language(){
-    global $firephp;
-    $firephp->log($_SESSION, 'SESSION');
     if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
 	return $_SESSION['userdata']['language'];
     } else {

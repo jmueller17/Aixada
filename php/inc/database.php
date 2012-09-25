@@ -144,10 +144,6 @@ class DBWrap {
     if ($this->debug) {
       global $firephp;
       $firephp->log($safe_sql_string, 'query');
-//       $firephp->log($rs, 'rs');
-//       if ($multi) {
-// 	$firephp->log(mysqli_num_rows($rs), 'rows in result');
-//       }
     }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;
@@ -228,14 +224,10 @@ class DBWrap {
    */
   public function Execute ()
   {
-//     global $firephp;
     $binds = func_get_args();
     if (is_array($binds[0])) {
       $binds = $binds[0];
     }
-
-//     if ($this->debug)
-//       $firephp->log($binds, 'entering Execute');
     return $this->do_Execute($this->make_safe_sql_str($binds));
   }
 
@@ -245,10 +237,7 @@ class DBWrap {
    */ 
   public function MultiExecute ()
   {
-//     global $firephp;
     $binds = func_get_args();
-//     if ($this->debug)
-//       $firephp->log($binds, 'entering Execute');
     $this->do_Execute($this->make_safe_sql_str($binds), true);
     return $this->mysqli->use_result();
   }
@@ -262,11 +251,6 @@ class DBWrap {
    */
   public function Insert ($table_name, $arrData)
   {
-//     global $firephp;
-//     if ($this->debug) {
-//       $firephp->log($table_name, 'entering Insert');
-//       $firephp->log($arrData, '..arrData');
-//     }
     $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
     $strVAL = 'VALUES (';
     $ct = 0;
@@ -294,11 +278,6 @@ class DBWrap {
    */ 
   public function Update($table_name, $arrData)
   {
-//     global $firephp;
-//     if ($this->debug) {
-//       $firephp->log($table_name, 'entering Update');
-//       $firephp->log($arrData, '..arrData');
-//     }
     if (!array_key_exists('id', $arrData))
       throw new InternalException('Update: Input array ' . $arrData . ' for table ' . $table_name . ' does not contain a field named "id"');
     $strSQL = 'UPDATE ' . $this->mysqli->real_escape_string($table_name) . ' SET ';
@@ -347,22 +326,12 @@ class DBWrap {
   public function calculate_page_limits ($count, $page, $limit) 
   {
     global $firephp;
-    if ($this->debug)
-      $firephp->log($count, 'count');
     $total_pages = ($count>0) ? ceil($count/$limit) : 0;
-    if ($this->debug)
-      $firephp->log($total_pages, 'total_pages');
-    
     if ($page < 0)
       $page = 0;
     if ($page > $total_pages && $total_pages>0)
       $page = $total_pages;
-    if ($this->debug)
-      $firephp->log($page, 'page');
-    
     $start = $limit * $page - $limit;
-    if ($this->debug)
-      $firephp->log($start, 'start');
     return array($start, $total_pages);
   }
 
