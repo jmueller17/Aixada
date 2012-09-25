@@ -28,7 +28,7 @@ function finalize_order($provider_id, $date_for_order)
  * calls to stored procedures. 
  * @param str $time_period today | all | prevMonth | etc. 
  */
-function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month")
+function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month")
 {
 	
 	//TODO server - client difference in time/date?!

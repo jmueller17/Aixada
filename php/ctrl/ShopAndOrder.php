@@ -149,17 +149,17 @@ try{
     // now come  the requests that need a cart manager
     switch (get_param('what', $default='')) {
 	    case 'Shop':
-	        require_once(__ROOT__ . "lib/shop_cart_manager.php");
+	        require_once(__ROOT__ . "php/lib/shop_cart_manager.php");
 	        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
 	        break;
 	      
 	    case 'Order':
-	        require_once(__ROOT__ . "lib/order_cart_manager.php");
+	        require_once(__ROOT__ . "php/lib/order_cart_manager.php");
 	        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
 	        break;
 	      
 	    case 'favorite_order':
-	        require_once(__ROOT__ . "lib/favorite_order_cart_manager.php");
+	        require_once(__ROOT__ . "php/lib/favorite_order_cart_manager.php");
 	        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
 	        break;
 	      

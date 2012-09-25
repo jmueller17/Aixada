@@ -6,7 +6,7 @@
 
 
 
-require_once(__ROOT__ . 'shop_cart_manager.php');
+require_once(__ROOT__.'php/lib/shop_cart_manager.php');
 
 /**
  * The class to validate a cart

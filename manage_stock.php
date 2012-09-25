@@ -1,4 +1,4 @@
-<?php include "inc/header.inc.php" ?>
+<?php include "php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -41,7 +41,7 @@
 		 * build Provider SELECT
 		 */
 		$("#providerSelect").xml2html("init", {
-			url: 'ctrlShopAndOrder.php',
+			url: 'php/ctrl/ShopAndOrder.php',
 			params : 'oper=getStockProviders',
 			offSet : 1,
 			loadOnInit:true,
@@ -244,7 +244,7 @@
 		 */
 		function submitStock(oper, product_id, quantity){
 
-			var urlStr = 'ctrlShop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
+			var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
 			
 			
 			$.ajax({
@@ -294,7 +294,7 @@
 <body>
 <div id="wrap">
 	<div id="headwrap">
-		<?php include "inc/menu2.inc.php" ?>
+		<?php include "php/inc/menu2.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 	

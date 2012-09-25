@@ -9,7 +9,7 @@
 //ob_start(); // Starts FirePHP output buffering
 //$firephp = FirePHP::getInstance(true);
 
-require_once(__ROOT__ . 'abstract_cart_manager.php');
+require_once(__ROOT__ . 'php/lib/abstract_cart_manager.php');
 
 /**
  * The class that manages a row of a favorite shopping cart.

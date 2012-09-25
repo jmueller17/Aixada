@@ -62,10 +62,7 @@
 			var gLastPage = $.getUrlVar('lastPage');
 
 			//order overview filter option
-			var gFilter = $.getUrlVar('filter');
-			
-			
-
+			var gFilter = (typeof $.getUrlVar('filter') == "string")? $.getUrlVar('filter'):'pastMonths2Future';
 			
 
 			$("#datepicker").datepicker({
@@ -513,10 +510,10 @@
 			/***********************************************************
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
-			var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
+			//var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
-				params : 'oper=getOrdersListing&filter='+timePeriod, 
+				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
 					var orderId = $(row).attr("id");
@@ -564,7 +561,7 @@
 							msg:'Sorry, no orders match the selected criteria. ',
 							type: 'warning'});
 					}
-					//$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
+					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
 				}
 			});
 
@@ -611,6 +608,10 @@
 			
 			
 			$("#tbl_orderOverview").tablesorter(); 
+			$("#tbl_orderOverview").bind('sortEnd', function(){
+				$('tr',this).removeClass('rowHighlight')
+				$('tr:even',this).addClass('rowHighlight');
+			});
 
 			
 			$('.iconContainer')
@@ -1010,7 +1011,7 @@
 						<td class="textAlignRight minPadding">{provider_name}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
-						<td class="textAlignCenter">{ts_sent_off}</td>
+						<td class="textAlignCenter">{ts_send_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>

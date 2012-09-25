@@ -7,7 +7,7 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/account.php");
-require_once(__ROOT__ . "lib/report_manager.php");
+require_once(__ROOT__ . "php/lib/report_manager.php");
 
 
 $use_session_cache = true; 

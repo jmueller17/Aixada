@@ -364,43 +364,12 @@
 			</table>
 			<p>&nbsp;</p>
 	
-			<h2>Consumption<span class="setTotalCashbox"></span></h2>
-			<table>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
-					</td>
-					<td><p></p></td>
-				</tr>
-				
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
-					</td>
-					<td><p></p></td>
-				</tr>
-			</table>
+			<h2>Consumption<span class="setTotalConsume"></span></h2>
+			
 	
 			<p>&nbsp;</p>
-	
-			<h2>Maintenance <span class="setTotalCashbox"></span></h2>
-			<table>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
-					</td>
-					<td><p>Make a cash deposite</p></td>
-				</tr>
-				
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
-					</td>
-					<td><p>Withdraw cash from the cashbox</p></td>
-				</tr>
-			</table>
-	
-	
+			<p>&nbsp;</p>
+			<h2>Maintenance <span class="setTotalMaintenance"></span></h2>
 		
 		</div>
 		</div>

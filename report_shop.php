@@ -1,4 +1,4 @@
-<?php include "inc/header.inc.php" ?>
+<?php include "php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -48,7 +48,7 @@
 		
 		//load purchase listing
 		$('#tbl_Shop tbody').xml2html('init',{
-				url : 'ctrlShop.php',
+				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopListing&filter=prev3Month', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
@@ -119,7 +119,7 @@
 		
 		//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
-				url : 'ctrlShop.php',
+				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopDetail', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
@@ -172,7 +172,7 @@
 			//uf select
 			$('#uf_select').xml2html('init',{
 				offSet	: 1,
-				url 	: 'ctrlUserAndUf.php',
+				url 	: 'php/ctrl/UserAndUf.php',
 				params 	: 'oper=getUfListing',
 				loadOnInit:true
 			//event listener to load items for this uf to validate
@@ -235,7 +235,7 @@
 <body>
 <div id="wrap">
 	<div id="headwrap">
-		<?php include "inc/menu2.inc.php" ?>
+		<?php include "php/inc/menu2.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 	

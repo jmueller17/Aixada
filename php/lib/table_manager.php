@@ -21,7 +21,7 @@ if (isset($slash[1])) {
     $app = '';
 }*/
 
-require_once(__ROOT__ . 'table_with_ref.php');
+require_once(__ROOT__ . 'php/lib/table_with_ref.php');
 
 /**
  * The following class encapsulates a table.
