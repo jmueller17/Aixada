@@ -9,15 +9,8 @@ if (isset($slash[1])) {
 
 require_once($app . 'php/inc/database.php');
 require_once($app . 'local_config/config.php');
-//$firephp = FirePHP::getInstance(true);
-
-//DBWrap::get_instance()->debug = true;
 
 function do_list_all ($tm, $page, $limit, $sidx, $sord, $options = array()) {
-//    global $firephp;
-//    $firephp->log($options, 'options');
-  //  $fields = (isset($_REQUEST['type']) && 
-  //	     $_REQUEST['type'] == 'short') ? array('id', 'name', 'uf_id', 'description') : array('*');
   list($rs, $total_pages)
     = $tm->list_all(array('filter' => (isset($options['filter']) ? 
 				      $options['filter'] : ''), 
@@ -29,9 +22,7 @@ function do_list_all ($tm, $page, $limit, $sidx, $sord, $options = array()) {
 			 'order_sense' => $sord,
 			 'page' => $page,
 			 'limit' => $limit)); 
-  //  $firephp->log($rs, 'do_list_all_rs');
   $strXML = $tm->rowset_to_jqGrid_XML($rs, $page, $limit, $total_pages); 
-//     $firephp->log($strXML, 'do_list_all');
   return $strXML;
 }
 
@@ -47,7 +38,6 @@ function is_editable ($field) {
 function get_names ($tm)
 {
     global $Text;
-    //    global $firephp;
     list ($substituted_name, $substituted_alias, $table_alias) = 
         get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $tm->get_keys());
     $keys = $tm->get_keys();
