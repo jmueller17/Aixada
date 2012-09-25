@@ -4,14 +4,17 @@
  */ 
 
 $slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+if (isset($slash[1])) {
+    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+} else { // this happens when called by make
+    $app = '';
+}
 
 require_once($app . 'local_config/config.php');
 
- require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
- ob_start(); // Starts FirePHP output buffering
-
- $firephp = FirePHP::getInstance(true);
+require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
 
  DBWrap::get_instance()->debug = true;
 

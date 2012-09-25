@@ -1,7 +1,11 @@
 <?php
 
 $slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+if (isset($slash[1])) {
+    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+} else { // this happens when called by make
+    $app = '';
+}
 
 require_once($app . 'php/inc/name_mangling.php');
 

@@ -15,7 +15,11 @@ ob_start(); // Starts FirePHP output buffering
  */
 
 $slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+if (isset($slash[1])) {
+    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+} else { // this happens when called by make
+    $app = '';
+}
 
 require_once($app . 'table_with_ref.php');
 
@@ -301,7 +305,5 @@ class table_manager extends table_with_ref
   }
 
 }
-
-
 
 ?>
