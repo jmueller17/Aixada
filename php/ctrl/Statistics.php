@@ -1,9 +1,10 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . "php/utilities/statistics.php");
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+
+require_once(__ROOT__ . "php/utilities/statistics.php");
 
 
 $use_session_cache = true; 

@@ -1,9 +1,12 @@
 <?php
 
-require_once("local_config/config.php");
-require_once("inc/database.php");
-require_once("utilities.php");
-require_once("lib/validation_cart_manager.php");
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+
+require_once(__ROOT__ ."local_config/config.php");
+require_once(__ROOT__ ."php/inc/database.php");
+require_once(__ROOT__ ."php/utilities/general.php");
+require_once(__ROOT__ ."php/lib/validation_cart_manager.php");
 
 
 if (!isset($_SESSION)) {

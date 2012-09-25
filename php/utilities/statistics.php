@@ -1,11 +1,9 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'php/inc/database.php');
-require_once($app . 'general.php');
-require_once($app . 'local_config/config.php');
+require_once(__ROOT__ . 'php/inc/database.php');
+require_once(__ROOT__ . 'general.php');
+require_once(__ROOT__ . 'local_config/config.php');
 //$firephp = FirePHP::getInstance(true);
 
 $max_ent = -1;

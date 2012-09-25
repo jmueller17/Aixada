@@ -1,10 +1,10 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once($app . "php/utilities/general.php");
-require_once($app . 'php/inc/cookie.inc.php');
+require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . 'php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();

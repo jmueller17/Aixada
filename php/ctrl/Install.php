@@ -1,11 +1,6 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-//require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
 
 $config_dir = 'local_config/';
 $log = "Starting installation process.\n";

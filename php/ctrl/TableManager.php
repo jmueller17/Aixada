@@ -1,12 +1,11 @@
 <?php
 
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-
-require_once($app . "local_config/config.php");
-require_once($app . "php/inc/database.php");
-require_once($app . "php/utilities/general.php");
+require_once(__ROOT__ . "local_config/config.php");
+require_once(__ROOT__ . "php/inc/database.php");
+require_once(__ROOT__ . "php/utilities/general.php");
 
 if (!isset($_SESSION)) {
     session_start();
@@ -16,8 +15,8 @@ $language = ( (isset($_SESSION['userdata']['language']) and
                $_SESSION['userdata']['language'] != '') ? 
               $_SESSION['userdata']['language'] : 
               configuration_vars::get_instance()->default_language );
-require_once($app . 'local_config/lang/' . $language . '.php');
-require_once($app . "php/utilities/tables.php");
+require_once(__ROOT__ . 'local_config/lang/' . $language . '.php');
+require_once(__ROOT__ . "php/utilities/tables.php");
 
 //$firephp = FirePHP::getInstance(true);
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
@@ -60,10 +59,10 @@ function get_columns_as_JSON()
 //     $firephp->log(true, 'including canned responses');
   global $language;
   global $Text;
-  global $app;
+  //global $app;
   //  global $firephp;
   $Text = array();
-  require($app . 'canned_responses_' . $language . '.php');
+  require(__ROOT__ . 'canned_responses_' . $language . '.php');
   //  $firephp->log($Text['please_select'], 'please select');
   // $firephp->log($language, 'language'); 
   // $firephp->log($_SESSION['userdata'], 'userdata'); 
@@ -212,7 +211,7 @@ try{
       exit;
   }
 
-  require_once($app . 'php/lib/table_manager.php');
+  require_once(__ROOT__ . 'php/lib/table_manager.php');
   if (!$special_table)
     $tm = new table_manager($_REQUEST['table'], 
 			    configuration_vars::get_instance()->use_session_cache);

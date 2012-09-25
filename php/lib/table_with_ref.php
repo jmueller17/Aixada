@@ -1,13 +1,14 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
+/*$slash = explode('/', getenv('SCRIPT_NAME'));
 if (isset($slash[1])) {
-    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+    //$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+    $app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
 } else { // this happens when called by make
     $app = '';
-}
+}*/
 
-require_once($app . 'php/inc/name_mangling.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'name_mangling.php');
 
 /** 
  * @package Aixada

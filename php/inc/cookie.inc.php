@@ -3,17 +3,23 @@
  * @package Aixada
  */ 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+//$slash = explode('/', getenv('SCRIPT_NAME'));
+//$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+//get the path with subdirectories...
+//$app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
 
-require_once($app . 'php/lib/exceptions.php');
-require_once($app . 'php/inc/database.php');
+//define('DS', DIRECTORY_SEPARATOR);
+//define('__ROOT__', dirname(__FILE__).DS); 
+
+
+require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 
 if (!isset($_SESSION)) {
     session_start();
 }
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 

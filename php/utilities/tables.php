@@ -1,14 +1,14 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
+/*$slash = explode('/', getenv('SCRIPT_NAME'));
 if (isset($slash[1])) {
     $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 } else { // this happens when called by make
     $app = '';
-}
+}*/
 
-require_once($app . 'php/inc/database.php');
-require_once($app . 'local_config/config.php');
+require_once(__ROOT__ . 'php/inc/database.php');
+require_once(__ROOT__ . 'local_config/config.php');
 
 function do_list_all ($tm, $page, $limit, $sidx, $sord, $options = array()) {
   list($rs, $total_pages)

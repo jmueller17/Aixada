@@ -1,19 +1,3 @@
-<script type="text/javascript">
-     $(function(){
-	     $('#btn_logout').button().click(function(e){
-		     $.ajax({
-			 type: 'POST',
-				 url: 'php/ctrl/Login.php?oper=logout',
-				 success: function(){
-				 top.location.href = 'login.php';
-			     },					
-				 error : function(XMLHttpRequest, textStatus, errorThrown){
-				 $.updateTips('#logonMsg','error',XMLHttpRequest.responseText);
-			     }
-		 });
-	 });
-	 });
-</script>
 <div id="logonStatus">
 	<p>
 		<?php 
@@ -34,7 +18,7 @@
        echo ' value="' . $role. '">' . $rt . '</option>'; 
      } 
      echo '</select> ';
-     echo '<select size="0" name="lang_select" id="lang_select">';
+     /*echo '<select size="0" name="lang_select" id="lang_select">';
        $keys = $_SESSION['userdata']['language_keys'];
        $names = $_SESSION['userdata']['language_names'];
        for ($i=0; $i < count($keys); $i++) {
@@ -43,14 +27,12 @@
                echo ' selected';
            echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
        } 
-     echo '</select> ';
+     echo '</select> '; */
        echo " | ";
-       echo '<button id="btn_logout" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button" aria-disabled="false">';
-       echo '<span class="ui-button-text">' . $Text['nav_logout'] . '</span>';
-       echo '</button>';
-       /*
-	 <a href='php/ctrl/Login.php?oper=logout'>".$Text['nav_logout']."</a>";
-       if (!isset($_SESSION['userdata']['can_checkout']) or 
+      
+      
+	 echo "<a href='javascript:void(null)' id='logoutRef'>".$Text['nav_logout']."</a>";
+     /*  if (!isset($_SESSION['userdata']['can_checkout']) or 
            !$_SESSION['userdata']['can_checkout']) {
            echo " | <a href='php/ctrl/Cookie.php?oper=try_to_checkout'>"
                . $Text['nav_try_to_checkout'] . "</a>";

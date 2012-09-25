@@ -1,22 +1,23 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'php/inc/cookie.inc.php');
-require_once($app . 'php/inc/authentication.inc.php');
-require_once($app . 'php/lib/exceptions.php');
-require_once($app . 'local_config/config.php');
-require_once($app . 'php/utilities/general.php');
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(__FILE__).DS); 
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'authentication.inc.php');
+require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
+require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
+
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
 $default_theme = get_session_theme();
 $language = get_session_language();
 $dev = configuration_vars::get_instance()->development;
-require_once($app . 'local_config/lang/' . $language  . '.php');
+require_once(__ROOT__ . 'local_config'.DS.'lang'.DS.'' . $language  . '.php');
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.
@@ -58,7 +59,7 @@ if (!isset($_SESSION)) {
 			$('#btn_logon').button();
 			$('#login').submit(function(){
 				var dataSerial = $(this).serialize();
-				alert(dataSerial);
+				//alert(dataSerial);
 				$.ajax({
 					type: "POST",
                     url: "php/ctrl/Login.php?oper=login",

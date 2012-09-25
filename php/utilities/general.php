@@ -1,20 +1,21 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
+/*$slash = explode('/', getenv('SCRIPT_NAME'));
 if (isset($slash[1])) {
-    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+    //$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+    $app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
 } else { // this happens when called by make
     $app = '';
-}
+}*/
 
-require_once($app . 'php/inc/database.php');
-require_once($app . 'local_config/config.php');
-require_once($app . 'php/inc/caching.inc.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
+require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'caching.inc.php');
 
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
-require_once($app . 'local_config/lang/' . $language . '.php');
+require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. $language . '.php');
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
@@ -431,9 +432,8 @@ function get_field_options_live($table, $field1, $field2)
 
 function get_existing_themes_XML()
 {
-    global $app;
     $exclude_list = array(".", "..", "example.txt");
-    $folders = array_diff( scandir($app . 'css/ui-themes'), $exclude_list);
+    $folders = array_diff( scandir(__ROOT__ . 'css/ui-themes'), $exclude_list);
      
     $XML = '<themes>';
     foreach ($folders as $theme) {
@@ -449,8 +449,7 @@ function existing_languages()
     // $Text['es_es'] = 'Español'
     // exists in each language file
     $languages = array();
-    global $app;
-    foreach (glob($app . "local_config/lang/*.php") as $lang_file) {
+    foreach (glob(__ROOT__ . "local_config/lang/*.php") as $lang_file) {
         $a = strpos($lang_file, 'lang/');
         $lang = substr($lang_file, $a+5, strpos($lang_file, '.')-$a-5);
         $handle = @fopen($lang_file, "r");

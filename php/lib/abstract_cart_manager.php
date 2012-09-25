@@ -4,12 +4,11 @@
    * @package Aixada
    */ 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'exceptions.php');
-require_once($app . 'local_config/config.php');
-require_once($app . 'php/inc/database.php');
+
+require_once(__ROOT__ . 'exceptions.php');
+require_once(__ROOT__ . 'local_config/config.php');
+require_once(__ROOT__ . 'php/inc/database.php');
 
 /**
  * This is the base class for rows of the tables.

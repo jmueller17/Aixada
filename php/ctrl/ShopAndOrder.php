@@ -1,16 +1,13 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-//require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//$firephp = FirePHP::getInstance(true);
-//ob_start(); // Starts FirePHP output buffering
 
-require_once($app . "local_config/config.php");
-require_once($app . "php/inc/database.php");
-require_once($app . "php/utilities/general.php");
-require_once($app . "php/utilities/shop_and_order.php");
+require_once(__ROOT__ . "local_config/config.php");
+require_once(__ROOT__ . "php/inc/database.php");
+require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
 
@@ -152,17 +149,17 @@ try{
     // now come  the requests that need a cart manager
     switch (get_param('what', $default='')) {
 	    case 'Shop':
-	        require_once($app . "lib/shop_cart_manager.php");
+	        require_once(__ROOT__ . "lib/shop_cart_manager.php");
 	        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
 	        break;
 	      
 	    case 'Order':
-	        require_once($app . "lib/order_cart_manager.php");
+	        require_once(__ROOT__ . "lib/order_cart_manager.php");
 	        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
 	        break;
 	      
 	    case 'favorite_order':
-	        require_once($app . "lib/favorite_order_cart_manager.php");
+	        require_once(__ROOT__ . "lib/favorite_order_cart_manager.php");
 	        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
 	        break;
 	      

@@ -1,20 +1,21 @@
 <?php
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once($app . "local_config/config.php");
-require_once($app . "php/inc/database.php");
-require_once($app . "php/inc/authentication.inc.php");
-require_once($app . "php/utilities/general.php");
-require_once($app . "php/lib/exceptions.php");
-require_once($app . 'php/inc/cookie.inc.php');
+
+require_once(__ROOT__ . "local_config/config.php");
+require_once(__ROOT__ . "php/inc/database.php");
+require_once(__ROOT__ . "php/inc/authentication.inc.php");
+require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . "php/lib/exceptions.php");
+require_once(__ROOT__ . 'php/inc/cookie.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
 }
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
@@ -34,13 +35,13 @@ try{
 		  $firephp->log($cookie, 'Login.php');
 	          $cookie->logout();
 		  $firephp->log($cookie, 'Login.php logged out');
-		  $h = 'Location:' . $app . 'login.php';
+		  $h = 'Location:' . __ROOT__ . 'login.php';
 		  $firephp->log($h);
 		  //		  header($h);
 		  //	          exit;
 	      } 
 	      catch (AuthException $e) {
-		  header('Location:' . $app . 'login.php');
+		  header('Location:' . __ROOT__ . 'login.php');
 	          //echo "Already logged out"; 
 	      }
 	      exit;

@@ -1,20 +1,20 @@
 <?php
 
-//$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-
-require_once($app . "local_config/config.php");
-require_once($app . "php/inc/database.php");
-require_once($app . "php/utilities/general.php");
-require_once($app . "php/utilities/dates.php");
-require_once($app . "php/utilities/shop_and_order.php");
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 
+require_once(__ROOT__ . "local_config/config.php");
+require_once(__ROOT__ . "php/inc/database.php");
+require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . "php/utilities/dates.php");
+require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
+
+//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+//ob_start(); // Starts FirePHP output buffering
 //$firephp = FirePHP::getInstance(true);
+
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.

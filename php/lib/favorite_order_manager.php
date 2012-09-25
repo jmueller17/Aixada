@@ -4,14 +4,12 @@
    * @package Aixada
    */ 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+//ob_start(); // Starts FirePHP output buffering
+//$firephp = FirePHP::getInstance(true);
 
-require_once($app . 'abstract_cart_manager.php');
+require_once(__ROOT__ . 'abstract_cart_manager.php');
 
 /**
  * The class that manages a row of a favorite shopping cart.

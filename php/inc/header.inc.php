@@ -1,13 +1,13 @@
 <?php 
-	
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'php/inc/cookie.inc.php');
-require_once($app . 'local_config/config.php');
-require_once($app . 'php/utilities/general.php');
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
+require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
+
+require_once(__ROOT__ . 'FirePHPCore'.DS.'lib'.DS.'FirePHPCore'.DS.'FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
@@ -18,7 +18,7 @@ $tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_templa
 $tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
 
 
-require_once($app . 'local_config/lang/' . get_session_language() . '.php');
+require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 
 //should be deleted in the end, and globally set. 
 $_SESSION['dev'] = true;

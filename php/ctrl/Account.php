@@ -1,14 +1,13 @@
 <?php
 
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-
-require_once($app . "local_config/config.php");
-require_once($app . "php/inc/database.php");
-require_once($app . "php/utilities/general.php");
-require_once($app . "php/utilities/account.php");
-require_once($app . "lib/report_manager.php");
+require_once(__ROOT__ . "local_config/config.php");
+require_once(__ROOT__ . "php/inc/database.php");
+require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . "php/utilities/account.php");
+require_once(__ROOT__ . "lib/report_manager.php");
 
 
 $use_session_cache = true; 

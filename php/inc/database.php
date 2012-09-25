@@ -4,28 +4,26 @@
  * @package Aixada
  */ 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
+/*$slash = explode('/', getenv('SCRIPT_NAME'));
 if (isset($slash[1])) {
-    $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
+	$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 } else { // this happens when called by make
     $app = '';
-}
+}*/
 
-require_once($app . 'local_config/config.php');
-require_once($app . 'php/lib/exceptions.php');
-require_once($app . 'php/inc/caching.inc.php');
+require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
+require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'caching.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
  }
 
-$language = ( (isset($_SESSION['userdata']['language']) and 
-               $_SESSION['userdata']['language'] != '') ? 
-              $_SESSION['userdata']['language'] : 
-              configuration_vars::get_instance()->default_language );
-require_once($app . 'local_config/lang/' . $language . '.php');
 
-//require_once($app . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
+
+//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 //$firephp = FirePHP::getInstance(true);
 
 /** 

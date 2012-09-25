@@ -4,10 +4,9 @@
  * @package Aixada
  */ 
 
-$slash = explode('/', getenv('SCRIPT_NAME'));
-$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
-require_once($app . 'shop_cart_manager.php');
+
+require_once(__ROOT__ . 'shop_cart_manager.php');
 
 /**
  * The class to validate a cart

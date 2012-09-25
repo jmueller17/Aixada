@@ -100,6 +100,26 @@ $(function(){
 							
    			}   		
    		});
-   	}); 
+   	});
+	
+	$('#logoutRef').click(function(e){
+		
+		 $.ajax({
+			type: 'POST',
+			url: 'php/ctrl/Login.php?oper=logout',
+			success : function(msg){
+				top.location.href = 'login.php';
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown){
+				 alert(XMLHttpRequest.responseText);
+			}, 
+			compplete: function(){
+				top.location.href = 'login.php';
+			}
+		 });
+		
+	});
+
+	
 	
 });
