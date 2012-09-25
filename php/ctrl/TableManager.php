@@ -17,7 +17,7 @@ $language = ( (isset($_SESSION['userdata']['language']) and
               $_SESSION['userdata']['language'] : 
               configuration_vars::get_instance()->default_language );
 require_once($app . 'local_config/lang/' . $language . '.php');
-require_once($app . "utilities_tables.php");
+require_once($app . "php/utilities/tables.php");
 
 //$firephp = FirePHP::getInstance(true);
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
@@ -60,9 +60,10 @@ function get_columns_as_JSON()
 //     $firephp->log(true, 'including canned responses');
   global $language;
   global $Text;
+  global $app;
   //  global $firephp;
   $Text = array();
-  require 'canned_responses_' . $language . '.php';
+  require($app . 'canned_responses_' . $language . '.php');
   //  $firephp->log($Text['please_select'], 'please select');
   // $firephp->log($language, 'language'); 
   // $firephp->log($_SESSION['userdata'], 'userdata'); 
@@ -211,7 +212,7 @@ try{
       exit;
   }
 
-  require_once 'lib/table_manager.php';
+  require_once($app . 'php/lib/table_manager.php');
   if (!$special_table)
     $tm = new table_manager($_REQUEST['table'], 
 			    configuration_vars::get_instance()->use_session_cache);

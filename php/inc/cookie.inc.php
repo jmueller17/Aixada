@@ -128,8 +128,6 @@ class Cookie {
                     'language' => $this->current_language_key,
 		    'theme' => $this->theme);
     $_SESSION['userdata'] = $userdata;
-    global $firephp;
-    $firephp->log($_SESSION, "_SESSION");
     setcookie(self::$cookiename, $cookie);
   }
 
@@ -139,10 +137,6 @@ class Cookie {
    * also set.
    */
   public function validate() {
-      //      global $firephp;
-      //$firephp->log($_SESSION['userdata']);
-      //exit();
-
     if (!$this->version || !$this->created || !$this->user_id) {
       throw new AuthException("Malformed cookie");
     }
@@ -241,8 +235,6 @@ class Cookie {
   }
 
   private function _unpackage($cookie) {
-      global $firephp;
-      $firephp->log('cookie');
       if ($cookie == '') {
 	  $this->logout();
 	  return;
