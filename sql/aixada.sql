@@ -236,7 +236,7 @@ create table aixada_order (
 	id 				int 			not null auto_increment,
 	provider_id		int				not null,
 	date_for_order	date			not null,
-	ts_send_off		timestamp		default 0,	
+	ts_sent_off		timestamp		default 0,	
 	date_received	date			default null,
 	date_for_shop	date			default null,
 	total			decimal(10,2)	default 0,
@@ -247,10 +247,10 @@ create table aixada_order (
 	primary key (id),
 	key (date_for_order),
 	key (date_for_shop),
-	key (ts_send_off),
+	key (ts_sent_off),
 	foreign key (provider_id) references aixada_provider(id),
 	foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order),
-	unique key (date_for_order, provider_id, ts_send_off)
+	unique key (date_for_order, provider_id, ts_sent_off)
 ) engine=InnoDB default character set utf8;     
 
 

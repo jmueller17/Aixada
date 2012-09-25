@@ -42,7 +42,7 @@ begin
 		select 
 			o.id as order_id,
 			o.date_for_order,
-			o.ts_send_off, 
+			o.ts_sent_off, 
 			o.date_for_shop,
 			o.total,
 			delivered_total,
@@ -68,7 +68,7 @@ begin
 		select 
 			0 as order_id,
 			the_date as date_for_order,
-			0 as ts_send_off, 
+			0 as ts_sent_off, 
 			0 as date_for_shop,
 			0 as total,
 			0 as delivered_total,
@@ -629,7 +629,7 @@ begin
 			oi.order_id,
 			oi.date_for_order,
 			p.provider_id,
-			o.ts_send_off,
+			o.ts_sent_off,
 			o.date_received,
 			o.date_for_shop,
 			o.total,
@@ -683,7 +683,7 @@ begin
 	
 	/** new order_id **/
 	insert into
-		aixada_order (provider_id, date_for_order, ts_send_off, total)
+		aixada_order (provider_id, date_for_order, ts_sent_off, total)
 	values
 		(the_provider_id, the_date_for_order, now(), order_total);
 		
@@ -786,7 +786,7 @@ begin
 
 	set @q = concat("select distinct
 		o.id,
-		o.ts_send_off,
+		o.ts_sent_off,
 		o.date_for_shop,
 		o.date_received,
 		o.total,

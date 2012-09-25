@@ -532,7 +532,7 @@
 						statusTd.attr('revisionStatus',status);
 						switch(status){
 							case "1": 
-								statusTd.attr('title','Order has been send to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+								statusTd.attr('title','Order has been sent to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 								break;
 							case "2": 
 								statusTd.attr('title','Revised and distributed without changes').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
@@ -552,7 +552,7 @@
 					if (orderId > 0){ 
 
 					} else {
-						//while open and not send off, no order_id exists
+						//while open and not sent off, no order_id exists
 						$(row).children().eq(1).html('<p>-</p>');
 						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder">Finalize now</a></p>');
 					}
@@ -641,7 +641,7 @@
 					//need the order id
 					if (gSelRow.attr('orderId') <= 0){
 						$.showMsg({
-							msg:'No valid ID for order found! This order has not been send off to the provider!!',
+							msg:'No valid ID for order found! This order has not been sent off to the provider!!',
 							type: 'error'});
 						return false; 
 					}
@@ -996,7 +996,7 @@
 						<th class="clickable">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Closes in days</th>
-						<th>Send off to provider</th>
+						<th>Sent off to provider</th>
 						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Status</th>
@@ -1010,7 +1010,7 @@
 						<td class="textAlignRight minPadding">{provider_name}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
-						<td class="textAlignCenter">{ts_send_off}</td>
+						<td class="textAlignCenter">{ts_sent_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>
@@ -1078,7 +1078,7 @@
 							<td>
 								{order_id}<br/>
 								{date_for_order} <br/>
-								{ts_send_off} <br/>
+								{ts_sent_off} <br/>
 								{date_for_shop} <br/><br/>
 								<span id="viewOrderRevisionStatus">{revision_status}</span><br/>
 								{notes}<br/>
