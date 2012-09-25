@@ -74,6 +74,7 @@ $(function(){
 			
 			var num = input.val();
 			num = parseFloat(num.replace(",","."));
+			
 			if (isNaN(num)) {
 
 				input.addClass("ui-state-error");

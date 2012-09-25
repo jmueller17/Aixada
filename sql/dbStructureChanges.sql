@@ -33,7 +33,9 @@ values
 	('stock', 'register gain or loss of stock'),
 	('validation', 'register validation of cart'),
 	('deposit','register the inpayment of cash'),
-	('bill','register withdrawal for bill payment to provider');
+	('bill','register withdrawal for bill payment to provider'),
+	('correction','by-hand correction of account balance'),
+	('withdrawal','default cash withdrawal');
 
 
 /**

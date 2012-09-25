@@ -25,6 +25,7 @@ option 				{padding:1px 5px;}
 .showInline			{display:inline;}
 .msg_dialog			{text-align:center;}
 .optionLink			{font-size:1.0em;}
+
 .negativeBalance	{color:red;}
 
 .greenBg			{background-color:green;}
@@ -111,15 +112,25 @@ div#ViewChoice		{float:right; margin-top:10px;}
 
 .aix-layout-center80 {width:80%; margin:5px auto;}
 .aix-layout-center60 {width:60%; margin:5px auto;}
+.aix-layout-centerDiv{margin:5px auto;}
 
 .aix-layout-fixW150	 {width:150px;}
 .aix-layout-fixW250	 {width:250px;}
+.aix-layout-fixW350	 {width:350px;}
+.aix-layout-fixW450	 {width:450px;}
 
 .aix-style-torn-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
 .aix-style-torn-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
 .aix-style-torn-widget table	{padding:15px;}
 .aix-style-torn-widget table td	{padding:15px;}
 
+.aix-style-neg-balance 	{color:#ff0000;}
+.aix-style-pos-balance 	{color:#000000;}
+
+
+.aix-style-padding3x3				{padding:3px;}
+.aix-style-highlight-deposit		{background-color:#7ECA7E; padding:22px;}
+.aix-style-highlight-withdrawl		{background-color:#FF7A75; padding:22px;}
 
 
 div#leftCol			{width:60%; float:left;}
@@ -161,10 +172,7 @@ div#deposit_content 	{padding:10px 5px;}
 .rightCol-Observer h3	{padding:2px 4px;}
 
 
-/** for cashbox **/
-div#withdraw_cash, #deposit_cash 		{margin-bottom:60px;}
-.highlight-deposit		{background-color:#72b42d; padding:12px;}
-.highlight-withdrawl	{background-color:red; padding:12px;}
+
 
 /** for incidents **/
 div#incidents_listing a	{font-size:0.8em; margin-right:20px;}

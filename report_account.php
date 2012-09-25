@@ -53,6 +53,16 @@
 					beforeLoad : function(){
 						$('#account_listing .loadAnim').show();
 					},
+					rowComplete : function (rowIndex, row){
+
+						var b = $('span[class=balanceAmount]',row).text();
+						var q = $('span[class=quantityAmount]',row).text();
+			        	var cssb = (new Number(b) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
+			        	var cssq = (new Number(q) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
+			        	$('span[class=balanceAmount]',row).addClass(cssb);
+			        	$('span[class=quantityAmount]',row).addClass(cssq);
+						
+					},
 					complete : function(rowCount){
 						$('#account_listing .loadAnim').hide();
 						
@@ -61,7 +71,6 @@
 								msg:"Sorry, there are no movements for the selected account and date. Try to widen the consulted time period with the filter button.",
 								type: 'warning'});
 						} else {
-
 							$('#list_account tbody tr:even').addClass('rowHighlight'); 
 						}
 					}
@@ -209,8 +218,8 @@
 							<td>{description}</td>
 							<td>{method}</td>
 							<td><p class="textAlignCenter">{account}</p></td>
-							<td><p class="textAlignRight">{quantity} {currency}</p></td>
-							<td><p class="textAlignRight">{balance} {currency}</p></td>
+							<td><p class="textAlignRight"><span class="quantityAmount">{quantity}</span> {currency}</p></td>
+							<td><p class="textAlignRight"><span class="balanceAmount">{balance}</span> {currency}</p></td>
 						</tr>
 					</tbody>
 					<tfoot>

@@ -496,6 +496,32 @@ begin
 end|
 
 
+/**
+ * returns a list of all products with current_stock below min_stock
+ */
+drop procedure if exists products_below_min_stock|
+create procedure products_below_min_stock()
+begin
+  select
+        p.id,
+        p.name as stock_item,
+        pv.name as stock_provider,
+        p.stock_actual,
+        p.stock_min
+  from 
+  	aixada_product p use index(delta_stock), 
+  	aixada_provider pv
+  where 
+ 	p.provider_id = pv.id 	
+  	and p.active = 1
+    and p.orderable_type_id = 1
+    and pv.active = 1
+    and p.stock_actual < p.stock_min
+  order by pv.name;
+end|
+
+
+
 drop procedure if exists stock_movements|
 create procedure stock_movements(in product_id int, in tmp_start_date date, in num_rows int)
 begin

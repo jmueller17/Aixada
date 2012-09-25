@@ -25,11 +25,11 @@ try{
 	
  	switch ($_REQUEST['oper']) {
 
- 		 case 'getAllAccounts':
+ 		case 'getAllAccounts':
 	        printXML(get_accounts(1));
 	        exit;
  		
-	      case 'getActiveAccounts':
+	    case 'getActiveAccounts':
 	        printXML(get_accounts(0));
 	        exit;   
 	        
@@ -48,16 +48,27 @@ try{
 	    case 'getIncomeSpendingBalance': 
 	    	printXML(stored_query_XML_fields('income_spending_balance', get_param('date',0)));
 	    	exit;
-	    
-	    case 'DepositForUF':
-	   		return do_stored_query('deposit_for_uf', get_param('uf_id'), get_param('quantity'), get_param('description',''), get_session_user_id());
+	    	
+	    case 'deposit':
+	    	echo do_stored_query('deposit', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id());
+	    	exit; 
+	    	
+	    case 'withdraw':
+	    	echo do_stored_query('withdrawal', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id(),10);
+	    	exit; 
+	    	
+	    case 'globalAccountsBalance':
+	    	printXML(stored_query_XML_fields('global_accounts_balance'));
+			exit;
+			
+	    case 'correctBalance':
+	    	echo do_stored_query('correct_account_balance', get_param('account_id'), get_param('balance'), get_session_user_id(), get_param('description','') );
 	    	exit;
-	
   	
 	    	
   		
 	  default:
-	    throw new Exception("ctrlReport: operation {$_REQUEST['oper']} not supported");
+	    throw new Exception("ctrlAccount: operation {$_REQUEST['oper']} not supported");
     
   }
 
