@@ -139,8 +139,8 @@ class Cookie {
    * also set.
    */
   public function validate() {
-      global $firephp;
-      $firephp->log($_SESSION['userdata']);
+      //      global $firephp;
+      //$firephp->log($_SESSION['userdata']);
       //exit();
 
     if (!$this->version || !$this->created || !$this->user_id) {

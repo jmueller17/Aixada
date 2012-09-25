@@ -60,9 +60,9 @@
 					//var revisionStatus = $(row).attr('revision_status');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(3).html('<p class="textAlignCenter">' + <?=$Text['expected'];?></p>');
+						$(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text["expected"];?></p>');
 					} else {
-						 $(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text['not_yet_sent'];?></p>');		
+						 $(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text["not_yet_sent"];?></p>');		
 					}
 
 					if (timeLeft <= 0){

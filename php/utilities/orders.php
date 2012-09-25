@@ -5,7 +5,7 @@ $app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
 
 require_once($app . 'php/inc/database.php');
 require_once($app . 'local_config/config.php');
-require_once ('general.php');
+require_once($app . 'php/utilities/general.php');
 
 
 /**
@@ -101,6 +101,4 @@ function get_orders_in_range($time_period='today', $uf_id=0, $from_date=0, $to_d
 
 	
 }
-
-	
 ?>
