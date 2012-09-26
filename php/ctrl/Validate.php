@@ -23,20 +23,29 @@ try{
 	
   switch (get_param('oper')) {
 
+  		//worx but not used
 	  	case 'getDatesForValidation':
 	    	printXML(get_dates_for_validation());
 	    	exit;
-
-	  	case 'getProductsBelowMinStock':
-	    	printXML(query_XML_noparam('products_below_min_stock'));
-	    	exit;
 	
-	  	case 'GetUFsForValidation':
+	    //worx but not used in validate
+	  	case 'getUFsForValidation':
 	    	printXML(stored_query_XML('get_ufs_for_validation', 'ufs', 'name', get_param('date',0)));
 	    	exit;
+	    
+	    //returns list of all active ufs and the #of non-validated carts
+	  	case 'getUFsCartCount':
+	  		printXML(stored_query_XML_fields('get_uf_listing_cart_count'));
+	    	exit;
 
+	    case 'getNonValidatedCarts':
+    		printXML(stored_query_XML_fields('get_non_validated_carts', get_param('uf_id',0)));
+    		exit;
+	    	
+    	//retrieves a given shopping cart, non-validated. 
+    	//this is the same as in /ctrl/Shop.php except the uf_id parameter which is flexible here
 	    case 'getShopCart':
-  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_param('uf_id'),get_param('cart_id',0),get_param('validated',0))); 
+  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date',0), get_param('uf_id',0), get_param('cart_id',0),get_param('validated',0))); 
 			exit; 
 	    
 	  	case 'commit':

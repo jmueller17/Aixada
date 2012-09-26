@@ -62,7 +62,7 @@
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
-					url		: 'php/ctrl/Validate.php',
+					url		: 'php/ctrl/Shop.php',
 					params	: 'oper=getProductsBelowMinStock',
 					rowComplete : function(rowIndex, row){
 						//reformat numbers to two decimal places

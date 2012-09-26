@@ -27,6 +27,15 @@ $(function(){
 				sums['totalRevTax'] = totalRevTax.toFixed(2); 
 				
 				return sums; 
+			},			
+			formatQuantity : function(obj){
+				
+				$('.formatQty',obj).each(function(){
+					var b = $(this).text();
+		        	var css = (new Number(b) >= 0)? 'aix-style-pos-balance':'aix-style-neg-balance';					
+		        	$(this).addClass(css);
+				})
+				
 			}
 	});
 	

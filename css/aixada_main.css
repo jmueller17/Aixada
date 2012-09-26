@@ -114,27 +114,47 @@ div#ViewChoice		{float:right; margin-top:10px;}
 .aix-layout-center60 {width:60%; margin:5px auto;}
 .aix-layout-centerDiv{margin:5px auto;}
 
+.aix-layout-splitW60 {width:59%;}
+.aix-layout-splitW40 {width:39%;}	
+
 .aix-layout-fixW150	 {width:150px;}
 .aix-layout-fixW250	 {width:250px;}
 .aix-layout-fixW350	 {width:350px;}
 .aix-layout-fixW450	 {width:450px;}
 
-.aix-style-torn-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
-.aix-style-torn-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
-.aix-style-torn-widget table	{padding:15px;}
-.aix-style-torn-widget table td	{padding:15px;}
+.aix-layout-title-with-icon {margin-left:100px;}
+
+
+.aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
+.aix-style-entry-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
+.aix-style-entry-widget table	{padding:15px;}
+.aix-style-entry-widget table td	{padding:15px;}
+
+.aix-style-observer-widget 		{margin-bottom:10px; margin-left:5px;}
+.aix-style-observer-widget div	{padding:10px;}
+.aix-style-observer-widget h3	{padding:2px 4px;}
+.aix-style-observer-widget table {padding:0px 4px; margin-bottom:5px;}
+
 
 .aix-style-neg-balance 	{color:#ff0000;}
 .aix-style-pos-balance 	{color:#000000;}
 
 
 .aix-style-padding3x3				{padding:3px;}
+.aix-style-padding8x8				{padding:8px;}
 .aix-style-highlight-deposit		{background-color:#7ECA7E; padding:22px;}
 .aix-style-highlight-withdrawl		{background-color:#FF7A75; padding:22px;}
 
 
-div#leftCol			{width:60%; float:left;}
-div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}
+/** for validate 
+div#deposit_content 	{padding:10px 5px;}
+.rightCol-Observer		{padding:3px; margin-bottom:5px;}
+.rightCol-Observer h3	{padding:2px 4px;}
+**/
+
+
+/*div#leftCol			{width:60%; float:left;}
+div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}*/
 .toggleShopDate		{font-weight:bold; cursor:pointer;}
 
 
@@ -166,10 +186,7 @@ p#weekDays			{margin:10px 20px;}**/
 
 
 
-/** for validate **/
-div#deposit_content 	{padding:10px 5px;}
-.rightCol-Observer		{padding:3px; margin-bottom:5px;}
-.rightCol-Observer h3	{padding:2px 4px;}
+
 
 
 

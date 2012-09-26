@@ -429,7 +429,7 @@
     		</div>
 		</div><!-- end titlewrap -->
 
-		<div id="leftCol">
+		<div id="leftCol" class="aix-layout-splitW60 floatLeft">
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1"><?php echo $Text['by_provider']; ?></a></li>
@@ -588,7 +588,7 @@
 		</div><!-- end left Col -->
 		
 		<!-- Shopping cart starts -->
-		<div id="rightCol">	
+		<div id="rightCol" class="aix-layout-splitW40 floatLeft">	
 			<div id="cartLayer"></div>
 		</div>
 		

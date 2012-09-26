@@ -2,6 +2,34 @@ delimiter |
 
 
 /**
+ * returns a list of all active ufs and the number of their non-validated
+ * shoppping carts.
+ */
+drop procedure if exists get_uf_listing_cart_count|
+create procedure get_uf_listing_cart_count()
+begin
+	
+	select
+		uf.id as uf_id,
+		uf.name as uf_name,
+		count(if(c.ts_validated=0,1,NULL)) as non_validated_carts,
+		count(if(c.ts_validated>0,1,NULL)) as validated_carts
+	from 
+		aixada_uf uf
+	left join 
+		aixada_cart c on c.uf_id = uf.id
+	where
+		uf.active = 1
+	group by
+		uf.id
+	order by
+		uf.id;
+	
+end|
+
+
+
+/**
  *  returns all ufs with unvalidated carts for given date
  */
 drop procedure if exists get_ufs_for_validation|

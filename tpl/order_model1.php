@@ -49,7 +49,7 @@
 			
 			//load purchase detail (products and quantities)
 			$('#tbl_orderList tbody').xml2html('init',{
-				url : '../ctrlShopAndOrder.php',
+				url : '../php/ctrl/ShopAndOrder.php',
 				params : 'oper=getOrderCart&date='+dateForOrder, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
@@ -84,7 +84,7 @@
 
 			//load purchase detail (products and quantities)
 			$('#memberAddress').xml2html('init',{
-				url : '../ctrlUserAndUf.php',
+				url : '../php/ctrl/UserAndUf.php',
 				params : 'oper=getMemberInfo&member_id=-1', 
 				loadOnInit : true,
 				rowComplete : function (rowIndex, row){ 

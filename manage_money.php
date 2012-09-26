@@ -465,7 +465,7 @@
 		</div><!-- end titlewrap -->
 		
 		<div class="aix-layout-center60 ui-widget"> 
-		<div id="account_overview" class="overviewElements aix-style-torn-widget">
+		<div id="account_overview" class="overviewElements aix-style-entry-widget">
 		
 			<h2 class="clickable">Cashbox <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> €</span></h2>
 			<table>

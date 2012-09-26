@@ -2,6 +2,54 @@ delimiter |
 
 
 /**
+ * retrieves non-validated carts for all ufs or every uf
+ * also non-active ufs where there may be a non-validated cart
+ * remaining...
+ * could and should be integrated into get_purchase_listing
+ */
+drop procedure if exists get_non_validated_carts|
+create procedure get_non_validated_carts(in the_uf_id int)
+begin
+	
+	-- for a specififc uf --
+	if (the_uf_id > 0) then
+	
+		select
+			uf.id as uf_id, 
+			uf.name as uf_name, 
+			c.*,
+			get_purchase_total(c.id) as purchase_total
+		from
+			aixada_cart c,
+			aixada_uf uf
+		where
+			c.ts_validated = 0
+			and c.uf_id = the_uf_id
+			and uf.id = the_uf_id
+		order by
+			c.date_for_shop;
+	
+	-- every uf -- 
+	else 
+		select
+			uf.id as uf_id, 
+			uf.name as uf_name, 
+			c.*,
+			get_purchase_total(c.id) as purchase_total
+		from
+			aixada_cart c,
+			aixada_uf uf
+		where
+			c.ts_validated = 0
+			and c.uf_id = uf.id
+		order by
+			uf.id, c.date_for_shop; 
+	end if; 
+	
+end|
+
+
+/**
  * returns listing of aixada_cart's for given uf and date range. 
  * including the name and uf of the validation operator. 
  * if uf_id is not set (0), then returns for all ufs 
@@ -92,6 +140,7 @@ begin
       
   return total_price;
 end|
+
 
 
 

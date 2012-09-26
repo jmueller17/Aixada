@@ -33,6 +33,16 @@
 		//saves the selected purchase row
 		var gSelShopRow = null; 
 
+
+		//coming from other page
+		var gDetail = (typeof $.getUrlVar('detailForCart') == "string")? $.getUrlVar('detailForCart'):false;
+
+
+		//order overview filter option
+		var gBackTo = (typeof $.getUrlVar('lastPage') == "string")? $.getUrlVar('lastPage'):false;
+		
+		
+
 		/********************************************************
 		 *    PURCHASE LISTING
 		 ********************************************************/
@@ -58,11 +68,18 @@
 						$(row).children().eq(4).html("-");	
 					} else {
 						$(row).children().eq(4).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
-					}		
+					}	
+
+					if (gDetail > 0 && $(row).attr('shopId') == gDetail){
+						gSelShopRow = $(row); 
+					}	
 				},
 				complete : function(){
 					$('tr:even', this).addClass('rowHighlight');
 					$("#tbl_Shop").trigger("update"); 
+					if (gSelShopRow != null) {
+						gSelShopRow.trigger('click');
+					}
 				}
 		});
 
@@ -85,7 +102,7 @@
 				gSelShopRow = $(this); 
 					
 				$('#tbl_purchaseDetail tbody').xml2html('reload',{
-					params : 'oper=getShopDetail&shop_id='+$(this).attr('shopId')
+					params : 'oper=getShopCart&shop_id='+$(this).attr('shopId')
 				});
 
 				$('.setUfId').text($(this).attr('ufId'));
@@ -120,7 +137,7 @@
 		//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
 				url : 'php/ctrl/Shop.php',
-				params : 'oper=getShopDetail', 
+				params : 'oper=getShopCart', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
 					var price = new Number($('.up',row).text());
@@ -210,21 +227,35 @@
 
 			}
 
+
+			
 			
 			/**
 			 *	returns to order overview 
 			 */
+			var label = 'Overview';
+			if (gBackTo != ''){
+				label = 'Back to validate';
+			}
+			 
 			$("#btn_overview").button({
-				 icons: {
+				icons: {
 		        		primary: "ui-icon-circle-arrow-w"
-		        	}
+		        	},
+        		label: label
 				 })
 	    		.click(function(e){
-					switchTo('overview'); 
+
+					if (gBackTo != ''){
+						window.location.href = 'validate.php';
+					} else {
+						switchTo('overview'); 
+					}
+		    		
+
 	    		});
-
-
-		switchTo('overview');
+			
+			switchTo('overview');
 
 			
 	});  //close document ready

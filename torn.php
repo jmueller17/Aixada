@@ -78,7 +78,7 @@
 	
 		<div class="aix-layout-center60 ui-widget"> 
 			
-			<div class="aix-style-torn-widget">
+			<div class="aix-style-entry-widget">
 				<table>
 					<tr>
 						<td>
@@ -89,7 +89,7 @@
 				</table>
 			</div>
 	
-			<div class="aix-style-torn-widget">
+			<div class="aix-style-entry-widget">
 				<h2>1st Shift</h2>
 				<table>
 					<tr>
@@ -108,7 +108,7 @@
 				</table>
 			</div>		
 
-			<div class="aix-style-torn-widget">
+			<div class="aix-style-entry-widget">
 				<h2>2nd Shift</h2>
 				<table>
 					<tr>

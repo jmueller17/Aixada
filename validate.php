@@ -32,134 +32,170 @@
 	<script type="text/javascript">
 	$(function(){
 
-			var torn_uf_id = <?=$_SESSION['userdata']['uf_id'];?>;
-		
-			/**
-			 * resets all input fields 
-			 */
-			function resetFields(){
-				
-				$('#cartLayer').aixadacart('resetCart');						
-				$('.insert_uf_id').html('<strong>??</strong>');
-				$('#uf_cart_select').val(-10);
-
-				 $('#dailyStats').xml2html('reload',{
-						url		: 'php/ctrl/Account.php',
-						params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate()
-				 });				
-			}
-
-			function resetDeposit(){
-				$('#uf_account_select').hide();	
-				$('#deposit_amount').val(''); 
-				$('#deposit_note').val('');	
-				$('.deposit_status').hide();
-				
-				$('#deposit_submit').button('disable');
-				$('#deposit_amount, #deposit_note').attr('disabled',true);
-
-				if ($("#uf_cart_select option:selected").val() <= -10){
-					$('.account').html('<strong>??</strong>');
-					$('#uf_account_select').val(-10);
-				}
-			}
-
-			function reloadValidationUfs(){
-				$('#uf_cart_select').xml2html('reload',{
-					url 	: 'php/ctrl/Validate.php',
-					params 	: 'oper=GetUFsForValidation&date='+getSelectedDate()
-				});
-
-				 $('#dailyStats').xml2html('reload',{
-					 params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate(),
-				 });
-			}
+			var torn_uf_id = <?=get_session_uf_id();?>;
 
 
 			/**
-			 *	load all UF-carts to validate
+			 *	UF LISTING FUNCTIONALITY
 			 */
 			$('#uf_cart_select').xml2html('init',{
 					offSet	: 1,
 					url 	: 'php/ctrl/Validate.php',
-					params 	: 'oper=GetUFsForValidation',
+					params 	: 'oper=getUFsCartCount',
 					rowComplete : function(rowIndex, row){
+					
+						//show number of non_validated carts for uf
+						var non_validated_carts = $(row).attr('cc');
+						non_validated_carts = (non_validated_carts > 0)? '&nbsp;&nbsp;(#'+non_validated_carts+')':'';
+						$(row).append(non_validated_carts);
+
+						//dim out own uf
 						if ($(row).val() == torn_uf_id){	//cannot validate yourself
 							$(row).addClass('dim60');
 						}
 					}, 
 					loadOnInit:true
-				//event listener to load items for this uf to validate
-			}).change(function(){
-			
-				//get the id of the uf
-				var uf_id = $("option:selected", this).val(); 
-				var account = 1000+parseInt(uf_id); 
-
-				if (uf_id <=0) {
-					resetFields();
-					resetDeposit();
-					return false; 
+				
+				}).change(function(){
+					//get the id of the uf
+					var uf_id = $("option:selected", this).val(); 
 					
-				} else if (uf_id == torn_uf_id){ //cannot validate your own cart
-					$.showMsg({
-						msg:"<?php echo $Text['msg_err_validate_self'];?>",
-						type: 'error'});
-					resetFields();
-					resetDeposit();
-					return false;
-				}
-				
-				//activate the deposit pane
-				$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
-				$('#deposit_submit').button('enable');
-				$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
-				$('#uf_account_select').val(account).hide();
+					if (uf_id <=0) {
+						resetFields();
+						resetDeposit();
+						return false; 
+						
+					} else if (uf_id == torn_uf_id){ //cannot validate your own cart
+						$.showMsg({
+							msg:"<?php echo $Text['msg_err_validate_self'];?>",
+							type: 'error'});
+						resetFields();
+						resetDeposit();
+						return false;
+					} 
+	
+	
+					//activate the deposit pane
+					$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
+					$('.cartTitle').show();
+					$('.noCartTitle, .validatedCartTitle').hide();
+					$('#deposit_submit').button('enable');
+					$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
+	
+					//how many carts are there? 
+					$('#tbl_Shop tbody').xml2html('reload',{
+						url : 'php/ctrl/Validate.php',
+						params : 'oper=getNonValidatedCarts&uf_id='+uf_id
+					});
+			}); //end of listing 
 
-				
-				//set the uf_id for the saveCartURL when submitting
-				$('#cartLayer').aixadacart('options',{
-					saveCartURL : 'php/ctrl/Validate.php?oper=commit&uf_id='+uf_id
-				});
+			
 
-				$('#cartAnim').show();
-				//the url to load the items for given uf/date
-				$('#cartLayer').aixadacart('loadCart',{
-					loadCartURL		: 'php/ctrl/Validate.php?oper=getShopCart&date='+getSelectedDate() + '&uf_id='+uf_id,
-					//loadCartURL : 'php/ctrl/Validate.php?oper=getShopItemsForDateAndUf&date='+getSelectedDate()+'&uf_id='+uf_id,
-					loadSuccess : function (){
-						$('#cartAnim').hide();
+			//load purchase listing: how may carts does this uf have?
+			$('#tbl_Shop tbody').xml2html('init',{
+					url : 'php/ctrl/Shop.php',
+					loadOnInit : false, 
+					rowComplete : function(rowIndex, row){
+						var validated = $(row).children().eq(2).text();
+						if (validated == "0000-00-00 00:00:00"){
+							$(row).children().eq(2).html('<span class="ui-state-error ui-corner-all">Not validated</span>');
+						}
+					}, 
+					complete: function(rowCount){
+						//more than one cart to validate
+						if (rowCount > 1){
+							$('#dialog_select_cart').dialog('open');
+
+						//one or zero
+						} else {
+							var cart_id = $('#tbl_Shop tbody tr').attr('shopId');
+							var date_for_shop = $('#tbl_Shop tbody tr').attr('dateForShop');
+												
+							if (cart_id > 0 ){
+								loadCart(cart_id, date_for_shop);
+							} else {
+								$('.cartTitle, .validatedCartTitle').hide();
+								$('.noCartTitle').show();
+							}
+						}
 					}
-				}); //end loadCart
 			});
 
 
 
-			//retrieve all dates with available ufs for validation
-			$('#selDate4Validation').xml2html('init',{
-						url : 'php/ctrl/Validate.php',
-						params : 'oper=getDatesForValidation',
-						loadOnInit:true,
-						complete : function(){
-							//make sure "today" is selected automatically from the select box							
-							var xmlr = $(this).xml2html('getXML');
-							$(xmlr).find('date_for_validation').each(function(){
-								if($(this).attr('today')) {
-									$('#selDate4Validation option[value="'+$(this).text()+'"]').attr("selected","selected");
-								}
-							}); 
-							reloadValidationUfs();
-						}
+		
+			/**
+			 * MULTIPLE CARTS TO VALIDATE / SELECT
+			 */	
+			$('#dialog_select_cart').dialog({
+				autoOpen:false,
+				width:500,
+				buttons: {  
+					"<?=$Text['btn_cancel'];?>"	: function(){
+						
+						$( this ).dialog( "close" );
+						} 
+				}
+			});
+
+			$('#tbl_Shop tbody tr, #tbl_cart_listing tbody tr')
+			.live('mouseover', function(){
+				$(this).removeClass('highlight').addClass('ui-state-hover');
 				
-			}).change(function(){
-				$('#cartLayer').aixadacart('setDate',getSelectedDate());
-				reloadValidationUfs();
+			})
+			.live('mouseout',function(){
+				$(this).removeClass('ui-state-hover');
+				
+			})
+			.live('click',function(e){
+
+				var uf_id = $(this).attr('ufId'); 
+				var validated = $(this).attr('validated');
+				var cart_id = $(this).attr('shopId'); 
+				var date_for_shop = $(this).attr('dateForShop'); 
+
+				//means we come from cart observe
+				if (uf_id > 0){
+					$('#uf_cart_select').val(uf_id).attr('selected','selected');
+					$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
+					
+					$('#deposit_submit').button('enable');
+					$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
+				}
+
+				if (validated == "0000-00-00 00:00:00") {
+					$('.cartTitle').show();
+					$('.noCartTitle, .validatedCartTitle').hide();
+					loadCart(cart_id, date_for_shop);
+				} else {					
+					resetFields();
+					$.showMsg({
+						msg:'The selected cart has already been validated. Do you want to see its products/items?',
+						width:500,
+						buttons: {
+							"Yes":function(){						
+								/*loadCart(cart_id, date_for_shop);
+								$('.validatedCartTitle').show();
+								$('.noCartTitle, .cartTitle').hide();
+								$('#btn_submit').hide();*/
+
+								window.location.href = "report_shop.php?detailForCart="+cart_id+"&lastPage=validate";
+								
+								$( this ).dialog( "close" );
+							},
+							
+							"Cancel" : function(){
+								$( this ).dialog( "close" );
+							}
+						},
+						type: 'warning'});
+				}
+			
+				
+				$('#dialog_select_cart').dialog('close');
 			});
 			
 
-			function getSelectedDate(){
-				return $('#selDate4Validation option:selected').val();
-			}
 			
 			//init tabs
 			$("#tabs").tabs();
@@ -171,15 +207,16 @@
 				btnType		: 'validate',
 				saveOnDelete: false,
 				submitSuccess : function (msg){
-					reloadValidationUfs();
-					
+					$('#tbl_cart_listing tbody').xml2html('reload'); 
+														
 					//empty the cart
 					$(this).aixadacart("resetCart");	
-
-					$('#list_account tbody').xml2html('reload');				
 				}
 			});
 
+
+	
+			
 		    //init xml2html product search
 			$('#product_list_search tbody').xml2html('init',{
 					url : 'php/ctrl/ShopAndOrder.php'
@@ -187,29 +224,29 @@
 
 				
 			/**
-			 *	define and submit the deposit
+			 *	MAKE A DEPOSIT
 			 */
 			$('#deposit_submit')
 				.button()
 				.click(function(){
-					var quantity = $('#deposit_amount').val(); 
+
 					var description = $('#deposit_note').val();
-				
-					if (isNaN(quantity) || quantity == '') { 
+					var uf_account_id = 1000 + new Number($("#uf_cart_select option:selected").val());
+					var quantity = $.checkNumber($('#deposit_amount'), '', 2);		
+					
+					if (!quantity) { 
 						$.showMsg({
 									msg:"<?php echo $Text['msg_enter_deposit_amount'];?>",
 									type: 'warning'});
 						return false;
-					}
-	
-					var uf_account_id = $("#uf_account_select option:selected").val();
-	
-					if (uf_account_id <= -10){
+						
+					} else if (uf_account_id <= -4){
 						$.showMsg({
 									msg:"<?php echo $Text['msg_please_set_ufid_deposit'];?>",
 									type: 'error'});
 						return false; 
 					}
+					
 	
 					$('#deposit_submit').button('disable');
 				
@@ -246,22 +283,41 @@
 			 $('#list_account tbody').xml2html('init',{
 					url		: 'php/ctrl/Account.php',
 					params	: 'oper=latestMovements',
-					loadOnInit: true
+					loadOnInit: true,
+					rowComplete : function (rowIndex, row){
+						$.formatQuantity(row);						
+					}, 
+					complete : function (rowCount){
+						$('#list_account tbody tr:even').addClass('rowHighlight'); 
+					}
 			});
 
 
-  			 //balance
-			 $('#dailyStats').xml2html('init',{
-					url		: 'php/ctrl/Account.php',
-					params	: 'oper=getIncomeSpendingBalance&date=' + getSelectedDate(),
-                    autoReload: 100200, 
+			
+  			 //carts to validate today
+			 $('#tbl_cart_listing tbody').xml2html('init',{
+					url		: 'php/ctrl/Shop.php',
+					params : 'oper=getShopListing&filter=today', 
+                    autoReload: 100200,
+                    loadOnInit:true, 
                     beforeLoad : function(){
 						$('#dailyStats .loadAnim').show();
 					},
+					rowComplete : function(rowIndex, row){
+						var validated = $(row).children().eq(3).text();
+
+						if (validated == '0000-00-00 00:00:00'){
+							$(row).children().eq(3).html("-");	
+						} else {
+							$(row).children().eq(3).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
+						}		
+					},
 					complete : function(){
+						$('tr:even', this).addClass('rowHighlight');
 						$('#dailyStats .loadAnim').hide();
 					}
 			});
+				
 				
   			 //negative ufs
 			 $('#negative_ufs tbody').xml2html('init',{
@@ -280,9 +336,9 @@
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
-					url		: 'php/ctrl/Validate.php',
+					url		: 'php/ctrl/Shop.php',
 					params	: 'oper=getProductsBelowMinStock',
-					loadOnInit: true,
+					loadOnInit: false,
                     autoReload: 100010, 
                     beforeLoad : function(){
 						$('#min_stock .loadAnim').show();
@@ -338,30 +394,6 @@
 				$('#uf_account_select').toggle();
 			});	
 			
-			 
-			$('#uf_account_select').xml2html('init',{
-						url 	: 'php/ctrl/Account.php',
-						params 	: 'oper=getActiveAccounts', 
-						offSet	: 1, 
-						loadOnInit : true
-				//event listener to load items for this uf to validate
-			}).change(function(){
-
-					resetFields();
-				
-					//get the id of the uf
-					var uf_id = parseInt($("option:selected", this).val()) - 1000; 
-
-					if (uf_id <= -10) {
-						resetDeposit();
-						return false; 
-					}
-					
-					//activate the deposit pane
-					$('.account').html('<strong>'+uf_id+'</strong>');
-					$('#deposit_submit').button('enable');
-					$('#deposit_amount, #deposit_note').attr('disabled',false);		
-			});
 				
 
 			/**
@@ -439,6 +471,90 @@
 									}					
 			});//end event listener for product list 
 
+
+
+
+			
+			/**
+			 * resets all input fields 
+			 */
+			function resetFields(){
+				
+				$('#cartLayer').aixadacart('resetCart');		
+				$('.cartTitle').show();
+				$('.noCartTitle, .validatedCartTitle').hide();
+								
+				$('.insert_uf_id').html('<strong>??</strong>');
+				$('#uf_cart_select').val(-10);
+
+				$('#deposit_submit').button('disable');
+				$('#deposit_amount, #deposit_note').attr('disabled',true);
+
+			
+			}
+
+			//reset the deposit pane
+			function resetDeposit(){
+				$('#deposit_amount').val(''); 
+				$('#deposit_note').val('');	
+				$('.deposit_status').hide();
+			}
+
+			//realod the uf listing, update the (#) carts to be validated
+			function reloadValidationUfs(){
+				$('#uf_cart_select').xml2html('reload',{
+					url 	: 'php/ctrl/Validate.php',
+					params : 'oper=getUFsCartCount'
+				});
+
+			}
+
+
+			/**
+			 *	load items for given cart. 
+			 *	date_for_shop is not needed for loading, however for submitting(!)
+			 */
+			function loadCart(cart_id, date_for_shop){
+				var uf_id = $("#uf_cart_select option:selected").val();
+				var account = 1000+parseInt(uf_id); 
+
+				//set the uf_id and date for the saveCartURL when submitting
+				//TODO this should be replaced with the cart_id...! however this means
+				//to change the lib/validation_cart_manager, abstract_cart_manager!!
+				$('#cartLayer').aixadacart('options',{
+					date : date_for_shop,
+					saveCartURL : 'php/ctrl/Validate.php?oper=commit&uf_id='+uf_id
+				});
+
+				$('#cartAnim').show();
+				//the url to load the items for given uf/date
+				$('#cartLayer').aixadacart('loadCart',{
+					loadCartURL		: 'php/ctrl/Validate.php?oper=getShopCart&cart_id='+cart_id,
+					loadSuccess : function (){
+						$('#cartAnim').hide();
+					}
+				}); //end loadCart
+
+			}
+
+			
+			function getSelectedDate(){
+				return $('#selDate4Validation option:selected').val();
+			}
+
+
+			//prevent accidental submit on return when editing input
+			$('input')
+				.live('keydown', function(e){
+				if (e.keyCode == 13){
+					//var ti = $(this).attr("tabindex");
+					//$(this).attr("tabindex",ti+1);
+					e.stopPropagation();
+					return false; 
+				}
+			})
+			
+			
 			resetFields();
 			resetDeposit();
 			
@@ -461,22 +577,26 @@
 		
 		<div id="titlewrap">
 			<div id="titleLeftCol">
-		    	<h1><img src="img/validar.png" style="float:left; margin-top:-15px;  height:60px; margin-right:20px" /><?php echo $Text['ti_validate']; ?> <span class="insert_uf_id cart">??</span> </h1>
+				<p class="floatLeft"><img src="img/validar.png" style="margin-top:4px; height:60px;"/></p>
+		    	<div class="aix-layout-title-with-icon">
+		    		<h1 class="cartTitle"><?php echo $Text['ti_validate']; ?> <span class="insert_uf_id cart">??</span> </h1>
+		    		<h1 class="noCartTitle ui-state-highlight ui-corner-all">Nothing to validate for household <span class="insert_uf_id cart">??</span> </h1>
+		    		<h1 class="validatedCartTitle ui-state-highlight ui-corner-all">Validated cart for household <span class="insert_uf_id cart">??</span> </h1>
+		    	</div>
 		    </div>
 		    <div id="titleRightCol">
-		    	<p class="textAlignRight"><?php echo $Text['set_date'];?>: <select id="selDate4Validation">
-		    																	<option value="{date_for_validation}">{date_for_validation}</option>
-		    																</select></p>
-		    	<p class="textAlignRight"><?php echo $Text['get_cart_4_uf'];?>: <select id="uf_cart_select">
+				
+		    	<p class="textAlignRight">
+		    		<select id="uf_cart_select">
 		    			<option value="-10" selected="selected"><?php echo $Text['sel_uf']; ?></option>
-		    			<option value="{id}">{id} {name}</option>
-		    	</select>
+		    			<option value="{uf_id}" cc="{non_validated_carts}"> {uf_id} {uf_name}</option>
+		    		</select>
 		    	</p>
 		    </div>
 		</div>
 	
 
-		<div id="leftCol">
+		<div class="aix-layout-splitW60 floatLeft">
 			<div id="tabs">
 			<span class="loadAnimValidate hidden" id="cartAnim"><img src="img/ajax-loader.gif"/></span>
 			<ul>
@@ -496,8 +616,8 @@
                                  <label for="search"><?php echo $Text['search'];?></label>
 						<input id="search" class="ui-widget-content ui-corner-all" value="" />
 				</div>
-				
-				<div class="product_list_wrap">
+				<p>&nbsp;</p>
+				<div>
 					<table id="product_list_search" class="product_list" >
 						<thead>
 						<tr>
@@ -516,10 +636,9 @@
 						<tbody>
 							<tr id="{id}">
 								<td class="item_it">{id}</td>
-								<!-- td class="item_stock"><span class="product_info ui-icon ui-icon-info" stock="{stock_actual}"></span></td-->
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input name="{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input name="{id}" class="ui-corner-all" value="0.00"  size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>	
 								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
@@ -535,94 +654,106 @@
 		</div><!-- end tabs -->
 		</div><!-- end left col -->
 		
-		<div id="rightCol">
+		<div class="aix-layout-splitW40 floatLeft">
 			
 			<div id="deposit" class="ui-widget">
-				<div class="rightCol-Observer ui-widget-content ui-corner-all" >
+				<div class="aix-style-observer-widget ui-widget-content ui-corner-all" >
 					<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['make_deposit'];?> <span class="insert_uf_id account">??</span><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
 					<p id="depositMsg"></p>
 					<div id="deposit_content">
-						<table class="table_listing">
+						<table class="tblForms">
 						<tr><td><?php echo $Text['amount'];?>:&nbsp;&nbsp;</td><td><input type="text" name="quantity" id="deposit_amount" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/></td></tr>
 						<tr><td><?php echo $Text['comment'];?>:&nbsp;&nbsp;</td><td><input type="text" name="description" id="deposit_note" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/></td></tr>
 						<tr>
 							<td></td>
 							<td><button id="deposit_submit"><?=$Text['btn_make_deposit']; ?></button></td>
 						</tr>
-						<tr>
-							<td colspan="2"><p class="textAlignLeft"><a class="optionLink" id="toggle_uf_account_select" href="javascript:void(null)"><?php echo $Text['deposit_other_uf'];?></a>&nbsp;
-							<select id="uf_account_select">
-		    						<option value="-10" selected="selected"><?php echo $Text['sel_uf_or_account']; ?></option>
-		    						<option value="{id}">{id} {name}</option>
-		    				</select></p>
-							</td>
-							
-						</tr>
+						
 						<tr>
 							<td colspan="2">
 							
 							</td>
 						</tr>
 						</table>
-			
 					</div>
 				</div>
 			</div>
 			
 			<div id="monitorFlows" class="ui-widget">
-				<div class="rightCol-Observer ui-widget-content ui-corner-all">
+				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['latest_movements'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-					<table id="list_account" class="table_listing">
+					<table id="list_account" class="tblListingGrid">
 					<thead>
 						<tr>
-							<th><?php echo $Text['time'];?></th>
 							<th><?php echo $Text['account'];?></th>
 							<th><?php echo $Text['uf_short'];?></th>
-							<th><?php echo $Text['amount'];?></th>
-							<th><?php echo $Text['balance'];?></th>
+							<th>Type</th>
+							
+							<th class="textAlignRight"><?php echo $Text['amount'];?></th>
+							<th class="textAlignRight"><?php echo $Text['balance'];?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>{time}</td>
 							<td>{account_id}</td>
 							<td>{uf_id}</td>
-							<td>{quantity}</td>
-							<td>{balance}</td>
+							<td>{method}</td>
+							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
 						</tr>
 					</tbody>
 					</table>
 				</div>
 			</div>
-			<div id="monitorGlobals" class="ui-widget">
-				<div class="rightCol-Observer ui-widget-content ui-corner-all">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['dailyStats']?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-					<div id="dailyStats">
-						<p><?php echo $Text['totalIncome'];?>: {income}</p>
-						<p><?php echo $Text['totalSpending'];?>: {spending}</p>
-						<p><?php echo $Text['balance'];?>: {balance}</p><br/><br/>
-					</div>
+		
+			
+			
+			
+			<div id="monitorCarts" class="ui-widget">
+				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span>Today's carts<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<table id="tbl_cart_listing" class="tblListingDefault">
+						<thead>
+							<tr >
+								<th>Cart id</th>
+								<th><?=$Text['uf_short'];?></th>
+								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
+								<th class="textAlignCenter"><?=$Text['validated'];?></th>
+								<th class="textAlignRight"><?=$Text['total'];?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" ufId="{uf_id}" validated="{ts_validated}" class="clickable">
+								<td>{id}</td>
+								<td>{uf_id}</td>
+								<td>{date_for_shop}</td>
+								<td>{ts_validated}</td>
+								<td><p class="textAlignRight">{purchase_total}€</p></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 			
+		
 			<div id="monitorUFs" class="ui-widget">
-				<div class="rightCol-Observer ui-widget-content ui-corner-all">
+				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeUfs'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
 					
-						<table width="100%" id="negative_ufs" class="table_listing">
+						<table id="negative_ufs" class="tblListingDefault">
 							<thead>
 								<tr>
-									<th><?php echo $Text['uf_short'];?></th>
-									<th><?php echo $Text['name'];?></th>
-									<th><?php echo $Text['balance'];?></th>
+									<th class="textAlignRight"><?php echo $Text['uf_short'];?></th>
+									<th class="textAlignLeft"><?php echo $Text['name'];?></th>
+									<th class="textAlignRight"><?php echo $Text['balance'];?></th>
 									<th><?php echo $Text['lastUpdate'];?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td>{uf}</td>
-									<td>{name}</td>
-									<td><span class="negativeBalance">{balance}</span></td>
+									<td><p class="textAlignRight">{uf}</p></td>
+									<td><p class="textAlignLeft">{name}</p></td>
+									<td><p class="textAlignRight"><span class="negativeBalance">{balance}</span></p></td>
 									<td>{last_update}</td>
 								</tr>
 							</tbody>
@@ -630,7 +761,7 @@
 					
 				</div>
 			</div>
-			<div id="monitorStock" class="ui-widget">
+			<div id="monitorStock" class="ui-widget hidden">
 				<div class="rightCol-Observer ui-widget-content ui-corner-all">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
 					
@@ -668,5 +799,31 @@
 </div>
 <!-- end of wrap -->
 <!-- / END -->
+
+<div id="dialog_select_cart" title="Non-validated carts for household">
+	<p>&nbsp;</p>
+	<p class="ui-state-highlight ui-corner-all aix-style-padding8x8">The selected household has more than one cart pending for validation. Please select one: </p>
+	<p>&nbsp;</p>
+	<table id="tbl_Shop" class="tblListingDefault">
+		<thead>
+			<tr >
+				<th>Cart id</th>
+				<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
+				<th class="textAlignCenter"><?=$Text['validated'];?></th>
+				<th class="textAlignRight"><?=$Text['total'];?></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" validated="{ts_validated}"class="clickable">
+				<td>{id}</td>
+				<td class="textAlignCenter">{date_for_shop}</td>
+				<td class="textAlignCenter">{ts_validated}</td>
+				<td class="textAlignRight">{purchase_total}€</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+
 </body>
 </html>

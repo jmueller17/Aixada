@@ -32,7 +32,11 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 	
 	
 	switch ($filter) {
-		// all orders where date_for_order = today
+		
+		case 'today':
+			printXML(stored_query_XML_fields('get_purchase_listing', $today, $today, $uf_id));
+			break;
+			
 		case 'prevMonth':
 			printXML(stored_query_XML_fields('get_purchase_listing', $prevMonth, $today, $uf_id));
 			break;

@@ -60,8 +60,8 @@
 			
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseList tbody').xml2html('init',{
-				url : '../ctrlShop.php',
-				params : 'oper=getShopDetail&shop_id='+shopId, 
+				url : '../php/ctrl/Shop.php',
+				params : 'oper=getShopCart&shop_id='+shopId, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
 					var price = new Number($(row).children().eq(4).text());
@@ -88,7 +88,7 @@
 
 			//load purchase detail (products and quantities)
 			$('#memberAddress').xml2html('init',{
-				url : '../ctrlUserAndUf.php',
+				url : '../php/ctrl/UserAndUf.php',
 				params : 'oper=getMemberInfo&member_id=-1', 
 				loadOnInit : true,
 				rowComplete : function (rowIndex, row){ 

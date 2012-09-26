@@ -280,7 +280,7 @@
 			//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
 				url : 'php/ctrl/Shop.php',
-				params : 'oper=getShopDetail', 
+				params : 'oper=getShopCart', 
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
 					var price = new Number($(row).children().eq(5).text());
@@ -317,7 +317,7 @@
 					$(this).parents('tr').children().addClass('ui-state-highlight ui-corner-all');
 
 					$('#tbl_purchaseDetail tbody').xml2html('reload',{
-						params : 'oper=getShopDetail&shop_id='+shopId
+						params : 'oper=getShopCart&shop_id='+shopId
 					});
 
 					

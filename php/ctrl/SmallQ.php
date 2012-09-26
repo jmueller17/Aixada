@@ -48,27 +48,6 @@ try{
 		case 'getExistingThemes':
 			printXML(get_existing_themes_XML());
 			exit;
-        
-
-        
-        
-    case 'getProductsBelowMinStock':
-        printXML(stored_query_XML_fields('products_below_min_stock'));
-        exit;
-
-    case 'addStock':
-        printXML(stored_query_XML_fields('add_stock', $_REQUEST['product_id'], $_REQUEST['delta_amount'], $_REQUEST['operator_id'], $_REQUEST['description']));
-        exit;
-
-    case 'stockMovements':
-        printXML(stored_query_XML_fields('stock_movements', $_REQUEST['product_id'], $date, $_REQUEST['num_rows']));
-        exit;
-
-    
-
-    
-
-    
 
     default:
         throw new Exception('ctrlSmallQ.php: Operation ' . $_REQUEST['oper'] . ' not supported.');
