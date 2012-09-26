@@ -108,7 +108,7 @@ $(function(){
 	$.extend({
 		getAixadaDates : function(oper, callbackfn){
 			$.ajax({
-				type: "GET",
+				type: "POST",
 				url: "php/ctrl/Dates.php?oper="+oper+"&responseFormat=array",		
 				dataType: "JSON", 
 				success: function(data){
@@ -132,9 +132,10 @@ $(function(){
 			return $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
 		}, 
 		//util function that receives a date string as 'yy-mm-dd' and returns extended french format
-		getCustomDate: function(dateString){
+		getCustomDate: function(dateString, format){
 			var date = $.datepicker.parseDate('yy-mm-dd', dateString);
-			return $.datepicker.formatDate('DD, d MM, yy', date);
+			var f = (format)? format:'DD, d MM, yy'; 
+			return $.datepicker.formatDate(f, date);
 		}
 		
 	});

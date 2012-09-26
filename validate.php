@@ -32,7 +32,18 @@
 	<script type="text/javascript">
 	$(function(){
 
-			var torn_uf_id = <?=get_session_uf_id();?>;
+			//get the operator user id to prevent own validation
+			var gTornUfId = <?=get_session_uf_id();?>;
+
+
+			//stores todays date
+			var gToday = null;
+
+			$.getAixadaDates('getToday', function (date){
+				gToday = date[0]; 
+				//var today = $.datepicker.parseDate('yy-mm-dd', date[0]);	
+			});	
+			
 
 
 			/**
@@ -50,7 +61,7 @@
 						$(row).append(non_validated_carts);
 
 						//dim out own uf
-						if ($(row).val() == torn_uf_id){	//cannot validate yourself
+						if ($(row).val() == gTornUfId){	//cannot validate yourself
 							$(row).addClass('dim60');
 						}
 					}, 
@@ -65,7 +76,7 @@
 						resetDeposit();
 						return false; 
 						
-					} else if (uf_id == torn_uf_id){ //cannot validate your own cart
+					} else if (uf_id == gTornUfId){ //cannot validate your own cart
 						$.showMsg({
 							msg:"<?php echo $Text['msg_err_validate_self'];?>",
 							type: 'error'});
@@ -77,6 +88,7 @@
 	
 					//activate the deposit pane
 					$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
+					$('.showCartDate').removeClass('ui-state-highlight dim40').text('');
 					$('.cartTitle').show();
 					$('.noCartTitle, .validatedCartTitle').hide();
 					$('#deposit_submit').button('enable');
@@ -106,11 +118,16 @@
 						if (rowCount > 1){
 							$('#dialog_select_cart').dialog('open');
 
-						//one or zero
+						//one or zero, should be today!
 						} else {
 							var cart_id = $('#tbl_Shop tbody tr').attr('shopId');
 							var date_for_shop = $('#tbl_Shop tbody tr').attr('dateForShop');
-												
+							var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40'; 
+							var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
+							
+							$('.showCartDate').removeClass('ui-state-highlight dim40').addClass(css).text(df);
+							
+																			
 							if (cart_id > 0 ){
 								loadCart(cart_id, date_for_shop);
 							} else {
@@ -149,6 +166,8 @@
 			})
 			.live('click',function(e){
 
+				$('.showCartDate').removeClass('ui-state-highlight dim40');
+				
 				var uf_id = $(this).attr('ufId'); 
 				var validated = $(this).attr('validated');
 				var cart_id = $(this).attr('shopId'); 
@@ -166,6 +185,12 @@
 				if (validated == "0000-00-00 00:00:00") {
 					$('.cartTitle').show();
 					$('.noCartTitle, .validatedCartTitle').hide();
+
+					var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40'; 
+					var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
+					$('.showCartDate').addClass(css).text(df);
+
+					
 					loadCart(cart_id, date_for_shop);
 				} else {					
 					resetFields();
@@ -174,16 +199,9 @@
 						width:500,
 						buttons: {
 							"Yes":function(){						
-								/*loadCart(cart_id, date_for_shop);
-								$('.validatedCartTitle').show();
-								$('.noCartTitle, .cartTitle').hide();
-								$('#btn_submit').hide();*/
-
 								window.location.href = "report_shop.php?detailForCart="+cart_id+"&lastPage=validate";
-								
 								$( this ).dialog( "close" );
 							},
-							
 							"Cancel" : function(){
 								$( this ).dialog( "close" );
 							}
@@ -485,6 +503,7 @@
 				$('.noCartTitle, .validatedCartTitle').hide();
 								
 				$('.insert_uf_id').html('<strong>??</strong>');
+				$('.showCartDate').removeClass('ui-state-highlight dim40').text('');
 				$('#uf_cart_select').val(-10);
 
 				$('#deposit_submit').button('disable');
@@ -579,9 +598,9 @@
 			<div id="titleLeftCol">
 				<p class="floatLeft"><img src="img/validar.png" style="margin-top:4px; height:60px;"/></p>
 		    	<div class="aix-layout-title-with-icon">
-		    		<h1 class="cartTitle"><?php echo $Text['ti_validate']; ?> <span class="insert_uf_id cart">??</span> </h1>
-		    		<h1 class="noCartTitle ui-state-highlight ui-corner-all">Nothing to validate for household <span class="insert_uf_id cart">??</span> </h1>
-		    		<h1 class="validatedCartTitle ui-state-highlight ui-corner-all">Validated cart for household <span class="insert_uf_id cart">??</span> </h1>
+		    		<h1 class="cartTitle"><?php echo $Text['ti_validate']; ?><span class="insert_uf_id cart">??</span> <span class="ui-corner-all aix-style-padding3x3 showCartDate"></span> </h1>
+		    		<h1 class="noCartTitle ui-state-highlight ui-corner-all">Nothing to validate for HU<span class="insert_uf_id cart">??</span> </h1>
+		    		<h1 class="validatedCartTitle ui-state-highlight ui-corner-all">Validated cart for HU<span class="insert_uf_id cart">??</span></h1>
 		    	</div>
 		    </div>
 		    <div id="titleRightCol">

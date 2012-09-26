@@ -1011,7 +1011,7 @@
 						<td class="textAlignRight minPadding">{provider_name}</td>
 						<td class="textAlignCenter">{date_for_order}</td>
 						<td class="textAlignCenter">{time_left}</td>
-						<td class="textAlignCenter">{ts_send_off}</td>
+						<td class="textAlignCenter">{ts_sent_off}</td>
 						<td class="textAlignCenter">{date_for_shop}</td>
 						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
 						<td class="textAlignCenter">{revision_status}</td>
