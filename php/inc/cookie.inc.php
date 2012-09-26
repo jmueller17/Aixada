@@ -3,15 +3,6 @@
  * @package Aixada
  */ 
 
-//$slash = explode('/', getenv('SCRIPT_NAME'));
-//$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-//get the path with subdirectories...
-//$app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
-
-//define('DS', DIRECTORY_SEPARATOR);
-//define('__ROOT__', dirname(__FILE__).DS); 
-
-
 require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 
