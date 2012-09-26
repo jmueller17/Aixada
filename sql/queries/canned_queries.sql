@@ -117,7 +117,8 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_iva_type.id,
-      aixada_iva_type.percent 
+      aixada_iva_type.percent,
+      aixada_iva_type.description 
     from aixada_iva_type ";
   set @q = concat(@q, @lim);
   prepare st from @q;
@@ -133,6 +134,7 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_member.id,
+      aixada_member.custom_member_ref,
       aixada_uf.name as uf,
       aixada_member.name,
       aixada_member.address,
@@ -166,7 +168,7 @@ begin
       aixada_order.id,
       aixada_provider.name as provider,
       aixada_order.date_for_order,
-      aixada_order.ts_send_off,
+      aixada_order.ts_sent_off,
       aixada_order.date_received,
       aixada_order.date_for_shop,
       aixada_order.total,
@@ -285,7 +287,7 @@ begin
       aixada_orderable_type.description as orderable_type,
       aixada_product_category.description as category,
       aixada_rev_tax_type.description as rev_tax_type,
-      aixada_product.iva_percent_id,
+      aixada_iva_type.description as iva_percent,
       aixada_product.unit_price,
       aixada_unit_measure_order.unit as unit_measure_order,
       aixada_unit_measure_shop.unit as unit_measure_shop,
@@ -301,6 +303,7 @@ begin
     left join aixada_orderable_type as aixada_orderable_type on aixada_product.orderable_type_id=aixada_orderable_type.id
     left join aixada_product_category as aixada_product_category on aixada_product.category_id=aixada_product_category.id
     left join aixada_rev_tax_type as aixada_rev_tax_type on aixada_product.rev_tax_type_id=aixada_rev_tax_type.id
+    left join aixada_iva_type as aixada_iva_type on aixada_product.iva_percent_id=aixada_iva_type.id
     left join aixada_unit_measure as aixada_unit_measure_order on aixada_product.unit_measure_order_id=aixada_unit_measure_order.id
     left join aixada_unit_measure as aixada_unit_measure_shop on aixada_product.unit_measure_shop_id=aixada_unit_measure_shop.id";
   set @q = concat(@q, @lim);

@@ -4,6 +4,8 @@
  * @package   Aixada
  */ 
 
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 
 ob_start(); // Starts FirePHP output buffering
 
