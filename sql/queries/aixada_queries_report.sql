@@ -66,7 +66,7 @@ end|
  * report the total orders for all providers for a given date, in summary
  */
 drop procedure if exists summarized_orders_for_date|
-create procedure summarized_orders_for_date(IN order_date date)
+create procedure summarized_orders_for_date(in order_date date)
 begin
   select 
     pv.id as provider_id,

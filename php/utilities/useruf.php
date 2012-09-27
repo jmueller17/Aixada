@@ -94,7 +94,7 @@ function extract_user_form_values(){
 	$fields["phone2"] = get_param('phone2','');
 	$fields["web"] = get_param('web','');
 	$fields["notes"] = get_param('notes','');
-	$fields["active"] = get_param('member_active',1);
+	$fields["active"] = get_param('member_active',0);
 	$fields["participant"] = get_param('participant',1);
 	$fields["adult"] = get_param('adult',1);	
 	

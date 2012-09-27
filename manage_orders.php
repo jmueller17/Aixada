@@ -516,15 +516,16 @@
 				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
 				rowComplete : function (rowIndex, row){
+					var tds = $(row).children();
 					var orderId = $(row).attr("id");
-					var timeLeft = parseInt($(row).children().eq(4).text());
-					var status = $(row).children().eq(8).text();
+					var timeLeft = parseInt(tds.eq(4).text());
+					var status = tds.eq(8).text();
 					
 					if (timeLeft > 0){ 	// order is still open
-						$(row).children().eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
+						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
 						
 					} else {			//order is closed
-						$(row).children().eq(4).text("closed");
+						tds.eq(4).text("closed");
 						var statusTd = $(row).children().eq(8); 
 						statusTd.attr('revisionStatus',status);
 						switch(status){
@@ -547,11 +548,14 @@
 
 					
 					if (orderId > 0){ 
-
+						var ts = tds.eq(5).text();
+						var str = (ts == "0000-00-00 00:00:00")? '-':'<p title="'+ts+'">'+ts.substr(0,10)+'</p>';
+						
+						tds.eq(5).html(str);
 					} else {
 						//while open and not sent off, no order_id exists
-						$(row).children().eq(1).html('<p>-</p>');
-						$(row).children().eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder">Finalize now</a></p>');
+						tds.eq(1).html('<p>-</p>');
+						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder">Finalize now</a></p>');
 					}
 				},
 				complete : function (rowCount){
@@ -592,19 +596,26 @@
 							}
 						},
 						type: 'confirm'});
+					
+					e.stopPropagation();
 			});
 
 			
 			
 			$('#tbl_orderOverview tbody tr')
-			.live('mouseover', function(){
-				$(this).removeClass('highlight').addClass('ui-state-hover');
-				
-			})
-			.live('mouseout',function(){
-				$(this).removeClass('ui-state-hover');
-				
-			});
+				.live('mouseover', function(e){
+					$(this).removeClass('highlight').addClass('ui-state-hover');
+					
+				})
+				.live('mouseout',function(e){
+					$(this).removeClass('ui-state-hover');
+					
+				})
+				.live('click', function(e){
+					gSelRow = $(this); 
+					$('.col').hide();	
+					switchTo('view',{});
+				});
 			
 			
 			$("#tbl_orderOverview").tablesorter(); 
@@ -697,16 +708,18 @@
 					} else {
 						switchTo('review', {});
 					}
+
+					e.stopPropagation();
 				});
 
 
 				//view selected order (no editing)
-				$('.viewOrderBtn')
+				/*$('.viewOrderBtn')
 					.live('click', function(e){
 						gSelRow = $(this).parents('tr'); 
 						$('.col').hide();	
 						switchTo('view',{});
-					});
+					});*/
 
 				
 				//print the selected order. If more than one is selected, confirm bulk print
@@ -739,6 +752,7 @@
 						$(this).parents('tr').children('td:first').find('input').attr('checked','checked');
 						printQueue();
 					}
+					e.stopPropagation();
 				});
 
 
@@ -765,23 +779,68 @@
 					}//end item selected 
 				});//end menu
 
-	
+
+				//bulk actions
+				$('input[name=bulkAction]')
+					.live('click', function(e){
+						e.stopPropagation();
+					})
 				
 				//do selected stuff with bunch of orders (from overview)
-				$('#bulkActions')
-					.change(function(){
+				$('#bulkActionsTop, #bulkActionsBottom')
+					.change(function(e){
 
 						switch ($("option:selected", this).val()){
 							case "print": 
 								printQueue();
 								break;
 							case "download":
-								alert("todo");
+								var orderRow = ''; 								
+								$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+									orderRow += '<input type="hidden" name="order_id[]" value="'+$(this).parents('tr').attr('orderId')+'"/>';
+									orderRow += '<input type="hidden" name="provider_id[]" value="'+$(this).parents('tr').attr('providerId')+'"/>';
+									orderRow += '<input type="hidden" name="date_for_order[]" value="'+$(this).parents('tr').attr('dateforOrder')+'"/>';
+								});
+								$('#submitZipForm').empty().append(orderRow);
+								getZippedOrders();
 								break;						
 						}
-				});
+					});
+
+				$('#toggleBulkActions')
+					.click(function(e){
+						if ($(this).is(':checked')){
+							$('input:checkbox[name="bulkAction"]').attr('checked','checked');
+						} else {
+							$('input:checkbox[name="bulkAction"]').attr('checked',false);
+						}
+						e.stopPropagation();
+					});
 
 
+				
+				/**
+				 *	download selected orders in zipfile
+				 */
+				function getZippedOrders(){
+					$.ajax({
+						type: "POST",
+						url: 'php/ctrl/Orders.php?oper=bundleOrders',
+						data : $('#submitZipForm').serialize(),
+						success: function(zipURL){
+							window.frames['dataFrame'].window.location = zipURL;
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							$.showMsg({
+								msg:XMLHttpRequest.responseText,
+								type: 'error'});
+						},
+						complete : function(){
+							$('#bulkActionsTop, #bulkActionsBottom').val(-1).attr('selected','selected');
+						}
+					});
+				}
+				
 
 				/**
 				 *	prepares the printing queue of the selected orders. 
@@ -983,18 +1042,27 @@
 				</div>				
 		   	</div> 	
 		</div> <!--  end of title wrap -->
-	
+		<div class="ui-widget overviewElements" id="withSelected">
+			<p  class="textAlignLeft">
+				<!-- span class="ui-icon ui-icon-arrowreturnthick-1-s floatLeft" style="margin-top:10px; margin-right:5px;"></span-->
+				<select id="bulkActionsTop">
+					<option value="-1">With selected...</option>
+					<option value="print">Print</option>
+					<option value="download">Download as zip</option>
+				</select>
+			</p>
+		</div>
 		<div id="orderOverview" class="ui-widget overviewElements">
 			<div class="ui-widget-header ui-corner-all">
 				<p>&nbsp;</p>
 			</div>
 			<div class="ui-widget-content">
-			<table id="tbl_orderOverview" class="tblOverviewOrders">
+			<table id="tbl_orderOverview" class="tblListingDefault">
 				<thead>
 					<tr>
-						<th></th>
+						<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
 						<th class="clickable">id <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable textAlignLeft">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Closes in days</th>
 						<th>Sent off to provider</th>
@@ -1005,18 +1073,18 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}">
+					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="clickable">
 						<td><input type="checkbox" name="bulkAction"/>
 						<td>{id}</td>
-						<td class="textAlignRight minPadding">{provider_name}</td>
-						<td class="textAlignCenter">{date_for_order}</td>
-						<td class="textAlignCenter">{time_left}</td>
-						<td class="textAlignCenter">{ts_sent_off}</td>
-						<td class="textAlignCenter">{date_for_shop}</td>
-						<td class="textAlignRight">{order_total} €&nbsp;&nbsp;</td>
-						<td class="textAlignCenter">{revision_status}</td>
+						<td class="textAlignRight minPadding"><p class="textAlignLeft">{provider_name}</p></td>
+						<td>{date_for_order}</td>
+						<td>{time_left}</td>
+						<td>{ts_sent_off}</td>
+						<td>{date_for_shop}</td>
+						<td><p  class="textAlignRight">{order_total} €&nbsp;&nbsp;</p></td>
+						<td>{revision_status}</td>
 						<td class="maxwidth-100">				
-							<p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p>
+							<!-- p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p-->
 							<p class="ui-corner-all iconContainer ui-state-default floatLeft printOrderBtn"><span class="ui-icon ui-icon-print" title="Print order"></span></p>							
 							<p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
 						</td>
@@ -1026,11 +1094,13 @@
 					<tr>
 						<td><span class="ui-icon ui-icon-arrowreturnthick-1-e"></span></td>
 						<td colspan="6">
-							<select id="bulkActions">
+							<p  class="textAlignLeft">
+							<select id="bulkActionsBottom">
 								<option value="-1">With selected...</option>
 								<option value="print">Print</option>
-								<option value="download">Download as zip (TODO)</option>
+								<option value="download">Download as zip</option>
 							</select>
+							</p>
 						</td>
 					</tr>
 				</tfoot>
@@ -1171,7 +1241,8 @@
 	<br/>
 	<div id="datepicker"></div>
 </div>
-
+<iframe name="dataFrame" style="display:none;"></iframe>
+<form id="submitZipForm" class="hidden"></form>
 
 <!-- / END -->
 </body>

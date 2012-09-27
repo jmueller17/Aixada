@@ -443,28 +443,37 @@ end|
 
 drop procedure if exists check_credentials|
 create procedure check_credentials(in the_login varchar(50), in the_password varchar(255))
-begin
-   update aixada_user 
-   set last_login_attempt = sysdate() 
-   where login=the_login;
-
-   update aixada_user 
-   set last_successful_login = sysdate() 
-   where login=the_login and password=the_password;
-   
-	select 
-   		id, 
-   		login, 
-   		uf_id, 
-   		member_id, 
-   		provider_id, 
-   		language, 
-   		gui_theme 
-   from 
+begin	
+	
+	update 
    		aixada_user 
-   where 
+   	set 
+   		last_login_attempt = sysdate() 
+   	where 
+   		login=the_login;
+   	
+	update 
+   		aixada_user 
+   	set 
+   		last_successful_login = sysdate() 
+   	where 
    		login=the_login 
    		and password=the_password;
+   
+   	-- check credentials, see if user is active --
+	select 
+   		u.*,
+   		mem.active as is_active_member,
+   		pv.active as is_active_provider
+   	from 
+   		aixada_user u
+   	left join
+   		aixada_member mem on u.member_id = mem.id
+   	left join
+   		aixada_provider pv on u.provider_id = pv.id
+   	where 
+   		u.login=the_login 
+   		and u.password=the_password; 
 end|
 
 

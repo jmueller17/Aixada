@@ -260,6 +260,8 @@ $Text['retype_pwd']	= "Retype password";
 $Text['lang']	= "Language";
 $Text['msg_err_incorrectLogon'] = "Incorrect login";
 $Text['msg_err_noUfAssignedYet'] = "You haven't been assigned an UF yet. Please get somebody to complete registering you.";
+
+
 $Text['msg_reg_success'] = "You have been successfully registered; the full activation of your user is pending. Have all the other members of your UF register, and get someone to finish the process. ";
 $Text['register'] = "Register";
 $Text['required_fields'] = " are required fields";
@@ -547,5 +549,9 @@ $Text['ordered'] = 'Ordered';
 $Text['delivered'] = 'Delivered';
 $Text['price'] = 'Price';
 $Text['qu'] = 'Qu';
+$Text['msg_err_deactivatedUser'] = "Your user account has been deactivated!";
+$Text['order'] = 'Order';
+$Text['order_pl'] = 'Orders';
+
 
 ?>

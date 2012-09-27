@@ -86,10 +86,6 @@ try{
         }
         exit;
 
-  
-
-
- 
 
   case 'changeOtherPassword':
       $user_id = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;

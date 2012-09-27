@@ -108,7 +108,7 @@ div#titleLeftCol50	{width:40%; float:left;}
 div#titleRightCol50	{width:58%; float:left; padding-top:15px; line-height:2em;}
 div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
 div#ViewChoice		{float:right; margin-top:10px;}
-
+div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 
 .aix-layout-center80 {width:80%; margin:5px auto;}
 .aix-layout-center60 {width:60%; margin:5px auto;}

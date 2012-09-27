@@ -58,6 +58,7 @@ class Authentication {
     $row = $rs->fetch_assoc();
     $db->free_next_results();
 
+    
     if (!$row or !array_key_exists('id', $row)) {
         global $Text;
         throw new AuthException($Text['msg_err_incorrectLogon']);
@@ -66,6 +67,11 @@ class Authentication {
     if (!array_key_exists('uf_id', $row) or intval($row['uf_id']) == 0) {
         global $Text;
         throw new AuthException($Text['msg_err_noUfAssignedYet']);
+    }
+    
+  	if (!array_key_exists('is_active_member', $row) or intval($row['is_active_member']) == 0) {
+        global $Text;
+        throw new AuthException($Text['msg_err_deactivatedUser']);
     }
 
     $user_id = $row['id'];

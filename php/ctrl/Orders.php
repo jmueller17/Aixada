@@ -7,6 +7,7 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/orders.php");
+require_once(__ROOT__ . "php/lib/report_manager.php");
 
 
 if (!isset($_SESSION)) {
@@ -91,6 +92,14 @@ try{
   		case 'orderDetailInfo':
   			printXML(stored_query_XML_fields('get_detailed_order_info', get_param('order_id',0), get_param('provider_id'), get_param('date',0) ));
   			exit;
+  			
+  		//make html file(s) of selected orders and bundle them into a zip
+  		case 'bundleOrders':
+  			$rm = new report_manager();
+  			$zipfile = $rm->bundle_orders(get_param('provider_id'), get_param('date_for_order'), get_param('order_id'),0);
+      		echo $zipfile;
+      		exit;
+      		
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  
         break;

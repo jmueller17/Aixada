@@ -19,7 +19,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	
    	<?php  } else { ?>
-   	    <script type="text/javascript" src="js/js_for_manage_db.min.js"></script>
+   	    <script type="text/javascript" src="js/js_for_manage_admin.min.js"></script>
     <?php }?>
     
    
@@ -37,7 +37,7 @@
 				icons: {
 					primary: "ui-icon-copy"}
 			})
-			.click(function(){
+			.click(function(e){
 
 				$.ajax({
 					   url: "php/ctrl/Admin.php?oper=backupDatabase",
@@ -46,7 +46,7 @@
 						   $('#btn_backup').button( "option", "disabled", true );
 						},
 					   success: function(msg){
-					    $('#msg_link').html("<a href='"+msg+"'>"+<?=$Text['download_db_zipped'];?>+"</a>");
+					    $('#msg_link').html('<a href="'+msg+'"><?=$Text['download_db_zipped'];?></a>');
 					   },
 					   error : function(XMLHttpRequest, textStatus, errorThrown){
 						   $.showMsg({

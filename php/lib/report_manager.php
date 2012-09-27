@@ -61,39 +61,6 @@ class report_manager {
   }
 
   /**
-   * Report all items shopped in the past month by a given uf, compact (sparse) format
-   */
-  /*
-  public function compact_shopsHTML($uf, $standalone_HTML=false, $with_rollup=true)
-  {
-    global $Text;
-    $rs = do_stored_query('last_shops_for_uf', $uf);
-    $headings = array('date_for_shop' => $Text['provider_name'], 
-		      'ts_validated'  => $Text['product_name'], 
-		      'product'            => $Text['uf_short'],
-		      'qty'           => $Text['qty']);
-    $totals = array('total_quantity'          => $Text['total_qty'], 
-		    'total_price'        => $Text['total_price']);
-    $styles   = array('provider_name' => 'style1',
-		      'product_name'  => 'style2',
-		      'uf'            => 'style3',
-		      'qty'     => 'style4',
-		      'total_price'   => 'style_total_price');
-    $options = array('title' => "All orders for $date",
-		     'standalone_HTML'    => $standalone_HTML,
-		     'pagebreak_after_h1' => true,
-		     'additional_h1_info' => array('email' => 'email'),
-		     'additional_pagebreak_info' => array('email' => 'email'),
-		     'additional_last_info' => 'unit');
-    $strHTML = ($with_rollup ? 
-		$this->rowset_to_HTML_with_rollup($rs, $headings, $totals, $styles, $options) :
-		$this->rowset_to_HTML_without_rollup($rs, $headings, $styles, $options));
-    DBWrap::get_instance()->free_next_results();
-    return $strHTML;
-  }
-  */
-
-  /**
    * Report all orders for a given provider and date, extended (old-style) format
    */
   public function extended_ordersHTML($rs)
@@ -123,14 +90,14 @@ class report_manager {
     }    
     $uf_list = array_unique($uf_list);
     natsort($uf_list);
-    $strHTML = "<table><tbody><tr><td>{$Text['product_name']}</td>";
+    $strHTML = "<table><thead><tr><th><p class='textAlignLeft'>{$Text['product_name']}</p></th>";
     foreach ($uf_list as $uf) {
-        $strHTML .= "<td>" //{$Text['uf_short']} 
-            . "$uf</td>";
+        $strHTML .= "<th>" //{$Text['uf_short']} 
+            . "$uf</th>";
     }
-    $strHTML .= '<td class="report_total_quantity_num">' . $Text['total_qty'] . "</td></tr>\n";
+    $strHTML .= '<th class="report_total_quantity_num">' . $Text['total_qty'] . "</th></tr></thead><tbody>\n";
     foreach (array_keys($matrix) as $product) {
-        $strHTML .= "<tr><td>{$product} [{$matrix[$product]['unit']}]</td>";
+        $strHTML .= "<tr><td><p class='productName'>{$product} [{$matrix[$product]['unit']}]</p></td>";
         foreach ($uf_list as $uf) {
             $strHTML .= '<td>';
             if (isset($matrix[$product][$uf])) {
@@ -212,20 +179,22 @@ class report_manager {
   {
       global $Text;
       $html = '<table>'
-          . '<td>' . $Text['product_name'] . '</td>'
-          . '<td>' . $Text['description'] . '</td>'
-          . '<td>' . $Text['total_qty'] . '</td>'
-          . '<td>' . $Text['unit'] . '</td>'
-          . '<td>' . $Text['total_price'] . '</td>'
-          ;
+      	  . '<thead>'	
+      	  . '<tr>'	
+          . '<th>' . $Text['product_name'] . '</th>'
+          . '<th>' . $Text['description'] . '</th>'
+          . '<th>' . $Text['total_qty'] . '</th>'
+          . '<th>' . $Text['unit'] . '</th>'
+          . '<th>' . $Text['total_price'] . '</th>'
+          . '</tr></thead><tbody>';
       $rs = do_stored_query('summarized_orders_for_provider_and_date', $id, $the_date);
       while ($row = $rs->fetch_assoc()) {
           $html .=
               '<tr>'
-              . '<td><span class="productName">' . $row['product_name'] . '</span></td>'
+              . '<td><p class="productName">' . $row['product_name'] . '</p></td>'
               . '<td>'
               . ($row['description'] ? 
-                 '<span class="productDescription">' . $row['description'] . '</span>'
+                 '<p class="productDescription">' . $row['description'] . '</p>'
                  : '')
               . '</td>'
               . '<td><span class="totalQuantity">' 
@@ -236,7 +205,7 @@ class report_manager {
               . '</tr>';
       }
       DBWrap::get_instance()->free_next_results();
-      return $html . '</table>';
+      return $html . '</tbody></table>';
   }
 
   private function create_summarized_orders_html($the_date)
@@ -265,14 +234,16 @@ class report_manager {
       }    
       DBWrap::get_instance()->free_next_results();
             
-      $headerfile = 'php/inc/report_header.html';
+      $headerfile = __ROOT__.'php/inc/report_header.html';
       $inhandle = @fopen($headerfile, 'r');
       if (!$inhandle)
           throw new Exception("Couldn't open {$headerfile} for reading");
       $header = fread($inhandle, 4096);
       $report_files = array();
+      
+      
       foreach($prov_ids as $id) {
-          $report_file =   'local_config/comanda.' 
+          $report_file =  __ROOT__. 'local_config/orders/comanda.' 
               . str_replace(' ', '+', $prov_name[$id])
               . '.' . $the_date . '.html';
           $report_file = htmlentities($report_file);
@@ -317,8 +288,8 @@ class report_manager {
   {
       $report_files = $this->create_summarized_orders_html($the_date);
       $zip = new ZipArchive();
-      $filename = 'local_config/comanda.' . $the_date . '.zip';
-      if ($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) !== TRUE) {
+      $filename = 'local_config/orders/comanda.' . $the_date . '.zip';
+      if ($zip->open(__ROOT__.$filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) !== TRUE) {
           throw new Exception("cannot open <$filename>\n");
       }      
       foreach($report_files as $file) {
@@ -328,6 +299,131 @@ class report_manager {
       $zip->close();
       return $filename;
   }
+  
+
+  
+  
+  
+  
+  
+  
+ public function bundle_orders($arr_providers,$arr_dates, $arr_order_ids)
+  {
+	  global $Text;
+	  
+	  //delete old files: 
+  	  $files = glob(__ROOT__.'local_config/orders/*'); // get all file names
+	  foreach($files as $file){ // iterate files
+  			if(is_file($file))
+    			unlink($file); // delete file
+	  }
+		  
+      $report_files = $this->create_selected_summarized_orders_html($arr_providers, $arr_dates, $arr_order_ids);
+      $zip = new ZipArchive();
+      $filename = 'local_config/orders/'.$Text['order_pl'].'X'.$arr_dates[0].'.zip';
+      if ($zip->open(__ROOT__.$filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) !== TRUE) {
+          throw new Exception("cannot open <$filename>\n");
+      }      
+      foreach($report_files as $file) {
+          $localfile = substr(strrchr($file, '/'), 1); // only filename, no directory
+          $zip->addFile($file, $localfile);
+      }
+      $zip->close();
+      return $filename;
+  }
+  
+  
+  private function create_selected_summarized_orders_html($arr_provider_ids, $arr_dates, $arr_order_ids)
+  {
+      global $Text;
+      $prov_ids = array();
+      $prov_order_ids = array();
+      $prov_name = array();
+      $prov_email = array();
+      $prov_phone = array();
+      $resp_uf = array();
+      $resp_uf_name = array();
+      $resp_uf_phone = array();
+      $total_price = array();
+
+       if (  count($arr_provider_ids)!= count($arr_dates) )
+       	 throw new Exception("Array size mismatch in report_manager.php");
+
+       	 
+       	 
+      for ($i=0; $i < count($arr_provider_ids); ++$i) {
+      	$rs = do_stored_query('get_detailed_order_info', 0,  $arr_provider_ids[$i], $arr_dates[$i]);
+      	 while ($row = $rs->fetch_assoc()) {
+	          $prov_name[$i]       = $row['name'];
+	          $prov_email[$i]      = $row['email'];
+	          $prov_phone[$i]      = $row['phone1'];
+	          $resp_uf[$i]         = $row['uf_id'];
+	          $resp_uf_name[$i]    = $row['uf_name'];
+	          //$resp_uf_phone[$id]   = $row['responsible_uf_phone'];
+	          //$total_price[$id]     = $row['total_price'];
+      	}    
+      	DBWrap::get_instance()->free_next_results();      	
+      }
+       
+      $headerfile = __ROOT__.'php/inc/report_header.html';
+      $inhandle = @fopen($headerfile, 'r');
+      if (!$inhandle)
+          throw new Exception("Couldn't open {$headerfile} for reading");
+      $header = fread($inhandle, 4096);
+      $report_files = array();
+      
+      
+      //foreach($arr_providers as $id) {
+      for ($i=0; $i < count($arr_provider_ids); ++$i) {
+      	
+       //foreach($arr_provider_ids as $id) {
+
+		$report_file =   __ROOT__.'local_config/orders/'.$Text['order_pl'].'.' 
+              . str_replace(' ', '_', $prov_name[$i]) . '.'
+              . $arr_dates[$i]  . '.html';
+          
+        $report_file = htmlentities($report_file);
+        $report_files[] = $report_file;
+        $outhandle = @fopen($report_file, 'w');
+        
+        if (!$outhandle)
+              throw new Exception("Couldn't open {$report_file} for writing");
+        
+        $html = $header 
+              . '<title>' 
+              . "Order for {$prov_name[$i]} for {$arr_dates[$i] }"
+              . '</title></head><body>';
+          $html .= 
+              '<h1>Order #'.$arr_order_ids[$i].' for <span class="providerName">'
+              . $prov_name[$i]
+              . '</span> for '
+              . $arr_dates[$i] 
+              . '</h1><p><span class="responsibleUF">Responsible ' 
+              . $Text['uf_short'] . ' ' . $resp_uf[$i] . ' ' . $resp_uf_name[$i] 
+              //. ' (Tel. ' 
+              //. $resp_uf_phone[$id]
+              . ')</span><br/><span class="providerInfo">Info provider: telf: '
+              . $prov_phone[$i]
+              . ' / email: '
+              . $prov_email[$i]
+              . '</span></p>';
+
+          $html .= '<h2>' . $Text['summarized_orders'] . ' </h2>';
+          $html .= $this->write_summarized_orders_html($arr_provider_ids[$i], $arr_dates[$i] );
+          $html .= '<div/>';
+          $html .= '<h2>' . $Text['detailed_orders']  .', '. $prov_name[$i] . ', '. $arr_dates[$i].'</h2>';
+          $html .= $this->compact_orders_for_provider_and_dateHTML($arr_provider_ids[$i], $arr_dates[$i]);
+          $html .= '<div/>';
+          $html .= '<h2>' . $Text['detailed_orders']  .', '. $prov_name[$i] . ', '. $arr_dates[$i].'</h2>';
+          $html .= $this->extended_orders_for_provider_and_dateHTML($arr_provider_ids[$i], $arr_dates[$i]);
+          $html .= '</body></html>';
+          fwrite($outhandle, $html);
+          
+      }      
+      return $report_files;      
+  }
+  
+  
   
   /**
    * This function creates HTML code from a rowset iterator.
