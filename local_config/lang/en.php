@@ -20,16 +20,6 @@ $Text['uf_short'] = "HU";
 $Text['uf_long'] = "Household";
 
 
-/** added 2012-09-19 */
-$Text['nif'] = "NIF";
-$Text['bank_name'] = "Bank";
-$Text['bank_account'] = "Bank Account";
-$Text['picture']  = "Picture";
-$Text['offset_order_close'] = "Processing time";
-$Text['iva_percent_id'] = "IVA type";
-$Text['percent'] = "Percent";
-$Text['adult'] = "Adult";
-
 /** 
  *  		misc
  */
@@ -67,17 +57,15 @@ $Text['validate'] = "Validate";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = "The New Aixada";
-$Text['head_ti_order'] = "Place Order";
-$Text['head_ti_shop'] = "Buy Products";
-$Text['head_ti_reports'] = "Reports"; 
+$Text['global_title'] = "Aixada platform";
 $Text['head_ti_validate'] = "Validate";
-$Text['head_ti_active_products'] = "Active Products";
-$Text['head_ti_arrived_products'] = "Products that have arrived";
+
+$Text['head_ti_active_products'] = "De/activate orderable products";
+//$Text['head_ti_arrived_products'] = "Products that have arrived";
 $Text['head_ti_active_roles'] = "Active Roles";
 $Text['head_ti_account'] = "Accounts";
 $Text['head_ti_manage_orders'] = "Manage Orders";
-$Text['head_ti_manage_dates'] = "Set Order Dates";
+//$Text['head_ti_manage_dates'] = "Set Order Dates";
 $Text['head_ti_manage'] = "Manage";
 $Text['head_ti_manage_uf'] = "Households/Members";
 $Text['head_ti_incidents'] = "Incidents";
@@ -91,21 +79,21 @@ $Text['head_ti_cashbox'] = "Cashbox control";
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "De-/activate products for ordering";
-$Text['ti_mng_arrived_products'] = "The following products have arrived on ";
+//$Text['ti_mng_arrived_products'] = "The following products have arrived on ";
 $Text['ti_mng_activate_roles'] = "Manage roles of user ";
 $Text['ti_mng_activate_users'] = "Activate users for ";
-$Text['ti_mng_move_orders'] = "Move orders";
+//$Text['ti_mng_move_orders'] = "Move orders";
 $Text['ti_mng_activate_preorders'] = "Convert preorder to order";
-$Text['ti_mng_members'] = "Manage members";
-$Text['ti_mng_ufs'] = "Manage households";
-$Text['ti_mng_dates'] = "De-/activate products for ordering";	 /*delme*/
-$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates"; /*delme*/
+$Text['ti_mng_members'] = "Manage member";
+//$Text['ti_mng_ufs'] = "Manage households";
+//$Text['ti_mng_dates'] = "De-/activate products for ordering";	 /*delme*/
+//$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates"; /*delme*/
 $Text['ti_mng_db'] = "Backup database"; 
 $Text['ti_order'] = "Place your order for ";
 $Text['ti_shop'] = "Buy stuff ";
-$Text['ti_report_report'] = "Summary of orders for "; 
+//$Text['ti_report_report'] = "Summary of orders for "; 
 $Text['ti_report_account'] = "Report accounts "; 
-$Text['ti_report_my_account'] = "Report my account "; 
+//$Text['ti_report_my_account'] = "Report my account "; 
 $Text['ti_report_preorder'] = "Summary of preorders"; 
 $Text['ti_report_incidents'] = "Today's incidents";
 $Text['ti_incidents'] = "Incidents";
@@ -113,12 +101,12 @@ $Text['ti_validate'] = "Validate cart for HU";
 $Text['ti_stats'] = "Overall statistics";
 $Text['ti_my_account'] = "My settings";
 $Text['ti_my_account_money'] = "My money";
-$Text['ti_my_prev_sales'] = "My previous purchases";
+//$Text['ti_my_prev_sales'] = "My previous purchases";
 $Text['ti_all_sales'] = "Overview sales";
 $Text['ti_login_news'] = "Login and news";
 $Text['ti_timeline'] = "Timeline Report";
 $Text['ti_report_torn'] = "Summary of today's session";
-$Text['ti_mng_cashbox'] = "Cashbox";
+//$Text['ti_mng_cashbox'] = "Cashbox";
 
 
 
@@ -139,26 +127,25 @@ $Text['Producer'] = 'Producer';
 /**
  * 				Manage Products / Roles
  */
-$Text['mo_inact_prod'] = "Products they can't order";
-$Text['mo_act_prod'] = "Products they will be able to order:";
-$Text['mo_notarr_prod'] = "Products that haven't arrived:";
-$Text['mo_arr_prod'] = "Products that have arrived:";
+//$Text['mo_inact_prod'] = "Products they can't order";
+//$Text['mo_act_prod'] = "Products they will be able to order:";
+//$Text['mo_notarr_prod'] = "Products that haven't arrived:";
+//$Text['mo_arr_prod'] = "Products that have arrived:";
 $Text['mo_inact_role'] = "Inactive roles";
-$Text['mo_act_role'] = "Active roles";
+//$Text['mo_act_role'] = "Active roles";
 $Text['mo_inact_user'] = "Inactive users";
 $Text['mo_act_user'] = "Active users";
-$Text['msg_no_report'] = "No providers/products to report for the given date!";
+//$Text['msg_no_report'] = "No providers/products to report for the given date!";
 
 
 /**
  * 				uf member manage
  */
-
-$Text['search_memberuf'] = "Search name";
+$Text['search_memberuf'] = "Search name or login"; //changed !!!!!!!!!
 $Text['browse_memberuf'] = "Browse";
 $Text['assign_members'] = "Assign members";
 $Text['login'] = "Login";
-$Text['create_uf'] = "New household";
+$Text['create_uf'] = "New HU";
 $Text['name_person'] = "Name";
 $Text['address'] = "Address";
 $Text['zip'] = "Zip";
@@ -176,19 +163,27 @@ $Text['active_roles'] = "Active roles";
 $Text['products_cared_for'] = "Products responsible for";
 $Text['providers_cared_for'] = "Providers responsible for";
 $Text['notes'] = "Notes";
-$Text['edit_uf'] = "Edit household";
-$Text['members_uf'] = "Members of household";
-$Text['mentor_uf'] = "Mentor household";
-$Text['unassigned_members'] = "Unassigned members";
+$Text['edit_uf'] = "Edit HU";
+//$Text['members_uf'] = "Members of household";
+$Text['mentor_uf'] = "Mentor HU";
+$Text['unassigned_members'] = "Unassigned";
 $Text['edit_my_settings'] = "Edit my settings";
 
+$Text['nif'] = "NIF";
+$Text['bank_name'] = "Bank";
+$Text['bank_account'] = "Bank account";
+$Text['picture']  = "Picture";
+$Text['offset_order_close'] = "Processing time";
+$Text['iva_percent_id'] = "IVA type";
+$Text['percent'] = "Percent";
+$Text['adult'] = "Adult";
 
 
 /**
  *  			wiz stuff
  */
-$Text['deposit_cashbox'] = 'Deposit money in cashbox';
-$Text['widthdraw_cashbox'] = 'Withdraw money from cashbox';
+$Text['deposit_cashbox'] = 'Deposit money'; 	//changed
+$Text['widthdraw_cashbox'] = 'Withdraw money';	//changed
 $Text['current_balance'] = 'Current balance';
 $Text['deposit_type'] = 'Type of deposit';
 $Text['deposit_by_uf'] = 'Deposite by HU';
@@ -202,7 +197,6 @@ $Text['withdraw_provider'] = 'Withdraw for provider';
 $Text['btn_make_withdrawal'] = 'Withdrawal';
 $Text['correct_balance'] = 'Correct balance';
 $Text['set_balance'] = 'Set current balance in cashbox';
-$Text['current_balance'] = 'Current balance';
 $Text['name_cash_account'] = 'Cashbox';
 
 
@@ -214,14 +208,14 @@ $Text['name_cash_account'] = 'Cashbox';
 $Text['set_date'] = "Set a date";
 $Text['get_cart_4_uf'] = "Get cart for household";
 $Text['make_deposit'] = "Deposit for household";
-$Text['success_deposit'] = "Deposit has been successful!";
+$Text['success_deposit'] = "Deposit has been saved!";
 $Text['amount'] = "Amount";
 $Text['comment'] = "Comment";
-$Text['deposit_other_uf'] = "Make deposit for another household or account";
+//$Text['deposit_other_uf'] = "Make deposit for another household or account";
 $Text['latest_movements'] = "Latest movements";
 $Text['time'] = "Time";
 $Text['account'] = "Account";
-$Text['consum_account'] = "Consum Account";
+$Text['consum_account'] = "Consum cccount";
 $Text['operator'] = "Operator";
 $Text['balance'] = "Balance";
 $Text['dailyStats'] = "Daily statistics";
@@ -246,7 +240,7 @@ $Text['unit'] = "Unit";
 $Text['price'] = "Price";
 $Text['name_item'] = "Name";
 $Text['revtax_abbrev'] = "RevTax";
-$Text['cur_stock'] = "Current Stock";
+//$Text['cur_stock'] = "Current Stock";
 $Text['date_for_shop'] = 'Date shopped';
 $Text['ts_validated'] = 'Validated';
 
@@ -256,16 +250,16 @@ $Text['ts_validated'] = 'Validated';
 $Text['welcome_logon'] = "Welcome to Aixada!!";
 $Text['logon'] = "User";
 $Text['pwd']	= "Password";
+$Text['old_pwd'] = "Old Password";
 $Text['retype_pwd']	= "Retype password";
 $Text['lang']	= "Language";
 $Text['msg_err_incorrectLogon'] = "Incorrect login";
 $Text['msg_err_noUfAssignedYet'] = "You haven't been assigned an UF yet. Please get somebody to complete registering you.";
 
 
-$Text['msg_reg_success'] = "You have been successfully registered; the full activation of your user is pending. Have all the other members of your UF register, and get someone to finish the process. ";
-$Text['register'] = "Register";
+//$Text['msg_reg_success'] = "You have been successfully registered; the full activation of your user is pending. Have all the other members of your UF register, and get someone to finish the process. ";
+//$Text['register'] = "Register";
 $Text['required_fields'] = " are required fields";
-$Text['old_pwd'] = "Old Password";
 
 
 /**
@@ -273,16 +267,16 @@ $Text['old_pwd'] = "Old Password";
  */
 $Text['nav_home'] = "Home";
 $Text['nav_wiz'] = "Wizard";
-	$Text['nav_wiz_arrived'] = "Products that haven't arrived";
+//	$Text['nav_wiz_arrived'] = "Products that haven't arrived";
 	$Text['nav_wiz_validate'] = "Validate";
-	$Text['nav_wiz_open'] = "Open";
-	$Text['nav_wiz_close'] = "Close";
-	$Text['nav_wiz_torn'] = "Summary info";
+//	$Text['nav_wiz_open'] = "Open";
+//	$Text['nav_wiz_close'] = "Close";
+//	$Text['nav_wiz_torn'] = "Summary info";
 	$Text['nav_wiz_cashbox'] = "Cashbox";
 $Text['nav_shop'] = "Buy stuff";
 $Text['nav_order'] = "Place order";
 $Text['nav_mng'] = "Manage";
-	$Text['nav_mng_uf'] = "Households";
+	//$Text['nav_mng_uf'] = "Households";
 	$Text['nav_mng_member'] = "Members";
 	$Text['nav_mng_providers'] = "Providers";
 	$Text['nav_mng_products'] = "Products";
@@ -290,14 +284,14 @@ $Text['nav_mng'] = "Manage";
 		$Text['nav_mng_stock'] = "Stock";
 		$Text['nav_mng_units'] = "Units";
 	$Text['nav_mng_orders'] = "Orders";
-		$Text['nav_mng_setorderable'] = "Set orderable dates";
-		$Text['nav_mng_move'] = "Move order to new date";
-		$Text['nav_mng_orders_overview'] = "Manage orders";
+		//$Text['nav_mng_setorderable'] = "Set orderable dates";
+		//$Text['nav_mng_move'] = "Move order to new date";
+		//$Text['nav_mng_orders_overview'] = "Manage orders";
 		$Text['nav_mng_preorder'] = "Convert preorder to order";
 	$Text['nav_mng_db'] = "Backup db";
 	$Text['nav_mng_roles'] = "Roles";
 $Text['nav_report'] = "Reports";
-$Text['nav_report_order'] = "Current order";
+//$Text['nav_report_order'] = "Current order";
 $Text['nav_report_account'] = "Accounts";
 $Text['nav_report_timelines'] = "Timelines";
 $Text['nav_report_timelines_uf'] = "Households";
@@ -311,7 +305,7 @@ $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Browse / add";
 $Text['nav_myaccount'] = "My Account";
 	$Text['nav_myaccount_settings'] = "Settings";
-	$Text['nav_myaccount_account'] = "Money";
+	$Text['nav_myaccount_account'] = "My money";
 	$Text['nav_changepwd'] = "Change password"; 
 	$Text['nav_prev_orders'] = "Previous purchases";
 
@@ -333,9 +327,9 @@ $Text['btn_reset'] = "Reset";
 $Text['btn_cancel'] = "Cancel";
 $Text['btn_activate'] = "Activate";
 $Text['btn_deactivate'] = "Deactivate";
-$Text['btn_arrived'] = "Has arrived";
-$Text['btn_notarrived'] = "Has not arrived";
-$Text['btn_move'] = "Move";
+//$Text['btn_arrived'] = "Has arrived";
+//$Text['btn_notarrived'] = "Has not arrived";
+//$Text['btn_move'] = "Move";
 $Text['btn_ok'] = "Ok";
 $Text['btn_assign'] = "Assign";
 $Text['btn_create'] = "Create";
@@ -376,15 +370,15 @@ $Text['edit_incident'] = "Edit incident";
  */
 $Text['provider_name'] = "Provider";
 $Text['product_name'] = "Product";
-$Text['qty'] = "Quantity";
+//$Text['qty'] = "Quantity";
 $Text['total_qty'] = "Total Quantity";
 $Text['total_price'] = "Total Price";
 $Text['total_amount'] = "Total amount";
-$Text['select_order'] = "List orders for the following date:";
-$Text['move_success'] = "The listed order items are now active for: ";
-$Text['show_compact'] = "Change view: shift / provider";
-$Text['show_all_providers'] = "Toggle products";						//ADDED 8. JUNE
-$Text['show_all_print'] = "Toggle printout";							//ADDED 8. JUNE
+//$Text['select_order'] = "List orders for the following date:";
+//$Text['move_success'] = "The listed order items are now active for: ";
+//$Text['show_compact'] = "Change view: shift / provider";
+//$Text['show_all_providers'] = "Toggle products";						//ADDED 8. JUNE
+//$Text['show_all_print'] = "Toggle printout";							//ADDED 8. JUNE
 $Text['nr_ufs'] = "Total HUs";
 $Text['printout'] = "Print";
 $Text['summarized_orders'] = "Summarized orders";
@@ -402,26 +396,26 @@ $Text['msg_err_passshort'] = "The password is too short. Should be between 4 and
 $Text['msg_err_notempty'] = " field cannot be left empty!"; 
 $Text['msg_err_only_num'] = " field only allows numbers and cannot be empty!"; 
 $Text['msg_err_email'] = "The email format is not correct. Should be name@domain.com or similar.";
-$Text['msg_err_select_uf'] = "In order to assign a new member to an HU you have to select an HU first by clicking on its name! If you need a new HU, create one first by clicking +New HU.";
-$Text['msg_err_select_non_member'] = "In order to assign a new member to an HU you have to select one from the non-member listing on your right!"; 
-$Text['msg_err_insufficient_stock'] = 'Insufficient stock for ';
+//$Text['msg_err_select_uf'] = "In order to assign a new member to an HU you have to select an HU first by clicking on its name! If you need a new HU, create one first by clicking +New HU.";
+//$Text['msg_err_select_non_member'] = "In order to assign a new member to an HU you have to select one from the non-member listing on your right!"; 
+//$Text['msg_err_insufficient_stock'] = 'Insufficient stock for ';
 
 
-$Text['msg_edit_success'] = "Edited data has been saved succesfully!";
-$Text['msg_edit_mysettings_success'] = "Your new settings have been saved succesfully!";
+$Text['msg_edit_success'] = "Everything saved succesfully!"; //changed!!!!! 
+//$Text['msg_edit_mysettings_success'] = "Your new settings have been saved succesfully!";
 $Text['msg_pwd_changed_success'] = "Your password has been changed successfully!"; 
-$Text['msg_confirm_del'] = "Are you sure you want to delete this member?";
+$Text['msg_confirm_del'] = "Are you sure you want to remove this member from this household?"; //changed!!!!!
 $Text['msg_enter_deposit_amount'] = "Deposit amount should only contain numbers and not be empty!";
 $Text['msg_please_set_ufid_deposit'] = "The HU ID is not set. You either have to choose a cart or select an alternative HU to make a deposit!";
-$Text['msg_error_deposit'] = "An error has occured while making the deposit. You can try again. Successful deposits should show in the account listing. <br/>The error message was: ";
+//$Text['msg_error_deposit'] = "An error has occured while making the deposit. You can try again. Successful deposits should show in the account listing. <br/>The error message was: ";
 $Text['msg_deposit_success'] = "Deposit has been successful!";
 $Text['msg_withdrawal_success'] = "The withdrawal has been successful!";
 $Text['msg_select_cart_first'] = "In order to add items for validating you have to select an HU/cart first!";
-$Text['msg_err_move_date'] = "An error has occured while moving the order to the new date. Try again. ";
-$Text['msg_no_active_products'] = "Sorry, but currently there are no products activated for ordering. Usually this is the responsibility of those coop members in charge of a certain provider!";
-$Text['msg_no_movements'] = "Sorry, no movements for given account and date!"; 
+//$Text['msg_err_move_date'] = "An error has occured while moving the order to the new date. Try again. ";
+$Text['msg_no_active_products'] = "Sorry, but currently there are no products activated for ordering. Talk to the person in charge of this provider!";
+//$Text['msg_no_movements'] = "Sorry, no movements for given account and date!"; 
 $Text['msg_delete_incident'] = "Are you sure you want to delete this incident?";
-$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases."; //ADDED JAN 2012
+//$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases."; //ADDED JAN 2012
 
 
 /**
@@ -487,38 +481,40 @@ $Text['description_url'] = 'URL of description';
 $Text['msg_err_validate_self'] = 'You cannot validate your own cart!';
 $Text['msg_err_preorder'] = 'Sorry, but in order to activate this preoder you have to choose a date in the future!';
 $Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the following date: ';
-$Text['msg_can_be_ordered'] =  'Items can be ordered for this date';
-$Text['msg_has_ordered_items'] = 'Items have been ordered for this day; they cannot be deleted, just moved';
-$Text['msg_today'] = 'Today';
-$Text['msg_default_day'] = 'Days without any orders yet';
-$Text['activate_for_date'] = 'Activate for ';
-$Text['start_date'] = "Show items starting from ";
-$Text['date'] = "Date";
-$Text['iva'] = "VAT";
+//$Text['msg_can_be_ordered'] =  'Items can be ordered for this date';
+//$Text['msg_has_ordered_items'] = 'Items have been ordered for this day; they cannot be deleted, just moved';
+//$Text['msg_today'] = 'Today';
+//$Text['msg_default_day'] = 'Days without any orders yet';
+//$Text['activate_for_date'] = 'Activate for ';
+//$Text['start_date'] = "Show items starting from ";
 
-$Text['Download zip'] = 'Download zip file with all orders';
+
+//$Text['Download zip'] = 'Download zip file with all orders';
 $Text['product_singular'] = 'product';
 $Text['product_plural'] = 'products';
 $Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database? This make take a little while...';
 $Text['show_date_field'] = 'Click here to show the calendar field and select a different date than today.';
 
-/**
- * home
- */
+
 $Text['purchase_current'] = 'My purchase(s)';
-$Text['items_bought'] = "Past purchases";
+//$Text['items_bought'] = "Past purchases";
 $Text['purchase_future'] = 'My order(s)';
-$Text['purchase_prev'] = 'Previous purchase(s)';
-$Text['icon_order'] = 'Place your order here';
+//$Text['purchase_prev'] = 'Previous purchase(s)';
+$Text['icon_order'] = 'Place your order';
 $Text['icon_purchase'] = 'Buy items now';
 $Text['icon_incidents'] = 'Post an incident';
 $Text['purchase_date'] = 'Date of purchase';
-$Text['purchase_validated'] = 'Date of validation';
-$Text['ordered_for'] = 'Items ordered for';
+//$Text['purchase_validated'] = 'Date of validation';
+//$Text['ordered_for'] = 'Items ordered for';
 $Text['not_validated'] = 'not validated';
 
 
-/* new stuff */
+
+
+
+
+/* definitely new stuff */
+
 $Text['download_db_zipped'] = 'Download Zipped Database';
 $Text['backup'] = 'Ok, back up the database!';
 $Text['filter_incidents'] = 'Filter incidents';
@@ -534,6 +530,8 @@ $Text['internal_email_private'] = 'Internal + email (private)';
 $Text['internal_post'] = 'Internal + post to portal (public)';
 $Text['internal_email_post'] = 'Internal + email + post (public)';
 
+$Text['date'] = "Date";
+$Text['iva'] = "VAT";
 $Text['expected'] = 'Expected';
 $Text['not_yet_sent'] = 'Not yet sent';
 $Text['ordered_for'] = 'Ordered for';
@@ -552,6 +550,155 @@ $Text['qu'] = 'Qu';
 $Text['msg_err_deactivatedUser'] = "Your user account has been deactivated!";
 $Text['order'] = 'Order';
 $Text['order_pl'] = 'Orders';
+$Text['msg_already_validated'] = 'The selected cart has already been validated. Do you want to see its products/items?';
+$Text['validated_at'] = "Validated at "; //refers to a date/hour
 
+
+$Text['nothing_to_val'] = "Nothing to validate for HU";
+$Text['cart_id'] = "Cart id";
+$Text['msg_several_carts'] = "The selected household has more than one cart pending for validation. Please select one:";
+$Text['transfer_type'] = "Type";
+$Text['todays_carts'] = "Today's carts";
+$Text['head_ti_torn'] = "Working shift overview"; 
+$Text['btn_validate'] = "Validate";
+$Text['desc_validate'] = "Validate past and present carts for households. Make money deposits.";
+$Text['nav_wiz_revise_order'] = "Revise";
+$Text['desc_revise'] = "Revise individual orders; check if products have arrived and adjust quantities if necessary. Distribute the order into individual shopping carts.";
+$Text['desc_cashbox'] = "Make cash deposits and withdrawals. At the start of the first shift the balance has to be reset. The amount of this account has to reflect the real money available.";
+$Text['desc_stock'] = "Add and/or control the stock of products.";
+$Text['desc_print_orders'] = "Print and download orders for next week. Orders need to be finalized, printed and download as zip file.";
+$Text['nav_report_status'] = "Statistics";
+$Text['desc_stats'] = "Download a summery info of the currrent shift including today's incidents, negative ufs, total spending balance and products with negative stock";
+$Text['order_closed'] = "The order is closed for this provider.";
+$Text['head_ti_sales'] = "Sales listing"; 
+$Text['not_yet_val'] = "not yet validated";
+$Text['val_by'] = "Validated by";
+$Text['purchase_details'] = "Purchase details of cart #";
+$Text['filter_uf'] = "Filter by household";
+$Text['purchase_uf'] = "Purchase of HU";
+$Text['quantity_short'] = "Qu";
+$Text['incl_iva'] = "incl. VAT";
+$Text['incl_revtax'] = "incl. RevTax";
+$Text['no_news_today'] = "No new is good news: no incidents have been posted for today!";
+$Text['nav_mng_iva'] = "VAT types";
+$Text['nav_mng_money'] = "Money";
+$Text['nav_mng_admin'] = "Admin";
+$Text['nav_mng_users'] = "Users";
+$Text['nav_mng_access_rights'] = "Access rights";
+$Text['msg_sel_account'] = "Choose an account first, then filter the results!";
+$Text['msg_err_nomovements'] = "Sorry, there are no movements for the selected account and date. Try to widen the consulted time period with the filter button.";
+$Text['active_changed_uf'] = "Active state changed for HU";
+$Text['msg_err_mentoruf'] = "The mentor household must be different from the HU itself!";
+$Text['msg_err_ufexists'] = "The HU name already exists. Please choose another one!";
+$Text['msg_err_form_init'] = "Seems like the form for creating a new member did not initialize correctly. Reload the page and then try again...   ";
+$Text['ti_mng_hu_members'] = "Manage households and its members"; 
+$Text['list_ufs'] = "List of households";
+$Text['search_members'] = "Member search";
+$Text['member_pl'] = "Members";
+$Text['mng_members_uf'] = "Manage members of household ";
+$Text['uf_name'] = "Name";
+$Text['btn_new_member'] = "New member";
+$Text['ti_add_member'] = "Add new member to HU";
+$Text['custom_member_ref'] = "Custom ref.";
+$Text['theme'] = "Theme";
+$Text['member_id'] = "Member id";
+$Text['ti_mng_stock'] = "Manage stock";
+$Text['msg_err_no_stock'] = "This provider seems to have no stock";
+$Text['msg_err_qu'] = "Quantity needs to be numeric and bigger than 0!";
+$Text['msg_correct_stock'] = "Adjusting stock this way should be the exception! New stock should always be ADDED. Are you sure to correct the stock for this product?";
+$Text['btn_yes_corret'] = "Yes, make correction!";
+$Text['ti_mng_stock'] = "Manage stock";
+$Text['search_product'] = "Search a product";
+$Text['add_stock'] = "Add stock";
+$Text['click_to_edit'] = "Click table cells to edit!";
+$Text['no_results'] = "The search produced no results.";
+$Text['for'] = "for"; //as in order FOR Aurora
+$Text['date_for_order'] = "Delivery date";
+$Text['finished_loading'] = "Finished loading";
+$Text['msg_err_unrevised'] = "There are still unrevised items in this order. Please make sure all ordered products have arrived!";
+$Text['btn_dis_anyway'] = "Distribute anyway";
+$Text['btn_remaining'] = "Revise remaining";
+$Text['msg_err_edit_order'] = "This order is not finalized. You can only save the notes and references once the order has been sent off.";
+$Text['order_open'] = "Order is open";
+$Text['finalize_now'] = "Finalize now";
+$Text['msg_err_order_filter'] = "No orders matching the filter criteria.";
+$Text['msg_finalize'] = "You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?";
+$Text['msg_finalize_open'] = "This order is still open. Finalizing it now implies that you will close it before the anounced deadline. Are you sue you want to continue?";
+$Text['msg_wait_tbl'] = "The table header is still being constructed. Depending on your internet connection this might take a little while. Try again in 5 seconds. ";
+$Text['msg_err_invalid_id'] = "No valid ID for order found! This order has not been sent off to the provider!!";
+$Text['msg_revise_revised'] = "The items of this order have already been revised and placed into people\'s carts for the indicated shop date. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?! <br/><br/>Pressing OK will delete the items from the existing shopping carts and start the order-revision process again.";
+$Text['wait_reset'] = "Please wait while the order is being reset...";
+$Text['msg_err_already_val'] = "Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!";
+$Text['print_several'] = "There is more than one order currently selected. Do you want to print them all in one go?";
+$Text['btn_yes_all'] = "Yes, print all";
+$Text['btn_just_one'] = "No, just one";
+$Text['ostat_revised'] = "Revised";
+$Text['ostat_finalized'] = "Finalized";
+$Text['set_ostat_arrived'] = "Arrived!";
+$Text['set_ostat_postpone'] = "Postpone!";
+$Text['set_ostat_cancel'] = "Cancel!";
+$Text['ostat_desc_sent'] = "Order has been sent to provider";
+$Text['ostat_desc_nochanges'] = "Revised and distributed without changes";
+$Text['ostat_desc_postponed'] = "Order has been postponed";
+$Text['ostat_desc_cancel'] = "Order has been canceled";
+$Text['ostat_desc_changes'] = "Revised with some modifications";
+$Text['set_ostat_desc_arrived'] = "Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...";
+$Text['set_ostat_desc_postpone'] = "The order did not arrive for the ordered date but probably will in the upcoming weeks.";
+$Text['set_ostat_desc_cancel'] = "Ordered items will never arrive.";
+$Text['msg_move_to_shop'] = "The items have been successfully moved to the shopping carts of the corresponding date.";
+$Text['msg_err_noselect'] = "Nothing selected!";
+$Text['ti_revise'] = "Revise order";
+$Text['btn_revise'] = "Revise order";
+$Text['ti_order_detail'] = "Order detail for";
+$Text['ti_mng_orders'] = "Manage orders";
+$Text['btn_distribute'] = "Distribute!";
+$Text['distribute_desc'] = "Place order-items into shopping carts";
+$Text['filter_orders'] = "Filter orders";
+$Text['btn_filter'] = "Filter";
+$Text['filter_acc_todays'] = "Today's movements";
+$Text['filter_recent'] = "Recent ones";
+$Text['filter_year'] = "Last year";
+$Text['filter_all'] = "All";
+$Text['filter_expected'] = "Expected today";
+$Text['filter_next_week'] = "Next week";
+$Text['filter_future'] = "All future orders";
+$Text['filter_month'] = "Last month";
+$Text['filter_postponed'] = "Postponed";
+$Text['with_sel'] = "With selected...";
+$Text['dwn_zip'] = "Download as zip";
+$Text['closes_days'] = "Closes in days";
+$Text['sent_off'] = "Sent off to provider";
+$Text['date_for_shop'] = "Shop date";
+$Text['order_total'] = "Order total";
+$Text['nie'] = "NIE";
+$Text['total_orginal_order'] = "Original order";
+$Text['total_after_revision'] = "After revision";
+$Text['delivery_ref'] = "Delivery ref.";
+$Text['payment_ref'] = "Payment ref.";
+$Text['arrived'] = "Arrived"; //as in order items have arrived. this is a table heading
+$Text['msg_cur_status'] = "The current order status is";
+$Text['msg_change_status'] = "Change the order status to one of the following options";
+$Text['msg_confirm_move'] = "Are you sure you want to make this order available for shopping? All corresponding products will be placed into the shopping cart for the following date:";
+$Text['alter_date'] = "Choose an alternative date";
+$Text['msg_err_miss_info'] = "It seems that this order was created with an older version of this platform which is not compatible with the revision functionality. This order cannot be revised.";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+$Text[''] = "";
+
+
+
+//$Text[''] = ""; 
 
 ?>

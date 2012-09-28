@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - ";?> Manage Stock</title>
+	<title><?php echo $Text['global_title'] . " - " .$Text['ti_mng_stock'];?></title>
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
@@ -63,7 +63,7 @@
 						$('.loadAnimShop').hide();
 						if (rowCount == 0){
 						$.showMsg({
-							msg:"This provider seems to have no stock products! ",
+							msg:"<?php echo $Text['msg_err_no_stock']; ?> ",
 							type: 'info'});
 						} 
 							
@@ -137,7 +137,7 @@
 						submitStock('addStock',$(this).attr('productId'),addQu);
 					} else {
 						$.showMsg({
-							msg: "Quantity needs to be numeric and bigger than 0!",
+							msg: "<?php echo $Text['msg_err_qu']; ?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){						
 									$(this).dialog("close");
@@ -171,9 +171,9 @@
 					
 					if (absStock >= 0){
 						$.showMsg({
-							msg: "Adjusting stock this way should be the exception! New stock should always be ADDED. Are you sure to correct the stock for this product?",
+							msg: "<?php echo $Text['msg_correct_stock']; ?>",
 							buttons: {
-								"Yes, make correction!":function(){						
+								"<?=$Text['btn_yes_corret'];?>":function(){						
 									submitStock('correctStock',product_id,absStock);
 									$(this).dialog("close");
 								},
@@ -186,7 +186,7 @@
 												
 					} else {
 						$.showMsg({
-							msg: "Quantity needs to be numeric and bigger than 0!",
+							msg: "<?php echo $Text['msg_err_qu']; ?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){						
 									$(this).dialog("close");
@@ -287,14 +287,14 @@
 	
 				<div id="titlewrap" class="ui-widget">
 					<div id="titleLeftCol50">
-				    	<h1>Manage stock</h1>
+				    	<h1><?php echo $Text['ti_mng_stock']; ?></h1>
 		    		</div>
 		    		<div id="titleRightCol50">
 						<select id="providerSelect">
-	                    	<option value="-1" selected="selected">Select product by provider...</option>
+	                    	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
 	                    	<option value="{id}"> {name}</option>                     
 						</select>
-						<p class="floatRight">Search product: <input id="search" class="ui-corner-all"/></p>
+						<p class="floatRight"><?php echo $Text['search_product'];?>: <input id="search" class="ui-corner-all"/></p>
 		    		</div>
 				</div><!-- end titlewrap -->
  
@@ -306,10 +306,10 @@
 								<tr>
 									<th class="textAlignRight"><?php echo $Text['id'];?></th>
 									<th><?php echo $Text['name_item'];?></th>
-									<th>Provider</th>						
-									<th>Current stock</th>
+									<th><?php echo $Text['provider_name']; ?></th>						
+									<th><?php echo $Text['curStock']; ?></th>
 									<th><?php echo $Text['unit'];?></th>
-									<th class="width-280 textAlignLeft">Add stock</th>
+									<th class="width-280 textAlignLeft"><?php echo $Text['add_stock']; ?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -326,14 +326,14 @@
 									<td>
 										<p class="floatLeft iconContainerNull"><span class="ui-icon ui-icon-plusthick"></span></p>
 										&nbsp;<input class="ui-corner-all inputAddStock textAlignRight" value=""  productId="{id}" id="add_stock_{id}" size="5"/>
-										&nbsp;&nbsp;&nbsp;<button class="btn_save_new_stock hidden" productId="{id}">Save</button>
+										&nbsp;&nbsp;&nbsp;<button class="btn_save_new_stock hidden" productId="{id}"><?php echo $Text['btn_save'];?></button>
 									</td>
 								</tr>						
 							</tbody>
 							<tfoot>
 								<tr>
 									<td colspan="3">&nbsp;</td>
-									<td><p class="textAlignCenter dim80 ui-state-highlight ui-corner-all">Click cells to correct stock!</p></td>
+									<td><p class="textAlignCenter dim80 ui-state-highlight ui-corner-all"><?php echo $Text['click_to_edit']; ?></p></td>
 									<td>&nbsp;</td>
 									<td></td>
 								</tr>
@@ -344,7 +344,7 @@
 				
 				<p>&nbsp;</p>
 				<div class="ui-widget width-280 centerDiv">
-					<p id="searchTips" class="ui-widget-content ui-state-highlight infoblurp hidden">The search produced no results!</p>
+					<p id="searchTips" class="ui-widget-content ui-state-highlight infoblurp hidden"><?php echo $Text['no_results']; ?></p>
 				</div>
 
 	</div>

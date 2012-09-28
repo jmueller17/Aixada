@@ -79,6 +79,13 @@ class configuration_vars {
   public $print_bill_template = 'bill_model1.php';
   
   
+  /**
+   * 
+   * diplays the language select on every page or not
+   */
+  public $show_menu_language_select = false; 
+  
+  
   
   /**
    * Code optimizations

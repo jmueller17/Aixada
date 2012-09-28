@@ -314,6 +314,7 @@ end |
 
 /**
  * set the revision status flag for each order. 
+ * 	   -1 : transfer from aixada.sql < 2.5 where reference from shop_item to order_item is not possible
  * 		1 : default value. Finalized, send off to provider 
  * 		2 : arrived and items have been revised: everything is complete. This is set automatically once items have been copied from order to shop. 
  * 		3 : posponed. Did not arrive for the originally ordered date but could arrive in the near future

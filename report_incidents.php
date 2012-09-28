@@ -26,9 +26,6 @@
 	<script type="text/javascript">
 	
 	$(function(){
-
-		
-
 			
 		/**
 		 *	incidents
@@ -41,7 +38,7 @@
 			complete : function(rowCount){
 				if (rowCount == 0){
 					$.showMsg({
-						msg:'No new is good news: no incidents have been posted for today!',
+						msg:'<?php echo $Text['no_news_today']; ?>',
 						type: 'info'});
 				}
 				//$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 	

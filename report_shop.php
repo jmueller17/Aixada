@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_prev_orders'] ;?></title>
+	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_sales'] ;?></title>
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
@@ -67,7 +67,7 @@
 					if (validated == '0000-00-00 00:00:00'){
 						$(row).children().eq(4).html("<p class='textAlignCenter'>-</p>");	
 					} else {
-						$(row).children().eq(4).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
+						$(row).children().eq(4).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at'];?>: '+validated+'"></span>');
 					}	
 
 					if (gDetail > 0 && $(row).attr('shopId') == gDetail){
@@ -113,14 +113,14 @@
 				$('.setValidateStatus').removeClass('noRed okGreen');
 
 				if (dateValidated == "0000-00-00 00:00:00"){
-					$('.setValidateStatus').addClass('noRed').text('Not yet validated');
+					$('.setValidateStatus').addClass('noRed').text('<?php echo $Text['not_yet_val']; ?>');
 				} else {
 					var opUf = $(this).attr('operatorUf'); 
 					var opName = $(this).attr('operatorName'); 
 					
 					$('.setValidateStatus')
 						.addClass('okGreen')
-						.html('<span title="Validated by '+opUf+' '+opName+'">'+dateValidated.substring(0,10)+'</span>');
+						.html('<span title="<?php echo $Text['val_by'];?> '+opUf+' '+opName+'">'+dateValidated.substring(0,10)+'</span>');
 				}
 	
 				switchTo('detail');
@@ -279,14 +279,14 @@
 			<div id="titleLeftCol">
 				<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
 		    	<h1 class="overviewElements"><?php echo $Text['ti_all_sales']; ?></h1>
-		    	<h1 class="detailElements">Purchase details of cart #<span class="setCartId"></span></h1>
+		    	<h1 class="detailElements"><?php echo $Text['purchase_details']; ?><span class="setCartId"></span></h1>
 		    </div>
 		    <div id="titleRightCol">
-		    	<p class="floatLeft detailElements">Validated: <span class="ui-corner-all padding5x5 setValidateStatus"></span></p>
-		    	<button id="btn_print_detail" class="detailElements floatRight">Print</button>
+		    	<p class="floatLeft detailElements"><?php echo $Text['validated'];?>: <span class="ui-corner-all padding5x5 setValidateStatus"></span></p>
+		    	<button id="btn_print_detail" class="detailElements floatRight"><?php echo $Text['printout'] ; ?></button>
 		    	<p class="textAlignRight overviewElements">
 		    		<select id="uf_select">
-		    			<option value="-10" selected="selected">Filter by Household</option>
+		    			<option value="-10" selected="selected"><?php echo $Text['filter_uf']; ?></option>
 		    			<option value="{id}">{id} {name}</option>
 		    		</select>
 		    	</p>
@@ -306,9 +306,9 @@
 							<th></th>
 							<th class="textAlignCenter clickable">Cart id <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
 							<th  class="clickable"><?php echo $Text['uf_long']; ?><span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
-							<th  class="clickable"><p class="textAlignCenter">Date of purchase <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></p></th>
-							<th><p class="textAlignCenter">Validated</p></th>
-							<th><p class="textAlignRight">Total</p></th>
+							<th  class="clickable"><p class="textAlignCenter"><?php echo $Text['purchase_date'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></p></th>
+							<th><p class="textAlignCenter"><?php echo $Text['validated'];?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['total'];?></p></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -342,14 +342,14 @@
 		
 		<div id="shop_detail" class="ui-widget detailElements">
 			<div class="ui-widget-content ui-corner-all">
-				<h3 class="ui-widget-header">Purchase of HU<span class="setUfId"></span>, <span class="setShopDate"></span></h3>
+				<h3 class="ui-widget-header"><?php echo $Text['purchase_uf']; ?><span class="setUfId"></span>, <span class="setShopDate"></span></h3>
 				<table id="tbl_purchaseDetail" class="tblListingGrid" currentShopId="" currenShopDate="">
 					<thead>
 						<tr>
 							
 							<th><?php echo $Text['name_item'];?></th>	
 							<th><?php echo $Text['provider_name'];?></th>					
-							<th><p class="textAlignRight">Qu</p></th>
+							<th><p class="textAlignRight"><?php echo $Text['quantity_short']; ?></p></th>
 							<th><?php echo $Text['unit'];?></th>
 							<th><p class="textAlignRight"><?php echo $Text['unit_price'];?></p></th>
 							<th class="width-180"><p class="textAlignRight"><?php echo $Text['price'];?></p></th>
@@ -372,17 +372,17 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="5">included IVA</td>
+							<td colspan="5"><?php echo $Text['incl_iva']; ?></td>
 							<td id="total_iva" class="dblBorderTop"></td>
 						</tr>
 						<tr>
 						
-							<td colspan="5">included RevTax</td>
+							<td colspan="5"><?php echo $Text['incl_revtax']; ?></td>
 							<td id="total_revTax"></td>
 						</tr>
 						<tr>
 							
-							<td colspan="5" class="boldStuff">Total</td>
+							<td colspan="5" class="boldStuff"><?php echo $Text['total'];?></td>
 							<td id="total" class="boldStuff dblBorderBottom"></td>
 						</tr>
 						<tr>

@@ -446,7 +446,7 @@
 					</select>
 
 				</div>
-				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight">Order is closed for this provider <span class="ui-icon ui-icon-locked floatRight"></span></p></div> 
+				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div> 
 				<div class="product_list_wrap">
 					<table id="product_list_provider" class="product_list" >
 						<thead>
@@ -456,7 +456,6 @@
 								<th><?php echo $Text['name_item'];?></th>						
 								<th><?php echo $Text['quantity'];?></th>
 								<th><?php echo $Text['unit'];?></th>
-								<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 								<th><?php echo $Text['price'];?></th>
 								
 							</tr>

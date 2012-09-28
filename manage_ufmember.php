@@ -198,15 +198,16 @@
 		$('input[name=uf_active]')
 			.live('click',function(e){
 
-				var is_active = $(this).attr('checked')? 1:0; 
-				
+				var is_active = $(this).attr('checked')? 1:0;
+				var uf_id =  $(this).parents('tr').attr('ufid'); 
+
 				//toggle active state of uf. 
 				$.ajax({
 					type: "POST",
 	                url: 'php/ctrl/UserAndUf.php?oper=editUF&is_active='+is_active+'&uf_id='+$(this).parents('tr').attr('ufid')+'&name='+$(this).parents('tr').attr('ufname')+'&mentor_uf='+$(this).parents('tr').attr('mentoruf'), 
 			        success :  function(msg){
 			        	$.showMsg({
-							msg: 'The active state has been successful changed for HU'+$(this).parents('tr').attr('ufid'),
+							msg: '<?php echo $Text['active_changed_uf']; ?>'+uf_id,
 							type: 'success'
 						});
 					}, 
@@ -241,7 +242,7 @@
 				stupidHack = 's9328820398023948'; 
 				if (ufId == mentorUf){
 					$.showMsg({
-						msg: 'The mentor household must be different from the HU itself! ',
+						msg: '<?php echo $Text['msg_err_mentoruf']; ?>',
 						type: 'error'
 					});
 					return false; 
@@ -261,7 +262,7 @@
 		        	//check if uf name exists
 			       if (msg == 1){
 			    	   $.showMsg({
-							msg: 'Your UF name already exist. Please choose another one! ',
+							msg: '<?php echo $Text['msg_err_ufexists']; ?> ',
 							type: 'error'
 						});
 				   } else { 
@@ -272,7 +273,7 @@
 							url : urlStr,
 					        success :  function(msg){
 					        	$.showMsg({
-									msg: "The data has been successfully saved!",
+									msg: "<?php echo $Text['msg_edit_success'] ; ?>",
 									type: 'success'
 								});
 								$("#dialog-uf").dialog( "close" );
@@ -452,7 +453,7 @@
 			    	.live('click',function(e){
 				    	var $this = $(this);
 			    		$.showMsg({
-							msg: "Are you really sure you want to delete this member from this HU?",
+							msg: "<?php echo $Text['msg_confirm_del']; ?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){
 									var dlog = $(this);
@@ -518,7 +519,7 @@
 				
 				//save button
 				$('#frm_add_member .btn_save_new_member').button({
-						icons: {primary: "ui-icon-disk"}
+						icons: {primary: "ui-icon-check"}
 					})
 					.bind('click', function(e){					
 						submitMember('create', '#add_member_div');
@@ -631,7 +632,7 @@
 					},
 				   	success: function(msg){
 				   	 	$.showMsg({
-							msg: "The new member data has been successfully saved!",
+							msg: "<?php echo $Text['msg_edit_success']; ?>",
 							type: 'success'});
 				   	 	$('#uf_detail_member_list').xml2html('reload',{
 							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid'),
@@ -694,7 +695,8 @@
 					$('#uf_info input:checkbox').attr('disabled','disabled');	
 
 					
-					selMentorUf = gSelUfRow.attr('mentoruf')? -1:gSelUfRow.attr('mentoruf'); 	//copy mentor uf and disable select
+					selMentorUf = (gSelUfRow.attr('mentoruf') > 0)? gSelUfRow.attr('mentoruf'):-1; 	//copy mentor uf and disable select
+
 					$('#mentor_uf')
 						.val(selMentorUf)
 						.attr('selected','selected')
@@ -707,7 +709,7 @@
 				case 'createMemberView':
 					if (!gFormComplete){
 						$.showMsg({
-							msg: 'Seems like the form for creating a new member did not initialize correctly. Reload the page and then try again...   ',
+							msg: '<?php echo $Text['msg_err_form_init']; ?>',
 							type: 'error'
 						});
 						return false; 
@@ -755,22 +757,22 @@
 				
 			<div id="titleLeftCol">
 					<button id="btn_overview" class="floatLeft ufDetailElements viewMemberElements createMemberElements"><?php echo $Text['overview'];?></button>
-		    		<h1 class="overviewElements">Manage households and its members </h1>
-		    		<h1 class="viewMemberElements">Manage member </h1>
+		    		<h1 class="overviewElements"><?php echo $Text['ti_mng_hu_members']; ?></h1>
+		    		<h1 class="viewMemberElements"><?php echo $Text['ti_mng_members'];?> </h1>
 		    </div>
 		    <div id="titleRightCol">
 		    	<!-- p class="textAlignRight"><?php echo $Text['search_memberuf'];?>: <input type="text" name="search_member" id="search_member" class="inputTxtMiddle ui-widget-content ui-corner-all" /></p-->
-		    	<button id="btn_new_uf" class="overviewElements floatRight">New UF...</button>
+		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
 		</div>
 		<div id="uf_listing" class="ui-widget overviewElements floatLeft">
 			<div class="ui-widget-content ui-corner-all">
-				<h2 class="ui-widget-header ui-corner-all">List of households <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
+				<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['list_ufs']; ?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="ufMsg"></p>
 				<table id="uf_list" class="tblListingDefault">
 						<thead>
 						<tr>
-							<th>Active</th>
+							<th><?=$Text['active'];?></th>
 							<th><?=$Text['uf_short'];?></th>
 							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
 							<th><?=$Text['mentor_uf'];?></th>
@@ -804,9 +806,9 @@
 		<div id="member_listing" class="ui-widget overviewElements splitCol floatRight">
 		
 			<ul>
-				<li><a href="#tabs-1"><h2>Members</h2></a></li>
-				<li><a href="#tabs-2"><h2>Unassigned</h2></a></li>
-				<li><a href="#tabs-3"><h2>Member search</h2></a></li>	
+				<li><a href="#tabs-1"><h2><?php echo $Text['member_pl']; ?></h2></a></li>
+				<li><a href="#tabs-2"><h2><?php echo $Text['unassigned_members']; ?></h2></a></li>
+				<li><a href="#tabs-3"><h2><?php echo $Text['search_members']; ?></h2></a></li>	
 			</ul>
 		
 		
@@ -818,7 +820,7 @@
 							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
 							<th><?=$Text['active'];?></th>	
 							<th><?=$Text['uf_short'];?></th>	
-							<th class="textAlignLeft">Contact</th>
+							<th class="textAlignLeft"><?php echo $Text['contact']; ?></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -867,7 +869,7 @@
 			
 			
 			<div id="tabs-3" class="ui-widget-content ui-corner-all">
-				<p>Search for name or login: <input type="text" id="search" class="ui-widget-content ui-corner-all"/></p>
+				<p><?php echo $Text['search_memberuf']; ?>: <input type="text" id="search" class="ui-widget-content ui-corner-all"/></p>
 				<p>&nbsp;</p>
 				<table id="member_list_search" class="tblListingDefault">
 						<thead>
@@ -901,14 +903,14 @@
 		
 		<div id="uf_member_detail" class="ui-widget">
 			<div class="ui-widget-content ui-corner-all ufDetailElements adaptHeight">
-				<h2  class="ui-widget-header ui-corner-all">Manage members of <?php echo $Text['uf_short'];?><span class="setUfId"></span> </h2> 
+				<h2  class="ui-widget-header ui-corner-all"><?php echo $Text['mng_members_uf'];?><span class="setUfId"></span> </h2> 
 				<div id="uf_info" class="padding15x10 splitCol floatLeft">
 					<table class="tblforms">
 						<tr>
-							<td class="minwidth-180">Name </td>
+							<td class="minwidth-180"><?php echo $Text['name']; ?></td>
 							<td><input class="ui-widget-content ui-corner-all" type="text" name="uf_info_name" id="uf_name" value="" disabled="disabled" /></td>
 							<td>&nbsp;</td>
-							<td>Active </td>
+							<td><?php echo $Text['active']?></td>
 							<td><input type="checkbox" name="uf_info_active" /></td>
 							<td colspan="5">&nbsp;</td>
 						</tr>
@@ -916,19 +918,19 @@
 							<td colspan="10">&nbsp;</td>
 						</tr>
 						<tr>
-							<td class="minwidth-180">Mentor HU: </td>
+							<td class="minwidth-180"><?php echo $Text['mentor_uf'] ;?>: </td>
 							<td>
 								<p class="mentor_uf"></p>
 							</td>
 							<td>&nbsp;</td>
 							<td colspan="2">&nbsp;</td>
 							<td class="minwidth-180">
-								<button id="btn_edit_uf" class="floatRight">Edit UF</button>
-								<button id="btn_edit_uf_save" class="floatRight">Save</button>
+								<button id="btn_edit_uf" class="floatRight"><?php echo $Text['edit_uf']; ?></button>
+								<button id="btn_edit_uf_save" class="floatRight"><?php echo $Text['btn_save']; ?></button>
 							</td>
 							<td>&nbsp;</td>
 							<td class="minwidth-180"> 
-								<button id="btn_add_member">New member</button>
+								<button id="btn_add_member"><?php echo $Text['btn_new_member'];?></button>
 							</td>
 						</tr>
 					</table>		
@@ -966,7 +968,7 @@
 		<div id="add_member_div" class="createMemberElements">
 				<div class="ui-widget-content ui-corner-all member-add">
 				<h3 class="ui-widget-header padding10x5">
-					Add new member to HU<span class="setUfId"></span>
+					<?php echo $Text['ti_add_member']; ?><span class="setUfId"></span>
 					<p class="iconContainer ui-corner-all floatRight ibtn_cancel_new_member"><span class="ui-icon ui-icon-closethick"></span></p>
 				</h3>
 				<form id="frm_add_member">
@@ -985,7 +987,7 @@
 						</tr>
 						<tr>
 							<td colspan="2"></td>
-							<td><label for="custom_member_ref">Custom ref</label></td>
+							<td><label for="custom_member_ref"><?php echo $Text['custom_member_ref']; ?></label></td>
 							<td><input type="text" name="custom_member_ref" value="{custom_member_ref}" class="ui-widget-content ui-corner-all" /></td>
 						</tr>
 						
@@ -1008,7 +1010,7 @@
 							<td></td>
 						</tr>
 						<tr>
-							<td><label for="nif">NIF</label></td>
+							<td><label for="nif"><?php echo $Text['nif']; ?></label></td>
 							<td><input type="text" name="nif" id="nif" value="" class="ui-widget-content ui-corner-all" /></td>
 							<td></td>
 							<td></td>
@@ -1055,7 +1057,7 @@
 						</tr>
 
 						<tr>
-							<td><label for="default_theme">Theme:</label></td>
+							<td><label for="default_theme"><?php echo $Text['theme']; ?>:</label></td>
 							<td colspan="2">
 								<div class="memberThemeSelect"></div>
 							</td>
@@ -1070,7 +1072,7 @@
 							<td colspan="2"></td>
 							<td>
 								<p class="floatRight">
-									<button class="btn_save_new_member">Create member</button>
+									<button class="btn_save_new_member"><?php echo $Text['btn_save']?></button>
 								</p>
 							</td>
 							<td>

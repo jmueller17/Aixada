@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title']; ?> Manage Orders - Overview</title>
+	<title><?php echo $Text['global_title'] ." -  " .$Text['head_ti_manage_orders'] ?></title>
 
  	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
@@ -100,8 +100,8 @@
 							theadStr += '<th class="'+colClass+' hidden col">'+id+'</th>'
 						});
 
-						theadStr += '<th>Total</th>';
-						theadStr += '<th class="revisedCol">Revised</th>';
+						theadStr += '<th><?=$Text['total'];?></th>';
+						theadStr += '<th class="revisedCol"><?=$Text['ostat_revised'];?></th>';
 						
 						$('#tbl_reviseOrder thead tr').last().append(theadStr);
 
@@ -227,16 +227,16 @@
 							var tbl = $('#tbl_reviseOrder').clone();			//clone the table with the current order data
 							
 							$(tbl).attr('id', 'print_order_'+gPrintIndex);	
-							$('thead', tbl).prepend('<tr><th colspan="100"><h2>Order for (#'+gSelRow.attr('orderId')+') for '+pname+' for: '+odate+' </h2></th></tr>');	
+							$('thead', tbl).prepend('<tr><th colspan="100"><h2><?=$Text['order'];?> (#'+gSelRow.attr('orderId')+') <?=$Text['for'];?> '+pname+'.&nbsp;&nbsp;&nbsp; <?=$Text['date_for_order'];?>: '+odate+' </h2></th></tr>');	
 							$(wrapDiv).prepend(tbl); //add the table to the wrapper							
 							$('#orderWrap', printWin.document).append(wrapDiv); //and add the wrapper to the doc in the new window
 
 							if (gPrintIndex == gPrintList.length-1){
-								$('.loadingMsg', printWin.document).html("<p>Finished loading</p>").fadeOut(2000);
+								$('.loadingMsg', printWin.document).html("<p><?=$Text['finished_loading'];?></p>").fadeOut(2000);
 								$('#orderWrap', printWin.document).children(':first').hide();
 								//printWin.print();
 							} else {
-								$('.loadingMsg', printWin.document).html("<p>Please wait while loading " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
+								$('.loadingMsg', printWin.document).html("<p><?=$Text['loading']; ?> " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
 							}
 
 							loadPrintOrder();
@@ -292,13 +292,13 @@
 					} else {
 
 						$.showMsg({
-							msg:"There are still unrevised items in this order. Please make sure all ordered products have arrived! ",
+							msg:"<?=$Text['msg_err_unrevised']?>",
 							buttons: {
-								"Distribute anyway":function(){						
+								"<?=$Text['btn_dis_anyway'];?>":function(){						
 									$('#dialog_setShopDate').dialog("open");
 									$(this).dialog("close");
 								},
-								"Revise remaining" : function(){
+								"<?=$Text['btn_remaining'];?>" : function(){
 									$( this ).dialog( "close" );
 								}
 							},
@@ -313,7 +313,6 @@
 				height:600,
 				buttons: {  
 					"<?=$Text['btn_ok'];?>" : function(){
-						
 						var $this = $(this);
 						$.ajax({
 							type: "POST",
@@ -339,7 +338,6 @@
 						},
 				
 					"<?=$Text['btn_cancel'];?>"	: function(){
-						
 						$( this ).dialog( "close" );
 						} 
 				}
@@ -368,7 +366,7 @@
 									id 		: 'product_uf',
 									name 	: 'quantity',
 									indicator: 'Saving',
-								    tooltip	: 	'UF ' + col + '\n' + product + '\nClick to edit!',
+								    tooltip	: 	'<?=$Text['uf_short'];?> ' + col + '\n' + product + '\n<?=$Text['click_to_edit'];?>',
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
 									} 
@@ -463,7 +461,7 @@
 					if (gSelRow.attr('orderId') > 0) {
 					} else {
 						$.showMsg({
-							msg:"This order is not finalized. You can only save the notes and references once the order has been sent off.",
+							msg:"<?=$Text['msg_err_edit_order'];?>",
 							type: 'warning'});
 					}
 				})
@@ -502,6 +500,7 @@
 			        	primary: "ui-icon-check"
 					}
 			    }).click(function(e){
+				    //TODO needs to trigger the revise buttons to check order status
 			    	//$('.reviseOrderBtn').trigger('click');
 				  });
 
@@ -579,7 +578,7 @@
 					var status = tds.eq(8).text();
 					
 					if (timeLeft > 0){ 	// order is still open
-						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="Order is open"></span>');
+						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="<?=$Text['order_open'];?>"></span>');
 						
 					} else {			//order is closed
 						tds.eq(4).text("closed");
@@ -597,14 +596,14 @@
 					} else {
 						//while open and not sent off, no order_id exists
 						tds.eq(1).html('<p>-</p>');
-						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder">Finalize now</a></p>');
+						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder"><?=$Text['finalize_now'];?></a></p>');
 					}
 				},
 				complete : function (rowCount){
 					$("#tbl_orderOverview").trigger("update"); 
 					if (rowCount == 0){
 						$.showMsg({
-							msg:'Sorry, no orders match the selected criteria. ',
+							msg:'<?=$Text['msg_err_order_filter'];?> ',
 							type: 'warning'});
 					}
 					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
@@ -620,10 +619,10 @@
 					var date = $(this).parents('tr').attr('dateForOrder');
 					var providerId = $(this).parents('tr').attr('providerId');
 					var timeLeft = $(this).parents('tr').children().eq(4).text();
-					var msgt = 'You are about to finalize an order. This means that no further modifications are possible to this order. Are you sure to continue?';
+					var msgt = "<?=$Text['msg_finalize'] ;?>";
 					
 					if (timeLeft > 0){
-						msgt = 'This order is still open. Finalizing it now means that no further items can be ordered for this date and provider. Are you sue you want to continue?'
+						msgt = "<?=$Text['msg_finalize_open'];?>"
 					}
 					
 					$.showMsg({
@@ -686,13 +685,22 @@
 					gSelRow.addClass('ui-state-highlight');
 					
 					var shopDate 		= $(this).parents('tr').children().eq(6).text();
-
+					var status = gSelRow.children().eq(8).attr('revisionStatus');
+					
 					$('.col').hide();
-
+					
+					//order comes from pre v2.5 database we miss some info
+					if (status == "-1"){
+						$.showMsg({
+							msg:'<?=$Text['msg_err_miss_info'];?>',
+							type: 'error'});
+						return false; 
+					}
+					
 					//if table header ajax call has not finished, wait
 					if (!tblHeaderComplete){
 						$.showMsg({
-							msg:'The table header is still being constructed. Depending on your internet connection this might take a little while. Try again in 5 seconds. ',
+							msg:'<?=$Text['msg_wait_tbl'];?>',
 							type: 'error'});
 						return false; 
 					}
@@ -700,7 +708,7 @@
 					//need the order id
 					if (gSelRow.attr('orderId') <= 0){
 						$.showMsg({
-							msg:'No valid ID for order found! This order has not been sent off to the provider!!',
+							msg:'<?=$Text['msg_err_invalid_id'];?>',
 							type: 'error'});
 						return false; 
 					}
@@ -724,11 +732,11 @@
 							//alert("has cart " + hasCart + "  isvalidated "  + isValidated);
 							if (hasCart && !isValidated){
 								$.showMsg({
-									msg:'The items of this order have already been revised and placed into people\'s carts for the indicated shop date. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?! <br/><br/>Pressing OK will delete the items from the existing shopping carts and start the order-revision process again.',
+									msg:'<?=$Text['msg_revise_revised'];?>',
 									buttons: {
 										"<?=$Text['btn_ok'];?>":function(){	
 											//reset this order to "finalized"
-											$(this).html('Please wait while the order is being reset....');
+											$(this).html('<?=$Text['wait_reset'];?>');
 											gSelRow.children().eq(8).attr('revisionStatus',1);
 											var $this = $(this);
 											resetOrder(gSelRow.attr('orderId'), function(){
@@ -748,7 +756,7 @@
 
 							} else if (isValidated){
 								$.showMsg({
-									msg:'Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!',
+									msg:'<?=$Text['msg_err_already_val'];?>',
 									type: 'error'});
 							} else {
 								switchTo('review', {});
@@ -777,21 +785,20 @@
 					$this = $(this);
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
 						$.showMsg({
-							msg:'There is more than one order currently selected. Do you want to print them all in one go?',
+							msg:'<?=$Text['print_several'];?>',
 							width:500,
 							buttons: {
-								"Yes, print all":function(){						
+								"<?=$Text['btn_yes_all'];?>":function(){						
 									printQueue();
 									$(this).dialog("close");
 								},
-								
-								"No, just one" : function(){
+								"<?=$Text['btn_just_one']?>" : function(){
 									$('input:checkbox[name="bulkAction"]').attr('checked', false);
 									$this.parents('tr').children('td:first').find('input').attr('checked','checked');
 									printQueue();
 									$( this ).dialog( "close" );
 								},
-								"Cancel" : function(){
+								"<?=$Text['btn_cancel'];?>" : function(){
 									$( this ).dialog( "close" );
 								}
 							},
@@ -898,22 +905,25 @@
 				
 					switch(td.text()){
 						case "1": 
-							td.attr('title','Order has been sent to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+							td.attr('title','<? echo $Text['ostat_desc_sent'];?>').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 							break;
 						case "2": 
-							td.attr('title','Revised and distributed without changes').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr('title','<?php echo $Text['ostat_desc_nochanges']; ?>').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "3": 
-							td.attr('title','Order has been postponed').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
+							td.attr('title','<?php echo $Text['ostat_desc_postponed']; ?>').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
 							break;
 						case "4": 
-							td.attr('title','Order has been canceled').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
+							td.attr('title','<?php echo $Text['ostat_desc_cancel']; ?>').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
 							break;
 						case "5":
-							td.attr('title','Revised with some modifications').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr('title','<?php echo $Text['ostat_desc_changes'];?>').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "6":
 							td.attr('title','Items of this order have been validated').addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
+							break;
+						case "-1":
+							td.attr('title','Order ignored. Info not available in past orders aixada v2.03').addClass('dim40').html('-');
 							break;
 					}
 				}
@@ -929,7 +939,7 @@
 
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
 						$.showMsg({
-							msg:'There are no orders selected!',
+							msg:'<?=$Text['msg_err_noselect'];?>',
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){						
 									$(this).dialog("close");
@@ -1106,22 +1116,22 @@
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
 				<button id="btn_overview" class="floatLeft reviewElements viewElements"><?php echo $Text['overview'];?></button>
-				<h1 class="reviewElements">Revise order <span class="providerName"></span></h1>
-				<h1 class="viewElements">Order detail for <span class="providerName aix-style-provider-name"></span></h1>
-		    	<h1 class="overviewElements">Manage orders</h1>
+				<h1 class="reviewElements"><?=$Text['ti_revise'];?> <span class="providerName"></span></h1>
+				<h1 class="viewElements"><?=$Text['ti_order_detail'];?> <span class="providerName aix-style-provider-name"></span></h1>
+		    	<h1 class="overviewElements"><?=$Text['ti_mng_orders'];?></h1>
 		    </div>
 		   	<div id="titleRightCol">
-		   		<button id="btn_setReview" class="viewElements btn_right" title="Revise order">Revise order</button>
-		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
-				<button	id="tblViewOptions" class="overviewElements btn_right">Filter orders</button>
+		   		<!-- button id="btn_setReview" class="viewElements btn_right"><?=$Text['btn_revise']; ?></button-->
+		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
+				<button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['filter_orders']; ?></button>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="ordersForToday">Expected today</a></li>
-						<li><a href="javascript:void(null)" id="nextWeek">Next week</a></li>
-						<li><a href="javascript:void(null)" id="futureOrders">All future orders</a></li>
-						<li><a href="javascript:void(null)" id="pastMonth">Last month</a></li>
-						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
-						<li><a href="javascript:void(null)" id="limboOrders">Postponed</a></li>
+						<li><a href="javascript:void(null)" id="ordersForToday"><?=$Text['filter_expected'] ?></a></li>
+						<li><a href="javascript:void(null)" id="nextWeek"><?=$Text['filter_next_week'] ;?></a></li>
+						<li><a href="javascript:void(null)" id="futureOrders"><?=$Text['filter_future'];?></a></li>
+						<li><a href="javascript:void(null)" id="pastMonth"><?=$Text['filter_prev_month'] ; ?></a></li>
+						<li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
+						<li><a href="javascript:void(null)" id="limboOrders"><?=$Text['filter_postponed'];?></a></li>
 					</ul>
 				</div>				
 		   	</div> 	
@@ -1130,9 +1140,9 @@
 			<p  class="textAlignLeft">
 				<!-- span class="ui-icon ui-icon-arrowreturnthick-1-s floatLeft" style="margin-top:10px; margin-right:5px;"></span-->
 				<select id="bulkActionsTop">
-					<option value="-1">With selected...</option>
-					<option value="print">Print</option>
-					<option value="download">Download as zip</option>
+					<option value="-1"><?=$Text['with_sel'];?></option>
+					<option value="print"><?=$Text['printout'];?></option>
+					<option value="download"><?=$Text['dwn_zip'];?></option>
 				</select>
 			</p>
 		</div>
@@ -1145,13 +1155,13 @@
 				<thead>
 					<tr>
 						<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
-						<th class="clickable">id <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable textAlignLeft">Provider <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable">Ordered for <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th>Closes in days</th>
-						<th>Sent off to provider</th>
-						<th class="clickable">Shop date <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable">Order total  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable"><?=$Text['id'];?><span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable textAlignLeft"><?=$Text['provider_name'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable"><?=$Text['ordered_for'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th><?=$Text['closes_days'];?></th>
+						<th><?=$Text['sent_off'];?></th>
+						<th class="clickable"><?=$Text['date_for_shop'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th class="clickable"><?=$Text['order_total'];?>  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th>Status</th>
 						<th>Actions</th>
 					</tr>
@@ -1180,9 +1190,9 @@
 						<td colspan="6">
 							<p  class="textAlignLeft">
 							<select id="bulkActionsBottom">
-								<option value="-1">With selected...</option>
-								<option value="print">Print</option>
-								<option value="download">Download as zip</option>
+								<option value="-1"><?=$Text['with_sel'];?></option>
+								<option value="print"><?=$Text['printout'];?></option>
+								<option value="download"><?=$Text['dwn_zip'];?></option>
 							</select>
 							</p>
 						</td>
@@ -1201,9 +1211,9 @@
 				<table id="tbl_orderDetailInfo" class="tblListingBorder2">
 					<thead>	
 						<tr>
-							<th colspan="2"><p>Provider</p></th>
-							<th colspan="2"><p>Order</p></th>
-							<th colspan="2" class="aix-layout-fixW250"><p>Responsible UF</p></th>
+							<th colspan="2"><p><?=$Text['provider_name'];?></p></th>
+							<th colspan="2"><p><?=$Text['order'];?></p></th>
+							<th colspan="2" class="aix-layout-fixW250"><p><?=$Text['responsible_uf'];?></p></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1214,14 +1224,14 @@
 						<td colspan="2" rowspan="2"><p>{uf_id} {uf_name}</p></td>
 					</tr>
 					<tr>
-						<td class="aix-layout-fixW150"><p>NIF/NIE</p></td>
+						<td class="aix-layout-fixW150"><p><?php echo $Text['nif'] ."/".$Text['nie']; ?></p></td>
 						<td>{nif}</td>
-						<td class="aix-layout-fixW150"><p>Order id</p></td>
+						<td class="aix-layout-fixW150"><p><?php echo $Text['order']." ".$Text['id'];?></p></td>
 						<td><p class="boldStuff">{order_id}</p></td>
 					</tr>
 					<tr>
 						<td>
-							<p>Contact</p>
+							<p><?=$Text['contact'];?></p>
 						</td>
 						<td>
 							{contact}<br/>
@@ -1229,30 +1239,30 @@
 							{zip} {city}
 						</td>
 						<td>
-							<p>Ordered for</p>
+							<p><?php echo $Text['ordered_for']; ?></p>
 						</td>
 						<td>
 							<p id="orderDetailDateForOrder" class="boldStuff">{date_for_order}</p>
 						</td>
 						<th colspan="2" class="aix-layout-fixW250">
-							<p>Totals</p>
+							<p><?php echo $Text['total'];?></p>
 						</th>
 					</tr>
 					<tr>
 						<td>
-							<p>Email</p>
+							<p><?php echo $Text['email'];?></p>
 						</td>
 						<td>
 							{email}
 						</td>
 						<td>
-							<p>Finalized</p>
+							<p><?php echo $Text['ostat_finalized']; ?></p>
 						</td>
 						<td>
 							{ts_sent_off}
 						</td>
 						<td>
-							<p>Original order</p>
+							<p><?php echo $Text['total_orginal_order']; ?></p>
 						</td>
 						<td>
 							<p class="textAlignRight  boldStuff">{total} €</p>
@@ -1260,19 +1270,19 @@
 					</tr>
 					<tr>
 						<td>
-							<p>Phone</p>
+							<p><?php echo $Text['phone1']; ?></p>
 						</td>
 						<td>
 							 {phone1} / {phone2}
 						</td>
 						<td>
-							<p>Shop date</p>
+							<p><?php echo $Text['date_for_shop']; ?></p>
 						</td>
 						<td>
 							<p id="orderDetailShopDate">{date_for_shop}</p>
 						</td>
 						<td>
-							<p>After revision</p>
+							<p><?php echo $Text['total_after_revision']; ?></p>
 						</td>
 						<td>
 							<p class="textAlignRight  boldStuff">{delivered_total}</p>
@@ -1280,19 +1290,19 @@
 					</tr>
 					<tr>
 						<td>
-							<p>Bank</p>
+							<p><?php echo $Text['bank_name']; ?></p>
 						</td>
 						<td>
 							{bank_name}
 						</td>
 						<td>
-							<p>Status</p>
+							<p><?php echo $Text['status']; ?></p>
 						</td>
 						<td id="orderDetailRevisionStatus">
 							{revision_status}
 						</td>
 						<td>
-							<p>Validated</p>
+							<p><?php echo $Text['validated'];?></p>
 						</td>
 						<td>
 							<p class="textAlignRight boldStuff">{validated_income}</p>
@@ -1300,21 +1310,16 @@
 					</tr>
 					<tr>
 						<td>
-							<p>Account</p>
+							<p><?php echo $Text['bank_account'];?></p>
 						</td>
 						<td>
 							{bank_account}
 						</td>
 						<td>
-							<p class="floatLeft">Notes</p>
+							<p class="floatLeft"><?php echo $Text['notes']; ?></p>
 						</td>
 						<td>
 							<textarea class="ui-widget-content ui-corner-all editOrderDetail textareaMax" id="orderDetailNotes" name="order_notes">{order_notes}</textarea>
-
-							<!-- input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailNotes" name="order_notes" value="{order_notes}" /-->
-
-
-							
 						</td>
 						<td></td>
 						<td></td>
@@ -1323,7 +1328,7 @@
 						<td></td>
 						<td></td>
 						<td>
-							<p>Delivery ref.</p>
+							<p><?php echo $Text['delivery_ref']; ?></p>
 						</td>
 						<td>
 							<input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailDeliveryRef" name="delivery_ref" value="{delivery_ref}" />
@@ -1335,7 +1340,7 @@
 						<td></td>
 						<td></td>
 						<td>
-							<p>Payment ref.</p>
+							<p><?php echo $Text['payment_ref']; ?></p>
 						</td>
 						<td>
 							<input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailPaymentRef" name="payment_ref" value="{payment_ref}" />
@@ -1360,10 +1365,10 @@
 				<table id="tbl_reviseOrder" class="tblReviseOrder">
 					<thead>
 						<tr>
-							<th>id</th>
-							<th>Name</th>
-							<th>Unit</th>
-							<th class="arrivedCol">Arrived</th>
+							<th><?=$Text['id'];?></th>
+							<th><?=$Text['product_name'];?></th>
+							<th><?=$Text['unit'];?></th>
+							<th class="arrivedCol"><?=$Text['arrived']; ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1389,28 +1394,27 @@
 
 <div id="dialog_orderStatus" title="Set Order Status">
 	<p>&nbsp;</p>
-	<p>You are about to change the status of this order. Currently your order is marked as "<span id="currentOrderStatus" class="boldStuff"></span>". Change it to one of the following options: </p>
+	<p><?php echo $Text['msg_cur_status'];?>: <span id="currentOrderStatus" class="ui-state-highlight ui-corner-all aix-style-padding3x3"></span>.</p>
+	<p><?php echo $Text['msg_change_status']; ?>: </p>
 	<p>&nbsp;</p>
 	<table>
-		<tr><td class="textAlignCenter"><button id="btn_revised">Arrived!</button></td><td>&nbsp;</td><td>Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...</td></tr>					
+		<tr><td class="textAlignCenter"><button id="btn_revised"><?php echo $Text['set_ostat_arrived'];?>!</button></td><td>&nbsp;</td><td><?php echo $Text['set_ostat_desc_arrived']; ?></td></tr>					
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_postponed">Postpone!</button></td><td>&nbsp;</td><td>The order did not arrive for the ordered date but probably will in the upcoming weeks.</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_postponed"><?php echo $Text['set_ostat_postpone']; ?></button></td><td>&nbsp;</td><td><?php echo $Text['set_ostst_desc_postpone'] ; ?></td></tr>
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_canceled">Cancel!</button></td><td>&nbsp;</td><td>Ordered items will never arrive.</td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_canceled"><?php echo $Text['set_ostat_cancel']; ?></button></td><td>&nbsp;</td><td><?php echo $Text['set_ostat_desc_cancel'] ; ?></td></tr>
 	</table>
 </div>	
 
 
 <div id="dialog_setShopDate" title="Set shopping date">
 	<p>&nbsp;</p>
-	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8">The items have been successfully moved to the shopping carts of the corresponding date.</p>
-	<p>Are you sure you want to make this order available for shopping? All corresponding products will be  
-	placed into the shopping cart for the following date: 
-	</p>
+	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"><?php echo $Text['msg_move_to_shop']; ?></p>
+	<p><?php echo $Text['msg_confirm_move']; ?></p>
 	<br/>
 	<p class="textAlignCenter boldStuff" id="indicateShopDate"></p> 
 	<br/>
-	<p>You can also <a href="javascript:void(null)" id="showDatePicker">choose an alternative date</a> </p>
+	<p><a href="javascript:void(null)" id="showDatePicker"><?php echo $Text['alter_date']; ?></a> </p>
 	<br/>
 	<div id="datepicker"></div>
 </div>

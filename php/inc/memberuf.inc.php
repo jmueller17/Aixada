@@ -4,13 +4,13 @@
 							<td>
 								<p class="textAlignLeft ui-corner-all">{login}</p>
 							</td>
-							<td><label for="member_id">Member id</label></td>
+							<td><label for="member_id"><?php echo $Text['member_id']; ?></label></td>
 							<td><p class="textAlignLeft ui-corner-all">{id}</p></td>
 							
 						</tr>
 						<tr>
 							<td colspan="2"></td>
-							<td><label for="custom_member_ref">Custom ref</label></td>
+							<td><label for="custom_member_ref"><?php echo $Text['custom_member_ref']; ?></label></td>
 							<td><input type="text" name="custom_member_ref" value="{custom_member_ref}" class="ui-widget-content ui-corner-all" /></td>
 						</tr>
 						<tr>
@@ -20,7 +20,7 @@
 							<td></td>
 						</tr>
 						<tr>
-							<td><label for="nif">NIF</label></td>
+							<td><label for="nif"><?php echo $Text['nif'];?></label></td>
 							<td><input type="text" name="nif" value="{nif}" class="ui-widget-content ui-corner-all" /></td>
 							<td></td>
 							<td></td>
@@ -66,11 +66,11 @@
 							</td>
 						</tr>
 						<tr>
-							<td><label for="last_seen" >Last seen:</label></td>
+							<td><label for="last_seen"><?php echo $Text['last_logon']; ?>:</label></td>
 							<td colspan="2"><p class="textAlignLeft ui-corner-all">{last_successful_login}</p></td>
 						</tr>
 						<tr>
-							<td><label for="default_theme">Theme:</label></td>
+							<td><label for="default_theme"><?php echo $Text['theme']; ?>:</label></td>
 							<td colspan="2">
 								<p class="textAlignLeft ui-corner-all hidden">{gui_theme}</p>
 								<div class="memberThemeSelect"></div>
@@ -86,7 +86,7 @@
 						<tr>
 							<td colspan="3"></td>
 							<td><p class="floatRight">
-									<button class="btn_save_edit_member" memberid="{id}">Save changes</button>
+									<button class="btn_save_edit_member" memberid="{id}"><?php echo $Text['btn_save'];?></button>
 								</p>
 							</td>
 						</tr>

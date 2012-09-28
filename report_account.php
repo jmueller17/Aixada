@@ -55,21 +55,13 @@
 					},
 					rowComplete : function (rowIndex, row){
 						$.formatQuantity(row);
-						
-						/*var b = $('span[class=balanceAmount]',row).text();
-						var q = $('span[class=quantityAmount]',row).text();
-			        	var cssb = (new Number(b) >= 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
-			        	var cssq = (new Number(q) >= 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
-			        	$('span[class=balanceAmount]',row).addClass(cssb);
-			        	$('span[class=quantityAmount]',row).addClass(cssq);*/
-						
 					},
 					complete : function(rowCount){
 						$('#account_listing .loadAnim').hide();
 						
 						if ($('#list_account tbody tr').length == 0){
 							$.showMsg({
-								msg:"Sorry, there are no movements for the selected account and date. Try to widen the consulted time period with the filter button.",
+								msg:"<?php echo $Text['msg_err_nomovements']; ?>",
 								type: 'warning'});
 						} else {
 							$('#list_account tbody tr:even').addClass('rowHighlight'); 
@@ -131,7 +123,7 @@
 					
 					if (id == -100 && what != 'my_account'){
 						$.showMsg({
-							msg:"There is currently no account selected! Choose an account first, then filter the results!",
+							msg:"<?php echo $Text['msg_sel_account'];?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){	
 									$(this).dialog('close');
@@ -177,13 +169,13 @@
 		    </div>
 		    <div id="titleRightCol50">
 
-		    	<button	id="tblAccountViewOptions" class="hideInPrint floatRight">Filter</button>
+		    	<button	id="tblAccountViewOptions" class="hideInPrint floatRight"><?php echo $Text['btn_filter'];?></button>
 		    	<div id="tblAccountOptionsItems" class="hidden hideInPrint">
 					<ul>
-						<li><a href="javascript:void(null)" id="today">Today's movements</a></li>
-						<li><a href="javascript:void(null)" id="past2Month">Recent ones</a></li>
-						<li><a href="javascript:void(null)" id="pastYear">Last year</a></li>
-						<li><a href="javascript:void(null)" id="all">All</a></li>
+						<li><a href="javascript:void(null)" id="today"><?php echo $Text['filter_acc_todays']; ?></a></li>
+						<li><a href="javascript:void(null)" id="past2Month"><?php echo $Text['filter_recent']; ?></a></li>
+						<li><a href="javascript:void(null)" id="pastYear"><?php echo $Text['filter_year'] ;?></a></li>
+						<li><a href="javascript:void(null)" id="all"><?php echo $Text['filter_all'];?></a></li>
 					</ul>
 				</div>		
 				
@@ -219,8 +211,8 @@
 							<td>{description}</td>
 							<td>{method}</td>
 							<td><p class="textAlignCenter">{account}</p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span>€</p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{balance}</span>€</p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
 						</tr>
 					</tbody>
 					<tfoot>

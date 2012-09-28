@@ -21,16 +21,19 @@
        echo ' value="' . $role. '">' . $rt . '</option>'; 
      } 
      echo '</select> ';
-     /*echo '<select size="0" name="lang_select" id="lang_select">';
-       $keys = $_SESSION['userdata']['language_keys'];
-       $names = $_SESSION['userdata']['language_names'];
-       for ($i=0; $i < count($keys); $i++) {
-           echo '<option';
-           if ($keys[$i] == $_SESSION['userdata']['language'])
-               echo ' selected';
-           echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
-       } 
-     echo '</select> '; */
+     
+     if (configuration_vars::get_instance()->show_menu_language_select){
+	     echo '<select size="0" name="lang_select" id="lang_select">';
+	       $keys = $_SESSION['userdata']['language_keys'];
+	       $names = $_SESSION['userdata']['language_names'];
+	       for ($i=0; $i < count($keys); $i++) {
+	           echo '<option';
+	           if ($keys[$i] == $_SESSION['userdata']['language'])
+	               echo ' selected';
+	           echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
+	       } 
+	     echo '</select> ';
+     }
        echo " | ";
       
       
@@ -89,24 +92,24 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<li><a href="manage_stock.php">Stock </a></li>
-				<li><a href="manage_table.php?table=aixada_iva_type">IVA</a></li>
+				<li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li>
+				<li><a href="manage_table.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
 				
 			</ul>
 		</li>
-		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a>
-			<ul>
+		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a></li>
+			<!--  ul>
 
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
+		</li-->
+		<li><a href="manage_money.php"><?php echo $Text['nav_mng_money'];?></a>
 		</li>
-		<li><a href="manage_money.php">Money</a>
-		</li>
-		<li><a href="#TODO">Admin</a>
+		<li><a href="#TODO"><?php echo $Text['nav_mng_admin'];?></a>
 			<ul>
 				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
-				<li><a href="#TODO">Users </a></li>
-				<li><a href="#TODO">Access rights</a></li>
+				<li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
+				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li>
 			</ul>
 		</li>
 

@@ -110,7 +110,7 @@
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
 						if (validated == "0000-00-00 00:00:00"){
-							$(row).children().eq(2).html('<span class="ui-state-error ui-corner-all">Not validated</span>');
+							$(row).children().eq(2).html('<span class="ui-state-error ui-corner-all"><?php echo $Text['not_validated'];?></span>');
 						}
 					}, 
 					complete: function(rowCount){
@@ -195,7 +195,7 @@
 				} else {					
 					resetFields();
 					$.showMsg({
-						msg:'The selected cart has already been validated. Do you want to see its products/items?',
+						msg:"<?php echo $Text['msg_already_validated']; ?>",
 						width:500,
 						buttons: {
 							"Yes":function(){						
@@ -327,7 +327,7 @@
 						if (validated == '0000-00-00 00:00:00'){
 							$(row).children().eq(3).html("-");	
 						} else {
-							$(row).children().eq(3).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
+							$(row).children().eq(3).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at']; ?>: '+validated+'"></span>');
 						}		
 					},
 					complete : function(){
@@ -599,8 +599,8 @@
 				<p class="floatLeft"><img src="img/validar.png" style="margin-top:4px; height:60px;"/></p>
 		    	<div class="aix-layout-title-with-icon">
 		    		<h1 class="cartTitle"><?php echo $Text['ti_validate']; ?><span class="insert_uf_id cart">??</span> <span class="ui-corner-all aix-style-padding3x3 showCartDate"></span> </h1>
-		    		<h1 class="noCartTitle ui-state-highlight ui-corner-all">Nothing to validate for HU<span class="insert_uf_id cart">??</span> </h1>
-		    		<h1 class="validatedCartTitle ui-state-highlight ui-corner-all">Validated cart for HU<span class="insert_uf_id cart">??</span></h1>
+		    		<h1 class="noCartTitle ui-state-highlight ui-corner-all"><?php echo $Text['nothing_to_val']; ?><span class="insert_uf_id cart">??</span> </h1>
+		    		<h1 class="validatedCartTitle ui-state-highlight ui-corner-all"><?php echo $Text['ti_validate']; ?><span class="insert_uf_id cart">??</span></h1>
 		    	</div>
 		    </div>
 		    <div id="titleRightCol">
@@ -642,7 +642,6 @@
 						<tr>
 							
 							<th><?php echo $Text['id'];?></th>
-							<!-- th><?php echo $Text['info'];?></th-->
 							<th><?php echo $Text['name_item'];?></th>
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['quantity'];?></th>
@@ -701,12 +700,12 @@
 			<div id="monitorFlows" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['latest_movements'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-					<table id="list_account" class="tblListingGrid">
+					<table id="list_account" class="tblListingDefault">
 					<thead>
 						<tr>
 							<th><?php echo $Text['account'];?></th>
 							<th><?php echo $Text['uf_short'];?></th>
-							<th>Type</th>
+							<th><?php echo $Text['transfer_type'];?></th>
 							
 							<th class="textAlignRight"><?php echo $Text['amount'];?></th>
 							<th class="textAlignRight"><?php echo $Text['balance'];?></th>
@@ -730,11 +729,11 @@
 			
 			<div id="monitorCarts" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span>Today's carts<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['todays_carts']; ?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
 					<table id="tbl_cart_listing" class="tblListingDefault">
 						<thead>
 							<tr >
-								<th>Cart id</th>
+								<th><?=$Text['cart_id'];?></th>
 								<th><?=$Text['uf_short'];?></th>
 								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
 								<th class="textAlignCenter"><?=$Text['validated'];?></th>
@@ -781,10 +780,10 @@
 				</div>
 			</div>
 			<div id="monitorStock" class="ui-widget hidden">
-				<div class="rightCol-Observer ui-widget-content ui-corner-all">
+				<div class="rightCol-Observer ui-widget-content ui-corner-all  aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
 					
-						<table width="100%" id="min_stock" class="table_listing">
+						<table id="min_stock" class="tblListingDefault">
 							<thead>
 								<tr>
 									<th><?php echo $Text['id'];?></th>
@@ -821,19 +820,19 @@
 
 <div id="dialog_select_cart" title="Non-validated carts for household">
 	<p>&nbsp;</p>
-	<p class="ui-state-highlight ui-corner-all aix-style-padding8x8">The selected household has more than one cart pending for validation. Please select one: </p>
+	<p class="ui-state-highlight ui-corner-all aix-style-padding8x8"><?php echo $Text['msg_several_carts']; ?> </p>
 	<p>&nbsp;</p>
 	<table id="tbl_Shop" class="tblListingDefault">
 		<thead>
 			<tr >
-				<th>Cart id</th>
+				<th><?php echo $Text['cart_id'];?></th>
 				<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
 				<th class="textAlignCenter"><?=$Text['validated'];?></th>
 				<th class="textAlignRight"><?=$Text['total'];?></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" validated="{ts_validated}"class="clickable">
+			<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" validated="{ts_validated}" class="clickable">
 				<td>{id}</td>
 				<td class="textAlignCenter">{date_for_shop}</td>
 				<td class="textAlignCenter">{ts_validated}</td>

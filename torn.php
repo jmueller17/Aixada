@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title']; ?></title>
+	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_torn']; ?></title>
 
  	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
@@ -82,9 +82,9 @@
 				<table>
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_validate">Validate</button>
+							<button class="aix-layout-fixW150" id="btn_nav_validate"><?php echo $Text['nav_wiz_validate']; ?></button>
 						</td>
-						<td><p>Validate shopping carts.</p></td>
+						<td><p><?php echo $Text['desc_validate']; ?></p></td>
 					</tr>
 				</table>
 			</div>
@@ -94,16 +94,16 @@
 				<table>
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_revise">Revise</button>
+							<button class="aix-layout-fixW150" id="btn_nav_revise"><?php echo $Text['nav_wiz_revise_order']; ?></button>
 						</td>
-						<td><p>Revise orders and distribute to shopping carts</p></td>
+						<td><p><?php echo $Text['desc_revise']; ?></p></td>
 					</tr>
 					
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_cash">Cashbox</button>
+							<button class="aix-layout-fixW150" id="btn_nav_cash"><?php echo $Text['nav_wiz_cashbox']; ?></button>
 						</td>
-						<td><p>Revise and set starting balance for this shift</p></td>
+						<td><p><?php echo $Text['desc_cashbox']; ?></p></td>
 					</tr>
 				</table>
 			</div>		
@@ -113,22 +113,22 @@
 				<table>
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_stock">Stock</button>
+							<button class="aix-layout-fixW150" id="btn_nav_stock"><?php echo $Text['nav_mng_stock']; ?></button>
 						</td>
-						<td><p>Add and/or control stock of products</p></td>
+						<td><p><?php echo $Text['desc_stock']; ?></p></td>
 					</tr>
 					
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_orders">Orders</button>
+							<button class="aix-layout-fixW150" id="btn_nav_orders"><?php echo $Text['nav_mng_orders']; ?></button>
 						</td>
-						<td><p>Print and download orders for next week</p></td>
+						<td><p><?php echo $Text['desc_print_orders']; ?></p></td>
 					</tr>
 					<tr>
 						<td>
-							<button class="aix-layout-fixW150" id="btn_nav_stats">Stats</button>
+							<button class="aix-layout-fixW150" id="btn_nav_stats"><?php echo $Text['nav_report_status']; ?></button>
 						</td>
-						<td><p>Download incidents, negative ufs, products with negative stock</p></td>
+						<td><p><?php echo $Text['desc_stats']; ?></p></td>
 					</tr>
 					
 				</table>

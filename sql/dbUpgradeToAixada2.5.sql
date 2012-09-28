@@ -209,7 +209,7 @@ update
 	aixada_order o
 set
 	o.date_for_shop = o.date_for_order,
-	o.revision_status = 2
+	o.revision_status = -1
 where
 	o.date_for_order < '2012-09-28';
 	
