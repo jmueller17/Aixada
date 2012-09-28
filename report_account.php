@@ -200,7 +200,7 @@
 			<div class="ui-widget-content ui-corner-all">
 					
 					<h3 class="ui-widget-header ui-corner-all"><?=$Text['latest_movements'];?> <span class="account_id"></span> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
-					<table id="list_account" class="tblListingGrid">
+					<table id="list_account" class="tblListingDefault">
 					<thead>
 						<tr>
 							<th><?php echo $Text['date'];?></th>
@@ -219,8 +219,8 @@
 							<td>{description}</td>
 							<td>{method}</td>
 							<td><p class="textAlignCenter">{account}</p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span> {currency}</p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{balance}</span> {currency}</p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span>€</p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{balance}</span>€</p></td>
 						</tr>
 					</tbody>
 					<tfoot>

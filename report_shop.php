@@ -65,7 +65,7 @@
 					var validated = $(row).children().eq(4).text();
 
 					if (validated == '0000-00-00 00:00:00'){
-						$(row).children().eq(4).html("-");	
+						$(row).children().eq(4).html("<p class='textAlignCenter'>-</p>");	
 					} else {
 						$(row).children().eq(4).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
 					}	
@@ -304,21 +304,21 @@
 					<thead>
 						<tr>
 							<th></th>
-							<th class="textAlignLeft clickable">Cart id <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
-							<th class="textAlignLeft clickable"><?php echo $Text['uf_long']; ?><span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
-							<th class="textAlignLeft clickable">Date of purchase <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
-							<th>Validated</th>
-							<th >Total</th>
+							<th class="textAlignCenter clickable">Cart id <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
+							<th  class="clickable"><?php echo $Text['uf_long']; ?><span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></th>
+							<th  class="clickable"><p class="textAlignCenter">Date of purchase <span class="ui-icon ui-icon-triangle-2-n-s floatLeft"></span></p></th>
+							<th><p class="textAlignCenter">Validated</p></th>
+							<th><p class="textAlignRight">Total</p></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr class="clickable" id="shop_{id}" shopId="{id}" ufId={uf_id} dateForShop="{date_for_shop}" validated="{ts_validated}" operatorName="{operator_name}" operatorUf="{operator_uf}">
 							<td></td>
-							<td><p class="textAlignLeft">{id}</p></td>
-							<td><p class="textAlignLeft">{uf_id} {uf_name}</p></td>
-							<td><p class="textAlignLeft">{date_for_shop}</p></td>
+							<td><p>{id}</p></td>
+							<td><p>{uf_id} {uf_name}</p></td>
+							<td><p class="textAlignCenter">{date_for_shop}</p></td>
 							<td>{ts_validated}</td>
-							<td class="textAlignRight">{purchase_total}€</td>
+							<td><p class="textAlignRight">{purchase_total}€</p></td>
 						</tr>
 					</tbody>
 					<tfoot>

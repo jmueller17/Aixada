@@ -124,22 +124,6 @@
 				$('.inputCorrectStock').hide();
 				$('.btn_save_new_stock .btn_correct_stock').hide();
 				
-				 //init and show the save button
-				/*var btn = $(this).next();
-
-				if (!btn.hasClass('exists')){
-					btn.button({
-						icons:{secondary:'ui-icon-disk'}
-					})
-					.click(function(e){
-						var addQu = $.checkNumber($(this).prev(),'',3);	
-						submitStock('addStock',$(this).attr('productId'),addQu);
-					})
-					 .addClass('exists')
-					 .show();
-				} else {
-					btn.show();
-				}*/
 			})
 			.live('keyup',function(e){
 				//submit change on add stock

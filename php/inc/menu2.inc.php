@@ -1,12 +1,15 @@
 <div id="logonStatus">
-	<p>
+	<p class="ui-widget">
 		<?php 
-   if ($_SESSION['userdata']['login'] != '') {
-       if (isset($_SESSION['userdata']['can_checkout']) and
+
+   	if ($_SESSION['userdata']['login'] != '') {
+
+   		echo '<a href="docs/index_'.get_session_language().'.php" target="_blank">Help</a> | ';	
+   	if (isset($_SESSION['userdata']['can_checkout']) and
            $_SESSION['userdata']['can_checkout']) {
            echo '<font color="red">' . $Text['nav_can_checkout'] . '</font> ';
        }
-     echo $Text['nav_signedIn'] . " " . $_SESSION['userdata']['login'] . " | "
+     echo  $Text['nav_signedIn'] . " " . $_SESSION['userdata']['login'] . " | "
        . $Text['uf_long'] . ' ' . $_SESSION['userdata']['uf_id'] . " | " 
        . $_SESSION['userdata']['provider_id'];
      echo '<select size="0" name="role_select" id="role_select">';
@@ -32,15 +35,7 @@
       
       
 	 echo "<a href='javascript:void(null)' id='logoutRef'>".$Text['nav_logout']."</a>";
-     /*  if (!isset($_SESSION['userdata']['can_checkout']) or 
-           !$_SESSION['userdata']['can_checkout']) {
-           echo " | <a href='php/ctrl/Cookie.php?oper=try_to_checkout'>"
-               . $Text['nav_try_to_checkout'] . "</a>";
-       } else {
-           echo " | <a href='php/ctrl/Cookie.php?oper=stop_checkout'>"
-               . $Text['nav_stop_checkout'] . "</a>";
-       }
-       */
+ 
    } else {
      echo ("userdata not set");
      header('Location:login.php');

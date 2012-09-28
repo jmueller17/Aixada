@@ -132,7 +132,7 @@
 					}
 
 					//product total quantities
-					tbodyStr += '<td id="total_'+product_id+'"></td>';
+					tbodyStr += '<td id="total_'+product_id+'" class="nobr"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -290,10 +290,19 @@
 					if (allRevised){
 						$('#dialog_setShopDate').dialog("open");
 					} else {
+
 						$.showMsg({
-							msg:"There are still unrevised items in this order. Please make sure all 'revised' checkboxes are checked!",
-							type: "error"
-						});
+							msg:"There are still unrevised items in this order. Please make sure all ordered products have arrived! ",
+							buttons: {
+								"Distribute anyway":function(){						
+									$('#dialog_setShopDate').dialog("open");
+									$(this).dialog("close");
+								},
+								"Revise remaining" : function(){
+									$( this ).dialog( "close" );
+								}
+							},
+							type: 'confirm'});
 
 					}
        			}).hide();
@@ -314,6 +323,7 @@
 								setTimeout(function(){
 									$this.dialog( "close" )
 									$('.interactiveCell').hide();
+									$('.success_msg').hide().next().show();
 									switchTo('overview');
 								},3000);
 							},
@@ -447,7 +457,53 @@
 			 });
 
 
+			//edit/save the notes, payment_ref and delivery_ref pages
+			$('.editOrderDetail')
+				.live('focus', function(e){
+					if (gSelRow.attr('orderId') > 0) {
+					} else {
+						$.showMsg({
+							msg:"This order is not finalized. You can only save the notes and references once the order has been sent off.",
+							type: 'warning'});
+					}
+				})
+				.live('keyup', function(e){
+					//hitting return saves it
+					if (e.keyCode == 13 && gSelRow.attr('orderId') > 0){
+						$.ajax({
+							type: "POST",
+							url: 'php/ctrl/Orders.php?oper=editOrderDetailInfo&order_id='+gSelRow.attr('orderId')+"&delivery_ref="+$('#orderDetailDeliveryRef').val()+"&payment_ref="+$('#orderDetailPaymentRef').val()+"&order_notes="+$('#orderDetailNotes').val(),
+							beforeSend : function (xhr){
+								$('.editOrderDetail').attr('disabled',true);
+							},
+							success: function(txt){
+								$.showMsg({
+									msg:"Saved successfully!",
+									type: 'success'});
+								
+							},
+							error : function(XMLHttpRequest, textStatus, errorThrown){
+								$.showMsg({
+									msg:XMLHttpRequest.responseText,
+									type: 'error'});
+							},
+							complete : function(){
+								$('.editOrderDetail').attr('disabled',false);
+							}
+						});
+					}
 
+				})
+
+				//revise button which switches from order detail view to revise screen
+				$("#btn_setReview")
+				.button({
+					icons: {
+			        	primary: "ui-icon-check"
+					}
+			    }).click(function(e){
+			    	//$('.reviseOrderBtn').trigger('click');
+				  });
 
 				
 
@@ -487,6 +543,7 @@
 					modal:true
 				});
 
+			//upon entering the revision page, the overall order status is set. 
 			function setOrderStatus(status){
 				$.ajax({
 					type: "POST",
@@ -528,22 +585,7 @@
 						tds.eq(4).text("closed");
 						var statusTd = $(row).children().eq(8); 
 						statusTd.attr('revisionStatus',status);
-						switch(status){
-							case "1": 
-								statusTd.attr('title','Order has been sent to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
-								break;
-							case "2": 
-								statusTd.attr('title','Revised and distributed without changes').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
-								break;
-							case "3": 
-								statusTd.attr('title','Order has been postponed').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
-								break;
-							case "4": 
-								statusTd.attr('title','Order has been canceled').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
-								break;
-							case "5":
-								statusTd.attr('title','Revised with some modifications').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
-						}
+						formatRevisionStatus(statusTd);
 					}
 
 					
@@ -604,7 +646,7 @@
 			
 			$('#tbl_orderOverview tbody tr')
 				.live('mouseover', function(e){
-					$(this).removeClass('highlight').addClass('ui-state-hover');
+					$(this).addClass('ui-state-hover');
 					
 				})
 				.live('mouseout',function(e){
@@ -612,7 +654,9 @@
 					
 				})
 				.live('click', function(e){
+					$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
 					gSelRow = $(this); 
+					gSelRow.addClass('ui-state-highlight');
 					$('.col').hide();	
 					switchTo('view',{});
 				});
@@ -637,7 +681,10 @@
 			//revise order icon 
 			$('.reviseOrderBtn')
 				.live('click', function(e){
+					$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
 					gSelRow = $(this).parents('tr'); 
+					gSelRow.addClass('ui-state-highlight');
+					
 					var shopDate 		= $(this).parents('tr').children().eq(6).text();
 
 					$('.col').hide();
@@ -672,7 +719,9 @@
 								 
 
 							});
-
+							//when migrating from old database, we have no order_id reference in shop_item and this
+							//test fails!! 
+							//alert("has cart " + hasCart + "  isvalidated "  + isValidated);
 							if (hasCart && !isValidated){
 								$.showMsg({
 									msg:'The items of this order have already been revised and placed into people\'s carts for the indicated shop date. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?! <br/><br/>Pressing OK will delete the items from the existing shopping carts and start the order-revision process again.',
@@ -840,6 +889,34 @@
 						}
 					});
 				}
+
+
+				/**
+				 * formats table cells according to order status
+				 */
+				function formatRevisionStatus(td){
+				
+					switch(td.text()){
+						case "1": 
+							td.attr('title','Order has been sent to provider').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+							break;
+						case "2": 
+							td.attr('title','Revised and distributed without changes').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							break;
+						case "3": 
+							td.attr('title','Order has been postponed').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
+							break;
+						case "4": 
+							td.attr('title','Order has been canceled').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
+							break;
+						case "5":
+							td.attr('title','Revised with some modifications').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							break;
+						case "6":
+							td.attr('title','Items of this order have been validated').addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
+							break;
+					}
+				}
 				
 
 				/**
@@ -954,16 +1031,19 @@
 						case 'overview':
 							$('.reviewElements, .viewElements').hide();
 		    				$('.overviewElements').fadeIn(1000);
+		    				$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
+							gSelRow.addClass('ui-state-highlight');
 		    				gSelRow = null;	
-		    				$('#tbl_orderOverview tbody').xml2html('reload');	
+		    				//$('#tbl_orderOverview tbody').xml2html('reload');	
 							break;
 
 						case 'review':
-							var title = gSelRow.children().eq(2).text() + " (#"+gSelRow.attr('orderId')+") for " + $.getCustomDate(gSelRow.attr('dateForOrder'));
+							$('.overviewElements, .viewElements').hide();
+							
+							var title = "(#"+gSelRow.attr('orderId')+"), <span class='aix-style-provider-name'>" +gSelRow.children().eq(2).text() + "</span>, "  + $.getCustomDate(gSelRow.attr('dateForOrder'), 'D d M, yy');
 							var sindex = gSelRow.children().eq(8).attr('revisionStatus');
 							
-							$('.providerName').text(title);							
-							$('.overviewElements').hide();
+							$('.providerName').html(title);							
 							$('.reviewElements').fadeIn(1000);
 
 							$('#dialog_orderStatus button').button('enable');
@@ -976,9 +1056,9 @@
 							break;
 							
 						case 'view':
-							var title = gSelRow.children().eq(2).text() + " for " + $.getCustomDate(gSelRow.attr('dateForOrder'));
+							var title = gSelRow.children().eq(2).text();
 							//$('#viewOrderRevisionStatus') set the order status here. 
-							$('.providerName').text(title);							
+							$('.providerName').html(title);							
 							$('.overviewElements').hide();
 							$('.viewElements').fadeIn(1000);
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
@@ -988,7 +1068,12 @@
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
 								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
 								complete : function(rowCount){
-
+									$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
+									$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
+									var std = $('#orderDetailRevisionStatus');
+									//alert(std.text()); 
+									//std.addClass('asOrdered').html('asdf');
+									formatRevisionStatus(std);
 								}
 			 				});
 							
@@ -997,8 +1082,6 @@
 					}
 					gSection = page; 
 				}
-
-
 				
 			
 			
@@ -1023,11 +1106,12 @@
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
 				<button id="btn_overview" class="floatLeft reviewElements viewElements"><?php echo $Text['overview'];?></button>
-				<h1 class="reviewElements">Manage order detail for <span class="providerName"></span></h1>
-				<h1 class="viewElements">Order detail for <span class="providerName"></span></h1>
+				<h1 class="reviewElements">Revise order <span class="providerName"></span></h1>
+				<h1 class="viewElements">Order detail for <span class="providerName aix-style-provider-name"></span></h1>
 		    	<h1 class="overviewElements">Manage orders</h1>
 		    </div>
 		   	<div id="titleRightCol">
+		   		<button id="btn_setReview" class="viewElements btn_right" title="Revise order">Revise order</button>
 		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="Place order-items into HU shopping carts">Distribute!</button>
 				<button	id="tblViewOptions" class="overviewElements btn_right">Filter orders</button>
 				<div id="tblOptionsItems" class="hidden">
@@ -1113,69 +1197,158 @@
 				<h3>&nbsp;</h3>
 			</div>
 			<div class="ui-widget-content ui-corner-all">
-				<table id="tbl_orderDetailInfo">
-					<thead>
+				
+				<table id="tbl_orderDetailInfo" class="tblListingBorder2">
+					<thead>	
 						<tr>
-							<th colspan="2">Provider</th>
-							<th colspan="3">Order</th>
-							<th colspan="3">Money</th>
-							<th colspan="2">Responsible UF</th>
+							<th colspan="2"><p>Provider</p></th>
+							<th colspan="2"><p>Order</p></th>
+							<th colspan="2" class="aix-layout-fixW250"><p>Responsible UF</p></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td><em>{name}</em><br/>
-								NIE/NIF: {nif}<br/><br/>
-								Contact:<br/> 
-								{contact}<br/>
-								{address}<br/>
-								{zip} {city}<br/>
-								Email:&nbsp;{email}<br/>
-								Phone: {phone1} / {phone2}<br/>
-								Bank: {bank_name}<br/>
-								Account number: {bank_account}
-							</td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td>
-								Order id: <br/>
-								Ordered for: <br/>
-								Finalized : <br/>
-								Shop date: <br/><br/>
-								Status: <br/>
-								Notes: <br/>
-								Delivery reference: <br/>
-								Payment reference
-							</td>
-							<td>
-								{order_id}<br/>
-								{date_for_order} <br/>
-								{ts_sent_off} <br/>
-								{date_for_shop} <br/><br/>
-								<span id="viewOrderRevisionStatus">{revision_status}</span><br/>
-								{notes}<br/>
-								{delivery_ref}<br/>
-								{payment_ref}
-								
-							</td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td>
-								Total (original order): <br/>
-								Total (after revision): <br/>
-								Total (validated income): 
-							</td>
-							<td class="textAlignRight">
-								{total}<br/>
-								{delivered_total}<br/>
-								{validated_income}
-							</td>
-							<td class="maxwidth-100">&nbsp;</td>
-							<td>
-								{uf_name} ({uf_id})
-							</td>
-						</tr>
-						
+					<tr>
+						<td colspan="2"><p class="aix-style-provider-name">{name}</p></td>
+						<td></td>
+						<td></td>
+						<td colspan="2" rowspan="2"><p>{uf_id} {uf_name}</p></td>
+					</tr>
+					<tr>
+						<td class="aix-layout-fixW150"><p>NIF/NIE</p></td>
+						<td>{nif}</td>
+						<td class="aix-layout-fixW150"><p>Order id</p></td>
+						<td><p class="boldStuff">{order_id}</p></td>
+					</tr>
+					<tr>
+						<td>
+							<p>Contact</p>
+						</td>
+						<td>
+							{contact}<br/>
+							{address}<br/>
+							{zip} {city}
+						</td>
+						<td>
+							<p>Ordered for</p>
+						</td>
+						<td>
+							<p id="orderDetailDateForOrder" class="boldStuff">{date_for_order}</p>
+						</td>
+						<th colspan="2" class="aix-layout-fixW250">
+							<p>Totals</p>
+						</th>
+					</tr>
+					<tr>
+						<td>
+							<p>Email</p>
+						</td>
+						<td>
+							{email}
+						</td>
+						<td>
+							<p>Finalized</p>
+						</td>
+						<td>
+							{ts_sent_off}
+						</td>
+						<td>
+							<p>Original order</p>
+						</td>
+						<td>
+							<p class="textAlignRight  boldStuff">{total} €</p>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p>Phone</p>
+						</td>
+						<td>
+							 {phone1} / {phone2}
+						</td>
+						<td>
+							<p>Shop date</p>
+						</td>
+						<td>
+							<p id="orderDetailShopDate">{date_for_shop}</p>
+						</td>
+						<td>
+							<p>After revision</p>
+						</td>
+						<td>
+							<p class="textAlignRight  boldStuff">{delivered_total}</p>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p>Bank</p>
+						</td>
+						<td>
+							{bank_name}
+						</td>
+						<td>
+							<p>Status</p>
+						</td>
+						<td id="orderDetailRevisionStatus">
+							{revision_status}
+						</td>
+						<td>
+							<p>Validated</p>
+						</td>
+						<td>
+							<p class="textAlignRight boldStuff">{validated_income}</p>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p>Account</p>
+						</td>
+						<td>
+							{bank_account}
+						</td>
+						<td>
+							<p class="floatLeft">Notes</p>
+						</td>
+						<td>
+							<textarea class="ui-widget-content ui-corner-all editOrderDetail textareaMax" id="orderDetailNotes" name="order_notes">{order_notes}</textarea>
+
+							<!-- input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailNotes" name="order_notes" value="{order_notes}" /-->
+
+
+							
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td>
+							<p>Delivery ref.</p>
+						</td>
+						<td>
+							<input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailDeliveryRef" name="delivery_ref" value="{delivery_ref}" />
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td>
+							<p>Payment ref.</p>
+						</td>
+						<td>
+							<input type="text" class="editOrderDetail ui-widget-content ui-corner-all" id="orderDetailPaymentRef" name="payment_ref" value="{payment_ref}" />
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
 					</tbody>
 				</table>
+				
+				
+				
+				
 			</div>
 		</div>
 		<p>&nbsp;</p>
@@ -1230,7 +1403,7 @@
 
 <div id="dialog_setShopDate" title="Set shopping date">
 	<p>&nbsp;</p>
-	<p class="success_msg">The items have been successfully moved to the shopping carts of the corresponding date.</p>
+	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8">The items have been successfully moved to the shopping carts of the corresponding date.</p>
 	<p>Are you sure you want to make this order available for shopping? All corresponding products will be  
 	placed into the shopping cart for the following date: 
 	</p>

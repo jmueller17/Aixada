@@ -48,7 +48,12 @@ try{
     		} else {
     			throw new Exception("An error occured during saving the new product quantity!!");      			
     		}
-    		exit;
+    		exit;		
+    	
+    	//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
+  		case 'checkOrderStatus':
+  			printXML(stored_query_XML_fields('get_order_status', get_param('date',0), get_param('provider_id',0), get_param('product_id',0), get_param('order_id',0)  ));
+  			exit;
     		
     	//set the global revisio status of the order
     	case 'setOrderStatus':
@@ -84,10 +89,10 @@ try{
   			echo do_stored_query('reset_order_revision', get_param('order_id'));
   			exit;
   			
-  		//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
-  		case 'checkOrderStatus':
-  			printXML(stored_query_XML_fields('get_order_status', get_param('date',0), get_param('provider_id',0), get_param('product_id',0), get_param('order_id',0)  ));
+  		case 'editOrderDetailInfo':
+  			echo do_stored_query('edit_order_detail_info', get_param('order_id'), get_param('payment_ref',''), get_param('delivery_ref',''), get_param('order_notes','') );
   			exit;
+  	
   			
   		case 'orderDetailInfo':
   			printXML(stored_query_XML_fields('get_detailed_order_info', get_param('order_id',0), get_param('provider_id'), get_param('date',0) ));

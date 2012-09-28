@@ -61,6 +61,7 @@ option 				{padding:1px 5px;}
 .rowHighlight		{background:#EBEBEB;}
 .centerDiv			{margin:0px auto;}
 .adaptHeight		{overflow:auto;}
+.nobr				{white-space: nowrap;}
 
 .ui-widget-content h2 	{padding-left:15px;}
 .ui-state-success		{background-color:#d2f3d2; border:1px solid #7eca7e;}
@@ -71,19 +72,26 @@ option 				{padding:1px 5px;}
 
 	
 /** different table styles **/
-table.tblListingDefault		{width:100%;  border-collapse:collapse;}
-table.tblListingDefault th	{background:#f3f3f3; padding:4px 2px;}
-table.tblListingDefault td	{padding:2px 8px; text-align:center;}
+table.tblListingDefault				{width:100%;  border-collapse:collapse;}
+table.tblListingDefault th			{background:#f3f3f3; padding:4px 2px; text-align:left;}
+table.tblListingDefault td			{padding:2px 8px; text-align:left;}
+table.tblListingDefault tfoot td	{padding:2px 4px; margin:1px; text-align:right;}
 
 table.tblListingGrid			{width:100%;}
-table.tblListingGrid th			{background:#f3f3f3; padding:4px 4px; text-align:left;}
-table.tblListingGrid td			{padding:2px 4px; text-align:left;}
-table.tblListingGrid tfoot td	{padding:2px 4px; text-align:right;}
+table.tblListingGrid th			{background:#f3f3f3; padding:4px 4px; margin:1px; text-align:left;}
+table.tblListingGrid td			{background:#ebebeb; padding:2px 4px; margin:1px; text-align:left;}
+table.tblListingGrid tfoot td	{background:#EBEBEB; padding:2px 4px; margin:1px; text-align:right;}
+
+/*{text-align:right;  padding:5px 5px;}*/
 
 
 table.tblListingBorder		{width:100%; border-collapse:collapse;}
 table.tblListingBorder th	{background:#f3f3f3; padding:4px 8px; border:1px solid black;}
 table.tblListingBorder td	{padding:4px 8px; text-align:left; border:1px solid black; vertical-align:middle;}
+
+table.tblListingBorder2		{width:100%; border-collapse:collapse;}
+table.tblListingBorder2 th	{background:#f3f3f3; padding:4px 8px; border:1px solid #c3c3c3;}
+table.tblListingBorder2 td	{padding:4px 8px; text-align:left; border:1px solid #c3c3c3; vertical-align:top;}
 
 table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padding-top:4px; vertical-align:middle;}
 table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
@@ -115,8 +123,10 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-centerDiv{margin:5px auto;}
 
 .aix-layout-splitW60 {width:59%;}
-.aix-layout-splitW40 {width:39%;}	
+.aix-layout-splitW40 {width:39%;}
 
+.aix-layout-fixW80	 {width: 80px;}
+.aix-layout-fixW100	 {width:100px;}
 .aix-layout-fixW150	 {width:150px;}
 .aix-layout-fixW250	 {width:250px;}
 .aix-layout-fixW350	 {width:350px;}
@@ -144,6 +154,8 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-style-padding8x8				{padding:8px;}
 .aix-style-highlight-deposit		{background-color:#7ECA7E; padding:22px;}
 .aix-style-highlight-withdrawl		{background-color:#FF7A75; padding:22px;}
+.aix-style-provider-name			{text-transform:uppercase; font-weight:bold;}
+.aix-style-ok-green 				{background:#D1F3D1; background-color:#D1F3D1;}
 
 
 /** for validate 

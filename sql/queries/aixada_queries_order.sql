@@ -2,6 +2,24 @@ delimiter |
 
 
 /**
+ * just updates three fields for the order: payment reference, delivery refence, notes. 
+ */
+drop procedure if exists edit_order_detail_info|
+create procedure edit_order_detail_info (in the_order_id int, in the_payment_ref varchar(255), in the_delivery_ref varchar(255), in the_notes varchar(255))
+begin
+	update
+		aixada_order
+	set
+		delivery_ref = the_delivery_ref,
+		payment_ref = the_payment_ref,
+		notes = the_notes
+	where
+		id = the_order_id; 
+
+end|
+
+
+/**
  * delivers detailed info about an order: provider stuff, resposible uf stuff, etc. 
  * usually called from manage order detail view. 
  */
@@ -47,7 +65,7 @@ begin
 			o.total,
 			delivered_total,
 			validated_income,
-			o.notes, 
+			o.notes as order_notes, 
 			o.revision_status,
 			o.delivery_ref,
 			o.payment_ref,

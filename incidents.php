@@ -346,12 +346,12 @@
 			<div class="ui-widget-content ui-corner-all">
 					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?>&nbsp;&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
 					<div id="tbl_div">
-					<table id="tbl_incidents">
+					<table id="tbl_incidents" class="tblListingDefault">
 					<thead>
 						<tr>
 							<th class="mwidth-30"><?php echo $Text['id'];?></th>
 							<th hideInPrint"><?php echo $Text['subject'];?></th>
-							<th><?php echo $Text['priority'];?></th>
+							<th><?php echo $Text['priority'];?>&nbsp;&nbsp;</th>
 							<th><?php echo $Text['created_by'];?></th>
 							<th><?php echo $Text['created'];?></th>
 							<th class="textAlignCenter"><?php echo $Text['status'];?></th>
@@ -367,7 +367,7 @@
 						<tr class="clickable" incidentId="{id}">
 							<td field_name="incident_id">{id}</td>
 							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
-							<td field_name="priority" class="textAlignCenter">{priority}</td>
+							<td field_name="priority"><p  class="textAlignCenter">{priority}</p></td>
 							<td field_name="operator" class="textAlignCenter">{uf_id} {user_name}</td>
 							<td field_name="date_posted" class="textAlignCenter">{ts}</td>
 							<td field_name="status" class="textAlignCenter">{status}</td>
@@ -416,7 +416,7 @@
 				<p id="incidentsMsg" class="user_tips"></p>
 				<form>
 					<input type="hidden" id="incident_id" name="incident_id" value=""/>
-					<table>
+					<table class="tblForms">
 						<tr>
 							<td><label for="subject"><?php echo $Text['subject'];?>:</label></td>
 							<td><input type="text" name="subject" id="subject" class="inputTxtLarge inputTxt ui-corner-all" value=""/></td>
@@ -481,9 +481,11 @@
 							</td>
 						</tr>
 						<tr>
+							<td></td>
 							<td colspan="2" class="textAlignRight">
-								<button id="btn_cancel" type="reset"><?php echo $Text['btn_cancel'];?></button>
 								<button id="btn_save" type="submit"><?php echo $Text['btn_save'];?></button>
+								&nbsp;&nbsp;
+								<button id="btn_cancel" type="reset"><?php echo $Text['btn_cancel'];?></button>
 							</td>
 						</tr>
 					</table>
