@@ -1,3 +1,4 @@
+<?php include "../php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -74,10 +75,10 @@
 	
 					if ($(this).hasClass('pageBreak')){
 						$(this).removeClass('pageBreak');
-						$(this).find('span').text('Click to ADD here a page break while printing');
+						$(this).find('span').text("<?php echo $Text['add_pagebreak']; ?>");
 					} else {
 						$(this).addClass('pageBreak');
-						$(this).find('span').text('Click to REMOVE this page break');
+						$(this).find('span').text("<?php echo $Text['remove_pagebreak']; ?>");
 					}
 				})
 			
@@ -90,11 +91,11 @@
 	
 	<div id="header" class="section">
 		<div id="logo">
-			<img alt="coop logo" width="500" height="180"/>
+						<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
 		</div>
 		<div id="address">
-			<h2 class="txtAlignRight">COOPERATIVA XXXXXX</h2>
-			<h2 class="txtAlignRight">CIF/NIF: F650000000</h2>
+			<h2 class="txtAlignRight">COOPERATIVA NAME</h2>
+			<h2 class="txtAlignRight">CIF/NIF: F6500000</h2>
 			<p class="txtAlignRight">Street<br/>
 			Zip City<br/>
 			email@bla.com
@@ -107,12 +108,12 @@
 	<p>&nbsp</p>
 	<p>&nbsp</p>
 	
-	<h2 class="loadingMsg">Please wait while loading...</h2>
+	<h2 class="loadingMsg"><?php echo $Text['loading'] ; ?></h2>
 	
 	<div id="orderWrap" class="section">
 		
 		<div class="anOrder">
-			<p class="clickPageBreak txtAlignCenter"><span class="pageBreakBtn">Click to ADD here a page break while printing</span></p>
+			<p class="clickPageBreak txtAlignCenter"><span class="pageBreakBtn"><?php echo $Text['add_pagebreak']; ?></span></p>
 		</div>
 	</div>
 </body>

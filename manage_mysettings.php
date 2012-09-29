@@ -154,7 +154,7 @@
 					},
 				   	success: function(msg){
 				   	 	$.showMsg({
-							msg: "Your data has been successfully saved!",
+							msg: "<?=$Text['msg_edit_success'];?>",
 							type: 'success'});
 				   	},
 				   	error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -267,16 +267,12 @@
 	
 	
 	<div id="stagewrap">
-	
 		<div id="titlewrap" class="ui-widget">
 				
 			<div id="titleLeftCol">
 		    		<h1><?=$Text['ti_my_account']; ?></h1>
-		    </div>
-				  	
+		    </div>  	
 		</div>
-
-
 			<div id="pwdWrap" class="ui-widget changePwdElements">
 				<div class="ui-widget-content ui-corner-all">
 				<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['nav_changepwd'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>

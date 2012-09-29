@@ -334,7 +334,7 @@
   							});
   						
   					},
-  					"<?php echo $Text['btn_cancel'];?>": function() {
+  					"<?=$Text['btn_cancel'];?>": function() {
   						$('#c_balance_quantity').val("");  
   						$( this ).dialog( "close" );
   					}
@@ -467,38 +467,38 @@
 		<div class="aix-layout-center60 ui-widget"> 
 		<div id="account_overview" class="overviewElements aix-style-entry-widget">
 		
-			<h2 class="clickable">Cashbox <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> €</span></h2>
+			<h2 class="clickable"><?php echo $Text['name_cash_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> €</span></h2>
 			<table>
 				<tr>
 					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCashbox">Deposit</button>
+						<button class="aix-layout-fixW150" id="btn_nav_dCashbox"><?php echo $Text['btn_deposit']; ?></button>
 					</td>
-					<td><p>Make a cash deposite</p></td>
+					<td><p><?php echo $Text['deposit_desc']; ?></p></td>
 				</tr>
 				
 				<tr>
 					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCashbox">Withdraw</button>
+						<button class="aix-layout-fixW150" id="btn_nav_wCashbox"><?php echo $Text['btn_make_withdrawal']; ?></button>
 					</td>
-					<td><p>Withdraw cash from the cashbox</p></td>
+					<td><p><?php echo $Text['withdraw_desc']; ?></p></td>
 				</tr>
 				<tr>
 					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_cCashbox">Set balance</button>
+						<button class="aix-layout-fixW150" id="btn_nav_cCashbox"><?php echo $Text['btn_set_balance']; ?></button>
 					</td>
-					<td><p>Reset current balance at the start of a shift.</p></td>
+					<td><p><?php echo $Text['set_bal_desc']; ?></p></td>
 				</tr>
 				
 			</table>
 			<p>&nbsp;</p>
 	
-			<h2>Consumption <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> €</span></h2>
+			<h2><?php echo $Text['consum_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> €</span></h2>
 			<table>
 				<tr>
 					<td class="aix-layout-fixW150">
 						
 					</td>
-					<td><p>Consumpion account keeps track of...</p></td>
+					<td><p>...</p></td>
 				</tr>
 				
 				<tr>
@@ -509,13 +509,13 @@
 				</tr>
 			</table>
 			<p>&nbsp;</p>
-			<h2>Maintenance  <span class="floatRight"><?=$Text['current_balance'];?><span class="setTotalMaintenance">-</span></span></h2>
+			<h2><?php echo $Text['maintenance_account']; ?>  <span class="floatRight"><?=$Text['current_balance'];?><span class="setTotalMaintenance">-</span></span></h2>
 			<table>
 				<tr>
 					<td class="aix-layout-fixW150">
 						
 					</td>
-					<td><p>Maintenance account keeps track of...</p></td>
+					<td><p>...</p></td>
 				</tr>
 				
 				<tr>

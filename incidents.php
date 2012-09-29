@@ -333,9 +333,9 @@
 		 <button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint"><?=$Text['filter_incidents'];?></button>
 		    	<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
 					<ul>
-		 <li><a href="javascript:void(null)" id="today"><?=$Text['todays'];?></a></li>
-		 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['recent_ones'];?></a></li>
-		 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['last_year'];?></a></li>
+		 <li><a href="javascript:void(null)" id="today"><?=$Text['filter_todays'];?></a></li>
+		 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['filter_recent'];?></a></li>
+		 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
 					</ul>
 				</div>		
 		    	<button id="btn_new_incident" class="overviewElements floatLeft hideInPrint"><?php echo $Text['btn_new_incident'];?></button>

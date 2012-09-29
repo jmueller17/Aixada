@@ -1,3 +1,4 @@
+<?php include "../php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -6,6 +7,7 @@
 
 
 	<style type="text/css">
+		body 				{font-family:arial; }
 		table 				{width:100%; border-collapse:collapse;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
@@ -16,12 +18,13 @@
 		.halfWidth			{width:48%; float:left;}
 		.width-50			{width:50px;}	
 		.width-80			{width:80px;}	
-		.memberTitle		{background-color:#efefef; text-align:center; margin-top:0px; padding:2px; font-weight:bold; margin-bottom:-5px;}	
+		.memberTitle		{background-color:#efefef; text-align:center; margin-top:0px; padding:2px; font-weight:bold; margin-bottom:-5px; text-transform:uppercase; }	
 		.b4					{border:2px solid black;}	 
 		.p4-5				{padding:5px;}
 		.hidden				{display:none;}
-		.cellBorderList td	{border:solid 1px black; padding:2px 4px;}
-		.cellBorderList th	{border:solid 1px black; background:#efefef;}
+		.cellBorderList td	{border:solid 1px black; padding:2px 5px;}
+		.cellBorderList th	{border:solid 1px black; padding:2px 5px; background:#efefef;}
+		.billHead			{text-transform:uppercase;}
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
@@ -43,6 +46,9 @@
 	<script type="text/javascript">
 		$(function(){
 
+			//prevent error msg when opening saved page
+			if (window.opener == null) return false;
+
 			var shopId = $.getUrlVar('shopId');
 			var date = $.getUrlVar('date');
 			var operatorName = $.getUrlVar('operatorName');
@@ -53,9 +59,9 @@
 			$('#date_for_shop').text(date);
 
 			if (operatorUf == ''){
-				$('#operator').text('not yet validated');
+				$('#operator').text("<?php echo $Text['not_yet_val']; ?>");
 			} else {
-				$('#operator').text(operatorName + " (Uf"+operatorUf+")");
+				$('#operator').text(operatorName + " (<?php echo $Text['uf_short']; ?>"+operatorUf+")");
 			}		
 			
 			//load purchase detail (products and quantities)
@@ -105,11 +111,11 @@
 	
 	<div id="header" class="section">
 		<div id="logo">
-			<img alt="coop logo" width="500" height="180"/>
+			<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
 		</div>
 		<div id="address">
-			<h2 class="txtAlignRight">COOPERATIVA XXXXXX</h2>
-			<h2 class="txtAlignRight">CIF/NIF: F650000000</h2>
+			<h2 class="txtAlignRight">COOPERATIVA NAME</h2>
+			<h2 class="txtAlignRight">CIF/NIF: F650000</h2>
 			<p class="txtAlignRight">Street<br/>
 			Zip City<br/>
 			email@bla.com
@@ -121,9 +127,9 @@
 		<div id="bill_info">
 			<table class="b4 cellBorderList">
 				<tr>
-					<th>FACTURA</th>
-					<th>DATA</th>
-					<th>REALITZADA PER</th>
+					<th class="billHead"><?php echo $Text['bill']; ?></th>
+					<th class="billHead"><?php echo $Text['date']; ?></th>
+					<th class="billHead"><?php echo $Text['operator']; ?></th>
 				</tr>	
 				<tr>
 					<td class="txtAlignCenter" id="cart_id"></td>
@@ -134,7 +140,7 @@
 			</table>
 		</div>
 		<div id="member_info" class="b4">
-			<p class="memberTitle">SOCI</p>
+			<p class="memberTitle"><?php echo $Text['member']; ?></p>
 			<div class="p4-5">
 				<table id="memberAddress">
 					<tr>
@@ -143,10 +149,10 @@
 							{zip} {city}
 						</td>
 						<td>
-							CIF/NIF: {nif}<br/>
-							Codi soci: {id}  / {custom_member_ref}<br/>
-							EmaiL: {email}<br/>
-							Phone(s): {phone1} / {phone2}
+							<?php echo $Text['cif_nif'];?>: {nif}<br/>
+							<?php echo $Text['member_id']; ?>: {id}  / {custom_member_ref}<br/>
+							<?php echo $Text['email'];?>: {email}<br/>
+							<?php echo $Text['phone_pl'];?>: {phone1} / {phone2}
 						</td>
 					</tr>
 				</table>
@@ -158,20 +164,20 @@
 		<table id="tbl_purchaseList" class="cellBorderList">
 			<thead>
 				<tr>
-					<th class="width-50">Ref.Codi</th>
-					<th>Concepte</th>
-					<th class="width-80">Quantitat</th>
-					<th class="width-80">Unitat</th>
-					<th class="width-80">Preu</th>
-					<th>Total</th>
+					<th class="width-50"><?php echo $Text['id'];?></th>
+					<th><?php echo $Text['bill_product_name'];?></th>
+					<th class="width-80"><?php echo $Text['quantity'];?></th>
+					<th class="width-80"><?php echo $Text['unit']; ?></th>
+					<th class="width-80 txtAlignRight"><?php echo $Text['price']; ?></th>
+					<th class="txtAlignRight"><?php echo $Text['total'];?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td class="width-50">{id}</td>
+					<td class="width-50 txtAlignRight">{id} </td>
 					<td>{name}</td>
 					<td class="width-80 txtAlignRight">{quantity}</td>
-					<td class="width-80 txtAlignCenter">{unit}</td>
+					<td class="width-80 txtAlignLeft">{unit}</td>
 					<td class="width-80 txtAlignRight">{unit_price}</td>
 					<td class="txtAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></td>
 					<td class="hidden">{cart_id}</td>					
@@ -182,31 +188,31 @@
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">Import brut</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['gross_amount']; ?></td>
 					<td id="import_brut"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">Import net</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['net_amount']; ?></td>
 					<td id="import_net"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">included IVA</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_iva']; ?></td>
 					<td id="total_iva" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">included RevTax</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_revtax']; ?></td>
 					<td id="total_revTax" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight bold">Total factura</td>
+					<td colspan="3" class="txtAlignRight bold"><?php echo $Text['bill_total']; ?></td>
 					<td id="total" class="txtAlignRight bold"></td>
 				</tr>
 			</tfoot>

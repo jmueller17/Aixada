@@ -39,7 +39,7 @@ class report_manager {
 		      'product_name'  => $Text['product_name'], 
 		      'iva'           => $Text['iva'],
 		      'uf'            => $Text['uf_short'],
-		      'qty'           => $Text['qty']);
+		      'qty'           => $Text['quantity']);
     $totals = array('total_quantity'          => $Text['total_qty'], 
 		    'total_price'        => $Text['total_price']);
     $styles   = array('provider_name' => 'style1',
@@ -118,7 +118,7 @@ class report_manager {
     global $Text;
     $headings = array('product_name'  => $Text['product_name'], 
 		      'uf'            => 'UF',
-		      'qty'           => $Text['qty']);
+		      'qty'           => $Text['quantity']);
     $totals = array('total_quantity'          => $Text['total_qty'],
 		    'total_price'        => $Text['total_price'],
                     'iva'             => $Text['iva']);

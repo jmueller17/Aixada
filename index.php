@@ -148,23 +148,23 @@
 
 							switch (revision){
 								case "1":
-									modTxt = 'not yet received';
+									modTxt = "<?=$Text['ostat_yet_received']; ?>";
 									break;
 								case "2": 
 									modClass = "asOrdered";
-									modTxt = "is complete"; 
+									modTxt = "<?=$Text['ostat_is_complete']; ?>"; 
 									break;
 								case "3": 
 									modClass = 'postponed'
-									modTxt = "postponed";
+									modTxt = "<?=$Text['ostat_postponed'];?>";
 									break;
 								case "4": 
 									modClass="orderCanceled";
-									modTxt = "canceled";
+									modTxt = "<?=$Text['ostat_canceled'];?>";
 									break;
 								case "5": 
 									modClass = "withChanges";
-									modTxt = "with changes";
+									modTxt = "<?=$Text['ostat_changes']; ?>";
 									break;	
 							}
 					
@@ -220,7 +220,7 @@
 			});
 
 			//show older orders dates
-			var orderDateSteps = 2;
+			var orderDateSteps = 6;
 			var orange = 'month';
 			$('#btn_prevOrders').button({
 				icons : {
@@ -256,7 +256,7 @@
 			/********************************************************
 			 *      My PURCHASE
 			 ********************************************************/
-			var shopDateSteps = 1;
+			var shopDateSteps = 3;
 			var srange = 'month';
 
 			//load purchase listing
@@ -270,7 +270,7 @@
 						if (validated == '0000-00-00 00:00:00'){
 							$(row).children().eq(2).html("-");	
 						} else {
-							$(row).children().eq(2).html('<span class="ui-icon ui-icon-check tdIconCenter" title="Validated at: '+validated+'"></span>');
+							$(row).children().eq(2).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
 						}
 
 						

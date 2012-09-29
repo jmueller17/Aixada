@@ -1,3 +1,4 @@
+<?php include "../php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -6,6 +7,7 @@
 
 
 	<style type="text/css">
+		body				{font-family:arial;}
 		table 				{width:100%; border-collapse:collapse;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
@@ -43,6 +45,9 @@
 	<script type="text/javascript">
 		$(function(){
 
+			//prevent error msg when opening saved page
+			if (window.opener == null) return false;
+			
 			var dateForOrder = $.getUrlVar('date');
 
 			$('#orderDate').text(dateForOrder);
@@ -101,10 +106,10 @@
 	
 	<div id="header" class="section">
 		<div id="logo">
-			<img alt="coop logo" width="500" height="180"/>
+						<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
 		</div>
 		<div id="address">
-			<h2 class="txtAlignRight">COOPERATIVA XXXXXX</h2>
+			<h2 class="txtAlignRight">COOPERATIVA Name</h2>
 			<h2 class="txtAlignRight">CIF/NIF: F650000000</h2>
 			<p class="txtAlignRight">Street<br/>
 			Zip City<br/>
@@ -115,7 +120,7 @@
 
 	<div id="info" class="section">
 		<div id="member_info" class="b4">
-			<h2 class="memberTitle">Items ordered for <span id="orderDate"></span></h2>
+			<h2 class="memberTitle"><?php echo $Text['ordered_for']; ?> <span id="orderDate"></span></h2>
 			<div class="p4-5">
 				<table id="memberAddress">
 					<tr>
@@ -124,13 +129,13 @@
 							{zip} {city}
 						</td>
 						<td>
-							CIF/NIF: {nif}<br/>
-							Codi soci: {id} / {custom_member_ref}<br/>
-							EmaiL: {email}<br/>
-							Phone(s): {phone1} / {phone2}
+							<?php echo $Text['cif_nif'];?>: {nif}<br/>
+							<?php echo $Text['member_id']; ?>: {id} / {custom_member_ref}<br/>
+							<?php echo $Text['email'];?>: {email}<br/>
+							<?php echo $Text['phone_pl'];?>: {phone1} / {phone2}
 						</td>
 						<td rowspan="3" class="txtAlignCenter">
-							<h2>UF{uf_id}</h2>
+							<h2><?php echo $Text['uf_short']; ?>{uf_id}</h2>
 						</td>
 					</tr>
 				</table>
@@ -142,18 +147,18 @@
 		<table id="tbl_orderList" class="cellBorderList">
 			<thead>
 				<tr>
-					<th class="width-50">Ref.code</th>
-					<th>Product</th>
-					<th>Provider</th>
-					<th class="width-80">Quantity</th>
-					<th class="width-80">Unit</th>
-					<th class="width-80">Price</th>
-					<th>Total</th>
+					<th class="width-50"><?php echo $Text['id'];?></th>
+					<th><?php echo $Text['bill_product_name'];?></th>
+					<th><?php echo $Text['provider_name'];?></th>
+					<th class="width-80"><?php echo $Text['quantity'];?></th>
+					<th class="width-80"><?php echo $Text['unit']; ?></th>
+					<th class="width-80"><?php echo $Text['price']; ?></th>
+					<th><?php echo $Text['total'];?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr isPreorder="{preorder}">
-					<td class="width-50">{id}</td>
+					<td class="width-50 txtAlignRight">{id}</td>
 					<td>{name}</td>
 					<td>{provider_name}</td>
 					<td class="width-80 txtAlignRight">{quantity}</td>
@@ -168,21 +173,21 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">included IVA</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_iva']; ?></td>
 					<td id="total_iva" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight">included RevTax</td>
+					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_revtax']; ?></td>
 					<td id="total_revTax" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight bold">Total</td>
+					<td colspan="3" class="txtAlignRight bold"><?php echo $Text['total'];?></td>
 					<td id="total" class="txtAlignRight bold"></td>
 				</tr>
 			</tfoot>

@@ -775,6 +775,7 @@ end |
 /**
  * returns all orders for all providers within a certain date range.
  * also provides info about status of order and order_items: if available for sale, validate. 
+ * revision_filter selects only those entries with a specific revision_status value (sent, cancel, postponed...)
  */
 drop procedure if exists get_orders_listing|
 create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int, in revision_filter int)

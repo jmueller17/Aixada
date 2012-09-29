@@ -89,11 +89,20 @@
 				
 				var dataSerial = "user_ids="+user_id;
 				$.ajax({
-					type: "GET",
+					type: "POST",
 					url: "php/ctrl/ActivateRoles.php?oper=activateUsers&role="+theRole,
 					data: dataSerial,
 					success: function(msg){
 						//$("input:submit").button( "option", "disabled", false);
+						$.showMsg({
+							msg:"<?php echo $Text['msg_edit_success']; ?>",
+							type: 'success'});
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
 					},
 					complete : function(){
 						$("input:submit").button( "option", "disabled", false );
@@ -123,16 +132,16 @@
 	<!-- end of headwrap -->
 	
 	
-	<div id="stagewrap">
+	<div id="stagewrap" class="ui-widget">
 	
 		<div id="titlewrap">
-			
-      <h1><?php echo $Text['ti_mng_activate_users'] . $Text[$the_role];  ?>
+				
+    	  <h1><?php echo $Text['ti_mng_activate_users'] . $Text[$the_role];  ?>
 		    	
 		</div>
 		<form id="activeUsersForm">
 		
-		<div id="threeColWrap">
+		<div id="threeColWrap" >
 			<div id="leftColumn">
 				<h4><?php echo $Text['mo_inact_user'];?></h4>
 				<select multiple="multiple" size="15" class="multipleSelect" id="inactiveUsers">						

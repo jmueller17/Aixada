@@ -100,7 +100,16 @@
 					url: "php/ctrl/ActivateRoles.php?oper=activateRoles",
 					data: dataSerial,
 					success: function(msg){
+						$.showMsg({
+							msg:"<?php echo $Text['msg_edit_success']; ?>",
+							type: 'success'});
 						//$("input:submit").button( "option", "disabled", false);
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+						
 					},
 					complete : function(){
 						$("input:submit").button( "option", "disabled", false );
@@ -156,7 +165,7 @@
 				<button id="deactivate"><?php echo $Text['btn_deactivate']?></button>
 			</div>
 			<div id="rightColumn">
-				<h4><?php echo $Text['mo_act_role'];?></h4>
+				<h4><?php echo $Text['active_roles'];?></h4>
 				<select multiple="multiple" size="15" class="multipleSelect" id="activeRoles">					
 				</select>
 			</div>

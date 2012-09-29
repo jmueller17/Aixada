@@ -169,7 +169,7 @@ $Text['mentor_uf'] = "Mentor HU";
 $Text['unassigned_members'] = "Unassigned";
 $Text['edit_my_settings'] = "Edit my settings";
 
-$Text['nif'] = "NIF";
+$Text['nif'] = "VAT Reg No";
 $Text['bank_name'] = "Bank";
 $Text['bank_account'] = "Bank account";
 $Text['picture']  = "Picture";
@@ -496,16 +496,16 @@ $Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database
 $Text['show_date_field'] = 'Click here to show the calendar field and select a different date than today.';
 
 
-$Text['purchase_current'] = 'My purchase(s)';
+//$Text['purchase_current'] = 'My purchase(s)';
 //$Text['items_bought'] = "Past purchases";
-$Text['purchase_future'] = 'My order(s)';
+//$Text['purchase_future'] = 'My order(s)';
 //$Text['purchase_prev'] = 'Previous purchase(s)';
 $Text['icon_order'] = 'Place your order';
 $Text['icon_purchase'] = 'Buy items now';
 $Text['icon_incidents'] = 'Post an incident';
 $Text['purchase_date'] = 'Date of purchase';
 //$Text['purchase_validated'] = 'Date of validation';
-//$Text['ordered_for'] = 'Items ordered for';
+$Text['ordered_for'] = 'Items ordered for';
 $Text['not_validated'] = 'not validated';
 
 
@@ -642,6 +642,7 @@ $Text['ostat_desc_nochanges'] = "Revised and distributed without changes";
 $Text['ostat_desc_postponed'] = "Order has been postponed";
 $Text['ostat_desc_cancel'] = "Order has been canceled";
 $Text['ostat_desc_changes'] = "Revised with some modifications";
+$Text['ostat_desc_incomp'] = "Order ignored. Insufficient data previous to v2.5";
 $Text['set_ostat_desc_arrived'] = "Most or all ordered items have arrived. Proceed to revise and distribute the products to shopping carts...";
 $Text['set_ostat_desc_postpone'] = "The order did not arrive for the ordered date but probably will in the upcoming weeks.";
 $Text['set_ostat_desc_cancel'] = "Ordered items will never arrive.";
@@ -680,22 +681,66 @@ $Text['msg_cur_status'] = "The current order status is";
 $Text['msg_change_status'] = "Change the order status to one of the following options";
 $Text['msg_confirm_move'] = "Are you sure you want to make this order available for shopping? All corresponding products will be placed into the shopping cart for the following date:";
 $Text['alter_date'] = "Choose an alternative date";
-$Text['msg_err_miss_info'] = "It seems that this order was created with an older version of this platform which is not compatible with the revision functionality. This order cannot be revised.";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
-$Text[''] = "";
+$Text['msg_err_miss_info'] = "It seems that this order was created with an older version of the Aixada platform which is incompatible with the current revision functionality. Sorry, but this order cannot be revised.";
+
+
+//added 29.09
+
+$Text['order_closes'] = "Order closes"; //as in: order closes 20 SEP 2012
+$Text['left_ordering'] = " left for ordering."; //as in 4 days left for ordering
+$Text['ostat_closed'] = "Order is closed";
+$Text['ostat_desc_fin_send'] = "Order has been finalized and send to provider. Ref. number is: #";
+$Text['msg_err_past'] = "This is the past! <br/> Too late to change anything here.";
+$Text['msg_err_is_deactive_p'] = "This product has been deactivated. In order to set an orderable date, you have to activate it first by clicking its 'active' checkbox.";
+$Text['msg_err_deactivate_p'] = "You are about to deactivate a product. This means that all associated 'orderable' dates will be erased as well.<br/><br/>Are you sure you want to deactivate the product as such? As an alternative you can deactivate selected dates by clicking the corresponding table cells.";
+$Text['msg_err_closing_date'] = "The closing date cannot be later than the order date!";
+$Text['msg_err_sel_col'] = "The selected column/date has no orderable products! You have to make at least one product orderable in order to be able to generate a date pattern.";
+$Text['msg_err_closing'] = "In order to modify the closing date, you need to make at least one product orderable.";
+$Text['msg_err_deactivate_sent'] = "The given product cannot be de/activated because the corresponding order has already been sent to the provider. No further changes are possible!";
+$Text['view_opt'] = "View options";
+$Text['days_display'] = "Number of dates at display";
+$Text['plus_seven'] = "Show +7 days";
+$Text['minus_seven'] = "Show -7 days";
+$Text['btn_earlier'] = "Earlier"; //cómo más temprano
+$Text['btn_later'] = "Later"; //más tarde... futuro
+
+//la frase entera es: "activate the selected day and products for the next  1|2|3.... month(s) every week | second week | third week | fourth week.
+$Text['pattern_intro'] = "Activate the selected day and products for the next ";
+$Text['pattern_scale'] = "month(s) every ";
+$Text['week'] = "week";
+$Text['second'] = "second";  //2nd 
+$Text['third'] = "third";
+$Text['fourth'] = "fourth";
+$Text['msg_pattern'] = "NOTE: This action will re-generate all dates and products from the selected day onwards!";
+$Text['sel_closing_date'] = "Select new closing date";
+$Text['btn_mod_date'] = "Modify closing date";
+$Text['btn_repeat'] = "Repeat pattern!";
+$Text['btn_entire_row'] = "De-/active entire row";
+$Text['btn_deposit'] = "Deposit";
+$Text['btn_withdraw'] = "Withdrawal";
+$Text['deposit_desc'] = "Make a cash deposit";
+$Text['withdraw_desc'] = "Withdraw cash from the cashbox";
+$Text['btn_set_balance'] = "Set balance";
+$Text['set_bal_desc'] = "Reset current balance at the start of the 1st shift.";
+$Text['maintenance_account'] = "Maintenance";
+$Text['posted_by'] = "Posted by"; //Posted by
+$Text['ostat_yet_received'] = "not yet received";
+$Text['ostat_is_complete'] = "is complete";
+$Text['ostat_postponed'] = "postponed";
+$Text['ostat_canceled'] = "canceled";
+$Text['ostat_changes'] = "with changes";
+$Text['filter_todays'] = "Today's";
+$Text['bill'] = "Bill";
+$Text['member'] = "Member";
+$Text['cif_nif'] = "VAT Reg No"; //CIF/NIF
+$Text['bill_product_name'] = "Item"; //concepte en cat... 
+$Text['bill_total'] = "Total"; //Total factura 
+$Text['phone_pl'] = "Phones";
+$Text['net_amount'] = "Net amount"; //importe netto 
+$Text['gross_amount'] = "Gross amount"; //importe brutto
+$Text['add_pagebreak'] = "Click to ADD here a page break while printing";
+$Text['remove_pagebreak'] = "Click to REMOVE this page break";
+
 
 
 

@@ -8,19 +8,13 @@
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
-
-
-    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-	    
-	    
+    
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>	    
 	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 	<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-
    	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
    	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   
-   	
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>   
     
    
@@ -162,8 +156,8 @@
 
 								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
 								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
-								var closingTitle = (days2Closing > 0)? "Closes " + closingDate + ". \n " +days2Closing + " days left for ordering": "order is closed";
-								closingTitle = (orderId > 0)? "Order has been finalized  \n and send to provider. Ref. number is: #" + orderId: closingTitle;
+								var closingTitle = (days2Closing > 0)? "<?=$Text['order_closes'];?> " + closingDate + ". \n " +days2Closing + " <?=$Text['left_ordering'];?>": "<?=$Text['ostat_closed'];?>";
+								closingTitle = (orderId > 0)? "<?=$Text['ostat_desc_fin_send'];?>" + orderId: closingTitle;
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
@@ -272,13 +266,13 @@
 				
 				if ($(this).hasClass('dim40')){
 					$.showMsg({
-						msg:'This is the past! <br/> Too late to change anything here.',
+						msg:"<?=$Text['msg_err_past']; ?>",
 						type: 'warning'});
 					return false;
 			
 				} else if ($(this).hasClass('deactivated')){
 					$.showMsg({
-						msg:'This product is currently deactive. In order to set an orderable date, you have to activate this product first by clicking its "active" checkbox.',
+						msg:"<?=$Text['msg_err_is_deactive_p'];?>",
 						type: 'warning'});
 					return false;
 
@@ -286,7 +280,7 @@
 				} else if ($(this).hasClass('dim60')) {  //check if product is part of a finalized order. If not, this triggers deactivation of product
 
 					$.showMsg({
-						msg:'The given product cannot be de/activated because the corresponding order has already been sent to the provider. No further changes are possible! ',
+						msg:"<?=$Text['msg_err_deactivate_sent'];?>",
 						type: 'warning'});
 				   	return false; 
 					
@@ -374,8 +368,7 @@
 				changeProductStatus(product_id, 'activateProduct');
 			} else {
 				$.showMsg({
-					title 	: "Confirm deactivate product", 
-					msg		: '<p>You are about to deactivate a product. This means that all associated "orderable" dates will be erased as well.<br/><br/>Are you sure you want to deactivate the product as such? As an alternative you can deactivate selected dates by clicking the corresponding table cells.</p>',
+					msg		: "<?=$Text['msg_err_deactivate_p'];?>",
 					buttons: {
 						"<?=$Text['btn_deactivate'];?>":function(){						
 							changeProductStatus(product_id,'deactivateProduct');
@@ -471,7 +464,7 @@
 
 			if (closingDate > orderDate){
 				$.showMsg({
-					msg:'The closing date cannot be later than the order date!',
+					msg:"<?=$Text['msg_err_closing_date'];?>",
 					type: 'error'});
 				return false; 
 			}
@@ -552,7 +545,7 @@
 				$(".Date-"+selDate).addClass('ui-state-hover');
 			} else {
 				$.showMsg({
-					msg:'The selected column/date has no orderable products! You have to make at least one product orderable in order to be able to generate a date pattern.',
+					msg:"<?=$Text['msg_err_sel_col'];?>",
 					type: 'warning'});
 			
 			}
@@ -580,7 +573,7 @@
 				$(".Date-"+selDate).addClass('ui-state-hover');
 			} else {
 				$.showMsg({
-					msg:'In order to modify the closing date, you need to make at least one product orderable.',
+					msg:"<?=$Text['msg_err_closing'];?>",
 					type: 'warning'});
 			
 			}
@@ -792,14 +785,14 @@
 	                    	<option value="{id}">{id} {name}</option>
 					</select>
 				</div>
-		   		<div class="textAlignRight"><button	id="tblOptions">View Options</button></div>
+		   		<div class="textAlignRight"><button	id="tblOptions"><?php echo $Text['view_opt']; ?></button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
-						<li><a href="javascript:void(null)">&nbsp;&nbsp;Number of dates at display</a>
+						<li><a href="javascript:void(null)">&nbsp;&nbsp;<?php echo $Text['days_display'];?></a>
 							<ul>
-								<li><a href="javascript:void(null)" id="plus7">Show +7 days</a></li>
-								<li><a href="javascript:void(null)" id="minus7">Show -7 days</a></li></ul>
+								<li><a href="javascript:void(null)" id="plus7"><?php echo $Text['plus_seven']; ?></a></li>
+								<li><a href="javascript:void(null)" id="minus7"><?php echo $Text['minus_seven']; ?></a></li></ul>
 						</li>
 						
 					</ul>
@@ -818,9 +811,9 @@
 			<div class="ui-widget-header">
 				<h3 id="providerName" class="minPadding floatLeft">&nbsp;</h3>
 				<p class="textAlignCenter">
-					<button id="prevDates">Earlier dates</button>
+					<button id="prevDates"><?php echo $Text['btn_earlier']; ?></button>
 					<span class="dateTableMonthYear"></span>							
-					<button id="nextDates">Next Dates</button>
+					<button id="nextDates"><?php echo $Text['btn_later']; ?></button>
 				</p>
 			</div>
 			
@@ -853,7 +846,7 @@
 
 <div id="dialog-generateDates" title="Generate date-product pattern">
 	<p>&nbsp;</p>
-	<p>Activate the selected day and products for the next 
+	<p><?php echo $Text['pattern_intro']; ?> 
 							<select id="nrOfMonth" name="nrOfMonth" >
 									<?php 
 										for ($i=0; $i<configuration_vars::get_instance()->max_month_orderable_dates; $i++){
@@ -862,33 +855,33 @@
 										}	
 									?>
 							</select> 
-							month(s) every 
+							<?php echo $Text['pattern_scale']; ?> 
 							<select id="weeklyFreq" name="weeklyFreq">
-								<option value="1">week</option>
-								<option value="2">second week</option>
-								<option value="3">third week</option>
-								<option value="4">four weeks</option>
+								<option value="1"><?php echo $Text['week']; ?></option>
+								<option value="2"><?php echo $Text['second'] . " " . $Text['week']; ?></option>
+								<option value="3"><?php echo $Text['third'] . " " . $Text['week']; ?></option>
+								<option value="4"><?php echo $Text['fourth'] . " " . $Text['week']; ?></option>
 							</select>
 	</p>
 							
 	<br/>
-	<p><em>NOTE:</em> This action will re-generate all dates and products from the selected date onwards!</p>
+	<p><<?php echo $Text['msg_pattern']; ?></p>
 </div>
 
 
 <div id="blip" title="Modify closing date for selected provider and order">
 	<p>&nbsp;</p>
-	<h3>Currently your order will be closed: <span id="infoCurrentClosing"></span></h3>
+	<h3><?php echo $Text['order_closes']; ?>: <span id="infoCurrentClosing"></span></h3>
 	<br/>
-	<p>Select new closing date: </p>
+	<p><?php echo $Text['sel_closing_date']; ?>: </p>
 	<br/>
 	<div id="closingDatePicker"></div>
 </div>
 <div id="limbo" class="hidden">0</div>
 <div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" currentColDate="">
-	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> Modify closing date</a></p>
-	<!-- p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> De-/active entire row</a></p-->
-	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> Repeat pattern!</a></p>
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> <?php echo $Text['btn_mod_date']; ?></a></p>
+	<!-- p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> <?php echo $Text['btn_entire_row']; ?></a></p-->
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> <?php echo $Text['btn_repeat']; ?></a></p>
 </div>
 
 

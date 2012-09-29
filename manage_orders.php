@@ -923,7 +923,7 @@
 							td.attr('title','Items of this order have been validated').addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
 							break;
 						case "-1":
-							td.attr('title','Order ignored. Info not available in past orders aixada v2.03').addClass('dim40').html('-');
+							td.attr('title','<?php echo $Text['ostat_desc_incomp']; ?>').addClass('dim40').html('<p class="textAlignCenter">-</p>');
 							break;
 					}
 				}

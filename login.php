@@ -144,7 +144,7 @@ if (!isset($_SESSION)) {
 			<div id="newsWrap">
 				<div class="portalPost">
 					<h2 class="subject">{subject}</h2>
-					<p class="info">By {user_name} (UF{uf_id}),  on {ts} </p>
+					<p class="info"><?php echo $Text['posted_by']; ?> {user_name} (<?php echo $Text['uf_short'] ;?>{uf_id}),  {ts} </p>
 					<p class="msg">{details}</p>
 				</div>
 			</div>
