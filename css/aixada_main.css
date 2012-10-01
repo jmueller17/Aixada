@@ -32,6 +32,8 @@ option 				{padding:1px 5px;}
 .lightGreenBg		{background-color:#72b42d;}
 .okGreen			{background:#D1F3D1;}
 .noRed				{background:#ff7a75;}
+.processing             {color:black; background:yellow;}
+.grayedGreen            {color:darkgray; background:lightgray; /*#d2f3d2;*/}
 
 .dateNum			{font-weight:bold; margin:1px; padding-right:2px;}
 .grayed				{color:#E1E1E1;}

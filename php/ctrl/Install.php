@@ -1,6 +1,8 @@
 <?php
 
-
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 $config_dir = 'local_config/';
 $log = "Starting installation process.\n";
@@ -11,11 +13,15 @@ function process_language_file($coop_name, $lang_file)
     $tmpname = $lang_file . '.tmp';
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
-    if (!$inhandle)
-        throw new Exception("Couldn't open {$tmpname} for reading");
+    if (!$inhandle) {
+        print "Couldn't open {$tmpname} for reading";
+	return 1;
+    }
     $outhandle = @fopen($lang_file, 'w');
-    if (!$outhandle)
-        throw new Exception("Couldn't open {$lang_file} for writing");
+    if (!$outhandle) {
+        "Couldn't open {$lang_file} for writing";
+	return 11;
+    }
     while(!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
         if (strpos($buffer, 'Aixada') !== false) {
@@ -23,7 +29,9 @@ function process_language_file($coop_name, $lang_file)
             $buffer = str_replace('The New ', '', $buffer);
         }
         fwrite($outhandle, $buffer);
-    }}
+    }
+    return 0;
+}
 
 function process_languages($coop_name)
 {
@@ -40,11 +48,15 @@ function create_setup_file($db_name)
     $aixada_filename = $config_dir . 'aixada_setup.sql';
     $db_filename = $config_dir . "{$db_name}_setup.sql";
     $inhandle =  @fopen($aixada_filename, 'r');
-    if (!$inhandle)
-        throw new Exception("Couldn't open {$aixada_filename} for reading");
+    if (!$inhandle) {
+        print "Couldn't open {$aixada_filename} for reading";
+	return 1;
+    }
     $outhandle = @fopen($db_filename, 'w');
-    if (!$outhandle)
-        throw new Exception("Couldn't open {$db_filename} for writing");
+    if (!$outhandle) {
+        print "Couldn't open {$db_filename} for writing";
+	return 1;
+    }
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle);
         if (strpos($buffer, 'drop database') !== false or
@@ -56,6 +68,7 @@ function create_setup_file($db_name)
             $buffer = str_replace('source ', 'source sql/', $buffer);
         fwrite($outhandle, $buffer);
     }
+    return 0;
 }
 
 function clear_results($mysqli)
@@ -100,8 +113,10 @@ function create_tables($db_name, $mysqli)
     }
     foreach ($files as $filename) {
         $handle = @fopen($filename, 'r');
-        if (!$handle)
-            throw new Exception("Couldn't open {$filename}");
+        if (!$handle) {
+            print "Couldn't open {$filename}";
+	    return 1;
+	}
         if (in_array($filename, $dump_files)) {
             $mysqli->query('call delete_member(-1);');
             clear_results($mysqli);
@@ -109,6 +124,7 @@ function create_tables($db_name, $mysqli)
         create_table($handle, $mysqli);
         fclose($handle);
     }
+    return 0;
 }
 
 function create_queries($mysqli)
@@ -117,8 +133,10 @@ function create_queries($mysqli)
     $direntries = scandir($querydir);
     foreach ($direntries as $filename) {
         $handle = @fopen($querydir . $filename, 'r');
-        if (!$handle)
-            throw new Exception("Couldn't open {$filename}");
+        if (!$handle) {
+            print "Couldn't open {$filename}";
+	    return 1;
+	}
         $cmd = '';
         while(!feof($handle)) {// and strpos($buffer, 'end|') === false) {
             $buffer = fgets($handle, 4096);
@@ -128,12 +146,12 @@ function create_queries($mysqli)
         $mysqli->multi_query(str_replace('|', ';', $cmd));
         clear_results($mysqli);
     }
+    return 0;
 }
 
 function create_database($db_name, $mysqli)
 {
-    create_tables($db_name, $mysqli);
-    create_queries($mysqli);
+    return create_tables($db_name, $mysqli) or create_queries($mysqli);
 }
 
 function create_config_file($host, $user, $password, $db_name, $language)
@@ -167,50 +185,43 @@ function create_config_file($host, $user, $password, $db_name, $language)
 }
 
 try {
-    $log .= "Extracting data you entered on the installation page...\n";
-    foreach (array('db_host', 'db_user', 'db_pwd', 'db_name', // 'pref_lang',
-                   'user_login', 'user_password') as $f) {
-        if (!isset($_REQUEST[$f]))
-            die ("Field " . $f . " is not set.");
-    }
-    
-    $host = $_REQUEST['db_host'];
-    $user = $_REQUEST['db_user'];
-    $password = $_REQUEST['db_pwd'];
-    $db_name = $_REQUEST['db_name'];
-    $pref_lang = (isset($_REQUEST['pref_lang']) ? $_REQUEST['pref_lang'] : 'en');
-    $user_login = $_REQUEST['user_login'];
-    $user_password = crypt($_REQUEST['user_password'], 'ax');
-    $first_uf = $_REQUEST['first_uf'];
+    $host = get_param('db_host');
+    $user = get_param('db_user');
+    $password = get_param('db_pwd');
+    $db_name = get_param('db_name');
+    $pref_lang = get_param('pref_lang', 'en');
+    $user_login = get_param('user_login');
+    $user_password = crypt(get_param('user_password'), 'ax');
+    $first_uf = get_param('first_uf');
 
-    $log .= "Connecting to database...\n";
+    $oper = get_param('oper');
+
     $mysqli = new mysqli($host, $user, $password, $db_name);
-    if (mysqli_connect_errno())
-        throw new Exception('Unable to connect to database. ' . mysqli_connect_error());
+    if (mysqli_connect_errno()) 
+	return 'Unable to connect to database. ' . mysqli_connect_error();
+    if ($oper == 'connect') return 0;
 
-    $coop_name = $mysqli->real_escape_string($_REQUEST['coop_name']);
-    $log .= "Processing language files...\n";
-    process_languages($coop_name);
+    switch ($oper) {
+    case 'lang':
+	$coop_name = $mysqli->real_escape_string($_REQUEST['coop_name']);
+	return process_languages($coop_name);
 
-    $log .= "Creating setup file for database...\n";
-    create_setup_file($db_name);
+    case 'create_setup':
+	return create_setup_file($db_name);
 
-    $log .= "Creating database...\n";
-    create_database($db_name, $mysqli);
+    case 'create_database':
+	return create_database($db_name, $mysqli);
 
-    $log .= "Creating configuration file...\n";
-    create_config_file($host, $user, $password, $db_name, $pref_lang);
+    case 'create_config_file':
+	return create_config_file($host, $user, $password, $db_name, $pref_lang);
 
-    $log .= "call register_special_user('{$user_login}', '{$user_password}', '{$pref_lang}', '{$first_uf}');";
-    $mysqli->query("call register_special_user('{$user_login}', '{$user_password}', '{$pref_lang}', '{$first_uf}');");
+    case 'create_user':
+	return $mysqli->query("call register_special_user('{$user_login}', '{$user_password}', '{$pref_lang}', '{$first_uf}');");
  
-    $log .= "done.\n";
-    echo $log;
-
-    $handle = @fopen('local_config/log.txt', 'w');
-    fwrite($handle, $log);
-
-    header("Location:login.php");
+    default:
+	print 'did not know what to do.';
+	return 1;
+    }
 }
 
 catch(Exception $e) {
