@@ -3,6 +3,7 @@
 
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
+require_once ('general.php');
 
 
 /**
@@ -143,19 +144,90 @@ function validate_field($table, $field, $value, $type='exists'){
  */
 function change_password(){
 
-	$user_id = get_session_user_id();
+		$user_id = get_session_user_id();
 	
-      $rs = do_stored_query('check_password', $user_id, crypt(get_param('old_password'), 'ax'));
-      $row = $rs->fetch_assoc();
-      if (!$row or $row['id'] != $user_id) {
-          throw new Exception("The old password did not match! Please try again.");
-      }
-      DBWrap::get_instance()->free_next_results();      
-      do_stored_query('update_password', $user_id, crypt(get_param('password'), 'ax'));
+      	$rs = do_stored_query('check_password', $user_id, crypt(get_param('old_password'), 'ax'));
+      	$row = $rs->fetch_assoc();
+      	if (!$row) {
+          	throw new Exception("The old password did not match! Please try again.");
+      	} else if ($row['id'] != $user_id){
+      		throw new Exception("The user ID did not match the currently logged user. You cannot change the password of other others. ");
+      	}
+      	      	
+      	DBWrap::get_instance()->free_next_results();      
+      	do_stored_query('update_password', $user_id, crypt(get_param('password'), 'ax'));
       
-      return 1; 
-	
+      	return 1; 	
 }
+
+
+/**
+ * 
+ * reset password for given user. only admin can do that. 
+ * @param int $user_id
+ * @throws Exception
+ */
+function reset_password($user_id)
+{
+	
+	//only admin 
+	 if (get_current_role() != 'Hacker Commission')
+          throw new Exception("Only Admin can do that!");
+	
+          
+    $sendAsEmail = configuration_vars::get_instance()->internet_connection;
+    
+    $newPwd = createPassword();
+    
+    $db = DBWrap::get_instance(); 
+    do_stored_query('update_password', $user_id, crypt($newPwd, 'ax'));
+    
+    
+    if ($sendAsEmail){
+    	DBWrap::get_instance()->free_next_results();     
+		$strSQL = 'SELECT email FROM aixada_user WHERE id = :1q';
+    	$rs = $db->Execute($strSQL, $user_id);
+    	if($rs->num_rows == 0){
+    		throw new Exception("This user has no valid email.");
+		}
+		
+		while ($row = $rs->fetch_assoc()) {
+      		$toEmail = $row['email'];
+    	}
+    	
+    	
+		$subject = "Aixada Reset Password";
+		$message = "Your password has been reset. The new password is " . $newPwd ."\n\n Please logon with the new password. Under My Account, Settings you can change your password.";
+		$from = "admin@aixada.org";
+		$headers = "From:" . $from;
+		mail($toEmail,$subject,$message,$headers);
+    	
+		echo "The new password has been sent to the user";
+    } else {
+    	
+    	echo $newPwd; 
+    	
+    }
+}
+
+
+
+function createPassword($length=8) {
+	$chars = "234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	$i = 0;
+	$password = "";
+	while ($i <= $length) {
+		$password .= $chars{mt_rand(0,strlen($chars))};
+		$i++;
+	}
+	return $password;
+}
+
+
+
+
+
+
 
 	
 ?>

@@ -25,7 +25,8 @@ $(function(){
 				sums['total'] = total.toFixed(2); 
 				sums['totalIva'] = totalIva.toFixed(2); 
 				sums['totalRevTax'] = totalRevTax.toFixed(2); 
-				
+				sums['total_net'] = total - (totalIva+totalRevTax)
+				sums['total_net'] = sums['total_net'].toFixed(2);
 				return sums; 
 			},			
 			formatQuantity : function(obj){

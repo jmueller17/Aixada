@@ -73,7 +73,6 @@
 						$('#tbl_Orders tbody').xml2html('reload',{
 							url : 'php/ctrl/Orders.php',
 							params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
-							//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 						});
 
 				});
@@ -89,7 +88,6 @@
 					$('#tbl_Orders tbody').xml2html('reload',{
 						url : 'php/ctrl/Orders.php',
 						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
-						//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
 					});
 
 				});

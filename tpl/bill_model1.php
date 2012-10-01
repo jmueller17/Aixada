@@ -25,6 +25,7 @@
 		.cellBorderList td	{border:solid 1px black; padding:2px 5px;}
 		.cellBorderList th	{border:solid 1px black; padding:2px 5px; background:#efefef;}
 		.billHead			{text-transform:uppercase;}
+		.revTaxCol			{display:none;}
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
@@ -75,7 +76,7 @@
 					var totalPrice = price * qu;
 					
 					totalPrice = totalPrice.toFixed(2);
-					$(row).children().eq(5).text(totalPrice);
+					$(row).children().eq(7).text(totalPrice);
 					
 
 				},
@@ -86,6 +87,7 @@
 					$('#total').text(totals['total']);
 					$('#total_iva').text(totals['totalIva']);
 					$('#total_revTax').text(totals['totalRevTax']);
+					$('#import_net').text(totals['total_net']);
 					
 				}
 			});
@@ -169,6 +171,8 @@
 					<th class="width-80"><?php echo $Text['quantity'];?></th>
 					<th class="width-80"><?php echo $Text['unit']; ?></th>
 					<th class="width-80 txtAlignRight"><?php echo $Text['price']; ?></th>
+					<th class="width-80 txtAlignRight"><?php echo $Text['iva']; ?></th>
+					<th class="width-80 txtAlignRight revTaxCol"><?php echo $Text['revtax_abbrev']; ?></th>
 					<th class="txtAlignRight"><?php echo $Text['total'];?></th>
 				</tr>
 			</thead>
@@ -179,6 +183,8 @@
 					<td class="width-80 txtAlignRight">{quantity}</td>
 					<td class="width-80 txtAlignLeft">{unit}</td>
 					<td class="width-80 txtAlignRight">{unit_price}</td>
+					<td class="width-80 txtAlignRight">{iva_percent}%</td>
+					<td class="width-80 txtAlignRight revTaxCol">{rev_tax_percent}%</td>
 					<td class="txtAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></td>
 					<td class="hidden">{cart_id}</td>					
 				</tr>
@@ -188,31 +194,36 @@
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight"><?php echo $Text['gross_amount']; ?></td>
+					<td class="revTaxCol"></td>
+					<td colspan="4" class="txtAlignRight"><?php echo $Text['gross_amount']; ?></td>
 					<td id="import_brut"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight"><?php echo $Text['net_amount']; ?></td>
-					<td id="import_net"></td>
+					<td class="revTaxCol"></td>
+					<td colspan="4" class="txtAlignRight"><?php echo $Text['net_amount']; ?></td>
+					<td id="import_net" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_iva']; ?></td>
+					<td class="revTaxCol"></td>
+					<td colspan="4" class="txtAlignRight"><?php echo $Text['incl_iva']; ?></td>
 					<td id="total_iva" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight"><?php echo $Text['incl_revtax']; ?></td>
+					<td class="revTaxCol"></td>
+					<td colspan="4" class="txtAlignRight"><?php echo $Text['incl_revtax']; ?></td>
 					<td id="total_revTax" class="txtAlignRight"></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td></td>
-					<td colspan="3" class="txtAlignRight bold"><?php echo $Text['bill_total']; ?></td>
+					<td class="revTaxCol"></td>
+					<td colspan="4" class="txtAlignRight bold"><?php echo $Text['bill_total']; ?></td>
 					<td id="total" class="txtAlignRight bold"></td>
 				</tr>
 			</tfoot>
