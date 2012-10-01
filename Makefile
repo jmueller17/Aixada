@@ -14,12 +14,12 @@ export FINAL = true
 
 config_dir:=local_config
 
-all: canned_responses.php $(config_dir)/config.php 
+all: sql/all canned_responses.php $(config_dir)/config.php 
 #sql/all js/all css/all
 
 
-# sql/all:
-# 	$(MAKE) -C sql
+sql/all:
+	$(MAKE) -C sql
 
 # css/all:
 # 	$(MAKE) -C css
