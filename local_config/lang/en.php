@@ -744,6 +744,10 @@ $Text['show_deactivated'] = "Show deactivated products";
 $Text['nav_report_sales'] = "Sales"; 
 $Text['nav_help'] = "Help"; 
 $Text['withdraw_from'] = "Withdraw from ";  //account
+$Text['withdraw_to_bank'] = "Withdraw cash for bank";
+$Text['withdraw_uf'] = "Withdraw from HU account";
+$Text['withdraw_cuota'] = "Withdraw member quota";
+
 
 
 //$Text[''] = ""; 

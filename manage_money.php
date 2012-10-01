@@ -625,12 +625,12 @@
 							<td><?=$Text['withdraw_type'];?>:&nbsp;&nbsp;</td>
 							<td>
 								<select id="sel_withdraw_type">
-									<option value="-1"><?=$Text['please_select'];?></option>
-									<option value="1">Pay provider</option>
-									<option value="2">Withdraw cash for bank</option>
-									<option value="3">Withdraw from HU account</option>
-									<option value="4">Withdraw member quota</option>
-									<option value="5"><?=$Text['withdraw_other'];?></option>
+									<option value="-1"><?php echo $Text['please_select'];?></option>
+									<option value="1"><?php echo $Text['withdraw_provider']; ?></option>
+									<option value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
+									<option value="3"><?php echo $Text['withdraw_uf']; ?></option>
+									<option value="4"><?php echo $Text['withdraw_cuota']; ?></option>
+									<option value="5"><?php echo $Text['withdraw_other'];?></option>
 								</select>
 							</td>
 						</tr>						
