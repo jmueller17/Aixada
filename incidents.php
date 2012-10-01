@@ -353,14 +353,14 @@
 							<th hideInPrint"><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?>&nbsp;&nbsp;</th>
 							<th><?php echo $Text['created_by'];?></th>
-							<th><?php echo $Text['created'];?></th>
-							<th class="textAlignCenter"><?php echo $Text['status'];?></th>
+							<th><p class="textAlignLeft"><?php echo $Text['created'];?></p></th>
+							<th><?php echo $Text['status'];?></th>
 							<th class="hidden"><?php echo $Text['incident_type'];?></th>
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>
 							<th class="hidden"><?php echo $Text['ufs_concerned'];?></th>
 							<th class="hidden"><?php echo $Text['comi_concerned'];?></th>
 							<th class="hidden hideInPrint"><?=$Text['details'];?></th>
-							<th class="maxwidth-100 hideInPrint"><?=$Text['actions'];?></th>
+							<th class="maxwidth-100 hideInPrint textAlignRight"><?=$Text['actions'];?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -368,8 +368,8 @@
 							<td field_name="incident_id">{id}</td>
 							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
 							<td field_name="priority"><p  class="textAlignCenter">{priority}</p></td>
-							<td field_name="operator" class="textAlignCenter">{uf_id} {user_name}</td>
-							<td field_name="date_posted" class="textAlignCenter">{ts}</td>
+							<td field_name="operator">{uf_id} {user_name}</td>
+							<td field_name="date_posted"><p class="textAlignLeft">{ts}</p></td>
 							<td field_name="status" class="textAlignCenter">{status}</td>
 							<td field_name="type" class="hidden hideInPrint">{distribution_level}</td>
 							<td field_name="type_description" class="hidden">{type_description}</td>

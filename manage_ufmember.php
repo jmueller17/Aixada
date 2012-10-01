@@ -41,6 +41,10 @@
 		var gFormComplete = false; 
 
 
+		//show/hide reset pwd. 
+		var isAdmin = "<?=$_SESSION['userdata']['current_role'];?>";
+
+			
 		$('#member_listing').tabs();
 		
 		
@@ -102,10 +106,16 @@
 		//handle events on uf list
 		$('#uf_list tbody tr')
 			.live('mouseenter', function(){
+				var uf_id = $(this).attr('ufId');
 				$(this).addClass('ui-state-hover');
+				
+				//$('#member_list tbody tr.memberOfUf_'+uf_id).addClass('ui-state-hover');
+				
 			})
 			.live('mouseleave',function(){
+				var uf_id = $(this).attr('ufId');
 				$(this).removeClass('ui-state-hover');
+				//$('#member_list tbody tr.memberOfUf_'+uf_id).removeClass('ui-state-hover');
 			})
 			//click on uf table row
 			.live('click',function(e){
@@ -242,7 +252,7 @@
 				stupidHack = 's9328820398023948'; 
 				if (ufId == mentorUf){
 					$.showMsg({
-						msg: '<?php echo $Text['msg_err_mentoruf']; ?>',
+						msg: "<?php echo $Text['msg_err_mentoruf']; ?>",
 						type: 'error'
 					});
 					return false; 
@@ -262,7 +272,7 @@
 		        	//check if uf name exists
 			       if (msg == 1){
 			    	   $.showMsg({
-							msg: '<?php echo $Text['msg_err_ufexists']; ?> ',
+							msg: "<?php echo $Text['msg_err_ufexists']; ?> ",
 							type: 'error'
 						});
 				   } else { 
@@ -709,7 +719,7 @@
 				case 'createMemberView':
 					if (!gFormComplete){
 						$.showMsg({
-							msg: '<?php echo $Text['msg_err_form_init']; ?>',
+							msg: "<?php echo $Text['msg_err_form_init']; ?>",
 							type: 'error'
 						});
 						return false; 
@@ -765,7 +775,7 @@
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
 		</div>
-		<div id="uf_listing" class="ui-widget overviewElements floatLeft">
+		<div id="uf_listing" class="ui-widget overviewElements floatLeft aix-layout-splitW40">
 			<div class="ui-widget-content ui-corner-all">
 				<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['list_ufs']; ?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="ufMsg"></p>
@@ -775,9 +785,7 @@
 							<th><?=$Text['active'];?></th>
 							<th><?=$Text['uf_short'];?></th>
 							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
-							<th><?=$Text['mentor_uf'];?></th>
-							<th>&nbsp;</th>
-							
+							<th><p class="textAlignCenter"><?=$Text['mentor_uf'];?></p></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -785,8 +793,7 @@
 								<td><input type="checkbox" name="uf_active" value="{active}"/></td>
 								<td><?=$Text['uf_short'];?>{id}</td>
 								<td><p class="textAlignLeft">{name}</p></td>
-                                <td>{mentor_uf}</td>
-								<td><!-- span class="btn_edit_uf ui-icon ui-icon-pencil" title="<?php echo $Text['edit_uf'];?>"</span--></td>
+                                <td><p class="textAlignCenter">{mentor_uf}</p></td>
 							</tr>						
 						</tbody>
 						<tfoot>
@@ -803,7 +810,7 @@
 		<!-- 
 					MEMBER LISTING TABS
 		 -->
-		<div id="member_listing" class="ui-widget overviewElements splitCol floatRight">
+		<div id="member_listing" class="ui-widget overviewElements floatRight">
 		
 			<ul>
 				<li><a href="#tabs-1"><h2><?php echo $Text['member_pl']; ?></h2></a></li>
@@ -817,19 +824,19 @@
 						<thead>
 						<tr>
 							<th><?=$Text['id'];?></th>
-							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
+							<th><?=$Text['name_person'];?></th>
 							<th><?=$Text['active'];?></th>	
-							<th><?=$Text['uf_short'];?></th>	
-							<th class="textAlignLeft"><?php echo $Text['contact']; ?></th>
+							<th><p class="textAlignCenter"><?=$Text['uf_short'];?></p></th>	
+							<th><?php echo $Text['contact']; ?></th>
 						</tr>
 						</thead>
 						<tbody>
-							<tr class="clickable" memberId="{id}">
+							<tr class="clickable memberOfUf_{uf_id}" memberId="{id}" ufId="{uf_id}">
 								<td>{id}</td>
-								<td><p class="textAlignLeft">{name}</p></td>
-								<td>{active}</td>
+								<td><p>{name}</p></td>
+								<td><p class="textAlignCenter">{active}</p></td>
 								<td><?=$Text['uf_short'];?>{uf_id}</td>
-								<td><p class="textAlignLeft">
+								<td><p>
 									{phone1} / {phone2}<br/>
 									{email}
 									</p>
@@ -1077,6 +1084,7 @@
 							</td>
 							<td>
 								<p class="floatRight">
+									<button class="btn_reset_pwd hidden"><?php echo $Text['btn_reset_pwd']; ?></button>	
 									<button class="btn_cancel_new_member"><?php echo $Text['btn_cancel'];?></button>
 								</p>
 							</td>

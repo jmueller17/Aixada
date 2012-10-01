@@ -86,6 +86,14 @@ class configuration_vars {
   public $show_menu_language_select = false; 
   
   
+  /**
+   * 
+   * is this a local install or accessible online. If online
+   * services such as sending emails will be active. 
+   * @var boolean
+   */
+  public $internet_connection = true; 
+  
   
   /**
    * Code optimizations

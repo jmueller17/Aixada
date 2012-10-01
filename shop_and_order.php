@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - " .  $Text['head_ti_'.strtolower($_REQUEST['what'])]; ?></title>
+	<title><?php echo $Text['global_title'] . " - " /*.  $Text['head_ti_'.strtolower($_REQUEST['what'])]*/; ?></title>
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
@@ -418,7 +418,7 @@
 		    					echo $Text['ti_shop'];
 		    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
 		    				}?>
-		    	&nbsp;&nbsp;&nbsp;<input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker"></h1>
+		    	&nbsp;&nbsp;&nbsp;<input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
     		</div>
     		<div id="titleRightCol">
     			<div id="ViewChoice">

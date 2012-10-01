@@ -778,13 +778,14 @@ end |
  * revision_filter selects only those entries with a specific revision_status value (sent, cancel, postponed...)
  */
 drop procedure if exists get_orders_listing|
-create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int, in revision_filter int)
+create procedure get_orders_listing(in from_date date, in to_date date, in the_uf_id int, in revision_filter int, in the_limit varchar(255))
 begin
 
 	declare today date default date(sysdate()); 
 	declare outer_wherec varchar(255) default "";
     declare totalc varchar(255) default "";
     declare filter_wherec varchar(255) default "";
+    declare set_limit varchar(255) default ""; 
     
     if (the_uf_id > 0) then
     	set outer_wherec = 	concat("oi.uf_id = ", the_uf_id ," and");
@@ -802,6 +803,11 @@ begin
     -- filter according to revision_status --
     if (revision_filter > 0) then
     	set filter_wherec = concat("and o.revision_status = ", revision_filter);
+    end if; 
+    
+    -- set a limit?
+    if (the_limit <> "") then
+    	set set_limit = concat("limit ", the_limit);
     end if; 
 
 	set @q = concat("select distinct
@@ -836,7 +842,8 @@ begin
 		and po.product_id = p.id
 		",filter_wherec,"
 	order by 
-		oi.date_for_order desc;");
+		oi.date_for_order desc 
+		",set_limit,";");
 		
 	prepare st from @q;
   	execute st;

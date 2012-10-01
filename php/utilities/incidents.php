@@ -12,7 +12,22 @@ require_once ('general.php');
  */
 function manage_incident($incident_id){
 	
+	
 	$params = extract_incident_form_values();
+	
+	$sendEmail = configuration_vars::get_instance()->internet_connection;
+	
+	//email incident
+	if ($sendEmail &&  ($params["type"] == 2 || $params["type"] == 4)){
+		
+		$to = "someone@someplace.com"; //here goes the user email list
+		$subject = "[Aixada] ".$params["subject"];
+		$message = $params["msg"];
+		$from = "admin@aixada.org";
+		$headers = "From:" . $from;
+		mail($to,$subject,$message,$headers);
+		
+	}
 	
 	echo do_stored_query('manage_incident', 
 						$incident_id, 
@@ -88,14 +103,6 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 			
 		case 'today':
 			printXML(stored_query_XML_fields('get_incidents_listing', $today, $tomorrow, $filterType));
-			break;
-			
-		case 'exact':
-			printXML(stored_query_XML_fields('get_purchase_listing', $from_date, $to_date, $filterType));
-			break;
-			
-		case 'all':
-			printXML(stored_query_XML_fields('get_purchase_listing', $very_distant_past, $very_distant_future, $filterType));
 			break;
 			
 			
