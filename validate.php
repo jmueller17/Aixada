@@ -122,8 +122,8 @@
 							$.showMsg({
 								msg:"<?php echo $Text['nothing_to_val'] ;?>",
 								type: 'warning'});
-
-								resetFields();
+								$('#cartLayer').aixadacart('resetCart');
+								//resetFields();
 						
 						//one, should be today!
 						} else {
@@ -284,7 +284,8 @@
 						success: function(msg){
 							$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
 							resetDeposit();
-									
+							
+							$('#dailyStats tbody').xml2html('reload');		
 							$('#list_account tbody').xml2html('reload');
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -326,7 +327,7 @@
                     autoReload: 100200,
                     loadOnInit:true, 
                     beforeLoad : function(){
-						$('#dailyStats .loadAnim').show();
+						//$('#dailyStats .loadAnim').show();
 					},
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(3).text();
@@ -339,7 +340,7 @@
 					},
 					complete : function(){
 						$('tr:even', this).addClass('rowHighlight');
-						$('#dailyStats .loadAnim').hide();
+						//$('#dailyStats .loadAnim').hide();
 					}
 			});
 				
@@ -358,6 +359,20 @@
 						$('#negative_ufs .loadAnim').hide();
 					}
 			});
+
+  			 //daily stats
+			 $('#dailyStats tbody').xml2html('init',{
+					url		: 'php/ctrl/Account.php',
+					params	: 'oper=getIncomeSpendingBalance',
+                 	//autoReload: 100200, 
+                 	loadOnInit:true,
+                 	beforeLoad : function(){
+						$('#dailyStats .loadAnim').show();
+					},
+					complete : function(){
+						$('#dailyStats .loadAnim').hide();
+					}
+			});	
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
@@ -786,6 +801,22 @@
 					
 				</div>
 			</div>
+			
+			<div id="monitorGlobals" class="ui-widget">
+				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['name_cash_account']; ?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<table id="dailyStats" class="tblListingDefault">
+						<tbody>
+							<tr><td><p><?php echo $Text['totalIncome'];?></p></td><td><p class="textAlignRight">{income}</p></td></tr>
+							<tr><td><p><?php echo $Text['totalSpending'];?></p></td><td><p class="textAlignRight">{spending}</p></td></tr>
+							<tr><td><p><?php echo $Text['balance'];?></p></td><td><p class="textAlignRight">{balance}</p></td></tr>							
+						</tbody>
+					</table>
+					
+				</div>
+			</div>
+			
+			
 			<div id="monitorStock" class="ui-widget hidden">
 				<div class="rightCol-Observer ui-widget-content ui-corner-all  aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>

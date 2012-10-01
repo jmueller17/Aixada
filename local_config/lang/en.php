@@ -193,12 +193,11 @@ $Text['short_desc'] = 'Short description';
 $Text['withdraw_type'] = 'Type of withdrawal';
 $Text['withdraw_for_provider'] = 'Make a withdrawal for provider';
 $Text['withdraw_other'] = 'All other withdrawals..';
-$Text['withdraw_provider'] = 'Withdraw for provider';
+$Text['withdraw_provider'] = 'Pay provider';
 $Text['btn_make_withdrawal'] = 'Withdrawal';
 $Text['correct_balance'] = 'Correct balance';
 $Text['set_balance'] = 'Set current balance in cashbox';
 $Text['name_cash_account'] = 'Cashbox';
-
 
 
 
@@ -744,6 +743,7 @@ $Text['remove_pagebreak'] = "Click to REMOVE this page break";
 $Text['show_deactivated'] = "Show deactivated products"; 
 $Text['nav_report_sales'] = "Sales"; 
 $Text['nav_help'] = "Help"; 
+$Text['withdraw_from'] = "Withdraw from ";  //account
 
 
 //$Text[''] = ""; 
