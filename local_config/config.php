@@ -92,7 +92,7 @@ class configuration_vars {
    * services such as sending emails will be active. 
    * @var boolean
    */
-  public $internet_connection = true; 
+  public $internet_connection = false; 
   
   
   /**

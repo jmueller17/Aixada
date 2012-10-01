@@ -84,7 +84,11 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="3"></td>
+							<td colspan="2"></td>
+							<td>
+								<button class="btn_reset_pwd hidden" userId="{user_id}"><?php echo $Text['btn_reset_pwd']; ?></button>
+							
+							</td>
 							<td><p class="floatRight">
 									<button class="btn_save_edit_member" memberid="{id}"><?php echo $Text['btn_save'];?></button>
 								</p>

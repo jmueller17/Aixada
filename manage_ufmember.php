@@ -43,6 +43,7 @@
 
 		//show/hide reset pwd. 
 		var isAdmin = "<?=$_SESSION['userdata']['current_role'];?>";
+		isAdmin = (isAdmin == "Hacker Commission")? true:false; 
 
 			
 		$('#member_listing').tabs();
@@ -89,14 +90,14 @@
 			//resultsPerPage:20,
 			//paginationNav : '#uf_list tfoot td',
 			beforeLoad : function(){
-				$('#uf_listing .loadAnim').show();
+				//$('#uf_listing .loadAnim').show();
 			},
 			rowComplete: function(index, row){
 				var ckbx = row.children().first().find('input');
 				if (ckbx.val() == "1") ckbx.attr('checked',true); //set the checkbox if uf is active or not
 			},
 			complete : function(){
-				$('#uf_listing .loadAnim').hide();
+				//$('#uf_listing .loadAnim').hide();
 				$('#uf_list tbody tr:even').addClass('rowHighlight'); 
 			}
 		});	
@@ -451,6 +452,35 @@
 						return false; 
 					});
 
+				//if admin is logged user, show reset pwd button.
+				if (isAdmin){
+					$('.btn_reset_pwd')
+						.button({
+							icons: {primary: "ui-icon-locked"}
+						}).live('click', function(e){
+							
+							$.ajax({
+							   	url: 'php/ctrl/UserAndUf.php?oper=resetPassword&user_id='+$(this).attr('userId'),
+							   	beforeSend: function(){
+								},
+							   	success: function(new_pwd){
+							   	 	$.showMsg({
+										msg: "The new password is: " + new_pwd,
+										type: 'success'});
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+								   $.showMsg({
+										msg: XMLHttpRequest.responseText,
+										type: 'error'});
+							   	},
+							   	complete : function(msg){
+							   	}
+							}); //end ajax
+										
+							return false; 
+						}).show();
+				} 
+
 
 				//add remove member icon
 				$('.ibtn_remove_member')
@@ -775,10 +805,23 @@
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
 		</div>
-		<div id="uf_listing" class="ui-widget overviewElements floatLeft aix-layout-splitW40">
-			<div class="ui-widget-content ui-corner-all">
-				<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['list_ufs']; ?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
-				<p id="ufMsg"></p>
+		
+		
+		
+		
+		<!-- 
+					MEMBER LISTING TABS
+		 -->
+		<div id="member_listing" class="ui-widget overviewElements aix-layout-center80">
+		
+			<ul>
+				<li><a href="#tabs-1"><h2><?php echo $Text['list_ufs']; ?></h2></a></li>
+				<li><a href="#tabs-2"><h2><?php echo $Text['member_pl']; ?></h2></a></li>
+				<li><a href="#tabs-3"><h2><?php echo $Text['search_members']; ?></h2></a></li>	
+				<li><a href="#tabs-4"><h2><?php echo $Text['unassigned_members']; ?></h2></a></li>
+			</ul>
+		
+			<div id="tabs-1" class="ui-widget-content ui-corner-all">
 				<table id="uf_list" class="tblListingDefault">
 						<thead>
 						<tr>
@@ -802,24 +845,10 @@
 							</tr>
 						</tfoot>
 					</table>
-					
 			</div>
-		</div>
+
 		
-		
-		<!-- 
-					MEMBER LISTING TABS
-		 -->
-		<div id="member_listing" class="ui-widget overviewElements floatRight">
-		
-			<ul>
-				<li><a href="#tabs-1"><h2><?php echo $Text['member_pl']; ?></h2></a></li>
-				<li><a href="#tabs-2"><h2><?php echo $Text['unassigned_members']; ?></h2></a></li>
-				<li><a href="#tabs-3"><h2><?php echo $Text['search_members']; ?></h2></a></li>	
-			</ul>
-		
-		
-			<div id="tabs-1" class="ui-widget-content ui-corner-all">
+			<div id="tabs-2" class="ui-widget-content ui-corner-all">
 				<table id="member_list" class="tblListingDefault">
 						<thead>
 						<tr>
@@ -837,34 +866,6 @@
 								<td><p class="textAlignCenter">{active}</p></td>
 								<td><?=$Text['uf_short'];?>{uf_id}</td>
 								<td><p>
-									{phone1} / {phone2}<br/>
-									{email}
-									</p>
-								</td>
-							</tr>						
-						</tbody>
-				</table>
-			</div>
-			
-			
-			<div id="tabs-2" class="ui-widget-content ui-corner-all">
-				<table id="member_list_unassigned" class="tblListingDefault">
-						<thead>
-						<tr>
-							<th><?=$Text['id'];?></th>
-							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
-							<th><?=$Text['active'];?></th>	
-							<th><?=$Text['uf_short'];?></th>	
-							<th class="textAlignLeft">Contact</th>
-						</tr>
-						</thead>
-						<tbody>
-							<tr class="clickable" memberId="{id}">
-								<td>{id}</td>
-								<td><p class="textAlignLeft">{name}</p></td>
-								<td>{active}</td>
-								<td><?=$Text['uf_short'];?>{uf_id}</td>
-								<td><p class="textAlignLeft">
 									{phone1} / {phone2}<br/>
 									{email}
 									</p>
@@ -903,6 +904,35 @@
 						</tbody>
 				</table>
 			</div>
+			
+			
+			<div id="tabs-4" class="ui-widget-content ui-corner-all">
+				<table id="member_list_unassigned" class="tblListingDefault">
+						<thead>
+						<tr>
+							<th><?=$Text['id'];?></th>
+							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
+							<th><?=$Text['active'];?></th>	
+							<th><?=$Text['uf_short'];?></th>	
+							<th class="textAlignLeft">Contact</th>
+						</tr>
+						</thead>
+						<tbody>
+							<tr class="clickable" memberId="{id}">
+								<td>{id}</td>
+								<td><p class="textAlignLeft">{name}</p></td>
+								<td>{active}</td>
+								<td><?=$Text['uf_short'];?>{uf_id}</td>
+								<td><p class="textAlignLeft">
+									{phone1} / {phone2}<br/>
+									{email}
+									</p>
+								</td>
+							</tr>						
+						</tbody>
+				</table>
+			</div>
+			
 			
 		</div><!-- END OF MEMBER LISTING TABS -->
 		
@@ -1083,8 +1113,7 @@
 								</p>
 							</td>
 							<td>
-								<p class="floatRight">
-									<button class="btn_reset_pwd hidden"><?php echo $Text['btn_reset_pwd']; ?></button>	
+								<p class="floatRight">	
 									<button class="btn_cancel_new_member"><?php echo $Text['btn_cancel'];?></button>
 								</p>
 							</td>

@@ -123,6 +123,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-center80 {width:80%; margin:5px auto;}
 .aix-layout-center60 {width:60%; margin:5px auto;}
 .aix-layout-centerDiv{margin:5px auto;}
+.aix-layout-max-W800 {max-width:800px; margin:5px auto;}
 
 .aix-layout-splitW60 {width:59%;}
 .aix-layout-splitW40 {width:39%;}

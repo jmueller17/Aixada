@@ -24,6 +24,7 @@
 		.hidden				{display:none;}
 		.cellBorderList td	{border:solid 1px black; padding:2px 4px;}
 		.cellBorderList th	{border:solid 1px black; background:#efefef;}
+		.revTaxCol			{display:none;}
 		
 		
 		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}

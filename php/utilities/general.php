@@ -88,8 +88,21 @@ function get_session_theme(){
 	return $_SESSION['userdata']['theme'];
     } else {
 	return	configuration_vars::get_instance()->default_theme;
+    }	 
+}
+
+
+/**
+ * 
+ * retrieves active role of the logged user
+ */
+function get_current_role()
+{
+	 if (isset($_SESSION['userdata']['current_role']) and $_SESSION['userdata']['current_role'] != '') {
+		return $_SESSION['userdata']['current_role'];
+    } else {
+		return false; 
     }
-	 
 }
 
 

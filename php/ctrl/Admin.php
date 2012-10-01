@@ -17,9 +17,8 @@ try{
 
 	
   switch (get_param('oper')) {
-
 	
-	  case 'backupDatabase':
+	  	case 'backupDatabase':
 	      $cv = configuration_vars::get_instance();
 	      $filename = '../../local_config/dbBkups/' . $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';
 	      //$filename = $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';

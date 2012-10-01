@@ -73,13 +73,14 @@ try{
 	    	
 	    case 'changePassword':
 	    	echo change_password();
-	        exit; 	
-	    	
-	    	
-	    	
-   
+	        exit; 
 
-  
+	    case 'resetPassword':
+	    	echo reset_password(get_param('user_id'));
+	    	exit; 
+	    	
+	    	
+	    	  
   case 'assignUsersToUF':
         foreach ($_REQUEST['user_id'] as $id) {
             do_stored_query('assign_user_to_uf', $id, $_REQUEST['uf_id']);
@@ -87,17 +88,6 @@ try{
         exit;
 
 
-  case 'changeOtherPassword':
-      $user_id = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
-      if (!$user_id)
-          throw new Exception("User id " . $user_id . ' not valid');
-      if ($_SESSION['userdata']['current_role'] != 'Hacker Commission')
-          throw new Exception("Only Hackers can do that!");
-      do_stored_query('update_password', $user_id, crypt($new_password, "ax"));
-      echo '1';
-      exit;
-      
-      	
 
   default:
     throw new Exception("ctrlUserAndUf: oper=" . $_REQUEST['oper'] . " not valid in query");
