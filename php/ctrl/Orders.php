@@ -26,7 +26,7 @@ try{
     	
     	//returns a list of all orders for the given uf
     	case 'getOrdersListingForUf':
-    		echo get_orders_in_range(get_param('filter'), get_param('uf_id'), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0));
+    		echo get_orders_in_range(get_param('filter'), get_param('uf_id'), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0), get_param('limit',''));
     		exit; 
 
     	//retrieves list of products that have been ordered. Needed to construct order revision table

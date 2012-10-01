@@ -175,7 +175,7 @@ class report_manager {
       return $result;
   }
 
-  private function write_summarized_orders_html($id, $the_date)
+  public function write_summarized_orders_html($id, $the_date)
   {
       global $Text;
       $html = '<table>'

@@ -788,7 +788,7 @@
 		   		<div class="textAlignRight"><button	id="tblOptions"><?php echo $Text['view_opt']; ?></button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;Show deactivated products</a></li>
+						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['show_deactivated']; ?></a></li>
 						<li><a href="javascript:void(null)">&nbsp;&nbsp;<?php echo $Text['days_display'];?></a>
 							<ul>
 								<li><a href="javascript:void(null)" id="plus7"><?php echo $Text['plus_seven']; ?></a></li>

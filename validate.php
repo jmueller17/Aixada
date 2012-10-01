@@ -118,7 +118,14 @@
 						if (rowCount > 1){
 							$('#dialog_select_cart').dialog('open');
 
-						//one or zero, should be today!
+						} else if (rowCount == 0){
+							$.showMsg({
+								msg:"<?php echo $Text['nothing_to_val'] ;?>",
+								type: 'warning'});
+
+								resetFields();
+						
+						//one, should be today!
 						} else {
 							var cart_id = $('#tbl_Shop tbody tr').attr('shopId');
 							var date_for_shop = $('#tbl_Shop tbody tr').attr('dateForShop');

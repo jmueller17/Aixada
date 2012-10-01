@@ -4,7 +4,7 @@
 
    	if ($_SESSION['userdata']['login'] != '') {
 
-   		echo '<a href="docs/index_'.get_session_language().'.php" target="_blank">Help</a> | ';	
+   		echo '<a href="docs/index_'.get_session_language().'.php" target="_blank">'.$Text['nav_help'].'</a> | ';	
    	if (isset($_SESSION['userdata']['can_checkout']) and
            $_SESSION['userdata']['can_checkout']) {
            echo '<font color="red">' . $Text['nav_can_checkout'] . '</font> ';
@@ -119,7 +119,7 @@
 
 <div id="navReportItems" class="hidden">
 	<ul>
-		<li><a href="report_shop.php">Sales</a></li>
+		<li><a href="report_shop.php"><?php echo $Text['nav_report_sales']; ?></a></li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
 		<li><a href="report_stats.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>

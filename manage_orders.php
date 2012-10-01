@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] ." -  " .$Text['head_ti_manage_orders'] ?></title>
+	<title><?php echo $Text['global_title'] ." -  " .$Text['head_ti_manage_orders']; ?></title>
 
  	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
@@ -227,7 +227,7 @@
 							var tbl = $('#tbl_reviseOrder').clone();			//clone the table with the current order data
 							
 							$(tbl).attr('id', 'print_order_'+gPrintIndex);	
-							$('thead', tbl).prepend('<tr><th colspan="100"><h2><?=$Text['order'];?> (#'+gSelRow.attr('orderId')+') <?=$Text['for'];?> '+pname+'.&nbsp;&nbsp;&nbsp; <?=$Text['date_for_order'];?>: '+odate+' </h2></th></tr>');	
+							$('thead', tbl).prepend("<tr><th colspan='100'><h2><?=$Text['order'];?> (#"+gSelRow.attr('orderId')+") <?=$Text['for'];?> "+pname+".&nbsp;&nbsp;&nbsp; <?=$Text['date_for_order'];?>: "+odate+" </h2></th></tr>");	
 							$(wrapDiv).prepend(tbl); //add the table to the wrapper							
 							$('#orderWrap', printWin.document).append(wrapDiv); //and add the wrapper to the doc in the new window
 
@@ -323,6 +323,8 @@
 									$this.dialog( "close" )
 									$('.interactiveCell').hide();
 									$('.success_msg').hide().next().show();
+									//reload order list
+									$('#tbl_orderOverview tbody').xml2html('reload');
 									switchTo('overview');
 								},3000);
 							},
@@ -549,6 +551,7 @@
 					url: 'php/ctrl/Orders.php?oper=setOrderStatus&order_id='+gSelRow.attr('orderId')+'&status='+status,
 					success: function(txt){
 						$("#dialog_orderStatus").dialog("close");
+						$('#tbl_orderOverview tbody').xml2html('reload');
 						switchTo('overview');
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -603,7 +606,7 @@
 					$("#tbl_orderOverview").trigger("update"); 
 					if (rowCount == 0){
 						$.showMsg({
-							msg:'<?=$Text['msg_err_order_filter'];?> ',
+							msg:"<?=$Text['msg_err_order_filter'];?>",
 							type: 'warning'});
 					}
 					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
@@ -692,7 +695,7 @@
 					//order comes from pre v2.5 database we miss some info
 					if (status == "-1"){
 						$.showMsg({
-							msg:'<?=$Text['msg_err_miss_info'];?>',
+							msg:"<?=$Text['msg_err_miss_info'];?>",
 							type: 'error'});
 						return false; 
 					}
@@ -700,7 +703,7 @@
 					//if table header ajax call has not finished, wait
 					if (!tblHeaderComplete){
 						$.showMsg({
-							msg:'<?=$Text['msg_wait_tbl'];?>',
+							msg:"<?=$Text['msg_wait_tbl'];?>",
 							type: 'error'});
 						return false; 
 					}
@@ -708,7 +711,7 @@
 					//need the order id
 					if (gSelRow.attr('orderId') <= 0){
 						$.showMsg({
-							msg:'<?=$Text['msg_err_invalid_id'];?>',
+							msg:"<?=$Text['msg_err_invalid_id'];?>",
 							type: 'error'});
 						return false; 
 					}
@@ -732,7 +735,7 @@
 							//alert("has cart " + hasCart + "  isvalidated "  + isValidated);
 							if (hasCart && !isValidated){
 								$.showMsg({
-									msg:'<?=$Text['msg_revise_revised'];?>',
+									msg:"<?=$Text['msg_revise_revised'];?>",
 									buttons: {
 										"<?=$Text['btn_ok'];?>":function(){	
 											//reset this order to "finalized"
@@ -756,7 +759,7 @@
 
 							} else if (isValidated){
 								$.showMsg({
-									msg:'<?=$Text['msg_err_already_val'];?>',
+									msg:"<?=$Text['msg_err_already_val'];?>",
 									type: 'error'});
 							} else {
 								switchTo('review', {});
@@ -785,7 +788,7 @@
 					$this = $(this);
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
 						$.showMsg({
-							msg:'<?=$Text['print_several'];?>',
+							msg:"<?=$Text['print_several'];?>",
 							width:500,
 							buttons: {
 								"<?=$Text['btn_yes_all'];?>":function(){						
@@ -905,25 +908,25 @@
 				
 					switch(td.text()){
 						case "1": 
-							td.attr('title','<? echo $Text['ostat_desc_sent'];?>').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+							td.attr("title","<?php echo $Text['ostat_desc_sent'];?>").html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 							break;
 						case "2": 
-							td.attr('title','<?php echo $Text['ostat_desc_nochanges']; ?>').addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr("title","<?php echo $Text['ostat_desc_nochanges']; ?>").addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "3": 
-							td.attr('title','<?php echo $Text['ostat_desc_postponed']; ?>').addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
+							td.attr("title","<?php echo $Text['ostat_desc_postponed']; ?>").addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
 							break;
 						case "4": 
-							td.attr('title','<?php echo $Text['ostat_desc_cancel']; ?>').addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
+							td.attr("title","<?php echo $Text['ostat_desc_cancel']; ?>").addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
 							break;
 						case "5":
-							td.attr('title','<?php echo $Text['ostat_desc_changes'];?>').addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr("title","<?php echo $Text['ostat_desc_changes'];?>").addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "6":
-							td.attr('title','Items of this order have been validated').addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
+							td.attr("title","Items of this order have been validated").addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
 							break;
 						case "-1":
-							td.attr('title','<?php echo $Text['ostat_desc_incomp']; ?>').addClass('dim40').html('<p class="textAlignCenter">-</p>');
+							td.attr("title","<?php echo $Text['ostat_desc_incomp']; ?>").addClass('dim40').html('<p class="textAlignCenter">-</p>');
 							break;
 					}
 				}
@@ -939,7 +942,7 @@
 
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
 						$.showMsg({
-							msg:'<?=$Text['msg_err_noselect'];?>',
+							msg:"<?=$Text['msg_err_noselect'];?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){						
 									$(this).dialog("close");
@@ -1129,7 +1132,7 @@
 						<li><a href="javascript:void(null)" id="ordersForToday"><?=$Text['filter_expected'] ?></a></li>
 						<li><a href="javascript:void(null)" id="nextWeek"><?=$Text['filter_next_week'] ;?></a></li>
 						<li><a href="javascript:void(null)" id="futureOrders"><?=$Text['filter_future'];?></a></li>
-						<li><a href="javascript:void(null)" id="pastMonth"><?=$Text['filter_prev_month'] ; ?></a></li>
+						<li><a href="javascript:void(null)" id="pastMonth"><?=$Text['filter_month'] ; ?></a></li>
 						<li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
 						<li><a href="javascript:void(null)" id="limboOrders"><?=$Text['filter_postponed'];?></a></li>
 					</ul>
@@ -1162,8 +1165,8 @@
 						<th><?=$Text['sent_off'];?></th>
 						<th class="clickable"><?=$Text['date_for_shop'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable"><?=$Text['order_total'];?>  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th>Status</th>
-						<th>Actions</th>
+						<th><?=$Text['status'];?></th>
+						<th><?=$Text['actions'];?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -1224,7 +1227,7 @@
 						<td colspan="2" rowspan="2"><p>{uf_id} {uf_name}</p></td>
 					</tr>
 					<tr>
-						<td class="aix-layout-fixW150"><p><?php echo $Text['nif'] ."/".$Text['nie']; ?></p></td>
+						<td class="aix-layout-fixW150"><p><?php echo $Text['nif']; ?></p></td>
 						<td>{nif}</td>
 						<td class="aix-layout-fixW150"><p><?php echo $Text['order']." ".$Text['id'];?></p></td>
 						<td><p class="boldStuff">{order_id}</p></td>
@@ -1400,7 +1403,7 @@
 	<table>
 		<tr><td class="textAlignCenter"><button id="btn_revised"><?php echo $Text['set_ostat_arrived'];?>!</button></td><td>&nbsp;</td><td><?php echo $Text['set_ostat_desc_arrived']; ?></td></tr>					
 		<tr><td colspan="2">&nbsp;</td></tr>
-		<tr><td class="textAlignCenter"><button id="btn_postponed"><?php echo $Text['set_ostat_postpone']; ?></button></td><td>&nbsp;</td><td><?php echo $Text['set_ostst_desc_postpone'] ; ?></td></tr>
+		<tr><td class="textAlignCenter"><button id="btn_postponed"><?php echo $Text['set_ostat_postpone']; ?></button></td><td>&nbsp;</td><td><?php echo $Text['set_ostat_desc_postpone'] ; ?></td></tr>
 		<tr><td colspan="2">&nbsp;</td></tr>
 		<tr><td class="textAlignCenter"><button id="btn_canceled"><?php echo $Text['set_ostat_cancel']; ?></button></td><td>&nbsp;</td><td><?php echo $Text['set_ostat_desc_cancel'] ; ?></td></tr>
 	</table>

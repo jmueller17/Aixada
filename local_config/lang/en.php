@@ -741,7 +741,9 @@ $Text['gross_amount'] = "Gross amount"; //importe brutto
 $Text['add_pagebreak'] = "Click to ADD here a page break while printing";
 $Text['remove_pagebreak'] = "Click to REMOVE this page break";
 
-
+$Text['show_deactivated'] = "Show deactivated products"; 
+$Text['nav_report_sales'] = "Sales"; 
+$Text['nav_help'] = "Help"; 
 
 
 //$Text[''] = ""; 

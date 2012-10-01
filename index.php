@@ -29,6 +29,20 @@
 	<script type="text/javascript">
 	$(function(){
 
+
+			//sql result set limit for order
+			var gOrderLimit = 5; 
+
+			//index
+			var gOrderLimitIndex = 0; 
+
+
+			//sql result set limti for purchase
+			var gShopLimit = 10; 
+
+
+			var gShopLimitIndex = 0; 
+
 			$('#loadingMsg').hide();
 
 			$( "#rightSummaryCol" ).tabs({
@@ -47,11 +61,45 @@
 			/********************************************************
 			 *      My ORDERS
 			 ********************************************************/
+
+			//show older orders dates			
+				$('#btn_prevOrders').button({
+					icons : {
+						primary:"ui-icon-seek-prev"
+						}
+				})
+				.click( function(e){
+						gOrderLimitIndex++;
+						$('#tbl_Orders tbody').xml2html('reload',{
+							url : 'php/ctrl/Orders.php',
+							params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
+							//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
+						});
+
+				});
+
+				//show more recent order dates
+				$('#btn_nextOrders').button({
+					icons : {
+						secondary:"ui-icon-seek-next"
+						}
+				})
+				.click( function(e){
+					gOrderLimitIndex--;
+					$('#tbl_Orders tbody').xml2html('reload',{
+						url : 'php/ctrl/Orders.php',
+						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
+						//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
+					});
+
+				});
+			 
 			 
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
-				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future', 
+				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(0),
+				//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future', 
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
@@ -60,9 +108,9 @@
 					//var revisionStatus = $(row).attr('revision_status');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text["expected"];?></p>');
+						$(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["expected"];?></p>");
 					} else {
-						 $(row).children().eq(3).html('<p class="textAlignCenter"><?=$Text["not_yet_sent"];?></p>');		
+						 $(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["not_yet_sent"];?></p>");		
 					}
 
 					if (timeLeft <= 0){
@@ -219,50 +267,66 @@
 				printWin.focus();
 			});
 
-			//show older orders dates
-			var orderDateSteps = 6;
-			var orange = 'month';
-			$('#btn_prevOrders').button({
+			
+			//calculates index for sql result set
+			function getOrderLimit(index)
+			{
+				if (index == 0) {
+					$('#btn_nextOrders').button('disable');  
+				} else {
+					$('#btn_nextOrders').button('enable');  
+				}	
+				return index*gOrderLimit+","+(index*gOrderLimit+gOrderLimit);
+			}
+
+
+			
+			
+			/********************************************************
+			 *      My PURCHASE
+			 ********************************************************/
+			//var shopDateSteps = 3;
+			//var srange = 'month';
+
+			//show older purchase dates
+			$('#btn_prevPurchase').button({
 				icons : {
 					primary:"ui-icon-seek-prev"
 					}
 			})
 			.click( function(e){
-					orderDateSteps++;	
-					$('#tbl_Orders tbody').xml2html('reload',{
-						url : 'php/ctrl/Orders.php',
-						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
+					gShopLimitIndex++;	
+					$('#tbl_Shop tbody').xml2html('reload',{
+						url : 'php/ctrl/Shop.php',
+						params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(gShopLimitIndex)
+						//params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 					});
 
 			});
 
-			//show more recent order dates
-			$('#btn_nextOrders').button({
+			//show older purchase dates
+			$('#btn_nextPurchase').button({
 				icons : {
 					secondary:"ui-icon-seek-next"
 					}
 			})
 			.click( function(e){
-				orderDateSteps--;	
-				$('#tbl_Orders tbody').xml2html('reload',{
-					url : 'php/ctrl/Orders.php',
-					params : 'oper=getOrdersListingForUf&uf_id=-1&filter=steps&steps='+orderDateSteps+'&range='+orange
+				gShopLimitIndex--;	
+				$('#tbl_Shop tbody').xml2html('reload',{
+					url : 'php/ctrl/Shop.php',
+					params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(gShopLimitIndex)
+					//params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
 				});
 
 			});
 			
 			
 			
-			/********************************************************
-			 *      My PURCHASE
-			 ********************************************************/
-			var shopDateSteps = 3;
-			var srange = 'month';
-
+			
 			//load purchase listing
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange, 
+					params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(0),
 					loadOnInit : false, 
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
@@ -343,39 +407,6 @@
 				printWin.focus();
 			});
 
-			//show older purchase dates
-			$('#btn_prevPurchase').button({
-				icons : {
-					primary:"ui-icon-seek-prev"
-					}
-			})
-			.click( function(e){
-					shopDateSteps++;	
-					$('#tbl_Shop tbody').xml2html('reload',{
-						url : 'php/ctrl/Shop.php',
-						params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
-					});
-
-			});
-
-			//show older purchase dates
-			$('#btn_nextPurchase').button({
-				icons : {
-					secondary:"ui-icon-seek-next"
-					}
-			})
-			.click( function(e){
-				shopDateSteps--;	
-				$('#tbl_Shop tbody').xml2html('reload',{
-					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
-				});
-
-			});
-			
-
-
-			
 			
 			$('.iconContainer')
 			.live('mouseover', function(e){
@@ -384,6 +415,18 @@
 			.live('mouseout', function (e){
 				$(this).removeClass('ui-state-hover');
 			});
+
+
+			//calculates index for sql result set
+			function getShopLimit(index)
+			{
+				if (index == 0) {
+					$('#btn_nextPurchase').button('disable');  
+				} else {
+					$('#btn_nextPurchase').button('enable');  
+				}	
+				return index*gShopLimit+","+(index*gShopLimit+gShopLimit);
+			}
 			
 	});  //close document ready
 </script>
@@ -437,7 +480,7 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevOrders"><?=$Text['previous'];?></button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_prevOrders"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
 										<button id="btn_nextOrders"><?=$Text['next'];?></button></p>
 									</td>
 								

@@ -14,7 +14,7 @@ require_once ('general.php');
  * @param str $filter  prevMonth | steps | exact  
  *  
  */
-function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month")
+function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_date=0, $steps=1, $range="month", $limit='')
 {
 	
 	//TODO server - client difference in time/date?!
@@ -34,28 +34,28 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 	switch ($filter) {
 		
 		case 'today':
-			printXML(stored_query_XML_fields('get_purchase_listing', $today, $today, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $today, $today, $uf_id, $limit));
 			break;
 			
 		case 'prevMonth':
-			printXML(stored_query_XML_fields('get_purchase_listing', $prevMonth, $today, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $prevMonth, $today, $uf_id, $limit));
 			break;
 			
 		case 'prev3Month':
-			printXML(stored_query_XML_fields('get_purchase_listing', $prev3Month, $today, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $prev3Month, $today, $uf_id, $limit));
 			break;
 			
 			
 		case 'steps':
-			printXML(stored_query_XML_fields('get_purchase_listing', $stepsFromDate, $stepsToDate, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $stepsFromDate, $stepsToDate, $uf_id, $limit));
 			break;
 			
 		case 'all':
-			printXML(stored_query_XML_fields('get_purchase_listing', $very_distant_past, $very_distant_future, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $very_distant_past, $very_distant_future, $uf_id, $limit));
 			break;
 			
 		case 'exact':
-			printXML(stored_query_XML_fields('get_purchase_listing', $from_date, $to_date, $uf_id));
+			printXML(stored_query_XML_fields('get_purchase_listing', $from_date, $to_date, $uf_id, $limit));
 			break;
 			
 		default:
