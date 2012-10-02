@@ -83,7 +83,7 @@ function existing_languages_selectbox()
 		    for (var i=0; i<items.length; i++) {
 			dataSerial += '&' + items[i] + '=' + $('#' + items[i]).val();
 		    }
-		    var actions = ['validate', 'connect'];
+		    var actions = ['validate', 'connect', 'lang', 'create_setup', 'create_database', 'create_config_file', 'create_user'];
 		    for (var i=0; i<actions.length; i++) {
 			$('#' + actions[i])
 			    .removeClass('okGreen')
