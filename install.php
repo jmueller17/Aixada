@@ -92,7 +92,7 @@ function existing_languages_selectbox()
 		    for (var i=0; i<items.length; i++) {
 			dataSerial += '&' + items[i] + '=' + $('#' + items[i]).val();
 		    }
-		    var actions = ['validate', 'connect', 'lang', 'create_setup', 'create_database', 'create_config_file', 'create_user'];
+		    var actions = ['validate', 'connect', 'lang', 'create_setup', 'create_database', 'create_database_queries', 'create_config_file', 'create_user'];
 		    for (var i=0; i<actions.length; i++) {
 			$('#' + actions[i])
 			    .removeClass('okGreen')
@@ -206,6 +206,7 @@ function existing_languages_selectbox()
       <p id="lang" class="grayed" style="visibility:hidden">Process language files ... <b id="lang_result"></b></p>
       <p id="create_setup" class="grayed" style="visibility:hidden">Create setup file for database ... <b id="create_setup_result"></b></p>
       <p id="create_database" class="grayed" style="visibility:hidden">Create database ... <b id="create_database_result"></b></p>
+      <p id="create_database_queries" class="grayed" style="visibility:hidden">Create database queries ... <b id="create_database_queries_result"></b></p>
       <p id="create_config_file" class="grayed" style="visibility:hidden">Create configuration file ... <b id="create_config_file_result"></b></p>
       <p id="create_user" class="grayed" style="visibility:hidden">Create special user ... <b id="create_user_result"></b></p>
       <p id="ok" class="grayed" style="visibility:hidden">Success!</p>

@@ -19,11 +19,14 @@ function process_language_file($coop_name, $lang_file)
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
     if (!$inhandle) {
-        throw new Exception("Couldn't open {$tmpname} for reading.\nMake sure that {$lang_file} and all directories above it can be universally written!");
+        throw new Exception("Couldn't open {$tmpname} for reading. Make sure that {$lang_file} and all directories above it can be universally written!");
     }
     $outhandle = @fopen($lang_file, 'w');
-    if (!$outhandle) {
-        throw new Exception("Couldn't open {$lang_file} for writing.\nMake sure that ${lang_file} has 'www-data' as owner.");
+    //    $firephp->log($outhandle, 'outhandle');
+    //    if ($outhandle==FALSE)
+	//	$firephp->log($outhandle, "it was false");
+    if ($outhandle==FALSE) {
+        throw new Exception("Couldn't open {$lang_file} for writing. Make sure that {$lang_file} has 'www-data' as owner.");
     }
     while(!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
@@ -40,7 +43,10 @@ function process_language_file($coop_name, $lang_file)
 function process_languages($coop_name)
 {
     global $config_dir;
-    foreach (glob($config_dir . "lang/*.php") as $lang_file) {
+    $lang_files = glob($config_dir . "lang/*.php");
+    if (!is_array($lang_files))
+	throw new Exception("Couldn't find language files in {$lang_files}");
+    foreach ($lang_files as $lang_file) {
         process_language_file($coop_name, $lang_file);
     }
 }
@@ -130,8 +136,11 @@ function create_tables($db_name, $mysqli)
 
 function create_queries($mysqli)
 {
-    $querydir = 'sql/queries/';
+    global $config_dir;
+    $querydir = $config_dir . '../sql/queries/';
     $direntries = scandir($querydir);
+    if (!is_array($direntries))
+	throw new Exception("Couldn't find the directory '{$querydir}', or it is empty");
     foreach ($direntries as $filename) {
         $handle = @fopen($querydir . $filename, 'r');
         if (!$handle) {
@@ -151,7 +160,12 @@ function create_queries($mysqli)
 
 function create_database($db_name, $mysqli)
 {
-    return create_tables($db_name, $mysqli) or create_queries($mysqli);
+    return create_tables($db_name, $mysqli);
+}
+
+function create_database_queries($db_name, $mysqli)
+{
+    return create_queries($mysqli);
 }
 
 function create_config_file($host, $user, $password, $db_name, $language)
@@ -165,7 +179,7 @@ function create_config_file($host, $user, $password, $db_name, $language)
         throw new Exception("Couldn't open {$tmpname} for reading");
     $outhandle = @fopen($filename, 'w');
     if (!$outhandle)
-        throw new Exception("Couldn't open {$filename} for writing.\nMake sure that it is universally writable, and has 'www-data' as owner.");
+        throw new Exception("Couldn't open {$filename} for writing. Make sure that it is universally writable, and has 'www-data' as owner.");
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
         if (strpos($buffer, 'db_host') !== false)
@@ -206,7 +220,7 @@ try {
 
     switch ($oper) {
     case 'lang':
-	$coop_name = $mysqli->real_escape_string($_REQUEST['coop_name']);
+	$coop_name = $mysqli->real_escape_string(get_param('coop_name'));
 	return process_languages($coop_name);
 
     case 'create_setup':
@@ -214,6 +228,9 @@ try {
 
     case 'create_database':
 	return create_database($db_name, $mysqli);
+
+    case 'create_database_queries':
+	return create_database_queries($db_name, $mysqli);
 
     case 'create_config_file':
 	return create_config_file($host, $user, $password, $db_name, $pref_lang);
@@ -229,6 +246,5 @@ try {
 catch(Exception $e) {
     echo $e->getMessage();
     header('HTTP/1.0 401 ' . $e->getMessage());
-    //    die($e->getMessage());
 }  
 ?>
