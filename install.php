@@ -43,6 +43,10 @@ function existing_languages_selectbox()
     .removeClass('grayed')
     .addClass('processing')
     .attr({style:'visibility:visible'});
+    $('#' + action + '_result')
+    .removeClass('grayed')
+    .addClass('processing')
+    .attr({style:'visibility:visible'});
     $.ajax({
 	type: "POST",
 		url: "php/ctrl/Install.php?oper=" + action + dataSerial,
@@ -53,6 +57,7 @@ function existing_languages_selectbox()
 		    .addClass('okGreen')
 		    .attr({style:'visibility:visible'});
 		$('#' + action + '_result')
+		    .removeClass('processing')
 		    .removeClass('noRed')
 		    .removeClass('grayed')
 		    .removeClass('fgWhite')
@@ -68,6 +73,7 @@ function existing_languages_selectbox()
 		    .attr({style:'visibility:visible'});
 		$('#' + action + '_result')
 		    .text(XMLHttpRequest.responseText)
+		    .removeClass('processing')
 		    .addClass('noRed')
 		    .removeClass('grayed')
 		    .addClass('fgWhite')
@@ -91,13 +97,16 @@ function existing_languages_selectbox()
 			$('#' + actions[i])
 			    .removeClass('okGreen')
 			    .removeClass('noRed')
+			    .removeClass('processing')
 			    .addClass('grayed')
-			    .attr({style:'display:none'});
+			    .attr({style:'visibility:hidden'});
 			$('#' + actions[i] + '_result')
 			    .removeClass('okGreen')
 			    .removeClass('noRed')
+			    .removeClass('processing')
 			    .addClass('grayed')
-			    .attr({style:'display:none'});
+			    .attr({style:'visibility:hidden'})
+			    .text('');
 		    }
 		    var result = 0;
 		    for (var i=0; i<actions.length && result==0; i++) {
@@ -194,11 +203,11 @@ function existing_languages_selectbox()
    <div id="wrapFeedback">
       <p id="validate" class="grayed " style="visibility:hidden">Validating input ... <b id="validate_result"></b></p>
       <p id="connect" class="grayed " style="visibility:hidden">Connect to database ... <b id="connect_result"></b></p>
-      <p id="lang" class="grayed" style="visibility:hidden">Process language files ... <b id="lang_result"/></p>
-      <p id="create_setup" class="grayed" style="visibility:hidden">Create setup file for database ... <b id="create_setup_result"/></p>
-      <p id="create_db" class="grayed" style="visibility:hidden">Create database ... <b id="create_db_result"/></p>
-      <p id="create_config" class="grayed" style="visibility:hidden">Create configuration file ... <b id="create_config_result"/></p>
-      <p id="create_user" class="grayed" style="visibility:hidden">Create special user ... <b id="create_user_result"/></p>
+      <p id="lang" class="grayed" style="visibility:hidden">Process language files ... <b id="lang_result"></b></p>
+      <p id="create_setup" class="grayed" style="visibility:hidden">Create setup file for database ... <b id="create_setup_result"></b></p>
+      <p id="create_database" class="grayed" style="visibility:hidden">Create database ... <b id="create_database_result"></b></p>
+      <p id="create_config_file" class="grayed" style="visibility:hidden">Create configuration file ... <b id="create_config_file_result"></b></p>
+      <p id="create_user" class="grayed" style="visibility:hidden">Create special user ... <b id="create_user_result"></b></p>
       <p id="ok" class="grayed" style="visibility:hidden">Success!</p>
    </div>
   <br/>

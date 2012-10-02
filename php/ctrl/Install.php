@@ -4,20 +4,26 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
-$config_dir = 'local_config/';
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
+$config_dir = __ROOT__ . 'local_config/';
 
 function process_language_file($coop_name, $lang_file)
 {
-    //    global $firephp;
+    global $firephp;
+    $firephp->log($coop_name, 'coop_name');
+    $firephp->log($lang_file, 'lang_file');
     $tmpname = $lang_file . '.tmp';
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
     if (!$inhandle) {
-        throw new Exception("Couldn't open {$tmpname} for reading");
+        throw new Exception("Couldn't open {$tmpname} for reading. Make sure that {$lang_file} and all directories above it can be universally written!");
     }
     $outhandle = @fopen($lang_file, 'w');
     if (!$outhandle) {
-        throw new Exception("Couldn't open {$lang_file} for writing");
+        throw new Exception("Couldn't open {$lang_file} for writing. Make sure that ${lang_file} has 'www-data' as owner.");
     }
     while(!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
@@ -59,8 +65,8 @@ function create_setup_file($db_name)
             strpos($buffer, 'use ') !== false) {
             $buffer = str_replace('aixada', $db_name, $buffer);
         } 
-        if (strpos($buffer, 'source') !== false)
-            $buffer = str_replace('source ', 'source sql/', $buffer);
+	//        if (strpos($buffer, 'source') !== false)
+	//            $buffer = str_replace('source ', 'source sql/', $buffer);
         fwrite($outhandle, $buffer);
     }
     return 0;
@@ -96,8 +102,8 @@ function create_tables($db_name, $mysqli)
 {
     global $config_dir;
     $files = array( $config_dir . "{$db_name}_setup.sql",
-                    'sql/aixada.sql',
-                    'sql/setup/aixada_setup_details.sql');
+                    $config_dir . '../sql/aixada.sql',
+                    $config_dir . '../sql/setup/aixada_setup_details.sql');
     $dump_files = array();
     $dump_dir = 'sql/dumps';
     if (file_exists($dump_dir) && is_dir($dump_dir)) { 
@@ -109,7 +115,7 @@ function create_tables($db_name, $mysqli)
     foreach ($files as $filename) {
         $handle = @fopen($filename, 'r');
         if (!$handle) {
-            throw new Exception("Couldn't open {$filename}");
+            throw new Exception("Couldn't open {$filename} for reading");
 	}
         if (in_array($filename, $dump_files)) {
             $mysqli->query('call delete_member(-1);');
@@ -158,7 +164,7 @@ function create_config_file($host, $user, $password, $db_name, $language)
         throw new Exception("Couldn't open {$tmpname} for reading");
     $outhandle = @fopen($filename, 'w');
     if (!$outhandle)
-        throw new Exception("Couldn't open {$filename} for writing");
+        throw new Exception("Couldn't open {$filename} for writing. Make sure that it is universally writable, and has 'www-data' as owner.");
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
         if (strpos($buffer, 'db_host') !== false)

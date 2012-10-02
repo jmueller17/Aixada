@@ -116,9 +116,11 @@ function get_current_role()
  */
 function get_param($param_name, $default=null, $transform = ''){
 	$value; 
-	global $firephp;
-	$firephp->log($param_name, 'parameter');
-	$firephp->log($default, 'default');
+	/*
+	  global $firephp;
+	  $firephp->log($param_name, 'parameter');
+	  $firephp->log($default, 'default');
+	*/
 	if (isset($_REQUEST[$param_name])) {
 		$value = $_REQUEST[$param_name];
 		if (($value == '' || $value == 'undefined') && isset($default)){
