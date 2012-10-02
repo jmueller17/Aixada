@@ -95,8 +95,8 @@ function extract_user_form_values(){
 	$fields["phone2"] = get_param('phone2','');
 	$fields["web"] = get_param('web','');
 	$fields["notes"] = get_param('notes','');
-	$fields["active"] = get_param('member_active',0);
-	$fields["participant"] = get_param('participant',1);
+	$fields["active"] = isset($_REQUEST['member_active'])? 1:0; //this is a checkbox; gets send when checked, otherwise not
+	$fields["participant"] = isset($_REQUEST['participant'])? 1:0;
 	$fields["adult"] = get_param('adult',1);	
 	
 	$fields["language"] = get_param('language','en');

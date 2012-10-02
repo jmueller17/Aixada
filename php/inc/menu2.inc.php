@@ -108,8 +108,8 @@
 		<li><a href="#TODO"><?php echo $Text['nav_mng_admin'];?></a>
 			<ul>
 				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
-				<li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
-				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li>
+				<!-- li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
+				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li-->
 			</ul>
 		</li>
 

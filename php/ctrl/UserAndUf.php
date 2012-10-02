@@ -25,7 +25,7 @@ try{
         	exit;
         	
         case 'createUF':
-		   	printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0)));
+		   	printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0), get_session_user_id() ));
 		   	exit;
  		
 	   	case 'editUF':

@@ -43,10 +43,13 @@ function existing_languages_selectbox()
     .removeClass('grayed')
     .addClass('processing')
     .attr({style:'visibility:visible'});
+    var datai = $('#install').serialize();
+    
     $.ajax({
 	type: "POST",
-		url: "php/ctrl/Install.php?oper=" + action + dataSerial,
-		success: function() {
+		url: "php/ctrl/Install.php?oper=" + action,
+		data : datai,
+		success: function(msg) {
 		$('#' + action)
 		    .removeClass('processing')
 		    .removeClass('noRed')
@@ -81,11 +84,11 @@ function existing_languages_selectbox()
     $(function(){
 	    $('#btn_install').button();
 	    $('#btn_install').click(function(){
-		    var items = ['coop_name', 'db_name', 'db_host', 'db_user', 'db_pwd', 'first_uf', 'user_login', 'user_password', 'retype_password'];
+		    /*var items = ['coop_name', 'db_name', 'db_host', 'db_user', 'db_pwd', 'first_uf', 'user_login', 'user_password', 'retype_password'];
 		    var dataSerial = '';		    
 		    for (var i=0; i<items.length; i++) {
 			dataSerial += '&' + items[i] + '=' + $('#' + items[i]).val();
-		    }
+		    }*/
 		    var actions = ['validate', 'connect', 'lang', 'create_setup', 'create_database', 'create_config_file', 'create_user'];
 		    for (var i=0; i<actions.length; i++) {
 			$('#' + actions[i])
@@ -100,8 +103,10 @@ function existing_languages_selectbox()
 			    .attr({style:'display:none'});
 		    }
 		    var result = 0;
+
+		    //not sure this will work: call all installs at the same time?! 
 		    for (var i=0; i<actions.length && result==0; i++) {
-			result = callInstall(actions[i], dataSerial);
+			result = callInstall(actions[i]);
 		    }
 		});
 	    return false;

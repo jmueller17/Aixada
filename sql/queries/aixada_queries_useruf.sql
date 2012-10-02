@@ -34,7 +34,7 @@ end |
  * creates a new uf
  */
 drop procedure if exists create_uf|
-create procedure create_uf(in the_name varchar(255), in the_mentor_uf int)
+create procedure create_uf(in the_name varchar(255), in the_mentor_uf int, in the_operator_id int)
 begin
    declare last_id int;
    start transaction;
@@ -51,9 +51,17 @@ begin
     values 
     	(last_id + 1, the_name, 1, the_mentor_uf);
 
+    	 
    	insert into 
-   		aixada_account (account_id, balance) 
-   	values (1000 + last_id + 1, 0); 
+   		aixada_account (account_id, quantity, payment_method_id, description, operator_id, ts, balance) 
+   	values (
+   		1000 + last_id + 1, 
+   		0,
+   		11,
+   		'account setup',
+   		the_operator_id,
+   		now(),
+   		0); 
    
    	commit;
    
@@ -389,56 +397,6 @@ begin
    	and password = the_password;
 end|
 
-/*
-drop procedure if exists users_without_ufs|
-create procedure users_without_ufs()
-begin
-  select 
-    u.id,
- 	u.login
-  from aixada_user u
-  where u.id between 0 and 999 
-    and not exists 
-        (select auf.id
-         from aixada_uf auf
-         left join aixada_user au
-         on auf.id = au.uf_id
-         where au.id = u.id);
-end|
-
-drop procedure if exists users_without_uf|
-create procedure users_without_uf()
-begin
-  select id, login, email, created_on as created
-  from aixada_user 
-  where id between 1 and 999 and 
-        isnull(uf_id);
-end|
-
-drop procedure if exists users_without_member|
-create procedure users_without_member()
-begin
-  select id, login, email, created_on as created
-  from aixada_user 
-  where id between 1 and 999 and 
-        isnull(member_id);
-end|
-*/
-
-
-/*
-drop procedure if exists member_id_of_user_id|
-create procedure member_id_of_user_id(in the_user_id int)
-begin
-  select m.id 
-  from aixada_user u
-  left join aixada_member m
-  on u.member_id = m.id
-  where u.id = the_user_id;
-end|
-*/
-
-
 
 
 drop procedure if exists check_credentials|
@@ -475,17 +433,6 @@ begin
    		u.login=the_login 
    		and u.password=the_password; 
 end|
-
-
-
-
-
-
-
-
-
-
-
 
 
 

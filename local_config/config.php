@@ -27,7 +27,7 @@ class configuration_vars {
    */
   public $db_type = 'mysqli';
   public $db_host = 'localhost';
-  public $db_name = 'aixadac';
+  public $db_name = 'aixada';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
 

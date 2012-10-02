@@ -35,7 +35,8 @@ values
 	('deposit','register the inpayment of cash'),
 	('bill','register withdrawal for bill payment to provider'),
 	('correction','by-hand correction of account balance'),
-	('withdrawal','default cash withdrawal');
+	('withdrawal','default cash withdrawal'),
+	('setup', 'account setup');
 
 
 /**

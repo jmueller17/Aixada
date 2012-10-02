@@ -72,21 +72,24 @@ $(function(){
    		});
    	}); 
 	
+
 	var role =  $("#role_select option:selected").val();
 	
 	//function to retrieve menu access rights
-	$.ajax({
-		type: "POST",
-            url: "php/ctrl/SmallQ.php?oper=configMenu&user_role="+role,
-            dataType: "xml", 
-            success:  function(xml){
-			$(xml).find('navigation').children().each(function(){
-				var tag = $(this)[0].tagName; 
-				var val = $(this).text();
-				$('#'+tag).button(val);
-			});
-		}   		
-	});
+	if (typeof(role) == "string" ){
+		$.ajax({
+			type: "POST",
+	            url: "php/ctrl/SmallQ.php?oper=configMenu&user_role="+role,
+	            dataType: "xml", 
+	            success:  function(xml){
+				$(xml).find('navigation').children().each(function(){
+					var tag = $(this)[0].tagName; 
+					var val = $(this).text();
+					$('#'+tag).button(val);
+				});
+			}   		
+		});
+	}
 	
 	$('#lang_select').change(function (){
    		var new_lang = $("#lang_select option:selected").val(); 

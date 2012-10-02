@@ -126,11 +126,13 @@
 				$(this).addClass('ui-state-highlight');
 				
 				gSelUfRow = $(this); 
-					
-				$('#uf_detail_member_list').xml2html('reload',{
-					params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid')
-				});
 
+				//only load fresh ones. otherwise use cash
+				//if (!$.inArray(gSelUfRow.attr('ufid'), gUfMemberViewCache)) 	
+					$('#uf_detail_member_list').xml2html('reload',{
+						params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid')
+					});
+				//}
 				switchTo('ufMemberView');
 
 			});
@@ -412,7 +414,7 @@
 		/*******************************************
 		 *		UF & MEMBER EDIT
 		 *******************************************/
-
+		
 		$('#uf_detail_member_list').xml2html('init',{
 			url : "php/ctrl/UserAndUf.php",
 			params: "oper=getMemberInfo&uf_id=",
@@ -443,7 +445,7 @@
 			},
 			complete : function(){
 				//$('#member_listing .loadAnim').hide();
-
+				
 				//each member gets an edit button
 				$('.btn_save_edit_member').button({
 						icons: {primary: "ui-icon-disk"}
@@ -674,11 +676,11 @@
 				   	 	$.showMsg({
 							msg: "<?php echo $Text['msg_edit_success']; ?>",
 							type: 'success'});
-				   	 	$('#uf_detail_member_list').xml2html('reload',{
+				   	 	/*$('#uf_detail_member_list').xml2html('reload',{
 							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid'),
 						});
 						
-				   		switchTo('ufMemberView');
+				   		switchTo('ufMemberView');*/
 
 					   	//$('#member_list tbody').xml2html('reload');
 				   	},
@@ -712,6 +714,8 @@
 			switch(section){
 				case 'overview':
 					$('.viewMemberElements, .ufDetailElements, .createMemberElements').hide();
+					$('.btn_save_edit_member').button('destroy');
+					$('.btn_save_edit_member').die('click');		//otherwise, save edits will duplicate, triplicate...
 					$('.overviewElements').show();
 					break;
 
@@ -852,11 +856,12 @@
 				<table id="member_list" class="tblListingDefault">
 						<thead>
 						<tr>
-							<th><?=$Text['id'];?></th>
+							<th class="aix-layout-fixW80"><?=$Text['id'];?></th>
 							<th><?=$Text['name_person'];?></th>
-							<th><?=$Text['active'];?></th>	
-							<th><p class="textAlignCenter"><?=$Text['uf_short'];?></p></th>	
-							<th><?php echo $Text['contact']; ?></th>
+							<th class="aix-layout-fixW80"><?=$Text['active'];?></th>	
+							<th class="aix-layout-fixW80"><?=$Text['uf_short'];?></th>	
+							<th><?php echo $Text['phone_pl']; ?></th>
+							<th><?php echo $Text['email']; ?></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -865,11 +870,8 @@
 								<td><p>{name}</p></td>
 								<td><p class="textAlignCenter">{active}</p></td>
 								<td><?=$Text['uf_short'];?>{uf_id}</td>
-								<td><p>
-									{phone1} / {phone2}<br/>
-									{email}
-									</p>
-								</td>
+								<td>{phone1} / {phone2}</p></td>
+								<td>{email}</td>
 							</tr>						
 						</tbody>
 				</table>
