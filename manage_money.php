@@ -55,7 +55,7 @@
 			/**
 			 *	load ufs. make depost in cashbox and account. 
 			 */
-			 $('#uf_account_select').xml2html('init',{
+			 $('.uf_account_select').xml2html('init',{
 					url 	: 'php/ctrl/Account.php',
 					params 	: 'oper=getAllAccounts', 
 					offSet	: 1, 
@@ -66,42 +66,32 @@
 						
 					}
 				//event listener to load items for this uf to validate
-				}).change(function(){
-					allowDeposit();					
-			});
-
-
-			/**
-			 *	provider select
-			 */
-			$("#providerSelect").xml2html("init", {
-					url : 'php/ctrl/SmallQ.php',
-					params : 'oper=getActiveProviders',
-					offSet : 1, 
-					loadOnInit: true
-				}).change(function(){
-					allowWithdraw();	
+				}).change(function(e){
+					allowDeposit();		
+					allowWithdraw();		
+								
 			});
 
 
 			/**
 			 * hide show specific deposit fields
 			 */
-			$('#uf_sel_tr, #uf_comment_tr').hide();
+			$('.uf_sel_tr, .comment_tr').hide();
 			$('#sel_deposite_type').change(function(){
-				var sel_id = parseInt($("option:selected", this).val()); 
+				var sel_id = parseInt($("option:selected", this).val());
+				$('.comment_tr').show(); 
 				//make deposit for UF
 				if (sel_id == 1){
-					$('#uf_account_select option[value="-10"]').attr('selected','selected')
-					$('#uf_sel_tr').show();
-					$('#uf_comment_tr').show();
+					$('.uf_account_select option[value="-10"]').attr('selected','selected')
+					$('.uf_sel_tr').show();
+				
 				//other type of deposits
 				} else if (sel_id == 2) {
-					$('#uf_account_select option[value="-3"]').attr('selected','selected');
-					$('#uf_sel_tr').hide();
-					$('#uf_comment_tr').show();
+					$('.uf_account_select option[value="-3"]').attr('selected','selected');
+					$('.uf_sel_tr').hide();
+
 				} else if (sel_id == -1){
-					$('#uf_sel_tr, #uf_comment_tr').hide();
+					$('.uf_sel_tr, .comment_tr').hide();
 				}
 				allowDeposit();
 			});
@@ -110,22 +100,33 @@
 			/**
 			 * hide show specific withdraw fields
 			 */			
-			$('#provider_sel_tr, #provider_comment_tr').hide();
+			$('.uf_sel_tr, .comment_tr').hide();
 			$('#sel_withdraw_type').change(function(){
 				var sel_id = parseInt($("option:selected", this).val()); 
-
-				//widthdraw for provider
+				$('.comment_tr').show();
+				$('.uf_account_select option[value="-3"]').attr('selected','selected');
+				$('.uf_sel_tr').hide();
+				
+				//widthdraw to pay provider
 				if (sel_id == 1){
-					$('#other_withdraw_comment_tr').hide();
-					$('#provider_sel_tr').show();
-					$('#provider_comment_tr').show();
-				//other type of deposits
+					
+					
+				//withdraw to take money to the bank
 				} else if (sel_id == 2) {
-					$('#provider_sel_tr').hide();
-					$('#provider_comment_tr').show();
+					
+
+				//uf stuff
+				} else if (sel_id == 3 || sel_id == 4) {
+					$('.uf_account_select option[value="-10"]').attr('selected','selected')
+					$('.uf_sel_tr').show();
+
+				//all other stuff
+				} else if (sel_id == 5) {
+					
 				} else if (sel_id == -1){
-					$('#provider_sel_tr, #provider_comment_tr').hide();
-				}
+					//$('.uf_sel_tr, .comment_tr').hide();
+				} 
+				
 				allowWithdraw();
 			});
 
@@ -137,8 +138,8 @@
   				var allow = true; 
   	  			var deposit_type = $('#sel_deposite_type option:selected').val();
   	  			var amount = $.checkNumber($('#deposit_amount'), '', 2);			
-  				var uf_id = parseInt($("#uf_account_select option:selected").val()) - 1000;
-  	  			allow = allow && (amount > 0) && ((deposit_type == 1) && (uf_id > 0) || (deposit_type == 2));
+  				var uf_id = parseInt($("#deposit_form .uf_account_select option:selected").val()) - 1000;
+  	  			allow = allow && (amount > 0) && ((deposit_type == 2) && (uf_id > 0) || (deposit_type == 2));
   	  			if (allow) {
   	  				$('#deposit_submit').button('enable');
   	  	  		} else {
@@ -154,8 +155,16 @@
   				var allow = true; 
   	  			var withdraw_type = $('#sel_withdraw_type option:selected').val()
   	  			var amount = $.checkNumber($('#withdraw_amount'), '', 2);
-  				var provider_id = parseInt($("#providerSelect option:selected").val());
-  	  			allow = allow && (amount > 0) && ((withdraw_type == 1) && (provider_id > 0) || (withdraw_type == 2));
+  	  			var uf_id = parseInt($("#withdraw_form .uf_account_select option:selected").val()) - 1000;
+				
+  	  			//alert(withdraw_type + " " + amount + " " + uf_id);
+  	  			/*if (withdraw_type == 3 || withdraw_type ==4){
+					allow = allow && (uf_id > 0) && (amount > 0);
+  	  	  		} else {
+  	  	  			allow = allow && (amount > 0);
+  	  	  	  	}*/
+  	  			allow = allow && (amount > 0) && (((withdraw_type == 2 || withdraw_type == 1 || withdraw_type == 5) || ((uf_id > 0) && (withdraw_type == 3 || withdraw_type == 4))));
+
   	  			if (allow) {
   	  				$('#withdrawal_submit').button('enable');
   	  	  		} else {
@@ -163,6 +172,8 @@
   	  	  	  	}
   	  		} 			
 
+
+  			
   			/**
   			 *	reset deposit / withdrawal
   			 */
@@ -420,7 +431,16 @@
 	
 
 			function switchTo(section){
+				
+				//$('.uf_account_select option[value="-10"]').attr('selected','selected')
+				
+				//reset selects; 
+				$('#sel_withdraw_type option[value="-1"]').attr('selected','selected');
+				$('#sel_deposite_type option[value="-1"]').attr('selected','selected');
 
+				resetDeposit();
+				resetWithdrawal();
+				
 				switch(section){
 
 				case 'overview':
@@ -554,20 +574,20 @@
 								</select>
 							</td>
 						</tr>
-						<tr id="uf_sel_tr">
+						<tr class="uf_sel_tr">
 							<td><?=$Text['make_deposit_4HU'];?>:&nbsp;&nbsp;</td>
 							<td>
-								<select id="uf_account_select" name="account_id">
+								<select class="uf_account_select" name="account_id">
 		    						<option value="-10" selected="selected"><?php echo $Text['sel_uf_or_account']; ?></option>
 		    						<option value="{id}">{name}</option>
 			    				</select>
 							</td>
 						</tr>
 						
-						<tr id="uf_comment_tr">
+						<tr class="comment_tr">
 							<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>
 							<td>
-								<input type="text" name="description" id="deposit_note_uf" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/>
+								<input type="text" name="description" id="deposit_description" class="inputTxtLarge ui-widget-content ui-corner-all" value=""/>
 							</td>
 						</tr>
 						<tr>
@@ -596,7 +616,7 @@
 					<table class="tblForms">
 						<tr>
 							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
-							<td>-<input type="text" name="quantity" id="withdraw_amount" class="inputTxtMiddle ui-widget-content ui-corner-all " value="0.00"/></td>
+							<td>-<input type="text" name="quantity" id="withdraw_amount" class="inputTxtLarge  ui-widget-content ui-corner-all " value="0.00"/></td>
 						</tr>
 						<tr>
 							<td colspan="2"><br/></td>
@@ -605,26 +625,29 @@
 							<td><?=$Text['withdraw_type'];?>:&nbsp;&nbsp;</td>
 							<td>
 								<select id="sel_withdraw_type">
-									<option value="-1"><?=$Text['please_select'];?></option>
-									<option value="1"><?=$Text['withdraw_for_provider'];?></option>
-									<option value="2"><?=$Text['withdraw_other'];?></option>
+									<option value="-1"><?php echo $Text['please_select'];?></option>
+									<option value="1"><?php echo $Text['withdraw_provider']; ?></option>
+									<option value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
+									<option value="3"><?php echo $Text['withdraw_uf']; ?></option>
+									<option value="4"><?php echo $Text['withdraw_cuota']; ?></option>
+									<option value="5"><?php echo $Text['withdraw_other'];?></option>
 								</select>
 							</td>
-						</tr>
-						<tr id="provider_sel_tr">
-							<td><?=$Text['withdraw_provider'];?>:&nbsp;&nbsp;</td>
+						</tr>						
+						<tr class="uf_sel_tr">
+							<td><?php echo $Text['withdraw_from']; ?>:&nbsp;&nbsp;</td>
 							<td>
-								<select id="providerSelect">
-                    				<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    				<option value="{id}">{id} {name}</option>                     
-								</select>
+								<select class="uf_account_select" name="account_id">
+		    						<option value="-10" selected="selected"><?php echo $Text['sel_uf_or_account']; ?></option>
+		    						<option value="{id}">{name}</option>
+			    				</select>
 							</td>
 						</tr>
 						
-						<tr id="provider_comment_tr">
+						<tr class="comment_tr">
 							<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>
 							<td>
-								<input type="text" name="description" id="withdraw_note_provider" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/>
+								<input type="text" name="description" id="withdraw_description" class="inputTxtLarge ui-widget-content ui-corner-all" value=""/>
 							</td>
 						</tr>
 						<tr>

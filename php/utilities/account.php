@@ -5,7 +5,6 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 
 
-
 /**
  * 
  * retrieves list of UFs with negative account balance

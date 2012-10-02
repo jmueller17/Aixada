@@ -741,5 +741,9 @@ $Text['remove_pagebreak'] = "Prem aquí per eliminar el salt de pàgina";
 $Text['show_deactivated'] = "Mostra productes desactivats";
 $Text['nav_report_sales'] = "Compres"; 
 $Text['nav_help'] = "Ajuda"; 
+$Text['withdraw_from'] = "Withdraw from ";  //account
+$Text['withdraw_to_bank'] = "Withdraw cash for bank";
+$Text['withdraw_uf'] = "Withdraw from HU account";
+$Text['withdraw_cuota'] = "Withdraw member quota";
 
 ?>
