@@ -19,11 +19,11 @@ function process_language_file($coop_name, $lang_file)
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
     if (!$inhandle) {
-        throw new Exception("Couldn't open {$tmpname} for reading. Make sure that {$lang_file} and all directories above it can be universally written!");
+        throw new Exception("Couldn't open {$tmpname} for reading.\nMake sure that {$lang_file} and all directories above it can be universally written!");
     }
     $outhandle = @fopen($lang_file, 'w');
     if (!$outhandle) {
-        throw new Exception("Couldn't open {$lang_file} for writing. Make sure that ${lang_file} has 'www-data' as owner.");
+        throw new Exception("Couldn't open {$lang_file} for writing.\nMake sure that ${lang_file} has 'www-data' as owner.");
     }
     while(!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
@@ -33,6 +33,7 @@ function process_language_file($coop_name, $lang_file)
         }
         fwrite($outhandle, $buffer);
     }
+    unlink($tmpname);
     return 0;
 }
 
@@ -56,7 +57,7 @@ function create_setup_file($db_name)
     }
     $outhandle = @fopen($db_filename, 'w');
     if (!$outhandle) {
-        throw new Exception("Couldn't open {$db_filename} for writing");
+        throw new Exception("Couldn't open {$db_filename} for writing.");
     }
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle);
@@ -164,7 +165,7 @@ function create_config_file($host, $user, $password, $db_name, $language)
         throw new Exception("Couldn't open {$tmpname} for reading");
     $outhandle = @fopen($filename, 'w');
     if (!$outhandle)
-        throw new Exception("Couldn't open {$filename} for writing. Make sure that it is universally writable, and has 'www-data' as owner.");
+        throw new Exception("Couldn't open {$filename} for writing.\nMake sure that it is universally writable, and has 'www-data' as owner.");
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
         if (strpos($buffer, 'db_host') !== false)
