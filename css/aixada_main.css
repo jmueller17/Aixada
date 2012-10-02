@@ -30,7 +30,7 @@ option 				{padding:1px 5px;}
 
 .greenBg			{background-color:green;}
 .lightGreenBg		{background-color:#72b42d;}
-.okGreen			{background:#D1F3D1;}
+.okGreen			{color:darkgreen; background:#D1F3D1;}
 .noRed				{background:#ff7a75;}
 .processing             {color:black; background:yellow;}
 .grayedGreen            {color:darkgray; background:lightgray; /*#d2f3d2;*/}

@@ -124,7 +124,7 @@ function get_param($param_name, $default=null, $transform = ''){
 		if (($value == '' || $value == 'undefined') && isset($default)){
 			$value = $default;
 		} else if (($value == '' || $value == 'undefined') && !isset($default)) {
-			throw new Exception("get_param: Parameter: {$param_name} has no value and $default value is not set either");
+			throw new Exception("get_param: Parameter: {$param_name} has no value and no default value");
 		}	
 			
 	} else if (isset($default) and $default !== null){

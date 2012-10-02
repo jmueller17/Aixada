@@ -5,7 +5,6 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 $config_dir = 'local_config/';
-$log = "Starting installation process.\n";
 
 function process_language_file($coop_name, $lang_file)
 {
@@ -14,13 +13,11 @@ function process_language_file($coop_name, $lang_file)
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
     if (!$inhandle) {
-        print "Couldn't open {$tmpname} for reading";
-	return 1;
+        throw new Exception("Couldn't open {$tmpname} for reading");
     }
     $outhandle = @fopen($lang_file, 'w');
     if (!$outhandle) {
-        "Couldn't open {$lang_file} for writing";
-	return 11;
+        throw new Exception("Couldn't open {$lang_file} for writing");
     }
     while(!feof($inhandle)) {
         $buffer = fgets($inhandle, 4096);
@@ -49,13 +46,11 @@ function create_setup_file($db_name)
     $db_filename = $config_dir . "{$db_name}_setup.sql";
     $inhandle =  @fopen($aixada_filename, 'r');
     if (!$inhandle) {
-        print "Couldn't open {$aixada_filename} for reading";
-	return 1;
+        throw new Exception("Couldn't open {$aixada_filename} for reading");
     }
     $outhandle = @fopen($db_filename, 'w');
     if (!$outhandle) {
-        print "Couldn't open {$db_filename} for writing";
-	return 1;
+        throw new Exception("Couldn't open {$db_filename} for writing");
     }
     while (!feof($inhandle)) {
         $buffer = fgets($inhandle);
@@ -114,8 +109,7 @@ function create_tables($db_name, $mysqli)
     foreach ($files as $filename) {
         $handle = @fopen($filename, 'r');
         if (!$handle) {
-            print "Couldn't open {$filename}";
-	    return 1;
+            throw new Exception("Couldn't open {$filename}");
 	}
         if (in_array($filename, $dump_files)) {
             $mysqli->query('call delete_member(-1);');
@@ -134,8 +128,7 @@ function create_queries($mysqli)
     foreach ($direntries as $filename) {
         $handle = @fopen($querydir . $filename, 'r');
         if (!$handle) {
-            print "Couldn't open {$filename}";
-	    return 1;
+            throw new Exception("Couldn't open {$filename}");
 	}
         $cmd = '';
         while(!feof($handle)) {// and strpos($buffer, 'end|') === false) {
@@ -190,15 +183,18 @@ try {
     $password = get_param('db_pwd');
     $db_name = get_param('db_name');
     $pref_lang = get_param('pref_lang', 'en');
+    $first_uf = get_param('first_uf');
     $user_login = get_param('user_login');
     $user_password = crypt(get_param('user_password'), 'ax');
-    $first_uf = get_param('first_uf');
-
+    $retype_password = crypt(get_param('retype_password'), 'ax');
+    if ($user_password != $retype_password)
+	throw new Exception('Please retype the password for the first user');
     $oper = get_param('oper');
+    if ($oper=='validate') return 0;
 
     $mysqli = new mysqli($host, $user, $password, $db_name);
     if (mysqli_connect_errno()) 
-	return 'Unable to connect to database. ' . mysqli_connect_error();
+	throw new Exception('Unable to connect to database. ' . mysqli_connect_error());
     if ($oper == 'connect') return 0;
 
     switch ($oper) {
@@ -219,14 +215,13 @@ try {
 	return $mysqli->query("call register_special_user('{$user_login}', '{$user_password}', '{$pref_lang}', '{$first_uf}');");
  
     default:
-	print 'did not know what to do.';
-	return 1;
+	throw new Exception ('Action "' . $action . '" not recognized');
     }
 }
 
 catch(Exception $e) {
-  echo $log;
-  header('HTTP/1.0 401 ' . $e->getMessage());
-  die($e->getMessage());
+    echo $e->getMessage();
+    header('HTTP/1.0 401 ' . $e->getMessage());
+    //    die($e->getMessage());
 }  
 ?>

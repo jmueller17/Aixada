@@ -37,43 +37,69 @@ function existing_languages_selectbox()
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
     <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 <script type="text/javascript">
-    function callInstall(action, dataSerial) {
+   function callInstall(action, dataSerial) {
+    var result = 2;
     $('#' + action)
     .removeClass('grayed')
-    .addClass('processing');
+    .addClass('processing')
+    .attr({style:'display:block'});
     $.ajax({
 	type: "POST",
 		url: "php/ctrl/Install.php?oper=" + action + dataSerial,
-		success: function(ans) {
+		success: function() {
 		$('#' + action)
 		    .removeClass('processing')
-		    .addClass('okGreen');
-		alert(ans);
-		return 0;
+		    .removeClass('noRed')
+		    .addClass('okGreen')
+		    .attr({style:'display:block'});
+		$('#' + action + '_result')
+		    .removeClass('noRed')
+		    .removeClass('grayed')
+		    .addClass('okGreen')
+		    .attr({style:'display:inline'})
+		    .text(' ok');
+		result = 0;
 	    },
 		error : function(XMLHttpRequest, textStatus, errorThrown){
 		$('#' + action)
 		    .removeClass('processing')
-		    .addClass('noRed');
-		$('#installMsg')
-		    .text(XMLHttpRequest.responseText + ' ' + textStatus + ' ' + errorThrown)
-		    .addClass('noRed');
-		alert('err');
-		return 1;
-	    }
+		    .addClass('noRed')
+		    .attr({style:'display:block'});
+		$('#' + action + '_result')
+		    .text(XMLHttpRequest.responseText)
+		    .addClass('noRed')
+		    .attr({style:'display:inline'});
+		result = 1;
+	    },
+		async:false
 	});
+    return result;
     }
     $(function(){
 	    $('#btn_install').button();
 	    $('#btn_install').click(function(){
-		    var items = ['coop_name', 'db_name'];
-		    var dataSerial = '';
-		    
+		    var items = ['coop_name', 'db_name', 'db_host', 'db_user', 'db_pwd', 'first_uf', 'user_login', 'user_password', 'retype_password'];
+		    var dataSerial = '';		    
 		    for (var i=0; i<items.length; i++) {
 			dataSerial += '&' + items[i] + '=' + $('#' + items[i]).val();
 		    }
-		    alert(dataSerial);
-		    callInstall('connect', dataSerial);
+		    var actions = ['validate', 'connect'];
+		    for (var i=0; i<actions.length; i++) {
+			$('#' + actions[i])
+			    .removeClass('okGreen')
+			    .removeClass('noRed')
+			    .addClass('grayed')
+			    .attr({style:'display:none'});
+			$('#' + actions[i] + '_result')
+			    .removeClass('okGreen')
+			    .removeClass('noRed')
+			    .addClass('grayed')
+			    .attr({style:'display:none'});
+		    }
+		    var result = 0;
+		    for (var i=0; i<actions.length && result==0; i++) {
+			result = callInstall(actions[i], dataSerial);
+		    }
 		});
 	    return false;
 	});
@@ -163,13 +189,14 @@ function existing_languages_selectbox()
    </div>
 <br/>
    <div id="wrapFeedback">
-      <p id="connect" class="grayed">Connect to database</p>
-      <p id="lang" class="grayed">Process language files</p>
-      <p id="create_setup" class="grayed">Create setup file for database</p>
-      <p id="create_db" class="grayed">Create database</p>
-      <p id="create_config" class="grayed">Create configuration file</p>
-      <p id="create_user" class="grayed">Create special user</p>
-      <p id="ok" class="grayed">Success!</p>
+      <p id="validate" class="grayed " style="display:none">Validating input ... <b id="validate_result"></b></p>
+      <p id="connect" class="grayed " style="display:none">Connect to database ... <b id="connect_result"></b></p>
+      <p id="lang" class="grayed" style="display:none">Process language files ... <b id="lang_result"/></p>
+      <p id="create_setup" class="grayed" style="display:none">Create setup file for database ... <b id="create_setup_result"/></p>
+      <p id="create_db" class="grayed" style="display:none">Create database ... <b id="create_db_result"/></p>
+      <p id="create_config" class="grayed" style="display:none">Create configuration file ... <b id="create_config_result"/></p>
+      <p id="create_user" class="grayed" style="display:none">Create special user ... <b id="create_user_result"/></p>
+      <p id="ok" class="grayed" style="display:none">Success!</p>
    </div>
   <br/>
   <div>
