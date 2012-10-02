@@ -42,7 +42,7 @@ function existing_languages_selectbox()
     $('#' + action)
     .removeClass('grayed')
     .addClass('processing')
-    .attr({style:'display:block'});
+    .attr({style:'visibility:visible'});
     $.ajax({
 	type: "POST",
 		url: "php/ctrl/Install.php?oper=" + action + dataSerial,
@@ -51,12 +51,12 @@ function existing_languages_selectbox()
 		    .removeClass('processing')
 		    .removeClass('noRed')
 		    .addClass('okGreen')
-		    .attr({style:'display:block'});
+		    .attr({style:'visibility:visible'});
 		$('#' + action + '_result')
 		    .removeClass('noRed')
 		    .removeClass('grayed')
 		    .addClass('okGreen')
-		    .attr({style:'display:inline'})
+		    .attr({style:'visibility:visible'})
 		    .text(' ok');
 		result = 0;
 	    },
@@ -64,11 +64,11 @@ function existing_languages_selectbox()
 		$('#' + action)
 		    .removeClass('processing')
 		    .addClass('noRed')
-		    .attr({style:'display:block'});
+		    .attr({style:'visibility:visible'});
 		$('#' + action + '_result')
 		    .text(XMLHttpRequest.responseText)
 		    .addClass('noRed')
-		    .attr({style:'display:inline'});
+		    .attr({style:'visibility:visible'});
 		result = 1;
 	    },
 		async:false
@@ -189,14 +189,14 @@ function existing_languages_selectbox()
    </div>
 <br/>
    <div id="wrapFeedback">
-      <p id="validate" class="grayed " style="display:none">Validating input ... <b id="validate_result"></b></p>
-      <p id="connect" class="grayed " style="display:none">Connect to database ... <b id="connect_result"></b></p>
-      <p id="lang" class="grayed" style="display:none">Process language files ... <b id="lang_result"/></p>
-      <p id="create_setup" class="grayed" style="display:none">Create setup file for database ... <b id="create_setup_result"/></p>
-      <p id="create_db" class="grayed" style="display:none">Create database ... <b id="create_db_result"/></p>
-      <p id="create_config" class="grayed" style="display:none">Create configuration file ... <b id="create_config_result"/></p>
-      <p id="create_user" class="grayed" style="display:none">Create special user ... <b id="create_user_result"/></p>
-      <p id="ok" class="grayed" style="display:none">Success!</p>
+      <p id="validate" class="grayed " style="visibility:hidden">Validating input ... <b id="validate_result"></b></p>
+      <p id="connect" class="grayed " style="visibility:hidden">Connect to database ... <b id="connect_result"></b></p>
+      <p id="lang" class="grayed" style="visibility:hidden">Process language files ... <b id="lang_result"/></p>
+      <p id="create_setup" class="grayed" style="visibility:hidden">Create setup file for database ... <b id="create_setup_result"/></p>
+      <p id="create_db" class="grayed" style="visibility:hidden">Create database ... <b id="create_db_result"/></p>
+      <p id="create_config" class="grayed" style="visibility:hidden">Create configuration file ... <b id="create_config_result"/></p>
+      <p id="create_user" class="grayed" style="visibility:hidden">Create special user ... <b id="create_user_result"/></p>
+      <p id="ok" class="grayed" style="visibility:hidden">Success!</p>
    </div>
   <br/>
   <div>
