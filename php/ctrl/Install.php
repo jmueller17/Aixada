@@ -188,7 +188,7 @@ try {
     $user_password = crypt(get_param('user_password'), 'ax');
     $retype_password = crypt(get_param('retype_password'), 'ax');
     if ($user_password != $retype_password)
-	throw new Exception('Please retype the password for the first user');
+	throw new Exception("The two instances of the password for the first user don't match");
     $oper = get_param('oper');
     if ($oper=='validate') return 0;
 

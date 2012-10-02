@@ -55,6 +55,7 @@ function existing_languages_selectbox()
 		$('#' + action + '_result')
 		    .removeClass('noRed')
 		    .removeClass('grayed')
+		    .removeClass('fgWhite')
 		    .addClass('okGreen')
 		    .attr({style:'visibility:visible'})
 		    .text(' ok');
@@ -68,6 +69,8 @@ function existing_languages_selectbox()
 		$('#' + action + '_result')
 		    .text(XMLHttpRequest.responseText)
 		    .addClass('noRed')
+		    .removeClass('grayed')
+		    .addClass('fgWhite')
 		    .attr({style:'visibility:visible'});
 		result = 1;
 	    },
