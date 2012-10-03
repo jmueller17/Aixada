@@ -157,7 +157,9 @@
 
 		//new uf
 		$("#btn_new_uf")
-			.button()
+			.button({
+				icons : {primary:"ui-icon-plus"}
+			})
 		    .click(function(e){
 		    	$('#create_uf_name').val('');
 				//$('#mentor_uf').xml2html('reload');
@@ -168,7 +170,7 @@
 		//edit uf
 		$("#btn_edit_uf")
 			.button({
-				icons : {secondary:"ui-icon-pencil"}
+				icons : {primary:"ui-icon-pencil"}
 			})
 		    .click(function(e){
 		    	$('#uf_info').find('input').removeAttr('disabled');
@@ -526,7 +528,7 @@
 		//create new member button
 		$("#btn_add_member")
 			.button({
-				icons:{secondary:'ui-icon-plus'}
+				icons:{primary:'ui-icon-plus'}
 			})
 		    .click(function(e){
 				prepareAddMemberForm(false);
@@ -798,7 +800,7 @@
 	<div id="stagewrap" class="ui-widget">
 	
 		<div id="titlewrap">
-				
+			
 			<div id="titleLeftCol">
 					<button id="btn_overview" class="floatLeft ufDetailElements viewMemberElements createMemberElements"><?php echo $Text['overview'];?></button>
 		    		<h1 class="overviewElements"><?php echo $Text['ti_mng_hu_members']; ?></h1>
@@ -808,6 +810,7 @@
 		    	<!-- p class="textAlignRight"><?php echo $Text['search_memberuf'];?>: <input type="text" name="search_member" id="search_member" class="inputTxtMiddle ui-widget-content ui-corner-all" /></p-->
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
+		  
 		</div>
 		
 		
@@ -816,7 +819,7 @@
 		<!-- 
 					MEMBER LISTING TABS
 		 -->
-		<div id="member_listing" class="ui-widget overviewElements aix-layout-center80">
+		<div id="member_listing" class="ui-widget overviewElements">
 		
 			<ul>
 				<li><a href="#tabs-1"><h2><?php echo $Text['list_ufs']; ?></h2></a></li>
