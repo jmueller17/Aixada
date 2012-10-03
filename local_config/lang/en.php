@@ -491,7 +491,7 @@ $Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the
 //$Text['Download zip'] = 'Download zip file with all orders';
 $Text['product_singular'] = 'product';
 $Text['product_plural'] = 'products';
-$Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database? This make take a little while...';
+$Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database? This may take a little while...';
 $Text['show_date_field'] = 'Click here to show the calendar field and select a different date than today.';
 
 
