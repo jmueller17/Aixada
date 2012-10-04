@@ -701,11 +701,11 @@ $Text['btn_later'] = "después de"; //más tarde... futuro
 
 //la frase entera es: "activate the selected day and products for the next  1|2|3.... month(s) every week | second week | third week | fourth week.
 $Text['pattern_intro'] = "Activa los productos i días para los próximos ";
-$Text['pattern_scale'] = "meses cada ";
-$Text['week'] = "semana";
-$Text['second'] = "segunda";  //2nd 
-$Text['third'] = "tercera";
-$Text['fourth'] = "cuarta";
+$Text['pattern_scale'] = "meses ";
+$Text['week'] = "cada semana";
+$Text['second'] = "cada 15 dias";  //2nd 
+$Text['third'] = "cada 3 semanas";
+$Text['fourth'] = "una vez al mes";
 $Text['msg_pattern'] = "¡NOTA: Esta acción regenerará los productos y fechas a partir de esta!";
 $Text['sel_closing_date'] = "Elegir una nueva fecha de cierre";
 $Text['btn_mod_date'] = "Modificar la fecha de cierre";
@@ -744,4 +744,5 @@ $Text['withdraw_from'] = "Withdraw from ";  //account
 $Text['withdraw_to_bank'] = "Withdraw cash for bank";
 $Text['withdraw_uf'] = "Withdraw from HU account";
 $Text['withdraw_cuota'] = "Withdraw member quota";
+$Text['msg_err_noorder'] = "No orders found for the selected time period!";
 ?>

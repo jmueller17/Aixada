@@ -136,11 +136,15 @@ if (!isset($_SESSION)) {
 		<p id="logonHeader"></p>
 	</div>
 
-	<div id="stagewrap">
+	<div id="stagewrap" class="ui-widget">
 		
-		<div class="oneQuarterCol floatLeft"></div>
+		<div class="floatLeft aix-layout-splitW20 aix-style-widget">
+			<div class="ui-widget-content ui-corner-all">
+				<h4 class="ui-widget-header">Global info</h4>
+			</div>
+		</div>
 		
-		<div id="middleCol" class="floatLeft">
+		<div class="floatLeft aix-layout-splitW50">
 			<div id="newsWrap">
 				<div class="portalPost">
 					<h2 class="subject">{subject}</h2>
@@ -151,7 +155,7 @@ if (!isset($_SESSION)) {
 		</div>
 	
 		
-		<div id="logonWrap" class="ui-widget oneQuarterCol">
+		<div id="logonWrap" class="aix-layout-splitW20">
 			<div class="ui-widget-content ui-corner-all">
 			<h4 class="ui-widget-header ui-corner-all"><?php echo $Text['login'];?></h4>
 			<p id="logonMsg" class="user_tips  minPadding"></p>

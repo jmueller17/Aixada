@@ -842,7 +842,7 @@ begin
 		and po.product_id = p.id
 		",filter_wherec,"
 	order by 
-		oi.date_for_order desc 
+		oi.date_for_order desc, o.id desc 
 		",set_limit,";");
 		
 	prepare st from @q;

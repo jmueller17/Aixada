@@ -19,6 +19,8 @@ $tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
 
 
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
+$language = get_session_language(); 
+
 
 //should be deleted in the end, and globally set. 
 $_SESSION['dev'] = true;
