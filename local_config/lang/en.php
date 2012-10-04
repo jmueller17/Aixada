@@ -411,7 +411,7 @@ $Text['msg_deposit_success'] = "Deposit has been successful!";
 $Text['msg_withdrawal_success'] = "The withdrawal has been successful!";
 $Text['msg_select_cart_first'] = "In order to add items for validating you have to select an HU/cart first!";
 //$Text['msg_err_move_date'] = "An error has occured while moving the order to the new date. Try again. ";
-$Text['msg_no_active_products'] = "Sorry, but currently there are no products activated for ordering. Talk to the person in charge of this provider!";
+$Text['msg_no_active_products'] = "Sorry, but currently there are no products activated for ordering. Talk to the person in charge of provider(s)!";
 //$Text['msg_no_movements'] = "Sorry, no movements for given account and date!"; 
 $Text['msg_delete_incident'] = "Are you sure you want to delete this incident?";
 //$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases."; //ADDED JAN 2012
@@ -491,7 +491,7 @@ $Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the
 //$Text['Download zip'] = 'Download zip file with all orders';
 $Text['product_singular'] = 'product';
 $Text['product_plural'] = 'products';
-$Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database? This make take a little while...';
+$Text['confirm_db_backup'] = 'Are you sure you want to backup the whole database? This may take a little while...';
 $Text['show_date_field'] = 'Click here to show the calendar field and select a different date than today.';
 
 
@@ -747,6 +747,8 @@ $Text['withdraw_from'] = "Withdraw from ";  //account
 $Text['withdraw_to_bank'] = "Withdraw cash for bank";
 $Text['withdraw_uf'] = "Withdraw from HU account";
 $Text['withdraw_cuota'] = "Withdraw member quota";
+$Text['msg_err_noorder'] = "No orders found for the selected time period!";
+
 
 
 

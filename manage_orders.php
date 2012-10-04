@@ -319,6 +319,7 @@
 							url: 'php/ctrl/Orders.php?oper=moveOrderToShop&order_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker'),
 							success: function(txt){
 								$('.success_msg').show().next().hide();
+								$this.button('disable');
 								setTimeout(function(){
 									$this.dialog( "close" )
 									$('.interactiveCell').hide();
@@ -326,7 +327,7 @@
 									//reload order list
 									$('#tbl_orderOverview tbody').xml2html('reload');
 									switchTo('overview');
-								},3000);
+								},2000);
 							},
 							error : function(XMLHttpRequest, textStatus, errorThrown){
 								$.showMsg({
@@ -339,7 +340,7 @@
 						
 						},
 				
-					"<?=$Text['btn_cancel'];?>"	: function(){
+					"<?=$Text['btn_close'];?>"	: function(){
 						$( this ).dialog( "close" );
 						} 
 				}

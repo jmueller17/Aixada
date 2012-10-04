@@ -57,7 +57,7 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
 	//TODO server - client difference in time/date?!
 	$today = date('Y-m-d', strtotime("Today"));
 	$tomorrow = date('Y-m-d', strtotime("Tomorrow"));
-	$next_week =  date('Y-m-d', strtotime('Today + 7 days'));
+	$next_week =  date('Y-m-d', strtotime('Tomorrow + 6 days'));
 	$prev_month = date('Y-m-d', strtotime('Today - 1 month'));
 	$prev_2month = date('Y-m-d', strtotime('Today - 2 month'));
 	$prev_year = date('Y-m-d', strtotime('Today - 1 year'));

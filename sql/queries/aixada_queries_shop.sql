@@ -97,7 +97,7 @@ begin
 		c.date_for_shop between '",from_date,"' and '",to_date,"'
 		",wherec,"
 	order by 
-		c.date_for_shop desc
+		c.date_for_shop desc, uf.id desc
 		",set_limit,";"); 
 			
 	prepare st from @q;

@@ -180,6 +180,15 @@
 				var cart_id = $(this).attr('shopId'); 
 				var date_for_shop = $(this).attr('dateForShop'); 
 
+				if (uf_id == gTornUfId){ //cannot validate your own cart
+					$.showMsg({
+						msg:"<?php echo $Text['msg_err_validate_self'];?>",
+						type: 'error'});
+					resetFields();
+					resetDeposit();
+					return false;
+				}
+				
 				//means we come from cart observe
 				if (uf_id > 0){
 					$('#uf_cart_select').val(uf_id).attr('selected','selected');
@@ -233,7 +242,7 @@
 				saveOnDelete: false,
 				submitSuccess : function (msg){
 					$('#tbl_cart_listing tbody').xml2html('reload'); 
-														
+					//reloadValidationUfs();					
 					//empty the cart
 					$(this).aixadacart("resetCart");	
 				}
@@ -257,6 +266,7 @@
 
 					var description = $('#deposit_note').val();
 					var uf_account_id = 1000 + new Number($("#uf_cart_select option:selected").val());
+			
 					var quantity = $.checkNumber($('#deposit_amount'), '', 2);		
 					
 					if (!quantity) { 
@@ -265,7 +275,7 @@
 									type: 'warning'});
 						return false;
 						
-					} else if (uf_account_id <= -4){
+					} else if (uf_account_id <= 1000 || uf_account_id == '' || typeof(uf_account_id) != 'number' ){
 						$.showMsg({
 									msg:"<?php echo $Text['msg_please_set_ufid_deposit'];?>",
 									type: 'error'});
@@ -333,9 +343,9 @@
 						var validated = $(row).children().eq(3).text();
 
 						if (validated == '0000-00-00 00:00:00'){
-							$(row).children().eq(3).html("-");	
+							$(row).children().eq(3).html('<p class="textAlignCenter">-</p>');	
 						} else {
-							$(row).children().eq(3).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at']; ?>: '+validated+'"></span>');
+							$(row).children().eq(3).addClass('okGreen').html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at']; ?>: '+validated+'"></span>');
 						}		
 					},
 					complete : function(){
@@ -585,7 +595,7 @@
 
 
 			//prevent accidental submit on return when editing input
-			$('input')
+			$('#cartLayer input')
 				.live('keydown', function(e){
 				if (e.keyCode == 13){
 					//var ti = $(this).attr("tabindex");

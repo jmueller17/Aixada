@@ -35,7 +35,8 @@ values
 	('deposit','register the inpayment of cash'),
 	('bill','register withdrawal for bill payment to provider'),
 	('correction','by-hand correction of account balance'),
-	('withdrawal','default cash withdrawal');
+	('withdrawal','default cash withdrawal'),
+	('setup', 'account setup');
 
 
 /**
@@ -211,7 +212,7 @@ set
 	o.date_for_shop = o.date_for_order,
 	o.revision_status = -1
 where
-	o.date_for_order < '2012-09-28';
+	o.date_for_order < '2012-10-03';
 	
 	
 	

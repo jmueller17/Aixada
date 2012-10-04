@@ -664,7 +664,7 @@ $Text['filter_next_week'] = "Propera setmana";
 $Text['filter_future'] = "Totes les comandes futures";
 $Text['filter_month'] = "Últim mes";
 $Text['filter_postponed'] = "Postposades";
-$Text['with_sel'] = "Amb ...";
+$Text['with_sel'] = "Amb selecionats...";
 $Text['dwn_zip'] = "Descarrega en zip";
 $Text['closes_days'] = "Es tanca en dies";
 $Text['sent_off'] = "Enviat al proveïdor";
@@ -703,11 +703,11 @@ $Text['btn_later'] = "després de"; //más tarde... futuro
 
 //la frase entera es: "activate the selected day and products for the next  1|2|3.... month(s) every week | second week | third week | fourth week.
 $Text['pattern_intro'] = "Activa els productes i dia per als propers ";
-$Text['pattern_scale'] = "mesos cada ";
-$Text['week'] = "setmana";
-$Text['second'] = "segona";  //2nd 
-$Text['third'] = "tercera";
-$Text['fourth'] = "quarta";
+$Text['pattern_scale'] = "mesos ";
+$Text['week'] = "cada setmana";
+$Text['second'] = "cada 15 dies";  //2nd 
+$Text['third'] = "cada 3 setmanes";
+$Text['fourth'] = "un cop al mes";
 $Text['msg_pattern'] = "NOTA: Aquesta acció regenerarà els productes i dates a partir d'aquesta!";
 $Text['sel_closing_date'] = "Tria una nova data de tancament";
 $Text['btn_mod_date'] = "Modifica la data de tancament";
@@ -745,5 +745,6 @@ $Text['withdraw_from'] = "Withdraw from ";  //account
 $Text['withdraw_to_bank'] = "Withdraw cash for bank";
 $Text['withdraw_uf'] = "Withdraw from HU account";
 $Text['withdraw_cuota'] = "Withdraw member quota";
+$Text['msg_err_noorder'] = "No orders found for the selected time period!";
 
 ?>

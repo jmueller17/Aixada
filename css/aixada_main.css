@@ -126,9 +126,14 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-centerDiv{margin:5px auto;}
 .aix-layout-max-W800 {max-width:800px; margin:5px auto;}
 
+.aix-layout-splitW80 {width:78%;}
 .aix-layout-splitW60 {width:59%;}
 .aix-layout-splitW40 {width:39%;}
+.aix-layout-splitW50 {width:50%;}
 .aix-layout-splitW30 {width:29%;}
+.aix-layout-splitW25 {width:25%;}
+.aix-layout-splitW20 {width:20%;}
+
 
 .aix-layout-fixW80	 {width: 80px;}
 .aix-layout-fixW100	 {width:100px;}
@@ -139,6 +144,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 
 .aix-layout-title-with-icon {margin-left:100px;}
 
+.aix-style-widget				{margin:5px 5px; padding-bottom:2px;}
 
 .aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
 .aix-style-entry-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
@@ -212,9 +218,9 @@ p#weekDays			{margin:10px 20px;}**/
 div#incidents_listing a	{font-size:0.8em; margin-right:20px;}
 .spacingEnd				{background:#d3d3d3; padding:0px;}
 
-table#tbl_incidents		{width:100%; } /* also for incidents page */
+/*table#tbl_incidents		{width:100%; } 
 table#tbl_incidents td  {padding-top:1px; padding-right:20px; padding-left:5px;}
-table#tbl_incidents th  {background:#f3f3f3;}
+table#tbl_incidents th  {background:#f3f3f3;}*/
 .minwidth-50			{min-width:50px;}
 .minwidth-30			{min-width:30px;}
 .minwidth-180			{min-width:180px;}
@@ -241,8 +247,8 @@ div#menuTable a			{font-size:1.2em; text-decoration:none;}
 div#menuTable a:hover	{font-size:1.2em; text-decoration:underline;}
 **/
 div#homeWrap			{margin:0 auto; max-width:1000px;}
-div#leftIconCol			{width:30%; float:left; margin-right:30px;}
-div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}
+/*div#leftIconCol			{width:30%; float:left; margin-right:30px;}
+div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}*/
 .homeIcon				{margin-bottom:20px; text-align:center;}
 
 

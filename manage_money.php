@@ -77,7 +77,7 @@
 			 * hide show specific deposit fields
 			 */
 			$('.uf_sel_tr, .comment_tr').hide();
-			$('#sel_deposite_type').change(function(){
+			$('#sel_deposite_type').change(function(e){
 				var sel_id = parseInt($("option:selected", this).val());
 				$('.comment_tr').show(); 
 				//make deposit for UF
@@ -139,7 +139,10 @@
   	  			var deposit_type = $('#sel_deposite_type option:selected').val();
   	  			var amount = $.checkNumber($('#deposit_amount'), '', 2);			
   				var uf_id = parseInt($("#deposit_form .uf_account_select option:selected").val()) - 1000;
-  	  			allow = allow && (amount > 0) && ((deposit_type == 2) && (uf_id > 0) || (deposit_type == 2));
+
+  				
+  	  			allow = allow && (amount > 0) && (deposit_type==2 || ((uf_id > 0) && (deposit_type == 1)));
+
   	  			if (allow) {
   	  				$('#deposit_submit').button('enable');
   	  	  		} else {

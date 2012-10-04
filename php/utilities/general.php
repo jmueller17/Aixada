@@ -81,13 +81,10 @@ function get_session_language(){
  * returns the theme for the logged user
  */
 function get_session_theme(){
-    if (isset($_SESSION['userdata']['theme']) 
-	and $_SESSION['userdata']['theme'] != ''
-	and $_SESSION['userdata']['theme'] != '1'
-	) {
-	return $_SESSION['userdata']['theme'];
+    if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
+		return $_SESSION['userdata']['theme'];
     } else {
-	return	configuration_vars::get_instance()->default_theme;
+		return	configuration_vars::get_instance()->default_theme;
     }	 
 }
 

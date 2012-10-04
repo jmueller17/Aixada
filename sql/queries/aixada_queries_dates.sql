@@ -5,7 +5,6 @@ delimiter |
  * returns all orderable dates, irrespective if they have ordered items or not. 
  *
  */
-
 drop procedure if exists get_orderable_dates|
 create procedure get_orderable_dates(in from_date date, in the_limit int)
 begin
@@ -15,14 +14,19 @@ begin
   		set from_date_onward = date(sysdate()); 
   	end if;
 		
-	select distinct
+	set @q = concat("select distinct
 		po.date_for_order
 	from 
 		aixada_product_orderable_for_date po
 	where
-		po.date_for_order > from_date_onward
-	limit the_limit;
-		
+		po.date_for_order > '", from_date_onward,"'
+	order by
+		po.date_for_order asc
+	limit ", the_limit , ";");
+
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 end|
 
 

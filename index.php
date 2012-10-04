@@ -31,7 +31,7 @@
 
 
 			//sql result set limit for order
-			var gOrderLimit = 5; 
+			var gOrderLimit = 10; 
 
 			//index
 			var gOrderLimitIndex = 0; 
@@ -96,8 +96,7 @@
 			var lastDate = '';
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
-				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(0),
-				//params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future', 
+				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future',
 				loadOnInit : true, 
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
@@ -121,6 +120,11 @@
 
 				},
 				complete : function(rowCount){
+					if (rowCount == 0){
+						$.showMsg({
+							msg:"<?php echo $Text['msg_err_noorder']; ?>",
+							type: 'error'});	
+					}
 					globalRowIndex = 0; 
 					loadOrderDetails();
 				}
@@ -274,7 +278,7 @@
 				} else {
 					$('#btn_nextOrders').button('enable');  
 				}	
-				return index*gOrderLimit+","+(index*gOrderLimit+gOrderLimit);
+				return index*gOrderLimit+","+(gOrderLimit);
 			}
 
 
@@ -423,7 +427,7 @@
 				} else {
 					$('#btn_nextPurchase').button('enable');  
 				}	
-				return index*gShopLimit+","+(index*gShopLimit+gShopLimit);
+				return index*gShopLimit+","+(gShopLimit);
 			}
 			
 	});  //close document ready
@@ -437,9 +441,10 @@
 		<?php include "php/inc/menu2.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	<div id="stagewrap">
+	<div id="stagewrap" class="ui-widget">
+	
 		<div id="homeWrap">
-			<div id="leftIconCol">
+			<div class="aix-layout-fixW250 floatLeft">
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
 					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
@@ -453,7 +458,7 @@
 					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
 				</div>
 			</div>
-			<div id="rightSummaryCol">
+			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft">
 				<ul>
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
