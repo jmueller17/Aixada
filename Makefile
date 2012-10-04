@@ -31,15 +31,6 @@ canned_responses.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(confi
 	php/lib/table_with_ref.php
 	php make_canned_responses.php
 
-#$(config_dir)/config.php: sql/setup/queries_reading.php \
-#            sql/setup/tables_modified_by.php \
-#            make_config.php
-#	php make_config.php
-
-clean_ship:
-	rm -rf $(ship_dir)
-	rm -f *~
-
 clean: clean_ship 
 	rm -f canned_responses_*.php
 	touch $(config_dir)/config.php
