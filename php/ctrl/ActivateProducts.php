@@ -62,8 +62,14 @@ try{
 
 	  case 'modifyOrderClosingDate':
 	  	echo do_stored_query('modify_order_closing_date', get_param('provider_id'), get_param('order_date'), get_param('closing_date'));
-	    exit;    
+	    exit;   
 
+	  //makes all active products (not) orderable for a given date and provider. 
+	  case 'activeAll4Date':
+	  	//printXML(stored_query_XML_fields('activate_all_for_date', $get_param('provider_id'), $get_param('date'), get_param('activate',1) ));
+	  	echo activate_all_for_date(get_param('provider_id'), get_param('date'), get_param('activate',1));
+		exit; 
+		
   default:
     throw new Exception("ctrlActivateProducts: variable oper not set in query");
         

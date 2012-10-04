@@ -90,7 +90,7 @@
 			</div>
 	
 			<div class="aix-style-entry-widget">
-				<h2>1st Shift</h2>
+				<h2><?php echo $Text['primer_torn'];?></h2>
 				<table>
 					<tr>
 						<td>
@@ -109,7 +109,7 @@
 			</div>		
 
 			<div class="aix-style-entry-widget">
-				<h2>2nd Shift</h2>
+				<h2><?php echo $Text['segon_torn']; ?></h2>
 				<table>
 					<tr>
 						<td>

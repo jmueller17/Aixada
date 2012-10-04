@@ -746,5 +746,10 @@ $Text['withdraw_to_bank'] = "Withdraw cash for bank";
 $Text['withdraw_uf'] = "Withdraw from HU account";
 $Text['withdraw_cuota'] = "Withdraw member quota";
 $Text['msg_err_noorder'] = "No orders found for the selected time period!";
+$Text['primer_torn'] = "Primer Torn";
+$Text['segon_torn'] = "Segond Torn";
+
+
+
 
 ?>

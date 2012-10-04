@@ -136,9 +136,11 @@ begin
 		where 
 			p.id = the_product_id
 			and p.provider_id = pv.id;
-	end if;
-	
+	end if;	
 end|
+
+
+
 
 
 /**
@@ -349,6 +351,38 @@ begin
   	deallocate prepare st;
   
 end|
+
+
+/**
+ * retrieves all products of given provider, irrespective of stock|orderable|accumulative
+ * but filters for active/non-active products
+ */
+drop procedure if exists get_products_of_provider|
+create procedure get_products_of_provider (in the_provider_id int, in the_active int)
+begin
+	
+	select 
+		p.id,
+		p.name,
+		p.description,
+		p.category_id,
+		p.stock_actual,
+		p.active,
+		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
+		pv.name as provider_name,
+		pv.id as provider_id
+	from 
+		aixada_product p, 
+		aixada_provider pv
+	where
+		p.active = the_active
+		and p.provider_id = the_provider_id
+		and pv.id = the_provider_id
+	order by
+		p.id; 
+end|
+
+
 
 /**
  *  retrieves all products of type preorderable

@@ -9,6 +9,40 @@ $firephp = FirePHP::getInstance(true);
 ob_start(); // Starts FirePHP output buffering
 
 
+
+/**
+ * 
+ * Activates or deactivates all products as orderable/not orderable for a given provider and for a given date. 
+ * @param unknown_type $provider_id
+ * @param unknown_type $date
+ * @param unknown_type $activate
+ */
+function activate_all_for_date($provider_id, $date, $activate)
+{
+	$product_ids = array();
+	$rs = do_stored_query('get_products_of_provider', $provider_id, 1);
+	
+	//for each product 
+	while ($row = $rs->fetch_assoc()) {
+	 	array_push($product_ids, $row['id']);	 
+	}
+	DBWrap::get_instance()->free_next_results();
+	
+	
+	foreach($product_ids as $id){
+		
+	 	do_stored_query('toggle_orderable_product', $id, $date);
+		
+		
+	}
+	DBWrap::get_instance()->free_next_results();
+	
+	
+	echo 1; //printXML(stored_query_XML_fields('get_products_of_provider', $provider_id, 1 ));
+}
+
+
+
 /**
  * 
  * Returns dates that have unvalidated shopping carts. If among the dates
