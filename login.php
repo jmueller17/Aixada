@@ -144,7 +144,7 @@ if (!isset($_SESSION)) {
 			</div>
 		</div>
 		
-		<div class="floatLeft aix-layout-splitW50">
+		<div class="floatLeft aix-layout-splitW40 aix-layout-middle-widget">
 			<div id="newsWrap">
 				<div class="portalPost">
 					<h2 class="subject">{subject}</h2>

@@ -59,7 +59,7 @@
 		loadCartURL : 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart',
 		cartType	: (what=='Shop')? 'standalone':'standalone_preorder',
 		btnType		: 'save',
-		autoSave	: 5000,
+		autoSave	: 0,
 		loadSuccess : updateCartLabel,
 		submitComplete : updateCartLabel
 	});

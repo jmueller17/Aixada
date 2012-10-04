@@ -126,6 +126,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-centerDiv{margin:5px auto;}
 .aix-layout-max-W800 {max-width:800px; margin:5px auto;}
 
+
 .aix-layout-splitW80 {width:78%;}
 .aix-layout-splitW60 {width:59%;}
 .aix-layout-splitW40 {width:39%;}
@@ -145,6 +146,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-title-with-icon {margin-left:100px;}
 
 .aix-style-widget				{margin:5px 5px; padding-bottom:2px;}
+.aix-layout-middle-widget		{margin-left:20px; margin-right:20px; }
 
 .aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
 .aix-style-entry-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}

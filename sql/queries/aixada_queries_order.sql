@@ -852,7 +852,25 @@ end |
 
 
 
-
+/**
+ * converts a preorder (which have no order date but are kept open until a certain quantity has been reached)
+ * into an order which is supposed to arrive at the specified date. 
+ * converting also sets the order status to "sent off to provider" and assigns an order id.  
+ */
+drop procedure if exists convert_preorder|
+create procedure convert_preorder(in the_provider_id int, in the_date_for_order date)
+begin
+	
+	update 
+		aixada_order_item oi
+	set 
+		oi.date_for_order = the_date_for_order
+	where
+		oi.date_for_order = '1234-01-23'
+		and p.provider_id = the_provider_id; 
+		
+	
+end 
 
 
 

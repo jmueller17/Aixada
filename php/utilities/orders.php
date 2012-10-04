@@ -63,8 +63,10 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
 	$prev_year = date('Y-m-d', strtotime('Today - 1 year'));
 	$very_distant_future = '9999-12-30';
 	$very_distant_past	= '1980-01-01';
+	$pre_order	= '1234-01-23';
 	
-	//this could be removed.... doesn't make much sense anymore. 
+	
+	//get results based on time periods and then go backward/foward a certain amount of time 
 	$steps_from_date 	 = date('Y-m-d', strtotime("Today -". ($steps--) . " " .$range));
 	$steps_to_date	 = date('Y-m-d', strtotime("Today -". ($steps) . " " .$range));	
 	
@@ -99,6 +101,10 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
 		//all orders that have been send off, but have no shop date assigned
 		case 'limboOrders':
 			printXML(stored_query_XML_fields('get_orders_listing', $prev_year, $very_distant_future, $uf_id, 3,$limit));
+			break;
+		
+		case 'preOrders':
+			printXML(stored_query_XML_fields('get_orders_listing', $pre_order, $pre_order, $uf_id, 0,$limit));
 			break;
 			
 		case 'nextWeek':

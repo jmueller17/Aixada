@@ -99,46 +99,7 @@ try{
         printXML(stored_query_XML_fields('delete_favorite_order_cart', $uf_logged_in, $_REQUEST['cart_id']));
         exit;
 
-    case 'moveAllOrders':
-        do_stored_query('move_all_orders', $_REQUEST['from_date'], $_REQUEST['to_date']);
-        printXML('<ok>1</ok>'); //this is probably not the right way to do this... but printXML does not create tags for automatically!!
-        exit;
-
-    case 'listPreOrderProviders':
-        printXML(stored_query_XML_fields('list_preorder_providers'));
-        exit;
-
-    case 'listPreOrderProducts':
-        printXML(stored_query_XML_fields('list_preorder_products', $_REQUEST['provider_id']));
-        exit;
-
-    case 'activatePreOrderProducts':
-        $activate_array = $_REQUEST['activate']; 
-        $pi_array = $_REQUEST['product_id']; 
-        $activate_list = '(';
-        $deactivate_list = '(';
-
-        foreach ($activate_array as $i => $product_id) { 
-            $activate_list .= $product_id . ',';
-        }
-
-        $deactivate_array = array_diff($pi_array, $activate_array);
-        foreach ($deactivate_array as $i => $product_id) { 
-            $deactivate_list .= $product_id . ',';
-        }
-
-        $activate_list = rtrim($activate_list, ',') . ')';
-        $deactivate_list = rtrim($deactivate_list, ',') . ')';
-
-        //         $firephp->log($activate_list, 'activate_list');
-        //         $firephp->log($deactivate_list, 'deactivate_list');
-
-        if ($activate_list != '()')
-            do_stored_query('activate_preorder_products', $the_date, $activate_list);
-        if ($deactivate_list != '()')
-            do_stored_query('deactivate_preorder_products', $the_date, $deactivate_list);
-        echo 'ok';
-        exit;*/
+	*/
 
     default:  
     	 //throw new Exception("ctrlShopAndOrder: oper={$_REQUEST['oper']} not supported");  

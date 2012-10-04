@@ -397,13 +397,17 @@ begin
         pv.id as provider_id,
         pv.name as provider_name,
         u.unit,
-        r.rev_tax_percent,
+   		round((p.unit_price * (1 + iva.percent/100) * (1+r.rev_tax_percent/100)),2) as unit_price,
+		iva.percent as iva_percent,
+   		r.rev_tax_percent,
         p.unit_price
+        
    from 
 	   	aixada_product p,
 	   	aixada_provider pv,
 		aixada_unit_measure u,
-		aixada_rev_tax_type r
+		aixada_rev_tax_type r,
+		aixada_iva_type iva
    where 
   		p.orderable_type_id = 4
   		and p.active = 1	
@@ -411,6 +415,7 @@ begin
   		and p.provider_id = pv.id
   		and p.rev_tax_type_id = r.id
   		and	p.unit_measure_order_id = u.id
+		and p.iva_percent_id = iva.id 
   	order by p.id, p.name;
 end|
 
