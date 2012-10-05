@@ -23,7 +23,7 @@ class configuration_vars {
   /**
    * What is the name of this cooperative?
    */
-  public $coop = 'Aixada';
+  public $coop_name = 'Aixada';
 
   /**
    * Configure the database connection
