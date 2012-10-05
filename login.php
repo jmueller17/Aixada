@@ -138,13 +138,13 @@ if (!isset($_SESSION)) {
 
 	<div id="stagewrap" class="ui-widget">
 		
-		<div class="floatLeft aix-layout-splitW20 aix-style-widget">
+		<div class="floatLeft aix-layout-splitW20 aix-layout-widget-left-col">
 			<div class="ui-widget-content ui-corner-all">
 				<h4 class="ui-widget-header">Global info</h4>
 			</div>
 		</div>
 		
-		<div class="floatLeft aix-layout-splitW40 aix-layout-middle-widget">
+		<div class="floatLeft aix-layout-splitW50 aix-layout-widget-center-col">
 			<div id="newsWrap">
 				<div class="portalPost">
 					<h2 class="subject">{subject}</h2>

@@ -444,7 +444,7 @@
 	<div id="stagewrap" class="ui-widget">
 	
 		<div id="homeWrap">
-			<div class="aix-layout-fixW250 floatLeft">
+			<div class="aix-layout-fixW150 floatLeft">
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
 					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
@@ -458,7 +458,7 @@
 					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
 				</div>
 			</div>
-			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft">
+			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-middle-widget">
 				<ul>
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	

@@ -34,6 +34,26 @@
 
 
 		$('#product_list_provider tbody').xml2html("init");
+		$('#product_list_provider tbody tr')
+			.live('mouseover', function(){
+				$(this).removeClass('highlight').addClass('ui-state-hover');
+				
+			})
+			.live('mouseout',function(){
+				$(this).removeClass('ui-state-hover');
+				
+			})
+			.live('click',function(e){
+
+				$('.setProductName').text($(this).attr('productName'));
+				
+				
+				$("#tbl_stock_movements tbody").xml2html("reload", {
+					params : 'oper=stockMovements&product_id='+	$(this).attr('productId'),
+				});
+				switchTo('detail');
+
+			});
 
 
 	
@@ -56,9 +76,6 @@
 				$('.loadAnimShop').show();
 				$('#product_list_provider tbody').xml2html("reload",{
 					params: 'oper=getShopProducts&provider_id='+provider_id,
-					rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-								
-					},
 					complete : function (rowCount){
 						$('.loadAnimShop').hide();
 						if (rowCount == 0){
@@ -87,9 +104,6 @@
 						$('.loadAnimShop').show();
 					  	$('#product_list_provider tbody').xml2html("reload",{
 							params: 'oper=getShopProducts&like='+searchStr,
-							rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-								//formatRow(row);
-							}, 
 							complete : function(rowCount){
 								if (rowCount == 0){
 									$('#searchTips').show();
@@ -117,6 +131,9 @@
 
 		//add stock 
 		$('.inputAddStock')
+			.live('click', function(e){
+				e.stopPropagation();
+			})
 			.live('focus', function(e){
 				
 				//hide other active field, buttons
@@ -215,9 +232,7 @@
 				$(this).children(':last').toggle().focus();
 				$(this).children(':first').toggle();
 
-				
-
-
+				e.stopPropagation();
 			});
 			
 
@@ -270,6 +285,77 @@
 			});
 		}
 
+
+
+		/***********************************************************
+		 *
+		 *  STOCK DETAIL MOVEMENTS, incl. accumulated loss
+		 *
+		 ***********************************************************/
+
+
+
+		$("#tbl_stock_movements tbody").xml2html("init", {
+			url: 'php/ctrl/Shop.php',
+			params : 'oper=stockMovements',
+			loadOnInit:false,
+			rowComplete : function (rowIndex, row){
+				$.formatQuantity(row);
+			},
+			complete : function(rowCount){
+				$('tr:even', this).addClass('rowHighlight');
+				var acc_loss_ever = 0; 
+				$('.stockDeltaPriceCell').each(function(){
+					acc_loss_ever += parseFloat($(this).text());
+				});
+				
+				$('.setAccLossEver').text(acc_loss_ever.toFixed(2)+'€');
+
+
+				if (rowCount == 0){
+					$.showMsg({
+						msg:"Sorry, no stock corrections/adds found for this product!",
+						type: 'warning'});
+
+				}
+				
+			}
+		});
+
+
+
+
+
+		function switchTo(section){
+
+
+			switch(section){
+
+				case 'overview':
+					$('.detailElements').hide();
+					$('.overviewElements').fadeIn(1000);
+					break;
+	
+				case 'detail':
+					$('.overviewElements').hide();
+					$('.detailElements').fadeIn(1000);
+					break;
+			}
+
+		}
+
+		switchTo('overview');
+
+
+		$("#btn_overview").button({
+			icons: {
+	        		primary: "ui-icon-circle-arrow-w"
+	        	}
+			 })
+    		.click(function(e){
+				switchTo('overview'); 
+    		});
+		 
 							
 	});  //close document ready
 </script>
@@ -287,18 +373,21 @@
 	
 				<div id="titlewrap" class="ui-widget">
 					<div id="titleLeftCol50">
-				    	<h1><?php echo $Text['ti_mng_stock']; ?></h1>
+						<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
+				    	<h1 class="overviewElements"><?php echo $Text['ti_mng_stock']; ?></h1>
+				    	<h1 class="detailElements"><?php echo $Text['ti_mgn_stock_mov']; ?></h1>
 		    		</div>
 		    		<div id="titleRightCol50">
-						<select id="providerSelect">
+						<select id="providerSelect" class="overviewElements">
 	                    	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
 	                    	<option value="{id}"> {name}</option>                     
 						</select>
-						<p class="floatRight"><?php echo $Text['search_product'];?>: <input id="search" class="ui-corner-all"/></p>
+						<p class="floatRight  overviewElements"><?php echo $Text['search_product'];?>: <input id="search" class="ui-corner-all"/></p>
+		    			<p class="floatRight detailElements"><?php echo $Text['stock_acc_loss_ever']; ?>: <span class="setAccLossEver ui-state-highlight aix-style-padding3x3 ui-corner-all">?</span></p>
 		    		</div>
 				</div><!-- end titlewrap -->
  
-				<div class="ui-widget aix-layout-center80">
+				<div class="ui-widget aix-layout-center80 overviewElements">
 					<div class="ui-widget-content ui-corner-all">
 						<h3 class="ui-widget-header">&nbsp;</h3>
 						<table id="product_list_provider" class="tblListingBorder" >
@@ -313,9 +402,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr productId="{id}">
+								<tr productId="{id}" productName="{name}">
 									<td><p class="textAlignRight">{id}</p></td>
-									<td>{name}</td>
+									<td class="clickable">{name}</td>
 									<td><p class="textAlignCenter">{provider_name}</p></td>
 									<td class="interactiveCell">
 										<p class="textAlignRight correctStock">{stock_actual}</p>
@@ -343,9 +432,48 @@
 				</div>		
 				
 				<p>&nbsp;</p>
-				<div class="ui-widget width-280 centerDiv">
+				<div class="ui-widget aix-layout-fixW250 aix-layout-centerDiv">
 					<p id="searchTips" class="ui-widget-content ui-state-highlight infoblurp hidden"><?php echo $Text['no_results']; ?></p>
 				</div>
+				
+				
+				<div class="detailElements ui-widget">
+					<div class="ui-widget-content ui-corner-all">
+					<h4 class="ui-widget-header"><span class="setProductName"></span></h4>
+					<table id="tbl_stock_movements" class="tblListingDefault">
+						<thead>
+							<tr>
+								<th><?php echo $Text['operator'] ; ?></th>
+								<th><?php echo $Text['description'] ; ?></th>
+								<th><?php echo $Text['date']; ?></th>
+								<th><p class="textAlignRight"><?php echo $Text['dff_qty']; ?></p></th>
+								<th><p class="textAlignRight"><?php echo $Text['dff_price']; ?></p></th>
+								<th><p class="textAlignRight"><?php echo $Text['balance']; ?></p></th>
+								<th>Unit</th>
+							</tr>
+							
+						</thead>
+						<tbody>
+							<tr>
+								<td>{member_name}</td>
+								<td>{description}</td>
+								<td class="stockDeltaTSCell">{ts}</td>
+								<td class="stockDeltaQtyCell"><p class="textAlignRight formatQty">{amount_difference}</p></td>
+								<td class="stockDeltaPriceCell"><p class="textAlignRight formatQty">{delta_price}</p></td>
+								<td><p class="textAlignRight formatQty">{resulting_amount}</p></td>
+								<td>{unit}</td>
+								
+							</tr>
+						
+						</tbody>
+					
+					
+					</table>
+				
+				
+				</div>
+				</div>
+				
 
 	</div>
 	<!-- end of stage wrap -->

@@ -750,6 +750,12 @@ $Text['withdraw_cuota'] = "Withdraw member quota";
 $Text['msg_err_noorder'] = "No orders found for the selected time period!";
 $Text['primer_torn'] = "1st Shift";
 $Text['segon_torn'] = "2nd Shift";
+$Text['dff_qty'] = "Diff. quantity";
+$Text['dff_price'] = "Diff. price";
+$Text['ti_mgn_stock_mov'] = "Stock movements";
+$Text['stock_acc_loss_ever'] = "Overall accumulated loss";
+
+
 
 
 

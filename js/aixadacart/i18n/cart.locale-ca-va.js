@@ -5,7 +5,7 @@
 			title : {
 				shop 	: "La cistella",
 				order	: "La comanda",
-				preorder : "Comanda acumulativa"
+				preorder : "Acumulativa"
 			},
 			validate : "Valida",
 			submit	: "Envia",

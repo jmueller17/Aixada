@@ -5,7 +5,7 @@
 			title : {
 				shop 	: "Mi cesta",
 				order	: "Mi pedido",
-				preorder : "Pedido acumulativo"
+				preorder : "Acumulativo"
 			},
 			validate : "Validar",
 			submit	: "Enviar",

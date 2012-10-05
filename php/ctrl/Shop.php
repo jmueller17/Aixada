@@ -41,7 +41,7 @@ try{
 	    	exit;
 	    
 	    case 'stockMovements':
-        	printXML(stored_query_XML_fields('stock_movements', $_REQUEST['product_id'], $date, $_REQUEST['num_rows']));
+        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id'), get_param('limit', 0)));
         	exit;
     		
     		

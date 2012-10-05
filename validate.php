@@ -704,7 +704,7 @@
 		</div><!-- end tabs -->
 		</div><!-- end left col -->
 		
-		<div class="aix-layout-splitW40 floatLeft">
+		<div class="aix-layout-splitW40 floatRight">
 			
 			<div id="deposit" class="ui-widget">
 				<div class="aix-style-observer-widget ui-widget-content ui-corner-all" >

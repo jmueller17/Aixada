@@ -174,7 +174,7 @@
 
 	
 	$("#datepicker").datepicker({
-				dateFormat 	: 'DD, d MM, yy',
+				dateFormat 	: 'DD d MM, yy',
 				showAnim	: '',
 				beforeShowDay: function(date){		//activate only those dates that are available for ordering.
 					if (what == 'Order'){
@@ -587,7 +587,7 @@
 		</div><!-- end left Col -->
 		
 		<!-- Shopping cart starts -->
-		<div id="rightCol" class="aix-layout-splitW40 floatLeft">	
+		<div id="rightCol" class="aix-layout-splitW40 floatLeft aix-layout-widget-right-col">	
 			<div id="cartLayer"></div>
 		</div>
 		
