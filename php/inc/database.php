@@ -14,7 +14,6 @@ if (isset($slash[1])) {
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
-require_once(__ROOT__ . 'php'.DS.'inc'.DS.'caching.inc.php');
 
 if (!isset($_SESSION)) {
     session_start();
@@ -264,7 +263,6 @@ class DBWrap {
     $strSQL .= ') ' . $strVAL . ');';
     if (isset($_SESSION['fkeys'][$table_name]))
       unset($_SESSION['fkeys'][$table_name]);
-    clear_cache($table_name);
     return $this->do_Execute($strSQL); // TODO: extract new index
   }
 
@@ -290,7 +288,6 @@ class DBWrap {
     $strSQL .= ' WHERE id=' . $this->mysqli->real_escape_string($arrData['id']) . ';';
     if (isset($_SESSION['fkeys'][$table_name]))
       unset($_SESSION['fkeys'][$table_name]);
-    clear_cache($table_name);
     
     $success = $this->do_Execute($strSQL);
     

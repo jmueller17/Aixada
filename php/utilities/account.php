@@ -11,10 +11,6 @@ require_once(__ROOT__ . 'local_config/config.php');
  */
 function get_negative_accounts()
 {
-    $cache = new QueryCache('negative_accounts');
-    if ($cache->exists())
-        return $cache->read();
-
     $strXML = '<negative_accounts>';
     $rs = do_stored_query('negative_accounts');
     while ($row = $rs->fetch_assoc()) {
@@ -25,7 +21,6 @@ function get_negative_accounts()
         $strXML .= '</account>';
     }
     $strXML .= '</negative_accounts>';
-    $cache->write($strXML);
     return $strXML;
 }
 
@@ -106,6 +101,4 @@ function get_account_extract($account_id, $filter, $from_date, $to_date)
 	}
 }
 
-
-	
 ?>

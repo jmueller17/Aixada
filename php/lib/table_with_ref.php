@@ -1,13 +1,5 @@
 <?php
 
-/*$slash = explode('/', getenv('SCRIPT_NAME'));
-if (isset($slash[1])) {
-    //$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-    $app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
-} else { // this happens when called by make
-    $app = '';
-}*/
-
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'name_mangling.php');
 
 /** 
@@ -100,13 +92,12 @@ class foreign_key_manager {
   /**
    * The constructor.
    * @param $table_name : The name of the table
-   * @param $use_cache Whether to read and store in the $_SESSION cache or not
    */
 
-  public function __construct ($table_name, $use_cache = false)
+  public function __construct ($table_name)
   {
     $this->_table_name = $table_name;
-    $this->_get_col_and_key_descriptions($use_cache);
+    $this->_get_col_and_key_descriptions();
   }
 
 
@@ -145,23 +136,8 @@ class foreign_key_manager {
   /**
    * Called upon initialization to process the definition in the database
    */
-  private function _get_col_and_key_descriptions ($use_cache)
+  private function _get_col_and_key_descriptions ()
   {
-     global $firephp;
-    $cache_is_filled =  false;
-    if ($use_cache) {
-//       $firephp->log($use_cache, 'use_cache');
-//       $firephp->log($_SESSION, '_SESSION');
-      if (!isset($_SESSION['managed_tables']))
-	$_SESSION['managed_tables'] = array();
-      if (!isset($_SESSION['managed_tables'][$this->_table_name]))
-	$_SESSION['managed_tables'][$this->_table_name] = array();
-      if (isset($_SESSION['managed_tables'][$this->_table_name]['table_cols'])) {
-	$cache_is_filled = $this->_read_from_cache(); // returns false if a foreign key cache is stale
-// 	$firephp->log($cache_is_filled, 'cache_is_filled');
-      }
-    } 
-    if (!$cache_is_filled) {
       $db = DBWrap::get_instance();
       $rs = $db->Execute('SHOW CREATE TABLE :1', $this->_table_name);
       if (!$rs) throw new InternalException("Could not retrieve table description for " . $this->_table_name);
@@ -170,50 +146,7 @@ class foreign_key_manager {
       $desc = $row['Create Table'];
       $this->_get_col_descriptions($desc);
       $this->_get_key_descriptions($desc);
-      if ($use_cache)
-	$this->_fill_cache();
-    }
-  }
-
-  /**
-   * @return bool $success
-   */
-  private function _read_from_cache()
-  {
-    $this->_table_cols = unserialize($_SESSION['managed_tables'][$this->_table_name]['table_cols']);
-    $this->_keys = $_SESSION['managed_tables'][$this->_table_name]['keys'];
-    $fkey_list = $_SESSION['managed_tables'][$this->_table_name]['fkey_list'];
-    foreach ($fkey_list as $fkey) {
-      if (!isset($_SESSION['fkeys'][$fkey])) // has a key cache gone stale?
-	return false;
-      else $this->_key_cache[$fkey] = $_SESSION['fkeys'][$fkey];
-    }
-    foreach($this->_key_cache as $key => $cache) {
-      $this->_reverse_key_cache[$key] = array();
-      foreach ($cache as $val => $desc)
-	$this->_reverse_key_cache[$key][$desc] = $val;
-    }
-    $this->_primary_key = $_SESSION['managed_tables'][$this->_table_name]['primary_key'];
-    $this->_primary_key_unique = $_SESSION['managed_tables'][$this->_table_name]['primary_key_unique'];
-    return true;
-  }
-
-  private function _fill_cache()
-  {
-    $_SESSION['managed_tables'][$this->_table_name]['table_cols'] = serialize($this->_table_cols);
-    $_SESSION['managed_tables'][$this->_table_name]['keys'] = $this->_keys;
-    if (!isset($_SESSION['fkeys']))
-      $_SESSION['fkeys'] = array();
-    $fkey_list = array();
-    foreach ($this->_key_cache as $fkey => $key_array) {
-      array_push($fkey_list,$fkey);
-      if (!isset($_SESSION['fkeys'][$fkey])) 
-	$_SESSION['fkeys'][$fkey] = $key_array;
-    }
-    $_SESSION['managed_tables'][$this->_table_name]['fkey_list'] = $fkey_list;
-    $_SESSION['managed_tables'][$this->_table_name]['primary_key'] = $this->_primary_key;
-    $_SESSION['managed_tables'][$this->_table_name]['primary_key_unique'] = $this->_primary_key_unique;
-  }
+   }
 
   /**
    *  Read the columns from the table, and construct the
@@ -481,11 +414,10 @@ class table_with_ref extends foreign_key_manager {
    * The constructor should not be called directly.
    * Instead, use get_instance($table_name) of the descendant class.
    * @param $table_name : The name of the table
-   * @param $use_cache Whether to read and store in the $_SESSION cache or not
    */
-  public function __construct ($table_name, $use_cache = false)
+  public function __construct ($table_name)
   {
-    parent::__construct($table_name, $use_cache);
+    parent::__construct($table_name);
   }
 
 

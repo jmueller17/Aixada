@@ -13,10 +13,13 @@
 
 class configuration_vars {
 
+    /*******************************************************************
+        Here begin the variables you must set during installation.
+    ********************************************************************/
+
   /**
    * General variables
    */
-    //  public $caixaIP = "192.168.1.100,192.168.1.101"; //checkout can only be performed from here;
   public $default_language = 'en';
   
 
@@ -34,6 +37,9 @@ class configuration_vars {
   public $db_user = 'aixada';
   public $db_password = 'aixada';
 
+  /****************************************************************************
+     You should not need to change anything past this point when installing.
+  ****************************************************************************/
 
  
   /**
@@ -342,4 +348,5 @@ class configuration_vars {
         self::$instance = new configuration_vars();
     return self::$instance;
   }
+};
 ?>

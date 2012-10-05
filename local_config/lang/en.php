@@ -1,10 +1,6 @@
 <?php
 
-define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
-require_once(__ROOT__ . "local_config/config.php");
-
-$coop = configuration_vars::get_instance()->coop_name;
+$coop = "Aixada";
 
 // English translation file for aixada 
 

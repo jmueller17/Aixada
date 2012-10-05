@@ -219,21 +219,11 @@ try {
     if ($oper == 'connect') return 0;
 
     switch ($oper) {
-    case 'lang':
-	$coop_name = $mysqli->real_escape_string(get_param('coop_name'));
-	return process_languages($coop_name);
-
-    case 'create_setup':
-	return create_setup_file($db_name);
-
     case 'create_database':
 	return create_database($db_name, $mysqli);
 
     case 'create_database_queries':
 	return create_database_queries($db_name, $mysqli);
-
-    case 'create_config_file':
-	return create_config_file($host, $user, $password, $db_name, $pref_lang);
 
     case 'create_user':
 	return $mysqli->query("call register_special_user('{$user_login}', '{$user_password}', '{$pref_lang}', '{$first_uf}');");

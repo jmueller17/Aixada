@@ -181,7 +181,6 @@ function do_stored_query()
   }
 
   $sql_func = array_shift($args);
-  purge_cache($sql_func);
 
   $strSQL = 'CALL ' . $sql_func . '(';
   foreach ($args as $arg) {
@@ -200,7 +199,7 @@ function do_stored_query()
 }
 
 class output_formatter {
-  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0, $cache_name='')
+  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)
   {
     $strXML = '';
     if ($rs) {
@@ -212,7 +211,7 @@ class output_formatter {
       $strXML .= '<records>' . $total_entries . '</records>';
       $strXML .= "<rows>";
       while ($row = $rs->fetch_assoc()) 
-	$strXML .= $this->row_to_XML($row, $cache_name);
+	$strXML .= $this->row_to_XML($row);
       $rs->free();
       $strXML .= "</rows>";
       $strXML .= "</rowset>";
@@ -220,7 +219,7 @@ class output_formatter {
     return $strXML;
   }
 
-  public function row_to_XML($row, $cache_name='')
+  public function row_to_XML($row)
   {
       //      global $firephp;
       global $Text;
@@ -247,10 +246,6 @@ function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
   $row_tag = array_shift($params);
   array_unshift($params, $strSQL);
 
-  $cache = new QueryCache($params);
-  if ($cache->exists())
-      return $cache->read();
-
   $strXML = "<$group_tag>";
 //   $rs = ((count($params)>0) ? 
 // 	 do_stored_query($strSQL, $params)
@@ -268,17 +263,12 @@ function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
           . '></row>'; 
   }
   $strXML .= "</$group_tag>";
-  $cache->write($strXML);
   return $strXML;
 }
 
 // make variable argument list
 function stored_query_XML_fields()
 {
-    $cache = new QueryCache(func_get_args());
-    if ($cache->exists())
-        return $cache->read();
-    
     $strXML = '<rowset>';
     global $Text;
     $rs = do_stored_query(func_get_args());
@@ -297,7 +287,6 @@ function stored_query_XML_fields()
         $strXML .= '</row>';
     }
     $strXML .= '</rowset>';
-    $cache->write($strXML);
     return $strXML;
 }
 
@@ -308,10 +297,6 @@ function query_XML() //$strSQL, $group_tag, $row_tag, $param1=0, $param2=0)
   $group_tag = array_shift($params);
   $row_tag = array_shift($params);
   array_unshift($params, $strSQL);
-
-  $cache = new QueryCache($params);
-  if ($cache->exists())
-      return $cache->read();
 
   $strXML = "<$group_tag>";
   $rs = DBWrap::get_instance()->Execute($params);
@@ -326,7 +311,6 @@ function query_XML() //$strSQL, $group_tag, $row_tag, $param1=0, $param2=0)
           . '></row>'; 
   }
   $strXML .= "</$group_tag>";
-  $cache->write($strXML);
   return $strXML;
 }
 
@@ -338,10 +322,6 @@ function query_XML_compact()
   $row_tag = array_shift($params);
   array_unshift($params, $strSQL);
 
-  $cache = new QueryCache($params);
-  if ($cache->exists())
-      return $cache->read();
-
   $strXML = "<$group_tag>";
   $rs = DBWrap::get_instance()->Execute($params);
   while ($row = $rs->fetch_array()) {
@@ -352,16 +332,11 @@ function query_XML_compact()
       . '>'; 
   }
   $strXML .= "</$group_tag>";
-  $cache->write($strXML);
   return $strXML;
 }
 
 function query_XML_noparam($queryname)
 {
-  $cache = new QueryCache($queryname);
-  if ($cache->exists())
-      return $cache->read();
-
   $strXML = "<$queryname>";
   $rs = do_stored_query($queryname);
   while ($row = $rs->fetch_assoc()) {
@@ -374,7 +349,6 @@ function query_XML_noparam($queryname)
        $strXML .= "</row>";
   }
   $strXML .= "</$queryname>";
-  $cache->write($strXML);
   return $strXML;
 }
 
@@ -514,25 +488,6 @@ function get_commissions()
     return $XML . '</rows>';
 }
 
-function purge_cache($sql_func)
-{
-    $cv = configuration_vars::get_instance();
-//     global $firephp;
-//     $firephp->log($cv);
-//     $firephp->log($cv->tables_modified_by);
-//     exit();
-/*
-    if (array_key_exists($sql_func, $cv->tables_modified_by)) {
-        $cache_dir = $cv->cache_dir;
-        foreach($cv->tables_modified_by[$sql_func] as $table) {
-            foreach(glob($cache_dir . $table . '*') as $filename) {
-                unlink($filename);
-            }
-        }
-    }
-*/
-
-}
 
 function clean_zeros($value)
 {

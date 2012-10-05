@@ -40,11 +40,10 @@ class table_manager extends table_with_ref
      * @see     table_with_ref
      * @see     get_instance
      * @param     $table_name : The name of the table
-     * @param     $use_cache  : Whether to read and store in the $_SESSION cache or not
      */
-     public function __construct ($table_name, $use_cache = false)
+     public function __construct ($table_name)
      {
-       parent::__construct($table_name, $use_cache);
+       parent::__construct($table_name);
      }
 
   /*

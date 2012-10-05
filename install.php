@@ -89,7 +89,7 @@ function existing_languages_selectbox()
     $(function(){
 	    $('#btn_install').button();
 	    $('#btn_install').click(function(){
-		    var actions = ['validate', 'connect', 'lang', 'create_setup', 'create_database', 'create_database_queries', 'create_config_file', 'create_user'];
+		    var actions = ['validate', 'connect', 'create_database', 'create_database_queries', 'create_user'];
 		    for (var i=0; i<actions.length; i++) {
 			$('#' + actions[i])
 			    .removeClass('okGreen')

@@ -209,7 +209,6 @@ class abstract_cart_manager {
             }
             $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice);
             $db->Execute('COMMIT');
-            clear_cache($this->_item_table_name);
         }
         catch (Exception $e) {
             $firephp->log($e);
@@ -280,23 +279,6 @@ class abstract_cart_manager {
     {
     }
 
-
-
-    /**
-     * Convert foreign key cache to XML
-     * @param array $cache a foreign key cache
-     * @param string $selected_option the option actually selected 
-     * @return string the corresponding XML string
-     */
-    /*protected function _key_cache_to_XML (array $cache, string $selected_option)
-    {
-        $strXML = '<choices>';
-        foreach($cache as $value => $field) 
-            $strXML .= "<c>$field</c>"; 
-        $strXML .= "<s>$selected_option</s>";
-        $strXML .= '</choices>';
-        return $strXML;
-    }*/
 
 }
 ?>
