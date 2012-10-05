@@ -3,6 +3,12 @@
 // contribute by Cristóbal Cabeza-Cáceres; Jordi Losantos
 // Email: cristobal.cabeza@gmail.com; jordi@losantos.name
 
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+require_once(__ROOT__ . "local_config/config.php");
+
+$coop = configuration_vars::get_instance()->coop_name;
+
 $Text['ca-va'] = 'Català';
 $Text['charset'] = "utf-8";
 $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aescriure de dreta a esquerra)
@@ -11,7 +17,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aes
 /** 
  *  		Elements globals
  */
-$Text['coop_name'] = "L'Aixada";
+$Text['coop_name'] = $coop;
 $Text['please_select'] = "Seleccioneu...";
 $Text['loading'] = "Si us plau, espere mentre es carreguen les dades...";
 $Text['search'] = "Cerca";
@@ -57,7 +63,7 @@ $Text['validate'] = "Valida";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = "La Nova Aixada";
+$Text['global_title'] = $coop;
 $Text['head_ti_validate'] = "Valida";
 
 $Text['head_ti_active_products'] = "Activa/Desactiva Productes demanables";
@@ -246,7 +252,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Benvinguts/des a l'Aixada!";
+$Text['welcome_logon'] = "Benvinguts/des a l'" + $coop + "!";
 $Text['logon'] = "Usuari";
 $Text['pwd']	= "Contrasenya";
 $Text['old_pwd'] = "Contrasenya antiga";
@@ -292,7 +298,7 @@ $Text['nav_mng'] = "Gestiona";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
 $Text['nav_report_account'] = "Comptes";
-$Text['nav_report_timelines'] = "Evolució de l.Aixada";
+$Text['nav_report_timelines'] = "Evolució de l" + $coop;
 $Text['nav_report_timelines_uf'] = "Per UFs";
 $Text['nav_report_timelines_provider'] = "Per proveidors";
 $Text['nav_report_timelines_product'] = "Per productes";
@@ -676,14 +682,14 @@ $Text['total_after_revision'] = "Després de revisió";
 $Text['delivery_ref'] = "Referència d'entrega";
 $Text['payment_ref'] = "Referència de pagament";
 $Text['arrived'] = "arribat"; //as in order items have arrived. this is a table heading
-$Text['msg_cur_status'] = "L'estat de la comnada és";
+$Text['msg_cur_status'] = "L'estat de la comanda és";
 $Text['msg_change_status'] = "Canvia l'estat de la comanda a un dels següents";
 $Text['msg_confirm_move'] = "Estàs segur que vols fer aquesta comanda disponible per a la venda? Tots els productes disponibles es posaran a les cistelles de la data:";
 $Text['alter_date'] = "Tria una data alternativa";
-$Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma Aixada, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
+$Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
 
 
-$Text['order_closes'] = "La comnada es tanca el"; //as in: order closes 20 SEP 2012
+$Text['order_closes'] = "La comanda es tanca el"; //as in: order closes 20 SEP 2012
 $Text['left_ordering'] = " pendents per demanar."; //as in 4 days left for ordering
 $Text['ostat_closed'] = "La comanda està tancada";
 $Text['ostat_desc_fin_send'] = "La comanda s'ha finalitzat i enviat al proveïdor. La referència és: #";

@@ -4,6 +4,13 @@
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
+
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+require_once(__ROOT__ . "local_config/config.php");
+
+$coop = configuration_vars::get_instance()->coop_name;
+
 $Text['es'] = 'Castellano';
 
 
@@ -14,7 +21,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = "L'Aixada";
+$Text['coop_name'] = $coop;
 $Text['please_select'] = "Seleccionar...";
 $Text['loading'] = "Por favor, espere mientras se cargan los datos...";
 $Text['search'] = "Buscar";
@@ -64,7 +71,7 @@ $Text['validate'] = "Validar";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = "La Nova Aixada";
+$Text['global_title'] = $coop;
 $Text['head_ti_order'] = "Pedido";
 $Text['head_ti_shop'] = "Comprar productos";
 $Text['head_ti_reports'] = "Informes"; 
@@ -251,7 +258,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Bienvenid@s a l'Aixada!";
+$Text['welcome_logon'] = "Bienvenid@s a l'" . $coop . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
@@ -296,7 +303,7 @@ $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
 $Text['nav_report_account'] = "Cuentas";
 $Text['nav_report_preorder'] = "Prepedidos";
-$Text['nav_report_timelines'] = "Evolución de la Aixada ";
+$Text['nav_report_timelines'] = "Evolución de l'" . $coop;
 $Text['nav_report_timelines_uf'] = "Por UFs";
 $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";
@@ -677,7 +684,7 @@ $Text['msg_cur_status'] = "El estado actual del pedido es";
 $Text['msg_change_status'] = "Cambiar el estado del pedido a alguna de las siguientes opciones";
 $Text['msg_confirm_move'] = "¿Está seguro de que quiere hacer disponible el pedido para la compra? Todos los productos asociados seran distribuidos en las cestas para la fecha:";
 $Text['alter_date'] = "Escoja una fecha alternativa";
-$Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versión más antigua del programa de la Aixada que es incompatible con la funcionalidad de revisión actual.  Lo siento, este pedido no puede ser revisado.";
+$Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versión más antigua del software que es incompatible con la funcionalidad de revisión actual.  Lo siento, este pedido no puede ser revisado.";
 
 //added 29.09
 
