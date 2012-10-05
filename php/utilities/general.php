@@ -1,16 +1,7 @@
 <?php
 
-/*$slash = explode('/', getenv('SCRIPT_NAME'));
-if (isset($slash[1])) {
-    //$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-    $app = getenv('DOCUMENT_ROOT') . substr(getenv('SCRIPT_NAME'), 0, (strrpos(getenv('SCRIPT_NAME'), DS) +1)); 
-} else { // this happens when called by make
-    $app = '';
-}*/
-
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
-require_once(__ROOT__ . 'php'.DS.'inc'.DS.'caching.inc.php');
 
 $language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. $language . '.php');

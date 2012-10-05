@@ -341,7 +341,7 @@ update
 	aixada_incident_type
 set
 	description = "internal + email",
-	definition = "like 1 + incidents are send out as email if possible"
+	definition = "like 1 + incidents are sent out as email if possible"
 where 
 	id=2; 
 
@@ -357,7 +357,7 @@ update
 	aixada_incident_type
 set
 	description = "internal + email + portal",
-	definition = "incidents are posted internally, send out as email and posted on the portal"
+	definition = "incidents are posted internally, sent out as email and posted on the portal"
 where 
 	id=4; 	
 	
