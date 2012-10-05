@@ -6,7 +6,7 @@ ob_start(); // Starts FirePHP output buffering
 require_once 'php/lib/table_manager.php';
 require_once 'php/inc/database.php';
 require_once 'php/utilities/general.php';
-require 'php/utilities/tables.php';
+require_once 'php/utilities/tables.php';
 
 $db = DBWrap::get_instance();
 
@@ -140,7 +140,7 @@ function make_canned_queries()
   foreach ($tables as $table) {
     $query_name = $table . '_list_all_query';
     $fkm = new foreign_key_manager($table);
-    $order_by_clause = ($table != 'aixada_unit_measure' ? 
+    $order_by_clause = ($table != 'aixada_unit_measure' && $table != 'aixada_iva_type' ? 
                         "' order by active desc, '" :
                         "' order by '");
     $strSQL .= <<<EOD

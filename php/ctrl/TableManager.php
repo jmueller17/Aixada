@@ -22,50 +22,15 @@ require_once(__ROOT__ . "php/utilities/tables.php");
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
 $use_canned_responses = configuration_vars::get_instance()->use_canned_responses;
 
-//DBWrap::get_instance()->debug = true;
 
-// utility functions
-/*
-function get_special_names_and_model ()
-{
-  return array('col_names' => "['id', 'uf_id', 'uf_name', 'member_id', 'member_name', 'provider_id', 'provider_name', 'roles']",
-	       'col_model' => 
-	       "[{name: 'id', index: 'id', width: 100, xmlmap: 'id', editable: false, formoptions: {label: 'id'}}," .
-	       "{name: 'uf_name', index: 'uf_name', width: 255, xmlmap: 'uf_name', editable: true, formoptions: {label: 'uf_name'}}," .
-	       "{name: 'member_name', index: 'member_name', width: 255, xmlmap: 'member_name', editable: true, formoptions: {label: 'name'}}," .
-	       "{name: 'name', index: 'name', width: 255, xmlmap: 'name', editable: true, formoptions: {label: 'name'}}," .
- "]");
-}
-*/
 
 function get_columns_as_JSON()
 {
-//   global $firephp;
   global $special_table;
-//   switch ($use_canned_responses) {
-//   case false:
-// //     $firephp->log(true, 'including table manager');
-//     require_once 'lib/table_manager.php';
-//     $tm = new table_manager($_REQUEST['table'], 
-// 			    configuration_vars::get_instance()->use_session_cache);
-//     $response = $special_table ? get_special_names_and_model()
-//       : array('col_names' => get_names($tm), 
-// 	      'col_model' => get_model($tm, $use_canned_responses), 
-// 	      'active_fields' => get_active_field_names($tm));
-// //     $firephp->log($response, 'response');
-//     return json_encode($response);
-    
-//   case true:
-//     $firephp->log(true, 'including canned responses');
   global $language;
   global $Text;
-  //global $app;
-  //  global $firephp;
   $Text = array();
   require(__ROOT__ . 'canned_responses_' . $language . '.php');
-  //  $firephp->log($Text['please_select'], 'please select');
-  // $firephp->log($language, 'language'); 
-  // $firephp->log($_SESSION['userdata'], 'userdata'); 
   $ctm = new canned_table_manager();
   $table = $_REQUEST['table'];
   return '{"col_names":"' . $ctm->get_col_names_as_JSON($table)
@@ -140,15 +105,6 @@ function get_list_all_XML()
   }
 
   $options = get_options();
-//   if (!$use_canned_responses) {
-//     require_once 'lib/table_manager.php';
-//     $tm = new table_manager($_REQUEST['table'], 
-// 			    configuration_vars::get_instance()->use_session_cache);
-//     return do_list_all($tm, $req_page, $req_rows, $req_sidx, $req_sord, $options);
-//   }
-
-  // else we use the canned responses
-
   $db = DBWrap::get_instance();
   $filter_str = $options['filter'];
   $strSQL = 'SELECT COUNT(*) AS count FROM :1';

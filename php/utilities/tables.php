@@ -64,7 +64,8 @@ function get_model ($tm)
                         'active', 'mentor_uf', 'phone1', 'unit',
                         'responsible_uf_id', 'unit_price',
                         'orderable_type_id', 'unit_measure_order_id', 
-                        'unit_measure_shop_id', 'stock_actual', 'stock_min');
+                        'unit_measure_shop_id', 'stock_actual', 'stock_min',
+			'percent');
     $keys = $tm->get_keys();
     list ($substituted_name, $substituted_alias, $table_alias) = 
         get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $tm->get_keys());

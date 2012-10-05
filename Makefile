@@ -14,7 +14,7 @@ export FINAL = true
 
 config_dir:=local_config
 
-all: sql/all canned_responses.php $(config_dir)/config.php 
+all: canned_responses.php sql/all $(config_dir)/config.php 
 #sql/all js/all css/all
 
 
