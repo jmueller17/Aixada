@@ -85,6 +85,10 @@ try{
   			echo finalize_order(get_param('provider_id'), get_param('date'));
   			exit;
   			
+  		case 'preorderToOrder':
+  			echo do_stored_query('convert_preorder',get_param('provider_id'), get_param('date_for_order'));
+  			exit;
+  			
   		case 'resetOrder':
   			echo do_stored_query('reset_order_revision', get_param('order_id'));
   			exit;

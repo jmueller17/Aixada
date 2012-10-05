@@ -136,9 +136,11 @@ begin
 		where 
 			p.id = the_product_id
 			and p.provider_id = pv.id;
-	end if;
-	
+	end if;	
 end|
+
+
+
 
 
 /**
@@ -350,6 +352,38 @@ begin
   
 end|
 
+
+/**
+ * retrieves all products of given provider, irrespective of stock|orderable|accumulative
+ * but filters for active/non-active products
+ */
+drop procedure if exists get_products_of_provider|
+create procedure get_products_of_provider (in the_provider_id int, in the_active int)
+begin
+	
+	select 
+		p.id,
+		p.name,
+		p.description,
+		p.category_id,
+		p.stock_actual,
+		p.active,
+		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
+		pv.name as provider_name,
+		pv.id as provider_id
+	from 
+		aixada_product p, 
+		aixada_provider pv
+	where
+		p.active = the_active
+		and p.provider_id = the_provider_id
+		and pv.id = the_provider_id
+	order by
+		p.id; 
+end|
+
+
+
 /**
  *  retrieves all products of type preorderable
  */
@@ -363,13 +397,17 @@ begin
         pv.id as provider_id,
         pv.name as provider_name,
         u.unit,
-        r.rev_tax_percent,
+   		round((p.unit_price * (1 + iva.percent/100) * (1+r.rev_tax_percent/100)),2) as unit_price,
+		iva.percent as iva_percent,
+   		r.rev_tax_percent,
         p.unit_price
+        
    from 
 	   	aixada_product p,
 	   	aixada_provider pv,
 		aixada_unit_measure u,
-		aixada_rev_tax_type r
+		aixada_rev_tax_type r,
+		aixada_iva_type iva
    where 
   		p.orderable_type_id = 4
   		and p.active = 1	
@@ -377,6 +415,7 @@ begin
   		and p.provider_id = pv.id
   		and p.rev_tax_type_id = r.id
   		and	p.unit_measure_order_id = u.id
+		and p.iva_percent_id = iva.id 
   	order by p.id, p.name;
 end|
 
@@ -396,15 +435,17 @@ begin
 	
 	start transaction;
 	
-	-- what's the difference in order to calculate the loss -- 
+	-- what's the difference in order to calculate the loss; loss includes iva but not revTax -- 
 	select
-		(the_current_stock - p.stock_actual) * p.unit_price
+		(the_current_stock - p.stock_actual) * p.unit_price * (1 + iva.percent/100)
 	into 
 		err_amount
 	from
-		aixada_product p
+		aixada_product p,
+		aixada_iva_type iva
 	where
-		p.id = the_product_id; 
+		p.id = the_product_id
+		and p.iva_percent_id = iva.id; 
 			
 		
 	-- get the current balance from consum account -- 
@@ -439,7 +480,7 @@ begin
      	the_product_id,
      	the_operator_id,
      	the_current_stock - p.stock_actual,
-     	concat('stock corrected. Delta amount: ',err_amount, 'Euros'),
+     	concat('stock corrected.'),
      	the_current_stock
     from 
     	aixada_product p
@@ -521,26 +562,69 @@ begin
 end|
 
 
-
+/**
+ * retrieves info about all stock movements of a given product
+ * or all products. 
+ */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in product_id int, in tmp_start_date date, in num_rows int)
+create procedure stock_movements(in the_product_id int, in the_limit varchar(255))
 begin
-  declare start_date date default tmp_start_date;
-  if start_date = 0 then set start_date = date_add(sysdate(), interval -3 month); end if;
-
-  set @q = concat("select
-    id, 
-    operator_id,
-    amount_difference, 
-    description,
-    resulting_amount,
-    ts
-    from aixada_stock_movement
-    where ts >= '", start_date, "'
-    order by ts limit ", num_rows);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
+  
+	declare wherec varchar(255) default ''; 
+	
+	if (the_product_id > 0) then
+		set wherec = concat('and sm.product_id = ', the_product_id);
+	end if; 
+	
+	select 
+		sm.*,
+		mem.id as member_id,
+		mem.name as member_name,
+		p.name as product_name,
+		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
+		um.unit
+	from
+		aixada_stock_movement sm,
+		aixada_member mem,
+		aixada_product p, 
+		aixada_iva_type iva,
+		aixada_unit_measure um
+	where
+		mem.id = sm.operator_id
+		and p.id = sm.product_id
+		and p.unit_measure_shop_id = um.id
+		and p.iva_percent_id = iva.id
+		and sm.product_id = the_product_id
+	order by
+		sm.ts desc, sm.product_id desc;  
+		
 end|
+
+
+/**
+ * calculates the accumulated loss of stock corrections
+ */
+drop function if exists calc_delta_price|
+create function calc_delta_price(the_diff_amount decimal(10,4), the_unit_price decimal(10,2), the_iva_percent decimal(10,2))
+returns decimal(10,2)
+begin
+	
+	declare result decimal(10,2) default 0.00;
+	
+	if (the_diff_amount < 0) then
+		set result = the_diff_amount  * the_unit_price *  (1 + the_iva_percent/100);
+	end if;
+		
+	return result;
+end|
+
+
+
+
+
+
+
+
+
 
 delimiter ;

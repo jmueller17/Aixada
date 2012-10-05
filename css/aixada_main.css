@@ -103,8 +103,8 @@ table.tblForms 	td label 	{float:right;}
 
 
 /** common layout **/
-div#wrap			{width:90%; margin: 0 auto; background-color:#fff;}
-div#stagewrap		{width:100%; background-color:#fff;}
+div#wrap			{width:92%; margin: 0 auto; background-color:#fff;}
+div#stagewrap		{background-color:#ff; min-width:900px;}
 div#topMenu			{}
 div#menuBgBar		{padding:5px; margin-bottom:10px;}
 a#navMyAccount		{float:right;}
@@ -126,6 +126,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-centerDiv{margin:5px auto;}
 .aix-layout-max-W800 {max-width:800px; margin:5px auto;}
 
+
 .aix-layout-splitW80 {width:78%;}
 .aix-layout-splitW60 {width:59%;}
 .aix-layout-splitW40 {width:39%;}
@@ -144,7 +145,9 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 
 .aix-layout-title-with-icon {margin-left:100px;}
 
-.aix-style-widget				{margin:5px 5px; padding-bottom:2px;}
+.aix-layout-widget-left-col		{margin-right:20px; padding-bottom:2px;}
+.aix-layout-widget-right-col		{margin-left:20px; padding-bottom:2px;}
+.aix-layout-widget-center-col	{margin:0px 2%; padding-bottom:2px;}
 
 .aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
 .aix-style-entry-widget h2		{color:gray; border-bottom:3px solid #e4e4f1;}
@@ -187,7 +190,7 @@ div#rightCol		{width:38%; float:left; margin-left:2px; min-height:400px;}*/
 div#logonWrap 			{min-width:280px; float:right;}
 
 div#pwdWrap				{width:460px; margin:60px auto;}
-div#newsWrap			{float:left; max-width:800px;}
+/*div#newsWrap			{float:left; max-width:800px;}*/
 p#logonHeader			{width:100%; height:150px; margin:10px auto; background-color:#fff; background-image:url('../img/aixada_header1600.150.png');}
 .success_tips			{margin:20px; padding:15px; background-color:#d2f3d2; border:1px solid #72b42d; text-align:center; border-radius:10px;}
 sup						{color:red; font-size:0.6em; padding-top:3px;}
@@ -246,7 +249,7 @@ div#menuTable table td 	{padding:20px 30px; text-align:center;}
 div#menuTable a			{font-size:1.2em; text-decoration:none;}
 div#menuTable a:hover	{font-size:1.2em; text-decoration:underline;}
 **/
-div#homeWrap			{margin:0 auto; max-width:1000px;}
+/*div#homeWrap			{margin:0 auto; max-width:1000px;}*/
 /*div#leftIconCol			{width:30%; float:left; margin-right:30px;}
 div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}*/
 .homeIcon				{margin-bottom:20px; text-align:center;}

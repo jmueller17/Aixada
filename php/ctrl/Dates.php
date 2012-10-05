@@ -27,19 +27,6 @@ try{
 
     
   switch ($oper) {
-
-  	 /*case 'getEmptyOrderableDates':
-  	  	echo get_orderable_dates('get_empty_orderable_dates');
-  	  	exit;
-
-  	case 'getDatesWithOrders':
-  	  	echo get_orderable_dates('get_nonempty_orderable_dates');
-      	exit;
-      
-   case 'getDatesWithSometimesOrderable':
-  	  	echo get_orderable_dates('get_sometimes_orderable_dates');
-      	exit;
-     */ 
   	
   	case 'getToday':
   		echo get_dates('today', $format='array');
@@ -61,34 +48,6 @@ try{
   		echo dateRange($_REQUEST['fromDate'], $_REQUEST['toDate'],'Y-m-d', 'array');
   		exit;
   	
-  		
-  		
-  		
-   /*case 'get10Dates':
-        printXML(get_10_sales_dates_XML($date));
-        exit;
-
-    case 'getNextDate':
-        printXML(get_next_shop_date_XML());
-        exit;
-    
-    case 'getNextEqualShopDate':
-        printXML(get_next_equal_shop_date_XML());
-        exit;
-
-    case 'setOrderableDate':
-        set_orderable_date($date, $available);
-        exit;
-
-    case 'getYearsOfOrders':
-        printXML(query_XML_compact('SELECT DISTINCT YEAR(date_for_order) FROM aixada_order_item', 'years', 'year'));
-        exit;
-
-    case 'getOrderDatesOfYear':
-        printXML(next_shop_dates());
-        exit;*/
-  		  		
-
   	default:
     	throw new Exception("ctrlDates: \"oper=" . $_REQUEST['oper'] . "\" not valid in query");
   }

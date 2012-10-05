@@ -233,9 +233,22 @@
 				
 				var colDate = $(this).attr('colDate');
 
-				if ($(".Date-"+colDate).hasClass("dim60") || !getProviderId()){
+				if ($(".Date-"+colDate).hasClass("dim40")){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_past']; ?>",
+						type: 'warning'});
 					return false; 
-				}
+				} else if (!getProviderId()){
+					$.showMsg({
+						msg:"<?=$Text['sel_provider']; ?>",
+						type: 'warning'});
+					return false; 
+				} else if ($(".Date-"+colDate).hasClass("dim60")){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_deactivate_sent'];?>",
+						type: 'warning'});
+					return false; 
+				} 
 
 				var selector = ".dateth.Date-"+colDate;
 				$('#colActionIcons').attr('currentColDate',colDate);
@@ -553,6 +566,24 @@
 
 
 		/**
+		 *	inverts the orderable/not orderable selection of the entire row. 
+		 */
+		function toggleEntireRow(colDate)
+		{
+			var urlStr = 'php/ctrl/ActivateProducts.php?oper=activeAll4Date&provider_id='+getProviderId()+"&date="+colDate;
+			
+			$.post(urlStr, function(data){
+				if (data == 1){
+					$('#dot tbody').xml2html('reload');
+				} else {
+
+				}
+			})
+			
+		}
+
+
+		/**
 		 *	checks the closing date of a product
 		 */
 		function checkSetClosing(selDate){
@@ -738,17 +769,18 @@
 				e.stopPropagation();
 			})
 			.bind('click', function(e){
+
 				var action = $('a',this).attr('id');
+				var selDate = $('#colActionIcons').attr('currentColDate');
+				
 				switch (action){
-					case 'tfIconCol-repeat':
-						
-						var selDate = $('#colActionIcons').attr('currentColDate');
+					case 'tfIconCol-repeat':		
 						checkRepeat(selDate);
 						break;
 					case 'tfIconCol-selrow':
+						toggleEntireRow(selDate);
 						break;
 					case 'tfIconCol-close':
-						var selDate = $('#colActionIcons').attr('currentColDate');
 						checkSetClosing(selDate);
 						break;
 				}
@@ -880,7 +912,7 @@
 <div id="limbo" class="hidden">0</div>
 <div id="colActionIcons" class="ui-widget ui-widget-content ui-corner-all hidden" currentColDate="">
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> <?php echo $Text['btn_mod_date']; ?></a></p>
-	<!-- p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> <?php echo $Text['btn_entire_row']; ?></a></p-->
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> <?php echo $Text['btn_entire_row']; ?></a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> <?php echo $Text['btn_repeat']; ?></a></p>
 </div>
 

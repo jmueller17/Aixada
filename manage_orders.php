@@ -63,8 +63,10 @@
 
 			//order overview filter option
 			var gFilter = (typeof $.getUrlVar('filter') == "string")? $.getUrlVar('filter'):'pastMonths2Future';
-			
 
+			var gToday = '';
+			
+			//set shoping date
 			$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
 				onSelect : function (dateText, instance){
@@ -73,14 +75,35 @@
 				}
 			}).hide();
 
+			
+			//date for order for convert preorder
+			$("#datepicker2").datepicker({
+				dateFormat 	: 'DD, d MM, yy',
+				onSelect : function (dateText, instance){
+
+				},
+				beforeShowDay: function(date){ //deactivate past dates
+						var today = $.datepicker.formatDate('yy-mm-dd', gToday)
+						var ymd = $.datepicker.formatDate('yy-mm-dd', date);
+						if (ymd <= today) {
+						    return [false,"","Unavailable"];			    
+						} else {
+							  return [true, ""];
+						}
+
+				},
+					
+			});
+
 			$('#showDatePicker').click(function(){
 				$('#datepicker').toggle();
 			});
 
 			$.getAixadaDates('getToday', function (date){
-				var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
-				$("#datepicker").datepicker('setDate', today);
+				gToday = $.datepicker.parseDate('yy-mm-dd', date[0]);
+				$("#datepicker").datepicker('setDate', gToday);
 				$("#datepicker").datepicker("refresh");		
+				$("#datepicker2").datepicker("refresh");		
 				$('#indicateShopDate').text($.getCustomDate(date[0]));		
 			});	
 			
@@ -346,6 +369,51 @@
 				}
 			});
 				
+
+			$('#dialog_convertPreorder').dialog({
+				autoOpen:false,
+				width:420,
+				height:500,
+				buttons: {  
+					"<?=$Text['btn_save'];?>" : function(){
+						var $this = $(this);
+
+						if ($.getSelectedDate('#datepicker2') == $.datepicker.formatDate('yy-mm-dd', gToday)){
+							$.showMsg({
+								msg:"Please select an order date starting from at least tomorrow onwards.",
+								type: 'warning'});
+							return false; 
+						}
+						
+						$.ajax({
+							type: "POST",
+							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker2'),
+							success: function(txt){
+
+								$this.button('disable');
+								setTimeout(function(){
+									$this.dialog( "close" )
+
+									//switchTo('overview');
+								},2000);
+							},
+							error : function(XMLHttpRequest, textStatus, errorThrown){
+								$.showMsg({
+									msg:XMLHttpRequest.responseText,
+									type: 'error'});
+								
+							}
+						});
+	
+						
+						},
+				
+					"<?=$Text['btn_close'];?>"	: function(){
+						$( this ).dialog( "close" );
+						} 
+				}
+			});
+
 			
 		
 			//interactivity for editing cells
@@ -580,9 +648,18 @@
 					var orderId = $(row).attr("id");
 					var timeLeft = parseInt(tds.eq(4).text());
 					var status = tds.eq(8).text();
+					var isPreorder = (tds.eq(3).text() == '1234-01-23')? true:false;
+
+					if (isPreorder){ //preorder has no closing date
+						tds.eq(3).text('preorder!');
+						tds.eq(6).text('-');
+					}
 					
 					if (timeLeft > 0){ 	// order is still open
 						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="<?=$Text['order_open'];?>"></span>');
+
+					} else if (timeLeft < 0 && isPreorder){ //preorder is not closed 
+						tds.eq(4).text("-");
 						
 					} else {			//order is closed
 						tds.eq(4).text("closed");
@@ -591,14 +668,13 @@
 						formatRevisionStatus(statusTd);
 					}
 
-					
-					if (orderId > 0){ 
+
+					if (orderId > 0 && !isPreorder){ //if it has order id, it has been sent off to provider
 						var ts = tds.eq(5).text();
 						var str = (ts == "0000-00-00 00:00:00")? '-':'<p title="'+ts+'">'+ts.substr(0,10)+'</p>';
-						
 						tds.eq(5).html(str);
 					} else {
-						//while open and not sent off, no order_id exists
+						//while open and not sent off, no order_id exists. show the finalize button
 						tds.eq(1).html('<p>-</p>');
 						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder"><?=$Text['finalize_now'];?></a></p>');
 					}
@@ -624,6 +700,15 @@
 					var providerId = $(this).parents('tr').attr('providerId');
 					var timeLeft = $(this).parents('tr').children().eq(4).text();
 					var msgt = "<?=$Text['msg_finalize'] ;?>";
+
+					
+					if (date == '1234-01-23'){ // is preorder, finalize means to assign also an order date
+						$("#dialog_convertPreorder").dialog("open");
+
+						e.stopPropagation();
+						return false; 
+					}
+
 					
 					if (timeLeft > 0){
 						msgt = "<?=$Text['msg_finalize_open'];?>"
@@ -1011,7 +1096,32 @@
 						}
 					});			
 				}
-				
+
+
+				/**
+				 *	convert a preorder to order by assigning a date_for_order
+				 */
+				function finalizePreorder(providerId){
+
+					$("#dialog_convertPreorder").dialog("open");
+
+					
+					/*$.ajax({
+						type: "POST",
+						url: 'php/ctrl/Orders.php?oper=finalizePreOrder&provider_id='+providerId+'&date='+orderDate,
+						success: function(txt){
+							$('#tbl_orderOverview tbody').xml2html('reload');
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							$.showMsg({
+								msg:XMLHttpRequest.responseText,
+								type: 'error'});
+							
+						}
+					});*/
+
+						
+				}
 					
 
 				/**
@@ -1071,6 +1181,7 @@
 							
 						case 'view':
 							var title = gSelRow.children().eq(2).text();
+
 							//$('#viewOrderRevisionStatus') set the order status here. 
 							$('.providerName').html(title);							
 							$('.overviewElements').hide();
@@ -1084,10 +1195,9 @@
 								complete : function(rowCount){
 									$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
 									$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
-									var std = $('#orderDetailRevisionStatus');
-									//alert(std.text()); 
-									//std.addClass('asOrdered').html('asdf');
-									formatRevisionStatus(std);
+									//copy the order status 
+									var tdStatus = gSelRow.children().eq(8).clone();
+									$('#orderDetailRevisionStatus').before(tdStatus).remove();
 								}
 			 				});
 							
@@ -1096,6 +1206,8 @@
 					}
 					gSection = page; 
 				}
+
+				
 				
 			
 			
@@ -1136,6 +1248,7 @@
 						<li><a href="javascript:void(null)" id="pastMonth"><?=$Text['filter_month'] ; ?></a></li>
 						<li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
 						<li><a href="javascript:void(null)" id="limboOrders"><?=$Text['filter_postponed'];?></a></li>
+						<li><a href="javascript:void(null)" id="preOrders"><?=$Text['nav_report_preorder'];?></a></li>
 					</ul>
 				</div>				
 		   	</div> 	
@@ -1410,6 +1523,14 @@
 	</table>
 </div>	
 
+
+<div id="dialog_convertPreorder" title="Convert preorder to order">
+	<p>&nbsp;</p>
+	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"></p>
+	<p>Conver this preorder to a regular order. This will assign an order date, i.e. when the expected items will arrive.</p>
+	<p>&nbsp;</p>
+	<div id="datepicker2"></div>
+</div>
 
 <div id="dialog_setShopDate" title="Set shopping date">
 	<p>&nbsp;</p>
