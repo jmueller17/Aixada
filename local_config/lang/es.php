@@ -4,12 +4,7 @@
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
-
-define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
-require_once(__ROOT__ . "local_config/config.php");
-
-$coop = configuration_vars::get_instance()->coop_name;
+$coop = "la Aixada";
 
 $Text['es'] = 'Castellano';
 
@@ -258,7 +253,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Bienvenid@s a l'" . $coop . "!";
+$Text['welcome_logon'] = "Bienvenid@s a " . $coop . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
@@ -303,7 +298,7 @@ $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
 $Text['nav_report_account'] = "Cuentas";
 $Text['nav_report_preorder'] = "Prepedidos";
-$Text['nav_report_timelines'] = "Evolución de l'" . $coop;
+$Text['nav_report_timelines'] = "Evolución de " . $coop;
 $Text['nav_report_timelines_uf'] = "Por UFs";
 $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";

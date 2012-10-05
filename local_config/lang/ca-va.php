@@ -3,11 +3,7 @@
 // contribute by Cristóbal Cabeza-Cáceres; Jordi Losantos
 // Email: cristobal.cabeza@gmail.com; jordi@losantos.name
 
-define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
-require_once(__ROOT__ . "local_config/config.php");
-
-$coop = configuration_vars::get_instance()->coop_name;
+$coop = "l'Aixada";
 
 $Text['ca-va'] = 'Català';
 $Text['charset'] = "utf-8";
@@ -252,7 +248,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Benvinguts/des a l'" + $coop + "!";
+$Text['welcome_logon'] = "Benvinguts/des a " + $coop + "!";
 $Text['logon'] = "Usuari";
 $Text['pwd']	= "Contrasenya";
 $Text['old_pwd'] = "Contrasenya antiga";
@@ -298,7 +294,7 @@ $Text['nav_mng'] = "Gestiona";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
 $Text['nav_report_account'] = "Comptes";
-$Text['nav_report_timelines'] = "Evolució de l" + $coop;
+$Text['nav_report_timelines'] = "Evolució de " + $coop;
 $Text['nav_report_timelines_uf'] = "Per UFs";
 $Text['nav_report_timelines_provider'] = "Per proveidors";
 $Text['nav_report_timelines_product'] = "Per productes";
