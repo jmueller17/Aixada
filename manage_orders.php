@@ -1223,7 +1223,7 @@
 <body>
 <div id="wrap">
 	<div id="headwrap">
-		<?php include "php/inc/menu2.inc.php" ?>
+		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 	

@@ -14,7 +14,7 @@ database-definition.up-to-date: aixada.sql $(DB_DUMP) dbUpgradeAixada2.1ToAixada
 	mysql --default-character-set=utf8 -u $(DB_USER) --password="$(DB_PASSWD)" -e "drop database $(DB_NAME); create database $(DB_NAME); use $(DB_NAME); source $(DB_DUMP); source dbUpgradeAixada2.1ToAixada2.5.sql;"
 	touch database-definition.up-to-date
 
-database-queries.up-to-date: aixada_setup_queries.sql $(QUERIES)
+database-queries.up-to-date: setup/aixada_setup_queries.sql $(QUERIES)
 	mysql -u $(DB_USER) --password="$(DB_PASSWD)" -e "use $(DB_NAME); source setup/aixada_setup_queries.sql;"
 	touch database-queries.up-to-date
 
