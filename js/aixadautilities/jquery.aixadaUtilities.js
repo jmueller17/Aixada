@@ -12,21 +12,26 @@ $(function(){
 				var total = 0; 
 				var totalIva = 0; 
 				var totalRevTax = 0; 
+				var totalNet = 0; 
 				$(sel).each(function(){
 					var price = new Number($(this).text());
+					var iva = new Number($(this).attr('iva'));
+					var rev = new Number($(this).attr('revTax'));
+					var tax = 1 + (iva+rev)/100; 
+					var net = price / tax; 
+					
 					total += price; 
-					var iva = $(this).attr('iva');
-					var rev = $(this).attr('revTax');
-					var tax = (price * (iva + rev))/100; 
-					totalIva += (tax*iva)/100;
-					totalRevTax += (tax*rev)/100;
+					totalNet += net;
+						
+					totalIva += net * (iva/100);
+					totalRevTax += net * (rev/100); 
+										
 				});
 				
 				sums['total'] = total.toFixed(2); 
 				sums['totalIva'] = totalIva.toFixed(2); 
 				sums['totalRevTax'] = totalRevTax.toFixed(2); 
-				sums['total_net'] = total - (totalIva+totalRevTax)
-				sums['total_net'] = sums['total_net'].toFixed(2);
+				sums['total_net'] = totalNet.toFixed(2);
 				return sums; 
 			},			
 			formatQuantity : function(obj){

@@ -14,8 +14,12 @@
 			searchAdd : "Buscar otro producto",
 			total : "Total",
 			subtotal : "Subtotal",
+			ivaTax : "Impuesto Valor Añadido",
+			ivaTaxAbbrev : "IVA",
+			ivaTaxInclAbbrev : "incl. IVA",			
 			revTax	: "Impuesto revolucionario",
 			revTaxAbbrev: "ImpRev",
+			revTaxInclAbbrev: "incl. ImpRev",
 			tblCol : {
 				productName : "Nombre",
 				providerName : "Proveedor",

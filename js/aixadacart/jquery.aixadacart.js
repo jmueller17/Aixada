@@ -214,7 +214,7 @@
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
-					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" />'
+					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" id="cart_iva_percent_'+itemObj.id+'" />'
 					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
 					//str += 								'<input type="hidden" name="time_left"  value="'+itemObj.time_left+'" id="cart_time_left_'+itemObj.id+'" /> ';
 					str += '<td class="'+deaTd+'">' + itemObj.unit + '</td>';
@@ -559,6 +559,7 @@
 			var total = 0; 
 			var subtotal = 0;
 			var rev_tax_total = 0; 
+			var iva_tax_total = 0; 
 			
 			$("#aixada_cart_list tbody tr").each(function(){
 				
@@ -566,19 +567,24 @@
 				var quantity 	= parseFloat($("#cart_quantity_"+id, $(this)).val());
 				var price    	= parseFloat($("#cart_price_"+id, $(this)).val());
 				var rev_tax	 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
+				var iva_tax 	= parseFloat($("#cart_iva_percent_"+id, $(this)).val());
 				
+				var tax = 1+(rev_tax+iva_tax)/100; 
 				var item_total 	= price * quantity; 
 				
-				//rev tax is already contained in price
-				var rev_tax_item = (item_total * rev_tax)/100; 
+				var item_net = item_total / tax; 
+				
+				//iva and revtax is contained in the unit_price
+				iva_tax_total += item_net * (iva_tax/100);
+				rev_tax_total += item_net * (rev_tax/100);
 	
-				subtotal += item_total;
-				rev_tax_total += rev_tax_item;
-				//total = subtotal + rev_tax_total;
-				total = subtotal;
+				subtotal += item_net;
+				
+				total += item_total;
 			});
 
 			$('#aixada_cart_list td.subtotal').text(String(subtotal.toFixed(2)));
+			$('#aixada_cart_list td.iva_tax_total').text(String(iva_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.rev_tax_total').text(String(rev_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.total').text(String(total.toFixed(2)));
 	}
@@ -645,9 +651,10 @@
 		tbl_head += '</thead>';
 		
 		var tbl_foot = 	'<tfoot>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="subtotal cart_dblBorderTop">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="5" class="rev_tax_label">'+$.aixadacart.revTaxAbbrev+' incl.</td><td class="rev_tax_total">0.00</td></tr>';
-		tbl_foot += '		<!--tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr-->';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="subtotal_label">'+$.aixadacart.subtotal+'</td><td class="subtotal cart_dblBorderTop">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="5" class="rev_tax_label">'+$.aixadacart.revTaxInclAbbrev+'</td><td class="rev_tax_total">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="5" class="iva_tax_label">'+$.aixadacart.ivaTaxInclAbbrev+'</td><td class="iva_tax_total">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="3"><p id="cartMsg"></p></td><td colspan="3"><button type="submit" id="btn_submit">'+$.aixadacart.submit+'</button></td></tr>';
 		tbl_foot += '	</tfoot>';
 		

@@ -82,26 +82,26 @@ try{
 
  		    	
 	    	
-	/*
-    case 'makeFavoriteOrderCart':
-        printXML(stored_query_XML_fields('make_favorite_order_cart', $uf_logged_in, $the_date, $_REQUEST['cart_name']));
-        exit;
+		/*
+	    case 'makeFavoriteOrderCart':
+	        printXML(stored_query_XML_fields('make_favorite_order_cart', $uf_logged_in, $the_date, $_REQUEST['cart_name']));
+	        exit;
+	
+	    case 'getFavoriteOrderCarts':
+	        printXML(stored_query_XML_fields('get_favorite_order_carts', $uf_logged_in));
+	        exit;
+	
+	    case 'getFavoriteOrdersOfCart':
+	        printXML(stored_query_XML_fields('products_for_favorite_order', $uf_logged_in, $_REQUEST['cart_id']));
+	        exit;
+	
+	    case 'deleteFavoriteOrderCart':
+	        printXML(stored_query_XML_fields('delete_favorite_order_cart', $uf_logged_in, $_REQUEST['cart_id']));
+	        exit;
+	
+		*/
 
-    case 'getFavoriteOrderCarts':
-        printXML(stored_query_XML_fields('get_favorite_order_carts', $uf_logged_in));
-        exit;
-
-    case 'getFavoriteOrdersOfCart':
-        printXML(stored_query_XML_fields('products_for_favorite_order', $uf_logged_in, $_REQUEST['cart_id']));
-        exit;
-
-    case 'deleteFavoriteOrderCart':
-        printXML(stored_query_XML_fields('delete_favorite_order_cart', $uf_logged_in, $_REQUEST['cart_id']));
-        exit;
-
-	*/
-
-    default:  
+    	default:  
     	 //throw new Exception("ctrlShopAndOrder: oper={$_REQUEST['oper']} not supported");  
         break;
     }

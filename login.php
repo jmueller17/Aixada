@@ -138,7 +138,7 @@ if (!isset($_SESSION)) {
 
 	<div id="stagewrap" class="ui-widget">
 		
-		<div class="floatLeft aix-layout-splitW20 aix-layout-widget-left-col">
+		<div class="floatLeft aix-layout-splitW20 aix-layout-widget-left-col hidden">
 			<div class="ui-widget-content ui-corner-all">
 				<h4 class="ui-widget-header">Global info</h4>
 			</div>

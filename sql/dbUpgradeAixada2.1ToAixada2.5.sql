@@ -220,12 +220,14 @@ where
 update
 	aixada_order_item oi,
 	aixada_product p,
-	aixada_iva_type iva
+	aixada_iva_type iva,
+	aixada_rev_tax_type r
 set
-	oi.unit_price_stamp = p.unit_price * (1 + iva.percent/100)
+	oi.unit_price_stamp = p.unit_price * (1 + (iva.percent+r.rev_tax_percent)/100)
 where
 	oi.product_id = p.id
-	and p.iva_percent_id = iva.id;	
+	and p.iva_percent_id = iva.id
+	and p.rev_tax_type_id = r.id;	
 		
 	
 /** add the keys to order_item **/
@@ -297,12 +299,14 @@ where
 update
 	aixada_shop_item si,
 	aixada_product p,
-	aixada_iva_type iva
+	aixada_iva_type iva,
+	aixada_rev_tax_type r
 set
-	si.unit_price_stamp = p.unit_price * (1 + iva.percent/100)
+	si.unit_price_stamp = p.unit_price * (1 + (iva.percent+r.rev_tax_percent)/100)
 where
 	si.product_id = p.id
-	and p.iva_percent_id = iva.id;	
+	and p.iva_percent_id = iva.id
+	and p.rev_tax_type_id = r.id;
 	
 	
 

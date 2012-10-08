@@ -295,6 +295,7 @@ class configuration_vars {
                    'may_edit_incident',
                    'may_edit_account',
                    'may_edit_unit_measure',
+             	   'may_edit_iva_type',
                    'may_view_all_accounts'),
              'Consumer' =>
              array('may_edit_incident',
@@ -304,7 +305,8 @@ class configuration_vars {
              array('may_edit_product',
                    'may_edit_provider',
                    'may_edit_incident',
-                   'may_edit_unit_measure'),
+                   'may_edit_unit_measure',
+             	   'may_edit_iva_type'),
 
              'Econo-Legal Commission' =>
              array('may_edit_incident',
@@ -322,7 +324,8 @@ class configuration_vars {
                    'may_edit_incident',
                    'may_edit_account',
                    'may_edit_unit_measure',
-                   'may_view_all_accounts'),
+                   'may_view_all_accounts',
+             	   'may_edit_iva_type'),
              
              'Fifth Commission' =>
              array('may_edit_incident'),

@@ -35,12 +35,12 @@ insert into aixada_orderable_type values
        
 insert into aixada_rev_tax_type values
        (1, 'default revolutionary tax', 3.00),
-       (2, 'basic necessities', 0.00),
+       (2, 'no revolutionary tax', 0.00),
        (3, 'luxury', 5.00);
        
 insert into aixada_iva_type values
 		(1, 0.00, 'no tax'),
-		(2, 18.00, 'a category');
+		(2, 18.00, '18 percent for certain products');
 
 insert into aixada_unit_measure values
        (1, 'SET_ME'),
