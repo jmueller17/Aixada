@@ -14,7 +14,7 @@ export FINAL = true
 
 config_dir:=local_config
 
-all: canned_responses.php sql/all $(config_dir)/config.php 
+all: $(wildcard canned_responses*.php) sql/all $(config_dir)/config.php 
 #sql/all js/all css/all
 
 
@@ -27,7 +27,7 @@ sql/all:
 # js/all:
 # 	$(MAKE) -C js
 
-canned_responses.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
+canned_responses%.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
 	php/lib/table_with_ref.php
 	php make_canned_responses.php
 
