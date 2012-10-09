@@ -2,6 +2,7 @@
 
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
@@ -199,11 +200,11 @@ function create_config_file($host, $user, $password, $db_name, $language)
 }
 
 try {
-    $host = get_param('db_host');
-    $user = get_param('db_user');
-    $password = get_param('db_pwd');
-    $db_name = get_param('db_name');
-    $pref_lang = get_param('pref_lang', 'en');
+    $host = configuration_vars::get_instance()->db_host;
+    $user = configuration_vars::get_instance()->db_user;
+    $password = configuration_vars::get_instance()->db_password;
+    $db_name = configuration_vars::get_instance()->db_name;
+    $pref_lang = configuration_vars::get_instance()->default_language;
     $first_uf = get_param('first_uf');
     $user_login = get_param('user_login');
     $user_password = crypt(get_param('user_password'), 'ax');
