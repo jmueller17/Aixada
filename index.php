@@ -458,7 +458,8 @@
 					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
 				</div>
 			</div>
-			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-middle-widget">
+			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-widget-center-col">
+
 				<ul>
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
@@ -528,7 +529,8 @@
 						</tfoot>
 					</table>
 				</div>
-			</div>			
+			</div>	
+					
 		</div>
 	</div>
 	

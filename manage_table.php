@@ -188,7 +188,7 @@ function navGrid_options() {
 				$("#detail").jqGrid({
 				  url: "", // this should be empty so that the table doesn't display junk on the first load of the page
 			      	height: 200,
-                                            width: 1600,
+                    width: 1600,
 			      	datatype: 'xml',
 			      	colNames: eval(colN),
 			      	colModel: eval('('+colM+')'),
@@ -213,9 +213,9 @@ function navGrid_options() {
 				}) // close jqgrid
 				
 	   			$("#detail").navGrid('#detail_pager',  
-				
+						 
 						   <?php navGrid_options(); ?>
-
+					
                   {reloadAfterSubmit:true, width:500}, 		//edit options
 			      {reloadAfterSubmit:true}, 		//add options
 			      {reloadAfterSubmit:true}, 		//del options

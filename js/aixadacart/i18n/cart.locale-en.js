@@ -14,8 +14,12 @@
 			searchAdd : "Search and add another item",
 			total : "Total",
 			subtotal : "Subtotal",
+			ivaTax : "Value Added Tax",
+			ivaTaxAbbrev : "VAT",
+			ivaTaxInclAbbrev : "incl. VAT",
 			revTax	: "Revolutionary Tax",
 			revTaxAbbrev: "RevTax",
+			revTaxInclAbbrev: "incl. RevTax",
 			tblCol : {
 				productName : "Name",
 				providerName : "Provider",

@@ -113,9 +113,9 @@ class DBWrap {
           $tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
           if (isset($Text[$tmp]))
               $bad_field = $Text[$tmp];
-          throw new ForeignKeyException('Please check your entry for the field "' . 
+          throw new ForeignKeyException('Foreign Key exception. Please check the field "' . 
                                         $bad_field . 
-                                        '". We cannot find it in the database; are you sure that it is valid?');
+                                        '". It either does not exist in the db or does not fullfil a foreign key constraint?');
 
       default:
           throw new DataException($safe_sql_string . ' generated error ' . $errno . ': ' . $error);
