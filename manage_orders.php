@@ -662,7 +662,7 @@
 						tds.eq(4).text("-");
 						
 					} else {			//order is closed
-						tds.eq(4).text("closed");
+						tds.eq(4).text("<?=$Text['closed'];?>");
 						var statusTd = $(row).children().eq(8); 
 						statusTd.attr('revisionStatus',status);
 						formatRevisionStatus(statusTd);
@@ -1402,7 +1402,7 @@
 							<p><?php echo $Text['total_after_revision']; ?></p>
 						</td>
 						<td>
-							<p class="textAlignRight  boldStuff">{delivered_total}</p>
+							<p class="textAlignRight  boldStuff">{delivered_total} €</p>
 						</td>
 					</tr>
 					<tr>
@@ -1422,7 +1422,7 @@
 							<p><?php echo $Text['validated'];?></p>
 						</td>
 						<td>
-							<p class="textAlignRight boldStuff">{validated_income}</p>
+							<p class="textAlignRight boldStuff">{validated_income} €</p>
 						</td>
 					</tr>
 					<tr>

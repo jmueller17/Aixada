@@ -710,9 +710,9 @@ $Text['btn_later'] = "Later"; //más tarde... futuro
 $Text['pattern_intro'] = "Activate the selected day and products for the next ";
 $Text['pattern_scale'] = "month(s) every ";
 $Text['week'] = "week";
-$Text['second'] = "second";  //2nd 
-$Text['third'] = "third";
-$Text['fourth'] = "fourth";
+$Text['second'] = "second week";  //2nd 
+$Text['third'] = "third week";
+$Text['fourth'] = "fourth week";
 $Text['msg_pattern'] = "NOTE: This action will re-generate all dates and products from the selected day onwards!";
 $Text['sel_closing_date'] = "Select new closing date";
 $Text['btn_mod_date'] = "Modify closing date";
@@ -757,6 +757,7 @@ $Text['dff_qty'] = "Diff. quantity";
 $Text['dff_price'] = "Diff. price";
 $Text['ti_mgn_stock_mov'] = "Stock movements";
 $Text['stock_acc_loss_ever'] = "Overall accumulated loss";
+$Text['closed'] = "closed"; 
 
 
 

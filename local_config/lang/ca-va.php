@@ -248,7 +248,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Benvinguts/des a " + $coop + "!";
+$Text['welcome_logon'] = "Benvinguts/des a " . $coop . "!";
 $Text['logon'] = "Usuari";
 $Text['pwd']	= "Contrasenya";
 $Text['old_pwd'] = "Contrasenya antiga";
@@ -294,7 +294,7 @@ $Text['nav_mng'] = "Gestiona";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
 $Text['nav_report_account'] = "Comptes";
-$Text['nav_report_timelines'] = "Evolució de " + $coop;
+$Text['nav_report_timelines'] = "Evolució " . $coop;
 $Text['nav_report_timelines_uf'] = "Per UFs";
 $Text['nav_report_timelines_provider'] = "Per proveidors";
 $Text['nav_report_timelines_product'] = "Per productes";
@@ -754,6 +754,7 @@ $Text['dff_qty'] = "Diff. quantity";
 $Text['dff_price'] = "Diff. price";
 $Text['ti_mgn_stock_mov'] = "Stock movements";
 $Text['stock_acc_loss_ever'] = "Overall accumulated loss";
+$Text['closed'] = "tancat";
 
 
 

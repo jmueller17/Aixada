@@ -2,7 +2,7 @@
 
 
 require_once(__ROOT__ . 'php/inc/database.php');
-require_once(__ROOT__ . 'general.php');
+require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/config.php');
 //$firephp = FirePHP::getInstance(true);
 

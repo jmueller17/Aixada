@@ -890,14 +890,14 @@
 							<?php echo $Text['pattern_scale']; ?> 
 							<select id="weeklyFreq" name="weeklyFreq">
 								<option value="1"><?php echo $Text['week']; ?></option>
-								<option value="2"><?php echo $Text['second'] . " " . $Text['week']; ?></option>
-								<option value="3"><?php echo $Text['third'] . " " . $Text['week']; ?></option>
-								<option value="4"><?php echo $Text['fourth'] . " " . $Text['week']; ?></option>
+								<option value="2"><?php echo $Text['second']; ?></option>
+								<option value="3"><?php echo $Text['third']; ?></option>
+								<option value="4"><?php echo $Text['fourth']; ?></option>
 							</select>
 	</p>
 							
 	<br/>
-	<p><<?php echo $Text['msg_pattern']; ?></p>
+	<p><?php echo $Text['msg_pattern']; ?></p>
 </div>
 
 

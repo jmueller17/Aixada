@@ -753,5 +753,6 @@ $Text['dff_qty'] = "Diff. quantity";
 $Text['dff_price'] = "Diff. price";
 $Text['ti_mgn_stock_mov'] = "Stock movements";
 $Text['stock_acc_loss_ever'] = "Overall accumulated loss";
+$Text['closed'] = "cerrado";
 
 ?>
