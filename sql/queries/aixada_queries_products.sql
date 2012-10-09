@@ -186,7 +186,7 @@ end|
 
 /**
  * returns all products for a given provider that are marked as 
- * either "always orderable" or "sometimes orderable" 
+ * either "always orderable" or "sometimes orderable" or "preorder"
  * independent if they are active or not active. 
  */
 drop procedure if exists get_type_orderable_products|
@@ -197,15 +197,22 @@ begin
 		p.id,
 		p.name as name,
 		pv.name as provider_name,
-		p.active as is_active
+		p.active as is_active,
+		(select 
+			count(*)
+		from 
+			aixada_product_orderable_for_date po
+		where
+			po.product_id = p.id
+			and po.date_for_order = '1234-01-23') as preorder
 	from 
-		aixada_product p,
-		aixada_provider pv 
+		aixada_provider pv,
+		aixada_product p
 	where 
-		p.provider_id = the_provider_id
-		and pv.id = the_provider_id
+		pv.id = the_provider_id
+		and p.provider_id = pv.id
 		and pv.active = 1
-		and p.orderable_type_id in (2,3)
+		and p.orderable_type_id in (2,3,4)
 	order by is_active desc, name desc;
 end|
 
@@ -323,8 +330,7 @@ begin
 		p.description,
 		p.category_id,
 		p.stock_actual,
-		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price,
-		if (p.orderable_type_id = 4, 'true', 'false') as preorder, 
+		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price, 
 		pv.name as provider_name,	
 		u.unit,
 		iva.percent as iva_percent,
@@ -407,9 +413,12 @@ begin
 	   	aixada_provider pv,
 		aixada_unit_measure u,
 		aixada_rev_tax_type r,
-		aixada_iva_type iva
+		aixada_iva_type iva,
+		aixada_product_orderable_for_date po
    where 
-  		p.orderable_type_id = 4
+  		p.orderable_type_id in (2,3,4)
+  		and po.date_for_order = '1234-01-23'
+  		and po.product_id = p.id
   		and p.active = 1	
      	and pv.active = 1
   		and p.provider_id = pv.id

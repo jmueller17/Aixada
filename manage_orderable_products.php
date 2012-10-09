@@ -64,7 +64,6 @@
 						var pastclass = (dd < today)? 'dim40':'';
 					
 						apstr += '<th class="dateth clickable '+ pastclass +' '+dateclass+'" colDate="'+gdates[i]+'">'+date+'</th>';
-						//tfoot += '<td class="tfootDateGenerate '+pastclass+' tf'+dateclass+'" colDate="'+gdates[i]+'"></td>';	
 
 						if (dd.getMonth() != visMonthYear[visMonthYear.length-1].getMonth()){
 							visMonthYear.push(dd);
@@ -110,11 +109,26 @@
 				loadOnInit:false,
 				rowComplete : function(rowIndex, row){		//construct table cells with product id and date
 					var id =  $(row).attr("id"); 			//get the product id
-					var ckbox = $("input:checkbox", row); 	//if the product is active or not
-					var cellStyle = (ckbox.attr("isactive") == 1)? "notOrderable":"deactivated";
+					var isactive = ($(row).attr('isactive')=="1")? true:false; //if product is active or not
+					var ispreorder = ($(row).attr('ispreorder')=="1")? true:false;
+					var cellStyle = (isactive)? 'notOrderable':'deactivated'; 
+					
+					/*if (!isactive){
+						cellStyle = "deactivated";
+					} else if (isactive && ispreorder){
+						cellStyle = "preorder"; 
+					} else if (isactive && !ispreorder){
+						cellStyle = 'notOrderable'; 
+					}*/
+
+					
 					var apstr = '';
 					
 					for (var i=0; i<gdates.length; i++){
+						if (ispreorder){
+							apstr = '<td class="preorder" colspan="'+gdates.length+'"><p class="textAlignCenter"><?=$Text["preorder_item"];?></p></td>';
+							break;
+						}
 						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)
 						dateidclass += ($(".Date-"+gdates[i]).hasClass("dim40"))? " dim40":""; 	//dim past dates
 						var tdid		= gdates[i]+"_"+id; 									//construct id selector of td-cell
@@ -122,17 +136,12 @@
 					}
 					$(row).append(apstr);
 
-					
-					//revise checkboxe attribute for each product row
-					if (ckbox.attr("isactive") == 1){
-						ckbox.attr("checked", "checked")
-					} else {
-						ckbox.removeAttr("checked");
+
+					if (!isactive){
 						if ($('#limbo').html() == 0){ //sort of patch for saving "show inactive products" state
 							$(row).hide();
 							counterNotActive++;
 						}
-						
 					}
 
 				},
@@ -212,6 +221,65 @@
 				$(this).parent().removeClass('ui-state-hover');
 			});
 		*/
+
+
+		//make the product name interactive for row actions menu
+		$('.rowActions')
+			.live('mouseenter', function(e){
+				$(this).addClass('ui-state-hover');
+
+			})
+			.live('mouseleave', function(e){
+				$(this).removeClass('ui-state-hover');
+			})
+			.live('click',function(e){
+
+				var curId = $(this).parent().attr('productId');
+				
+				$('#rowActionItems').attr('currentRowId',curId);
+				
+				$( "#rowActionItems" )
+	    			.show()
+	    			.position({
+						of: $(this),
+						my: 'left top',
+						at: 'left bottom',
+						offset: '10 0'
+					})
+					.bind('mouseleave', function(e){
+						$( "#rowActionItems" ).hide();
+					});
+
+			});
+
+		/**
+		 *	row actions menu
+		 */
+		$('.tfIconRow')
+			.bind('mouseenter', function(e){
+				$(this).addClass('ui-state-hover');
+				e.stopPropagation();
+
+			})
+			.bind('mouseleave', function(e){
+				$(this).removeClass('ui-state-hover');
+				e.stopPropagation();
+			})
+			.bind('click', function(e){
+				var productId =  $('#rowActionItems').attr('currentRowId');
+				var action = $('a',this).attr('id');
+
+				switch (action){
+					case 'tfIconRow-deactivate':	
+						deactivateProduct(productId);	
+						break;
+					case 'tfIconRow-preorder':
+						preorderProduct(productId);
+						break;
+				}
+				$('#rowActionItems').hide();
+		});
+		
 		
 
 		/**
@@ -367,36 +435,7 @@
 				$('#providerName').text(provider_name);
 
 		});
-
-
-
-		/**
-		 *	detect checkbox clicks for deactivating or activating the product as such (not for specific dates)  
-		 */
-		$('input[name="toggleDeActivateProducts"]').live('click', function(e){
-			var isDeactivated = ($(this).attr('checked') != 'checked')? false:true;
-			var product_id = $(this).attr('id').split("_")[1];
-			
-			if (isDeactivated){
-				changeProductStatus(product_id, 'activateProduct');
-			} else {
-				$.showMsg({
-					msg		: "<?=$Text['msg_err_deactivate_p'];?>",
-					buttons: {
-						"<?=$Text['btn_deactivate'];?>":function(){						
-							changeProductStatus(product_id,'deactivateProduct');
-							$(this).dialog("close");
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
-						}
-					},
-					type: 'confirm'});
-			}
-		});
-
-
-		
+				
 
 		/**
 		 *	dialog generate date pattern
@@ -441,10 +480,93 @@
 		});
 
 
+		/**
+		 *	check if product can be made preorderable
+		 */
+		function preorderProduct(productId){
+			var ispreorder = $('#'+productId).attr('ispreorder'); 
+				
+			if (ispreorder == "1"){
+				toggleOrderableProduct('reloadTable', productId, '1234-01-23');
+			} else {
+				$.showMsg({
+					msg		: "<?=$Text['msg_make_preorder_p'];?>",
+					buttons: {
+						"<?=$Text['btn_ok_go'];?>":function(){						
+							toggleOrderableProduct('reloadTable', productId, '1234-01-23');
+							$(this).dialog("close");
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+			}
+			 
+			
+			
+		}
+
+
+		/**
+		 *	check de-/activate entire product
+		 */
+		function deactivateProduct(productId){		
+			var isActive = ($('#'+productId).attr('isactive')=="1")? true:false;
+
+			if (!isActive){
+				changeProductStatus(productId, 'activateProduct');
+			} else {
+				$.showMsg({
+					msg		: "<?=$Text['msg_err_deactivate_p'];?>",
+					buttons: {
+						"<?=$Text['btn_deactivate'];?>":function(){						
+							changeProductStatus(productId,'deactivateProduct');
+							$(this).dialog("close");
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+			}
+		}
+		
+		/**
+		 *	sends off the request to deactivate or activate a product in general
+		 */
+		function changeProductStatus(product_id, oper){
+			$.ajax({
+				type: "POST",
+				url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+product_id,
+				success: function(msg){
+					if (oper == 'activateProduct'){
+						$('td.P-'+product_id).each(function(){
+							$(this).removeClass('deactivated isOrderable').addClass('notOrderable');
+						});
+						$('#'+product_id).attr('isactive',1);
+
+					} else if (oper == 'deactivateProduct'){
+						$('td.P-'+product_id).each(function(){
+							$(this).removeClass('notOrderable isOrderable').addClass('deactivated').empty();
+						});
+						$('#'+product_id).attr('isactive',0);
+
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown){
+					$.showMsg({
+						msg:XMLHttpRequest.responseText,
+						type: 'error'});
+				}
+			});
+		}
+		
 
 		/**
 		 *	changes the orderable status of a given product for a given date. triggered
-		 *  from checkOrderStatus 
+		 *  from checkOrderStatus. if the product was not orderable for this date it will 
+		 *  become orderable and vice versa. 
 		 */
 		function toggleOrderableProduct(id, productId, orderDate){
 				$.ajax({
@@ -454,8 +576,11 @@
 						//$('#deposit .loadAnim').show();
 					},	
 					success: function(txt){
-						toggleCell('#'+id);
-
+						if (id == 'reloadTable'){ //we change from/to preorder and have to rebuild the entire row
+							$('#dot tbody').xml2html('reload');
+						} else { //otherwise just change the look of the individual cell
+							toggleCell('#'+id);
+						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
@@ -631,34 +756,7 @@
 		}	
 
 	
-		/**
-		 *	sends off the request to deactivate or activate a product in general
-		 */
-		function changeProductStatus(product_id, oper){
-			$.ajax({
-				type: "POST",
-				url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+product_id,
-				success: function(msg){
-					if (oper == 'activateProduct'){
-						$('td.P-'+product_id).each(function(){
-							$(this).removeClass('deactivated isOrderable').addClass('notOrderable');
-						});
-						$('#ckbox_'+product_id).attr('checked','checked');
-
-					} else if (oper == 'deactivateProduct'){
-						$('td.P-'+product_id).each(function(){
-							$(this).removeClass('notOrderable isOrderable').addClass('deactivated').empty();
-						});
-						$('#ckbox_'+product_id).removeAttr('checked');
-					}
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-				}
-			});
-		}
+		
 
 		
 		/**
@@ -702,14 +800,12 @@
 								$(item).children('span').addClass('ui-icon ui-icon-check');
 								$('#limbo').html(1);
 							}
-							$('input[name="toggleDeActivateProducts"]').each(function(){
-								if ($(this).attr('checked') != 'checked'){
-									if ($(item).children('span').hasClass('ui-icon-check')){
-										$(this).parent().parent().show();
-									} else {
-										$(this).parent().parent().hide();
-									}
-								} 
+							$('#dot tbody tr').each(function(){
+								if ($(this).attr('isactive') == "0" && $('#limbo').text() == 1){
+									$(this).show();
+								} else if ($(this).attr('isactive') == "0" && $('#limbo').text() == 0){
+									$(this).hide();
+								}
 							});
 							break;
 						case 'plus7':
@@ -855,15 +951,12 @@
 				<tr>
 					<th><?php echo $Text['id'];?></th>
 					<th><?php echo $Text['name_item'];?></th>
-					<th><?php echo$Text['active'];?></th>
 				</tr>
 				</thead>
 				<tbody>
-					<tr id="{id}">
+					<tr id="{id}" productId="{id}" isactive="{is_active}" ispreorder="{preorder}">
 						<td class="prodActive">{id}</td>
-						<td>{name}</td>
-						<td><input type="checkbox" name="toggleDeActivateProducts" id="ckbox_{id}" isactive="{is_active}"/></td>
-									
+						<td class="clickable rowActions">{name} <span class="ui-icon ui-icon-triangle-1-s floatRight"></span></td>			
 					</tr>						
 				</tbody>
 
@@ -914,6 +1007,11 @@
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> <?php echo $Text['btn_mod_date']; ?></a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> <?php echo $Text['btn_entire_row']; ?></a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> <?php echo $Text['btn_repeat']; ?></a></p>
+</div>
+
+<div id="rowActionItems" class="ui-widget ui-widget-content ui-corner-all hidden aix-layout-fixW250 aix-style-padding3x3" currentRowId="">
+	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-deactivate"><?php echo $Text['do_deactivate_prod']; ?></a></p>
+	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-preorder"><?php echo $Text['do_preorder']; ?></a></p>
 </div>
 
 

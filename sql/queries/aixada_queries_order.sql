@@ -867,8 +867,7 @@ begin
 		oi.date_for_order = the_date_for_order
 	where
 		oi.date_for_order = '1234-01-23'
-		and p.provider_id = the_provider_id; 
-		
+		and p.provider_id = the_provider_id; 	
 	
 end|
 

@@ -35,11 +35,13 @@ try{
 	  case 'listAllOrderableProviders':
 	  	printXML(stored_query_XML('get_orderable_providers', 'providers', 'name'));
 	    exit;
-	      
+
+	  //retrieves the products for a given provider that have an entry in aixada_product_orderable_for_date
 	  case 'getOrderableProducts4DateRange':
 	  	printXML(stored_query_XML_fields('get_orderable_products_for_dates', get_param('fromDate'), get_param('toDate'),get_param('provider_id')));
 	  	exit; 	
-	  		
+
+	  //makes a product orderable for the given date / or not
 	  case 'toggleOrderableProduct':
 	  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'));
 	    exit;
@@ -55,7 +57,7 @@ try{
 	  case 'deactivateProduct':
 	  	echo do_stored_query('change_active_status_product', 0, get_param('product_id'));
 	  	exit;
-	  	
+	  		  	
 	  case 'generateDatePattern':
 	  	echo generate_date_product_pattern(get_param('provider_id'), get_param('date'), get_param('weeklyFreq'),  get_param('nrMonth') );
 	  	exit;

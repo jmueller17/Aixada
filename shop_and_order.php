@@ -519,7 +519,7 @@
                                  <label for="search"><?php echo $Text['search'];?></label>
 						<input id="search" value="" class="ui-widget-content ui-corner-all"/>
 				</div>
-				
+				<p>&nbsp;</p>
 				<div class="product_list_wrap">
 					<table id="product_list_search" class="product_list" >
 						<thead>

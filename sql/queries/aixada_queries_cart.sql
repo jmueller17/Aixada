@@ -88,7 +88,7 @@ begin
     p.category_id, 
     po.closing_date, 
     datediff(po.closing_date, today) as time_left,
-    if (p.orderable_type_id = 4 and oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
+    if (oi.date_for_order = '1234-01-23', 'true', 'false') as preorder, 
     rev.rev_tax_percent,
     iva.percent as iva_percent,
     um.unit

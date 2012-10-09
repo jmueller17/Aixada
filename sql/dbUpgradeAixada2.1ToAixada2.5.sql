@@ -60,6 +60,27 @@ where
 alter table
 	aixada_product
 	drop iva_percent;
+	
+/* convert orderable_type_id 2,3,4 to 2 */
+update 
+	aixada_product p
+set
+	orderable_type_id = 2
+where
+	orderable_type_id in (3,4);
+	
+/* update orderable types */
+delete from
+	aixada_orderable_type
+where 
+	id > 2; 
+
+update
+	aixada_orderable_type
+set
+	description = "orderable"
+where
+	id = 2; 
 
 
 

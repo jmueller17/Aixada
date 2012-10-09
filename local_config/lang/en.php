@@ -481,8 +481,8 @@ $Text['description_url'] = 'URL of description';
  * added after 14.5
  */
 $Text['msg_err_validate_self'] = 'You cannot validate your own cart!';
-$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preoder you have to choose a date in the future!';
-$Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the following date: ';
+//$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preoder you have to choose a date in the future!';
+//$Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the following date: ';
 //$Text['msg_can_be_ordered'] =  'Items can be ordered for this date';
 //$Text['msg_has_ordered_items'] = 'Items have been ordered for this day; they cannot be deleted, just moved';
 //$Text['msg_today'] = 'Today';
@@ -758,8 +758,11 @@ $Text['dff_price'] = "Diff. price";
 $Text['ti_mgn_stock_mov'] = "Stock movements";
 $Text['stock_acc_loss_ever'] = "Overall accumulated loss";
 $Text['closed'] = "closed"; 
-
-
+$Text['preorder_item'] = "This product forms part of an accumulative order";
+$Text['do_preorder'] = "De-/activate as preorder";
+$Text['do_deactivate_prod'] = "De-/activate entire product";
+$Text['msg_make_preorder_p'] = "You are about to set this product as *preorderable*. It will be part of an accumulative order which does not have any fixed order date (yet). People can order these items until a certain quantity has been reached and you close it. Are you sure to continue?";
+$Text['btn_ok_go'] = "Ok, go ahead!";
 
 
 
