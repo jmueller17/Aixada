@@ -160,7 +160,9 @@
 					$('#tbl_diffOrderShop').attr('currentProviderId','');
 					
 					globalRowIndex++;
-					if (globalRowIndex <= $('#tbl_Orders tbody').children().length) loadOrderDetails();
+					if (globalRowIndex <= $('#tbl_Orders tbody').children().length) {
+					    loadOrderDetails();
+					}
 				
 				}
 
