@@ -242,6 +242,7 @@
 				saveOnDelete: false,
 				submitSuccess : function (msg){
 					$('#tbl_cart_listing tbody').xml2html('reload'); 
+					$('#list_account tbody').xml2html('reload');
 					//reloadValidationUfs();					
 					//empty the cart
 					$(this).aixadacart("resetCart");	

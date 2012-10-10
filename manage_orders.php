@@ -384,10 +384,10 @@
 								type: 'warning'});
 							return false; 
 						}
-						
+						alert(1);
 						$.ajax({
 							type: "POST",
-							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker2'),
+							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('providerId')+'&date_for_order='+$.getSelectedDate('#datepicker2'),
 							success: function(txt){
 
 								$this.button('disable');
@@ -696,6 +696,7 @@
 			 */
 			$('.finalizeOrder')
 				.live('click', function(e){
+					gSelRow = $(this).parents('tr');
 					var date = $(this).parents('tr').attr('dateForOrder');
 					var providerId = $(this).parents('tr').attr('providerId');
 					var timeLeft = $(this).parents('tr').children().eq(4).text();
@@ -1097,31 +1098,6 @@
 					});			
 				}
 
-
-				/**
-				 *	convert a preorder to order by assigning a date_for_order
-				 */
-				function finalizePreorder(providerId){
-
-					$("#dialog_convertPreorder").dialog("open");
-
-					
-					/*$.ajax({
-						type: "POST",
-						url: 'php/ctrl/Orders.php?oper=finalizePreOrder&provider_id='+providerId+'&date='+orderDate,
-						success: function(txt){
-							$('#tbl_orderOverview tbody').xml2html('reload');
-						},
-						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
-							
-						}
-					});*/
-
-						
-				}
 					
 
 				/**

@@ -16,7 +16,7 @@ function navGrid_options() {
             echo '{edit:false,add:false,del:false,search:false},';
         }
     } else {
-        echo '{edit:false,add:false,del:false,search:false},';
+        	echo '{edit:false,add:false,del:false,search:false},';
     }
 }
 
@@ -113,7 +113,7 @@ function navGrid_options() {
 			  		filter_text = "&filter=" + filter_cond;
 				}
 			$("#desc").jqGrid({
-			  url: "php/ctrl/TableManager.php?table="+current_table+"&oper=listAll" + filter_text,
+			  		url: "php/ctrl/TableManager.php?table="+current_table+"&oper=listAll" + filter_text,
 			      	height: 200,
 			      	datatype: 'xml',
 			      	colNames: eval(colN),
@@ -131,19 +131,16 @@ function navGrid_options() {
 	        		rowList: [10,20,30],
 			      	autowidth: true, 
 			      	height:'100%',
-					//width:'100%',
 			      	pager: '#desc_pager', 
-			      	sortname: 'id',
+			      	sortname: 'name',
 			      	viewrecords: true,
 			      	sortorder: 'asc', 
 					onSelectRow: function(ids) { 
 							if (current_table == 'aixada_uf' || current_table == 'aixada_provider' || current_table == 'aixada_order_cart') {
 							var details = $.getDetails();
-							//alert(details['table'] + " " + details['key'] + " " + ids);
 							$("#detail").jqGrid('clearGridData');
 							$("#detail").jqGrid('setGridParam',{url:"php/ctrl/TableManager.php?table="+details['table']+"&oper=listAll&filter="+details['key']+"="+ids,page:1}); 	
-							$("#detail").jqGrid('setCaption', 'Detail for ' + current_table + ': ' +ids)
-														.trigger('reloadGrid'); 														
+							$("#detail").jqGrid('setCaption', 'Detail for ' + current_table + ': ' +ids).trigger('reloadGrid'); 														
 							$("#detail").jqGrid('setGridParam',{editurl:"php/ctrl/TableManager.php?table="+details['table']+"&oper=get_by_key"+"&key="+details['key']+"&val="+ids,page:1}); 
 							}
 					}, //end on select row
@@ -154,13 +151,11 @@ function navGrid_options() {
 				}) // close jqgrid
 				
 	   			$("#desc").navGrid('#desc_pager',  
-						   //	      {},
-						   //      {edit:false,add:true,del:true,search:false}, //options
 						   <?php navGrid_options(); ?>
-                                                   {reloadAfterSubmit:true, width:400}, 		//edit options
-			      {reloadAfterSubmit:true}, 		//add options
-			      {reloadAfterSubmit:true}, 		//del options
-			      {} //search options
+                          	{reloadAfterSubmit:true, width:600, dataheight:400, top:50, left:50}, 		//edit options
+			      			{reloadAfterSubmit:true, width:600, dataheight:400, top:50, left:50}, 		//add options
+			      			{reloadAfterSubmit:true}, 		//del options
+			     			{width:600, top:50, left:50} //search options
 			      
 			      ); 
 				
@@ -186,7 +181,7 @@ function navGrid_options() {
 	      		colM = result.col_model;
 	      		opt = result.field_options;
 				$("#detail").jqGrid({
-				  url: "", // this should be empty so that the table doesn't display junk on the first load of the page
+				  	url: "", // this should be empty so that the table doesn't display junk on the first load of the page
 			      	height: 200,
                     width: 1600,
 			      	datatype: 'xml',
@@ -204,7 +199,7 @@ function navGrid_options() {
 			      	autowidth: true, 
 			      	height:'100%',
 			      	pager: '#detail_pager', 
-			      	sortname: 'id',
+			      	sortname: 'name',
 			      	viewrecords: true,
 			      	sortorder: 'asc', 
 	        		multiselect: false, 
@@ -213,13 +208,11 @@ function navGrid_options() {
 				}) // close jqgrid
 				
 	   			$("#detail").navGrid('#detail_pager',  
-						 
 						   <?php navGrid_options(); ?>
-					
-                  {reloadAfterSubmit:true, width:500}, 		//edit options
-			      {reloadAfterSubmit:true}, 		//add options
-			      {reloadAfterSubmit:true}, 		//del options
-			      {} //search options
+                 		 	{reloadAfterSubmit:true, width:600, dataheight:400, top:50, left:50}, 		//edit options
+			      			{reloadAfterSubmit:true, width:600, dataheight:400, top:50, left:50}, 		//add options
+			      			{reloadAfterSubmit:true}, 		//del options
+			      			{} //search options
 			      
 			      ); 
 				
