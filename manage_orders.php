@@ -384,7 +384,7 @@
 								type: 'warning'});
 							return false; 
 						}
-						alert(1);
+						
 						$.ajax({
 							type: "POST",
 							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('providerId')+'&date_for_order='+$.getSelectedDate('#datepicker2'),
