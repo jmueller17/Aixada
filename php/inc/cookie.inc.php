@@ -66,7 +66,6 @@ class Cookie {
   static $resettime = '3000';
   static $glue  = '|';
   static $array_glue = '~';
-  //  static $array_glue1 = '*';
 
   public function __construct($logged_in=false, 
                               $user_id=false, 
@@ -80,52 +79,52 @@ class Cookie {
                               $language_names=false, 
                               $current_language_key=false, 
                               $theme=false) {
-      //    global $firephp;
-    
-  	$this->td = mcrypt_module_open(self::$cypher, '', self::$mode, '');
-    if (!$this->td) 
-      die("<br>Error in opening mcrypt with cypher=".self::$cypher .", mode=".self::$mode."<br>");
-    if ($logged_in) {
-        $this->logged_in = true;
-        $this->user_id = $user_id;
-        $this->login = $login;
-        $this->uf_id = $uf_id; 
-        $this->member_id = $member_id; 
-        $this->provider_id = $provider_id;
-        $this->roles = $roles;
-        $this->current_role = $current_role;
-        $this->language_keys = $language_keys;
-        $this->language_names = $language_names;
-        $this->current_language_key = $current_language_key;
-        $this->theme = $theme;
-        return;
-    } else {
-	if (array_key_exists(self::$cookiename, $_COOKIE)) {
-	    $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
-	} else {
-	  //	  header("Location: " . $app . "login.php?originating_uri=".$_SERVER['REQUEST_URI']);
+      $this->td = mcrypt_module_open(self::$cypher, '', self::$mode, '');
+      if (!$this->td) 
+	  die("<br>Error in opening mcrypt with cypher=".self::$cypher .", mode=".self::$mode."<br>");
+      if ($logged_in) {
+	  $this->logged_in = true;
+	  $this->user_id = $user_id;
+	  $this->login = $login;
+	  $this->uf_id = $uf_id; 
+	  $this->member_id = $member_id; 
+	  $this->provider_id = $provider_id;
+	  $this->roles = $roles;
+	  $this->current_role = $current_role;
+	  $this->language_keys = $language_keys;
+	  $this->language_names = $language_names;
+	  $this->current_language_key = $current_language_key;
+	  $this->theme = $theme;
+	  return;
+      } else {
+	  if (array_key_exists(self::$cookiename, $_COOKIE)) {
+	      $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
+	  } else {
+	      throw new AuthException('Bad cookie');
+	      //	  header("Location: " . $app . "login.php?originating_uri=".$_SERVER['REQUEST_URI']);
+	  }
       }
-    }
   }
+
   /**
    * This function packages, encrypts and sets the cookie. Moreover,
    * it copies all relevant data into $_SESSION['userdata'] 
    */
   public function set() {
-    $cookie = $this->package();
-    $userdata=array('user_id'      => $this->user_id, 
-		    'login'         => $this->login, 
-		    'uf_id'        => $this->uf_id, 
-		    'member_id'    => $this->member_id, 
-		    'provider_id'  => $this->provider_id,
-		    'roles'   => $this->roles,
-		    'current_role' => $this->current_role,
-                    'language_keys' => $this->language_keys,
-                    'language_names' => $this->language_names,
-                    'language' => $this->current_language_key,
-		    'theme' => $this->theme);
-    $_SESSION['userdata'] = $userdata;
-    setcookie(self::$cookiename, $cookie);
+      $cookie = $this->package();
+      $userdata=array('user_id'      => $this->user_id, 
+		      'login'         => $this->login, 
+		      'uf_id'        => $this->uf_id, 
+		      'member_id'    => $this->member_id, 
+		      'provider_id'  => $this->provider_id,
+		      'roles'   => $this->roles,
+		      'current_role' => $this->current_role,
+		      'language_keys' => $this->language_keys,
+		      'language_names' => $this->language_names,
+		      'language' => $this->current_language_key,
+		      'theme' => $this->theme);
+      $_SESSION['userdata'] = $userdata;
+      setcookie(self::$cookiename, $cookie);
   }
 
   /**
@@ -179,14 +178,12 @@ class Cookie {
    * is written to the cookie and to $_SESSION['userdata'].
    */
   public function change_language($new_language_key) {
-
       $this->current_language_key = $new_language_key;
       $_SESSION['userdata']['language'] = $this->current_language_key;
       $this->set();
   }
 
   public function logout() {
-      //    setcookie(self::$cookiename, "", 0);
     unset($_SESSION['userdata']);
 
     $this->logged_in = false;
