@@ -208,6 +208,7 @@ from
 	aixada_product p
 where 
 	p.id = oi.product_id 
+	and oi.date_for_order < '2012-10-10'
 order by 
 	oi.date_for_order asc;
 
@@ -233,7 +234,7 @@ set
 	o.date_for_shop = o.date_for_order,
 	o.revision_status = -1
 where
-	o.date_for_order < '2012-10-03';
+	o.date_for_order < '2012-10-10';
 	
 	
 	

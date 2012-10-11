@@ -41,7 +41,7 @@ class canned_table_manager {
      return "['id','Descripci\u00f3n','Detalles']";
 
  case 'aixada_product':
-     return "['id','Proveedor','Nombre','Descripci\u00f3n','C\u00f3digo de barras','Activo','Unidad familiar responsable','C\u00f3mo hacer el pedido','Categor\u00eda','Tipo de impuesto revolucionario','Porcentaje de IVA','Precio por unidad','Pedido por unidad','Vendido por peso','Cantidad m\u00ednima para tener en stock','Cantidad actual en stock','Diferencia con el stock m\u00ednimo','URL de descripci\u00f3n','TRANSLATION(picture)','TRANSLATION(ts)']";
+     return "['id','Proveedor','Nombre','Descripci\u00f3n','C\u00f3digo de barras','Activo','Unidad familiar responsable','Tipo de producto','Categor\u00eda','Tipo de impuesto revolucionario','Porcentaje de IVA','Precio por unidad','Pedido por unidad','Vendido por peso','Cantidad m\u00ednima para tener en stock','Cantidad actual en stock','Diferencia con el stock m\u00ednimo','URL de descripci\u00f3n','TRANSLATION(picture)','TRANSLATION(ts)']";
 
  case 'aixada_product_category':
      return "['id','Descripci\u00f3n']";
