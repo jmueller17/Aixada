@@ -60,6 +60,27 @@ where
 alter table
 	aixada_product
 	drop iva_percent;
+	
+/* convert orderable_type_id 2,3,4 to 2 */
+update 
+	aixada_product p
+set
+	orderable_type_id = 2
+where
+	orderable_type_id in (3,4);
+	
+/* update orderable types */
+delete from
+	aixada_orderable_type
+where 
+	id > 2; 
+
+update
+	aixada_orderable_type
+set
+	description = "orderable"
+where
+	id = 2; 
 
 
 
@@ -187,6 +208,7 @@ from
 	aixada_product p
 where 
 	p.id = oi.product_id 
+	and oi.date_for_order < '2012-10-10'
 order by 
 	oi.date_for_order asc;
 
@@ -212,7 +234,7 @@ set
 	o.date_for_shop = o.date_for_order,
 	o.revision_status = -1
 where
-	o.date_for_order < '2012-10-03';
+	o.date_for_order < '2012-10-10';
 	
 	
 	

@@ -242,6 +242,16 @@
 				saveOnDelete: false,
 				submitSuccess : function (msg){
 					$('#tbl_cart_listing tbody').xml2html('reload'); 
+					$('#list_account tbody').xml2html('reload');
+
+					//update nr of unvalidated carts in select
+					var txt = $('#uf_cart_select option:selected').text();
+					var nr = new Number(txt.substring(txt.lastIndexOf('#')+1, txt.length-1));
+					var rplstr = (nr == 1)? '':'(#'+(nr-1)+')'; 
+					var newTxt = txt.replace('(#'+nr+')', rplstr);
+			
+					$('#uf_cart_select option:selected').text(newTxt);
+					
 					//reloadValidationUfs();					
 					//empty the cart
 					$(this).aixadacart("resetCart");	

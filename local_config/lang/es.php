@@ -466,7 +466,7 @@ $Text['responsible_uf'] = 'Unidad familiar responsable';
 $Text['provider'] = 'Proveedor';
 $Text['description'] = 'Descripción';
 $Text['barcode'] = 'Código de barras';
-$Text['orderable_type'] = 'Cómo hacer el pedido';
+$Text['orderable_type'] = 'Tipo de producto';
 $Text['category'] = 'Categoría';
 $Text['rev_tax_type'] = 'Tipo de impuesto revolucionario';
 $Text['unit_price'] = 'Precio por unidad';
@@ -754,5 +754,11 @@ $Text['dff_price'] = "Diff. price";
 $Text['ti_mgn_stock_mov'] = "Stock movements";
 $Text['stock_acc_loss_ever'] = "Overall accumulated loss";
 $Text['closed'] = "cerrado";
+$Text['preorder_item'] = "This product forms part of an accumulative order";
+$Text['do_preorder'] = "De-/activate as preorder";
+$Text['do_deactivate_prod'] = "De-/activate entire product";
+$Text['msg_make_preorder_p'] = "You are about to set this product as *preorderable*. It will be part of an accumulative order which does not have any fixed order date (yet). People can order these items until a certain quantity has been reached and you close it. Are you sure to continue?";
+$Text['btn_ok_go'] = "Ok, go ahead!";
+
 
 ?>

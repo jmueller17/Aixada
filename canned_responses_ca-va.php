@@ -41,7 +41,7 @@ class canned_table_manager {
      return "['id','Descripci\u00f3','Detalls']";
 
  case 'aixada_product':
-     return "['id','Prove\u00efdor','Nom','Descripci\u00f3','Codi de barres','Actiu','Unitat familiar responsable','Com fer-ne la comanda','Categoria','Tipus d_impost revolucionari','Percentatge d_IVA','Preu per unitat','Unitat de comanda','Unitat de venda','Quantitat m\u00ednima per tindre en estoc','Quantitat actual en estoc','Difer\u00e8ncia amb l_estoc m\u00ednim','URL de descripci\u00f3','Imatge','TRANSLATION(ts)']";
+     return "['id','Prove\u00efdor','Nom','Descripci\u00f3','Codi de barres','Actiu','Unitat familiar responsable','Tipus de producte','Categoria','Tipus d_impost revolucionari','Percentatge d_IVA','Preu per unitat','Unitat de comanda','Unitat de venda','Quantitat m\u00ednima per tindre en estoc','Quantitat actual en estoc','Difer\u00e8ncia amb l_estoc m\u00ednim','URL de descripci\u00f3','Imatge','TRANSLATION(ts)']";
 
  case 'aixada_product_category':
      return "['id','Descripci\u00f3']";

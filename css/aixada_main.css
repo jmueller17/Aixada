@@ -286,6 +286,8 @@ div#cashbox_listing				{width:100%; clear:both;}
 .table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
 .table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
 .table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
+.table_datesOrderableProducts td.preorder		{background:#D1F3D1;}
+
 .dateTableMonthYear								{margin:0px 20px;}
 .tfootDateGenerate								{cursor:pointer}
  .infoTdLine									{font-size:0.8em; background-color:white; margin-bottom:-0.2em; padding-bottom:0px;}
@@ -294,10 +296,11 @@ div#colActionIcons  		{width:280px; padding:4px;}
 .tfIcon						{margin-right:6px; float:left;}
 .tdIconCenter				{margin:1px auto;}
 .tdIconRight				{float:right; padding:2px; margin-bottom:-12px;}
-.tfIconCol					{padding:5px;}
+.tfIconCol, .tfIconRow		{padding:5px;}
 .iconContainer				{padding:4px; margin:0px 3px; width:16px; height:16px; cursor:pointer;}
 .iconContainerNull			{padding:4px; margin:0px 3px; width:16px; height:16px;}
 .tfIconCol a, a:hover 		{text-decoration:none;}
+.tfIconRow a, a:hover 		{text-decoration:none;}
 
 
 /** for manage orders **/

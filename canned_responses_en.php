@@ -41,7 +41,7 @@ class canned_table_manager {
      return "['id','Description','Details']";
 
  case 'aixada_product':
-     return "['id','Provider','Name','Description','Barcode','Active','Responsible household','How to order','Category','Type of Revolutionary Tax','VAT in Percent','Unit Price','Ordered in which units','Sold in which units','Minimal amount to have in stock','Current amount in stock','Difference to minimal stock','URL of description','Picture','TRANSLATION(ts)']";
+     return "['id','Provider','Name','Description','Barcode','Active','Responsible household','Product type','Category','Type of Revolutionary Tax','VAT in Percent','Unit Price','Ordered in which units','Sold in which units','Minimal amount to have in stock','Current amount in stock','Difference to minimal stock','URL of description','Picture','TRANSLATION(ts)']";
 
  case 'aixada_product_category':
      return "['id','Description']";

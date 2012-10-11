@@ -29,9 +29,7 @@ insert into aixada_product_category values
 
 insert into aixada_orderable_type values
        (1, 'stock'),
-       (2, 'sometimes orderable'),
-       (3, 'always orderable'),
-       (4, 'cumulative order');
+       (2, 'orderable');
        
 insert into aixada_rev_tax_type values
        (1, 'default revolutionary tax', 3.00),
@@ -40,7 +38,7 @@ insert into aixada_rev_tax_type values
        
 insert into aixada_iva_type values
 		(1, 0.00, 'no tax'),
-		(2, 18.00, '18 percent for certain products');
+		(2, 10.00, '10 percent testing');
 
 insert into aixada_unit_measure values
        (1, 'SET_ME'),

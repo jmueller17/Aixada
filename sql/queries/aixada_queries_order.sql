@@ -91,7 +91,7 @@ begin
 			0 as total,
 			0 as delivered_total,
 			0 as validated_income,
-			0 as notes, 
+			0 as order_notes, 
 			0 as revision_status,
 			0 as delivery_ref,
 			0 as payment_ref,
@@ -861,14 +861,49 @@ drop procedure if exists convert_preorder|
 create procedure convert_preorder(in the_provider_id int, in the_date_for_order date)
 begin
 	
-	update 
+	start transaction;
+	
+	-- insert first entry in aixada_prodcuts_orderable_for_date -- 
+	insert into
+		aixada_product_orderable_for_date (date_for_order, product_id)
+	select
+		the_date_for_order, p.id
+	from
+		aixada_product p,
 		aixada_order_item oi
+	where
+		p.provider_id = the_provider_id
+		and oi.product_id = p.id
+		and oi.date_for_order = '1234-01-23';
+		
+		
+	-- set the new date_for_order -- 
+	update 
+		aixada_order_item oi,
+		aixada_product p
 	set 
 		oi.date_for_order = the_date_for_order
 	where
 		oi.date_for_order = '1234-01-23'
+		and oi.product_id = p.id
 		and p.provider_id = the_provider_id; 
 		
+		
+	-- delete the preorder date from products_orderable_for_date -- 
+	delete
+		po
+	from
+		aixada_product_orderable_for_date po,
+		aixada_product p
+	where
+		po.date_for_order = '1234-01-23'
+		and po.product_id = p.id
+		and p.provider_id = the_provider_id; 
+		
+	commit;
+	
+	-- finalize it -- 
+	call finalize_order(the_provider_id, the_date_for_order);
 	
 end|
 

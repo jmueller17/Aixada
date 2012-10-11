@@ -24,6 +24,7 @@
 	   	<script type="text/javascript" src="js/js_for_index.min.js"></script>
     <?php }?>
      
+   	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script> 
     <script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
 	   
 	<script type="text/javascript">

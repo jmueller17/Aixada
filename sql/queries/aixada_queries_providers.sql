@@ -18,7 +18,7 @@ begin
   where  
     pv.active = 1
     and pv.id = p.provider_id
-    and p.orderable_type_id in (2,3)
+    and p.orderable_type_id in (2,3,4)
   order by pv.name;
 end|
 
