@@ -157,6 +157,7 @@ create table aixada_unit_measure (
 
 create table aixada_rev_tax_type (
   id   	     		tinyint		 not null auto_increment,
+  name                  varchar(255)     not null,
   description		varchar(50)	 not null,
   rev_tax_percent	decimal(10,2),
   primary key (id)
@@ -167,9 +168,10 @@ create table aixada_rev_tax_type (
  * iva types associated then to different products
  */
 create table aixada_iva_type (
-  id   				smallint		not null auto_increment,
+  id   			     	smallint		not null auto_increment,
+  name                          varchar(255) not null, 
   percent			decimal(10,2) 	not null, 
-  description 		varchar(100)	default null,
+  description 		        varchar(100)	default null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
 

@@ -70,15 +70,15 @@ function get_substituted_names($table_name, $fields, $foreign_keys)
 
   // then assign names
   foreach($fields as $field) {
-    if (!isset($foreign_keys[$field]) or $foreign_keys[$field] == '') {
-      $substituted_name[$field] = $table_name . '.' . $field;
-    } else {
-      list ($ftable_name, $ftable_id, $ftable_desc) = $foreign_keys[$field];
-      $substituted_alias[$field] = get_fkey_alias($field);
-      $table_alias[$field] = (in_array($ftable_name, $doubled_foreign_keys) ? 
-			      get_table_alias($ftable_name, $field) : $ftable_name);
-      $substituted_name[$field] = $table_alias[$field] . '.' . $ftable_desc;
-    } 
+      if (!isset($foreign_keys[$field]) or $foreign_keys[$field] == '') {
+	  $substituted_name[$field] = $table_name . '.' . $field;
+      } else {
+	  list ($ftable_name, $ftable_id, $ftable_desc) = $foreign_keys[$field];
+	  $substituted_alias[$field] = get_fkey_alias($field);
+	  $table_alias[$field] = (in_array($ftable_name, $doubled_foreign_keys) ? 
+				  get_table_alias($ftable_name, $field) : $ftable_name);
+	  $substituted_name[$field] = $table_alias[$field] . '.' . $ftable_desc;
+      } 
   }
 //    if ($table_name == 'aixada_account') {
 //      var_dump($substituted_name);

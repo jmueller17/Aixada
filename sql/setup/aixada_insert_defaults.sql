@@ -32,13 +32,13 @@ insert into aixada_orderable_type values
        (2, 'orderable');
        
 insert into aixada_rev_tax_type values
-       (1, 'default revolutionary tax', 3.00),
-       (2, 'no revolutionary tax', 0.00),
-       (3, 'luxury', 5.00);
+       (1, 'default revolutionary tax', 3.00, 'what everybody pays'),
+       (2, 'no revolutionary tax', 0.00, 'everyone is exempt'),
+       (3, 'luxury', 5.00 , 'for capitalists');
        
 insert into aixada_iva_type values
-		(1, 0.00, 'no tax'),
-		(2, 10.00, '10 percent testing');
+		(1, 'no tax', 0, 'the best'),
+		(2, '10 percent testing', 10, 'did it work?');
 
 insert into aixada_unit_measure values
        (1, 'SET_ME'),
