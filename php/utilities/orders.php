@@ -7,6 +7,39 @@ require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
 
 
+
+
+function edit_total_order_quantities($order_id, $product_id, $new_quantity){
+	
+	$rs = do_stored_query('get_order_item_detail', $order_id, 0,0, 0,$product_id );
+	
+	$uf_qu = array();
+	
+	$total_qu = 0; 
+	//for each uf 
+	while ($row = $rs->fetch_assoc()) {
+		$uf_qu[$row['uf_id']] =  $row['quantity'];
+	 	$total_qu += $row['quantity'];	 
+	}		
+	DBWrap::get_instance()->free_next_results();
+	
+	//calc and save adjusted quantities for each uf
+	foreach ($uf_qu as $key => $value){
+		//percentage of uf qu
+		$pq = ($value * 100)/$total_qu;
+		
+		$nq = ($pq/100) * $new_quantity;
+		do_stored_query('modify_order_item_detail', $order_id, $product_id, $key, $nq);
+	
+	}
+	DBWrap::get_instance()->free_next_results();
+	
+	
+	echo $total_qu; 
+}
+
+
+
 /**
  * 
  * Finalizes an order which means, that an order is send to the provider (email, printed out, fetched by provider directly).

@@ -49,8 +49,8 @@ try{
 
 	    /**
 	     * retrieve products for providers. We assume
-	     * if date = 0, look for stock products
-	     * else 		look for orderable products
+	     * if date = 0, look for all active products (stock + orderable)
+	     * else 		look for orderable products for specified date
 	     * if provider_id > 0   get products according to provider_id
 	     * if category_id > 0 	get products according to category_id
 	     * if like != '' 		search product names

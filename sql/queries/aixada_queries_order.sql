@@ -164,7 +164,7 @@ end|
  * directly from aixada_order_item.
  */
 drop procedure if exists get_order_item_detail|
-create procedure get_order_item_detail (in the_order_id int, in the_uf_id int, in the_provider_id int, in the_date_for_order date)
+create procedure get_order_item_detail (in the_order_id int, in the_uf_id int, in the_provider_id int, in the_date_for_order date, in the_product_id int)
 begin
 	
 	declare edited boolean default is_under_revision(the_order_id);
@@ -176,6 +176,15 @@ begin
 	elseif (the_uf_id > 0 and edited is false) then
 		set wherec = concat(" and oi.uf_id=", the_uf_id);
 	end if;
+	
+	-- filter for product_id -- 
+	if (the_product_id > 0 and edited is true) then
+		set wherec = concat(wherec, " and ots.product_id=", the_product_id);
+	elseif (the_product_id > 0 and edited is false ) then
+		set wherec = concat(wherec, " and oi.product_id =", the_product_id);
+	elseif (edited is false) then
+		set wherec = concat(wherec, " and oi.product_id = p.id");
+	end if; 
 	
 	-- if the order items are edited, retrieve them from aixada_order_to_shop--
 	if (edited is true) then 
@@ -209,27 +218,10 @@ begin
 					oi.id = si.order_item_id
 				where
 					oi.order_id = ",the_order_id," 
-					and oi.product_id = p.id
 					",wherec,"
 				order by 
 					oi.product_id;");
 					
-				set @s = concat("select
-					oi.*,
-					p.name,
-					p.provider_id,
-					1 as arrived, 
-					0 as revised
-				from
-					aixada_order_item oi, 
-					aixada_product p
-				where
-					oi.order_id = ",the_order_id,"
-					and oi.product_id = p.id
-					", wherec ,"
-				order by
-					oi.product_id;");
-
 		
 		elseif (the_provider_id > 0 and the_date_for_order > 0) then
 			set @q = concat("select
@@ -248,7 +240,6 @@ begin
 					oi.id = si.order_item_id 	
 				where
 					oi.date_for_order = '",the_date_for_order,"'
-					and oi.product_id = p.id
 					and p.provider_id = ",the_provider_id,"
 					", wherec ,"
 				order by
@@ -265,6 +256,20 @@ begin
 	
 end |
 
+
+/*
+drop procedure if exists sum_product_quantity|
+create procedure sum_product_quantity (in the_order_id int, in the_product_id int)
+begin
+	
+	select
+		sum(oi.quantity) as ordered_total_quantity
+	from
+		aixada_order_item oi
+	where
+		oi.order_id = the_order_id
+		and oi.product_id = the_product_id; 
+end|*/
 
 
 /**

@@ -1,3 +1,11 @@
+/*******************************************
+ * UPGRADE FILE 
+ * to switch from Aixada v 2.03 to Aixada 2.5
+ * 
+ * NOTE: source the dump of v2.03. Then source this file. 
+ * be sure to edit the current date for the updates of aixada_order (see below)
+ */
+
 
 
 /**

@@ -34,9 +34,9 @@ try{
     		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id',0), get_param('provider_id',0), get_param('date',0) ));
     		exit;
 
-    	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf if needed. 
+    	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf and/or product_id if needed. 
     	case 'getProductQuantiesForUfs':
-    		printXML(stored_query_XML_fields('get_order_item_detail', get_param('order_id',0), get_param('uf_id',0), get_param('provider_id',0), get_param('date_for_order',0) ));
+    		printXML(stored_query_XML_fields('get_order_item_detail', get_param('order_id',0), get_param('uf_id',0), get_param('provider_id',0), get_param('date_for_order',0),0 ));
     		exit;
     		
     	//edits, modifies individual product quanties for order
@@ -48,7 +48,12 @@ try{
     		} else {
     			throw new Exception("An error occured during saving the new product quantity!!");      			
     		}
-    		exit;		
+    		exit;	
+
+    	case 'editTotalQuantity':
+    		//$splitParams = explode("_", get_param('product_id'));
+    		echo edit_total_order_quantities(get_param('order_id'), get_param('product_id'), get_param('quantity')); //this is the product_id
+    		exit;
     	
     	//retrieves for a given provider- or product id, and date if order is open, closed, send-off... NOT USED... DELETE?!
   		case 'checkOrderStatus':

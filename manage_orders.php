@@ -64,13 +64,14 @@
 			//order overview filter option
 			var gFilter = (typeof $.getUrlVar('filter') == "string")? $.getUrlVar('filter'):'pastMonths2Future';
 
+			//global today date
 			var gToday = '';
+
 			
 			//set shoping date
 			$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
 				onSelect : function (dateText, instance){
-					//var nd = $.getCustomDate(dateText)
 					$('#indicateShopDate').text(dateText);
 				}
 			}).hide();
@@ -91,10 +92,10 @@
 							  return [true, ""];
 						}
 
-				},
-					
+				}
 			});
 
+			
 			$('#showDatePicker').click(function(){
 				$('#datepicker').toggle();
 			});
@@ -150,12 +151,11 @@
 					for (var i=0; i<header.length; i++){
 						var colClass = 'Col-'+header[i];
 						var rowClass = 'Row-'+product_id;
-						//var tdid 	 = header[i] + "_" + product_id
 						tbodyStr += '<td class="'+colClass+' '+rowClass+' hidden interactiveCell toRevise" col="'+header[i]+'" row="'+product_id+'"></td>';
 					}
 
 					//product total quantities
-					tbodyStr += '<td id="total_'+product_id+'" class="nobr"></td>';
+					tbodyStr += '<td id="total_'+product_id+'" class="nobr totalQu"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -206,28 +206,28 @@
 								$('#ckboxArrived_'+product_id).attr('checked',false);
 							}
 							
-							$(tblCol).show();
+							$(tblCol).removeClass('hidden').show();
+							
 
 							//calculate total quantities and update last table cell
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
 								
-								var total = quTotal + "<span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
+								var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
 								
 								$('#total_'+lastId).html(total);
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
 							
-							quTotal += parseFloat(qu); 
-							quShopTotal += parseFloat(quShop);
+							quTotal += new Number(qu); 
+							quShopTotal += new Number(quShop);
 							lastId = product_id; 
 
 						});
 
 						
-							var total = quTotal + "<span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
-						
+						var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
 						$('#total_'+lastId).html(total);
 
 
@@ -414,6 +414,44 @@
 				}
 			});
 
+
+			//adjust total quantities
+			$('td.totalQu')
+				.live('mouseover', function(e){
+					
+					if (!$(this).hasClass('editable') && gSection == 'review'){
+						var pid = $(this).prev().attr('row')
+						$(this).children(':first')
+							.addClass('editable')
+							.editable('php/ctrl/Orders.php', {			//init the jeditable plugin
+									submitdata : {
+										oper: 'editTotalQuantity',
+										order_id : gSelRow.attr('orderId'),
+										product_id : pid 
+										},
+									name 	: 'quantity',
+									indicator: 'Saving',
+								    tooltip	: 	'Click to adjust total quantities',
+									callback: function(value, settings){
+
+										var pid = $(this).parent().prev().attr('row'); 
+										//loop through entire row to make qu adjustments
+										$('.Row-'+pid).each(function(){
+											if (!$(this).hasClass('hidden')){
+
+												
+												//$(this).attr('col')
+
+
+											} 
+
+										});
+										
+										//$(this).parent().removeClass('toRevise').addClass('revised');
+									} 
+							});
+					}
+			});
 			
 		
 			//interactivity for editing cells
@@ -447,8 +485,8 @@
 
 			})
 			.live('mouseout', function(e){
-				var col = $(this).attr('col');
-				var row = $(this).attr('row');
+				//var col = $(this).attr('col');
+				//var row = $(this).attr('row');
 
 				//$('.Row-'+row).removeClass('editHighlightRow');
 				//$('.Col-'+col).removeClass('editHighlightCol');

@@ -95,6 +95,8 @@
 			 
 			 
 			var lastDate = '';
+
+			//load the current orders by provider. introduces a date row when date changes
 			$('#tbl_Orders tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future',
@@ -103,18 +105,22 @@
 					var orderId = $(row).attr('orderId');
 					var timeLeft = $(row).children().eq(2).text();
 					
-					//var revisionStatus = $(row).attr('revision_status');
+					var revisionStatus = $(row).attr('revisionStatus');
 					
 					if (orderId > 0){ //order has been send
-						$(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["expected"];?></p>");
+						var st = formatOrderStatus(revisionStatus);
+						$(row).children().eq(3).addClass(st[1]).html('<p class="textAlignCenter">'+st[0]+'</p>');
+								
 					} else {
 						 $(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["not_yet_sent"];?></p>");		
-					}
+					} 
 
 					if (timeLeft <= 0){
 						$(row).children().eq(2).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
-					} 
+					}
+
 					
+					//create date heading row
 					var date = $(row).attr('dateForOrder');
 					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow"><?=$Text['ordered_for'];?> <span class="boldStuff">'+$.getCustomDate(date, "D d M, yy")+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
 					lastDate=date; 	
@@ -126,22 +132,21 @@
 							msg:"<?php echo $Text['msg_err_noorder']; ?>",
 							type: 'error'});	
 					}
-					globalRowIndex = 0; 
-					loadOrderDetails();
+					
 				}
 			});
 
 
-			
-			var globalRowIndex = 0; 
-		
-			function loadOrderDetails(){
 
-				//get either order_id OR date and provider for those orders that are still open/not finalized
-				var orderId = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('orderId');
-				var dateForOrder = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('dateForOrder');
-				var providerId = $('#tbl_Orders tbody tr').eq(globalRowIndex).attr('providerId');
-				
+			/**
+			 * load and show the order-shop comparison 
+			 */
+			function loadOrderDetails(orderId, dateForOrder, providerId){
+
+				$('#tbl_diffOrderShop').attr('currentOrderId','');
+				$('#tbl_diffOrderShop').attr('currentDateForOrder','');
+				$('#tbl_diffOrderShop').attr('currentProviderId','');
+								
 				if (orderId > 0) {
 					$('#tbl_diffOrderShop').attr('currentOrderId',orderId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
@@ -155,20 +160,10 @@
 						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder, 
 					});	
 					
-				} else {
-					$('#tbl_diffOrderShop').attr('currentOrderId','');
-					$('#tbl_diffOrderShop').attr('currentDateForOrder','');
-					$('#tbl_diffOrderShop').attr('currentProviderId','');
-					
-					globalRowIndex++;
-					if (globalRowIndex <= $('#tbl_Orders tbody').children().length) {
-					    loadOrderDetails();
-					}
-				
-				}
+				} 
+			} //end loadOrderDetails
 
 
-			}
 
 			
 			//tmp table to load the order - shop comparison
@@ -186,83 +181,102 @@
 						var orderId = $('#tbl_diffOrderShop').attr('currentOrderId');
 						var dateForOrder = $('#tbl_diffOrderShop').attr('currentDateForOrder');
 						var providerId = $('#tbl_diffOrderShop').attr('currentProviderId');
-						
+
+						var selector = (orderId > 0)? '.detail_'+orderId:'.detail_date_'+dateForOrder+'.detail_provider_'+providerId; 
+						//alert(selector);
 						var header = $('#tbl_diffOrderShop thead tr').clone();
 						var itemRows = $('#tbl_diffOrderShop tbody tr').clone();
 
 						if (orderId > 0){
-							var revision = $('#order_'+orderId).attr('revisionStatus');
+							//var revision = $('#order_'+orderId).attr('revisionStatus');
 							$('#order_'+orderId).after(itemRows).after(header);
-							$('.detail_'+orderId).hide().prev().hide();
-
-							
-							var modClass = '';
-							var modTxt = ''; 
-
-							switch (revision){
-								case "1":
-									modTxt = "<?=$Text['ostat_yet_received']; ?>";
-									break;
-								case "2": 
-									modClass = "asOrdered";
-									modTxt = "<?=$Text['ostat_is_complete']; ?>"; 
-									break;
-								case "3": 
-									modClass = 'postponed'
-									modTxt = "<?=$Text['ostat_postponed'];?>";
-									break;
-								case "4": 
-									modClass="orderCanceled";
-									modTxt = "<?=$Text['ostat_canceled'];?>";
-									break;
-								case "5": 
-									modClass = "withChanges";
-									modTxt = "<?=$Text['ostat_changes']; ?>";
-									break;	
-							}
+							$(selector).show().prev().show();
 					
-							$('#order_'+orderId).children().eq(3).addClass(modClass).html('<p class="textAlignCenter">'+modTxt+'</p>');		
+							//$('#order_'+orderId).children().eq(3).addClass(modClass).html('<p class="textAlignCenter">'+modTxt+'</p>');		
 
 						} else if (providerId > 0){  //not yet send / closed order
 							$('.Date_'+dateForOrder+'.Provider_'+providerId).after(itemRows).after(header);
-							$('.detail_date_'+dateForOrder+'.detail_provider_'+providerId).hide().prev().hide();
-							//$('.Date_'+dateForOrder+'.Provider_'+providerId).children().eq(4).text("-");
-
-						}
-
-						globalRowIndex++;
-						if (globalRowIndex <= $('#tbl_Orders tbody').children().length) {
-							loadOrderDetails();
-						}
+							$(selector).show().prev().show();
 						
+						}
+	
 					} 
-
-					
-					
 				}
 			});
+
+
+			/**
+			 *	converst the order status INT into CSS and text
+			 */
+			function formatOrderStatus(intStatus){
+				var modClass = '';
+				var modTxt = ''; 
+
+				switch (intStatus){
+					case "1":
+						modTxt = "<?=$Text['ostat_yet_received']; ?>";
+						break;
+					case "2": 
+						modClass = "asOrdered";
+						modTxt = "<?=$Text['ostat_is_complete']; ?>"; 
+						break;
+					case "3": 
+						modClass = 'postponed'
+						modTxt = "<?=$Text['ostat_postponed'];?>";
+						break;
+					case "4": 
+						modClass="orderCanceled";
+						modTxt = "<?=$Text['ostat_canceled'];?>";
+						break;
+					case "5": 
+						modClass = "withChanges";
+						modTxt = "<?=$Text['ostat_changes']; ?>";
+						break;	
+				}
+
+				//$(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["expected"];?></p>");
+				
+				return [modTxt, modClass];
+			}
 			
-			
+
+			/**
+			 *	expand order details
+			 */
 			$('.expandOrderIcon').live('click', function(){
 
-				var orderId = $(this).parents('tr').attr('orderId');
-				var dateForOrder =  $(this).parents('tr').attr('dateForOrder');
-				var providerId =  $(this).parents('tr').attr('providerId');
+				var curTr = $(this).parents('tr'); 
+				
+				var orderId = curTr.attr('orderId');
+				var dateForOrder =  curTr.attr('dateForOrder');
+				var providerId =  curTr.attr('providerId');
 
 				var selector = (orderId > 0)? '.detail_'+orderId:'.detail_date_'+dateForOrder+'.detail_provider_'+providerId; 
+				var isLoaded = ($(selector).length > 0)? true:false; 
+
 							
-				if ($('span',this).hasClass('ui-icon-plus')){
-					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
-					$(selector).show().prev().show();
-					$(this).parents('tr').children().addClass('ui-state-highlight ui-corner-all');
-				} else {
-					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
-					$(selector).hide().prev().hide();
-					$(this).parents('tr').children().removeClass('ui-state-highlight');
-				}
+					if ($('span',this).hasClass('ui-icon-plus')){
+						if (!isLoaded){
+							loadOrderDetails(orderId, dateForOrder, providerId);
+						} else {
+							$(selector).show().prev().show();							
+						}
+						$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
+						curTr.children().addClass('ui-state-highlight ui-corner-all');
+						
+					} else {
+						$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
+						$(selector).hide().prev().hide();
+						curTr.children().removeClass('ui-state-highlight');
+						
+					} 
+				
 			})
 			
 			
+			/**
+			 *	print stuff
+			 */
 			var printWin = null;
 			$('.printOrderIcon').live('click', function(){
 

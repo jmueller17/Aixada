@@ -20,7 +20,7 @@ try{
 	
 	  	case 'backupDatabase':
 	      $cv = configuration_vars::get_instance();
-	      $filename = __ROOT__ . 'local_config/dbBkups/' . $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';
+	      $filename = 'local_config/dbBkups/' . $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';
 	      //$filename = $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql';
 	      $output = array();
 	      $retval = 0;
