@@ -432,23 +432,20 @@
 									name 	: 'quantity',
 									indicator: 'Saving',
 								    tooltip	: 	'Click to adjust total quantities',
-									callback: function(value, settings){
+									callback: function(xml, settings){
 
-										var pid = $(this).parent().prev().attr('row'); 
-										//loop through entire row to make qu adjustments
-										$('.Row-'+pid).each(function(){
-											if (!$(this).hasClass('hidden')){
-
-												
-												//$(this).attr('col')
-
-
-											} 
-
-										});
-										
-										//$(this).parent().removeClass('toRevise').addClass('revised');
-									} 
+								    var pid = settings.submitdata.product_id;
+								    var total_quantity = 0;
+								    $(xml).find('row').each(function(){
+									    var uf_id = $(this).find('uf_id').text();
+									    var quantity = $(this).find('quantity').text();
+									    total_quantity = total_quantity + parseFloat(quantity);
+									    var selector = '.Col-' + uf_id + '.Row-' + pid;
+									    
+									    $(selector).removeClass('toRevise').addClass('revised').text(quantity);
+									})
+									$('#total_' + pid).children(':first').empty().text(total_quantity.toFixed(2));
+								} 
 							});
 					}
 			});

@@ -9,33 +9,30 @@ require_once(__ROOT__ . 'php/utilities/general.php');
 
 
 
-function edit_total_order_quantities($order_id, $product_id, $new_quantity){
+function edit_total_order_quantities($order_id, $product_id, $new_total_quantity){
 	
 	$rs = do_stored_query('get_order_item_detail', $order_id, 0,0, 0,$product_id );
 	
 	$uf_qu = array();
 	
-	$total_qu = 0; 
+	$total_quantity = 0; 
 	//for each uf 
 	while ($row = $rs->fetch_assoc()) {
 		$uf_qu[$row['uf_id']] =  $row['quantity'];
-	 	$total_qu += $row['quantity'];	 
+	 	$total_quantity += $row['quantity'];	 
 	}		
 	DBWrap::get_instance()->free_next_results();
 	
 	//calc and save adjusted quantities for each uf
-	foreach ($uf_qu as $key => $value){
-		//percentage of uf qu
-		$pq = ($value * 100)/$total_qu;
-		
-		$nq = ($pq/100) * $new_quantity;
-		do_stored_query('modify_order_item_detail', $order_id, $product_id, $key, $nq);
-	
+	$xml = '<rows>';
+	foreach ($uf_qu as $uf_id => $quantity){
+	    $new_quantity = round($quantity * $new_total_quantity / $total_quantity, 3);
+	    do_stored_query('modify_order_item_detail', $order_id, $product_id, $uf_id, $new_quantity);
+	    $xml .= "<row><uf_id>${uf_id}</uf_id><quantity>${new_quantity}</quantity></row>";
 	}
 	DBWrap::get_instance()->free_next_results();
 	
-	
-	echo $total_qu; 
+	printXML($xml . '</rows>');
 }
 
 
