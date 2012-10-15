@@ -107,7 +107,7 @@
 					
 					var revisionStatus = $(row).attr('revisionStatus');
 					
-					if (orderId > 0){ //order has been send
+					if (orderId > 0){ //order has been sent
 						var st = formatOrderStatus(revisionStatus);
 						$(row).children().eq(3).addClass(st[1]).html('<p class="textAlignCenter">'+st[0]+'</p>');
 								
@@ -486,8 +486,8 @@
 					<table id="tbl_Orders" class="tblListingDefault">
 						<tbody>
 							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
-								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td>{provider_name}</td>
+		 <td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+								<td><span class="textAlignRight tdMyOrderId">{id}</span> {provider_name}</td>
 								<td>{time_left}</td>
 								<td><?=$Text['loading_status_info'];?></td>
 								<td><p class="textAlignRight">{order_total}€</p></td>
@@ -524,7 +524,7 @@
 						</thead>
 						<tbody>
 							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" operatorName="{operator_name}" operatorUf="{operator_uf}">
-								<td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+																				  <td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td class="textAlignCenter">{date_for_shop}</td>
 								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
 								<td class="textAlignRight">{purchase_total}€</td>

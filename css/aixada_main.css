@@ -256,6 +256,7 @@ div#rightSummaryCol		{width:65%; float:left; padding-top:10px;}*/
 
 
 .overviewDateRow		{margin-bottom:5px; border-bottom:3px solid #cccccc;  }
+.tdMyOrderId {font-size:0.75em; }
 .tdMyOrder				{font-size:0.75em; background-color:#efefef; border-bottom:solid black 1px;}
 .MyOrderItem, .MyShopItem {font-size:0.75em; background-color:#f1f1f1;}
 
