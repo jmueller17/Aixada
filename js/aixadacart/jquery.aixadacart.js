@@ -686,7 +686,7 @@
 			str += '<li><a href="#tabsx-2" style="padding:1.20em;">'+$.aixadacart.title.preorder+'</a></li>';
 			str += '</ul>';
 			str += '<div id="tabsx-1">';
-			str += '<span class="cartLoadAnim cart_floatRight cart_animOrder cart_hidden"><img src="img/ajax-loader.gif"/></span>';
+			str += '<span class="cartLoadAnim cart_floatRight cart_animOrder cart_hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>';
 			str += '	<table id="aixada_cart_list" class="cart_product_list">';
 			str += tbl_head;
 			str += '	<tbody></tbody>';
@@ -710,7 +710,7 @@
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<div class="cart_container ui-widget-content ui-corner-all">';
-			str += '<h2 class="ui-widget-header ui-corner-all"> '+$.aixadacart.title.shop+'<span class="cartLoadAnim cart_floatRight cart_hidden"><img src="img/ajax-loader.gif"/></span></h2>';
+			str += '<h2 class="ui-widget-header ui-corner-all"> '+$.aixadacart.title.shop+'<span class="cartLoadAnim cart_floatRight cart_hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h2>';
 			str += '<table id="aixada_cart_list" class="cart_product_list">';
 			str += tbl_head;
 			str += '	<tbody></tbody>';

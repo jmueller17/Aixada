@@ -38,6 +38,10 @@
 			$('.reviewElements, .viewElements').hide();
 			$('.success_msg').hide();
 
+			//loading animation
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+			
+
 			var header = [];
 
 			var tblHeaderComplete = false; 
@@ -679,6 +683,9 @@
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					var tds = $(row).children();
 					var orderId = $(row).attr("id");
@@ -722,7 +729,8 @@
 							msg:"<?=$Text['msg_err_order_filter'];?>",
 							type: 'warning'});
 					}
-					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
+					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight');
+					$('.loadSpinner').hide(); 					
 				}
 			});
 
@@ -1322,7 +1330,7 @@
 		</div>
 		<div id="orderOverview" class="ui-widget overviewElements">
 			<div class="ui-widget-header ui-corner-all">
-				<p>&nbsp;</p>
+				<p style="height:30px;"><span style="float:right; margin-top:0px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></p>
 			</div>
 			<div class="ui-widget-content">
 			<table id="tbl_orderOverview" class="tblListingDefault">
@@ -1531,9 +1539,9 @@
 				
 			</div>
 		</div>
-		<p>&nbsp;</p>
+
 		<div id="reviseOrder" class="ui-widget reviewElements viewElements">
-			<div class="ui-widget-header ui-corner-all textAlignCenter">
+			<div class="ui-widget-header ui-corner-all textAlignCenter reviewElements">
 				<h3 id="orderInfoDate"></h3>
 			</div>
 			<div class="ui-widget-content">

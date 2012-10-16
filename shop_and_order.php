@@ -32,7 +32,7 @@
 	
 	$(function(){
 
-			
+				
 		
 	//decide what to do in which section
 	var what = $.getUrlVar('what');
@@ -88,14 +88,14 @@
 					
 					if (id < 0) { return true;}
 
-					$('.loadAnimShop').show();
+					$('.loadSpinner').show();
 					$('#product_list_provider tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker'),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
 						complete : function (rowCount){
-							$('.loadAnimShop').hide();
+							$('.loadSpinner').hide();
 							if (rowCount == 0){
 								$.showMsg({
 									msg:"<?php echo $Text['msg_no_active_products'];?>",
@@ -124,14 +124,14 @@
 					
 					if (id < 0) {return true;} 
 
-					$('.loadAnimShop').show();
+					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker'),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
 						complete : function (rowCount){
-							$('.loadAnimShop').hide();
+							$('.loadSpinner').hide();
 							if (rowCount == 0){
 								$.showMsg({
 									msg:"<?php echo $Text['msg_no_active_products'];?>",
@@ -150,14 +150,14 @@
 				var searchStr = $("#search").val(); 
 				
 				if (searchStr.length >= minLength){
-					$('.loadAnimShop').show();
+					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						}, 
 						complete : function(rowCount){
-							$('.loadAnimShop').hide();
+							$('.loadSpinner').hide();
 						}						
 					});	
 				} else {					 
@@ -394,6 +394,11 @@
 	$('.toggleShopDate').click(function(){
 		$("#datepicker").toggle();
 	});
+
+
+	//loading animation
+	$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+	$('#leftCol .loadSpinner').hide();
 							
 	});  //close document ready
 </script>
@@ -437,7 +442,7 @@
 				<li><a href="#tabs-3"><?php echo $Text['search']; ?></a></li>
 				<li><a href="#tabs-4"><?php echo $Text['special_offer']; ?></a></li>
 			</ul>
-					<span class="loadAnimShop floatRight hidden"><img src="img/ajax-loader.gif"/></span>
+			<span style="float:right; margin-top:-40px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			<div id="tabs-1">
 				<div class="wrapSelect">
 					<select id="providerSelect" class="longSelect">

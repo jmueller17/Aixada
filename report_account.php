@@ -28,6 +28,9 @@
 	
 	$(function(){
 
+			//loading animation
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+		
 			
 
 			//decide what to do in which section
@@ -51,13 +54,13 @@
 					resultsPerPage : 20,
 					paginationNav : '#list_account tfoot td',
 					beforeLoad : function(){
-						$('#account_listing .loadAnim').show();
+						$('.loadSpinner').show();
 					},
 					rowComplete : function (rowIndex, row){
 						$.formatQuantity(row);
 					},
 					complete : function(rowCount){
-						$('#account_listing .loadAnim').hide();
+						$('.loadSpinner').hide();
 						
 						if ($('#list_account tbody tr').length == 0){
 							$.showMsg({
@@ -191,7 +194,7 @@
 		<div id="account_listing" class="ui-widget">
 			<div class="ui-widget-content ui-corner-all">
 					
-					<h3 class="ui-widget-header ui-corner-all"><?=$Text['latest_movements'];?> <span class="account_id"></span> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><?=$Text['latest_movements'];?> <span class="account_id"></span> <span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<table id="list_account" class="tblListingDefault">
 					<thead>
 						<tr>

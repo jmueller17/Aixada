@@ -26,7 +26,12 @@
 	
 	$(function(){
 
+		//loading animation
+		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+		
+
 		$('.detailElements').hide();		
+
 		
 		function switchTo(section){
 			switch (section){
@@ -186,7 +191,7 @@
 				    url: "php/ctrl/Incidents.php?oper=mngIncident",
 				    data: dataSerial,
 				    beforeSend: function(){
-				   		$('#editorWrap .loadAnim').show();
+				   		$('#editorWrap .loadSpinner').show();
 					},
 				    success: function(msg){
 						switchTo('overview');
@@ -198,7 +203,7 @@
 				    complete : function(msg){
 				    	$('button').button( "option", "disabled", false );
 				    	$('#tbl_incidents tbody').xml2html('reload');
-				    	$('#editorWrap .loadAnim').hide();//
+				    	$('#editorWrap .loadSpinner').hide();//
 				    	
 				    	
 				    }
@@ -215,8 +220,12 @@
 				url: 'php/ctrl/Incidents.php',
 				params : 'oper=getIncidentsListing&filter=past2Month',
 				loadOnInit: true, 
+				beforeLoad: function(){
+					$('.loadSpinner').show();
+				},
 				complete : function(rowCount){
-					$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 	
+					$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 
+					$('.loadSpinner').hide();	
 				}
 		});
 
@@ -344,7 +353,7 @@
 		
 		<div id="incidents_listing" class="ui-widget overviewElements">
 			<div class="ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?>&nbsp;&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
+					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?>&nbsp;&nbsp;<span style="float:right;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h2>
 					<div id="tbl_div">
 					<table id="tbl_incidents" class="tblListingDefault">
 					<thead>
@@ -411,7 +420,7 @@
 					<span class="detailCreateElements"><?php echo $Text['create_incident'];?></span>
 					<span class="detailEditElements"><?=$Text['incident_details'];?></span> 
 					<span id="incident_id_info" class="detailEditElements">#</span>
-					<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span>
+					<span style="float:right; margin-top:-5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 				</h3>
 				<p id="incidentsMsg" class="user_tips"></p>
 				<form>

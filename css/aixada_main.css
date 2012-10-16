@@ -48,7 +48,7 @@ option 				{padding:1px 5px;}
 .oneQuarterCol		{width:20%; margin:2px 3px;}
 .splitCol			{width:48%; margin:4px 4px;}
 .minSidesMargin		{margin:0px 5px;}
-.loadAnim			{padding:3px 2px;}
+.loadAnim			{padding:3px 2px; margin-top:-6px;}
 .loadAnimValidate	{float:right; margin-top:10px; margin-right:10px;}
 .loadAnimShop		{margin-top:-27px; padding-right:5px; padding-left:2px;}
 .minPadding			{padding:3px;}

@@ -26,6 +26,8 @@
 	
 	$(function(){
 
+		//loading Spinner
+		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
 
 		//saves selected uf row 
 		var gSelUfRow = null;
@@ -87,6 +89,9 @@
 			url: 		'php/ctrl/UserAndUf.php',
 			params : 	'oper=getUfListing&all=1',
 			loadOnInit:	true,
+			beforeLoad: function(){
+				$('.loadSpinner').show();
+			},
 			//resultsPerPage:20,
 			//paginationNav : '#uf_list tfoot td',
 			beforeLoad : function(){
@@ -97,7 +102,7 @@
 				if (ckbx.val() == "1") ckbx.attr('checked',true); //set the checkbox if uf is active or not
 			},
 			complete : function(){
-				//$('#uf_listing .loadAnim').hide();
+				$('.loadSpinner').hide();
 				$('#uf_list tbody tr:even').addClass('rowHighlight'); 
 			}
 		});	
@@ -216,6 +221,7 @@
 				var is_active = $(this).attr('checked')? 1:0;
 				var uf_id =  $(this).parents('tr').attr('ufid'); 
 
+				$('.loadSpinner').show();
 				//toggle active state of uf. 
 				$.ajax({
 					type: "POST",
@@ -233,7 +239,7 @@
 						});
 				   	},
 				   	complete: function(){
-				   		//$('#dialog_uf .loadAnim').hide();	
+				   		$('.loadSpinner').hide();	
 					}  		
 				});
 
@@ -270,6 +276,7 @@
 				stupidHack = ''; 
 			}
 
+			//$('.loadSpinner').show();
 			$.ajax({
 				type: "POST",
                 url: 'php/ctrl/UserAndUf.php?oper=checkFormField&table=aixada_uf&field=name&value='+ufName+stupidHack, 
@@ -334,10 +341,10 @@
 			params: "oper=getMemberListing&all=1",
 			loadOnInit:true,
 			beforeLoad : function(){
-				$('#member_listing .loadAnim').show();
+				$('.loadSpinner').show();
 			},
 			complete : function(){
-				$('#member_listing .loadAnim').hide();
+				$('.loadSpinner').hide();
 				$('#member_list tbody tr:even').addClass('rowHighlight'); 
 			}
 		});
@@ -376,8 +383,12 @@
 			url : "php/ctrl/UserAndUf.php",
 			params : "oper=getMembersWithoutUF",
 			loadOnInit:true,
+			beforeLoad: function(){
+				$('.loadSpinner').show();
+			},
 			complete : function(){
-				$('#member_list_unassigned tbody tr:even').addClass('rowHighlight'); 
+				$('#member_list_unassigned tbody tr:even').addClass('rowHighlight');
+				$('.loadSpinner').hide(); 
 			}
 		});
 
@@ -385,8 +396,12 @@
 		$('#member_list_search tbody').xml2html('init',{
 			url : "php/ctrl/UserAndUf.php",
 			params : "oper=searchMember",
+			beforeLoad: function(){
+				$('.loadSpinner').show();
+			},
 			complete : function(){
-				$('#member_list_search tbody tr:even').addClass('rowHighlight'); 
+				$('#member_list_search tbody tr:even').addClass('rowHighlight');
+				$('.loadSpinner').hide(); 
 			}
 		});
 
@@ -405,7 +420,7 @@
 						});
 						
 					} else {					 
-						$('##member_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
+						$('#member_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
 						
 					}
 			e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
@@ -466,6 +481,7 @@
 							$.ajax({
 							   	url: 'php/ctrl/UserAndUf.php?oper=resetPassword&user_id='+$(this).attr('userId'),
 							   	beforeSend: function(){
+							   		$('.loadSpinner').show();
 								},
 							   	success: function(new_pwd){
 							   	 	$.showMsg({
@@ -478,6 +494,7 @@
 										type: 'error'});
 							   	},
 							   	complete : function(msg){
+							   		$('.loadSpinner').hide();
 							   	}
 							}); //end ajax
 										
@@ -670,6 +687,7 @@
 				   	url: urlStr,
 					data: sdata, 
 				   	beforeSend: function(){
+				   		$('.loadSpinner').show();
 					   	//$('button',mi).button('disable');
 					   	//myButton.button('disable');
 					   //$('#uf_listing .loadAnim').show();
@@ -692,6 +710,7 @@
 							type: 'error'});
 				   	},
 				   	complete : function(msg){
+				   		$('.loadSpinner').hide();
 					   	//$('button',mi).button('enable');
 					   //myButton.button('enable');
 					   //$('#uf_listing .loadAnim').hide();
@@ -724,7 +743,7 @@
 				//show single member	
 				case 'memberView':
 					$('.overviewElements, .ufDetailElements, .createMemberElements').hide();
-					$('.viewMemberElements').fadeIn(1000); 
+					$('.viewMemberElements').fadeIn(1000, function(){$('.loadSpinner').hide();}); 
 					break;
 
 				//show uf info and list all members
@@ -748,7 +767,7 @@
 						.attr('selected','selected')
 						.attr('disabled','disabled');
 
-					$('.ufDetailElements, viewMemberElements').fadeIn(1000);
+					$('.ufDetailElements, viewMemberElements').fadeIn(1000, function(){$('.loadSpinner').hide();});
 					break;
 
 				//show create form for new member	
@@ -761,7 +780,7 @@
 						return false; 
 					} 
 					$('.viewMemberElements').hide();
-					$('.createMemberElements').fadeIn(2000);
+					$('.createMemberElements').fadeIn(2000, function(){$('.loadSpinner').hide();});
 					break;
 			}
 
@@ -827,7 +846,7 @@
 				<li><a href="#tabs-3"><h2><?php echo $Text['search_members']; ?></h2></a></li>	
 				<li><a href="#tabs-4"><h2><?php echo $Text['unassigned_members']; ?></h2></a></li>
 			</ul>
-		
+			<span style="float:right; margin-top:-46px; margin-right:9px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			<div id="tabs-1" class="ui-widget-content ui-corner-all">
 				<table id="uf_list" class="tblListingDefault">
 						<thead>
@@ -992,6 +1011,7 @@
 				<h3 class="ui-widget-header padding10x5">
 					{name} (<span class="setUfId"><?php echo $Text['uf_short'];?>{uf_id}</span>)
 					<p class="iconContainer ui-corner-all floatRight ibtn_remove_member" memberid="{id}"><span class="ui-icon ui-icon-closethick"></span></p>
+					<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>	
 				</h3>
 				<form id="frm_save_member_{id}">
 				<input type="hidden" name="member_id" value="{id}"/>
@@ -1012,6 +1032,7 @@
 				<h3 class="ui-widget-header padding10x5">
 					<?php echo $Text['ti_add_member']; ?><span class="setUfId"></span>
 					<p class="iconContainer ui-corner-all floatRight ibtn_cancel_new_member"><span class="ui-icon ui-icon-closethick"></span></p>
+					<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 				</h3>
 				<form id="frm_add_member">
 				<input type="hidden" name="member_id"/>
