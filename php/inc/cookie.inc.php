@@ -230,8 +230,7 @@ class Cookie {
       } else {
 	  $cookie = 'x';
       }
-      return urlencode($cookie);
-      //      return urlencode($this->_encrypt($cookie));
+      return urlencode($this->_encrypt($cookie));
   }
 
   private function _unpackage($cookie) {
@@ -239,8 +238,7 @@ class Cookie {
 	  $this->logout();
 	  return;
       }
-      //      $buffer = $this->_decrypt(urldecode($cookie));
-      $buffer = urldecode($cookie);
+      $buffer = $this->_decrypt(urldecode($cookie));
       list($this->version, 
 	   $this->created, 
 	   $this->logged_in,
