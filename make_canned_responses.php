@@ -140,9 +140,9 @@ function make_canned_queries()
   foreach ($tables as $table) {
     $query_name = $table . '_list_all_query';
     $fkm = new foreign_key_manager($table);
-    $order_by_clause = ($table != 'aixada_unit_measure' ? 
-                        "' order by active desc, '" :
-                        "' order by '");
+    $order_by_clause = (in_array($table, array('aixada_unit_measure', 'aixada_iva_type')) ? 
+                        "' order by '" :
+                        "' order by active desc, '");
     $strSQL .= <<<EOD
 drop procedure if exists {$query_name}|
 create procedure {$query_name} (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
