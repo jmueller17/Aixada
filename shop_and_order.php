@@ -174,7 +174,7 @@
 
 	
 	$("#datepicker").datepicker({
-				dateFormat 	: 'DD d MM, yy',
+				dateFormat 	: 'DD d M, yy',
 				showAnim	: '',
 				beforeShowDay: function(date){		//activate only those dates that are available for ordering.
 					if (what == 'Order'){
@@ -418,7 +418,7 @@
 		    					echo $Text['ti_shop'];
 		    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
 		    				}?>
-		    	&nbsp;&nbsp;&nbsp;<input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
+		    	&nbsp; <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
     		</div>
     		<div id="titleRightCol">
     			<div id="ViewChoice">

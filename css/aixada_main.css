@@ -108,15 +108,15 @@ div#stagewrap		{background-color:#ff; min-width:900px;}
 div#topMenu			{}
 div#menuBgBar		{padding:5px; margin-bottom:10px;}
 a#navMyAccount		{float:right;}
-div#headwrap		{width:100%; background-color:#fff;}
+div#headwrap		{width:100%; min-width:1000px; background-color:#fff;}
 div#logonStatus		{text-align:right; padding:6px 5px; color:#999; font-size:0.8em;}
 div#wrapUFSelect	{margin-top:140px;}
 
 div#titlewrap		{width:100%; overflow:hidden; margin-bottom:20px;}
 div#titleLeftCol	{width:70%; float:left;}
 div#titleRightCol	{width:28%; float:right; padding-top:10px; padding-right:5px; line-height:2em;}
-div#titleLeftCol50	{width:40%; float:left;}
-div#titleRightCol50	{width:58%; float:left; padding-top:15px; line-height:2em;}
+div#titleLeftCol50	{width:50%; float:left;}
+div#titleRightCol50	{width:49%; float:left; padding-top:15px; line-height:2em;}
 div#titleSub		{float:right; margin-top:-18px; margin-right:20px;}
 div#ViewChoice		{float:right; margin-top:10px;}
 div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
@@ -306,7 +306,7 @@ div#colActionIcons  		{width:280px; padding:4px;}
 
 /** for manage orders **/
 h3#orderInfoDate			{font-size:1.5em;}
-.btn_right					{margin-top:0.8em; margin-right:-2em; float:right;}
+.btn_right					{margin-right:-2em; margin-left:4px; float:right;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
 .tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
 td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
@@ -359,7 +359,7 @@ input 					{height:1.6em;}
 
 .mediumSelect			{width:150px; }
 .longSelect				{width:300px; margin-bottom:10px;}
-.datePickerInput		{font-size:.85em; width:17em;}
+.datePickerInput		{font-size:.85em; width:12em; padding:2px;}
 .multipleSelect			{height:280px;}
 
 

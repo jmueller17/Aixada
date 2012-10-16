@@ -114,9 +114,10 @@ create procedure aixada_iva_type_list_all_query (in the_index char(50), in the_s
 begin
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_iva_type.id,
+      aixada_iva_type.name,
       aixada_iva_type.percent,
       aixada_iva_type.description 
     from aixada_iva_type ";
@@ -286,8 +287,8 @@ begin
       concat(aixada_uf.id, ' ', aixada_uf.name) as responsible_uf,
       aixada_orderable_type.description as orderable_type,
       aixada_product_category.description as category,
-      aixada_rev_tax_type.description as rev_tax_type,
-      aixada_iva_type.description as iva_percent,
+      aixada_rev_tax_type.name as rev_tax_type,
+      aixada_iva_type.name as iva_percent,
       aixada_product.unit_price,
       aixada_unit_measure_order.unit as unit_measure_order,
       aixada_unit_measure_shop.unit as unit_measure_shop,
@@ -389,6 +390,7 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_rev_tax_type.id,
+      aixada_rev_tax_type.name,
       aixada_rev_tax_type.description,
       aixada_rev_tax_type.rev_tax_percent 
     from aixada_rev_tax_type ";

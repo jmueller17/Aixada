@@ -487,7 +487,7 @@
 						<tbody>
 							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
 		 <td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td><span class="textAlignRight tdMyOrderId">{id}</span> {provider_name}</td>
+								<td title="Order id: #{id}">{provider_name}</td>
 								<td>{time_left}</td>
 								<td><?=$Text['loading_status_info'];?></td>
 								<td><p class="textAlignRight">{order_total}€</p></td>
