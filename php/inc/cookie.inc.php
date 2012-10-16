@@ -100,8 +100,8 @@ class Cookie {
 	  if (array_key_exists(self::$cookiename, $_COOKIE)) {
 	      $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
 	  } else {
-	      throw new AuthException('Bad cookie');
-	      //	  header("Location: " . $app . "login.php?originating_uri=".$_SERVER['REQUEST_URI']);
+	      var_dump($_COOKIE);
+	      throw new AuthException("Bad cookie");
 	  }
       }
   }
@@ -124,7 +124,11 @@ class Cookie {
 		      'language' => $this->current_language_key,
 		      'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
-      setcookie(self::$cookiename, $cookie);
+      global $firephp;
+      $firephp->log($_COOKIE, 'cookie in cookie.inc');
+      $_COOKIE[self::$cookiename] = $cookie;
+      //      setcookie(self::$cookiename, $cookie); 
+      //  don't do this, because it leads to a duplicate cookie.
   }
 
   /**
@@ -185,21 +189,22 @@ class Cookie {
 
   public function logout() {
     unset($_SESSION['userdata']);
+    unset($_COOKIE[self::$cookiename]);
+    setcookie(self::$cookiename, '', time() - 3600);
+    /* $this->logged_in = false; */
+    /* $this->user_id=false;  */
+    /* $this->login = false;  */
+    /* $this->uf_id=false;  */
+    /* $this->member_id=false;  */
+    /* $this->provider_id=false;  */
+    /* $this->roles=false;  */
+    /* $this->current_role=false;  */
+    /* $this->language_keys=false;  */
+    /* $this->language_names=false;  */
+    /* $this->current_language_key=false;  */
+    /* $this->theme=false; */
 
-    $this->logged_in = false;
-    $this->user_id=false; 
-    $this->login = false; 
-    $this->uf_id=false; 
-    $this->member_id=false; 
-    $this->provider_id=false; 
-    $this->roles=false; 
-    $this->current_role=false; 
-    $this->language_keys=false; 
-    $this->language_names=false; 
-    $this->current_language_key=false; 
-    $this->theme=false;
-
-    $this->set();
+    /* $this->set(); */
   }
 
   /**
@@ -225,7 +230,8 @@ class Cookie {
       } else {
 	  $cookie = 'x';
       }
-      return urlencode($this->_encrypt($cookie));
+      return $cookie;
+      //      return urlencode($this->_encrypt($cookie));
   }
 
   private function _unpackage($cookie) {
@@ -233,7 +239,8 @@ class Cookie {
 	  $this->logout();
 	  return;
       }
-      $buffer = $this->_decrypt(urldecode($cookie));
+      //      $buffer = $this->_decrypt(urldecode($cookie));
+      $buffer = $cookie;
       list($this->version, 
 	   $this->created, 
 	   $this->logged_in,

@@ -42,11 +42,11 @@ $_SESSION['dev'] = true;
 	       }
 	   }
 	   if ($forbidden) {
-	       $firephp->log('forbidden');
-	       $firephp->log($uri, 'uri');
-	       $firephp->log($role, 'role');
-	       $firephp->log($_SESSION, 'session');
-	       $firephp->log($_SERVER, 'server');
+	       /* $firephp->log('forbidden'); */
+	       /* $firephp->log($uri, 'uri'); */
+	       /* $firephp->log($role, 'role'); */
+	       /* $firephp->log($_SESSION, 'session'); */
+	       /* $firephp->log($_SERVER, 'server'); */
 	       header("Location: index.php");
 	   }
      }

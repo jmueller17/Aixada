@@ -24,24 +24,19 @@ DBWrap::get_instance()->debug = true;
 
 
 try{
-    $firephp->log($_REQUEST, 'REQUEST');
-
   switch ($_REQUEST['oper']) {
 	
 	  case 'logout':
 	      try {
 		  global $firephp;
 	          $cookie=new Cookie();
-		  $firephp->log($cookie, 'Login.php');
 	          $cookie->logout();
-		  $firephp->log($cookie, 'Login.php logged out');
 		  $h = 'Location:' . __ROOT__ . 'login.php';
-		  $firephp->log($h);
-		  //		  header($h);
-		  //	          exit;
 	      } 
 	      catch (AuthException $e) {
-		  header('Location:' . __ROOT__ . 'login.php');
+		  global $firephp;
+		  $firephp->log('caught auth exception');
+		  //		  header('Location:' . __ROOT__ . 'login.php');
 	          //echo "Already logged out"; 
 	      }
 	      exit;
@@ -81,9 +76,8 @@ try{
 	                               $theme);
 
 	          $cookie->set();
-		  $firephp->log($cookie, 'cookie in Login');
 	      }	catch (AuthException $e) {
-	          header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
+		  header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
 	          die($e->getMessage());
 	      }	
 	      print $cookie->package();

@@ -51,7 +51,7 @@ if (!isset($_SESSION)) {
 	<script type="text/javascript">
 		$(function(){
 
-
+			document.cookie = 'USERAUTH=';
 			
 			/**
 			 *	logon stuff
