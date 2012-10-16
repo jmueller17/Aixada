@@ -290,8 +290,8 @@ begin
       aixada_rev_tax_type.name as rev_tax_type,
       aixada_iva_type.name as iva_percent,
       aixada_product.unit_price,
-      aixada_unit_measure_order.unit as unit_measure_order,
-      aixada_unit_measure_shop.unit as unit_measure_shop,
+      aixada_unit_measure_order.name as unit_measure_order,
+      aixada_unit_measure_shop.name as unit_measure_shop,
       aixada_product.stock_min,
       aixada_product.stock_actual,
       aixada_product.delta_stock,
@@ -489,6 +489,7 @@ begin
   set @lim = concat(@lim, the_filter, ' order by ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_unit_measure.id,
+      aixada_unit_measure.name,
       aixada_unit_measure.unit 
     from aixada_unit_measure ";
   set @q = concat(@q, @lim);

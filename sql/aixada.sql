@@ -149,6 +149,7 @@ create table aixada_orderable_type (
  */
 create table aixada_unit_measure (
   id   	     		tinyint		 not null auto_increment,
+  name 			varchar(255) not null,
   unit				varchar(50)	 not null,
   primary key (id)
 ) engine=InnoDB default character set utf8;

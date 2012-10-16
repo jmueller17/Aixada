@@ -25,4 +25,11 @@ alter table
 
 update aixada_rev_tax_type set name = rev_tax_percent;
 
+
+alter table 
+      aixada_unit_measure
+      add name varchar(255) not null after id;
+
+update aixada_unit_measure set name = unit;
+
       
