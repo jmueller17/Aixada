@@ -13,17 +13,10 @@ if (!isset($_SESSION)) {
     session_start();
  }
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
 DBWrap::get_instance()->debug = true;
 
 try{
 
-    $firephp->log($_SESSION, 'session');
-    $firephp->log($_COOKIE, 'cookie');
-   
     switch ($_REQUEST['oper']) {
 
 	    case 'configMenu':

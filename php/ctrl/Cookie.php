@@ -37,14 +37,16 @@ try {
                 $uri = 'index.php';
         }
         $cookie->change_role($new_role);
-        printXML('<navigation>' . $uri . '</navigation>');
+        printXML('<row><navigation>' . $uri . '</navigation>' .
+		 '<cookie>' . $cookie->package() . '</cookie></row>');
         exit;
     }
     
     if (isset($_REQUEST['change_lang_to'])) {
         $new_lang = $_REQUEST['change_lang_to'];
         $cookie->change_language($new_lang);
-        printXML('<navigation>' . $uri . '</navigation>');
+        printXML('<row><navigation>' . $uri . '</navigation>' .
+		 '<cookie>' . $cookie->package() . '</cookie></row>');
         exit;        
     }
 }

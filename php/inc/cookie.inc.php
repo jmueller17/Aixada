@@ -230,7 +230,7 @@ class Cookie {
       } else {
 	  $cookie = 'x';
       }
-      return $cookie;
+      return urlencode($cookie);
       //      return urlencode($this->_encrypt($cookie));
   }
 
@@ -240,7 +240,7 @@ class Cookie {
 	  return;
       }
       //      $buffer = $this->_decrypt(urldecode($cookie));
-      $buffer = $cookie;
+      $buffer = urldecode($cookie);
       list($this->version, 
 	   $this->created, 
 	   $this->logged_in,

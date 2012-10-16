@@ -53,6 +53,7 @@ $_SESSION['dev'] = true;
      
    }   
    catch (AuthException $e) {
+       //       var_dump($_COOKIE);
      echo("caught AuthException: $e");
      header("Location: login.php?originating_uri=".$_SERVER['REQUEST_URI']);
      exit;

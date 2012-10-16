@@ -67,7 +67,8 @@ $(function(){
             url: "php/ctrl/Cookie.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
             dataType: "xml",
             success:  function(xml){
-            window.location.href = $(xml).find('navigation').text(); 				
+		document.cookie = 'USERAUTH=' + escape($(xml).find('cookie').text());
+		window.location.href = $(xml).find('navigation').text(); 
    			}   		
    		});
    	}); 
