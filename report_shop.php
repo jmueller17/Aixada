@@ -29,6 +29,9 @@
 	<script type="text/javascript">
 	$(function(){
 
+		//loading animation
+		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+		
 
 		//saves the selected purchase row
 		var gSelShopRow = null; 
@@ -61,6 +64,9 @@
 				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopListing&filter=prev3Month', 
 				loadOnInit : true, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function(rowIndex, row){
 					var validated = $(row).children().eq(4).text();
 
@@ -80,6 +86,7 @@
 					if (gSelShopRow != null) {
 						gSelShopRow.trigger('click');
 					}
+					$('.loadSpinner').hide();
 				}
 		});
 
@@ -139,6 +146,9 @@
 				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopCart', 
 				loadOnInit : false, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					var price = new Number($('.up',row).text());
 					$('.up',row).text(price.toFixed(2));
@@ -158,7 +168,7 @@
 					
 					$('tr:even', this).addClass('rowHighlight');
 					$("#tbl_Shop").trigger("update"); 
-					
+					$('.loadSpinner').hide();
 				}
 			});
 
@@ -299,7 +309,7 @@
 				
         <div id="shop_list" class="ui-widget overviewElements">    
         	<div class="ui-widget-content ui-corner-all">
-	        	<h3 class="ui-widget-header ui-corner-all">&nbsp;</h3>    
+	        	<h3 class="ui-widget-header ui-corner-all">&nbsp;<span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>    
 				<table id="tbl_Shop" class="tblListingDefault">
 					<thead>
 						<tr>
@@ -342,7 +352,7 @@
 		
 		<div id="shop_detail" class="ui-widget detailElements">
 			<div class="ui-widget-content ui-corner-all">
-				<h3 class="ui-widget-header"><?php echo $Text['purchase_uf']; ?><span class="setUfId"></span>, <span class="setShopDate"></span></h3>
+				<h3 class="ui-widget-header"><?php echo $Text['purchase_uf']; ?><span class="setUfId"></span>, <span class="setShopDate"></span><span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 				<table id="tbl_purchaseDetail" class="tblListingGrid" currentShopId="" currenShopDate="">
 					<thead>
 						<tr>

@@ -8,7 +8,13 @@ require_once(__ROOT__ . 'php/utilities/general.php');
 
 
 
-
+/**
+ * 
+ * recalculates the individual order quanties when adjusting the total delivered quantity. 
+ * @param unknown_type $order_id
+ * @param unknown_type $product_id
+ * @param unknown_type $new_total_quantity
+ */
 function edit_total_order_quantities($order_id, $product_id, $new_total_quantity){
 	
 	$rs = do_stored_query('get_order_item_detail', $order_id, 0,0, 0,$product_id );
@@ -19,14 +25,15 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 	//for each uf 
 	while ($row = $rs->fetch_assoc()) {
 		$uf_qu[$row['uf_id']] =  $row['quantity'];
-	 	$total_quantity += $row['quantity'];	 
+	 	$total_quantity = $total_quantity + $row['quantity'];	 
 	}		
 	DBWrap::get_instance()->free_next_results();
 	
 	//calc and save adjusted quantities for each uf
-	$xml = '<rows>';
+	$xml = '<total>'.$total_quantity.'</total>';
+	$xml .= '<rows>';
 	foreach ($uf_qu as $uf_id => $quantity){
-	    $new_quantity = round($quantity * $new_total_quantity / $total_quantity, 3);
+	    $new_quantity = round(($quantity / $total_quantity) * $new_total_quantity, 3);
 	    do_stored_query('modify_order_item_detail', $order_id, $product_id, $uf_id, $new_quantity);
 	    $xml .= "<row><uf_id>${uf_id}</uf_id><quantity>${new_quantity}</quantity></row>";
 	}
@@ -138,7 +145,7 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
 			break;
 			
 		case 'nextWeek':
-			printXML(stored_query_XML_fields('get_orders_listing', $today, $next_week, $uf_id, 0,$limit));
+			printXML(stored_query_XML_fields('get_orders_listing', $tomorrow, $next_week, $uf_id, 0,$limit));
 			break;
 					
 		case 'futureOrders':

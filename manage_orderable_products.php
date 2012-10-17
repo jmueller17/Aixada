@@ -21,6 +21,10 @@
 	<script type="text/javascript">
 	$(function(){
 
+		//loading animation
+		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+		
+		
 		//dates to be displayed in header
 		var gdates = [];
 
@@ -45,7 +49,7 @@
 				type: "POST",
 				url: "php/ctrl/Dates.php?oper=getDateRangeAsArray&fromDate="+fromDate+"&toDate="+toDate,	
 				beforeSend : function (){
-					
+					$('.loadSpinner').show();
 				},	
 				success: function(txt){
 
@@ -95,6 +99,9 @@
 					$.showMsg({
 						msg:XMLHttpRequest.responseText,
 						type: 'error'});
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
 				}
 			}); //end ajax						
 
@@ -107,20 +114,15 @@
 		$('#dot tbody').xml2html({
 				url:'php/ctrl/ActivateProducts.php',
 				loadOnInit:false,
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function(rowIndex, row){		//construct table cells with product id and date
 					var id =  $(row).attr("id"); 			//get the product id
 					var isactive = ($(row).attr('isactive')=="1")? true:false; //if product is active or not
 					var ispreorder = ($(row).attr('ispreorder')=="1")? true:false;
 					var cellStyle = (isactive)? 'notOrderable':'deactivated'; 
 					
-					/*if (!isactive){
-						cellStyle = "deactivated";
-					} else if (isactive && ispreorder){
-						cellStyle = "preorder"; 
-					} else if (isactive && !ispreorder){
-						cellStyle = 'notOrderable'; 
-					}*/
-
 					
 					var apstr = '';
 					
@@ -189,6 +191,7 @@
 								type: 'error'});
 						}, 
 						complete : function(msg){
+							$('.loadSpinner').hide();
 						}
 					}); //end ajax		
 					
@@ -536,6 +539,7 @@
 		 *	sends off the request to deactivate or activate a product in general
 		 */
 		function changeProductStatus(product_id, oper){
+			$('.loadSpinner').show();
 			$.ajax({
 				type: "POST",
 				url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+product_id,
@@ -558,6 +562,9 @@
 					$.showMsg({
 						msg:XMLHttpRequest.responseText,
 						type: 'error'});
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
 				}
 			});
 		}
@@ -573,7 +580,7 @@
 					type: "POST",
 					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate,	
 					beforeSend : function (){
-						//$('#deposit .loadAnim').show();
+						$('.loadSpinner').show();
 					},	
 					success: function(txt){
 						if (id == 'reloadTable'){ //we change from/to preorder and have to rebuild the entire row
@@ -587,6 +594,9 @@
 							msg:XMLHttpRequest.responseText,
 							type: 'error'});
 						
+					}, 
+					complete : function(){
+						$('.loadSpinner').hide();
 					}
 				}); 
 			
@@ -613,7 +623,7 @@
 				type: "POST",
 				url: urlStr,	
 				beforeSend : function (){
-					//$('#deposit .loadAnim').show();
+					$('.loadSpinner').show();
 				},	
 				success: function(txt){
 					$('#dot tbody').xml2html('reload');
@@ -622,11 +632,11 @@
 					$.showMsg({
 						msg:XMLHttpRequest.responseText,
 						type: 'error'});
-					
 				},
 				complete : function(msg){
 					$('#blip').dialog("close");
 					$('td, th').removeClass('ui-state-hover');
+					$('.loadSpinner').hide();
 				}
 			}); //end ajax	
 
@@ -646,7 +656,7 @@
 				type: "POST",
 				url: urlStr,	
 				beforeSend : function (){
-					//$('#deposit .loadAnim').show();
+					$('.loadSpinner').show();
 				},	
 				success: function(txt){
 					$('#dot tbody').xml2html('reload');
@@ -654,10 +664,10 @@
 				error : function(XMLHttpRequest, textStatus, errorThrown){
 					$.showMsg({
 						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
+						type: 'error'});	
 				},
 				complete : function(msg){
+					$('.loadSpinner').hide();
 					$('#dialog-generateDates').dialog("close");
 					$('td, th').removeClass('ui-state-hover');
 				}
@@ -695,6 +705,7 @@
 		 */
 		function toggleEntireRow(colDate)
 		{
+			$('.loadSpinner').show();
 			var urlStr = 'php/ctrl/ActivateProducts.php?oper=activeAll4Date&provider_id='+getProviderId()+"&date="+colDate;
 			
 			$.post(urlStr, function(data){
@@ -932,17 +943,15 @@
 		
 		
 		
-		
-		
-		
 		<div id="productDateOverview" class="ui-widget">
-			<div class="ui-widget-header">
+			<div class="ui-widget-header ui-corner-all">
 				<h3 id="providerName" class="minPadding floatLeft">&nbsp;</h3>
 				<p class="textAlignCenter">
 					<button id="prevDates"><?php echo $Text['btn_earlier']; ?></button>
 					<span class="dateTableMonthYear"></span>							
 					<button id="nextDates"><?php echo $Text['btn_later']; ?></button>
 				</p>
+				<span style="float:right; margin-top:-38px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			</div>
 			
 			<table id="dot" class="table_datesOrderableProducts ui-widget-content">

@@ -30,7 +30,10 @@
 	<script type="text/javascript">
 	$(function(){
 
-
+			//loading animation
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+				
+			
 			//sql result set limit for order
 			var gOrderLimit = 10; 
 
@@ -101,6 +104,9 @@
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future',
 				loadOnInit : true, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function(rowIndex, row){
 					var orderId = $(row).attr('orderId');
 					var timeLeft = $(row).children().eq(2).text();
@@ -132,6 +138,7 @@
 							msg:"<?php echo $Text['msg_err_noorder']; ?>",
 							type: 'error'});	
 					}
+					$('.loadSpinner').hide();
 					
 				}
 			});
@@ -171,11 +178,15 @@
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getDiffOrderShop', 
 				loadOnInit : false, 
+				beforeLoad : function (){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					var qu = $(row).children().eq(3).text();
 					if (isNaN(qu)) $(row).children().eq(3).text("-");
 				},
 				complete : function(rowCount){
+					$('.loadSpinner').hide();
 					if (rowCount >0){
 						
 						var orderId = $('#tbl_diffOrderShop').attr('currentOrderId');
@@ -347,6 +358,9 @@
 					url : 'php/ctrl/Shop.php',
 					params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(0),
 					loadOnInit : false, 
+					beforeLoad : function(){
+						$('.loadSpinner').show();
+					},
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
 
@@ -355,8 +369,9 @@
 						} else {
 							$(row).children().eq(2).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
 						}
-
-						
+					},
+					complete : function(){
+						$('.loadSpinner').hide();
 					}
 			});
 
@@ -365,6 +380,9 @@
 				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopCart', 
 				loadOnInit : false, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					var price = new Number($(row).children().eq(5).text());
 					var qu = new Number($(row).children().eq(3).text());
@@ -380,7 +398,7 @@
 					var itemRows = $('#tbl_purchaseDetail tbody tr').clone();
 
 					$('#shop_'+shopId).after(itemRows).after(header);
-					
+					$('.loadSpinner').hide();
 				}
 			});
 			
@@ -481,13 +499,13 @@
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
 				</ul>
-			
+				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 				<div id="tabs-1">
 					<table id="tbl_Orders" class="tblListingDefault">
 						<tbody>
 							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
-		 <td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td><span class="textAlignRight tdMyOrderId">{id}</span> {provider_name}</td>
+								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
+								<td title="Order id: #{id}">{provider_name}</td>
 								<td>{time_left}</td>
 								<td><?=$Text['loading_status_info'];?></td>
 								<td><p class="textAlignRight">{order_total}€</p></td>

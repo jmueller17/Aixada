@@ -181,7 +181,7 @@ begin
 	if (the_product_id > 0 and edited is true) then
 		set wherec = concat(wherec, " and ots.product_id=", the_product_id);
 	elseif (the_product_id > 0 and edited is false ) then
-		set wherec = concat(wherec, " and oi.product_id =", the_product_id);
+		set wherec = concat(wherec, " and oi.product_id = p.id and oi.product_id=", the_product_id);
 	elseif (edited is false) then
 		set wherec = concat(wherec, " and oi.product_id = p.id");
 	end if; 
@@ -409,6 +409,7 @@ drop procedure if exists move_order_to_shop |
 create procedure move_order_to_shop (in the_order_id int, in the_shop_date date)
 begin
 
+	
 	declare done int default 0; 
 	declare the_uf_id int default 0; 
 	declare the_cart_id int default 0;
@@ -416,10 +417,8 @@ begin
 	declare the_date_for_shop date; 
 	declare qu_diff float(10,4) default 0;
 	declare the_revision_status int default 2; 
-	
+	declare edited boolean default is_under_revision(the_order_id);
 	declare uf_cursor cursor for 
-		/** get list of uf_ids for order **/
-		
 		select distinct
 			os.uf_id
 		from
@@ -427,9 +426,32 @@ begin
 		where 
 			os.order_id = the_order_id;	
 	
-		
 	declare continue handler for not found
 		set done = 1; 
+	declare exit handler for sqlexception rollback; 
+	declare exit handler for sqlwarning rollback; 	
+		
+	
+	start transaction;	
+		
+	-- check if order is under revision; if not (should be exception) then copy it to tmp move_order_to_shp table -- 
+	if (edited is not true) then
+		insert into
+			aixada_order_to_shop (order_item_id, uf_id, order_id, unit_price_stamp, product_id, quantity)
+		select
+			oi.id, 
+			oi.uf_id,
+			oi.order_id,
+			oi.unit_price_stamp,
+			oi.product_id,
+			oi.quantity
+		from
+			aixada_order_item oi
+		where
+			oi.order_id = the_order_id; 
+	end if; 
+	
+	
 		
 	open uf_cursor;	
 	set done = 0; 
@@ -523,6 +545,10 @@ begin
 		aixada_order_to_shop
 	where 
 		order_id=the_order_id; 
+		
+		
+	commit;	
+	
 			
 end |
 

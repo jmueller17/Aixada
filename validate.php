@@ -32,6 +32,10 @@
 	<script type="text/javascript">
 	$(function(){
 
+			//loading animation
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+			
+
 			//get the operator user id to prevent own validation
 			var gTornUfId = <?=get_session_uf_id();?>;
 
@@ -299,7 +303,7 @@
 						type: "POST",
 						url: "php/ctrl/Account.php?oper=deposit&account_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
 						beforeSend : function (){
-							$('#deposit .loadAnim').show();
+							$('#deposit .loadSpinner').show();
 						},	
 						success: function(msg){
 							$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
@@ -313,7 +317,7 @@
 						},
 						complete : function(msg){
 							$('#deposit_submit').button('enable');
-							$('#deposit .loadAnim').hide();
+							$('#deposit .loadSpinner').hide();
 						}
 					}); //end ajax
 
@@ -347,7 +351,7 @@
                     autoReload: 100200,
                     loadOnInit:true, 
                     beforeLoad : function(){
-						//$('#dailyStats .loadAnim').show();
+						$('#dailyStats .loadSpinner').show();
 					},
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(3).text();
@@ -360,7 +364,7 @@
 					},
 					complete : function(){
 						$('tr:even', this).addClass('rowHighlight');
-						//$('#dailyStats .loadAnim').hide();
+						$('#dailyStats .loadSpinner').hide();
 					}
 			});
 				
@@ -373,10 +377,10 @@
 					rowName : 'account',
                     autoReload: 103020, 
                     beforeLoad : function(){
-						$('#negative_ufs .loadAnim').show();
+						$('#negative_ufs .loadSpinner').show();
 					},
 					complete : function(){
-						$('#negative_ufs .loadAnim').hide();
+						$('#negative_ufs .loadSpinner').hide();
 					}
 			});
 
@@ -387,10 +391,10 @@
                  	//autoReload: 100200, 
                  	loadOnInit:true,
                  	beforeLoad : function(){
-						$('#dailyStats .loadAnim').show();
+						$('#dailyStats .loadSpinner').show();
 					},
 					complete : function(){
-						$('#dailyStats .loadAnim').hide();
+						$('#dailyStats .loadSpinner').hide();
 					}
 			});	
 
@@ -401,10 +405,10 @@
 					loadOnInit: false,
                     autoReload: 100010, 
                     beforeLoad : function(){
-						$('#min_stock .loadAnim').show();
+						$('#min_stock .loadSpinner').show();
 					},
 					complete : function(){
-						$('#min_stock .loadAnim').hide();
+						$('#min_stock .loadSpinner').hide();
 					},
 					rowComplete : function(rowIndex, row){
 						//reformat numbers to two decimal places
@@ -659,7 +663,7 @@
 
 		<div class="aix-layout-splitW60 floatLeft">
 			<div id="tabs">
-			<span class="loadAnimValidate hidden" id="cartAnim"><img src="img/ajax-loader.gif"/></span>
+			<span style="float:right; margin-top:6px; margin-right:10px;" ><img id="cartAnim" class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			<ul>
 				<li><a href="#tabs-1"><?php echo $Text['validate']; ?></a></li>
 				<li><a href="#tabs-2"><?php echo $Text['search_add']; ?></a></li>
@@ -718,7 +722,7 @@
 			
 			<div id="deposit" class="ui-widget">
 				<div class="aix-style-observer-widget ui-widget-content ui-corner-all" >
-					<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['make_deposit'];?> <span class="insert_uf_id account">??</span><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['make_deposit'];?> <span class="insert_uf_id account">??</span><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<p id="depositMsg"></p>
 					<div id="deposit_content">
 						<table class="tblForms">
@@ -741,7 +745,7 @@
 			
 			<div id="monitorFlows" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['latest_movements'];?> <span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['latest_movements'];?> <span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<table id="list_account" class="tblListingDefault">
 					<thead>
 						<tr>
@@ -771,7 +775,7 @@
 			
 			<div id="monitorCarts" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['todays_carts']; ?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['todays_carts']; ?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<table id="tbl_cart_listing" class="tblListingDefault">
 						<thead>
 							<tr >
@@ -798,7 +802,7 @@
 		
 			<div id="monitorUFs" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeUfs'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeUfs'];?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					
 						<table id="negative_ufs" class="tblListingDefault">
 							<thead>
@@ -824,7 +828,7 @@
 			
 			<div id="monitorGlobals" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['name_cash_account']; ?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['name_cash_account']; ?><span class="loadAnim floatRight hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<table id="dailyStats" class="tblListingDefault">
 						<tbody>
 							<tr><td><p><?php echo $Text['totalIncome'];?></p></td><td><p class="textAlignRight">{income}</p></td></tr>
@@ -839,7 +843,7 @@
 			
 			<div id="monitorStock" class="ui-widget hidden">
 				<div class="rightCol-Observer ui-widget-content ui-corner-all  aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					
 						<table id="min_stock" class="tblListingDefault">
 							<thead>

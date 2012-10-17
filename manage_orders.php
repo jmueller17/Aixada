@@ -38,6 +38,10 @@
 			$('.reviewElements, .viewElements').hide();
 			$('.success_msg').hide();
 
+			//loading animation
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+			
+
 			var header = [];
 
 			var tblHeaderComplete = false; 
@@ -433,19 +437,20 @@
 									indicator: 'Saving',
 								    tooltip	: 	'Click to adjust total quantities',
 									callback: function(xml, settings){
-
-								    var pid = settings.submitdata.product_id;
-								    var total_quantity = 0;
-								    $(xml).find('row').each(function(){
-									    var uf_id = $(this).find('uf_id').text();
-									    var quantity = $(this).find('quantity').text();
-									    total_quantity = total_quantity + parseFloat(quantity);
-									    var selector = '.Col-' + uf_id + '.Row-' + pid;
-									    
-									    $(selector).removeClass('toRevise').addClass('revised').text(quantity);
-									})
-									$('#total_' + pid).children(':first').empty().text(total_quantity.toFixed(2));
-								} 
+									    var pid = settings.submitdata.product_id;
+									    var total_quantity = 0;
+									    $(xml).find('row').each(function(){
+										    var uf_id = $(this).find('uf_id').text();
+										    var quantity = $(this).find('quantity').text();
+										    total_quantity = total_quantity + parseFloat(quantity);
+										    var selector = '.Col-' + uf_id + '.Row-' + pid;
+										    
+										    $(selector).removeClass('toRevise').addClass('revised').text(quantity);
+										    
+										})
+										$('#ckboxRevised_'+pid).attr('checked','checked');
+										$('#total_' + pid).children(':first').empty().text(total_quantity.toFixed(2));
+									}//end callback 
 							});
 					}
 			});
@@ -678,6 +683,9 @@
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
+				beforeLoad : function(){
+					$('.loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					var tds = $(row).children();
 					var orderId = $(row).attr("id");
@@ -721,7 +729,8 @@
 							msg:"<?=$Text['msg_err_order_filter'];?>",
 							type: 'warning'});
 					}
-					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight'); 					
+					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight');
+					$('.loadSpinner').hide(); 					
 				}
 			});
 
@@ -894,6 +903,48 @@
 					e.stopPropagation();
 				});
 
+			
+				//global header print buttun
+				$("#btn_print").button({
+				 icons: {
+		        		primary: "ui-icon-print"
+		        	}
+				 })
+        		.click(function(e){
+        			printQueue();
+        		});
+
+
+        		//download selected as zip
+				$("#btn_zip").button({
+					 icons: {
+			        		primary: "ui-icon-suitcase"
+			        	}
+					 })
+	        		.click(function(e){
+	        			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+							$.showMsg({
+								msg:"<?=$Text['msg_err_noselect'];?>",
+								buttons: {
+									"<?=$Text['btn_ok'];?>":function(){						
+										$(this).dialog("close");
+									}
+								},
+								type: 'warning'});
+	        			} else {
+
+
+		        		
+		        			var orderRow = ''; 								
+							$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+								orderRow += '<input type="hidden" name="order_id[]" value="'+$(this).parents('tr').attr('orderId')+'"/>';
+								orderRow += '<input type="hidden" name="provider_id[]" value="'+$(this).parents('tr').attr('providerId')+'"/>';
+								orderRow += '<input type="hidden" name="date_for_order[]" value="'+$(this).parents('tr').attr('dateforOrder')+'"/>';
+							});
+							$('#submitZipForm').empty().append(orderRow);
+							getZippedOrders();
+	        			}
+	        		});
 
 				//view selected order (no editing)
 				/*$('.viewOrderBtn')
@@ -905,7 +956,7 @@
 
 				
 				//print the selected order. If more than one is selected, confirm bulk print
-				$('.printOrderBtn')
+				/*$('.printOrderBtn')
 				.live('click', function(e){
 					$this = $(this);
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
@@ -934,7 +985,7 @@
 						printQueue();
 					}
 					e.stopPropagation();
-				});
+				});*/
 
 
 				
@@ -1241,16 +1292,18 @@
 	<div id="stagewrap">
 	
 		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol">
+			<div id="titleLeftCol50">
 				<button id="btn_overview" class="floatLeft reviewElements viewElements"><?php echo $Text['overview'];?></button>
 				<h1 class="reviewElements"><?=$Text['ti_revise'];?> <span class="providerName"></span></h1>
 				<h1 class="viewElements"><?=$Text['ti_order_detail'];?> <span class="providerName aix-style-provider-name"></span></h1>
 		    	<h1 class="overviewElements"><?=$Text['ti_mng_orders'];?></h1>
 		    </div>
-		   	<div id="titleRightCol">
+		   	<div id="titleRightCol50">
 		   		<!-- button id="btn_setReview" class="viewElements btn_right"><?=$Text['btn_revise']; ?></button-->
+		   		
 		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
 				<button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['filter_orders']; ?></button>
+				
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="ordersForToday"><?=$Text['filter_expected'] ?></a></li>
@@ -1261,28 +1314,29 @@
 						<li><a href="javascript:void(null)" id="limboOrders"><?=$Text['filter_postponed'];?></a></li>
 						<li><a href="javascript:void(null)" id="preOrders"><?=$Text['nav_report_preorder'];?></a></li>
 					</ul>
-				</div>				
+				</div>	
+				<button id="btn_print" class="overviewElements btn_right">Print</button>
+		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
 		   	</div> 	
 		</div> <!--  end of title wrap -->
 		<div class="ui-widget overviewElements" id="withSelected">
-			<p  class="textAlignLeft">
-				<!-- span class="ui-icon ui-icon-arrowreturnthick-1-s floatLeft" style="margin-top:10px; margin-right:5px;"></span-->
+			<!-- p  class="textAlignLeft">
 				<select id="bulkActionsTop">
 					<option value="-1"><?=$Text['with_sel'];?></option>
 					<option value="print"><?=$Text['printout'];?></option>
 					<option value="download"><?=$Text['dwn_zip'];?></option>
 				</select>
-			</p>
+			</p-->
 		</div>
 		<div id="orderOverview" class="ui-widget overviewElements">
 			<div class="ui-widget-header ui-corner-all">
-				<p>&nbsp;</p>
+				<p style="height:30px;"><span style="float:right; margin-top:0px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></p>
 			</div>
 			<div class="ui-widget-content">
 			<table id="tbl_orderOverview" class="tblListingDefault">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
+						<th>&nbsp;<input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
 						<th class="clickable"><?=$Text['id'];?><span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable textAlignLeft"><?=$Text['provider_name'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
 						<th class="clickable"><?=$Text['ordered_for'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
@@ -1307,8 +1361,9 @@
 						<td>{revision_status}</td>
 						<td class="maxwidth-100">				
 							<!-- p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p-->
-							<p class="ui-corner-all iconContainer ui-state-default floatLeft printOrderBtn"><span class="ui-icon ui-icon-print" title="Print order"></span></p>							
-							<p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p>
+							<!-- p class="ui-corner-all iconContainer ui-state-default floatLeft printOrderBtn"><span class="ui-icon ui-icon-print" title="Print order"></span></p-->				
+							<!-- p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p-->
+							<p><a href="javascript:void(null)" class="reviseOrderBtn"><?php echo $Text['btn_revise']; ?></a></p>
 						</td>
 					</tr>
 				</tbody>
@@ -1484,9 +1539,9 @@
 				
 			</div>
 		</div>
-		<p>&nbsp;</p>
+
 		<div id="reviseOrder" class="ui-widget reviewElements viewElements">
-			<div class="ui-widget-header ui-corner-all textAlignCenter">
+			<div class="ui-widget-header ui-corner-all textAlignCenter reviewElements">
 				<h3 id="orderInfoDate"></h3>
 			</div>
 			<div class="ui-widget-content">

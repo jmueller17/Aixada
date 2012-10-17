@@ -350,7 +350,7 @@ begin
 		",wherec,"
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
-	order by p.id, p.name;");
+	order by p.name asc, p.id asc;");
 	
 	prepare st from @q;
   	execute st;
