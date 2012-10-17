@@ -114,7 +114,7 @@ create procedure aixada_iva_type_list_all_query (in the_index char(50), in the_s
 begin
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @lim = concat(@lim, the_filter, ' order by ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_iva_type.id,
       aixada_iva_type.name,
