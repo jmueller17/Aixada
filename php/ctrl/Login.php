@@ -28,16 +28,16 @@ try{
 	
 	  case 'logout':
 	      try {
-		  global $firephp;
-	          $cookie=new Cookie();
-	          $cookie->logout();
-		  $h = 'Location:' . __ROOT__ . 'login.php';
+		  	  //global $firephp;
+	        $cookie=new Cookie();
+	        $cookie->logout();
+		  	$h = 'Location:' . __ROOT__ . 'login.php';
 	      } 
 	      catch (AuthException $e) {
-		  global $firephp;
-		  $firephp->log('caught auth exception');
-		  //		  header('Location:' . __ROOT__ . 'login.php');
-	          //echo "Already logged out"; 
+		  	global $firephp;
+		  	$firephp->log('caught auth exception');
+		  	//		  header('Location:' . __ROOT__ . 'login.php');
+	        //echo "Already logged out"; 
 	      }
 	      exit;
 	
@@ -59,7 +59,7 @@ try{
 	               $current_language_key, 
 	               $theme) 
 	              = $auth->check_credentials(get_param('login'), crypt(get_param('password'), "ax"));
-	      
+	      	  
 	          $langs = existing_languages();
 	          $cookie = new Cookie(true, 
 	                               $user_id, 
@@ -72,20 +72,18 @@ try{
 	                               array_keys($langs), 
 	                               array_values($langs), 
 	                               $current_language_key,
-	                               false,
 	                               $theme);
-
+	
 	          $cookie->set();
 	      }	catch (AuthException $e) {
-		  header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
-	          die($e->getMessage());
+		  	header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
+	        die($e->getMessage());
 	      }	
 	      print $cookie->package();
 	      exit; 
-	      	 
-	
+	      	
 	  default:
-	    throw new Exception("ctrlLogin: operation {$_REQUEST['oper']} not supported");
+	    throw new Exception("ctrl/Login: operation {$_REQUEST['oper']} not supported");
 	    
   }
 

@@ -114,7 +114,8 @@
 
 				$('.setUfId').text($(this).attr('ufId'));
 				$('.setCartId').text($(this).attr('shopId'));
-				$('.setShopDate').text($(this).attr('dateForShop'));
+				var cd = $.getCustomDate($(this).attr('dateForShop'));
+				$('.setShopDate').text(cd);
 
 				var dateValidated = $(this).attr('validated');
 				$('.setValidateStatus').removeClass('noRed okGreen');
@@ -124,10 +125,10 @@
 				} else {
 					var opUf = $(this).attr('operatorUf'); 
 					var opName = $(this).attr('operatorName'); 
-					
+					var dv = $.getCustomDate(dateValidated.substring(0,10),'DD M m, yy');
 					$('.setValidateStatus')
 						.addClass('okGreen')
-						.html('<span title="<?php echo $Text['val_by'];?> '+opUf+' '+opName+'">'+dateValidated.substring(0,10)+'</span>');
+						.html('<span title="<?php echo $Text['val_by'];?> '+opUf+' '+opName+'">'+dv+'</span>');
 				}
 	
 				switchTo('detail');
@@ -361,6 +362,8 @@
 							<th><?php echo $Text['provider_name'];?></th>					
 							<th><p class="textAlignRight"><?php echo $Text['quantity_short']; ?></p></th>
 							<th><?php echo $Text['unit'];?></th>
+							<th><p class="textAlignRight"><?php echo $Text['revtax_abbrev']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['iva']; ?></p></th>
 							<th><p class="textAlignRight"><?php echo $Text['unit_price'];?></p></th>
 							<th class="width-180"><p class="textAlignRight"><?php echo $Text['price'];?></p></th>
 							
@@ -375,6 +378,8 @@
 							<td>{provider_name}</td>
 							<td><p class="textAlignRight qu">{quantity}</p></td>
 							<td>{unit}</td>
+							<td><p class="textAlignRight">{rev_tax_percent}%</p></td>
+							<td><p class="textAlignRight">{iva_percent}%</p></td>
 							<td><p class="textAlignRight up">{unit_price}</p></td>
 							<td><p class="textAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></p></td>	
 
@@ -382,21 +387,23 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="5"><?php echo $Text['incl_iva']; ?></td>
+							
+							<td colspan="7" class="boldStuff"><?php echo $Text['total'];?></td>
+							<td id="total" class="boldStuff dblBorderBottom dblBorderTop"></td>
+						</tr>
+						
+						<tr>
+							<td colspan="7"><?php echo $Text['incl_iva']; ?></td>
 							<td id="total_iva" class="dblBorderTop"></td>
 						</tr>
 						<tr>
 						
-							<td colspan="5"><?php echo $Text['incl_revtax']; ?></td>
+							<td colspan="7"><?php echo $Text['incl_revtax']; ?></td>
 							<td id="total_revTax"></td>
 						</tr>
+
 						<tr>
-							
-							<td colspan="5" class="boldStuff"><?php echo $Text['total'];?></td>
-							<td id="total" class="boldStuff dblBorderBottom"></td>
-						</tr>
-						<tr>
-							<td colspan="6"><p>&nbsp;</p></td>
+							<td colspan="8"><p>&nbsp;</p></td>
 						</tr>
 					</tfoot>
 				</table>

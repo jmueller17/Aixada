@@ -83,26 +83,26 @@ class Cookie {
       if (!$this->td) 
 	  die("<br>Error in opening mcrypt with cypher=".self::$cypher .", mode=".self::$mode."<br>");
       if ($logged_in) {
-	  $this->logged_in = true;
-	  $this->user_id = $user_id;
-	  $this->login = $login;
-	  $this->uf_id = $uf_id; 
-	  $this->member_id = $member_id; 
-	  $this->provider_id = $provider_id;
-	  $this->roles = $roles;
-	  $this->current_role = $current_role;
-	  $this->language_keys = $language_keys;
-	  $this->language_names = $language_names;
-	  $this->current_language_key = $current_language_key;
-	  $this->theme = $theme;
-	  return;
+		  $this->logged_in = true;
+		  $this->user_id = $user_id;
+		  $this->login = $login;
+		  $this->uf_id = $uf_id; 
+		  $this->member_id = $member_id; 
+		  $this->provider_id = $provider_id;
+		  $this->roles = $roles;
+		  $this->current_role = $current_role;
+		  $this->language_keys = $language_keys;
+		  $this->language_names = $language_names;
+		  $this->current_language_key = $current_language_key;
+		  $this->theme = $theme;
+		  return;
       } else {
-	  if (array_key_exists(self::$cookiename, $_COOKIE)) {
-	      $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
-	  } else {
-	      var_dump($_COOKIE);
-	      throw new AuthException("Bad cookie");
-	  }
+		  if (array_key_exists(self::$cookiename, $_COOKIE)) {
+		      $buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
+		  } else {
+		      var_dump($_COOKIE);
+		      throw new AuthException("Bad cookie");
+		  }
       }
   }
 
@@ -124,8 +124,8 @@ class Cookie {
 		      'language' => $this->current_language_key,
 		      'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
-      global $firephp;
-      $firephp->log($_COOKIE, 'cookie in cookie.inc');
+      //global $firephp;
+      //$firephp->log($_COOKIE, 'cookie in cookie.inc');
       $_COOKIE[self::$cookiename] = $cookie;
       //      setcookie(self::$cookiename, $cookie); 
       //  don't do this, because it leads to a duplicate cookie.
@@ -161,7 +161,7 @@ class Cookie {
                         'language_keys'     => $this->language_keys,
                         'language_names'     => $this->language_names,
                         'language' => $this->current_language_key,
-			'theme' => $this->theme);
+						'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
     }
   }
