@@ -210,7 +210,7 @@
 					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
 					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
-					str +=								'<input type="hidden" name="order_item_id[] value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
+					str +=								'<input type="hidden" name="order_item_id[]" value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
 					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
@@ -500,7 +500,7 @@
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
 					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
 					iva_percent		: $("td.item_iva_percent", row).text(),
-					order_item_id	: $("#cart_order_item_id_"+id).val(),
+					order_item_id	: $("#cart_order_item_id_"+id,row).val(),
 					cart_id 		: $("#global_cart_id").val()
 				};
 			  //alert(objItem.id + " qu: " + objItem.quantity + " price: " + objItem.price + " tax: " + objItem.rev_tax_percent);

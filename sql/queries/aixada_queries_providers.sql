@@ -47,35 +47,27 @@ end|
 
 
 /**
- * returns list of providers that either have stock items or 
- * had orderable products for the given date
+ * returns list of providers that are active and that
+ * have at least one active product. This is a list of providers
+ * from which potentially something can be bought. 
  */
-drop procedure if exists get_shop_providers_for_date|
-create procedure get_shop_providers_for_date(in the_date date)
-begin
-  (select distinct 
-     pv.id, 
-     pv.name as name
-  from 
-  	aixada_provider pv, 
-  	aixada_product p,
-  	aixada_product_orderable_for_date po
-  where  
-    po.date_for_order = the_date
-    and po.product_id = p.id
-    and p.provider_id = pv.id)
-  union
-  (select distinct
-  	pv.id,
-  	pv.name as name
-  from 
-  	aixada_provider pv,
- 	aixada_product p
-  where
-  	pv.active = 1
-  	and pv.id = p.provider_id
-  	and p.orderable_type_id = 1)
-  order by name;
+drop procedure if exists get_shop_providers|
+create procedure get_shop_providers()
+begin	
+	  select
+	  	pv.id,
+	  	pv.name as name
+	  from 
+	  	aixada_provider pv,
+	 	aixada_product p
+	  where
+	  	pv.active = 1
+	  	and p.active = 1
+	  	and p.provider_id = pv.id
+	  group by 
+	  	pv.name
+	  order by 
+	  	pv.name;
 end|
 
 
