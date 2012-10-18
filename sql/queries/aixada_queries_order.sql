@@ -821,7 +821,7 @@ begin
     if (the_uf_id > 0) then
     	set outer_wherec = 	concat("oi.uf_id = ", the_uf_id ," and");
     	set totalc = 		concat("(select
-	    								sum(ois.quantity * ois.unit_price_stamp)
+	    								round(sum(ois.quantity * ois.unit_price_stamp),2)
 	  								from 
 	  									aixada_order_item ois
 	  								where

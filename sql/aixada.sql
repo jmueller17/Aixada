@@ -149,7 +149,7 @@ create table aixada_orderable_type (
  */
 create table aixada_unit_measure (
   id   	     		tinyint		 not null auto_increment,
-  name 			varchar(255) not null,
+  name 				varchar(255) not null,
   unit				varchar(50)	 not null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
@@ -157,9 +157,9 @@ create table aixada_unit_measure (
 
 
 create table aixada_rev_tax_type (
-  id   	     		tinyint		 not null auto_increment,
-  name                  varchar(255)     not null,
-  description		varchar(50)	 not null,
+  id   	     		tinyint		 	not null auto_increment,
+  name              varchar(255)    not null,
+  description		varchar(50)	 	not null,
   rev_tax_percent	decimal(10,2),
   primary key (id)
 ) engine=InnoDB default character set utf8;
@@ -170,9 +170,9 @@ create table aixada_rev_tax_type (
  */
 create table aixada_iva_type (
   id   			     	smallint		not null auto_increment,
-  name                          varchar(255) not null, 
-  percent			decimal(10,2) 	not null, 
-  description 		        varchar(100)	default null,
+  name                  varchar(255) 	not null, 
+  percent				decimal(10,2) 	not null, 
+  description 		    varchar(100)	default null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
 

@@ -32,39 +32,32 @@ insert into aixada_orderable_type values
        (2, 'orderable');
        
 insert into aixada_rev_tax_type values
-       (1, 'default revolutionary tax', 3.00, 'what everybody pays'),
-       (2, 'no revolutionary tax', 0.00, 'everyone is exempt'),
-       (3, 'luxury', 5.00 , 'for capitalists');
+       (1, 'default revolutionary tax', 'what everybody pays', 3.00),
+       (2, 'no revolutionary tax', 'zero tax', 0),
+       (3, 'luxury', 'for capitalists', 5.00);
        
 insert into aixada_iva_type values
 		(1, 'no tax', 0, 'the best'),
-		(2, '10 percent testing', 10, 'did it work?');
+		(2, '10 percent', 10, 'group XYZ products');
 
 insert into aixada_unit_measure values
-       (1, 'SET_ME'),
-       (2, 'u'),
-       (3, 'g'),
-       (4, 'kg'),
-       (5, '250g'),
-       (6, '500g'),
-       (7, '100g'),
-       (8, '1,7kg'),
-       (9, 'ml'),
-       (10, 'l'),
-       (11, '250ml'),
-       (12, '500ml'),
-       (13, '750ml'),
-       (14, 'bunch'),
-       (15, 'quarter'),
-       (16, 'half');
+       (1, 'unit is not set', 'SET_ME'),
+       (2, 'unit', 'u'),
+       (3, 'grams', 'g'),
+       (4, 'kilograms', 'kg'),
+       (5, 'unit of 250g', '250g'),
+       (6, 'unit of half kilo','500g'),
+       (7, 'mililiters','ml'),
+       (8, 'liter','l'),
+       (9, 'quarter of a liter','250ml'),
+       (10, 'half a liter','500ml'),
+       (11, 'three quarters of a liter','750ml'),
+       (12, 'bunch','bunch');
 
 
 insert into aixada_payment_method (id, description, details)
        values 
        	(1, 'cash', 'cash payment'), 
-       	(2, 'envelope',''), 
-       	(3, 'transfer',''),
-       	(4, 'check',''),
        	(5,'stock', 'register gain or loss of stock'),
 		(6,'validation', 'register validation of cart'),
 		(7,'deposit','register the inpayment of cash'),

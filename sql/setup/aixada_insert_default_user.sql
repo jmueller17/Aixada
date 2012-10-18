@@ -4,7 +4,7 @@
 	values
 		(1, "Admin",1, sysdate());
 
-	-- 
+
 	insert into 
 		aixada_member (id, name, uf_id) 
 	values (
