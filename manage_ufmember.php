@@ -534,9 +534,9 @@
 							   	beforeSend: function(){
 							   		$('.loadSpinner').show();
 								},
-							   	success: function(new_pwd){
+							   	success: function(new_pwd_msg){
 							   	 	$.showMsg({
-										msg: "The new password is: " + new_pwd,
+										msg: new_pwd_msg,
 										type: 'success'});
 							   	},
 							   	error : function(XMLHttpRequest, textStatus, errorThrown){

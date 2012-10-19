@@ -198,14 +198,26 @@ function reset_password($user_id)
     	
 		$subject = "Aixada Reset Password";
 		$message = "Your password has been reset. The new password is " . $newPwd ."\n\n Please logon with the new password. Under My Account, Settings you can change your password.";
-		$from = "admin@aixada.org";
-		$headers = "From:" . $from;
-		mail($toEmail,$subject,$message,$headers);
+		$from = "joerg@toytic.com";
+		$headers = "From: $from \r\n";
+		$headers .= "Reply-To: $from \r\n";
+		$headers .= "Return-Path: $from\r\n";
+		$headers .= "X-Mailer: PHP \r\n";
+		
+		
+		if (mail($toEmail,$subject,$message,$headers)){
+			
+			echo $Text['msg_pwd_emailed'];			
+			
+		} else {
+			echo $Text['msg_err_emailed'];		
+			
+		}
     	
-		echo "The new password has been sent to the user";
+
     } else {
     	
-    	echo $newPwd; 
+    	echo $Text['msg_pwd_change'] . $newPwd; 
     	
     }
 }

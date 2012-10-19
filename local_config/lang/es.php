@@ -759,6 +759,11 @@ $Text['do_preorder'] = "De-/activate as preorder";
 $Text['do_deactivate_prod'] = "De-/activate entire product";
 $Text['msg_make_preorder_p'] = "You are about to set this product as *preorderable*. It will be part of an accumulative order which does not have any fixed order date (yet). People can order these items until a certain quantity has been reached and you close it. Are you sure to continue?";
 $Text['btn_ok_go'] = "Ok, go ahead!";
+$Text['msg_pwd_emailed'] = "The new password has been sent to the user";
+$Text['msg_pwd_change'] = "The new password is: ";
+$Text['msg_err_emailed'] = "The email sending failed!";
+$Text['msg_order_emailed'] = "The order has been emailed succesfully!";
+$Text['msg_err_responsible_uf'] = "No responsible user found for this provider";
 
 
 ?>

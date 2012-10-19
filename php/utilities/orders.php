@@ -63,17 +63,44 @@ function finalize_order($provider_id, $date_for_order)
 		
 		
 		$db = DBWrap::get_instance();
+		$db->free_next_results();
 		$strSQL = 'SELECT email FROM aixada_provider WHERE id = :1q';
     	$rs = $db->Execute($strSQL, $provider_id);
-		$toEmail = mysql_result($rs, 1);
+		if($rs->num_rows == 0){
+    		throw new Exception("This user has no valid email.");
+		}
+    	
+		while ($row = $rs->fetch_assoc()) {
+      		$toEmail = $row['email'];
+    	}
+    	
+    	$db->free_next_results();
+		$rs = do_stored_query('get_responsible_uf', $provider_id);
 		
-		
+		if($rs->num_rows == 0){
+    		throw new Exception($Text['msg_err_responsible_uf']);
+		}
+
+		//get emails of reponsible ufs
+		while ($row = $rs->fetch_assoc()) {
+      		$reply_to_responsible_uf = $row['email'];
+    	}
 				
-		$subject = "Comanda Aixada";
-		$from = "info@aixada.org"; //should be responsible uf!! 
-		$headers = "From:" . $from;
-		mail($to,$subject,$message,$headers);
-		echo "Mail Sent.";
+		$subject = "Aixada Order for ".$date_for_order;
+		$from = configuration_vars::get_instance()->admin_email; 
+		
+		$headers = "From: $from \r\n";
+		$headers .= "Reply-To: $reply_to_responsible_uf \r\n";
+		$headers .= "Return-Path: $from\r\n";
+		$headers .= "X-Mailer: PHP \r\n";
+		
+		if (mail($toEmail,$subject,$message,$headers)){
+			echo $Text['msg_order_emailed'];			
+		} else {
+			echo $Text['msg_err_emailed'];		
+		}
+		
+		
 	}
 	
 	

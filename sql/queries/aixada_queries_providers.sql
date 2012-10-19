@@ -2,6 +2,24 @@ delimiter |
 
 
 /**
+ * returns the responsible users for a provider. 
+ */
+drop procedure if exists get_reponsible_uf|
+create procedure get_responsible_uf(in the_provider_id int)
+begin
+	
+	select 
+		*
+	from 
+		aixada_user u, 
+		aixada_provider pv
+	where
+		pv.id = the_provider_id
+		and pv.reponsible_uf_id = u.id; 
+end|
+
+
+/**
  * returns all providers that have "sometimes orderable" or "always orderable"
  * items not stock. 
  * independent if products have been ordered or not. 

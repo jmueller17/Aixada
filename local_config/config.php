@@ -105,6 +105,13 @@ class configuration_vars {
   
   
   /**
+   * the email address of the admin; used for sending out pwd changes
+   * and orders
+   */
+  public $admin_email = "joerg@toytic.com";
+  
+  
+  /**
    * Code optimizations
    */
 
