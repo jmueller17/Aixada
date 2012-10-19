@@ -78,15 +78,10 @@ try{
 	    case 'resetPassword':
 	    	echo reset_password(get_param('user_id'));
 	    	exit; 
-	    	
-	    	
-	    	  
-  case 'assignUsersToUF':
-        foreach ($_REQUEST['user_id'] as $id) {
-            do_stored_query('assign_user_to_uf', $id, $_REQUEST['uf_id']);
-        }
-        exit;
-
+	    		  
+		case 'assignUF':
+		    echo do_stored_query('assign_member_to_uf', get_param('member_id'), get_param('uf_id'));
+ 			exit;
 
 
   default:

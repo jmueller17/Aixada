@@ -406,7 +406,7 @@
 		});
 
 
-		//member search functiona
+		//member search function
 		$("#search").keyup(function(e){
 					var minLength = 3; 						//search with min of X characters
 					var searchStr = $("#search").val(); 
@@ -426,6 +426,58 @@
 			e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
 		}); //end autocomplete
 
+
+		//load assign member uf select listing
+		$('#sel_assign_uf').xml2html('init',{
+				url: 'php/ctrl/UserAndUf.php',
+				params : 'oper=getUfListing&all=0',
+				loadOnInit:false,
+				offSet : 1
+			});	
+		
+		//assign un-assigned members to UF
+		$('.btn_assign')
+			.live('click', function(e){
+				var member_id = $(this).parents('tr').attr('memberId');
+				$('#sel_assign_uf').xml2html('reload');
+				$('#dialog_assign_uf').dialog('option','memberId',member_id).dialog('open');
+			});
+
+		
+		//create new uf	 
+		$("#dialog_assign_uf").dialog({
+			autoOpen: false,
+			height: 330,
+			width: 450,
+			modal: true,
+			buttons: {
+				"<?=$Text['btn_assign'];?>": function() {
+
+					var uf_id = $('#sel_assign_uf option:selected').val();
+
+					if (uf_id < 0) {
+						alert("<?php echo $Text['sel_uf']; ?>");
+						return false; 
+					}
+
+					var member_id = $(this).dialog('option','memberId'); 
+					
+					var urlStr = "php/ctrl/UserAndUf.php?oper=assignUF&member_id="+member_id+"&uf_id="+uf_id; 
+						
+					$.post(urlStr, function(ok){
+						if (ok == '1'){
+							$("#dialog_assign_uf").dialog( "close" );
+							$('#member_list_unassigned tbody').xml2html('reload'); 
+						}
+					})	
+	
+					
+				},
+				"<?php echo $Text['btn_cancel'];?>": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});	
 		
 		
 		/*******************************************
@@ -461,7 +513,6 @@
 				
 			},
 			complete : function(){
-				//$('#member_listing .loadAnim').hide();
 				
 				//each member gets an edit button
 				$('.btn_save_edit_member').button({
@@ -503,7 +554,7 @@
 				} 
 
 
-				//add remove member icon
+				//remove member icon
 				$('.ibtn_remove_member')
 					.live('mouseover', function(e){
 						$(this).addClass('ui-state-hover');
@@ -523,6 +574,7 @@
 										if (ok == '1'){
 											$('#detail_member_'+$this.attr('memberId')).fadeOut(1000, function(){$(this).remove()});
 											dlog.dialog( "close" );
+											$('#member_list_unassigned tbody').xml2html('reload'); 
 										}
 									})						
 									
@@ -688,21 +740,25 @@
 					data: sdata, 
 				   	beforeSend: function(){
 				   		$('.loadSpinner').show();
+				   		$('.btn_save_new_member').button('disable');
 					   	//$('button',mi).button('disable');
 					   	//myButton.button('disable');
-					   //$('#uf_listing .loadAnim').show();
+					  
 					},
 				   	success: function(msg){
 				   	 	$.showMsg({
 							msg: "<?php echo $Text['msg_edit_success']; ?>",
 							type: 'success'});
-				   	 	/*$('#uf_detail_member_list').xml2html('reload',{
+
+						//reload all members of this uf
+				   	 	$('#uf_detail_member_list').xml2html('reload',{
 							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid'),
 						});
-						
-				   		switchTo('ufMemberView');*/
-
-					   	//$('#member_list tbody').xml2html('reload');
+						//show them
+				   		switchTo('ufMemberView');
+				   		
+						//reload all members listing on overiew. 
+				   		$('#member_list tbody').xml2html('reload'); 
 				   	},
 				   	error : function(XMLHttpRequest, textStatus, errorThrown){
 					   $.showMsg({
@@ -711,9 +767,7 @@
 				   	},
 				   	complete : function(msg){
 				   		$('.loadSpinner').hide();
-					   	//$('button',mi).button('enable');
-					   //myButton.button('enable');
-					   //$('#uf_listing .loadAnim').hide();
+				   		$('.btn_save_new_member').button('enable');
 				   	}
 				}); //end ajax
 
@@ -939,10 +993,11 @@
 							<th><?=$Text['active'];?></th>	
 							<th><?=$Text['uf_short'];?></th>	
 							<th class="textAlignLeft">Contact</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
-							<tr class="clickable" memberId="{id}">
+							<tr memberId="{id}">
 								<td>{id}</td>
 								<td><p class="textAlignLeft">{name}</p></td>
 								<td>{active}</td>
@@ -952,6 +1007,7 @@
 									{email}
 									</p>
 								</td>
+								<td><a href="javascript:void(null)" class="btn_assign"><?php echo $Text['btn_assign'];?></a></td>
 							</tr>						
 						</tbody>
 				</table>
@@ -1151,37 +1207,7 @@
 		</div><!-- end member_create -->
 		
 			
-		<div id="non_member_listing" class="ui-widget hidden">
-			<div class="ui-widget-content ui-corner-all">
-				<h2 class="ui-widget-header ui-corner-all"> <?php echo $Text['unassigned_members'];?></h2>
-				<p id="assignMsg"></p>
-				<form id="assign_user2uf">
-				<table id="non_uf_member_list" class="product_list" >
-						<thead>
-						<tr>
-							<th>&nbsp;</th>
-							<th><?php echo $Text['id'];?></th>
-							<th><?php echo $Text['logon'];?></th>
-							<th><?php echo $Text['created'];?></th>
-						</tr>
-						</thead>
-						<tbody>
-							<tr class="xml2html_tpl">
-								<td><input type="checkbox" name="user_id[]" value="{id}"/></td>
-								<td>{id}</td>
-								<td>{login}</td>
-								<td>{created}</td>					
-							</tr>						
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="2" class="floatLeft"><button id="btn_assign"><?=$Text['btn_assign'] ?></button></td>
-							</tr>
-						</tfoot>
-					</table>
-					</form>
-			</div>
-		</div>
+		
 		
 		
 		
@@ -1212,6 +1238,15 @@
 				</tr>
 		</table>
 	</form>
+</div>
+
+<div id="dialog_assign_uf" title="Assign member to household">
+	<p>&nbsp;</p>
+	
+	<select id="sel_assign_uf">
+		<option value="-1" selected="selected"><?=$Text['sel_uf']; ?></option>
+		<option value="{id}">{id} {name}</option>		
+	</select>
 </div>
 
 <div id="loadLanguageSelect" class="hidden">

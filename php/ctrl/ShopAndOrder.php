@@ -37,9 +37,11 @@ try{
 	    case 'getOrderCategories':
 	    	printXML(stored_query_XML_fields('get_orderable_categories_for_date', get_param('date')));
 	    	exit;
-	    	
+
+	    //retrieves all categories of all products active; optional the date parameter
+	    //would retrieve all categories for stock products and orderable for the given date. 	
 	    case 'getShopCategories':
-	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', get_param('date')));
+	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', 0));
 	    	exit;
 	    	
 	    case 'getStockProviders':

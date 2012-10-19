@@ -319,7 +319,7 @@ begin
 	
     /** search for product name **/
     elseif the_like != "" then
-    	set wherec 	= concat (wherec, " and p.name LIKE '%", the_like,"%' ");
+    	set wherec 	= concat(wherec, " and p.name LIKE '%", the_like,"%' ");
     end if;
     
   

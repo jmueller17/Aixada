@@ -528,19 +528,30 @@ begin
 end|
 
 
-
-
-drop procedure if exists assign_user_to_uf|
-create procedure assign_user_to_uf(in the_user_id int, in the_uf_id int)
+/**
+ * assigns existing member to uf
+ */
+drop procedure if exists assign_member_to_uf|
+create procedure assign_member_to_uf(in the_member_id int, in the_uf_id int)
 begin
-  update aixada_user
-  set uf_id = the_uf_id 
-  where id = the_user_id;
+  update 
+  	aixada_user
+  set 
+  	uf_id = the_uf_id 
+  where 
+  	member_id = the_member_id;
 
-  update aixada_member 
-  set uf_id = the_uf_id
-  where id = the_user_id;
+  update 
+  	aixada_member 
+  set 
+  	uf_id = the_uf_id
+  where 
+  	id = the_member_id;
 end|
+
+
+
+
 
 drop procedure if exists get_users|
 create procedure get_users()

@@ -47,7 +47,7 @@ try{
 	                                       	);
 	          }
 	      }
-	      echo $filename . '.bz2';
+	      echo 'local_config/dbBkups/' . $cv->db_name . '.' . strftime('%Y.%m.%d', strtotime("now")) . '.sql.bz2';
 	      exit;
 	      
 	  default:  

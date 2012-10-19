@@ -48,11 +48,12 @@ insert into aixada_unit_measure values
        (5, 'unit of 250g', '250g'),
        (6, 'unit of half kilo','500g'),
        (7, 'mililiters','ml'),
-       (8, 'liter','l'),
-       (9, 'quarter of a liter','250ml'),
-       (10, 'half a liter','500ml'),
-       (11, 'three quarters of a liter','750ml'),
-       (12, 'bunch','bunch');
+       (8, 'liter','L'),
+       (9, 'one liter', '1L'),
+       (10, 'quarter of a liter','250ml'),
+       (11, 'half a liter','500ml'),
+       (12, 'three quarters of a liter','750ml'),
+       (13, 'bunch','bunch');
 
 
 insert into aixada_payment_method (id, description, details)
