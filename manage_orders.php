@@ -1174,6 +1174,9 @@
 						url: 'php/ctrl/Orders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
 						success: function(txt){
 							$('#tbl_orderOverview tbody').xml2html('reload');
+							$.showMsg({
+								msg:txt,
+								type: 'success'});
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.showMsg({
@@ -1359,11 +1362,8 @@
 						<td>{date_for_shop}</td>
 						<td><p  class="textAlignRight">{order_total} €&nbsp;&nbsp;</p></td>
 						<td>{revision_status}</td>
-						<td class="maxwidth-100">				
-							<!-- p class="ui-corner-all iconContainer ui-state-default floatLeft viewOrderBtn"><span class="ui-icon ui-icon-zoomin" title="View order"></span></p-->
-							<!-- p class="ui-corner-all iconContainer ui-state-default floatLeft printOrderBtn"><span class="ui-icon ui-icon-print" title="Print order"></span></p-->				
-							<!-- p class="ui-corner-all iconContainer ui-state-default floatRight reviseOrderBtn"><span class="ui-icon ui-icon-check" title="Revise order"></span></p-->
-							<p><a href="javascript:void(null)" class="reviseOrderBtn"><?php echo $Text['btn_revise']; ?></a></p>
+						<td class="aix-layout-fixW100s">				
+							<a href="javascript:void(null)" class="reviseOrderBtn nobr"><?php echo $Text['btn_revise']; ?></a>
 						</td>
 					</tr>
 				</tbody>

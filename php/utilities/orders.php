@@ -5,6 +5,7 @@
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
+require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
 
@@ -54,13 +55,17 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 function finalize_order($provider_id, $date_for_order)
 {
 	
-	$sendEmail = configuration_vars::get_instance()->internet_connection;
+	$config_vars = configuration_vars::get_instance(); 
+	$sendEmail = $config_vars->internet_connection;
+	$msg = ''; 
 	
 	if ($sendEmail){
 		
-		$rm = new report_manager(); 
-		$message = $rm->write_summarized_orders_html($provider_id, $date_for_order);
-		
+		$rm = new report_manager();
+		$message = '<html>';
+		$message .= '<body>';   
+		$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
+		$message .= '</body></html>';
 		
 		$db = DBWrap::get_instance();
 		$db->free_next_results();
@@ -85,27 +90,33 @@ function finalize_order($provider_id, $date_for_order)
 		while ($row = $rs->fetch_assoc()) {
       		$reply_to_responsible_uf = $row['email'];
     	}
+    	
+    	$db->free_next_results();
 				
-		$subject = "Aixada Order for ".$date_for_order;
-		$from = configuration_vars::get_instance()->admin_email; 
+		//$subject = " " . $config_vars->coop_name . " " .  $Text['order'] . " " .$Text['for'] . " " .$date_for_order;
+		$subject = $config_vars->coop_name . " order for " .$date_for_order;
+    	$from = configuration_vars::get_instance()->admin_email; 
 		
 		$headers = "From: $from \r\n";
 		$headers .= "Reply-To: $reply_to_responsible_uf \r\n";
 		$headers .= "Return-Path: $from\r\n";
-		$headers .= "X-Mailer: PHP \r\n";
+		$headers .= "MIME-Version: 1.0\r\n";
+		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+		
 		
 		if (mail($toEmail,$subject,$message,$headers)){
-			echo $Text['msg_order_emailed'];			
+			$msg = $Text['msg_order_emailed'];			
 		} else {
-			echo $Text['msg_err_emailed'];		
+			$msg =  $Text['msg_err_emailed'];		
 		}
 		
 		
 	}
 	
 	
-	return do_stored_query('finalize_order', $provider_id, $date_for_order);
+	$omsg = do_stored_query('finalize_order', $provider_id, $date_for_order);
 	
+	return $msg; 
 	
 }
 

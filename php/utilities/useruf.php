@@ -198,7 +198,7 @@ function reset_password($user_id)
     	
 		$subject = "Aixada Reset Password";
 		$message = "Your password has been reset. The new password is " . $newPwd ."\n\n Please logon with the new password. Under My Account, Settings you can change your password.";
-		$from = "joerg@toytic.com";
+		$from = configuration_vars::get_instance()->admin_email;
 		$headers = "From: $from \r\n";
 		$headers .= "Reply-To: $from \r\n";
 		$headers .= "Return-Path: $from\r\n";
@@ -206,7 +206,6 @@ function reset_password($user_id)
 		
 		
 		if (mail($toEmail,$subject,$message,$headers)){
-			
 			echo $Text['msg_pwd_emailed'];			
 			
 		} else {

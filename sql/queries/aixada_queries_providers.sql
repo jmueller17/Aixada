@@ -4,18 +4,18 @@ delimiter |
 /**
  * returns the responsible users for a provider. 
  */
-drop procedure if exists get_reponsible_uf|
+drop procedure if exists get_responsible_uf|
 create procedure get_responsible_uf(in the_provider_id int)
 begin
 	
 	select 
-		*
+		u.*
 	from 
-		aixada_user u, 
+		aixada_user u,
 		aixada_provider pv
 	where
 		pv.id = the_provider_id
-		and pv.reponsible_uf_id = u.id; 
+		and pv.responsible_uf_id = u.uf_id;
 end|
 
 
