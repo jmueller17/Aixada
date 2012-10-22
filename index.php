@@ -85,7 +85,8 @@
 				$('#btn_nextOrders').button({
 					icons : {
 						secondary:"ui-icon-seek-next"
-						}
+						},
+					disabled: true
 				})
 				.click( function(e){
 					gOrderLimitIndex--;
@@ -301,6 +302,7 @@
 			//calculates index for sql result set
 			function getOrderLimit(index)
 			{
+				
 				if (index == 0) {
 					$('#btn_nextOrders').button('disable');  
 				} else {

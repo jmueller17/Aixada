@@ -532,7 +532,7 @@ $Text['date'] = "Fecha";
 $Text['iva'] = "IVA";
 $Text['expected'] = 'Esperado';
 $Text['not_yet_sent'] = 'Todavía no enviado';
-$Text['ordered_for'] = 'Ordenado por';
+$Text['ordered_for'] = 'Pedido por el día';
 $Text['my_orders'] = 'Mi(s) Pedido(s)';
 $Text['my_purchases'] = 'Mi(s) Compra(s)';
 $Text['loading_status_info'] = 'Cargando Información de estado...';
@@ -740,8 +740,8 @@ $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
 
 $Text['show_deactivated'] = "Show deactivated products"; 
-$Text['nav_report_sales'] = "Sales"; 
-$Text['nav_help'] = "Help"; 
+$Text['nav_report_sales'] = "Ventas"; 
+$Text['nav_help'] = "Ayuda"; 
 $Text['withdraw_from'] = "Withdraw from ";  //account
 $Text['withdraw_to_bank'] = "Withdraw cash for bank";
 $Text['withdraw_uf'] = "Withdraw from HU account";
