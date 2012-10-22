@@ -5,8 +5,8 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once ('general.php');
 
-$firephp = FirePHP::getInstance(true);
-ob_start(); // Starts FirePHP output buffering
+//$firephp = FirePHP::getInstance(true);
+//ob_start(); // Starts FirePHP output buffering
 
 
 

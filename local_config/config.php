@@ -28,6 +28,7 @@ class configuration_vars {
    */
   public $coop_name = 'Aixada';
 
+  
   /**
    * Configure the database connection
    */
@@ -96,6 +97,13 @@ class configuration_vars {
   
   
   /**
+   * the email address of the admin; used for sending out pwd changes
+   * and orders
+   */
+  public $admin_email = "joerg@toytic.com";
+  
+  
+  /**
    * 
    * is this a local install or accessible online. If online
    * services such as sending emails will be active. 
@@ -105,10 +113,17 @@ class configuration_vars {
   
   
   /**
-   * the email address of the admin; used for sending out pwd changes
-   * and orders
+   * if set to true, when finalizing orders they 
+   * will be sent to the respective providers directly. Only works on 
+   * servers where PHP.ini is configured appropriately. 
    */
-  public $admin_email = "joerg@toytic.com";
+  public $email_orders = false; 
+  
+  
+  /**
+   * format of emailed orders: just summarized "1" or just extended "2" or both "3"
+   */
+  public $email_order_format = 3;
   
   
   /**

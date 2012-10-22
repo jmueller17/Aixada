@@ -3,12 +3,12 @@
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 
-$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
-require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. $language . '.php');
+//$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
+//require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. $language . '.php');
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+//ob_start(); // Starts FirePHP output buffering
+//$firephp = FirePHP::getInstance(true);
 
 
 /**

@@ -764,6 +764,6 @@ $Text['msg_pwd_change'] = "The new password is: ";
 $Text['msg_err_emailed'] = "The email sending failed!";
 $Text['msg_order_emailed'] = "The order has been emailed succesfully!";
 $Text['msg_err_responsible_uf'] = "No responsible user found for this provider";
-
+$Text['msg_err_finalize'] = "There was an error finalizing the order!";
 
 ?>

@@ -139,8 +139,8 @@ class DBWrap {
     if (!$rs) 
       $this->handle_execute_error($this->mysqli->errno, $this->mysqli->error, $safe_sql_string);
     if ($this->debug) {
-      global $firephp;
-      $firephp->log($safe_sql_string, 'query');
+      //global $firephp;
+      //$firephp->log($safe_sql_string, 'query');
     }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;
@@ -320,7 +320,7 @@ class DBWrap {
    */
   public function calculate_page_limits ($count, $page, $limit) 
   {
-    global $firephp;
+    
     $total_pages = ($count>0) ? ceil($count/$limit) : 0;
     if ($page < 0)
       $page = 0;

@@ -715,6 +715,7 @@ begin
 	
 	declare order_total decimal(10,2) default 0;
 	declare fix_closing_date date default date(sysdate());
+	declare last_order_id int default 0; 
 	
 	set fix_closing_date = date_sub(fix_closing_date, interval 1 day);
 	
@@ -736,7 +737,8 @@ begin
 		aixada_order (provider_id, date_for_order, ts_sent_off, total)
 	values
 		(the_provider_id, the_date_for_order, now(), order_total);
-		
+	
+	set last_order_id = last_insert_id();
 		
 	/** set order id to order_items **/
 	update 
@@ -760,6 +762,14 @@ begin
 		and po.date_for_order = the_date_for_order
 		and p.id = po.product_id
 		and p.provider_id = the_provider_id;
+		
+	/** return last order entry **/
+	select
+		* 
+	from 
+		aixada_order
+	where
+		id = last_order_id; 
 	
 end |
 

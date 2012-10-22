@@ -8,6 +8,10 @@ require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
+//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+//ob_start(); // Starts FirePHP output buffering
+//$firephp = FirePHP::getInstance(true);
+
 
 /**
  * 
@@ -54,17 +58,35 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
  */
 function finalize_order($provider_id, $date_for_order)
 {
-	
+	global $Text;  	
 	$config_vars = configuration_vars::get_instance(); 
-	$sendEmail = $config_vars->internet_connection;
 	$msg = ''; 
 	
-	if ($sendEmail){
+	if ($config_vars->internet_connection && $config_vars->email_orders){
+		
 		
 		$rm = new report_manager();
+		
 		$message = '<html>';
 		$message .= '<body>';   
-		$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
+		
+		if ($config_vars->email_order_format == 1){ 
+			$message .= "<h2>".$config_vars->coop_name.". Summarized order ".$date_for_order."</h2>";
+			$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
+			$message .= "<p><br/></p>";
+		} else if ($config_vars->email_order_format == 2){
+			$message .= "<h2>".$config_vars->coop_name.". Detail order ".$date_for_order."</h2>";
+			$message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
+			$message .= "<p><br/></p>";
+		} else if ($config_vars->email_order_format == 3){
+			$message .= "<h2>".$config_vars->coop_name.". Summarized order ".$date_for_order."</h2>";
+			$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
+			$message .= "<p><br/></p>";
+			$message .= "<h2>".$config_vars->coop_name.". Detail order ".$date_for_order."</h2>";
+			$message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
+			$message .= "<p><br/></p>";
+		}
+		
 		$message .= '</body></html>';
 		
 		$db = DBWrap::get_instance();
@@ -72,7 +94,7 @@ function finalize_order($provider_id, $date_for_order)
 		$strSQL = 'SELECT email FROM aixada_provider WHERE id = :1q';
     	$rs = $db->Execute($strSQL, $provider_id);
 		if($rs->num_rows == 0){
-    		throw new Exception("This user has no valid email.");
+    		throw new Exception("The provider does not have an email.");
 		}
     	
 		while ($row = $rs->fetch_assoc()) {
@@ -80,25 +102,34 @@ function finalize_order($provider_id, $date_for_order)
     	}
     	
     	$db->free_next_results();
+    	
 		$rs = do_stored_query('get_responsible_uf', $provider_id);
 		
 		if($rs->num_rows == 0){
     		throw new Exception($Text['msg_err_responsible_uf']);
 		}
 
+		$uf_emails = array();
 		//get emails of reponsible ufs
 		while ($row = $rs->fetch_assoc()) {
-      		$reply_to_responsible_uf = $row['email'];
+      		array_push($uf_emails, $row['email']);
     	}
     	
+    	$responsible_ufs = implode(", ", $uf_emails);
+    	
+    	//also send order to responsible uf 
+    	$toEmail = $toEmail . ", " . $responsible_ufs; 
+    	
     	$db->free_next_results();
-				
-		//$subject = " " . $config_vars->coop_name . " " .  $Text['order'] . " " .$Text['for'] . " " .$date_for_order;
-		$subject = $config_vars->coop_name . " order for " .$date_for_order;
-    	$from = configuration_vars::get_instance()->admin_email; 
+
+    	
+    	
+		$subject = " " . $config_vars->coop_name . " " .  $Text['order'] . " " .$Text['for'] . " " .$date_for_order;
+		//$subject = $config_vars->coop_name . " order for " .$date_for_order;
+    	$from = $config_vars->admin_email; 
 		
 		$headers = "From: $from \r\n";
-		$headers .= "Reply-To: $reply_to_responsible_uf \r\n";
+		$headers .= "Reply-To: $responsible_ufs \r\n";
 		$headers .= "Return-Path: $from\r\n";
 		$headers .= "MIME-Version: 1.0\r\n";
 		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
@@ -114,7 +145,14 @@ function finalize_order($provider_id, $date_for_order)
 	}
 	
 	
-	$omsg = do_stored_query('finalize_order', $provider_id, $date_for_order);
+	if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){
+		while ($row = $rs->fetch_assoc()) {
+      		$order_id = $row['id'];
+    	}
+		$msg .= $Text['ostat_desc_fin_send'] . $order_id;
+	} else {
+		throw new Exception ($Text['msg_err_finalize']);
+	}
 	
 	return $msg; 
 	

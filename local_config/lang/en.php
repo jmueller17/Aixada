@@ -691,7 +691,7 @@ $Text['msg_err_miss_info'] = "It seems that this order was created with an older
 $Text['order_closes'] = "Order closes"; //as in: order closes 20 SEP 2012
 $Text['left_ordering'] = " left for ordering."; //as in 4 days left for ordering
 $Text['ostat_closed'] = "Order is closed";
-$Text['ostat_desc_fin_send'] = "Order has been finalized and send to provider. Ref. number is: #";
+$Text['ostat_desc_fin_send'] = "Order has been finalized. Ref. number is: #";
 $Text['msg_err_past'] = "This is the past! <br/> Too late to change anything here.";
 $Text['msg_err_is_deactive_p'] = "This product has been deactivated. In order to set an orderable date, you have to activate it first by clicking its 'active' checkbox.";
 $Text['msg_err_deactivate_p'] = "You are about to deactivate a product. This means that all associated 'orderable' dates will be erased as well.<br/><br/>Are you sure you want to deactivate the product as such? As an alternative you can deactivate selected dates by clicking the corresponding table cells.";
@@ -768,6 +768,7 @@ $Text['msg_pwd_change'] = "The new password is: ";
 $Text['msg_err_emailed'] = "The email sending failed!";
 $Text['msg_order_emailed'] = "The order has been emailed succesfully!";
 $Text['msg_err_responsible_uf'] = "No responsible user found for this provider";
+$Text['msg_err_finalize'] = "There was an error finalizing the order!";
 
 
 
