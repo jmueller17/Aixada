@@ -92,6 +92,7 @@ begin
   	aixada_cart
   set 
   	ts_validated = sysdate(),
+  	ts_last_saved = now(),
     operator_id = the_op_id
    where 
    	id = the_cart_id

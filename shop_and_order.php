@@ -61,7 +61,26 @@
 		btnType		: 'save',
 		autoSave	: 5000,
 		loadSuccess : updateCartLabel,
-		submitComplete : updateCartLabel
+		submitComplete : updateCartLabel,
+		submitError : function (err_msg){
+			$.showMsg({
+				msg:err_msg,
+				buttons: {
+					"<?=$Text['btn_ok'];?>":function(){						
+
+						$('#cartLayer').aixadacart('loadCart',{
+							loadCartURL		: 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart&date='+$.getSelectedDate('#datepicker'),
+							date 			: $.getSelectedDate('#datepicker')
+						}); //end loadCart
+
+
+
+						
+						$(this).dialog("close");
+					}
+				},
+				type: 'error'});
+		}
 	});
 
 

@@ -268,6 +268,7 @@ create table aixada_cart (
 	date_for_shop	date			not null,
 	operator_id		int				default null,
 	ts_validated	timestamp		default 0, 
+	ts_last_saved	timestamp		default current_timestamp,
 	primary key (id),
 	key (date_for_shop),
 	foreign key (uf_id) references aixada_uf(id),

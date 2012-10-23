@@ -11,6 +11,11 @@ require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
 
+require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
+
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -137,7 +142,15 @@ try{
 	    case 'commit':
 	        try {
 				$emptyArr = array();
-	        	$cid = $cm->commit(get_param('quantity',$emptyArr), get_param('product_id',$emptyArr), get_param('iva_percent',$emptyArr), get_param('rev_tax_percent',$emptyArr), get_param('order_item_id',$emptyArr), get_param('cart_id',0), get_param('preorder',$emptyArr), get_param('price', $emptyArr));
+	        	$cid = $cm->commit(	get_param('quantity',$emptyArr), 
+	        						get_param('product_id',$emptyArr), 
+	        						get_param('iva_percent',$emptyArr), 
+	        						get_param('rev_tax_percent',$emptyArr), 
+	        						get_param('order_item_id',$emptyArr), 
+	        						get_param('cart_id',0), 
+	        						get_param('ts_last_saved',0),
+	        						get_param('preorder',$emptyArr), 
+	        						get_param('price', $emptyArr));
 	            echo ($cid);
 	        }
 	        catch(Exception $e) {

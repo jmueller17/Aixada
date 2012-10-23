@@ -49,9 +49,24 @@ try{
 			exit; 
 	    
 	  	case 'commit':
-       		$vm = new validation_cart_manager(get_session_user_id(), get_param('uf_id'), get_param('date')); 
-	  		$emptyArr = array();
-        	$vm->commit(get_param('quantity',$emptyArr), get_param('product_id',$emptyArr), get_param('iva_percent',$emptyArr), get_param('rev_tax_percent',$emptyArr), get_param('order_item_id',$emptyArr), get_param('cart_id',0), get_param('preorder',$emptyArr), get_param('price', $emptyArr));      
+       		try {
+		  		$vm = new validation_cart_manager(get_session_user_id(), get_param('uf_id'), get_param('date')); 
+		  		$emptyArr = array();
+        		$cid = $vm->commit(	get_param('quantity',$emptyArr), 
+        					get_param('product_id',$emptyArr), 
+        					get_param('iva_percent',$emptyArr), 
+        					get_param('rev_tax_percent',$emptyArr), 
+        					get_param('order_item_id',$emptyArr), 
+        					get_param('cart_id',0),
+        					get_param('ts_last_saved',0), 
+        					get_param('preorder',$emptyArr), 
+        					get_param('price', $emptyArr));      
+        		echo ($cid);
+        		
+       		} catch(Exception $e) {
+	            header('HTTP/1.0 401 ' . $e->getMessage());
+	            die ($e->getMessage());
+	        }
     		break;
 	    
 

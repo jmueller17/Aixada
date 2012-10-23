@@ -74,9 +74,9 @@ class order_cart_manager extends abstract_cart_manager {
 	 * @param array $arrCartId		the id of aixada_cart(id). If set, this indicates favorite cart
 	 * @param array $arrPreOrder		true/false if item is preorder
 	 */
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice)
     {
-    	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favorite" cart
+    	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favori te" cart
     	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
     	
         for ($i=0; $i < count($arrQuant); ++$i) {

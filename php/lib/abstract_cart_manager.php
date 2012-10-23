@@ -121,6 +121,13 @@ class abstract_cart_manager {
      */
     protected $_cart_id; 
     
+    
+    /**
+     * Timestamp when cart was last saved in db
+     * @var unknown_type
+     */
+    protected $_last_saved; 
+    
     /**
      * @var array_of_rows 
      */
@@ -177,7 +184,7 @@ class abstract_cart_manager {
      * @param array $arrPreOrder
      * @return int cart_id
      */
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice) 
     {
     	global $firephp;
     	$hasItems = true; 
@@ -194,12 +201,13 @@ class abstract_cart_manager {
 		    
         $this->_rows = array();
         
+		$result = array(); 
 		
         // now proceed to commit
         $db = DBWrap::get_instance();
         try {
             $db->Execute('START TRANSACTION');
-            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice);
+            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice);
             $this->_check_rows();
             $this->_delete_rows();
             if ($hasItems) {
@@ -218,7 +226,11 @@ class abstract_cart_manager {
         }
         $this->_commit_succeeded = true;    
         
-        return $this->_cart_id; 
+        //and last_saved
+        $result['cart_id'] = $this->_cart_id; 
+        $result['ts_last_saved'] = $this->_last_saved; 
+        
+        return json_encode($result);	
 
     }
 
@@ -227,7 +239,7 @@ class abstract_cart_manager {
     /**
      * abstract function to make the row classes
      */ 
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice)
     {
     }
 

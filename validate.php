@@ -245,6 +245,7 @@
 				btnType		: 'validate',
 				saveOnDelete: false,
 				submitSuccess : function (msg){
+					//alert(msg.cart_id  + " " + msg.ts_last_saved);
 					$('#tbl_cart_listing tbody').xml2html('reload'); 
 					$('#list_account tbody').xml2html('reload');
 

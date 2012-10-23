@@ -30,6 +30,7 @@ begin
     p.description,
     c.id as cart_id,
 	c.date_for_shop,
+	c.ts_last_saved,
     si.quantity as quantity,
     si.iva_percent, 
     si.order_item_id,

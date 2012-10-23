@@ -122,12 +122,17 @@
   							   type: $this.data('aixadacart').ajaxType,
   							   url: $this.data('aixadacart').saveCartURL,
   							   data: dataSerial,
+  							   dataType: "JSON",
   							   beforeSend : function(){
   							 		$('#cart .cartLoadAnim').show();
   								},
-  							   success: function(txt){
-  								    $('#global_cart_id').val(txt);
-  									$this.data('aixadacart').submitSuccess.call($this);
+  							   success: function(obj){
+  								    $('#global_cart_id').val(obj.cart_id);
+  								    $('#global_ts_last_saved').val(obj.ts_last_saved);
+								    
+  								    //alert("cart load: " + obj.cart_id + " " + obj.ts_last_saved);
+  								    
+  									$this.data('aixadacart').submitSuccess.call($this, obj);
   									$this.data('aixadacart').unsavedItems = false;
   									updateCartTips.call($this,'success',$.aixadacart.msg.saveSuccess,2000);
   									
@@ -139,8 +144,9 @@
   									
   							    },
   							   error : function(XMLHttpRequest, textStatus, errorThrown){
-  							    	$this.data('aixadacart').submitError.call($this,textStatus);
-  							    	alert(errorThrown);
+  							    	$this.data('aixadacart').submitError.call($this,XMLHttpRequest.responseText);
+  							    	//alert(errorThrown);
+  							    	
   							    	updateCartTips.call($this,'error',XMLHttpRequest.responseText);
   							    	//upon saving/validating error, try again :)
   							    	$('#btn_submit').button({
@@ -149,8 +155,6 @@
   							    },
   							   complete : function(msg){
   							    	$('#cart .cartLoadAnim').hide();
-  							    	
-  	
   							    	$this.data('aixadacart').submitComplete.call($this);
   							    }
   						}); //end ajax
@@ -359,6 +363,7 @@
  				success: function(xml){
  					
  					var lastCartId = -1;
+ 					var ts_last_saved = 0; 
  					
     			 	$(xml).find('row').each(function(){
 			  			var objItem = $this.aixadacart("getRowData", {
@@ -370,18 +375,21 @@
 			  				return false; 
 			  			}
 			  			lastCartId = objItem.cart_id; 
+			  			ts_last_saved = objItem.ts_last_saved;
 			  			$this.aixadacart("addItem",objItem);
 			  		 
 			  		});// end each row	
     			 	
     			 	$('#global_cart_id').val(lastCartId);
+    			 	$('#global_ts_last_saved').val(ts_last_saved);
+    			 	
     			 	$this.data('aixadacart').loadSuccess.call(this);
     			 	$this.data('aixadacart').unsavedItems = false;
     			 	
     			 	
      		 	},//end success ajax
      		 	error : function(XMLHttpRequest, textStatus, errorThrown){
-     		 		alert(errorThrown);
+     		 		//alert(errorThrown);
      		 		updateCartTips.call('error',XMLHttpRequest.responseText);
 					
      		 	},
@@ -484,7 +492,8 @@
 					iva_percent			: $(row).find('iva_percent').text(),
 					order_item_id		: $(row).find('order_item_id').text(),
 					cart_id 			: $(row).find('cart_id').text(),
-					time_left			: $(row).find('time_left').text()
+					time_left			: $(row).find('time_left').text(),
+					ts_last_saved		: $(row).find('ts_last_saved').text()
 				};
 			 
 		  } else if (options.type == "table"){
@@ -501,7 +510,8 @@
 					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
 					iva_percent		: $("td.item_iva_percent", row).text(),
 					order_item_id	: $("#cart_order_item_id_"+id,row).val(),
-					cart_id 		: $("#global_cart_id").val()
+					cart_id 		: $("#global_cart_id").val(),
+					ts_last_saved   : $("#global_ts_last_saved").val()
 				};
 			  //alert(objItem.id + " qu: " + objItem.quantity + " price: " + objItem.price + " tax: " + objItem.rev_tax_percent);
 			  
@@ -662,6 +672,7 @@
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
+			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
 			str += '<table id="aixada_cart_list" class="cart_product_list">';
 			str += tbl_head;
 			str += '<tbody></tbody>';
@@ -680,6 +691,7 @@
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
+			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
 			str += '<div id="cart_tabs">';
 			str += '<ul>';
 			str += '<li><a href="#tabsx-1" style="font-size:1.6em;">'+$.aixadacart.title.order+'</a></li>';
@@ -705,10 +717,10 @@
 		//default is standalone
 		} else {
 			str += '<div id="aixada_cart_standalone" class="ui-widget">';
-
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
+			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
 			str += '<div class="cart_container ui-widget-content ui-corner-all">';
 			str += '<h2 class="ui-widget-header ui-corner-all"> '+$.aixadacart.title.shop+'<span class="cartLoadAnim cart_floatRight cart_hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h2>';
 			str += '<table id="aixada_cart_list" class="cart_product_list">';

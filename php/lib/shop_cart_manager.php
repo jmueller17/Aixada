@@ -29,6 +29,7 @@ class shop_item extends abstract_cart_row {
 	protected $_rev_tax_percent = 0; 
 	
 	protected $_order_item_id = 0; 
+
  
 	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id, $unit_price_stamp){
 		$this->_iva_percent = $iva; 
@@ -68,6 +69,7 @@ class shop_item extends abstract_cart_row {
  * @subpackage Shop_and_Orders
  */
 class shop_cart_manager extends abstract_cart_manager {
+	  
 
   /**
    * Inserts an empty shopping cart into the aixada_shop_cart table in order to get a unique cart_id. 
@@ -87,10 +89,12 @@ class shop_cart_manager extends abstract_cart_manager {
   /**
    * Overloaded function to make sale_item rows
    */
-  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $arrPreorder, $arrPrice)
+  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $last_saved, $arrPreorder, $arrPrice)
     {
-
+		global $Text; 
+    	
     	$this->_cart_id = (isset($cartId) && $cartId>0)? $cartId:0; 
+    	$this->_last_saved = (isset($last_saved) && $last_saved>0)? $last_saved:0;
     	
     	
     	$db = DBWrap::get_instance();
@@ -107,19 +111,31 @@ class shop_cart_manager extends abstract_cart_manager {
     			die ($e->getMessage());
 			}  
     		    
-    	//check if cart is already validated
+		//if cart exists
 		} else if ($this->_cart_id > 0){
     		
-    		$rs = $db->Execute('select * from aixada_cart where id=:1q and ts_validated=0', $this->_cart_id);
-    		
-    		global $firephp;
-            $firephp->log($rs->num_rows, "not validated? num_rows=1 true");
-    		
+	    	//check if cart is already validated			
+    		$db->free_next_results();
+			$rs = $db->Execute('select * from aixada_cart where id=:1q and ts_validated=0', $this->_cart_id);
     		if ($rs->num_rows == 0) {
     		 throw new Exception('shop_cart_manager::_make_rows: shop cart has already been validated!!');
             	exit;
     		}
+    		
     		$db->free_next_results();
+    		//check if cart has been modified in the meanwhile in the db
+    		$rs = $db->Execute("select ts_last_saved from aixada_cart where id=:1q", $this->_cart_id); 
+    		$row = $rs->fetch_assoc();
+    		
+    		//global $firephp; 
+    		//$firephp->log($row['ts_last_saved'], "row ts_last_saved");
+    		//$firephp->log($this->_last_saved, "this->last_saved");
+    		
+    		if (strtotime($this->_last_saved) < strtotime($row['ts_last_saved'])){
+    			throw new Exception($Text['msg_err_cart_sync']);
+				exit; 	    			
+    		}
+    		
     		
     	}
     	
@@ -179,6 +195,35 @@ class shop_cart_manager extends abstract_cart_manager {
     }
     return $this->_table_manager->stored_query('products_for_shopping', $date, $uf);
   }
+  
+  
+	/**
+     * Overloaded function; set/get last_saved timestamp for cart
+     */
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    {
+
+		//update cart last saved
+	  	if ($this->_cart_id > 0){
+	  		$db = DBWrap::get_instance(); 
+	    	$db->Execute('update aixada_cart set ts_last_saved=now() where id=:1q', $this->_cart_id);
+	    	$db->free_next_results();
+	    	$rs = $db->Execute('select ts_last_saved from aixada_cart where id=:1q', $this->_cart_id);
+	    	$row = $rs->fetch_assoc();
+	    	$this->_last_saved = $row['ts_last_saved'];
+	    	$db->free_next_results();
+	    	
+	  	}  	else {
+	  		throw new Exception("Error in shop cart manager: can't update ts_last_saved. Missing cart_id!");
+				exit; 
+	  	 	
+	  	}
+	  		    	
+
+    }	
+  
+  
+  
 
 }
 

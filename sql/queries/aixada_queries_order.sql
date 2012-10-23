@@ -504,6 +504,15 @@ begin
 				and p.id = os.product_id
 				and os.uf_id = the_uf_id
 				and os.arrived = 1;
+				
+			-- update the last saved info of the cart -- 
+			update
+				aixada_cart
+			set
+				ts_last_saved = now()
+			where
+				id = the_cart_id; 
+			
 		end if; 
 	end loop;
 	close uf_cursor;	
