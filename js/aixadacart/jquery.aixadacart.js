@@ -147,7 +147,7 @@
   							    	$this.data('aixadacart').submitError.call($this,XMLHttpRequest.responseText);
   							    	//alert(errorThrown);
   							    	
-  							    	updateCartTips.call($this,'error',XMLHttpRequest.responseText);
+  							    	//updateCartTips.call($this,'error',XMLHttpRequest.responseText);
   							    	//upon saving/validating error, try again :)
   							    	$('#btn_submit').button({
 						    				label: btn_label,

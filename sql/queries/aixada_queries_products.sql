@@ -294,11 +294,18 @@ begin
     declare fromc varchar(255);
     declare fieldc varchar(255);
     
-    /** no date provided we assume that we are shopping, i.e. all active products are shown **/
+    /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set fieldc = "";
     	set fromc = "";
     	set wherec = 	" and p.unit_measure_shop_id = u.id ";
+    
+    /** hack: date=-1 works to filter stock only products **/ 	
+    elseif the_date = '1234-01-01' then 
+    	set fieldc = "";
+    	set fromc = "";
+    	set wherec = " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ";
+    
     /** otherwise search for products with orderable dates **/
     else 
     	set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");

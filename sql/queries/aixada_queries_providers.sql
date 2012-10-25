@@ -105,6 +105,7 @@ begin
   where  
     pv.active = 1
     and pv.id = p.provider_id
+    and p.active = 1
     and (p.orderable_type_id = 1 or p.orderable_type_id = 4) 
   order by pv.name;
 end|

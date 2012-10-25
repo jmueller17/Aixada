@@ -69,13 +69,14 @@
 		}).change(function(){
 				var provider_id = $("option:selected", this).val();					//get the id of the provider
 
-				$('#product_list_provider tbody').xml2html('removeAll');	//empty the list
+				$('#product_list_provider tbody').xml2html('removeAll');			//empty the list
 						
 				if (provider_id < 0) { return true;}
 	
 				$('.loadAnimShop').show();
 				$('#product_list_provider tbody').xml2html("reload",{
-					params: 'oper=getShopProducts&provider_id='+provider_id,
+					url : 'php/ctrl/ShopAndOrder.php',
+					params: 'oper=getShopProducts&provider_id='+provider_id+'&date=1234-01-01', //get stock only products, not all active ones
 					complete : function (rowCount){
 						$('.loadAnimShop').hide();
 						if (rowCount == 0){
@@ -103,7 +104,7 @@
 						
 						$('.loadAnimShop').show();
 					  	$('#product_list_provider tbody').xml2html("reload",{
-							params: 'oper=getShopProducts&like='+searchStr,
+							params: 'oper=getShopProducts&like='+searchStr+'&date=1234-01-01',
 							complete : function(rowCount){
 								if (rowCount == 0){
 									$('#searchTips').show();

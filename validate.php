@@ -260,6 +260,11 @@
 					//reloadValidationUfs();					
 					//empty the cart
 					$(this).aixadacart("resetCart");	
+				},
+				submitError : function (err_msg){
+					$.showMsg({
+						msg:err_msg,
+						type: 'error'});
 				}
 			});
 
@@ -473,7 +478,7 @@
 					
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
-								params: 'oper=getShopProducts&date='+getSelectedDate()+'&like='+searchStr,
+								params: 'oper=getShopProducts&date=0&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id"); 
 									var qu = $("#cart_quantity_"+id).val();
@@ -604,9 +609,9 @@
 			}
 
 			
-			function getSelectedDate(){
+			/*function getSelectedDate(){
 				return $('#selDate4Validation option:selected').val();
-			}
+			}*/
 
 
 			//prevent accidental submit on return when editing input

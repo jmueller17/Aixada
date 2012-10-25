@@ -133,9 +133,24 @@ $(function(){
 			
 		},
 		//util function to retrieve formated date from datepicker
-		getSelectedDate: function(selector, format){
+		getSelectedDate: function(selector, format, defaultValues){
 			formatDate = (format != null && format != '')? format:'yy-mm-dd';
-			return $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
+			
+			var date = null; 
+
+			switch(defaultValues){
+			
+				case "Shop":
+					date = 0; 
+					break;
+					
+				default: 
+					date = $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
+					break;
+			
+			}
+			
+			return date;
 		}, 
 		//util function that receives a date string as 'yy-mm-dd' and returns extended french format
 		getCustomDate: function(dateString, format){

@@ -213,11 +213,11 @@ class shop_cart_manager extends abstract_cart_manager {
 	    	$this->_last_saved = $row['ts_last_saved'];
 	    	$db->free_next_results();
 	    	
-	  	}  	else {
+	  	}  /*	else {
 	  		throw new Exception("Error in shop cart manager: can't update ts_last_saved. Missing cart_id!");
 				exit; 
-	  	 	
-	  	}
+	  	  throws "wrong" error when saving empty cart, i.e. deleting it. 	
+	  	}*/
 	  		    	
 
     }	

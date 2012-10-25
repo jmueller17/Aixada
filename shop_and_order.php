@@ -73,13 +73,10 @@
 							date 			: $.getSelectedDate('#datepicker')
 						}); //end loadCart
 
-
-
-						
 						$(this).dialog("close");
 					}
 				},
-				type: 'error'});
+				type: 'warning'});
 		}
 	});
 
@@ -109,7 +106,7 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_provider tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker'),
+						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -145,7 +142,7 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker'),
+						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -171,7 +168,7 @@
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker')+'&like='+searchStr,
+						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						}, 
