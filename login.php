@@ -92,6 +92,35 @@ if (!isset($_SESSION)) {
 
 			
 			
+			/**
+			 * forgot pwd dialog
+			 */
+			$('#dialog-recuperatePwd').dialog({
+				autoOpen:false,
+				buttons: {  
+					"<?=$Text['btn_ok'];?>" : function(){
+							$.ajax({
+								type: "POST",
+								url: '',
+								success: function(txt){
+									
+								},
+								error : function(XMLHttpRequest, textStatus, errorThrown){
+									$.showMsg({
+										msg:XMLHttpRequest.responseText,
+										type: 'error'});
+									
+								}
+							});
+		
+						
+						},
+							
+					"<?=$Text['btn_close'];?>"	: function(){
+							$( this ).dialog( "close" );
+						}
+				}
+			});
 			
 	
 				
@@ -187,6 +216,7 @@ if (!isset($_SESSION)) {
 	</div><!-- end logonwrap -->
 	
 	
+	
 	</div><!-- end stagewrap -->
 	
 
@@ -195,6 +225,11 @@ if (!isset($_SESSION)) {
 <div id="dialog-message" title="">
 	<p class="minPadding ui-corner-all"></p>
 </div>
+<div id="dialog-recuperatePwd">
+		<p>Please enter your email address here:</p>
+		<input type="text" name="email" value="" />
+</div>
+
 </body>
 </html>
 
