@@ -770,7 +770,7 @@ $Text['msg_order_emailed'] = "The order has been emailed succesfully!";
 $Text['msg_err_responsible_uf'] = "No responsible user found for this provider";
 $Text['msg_err_finalize'] = "There was an error finalizing the order!";
 $Text['msg_err_cart_sync'] = "Your shopping cart is out of synch with the database because shop items have been modified by someone else in the meanwhile. This usually happens when orders are revised and distributed while you shop. In order to proceed you need to reload your cart. Products that have been added since you last saved you cart will be lost.";
-
+$Text['msg_err_no_deposit'] = "The last household did not make any deposit???!!!";
 
 //$Text[''] = ""; 
 

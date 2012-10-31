@@ -34,6 +34,10 @@
 
 			//loading animation
 			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+
+
+			//made deposit
+			var gMadeDeposit = true; 
 			
 
 			//get the operator user id to prevent own validation
@@ -72,7 +76,9 @@
 					loadOnInit:true
 				
 				}).change(function(){
-					//get the id of the uf
+
+					if (!checkMadeDeposit()) return false;
+
 					var uf_id = $("option:selected", this).val(); 
 					
 					if (uf_id <=0) {
@@ -87,7 +93,8 @@
 						resetFields();
 						resetDeposit();
 						return false;
-					} 
+						
+					}
 	
 	
 					//activate the deposit pane
@@ -177,6 +184,9 @@
 			})
 			.live('click',function(e){
 
+				if (!checkMadeDeposit()) return false;
+
+				
 				$('.showCartDate').removeClass('ui-state-highlight dim40');
 				
 				var uf_id = $(this).attr('ufId'); 
@@ -210,7 +220,6 @@
 					var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
 					$('.showCartDate').addClass(css).text(df);
 
-					
 					loadCart(cart_id, date_for_shop);
 				} else {					
 					resetFields();
@@ -260,6 +269,8 @@
 					//reloadValidationUfs();					
 					//empty the cart
 					$(this).aixadacart("resetCart");	
+
+					gMadeDeposit = false; 
 				},
 				submitError : function (err_msg){
 					$.showMsg({
@@ -317,6 +328,7 @@
 							
 							$('#dailyStats tbody').xml2html('reload');		
 							$('#list_account tbody').xml2html('reload');
+							gMadeDeposit = true; 
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);
@@ -580,6 +592,22 @@
 
 			}
 
+			/**
+			 *	if new cart is selected for validation, shows warning message if for previous
+			 *  cart no deposit has been made
+			 */
+			function checkMadeDeposit(){
+				//check if last uf made deposit and show warning if not
+				if (!gMadeDeposit){
+					$.showMsg({
+						msg:"<?php echo $Text['msg_err_no_deposit'];?>",
+						type: 'warning'});
+					return false;
+				} else {
+					return true; 
+				}					
+			}
+			
 
 			/**
 			 *	load items for given cart. 
