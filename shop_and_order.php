@@ -105,6 +105,7 @@
 					if (id < 0) { return true;}
 
 					$('.loadSpinner').show();
+					//alert($.getSelectedDate('#datepicker','',what)); //for shop the date needs to be 0!!
 					$('#product_list_provider tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
