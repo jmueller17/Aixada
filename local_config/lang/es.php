@@ -418,7 +418,7 @@ $Text['msg_err_move_date'] = "Se ha producido un error mientras se cambiaba la f
 $Text['msg_no_active_products'] = "En estos momentos no hay productos activos para pedir.";
 $Text['msg_no_movements'] = "No hay movimientos para la cuenta y la fecha seleccionados."; 
 $Text['msg_delete_incident'] = "¿Seguro que quieres eliminar este incidente?";
-$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases. No hay ninguna UF seleccionada.  Elige una primero y luego sus compras."; //ADDED JAN 2012
+//$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases. No hay ninguna UF seleccionada.  Elige una primero y luego sus compras."; //ADDED JAN 2012
 
 
 
@@ -739,33 +739,36 @@ $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
 
-$Text['show_deactivated'] = "Show deactivated products"; 
+$Text['show_deactivated'] = "Mostrar productos no seleciondos"; 
 $Text['nav_report_sales'] = "Ventas"; 
 $Text['nav_help'] = "Ayuda"; 
-$Text['withdraw_from'] = "Withdraw from ";  //account
-$Text['withdraw_to_bank'] = "Withdraw cash for bank";
-$Text['withdraw_uf'] = "Withdraw from HU account";
-$Text['withdraw_cuota'] = "Withdraw member quota";
-$Text['msg_err_noorder'] = "No orders found for the selected time period!";
+$Text['withdraw_from'] = "Retirar dinero ";  //account
+$Text['withdraw_to_bank'] = "Retirar dinero de banco";
+$Text['withdraw_uf'] = "Retirr dinero de cuenta HU";
+$Text['withdraw_cuota'] = "Retirar dinero de quota";
+$Text['msg_err_noorder'] = "No hay pedidos para la selección!";
 $Text['primer_torn'] = "Primer Turno";
 $Text['segon_torn'] = "Segundo Turno";
-$Text['dff_qty'] = "Diff. quantity";
-$Text['dff_price'] = "Diff. price";
-$Text['ti_mgn_stock_mov'] = "Stock movements";
-$Text['stock_acc_loss_ever'] = "Overall accumulated loss";
+$Text['dff_qty'] = "Dif. cantidad";
+$Text['dff_price'] = "Dif. precio";
+$Text['ti_mgn_stock_mov'] = "Movimientos de stock";
+$Text['stock_acc_loss_ever'] = "Perdida acumulada";
 $Text['closed'] = "cerrado";
-$Text['preorder_item'] = "This product forms part of an accumulative order";
-$Text['do_preorder'] = "De-/activate as preorder";
-$Text['do_deactivate_prod'] = "De-/activate entire product";
-$Text['msg_make_preorder_p'] = "You are about to set this product as *preorderable*. It will be part of an accumulative order which does not have any fixed order date (yet). People can order these items until a certain quantity has been reached and you close it. Are you sure to continue?";
-$Text['btn_ok_go'] = "Vale, adelante!";
-$Text['msg_pwd_emailed'] = "The new password has been sent to the user";
-$Text['msg_pwd_change'] = "The new password is: ";
-$Text['msg_err_emailed'] = "The email sending failed!";
-$Text['msg_order_emailed'] = "The order has been emailed succesfully!";
-$Text['msg_err_responsible_uf'] = "No responsible user found for this provider";
-$Text['msg_err_finalize'] = "There was an error finalizing the order!";
-$Text['msg_err_cart_sync'] = "Your shopping cart is out of synch with the database because shop items have been modified by someone else in the meanwhile. This usually happens when orders are revised and distributed while you shop. In order to proceed you need to reload your cart. Products that have been added since you last saved you cart will be lost.";
-$Text['msg_err_no_deposit'] = "The last household did not make any deposit???!!!";
+$Text['preorder_item'] = "Este producto forma parte de un pedido acumulativo";
+$Text['do_preorder'] = "Activar/desactivar pedido";
+$Text['do_deactivate_prod'] = "Activar/desactivar producto";
+$Text['msg_make_preorder_p'] = "Éste pedido es acumulativo, por lo tanto todavía no tiene fecha de entrega";
+$Text['btn_ok_go'] = "OK, adelante!";
+$Text['msg_pwd_emailed'] = "La nueva constraseña se ha enviado al usuario";
+$Text['msg_pwd_change'] = "La nueva constraseña es: ";
+$Text['msg_err_emailed'] = "¡Error de envío!";
+$Text['msg_order_emailed'] = "El pedido se ha enviado correctamente!";
+$Text['msg_err_responsible_uf'] = "No hay responsable para éste producto";
+$Text['msg_err_finalize'] = "Ups...¡Error al finalizar pedido!";
+$Text['msg_err_cart_sync'] = "Tu pedido no está sincronizado con la base de datos; se ha modificado tu cesta mientras estabas comprando. Vuelve a actualizar el pedido.";
+$Text['msg_err_no_deposit'] = "La última UF no ha realizado ningún depósito?!!!";
+$Text['btn_load_cart'] = "Continua con la siguiente UF";
+$Text['btn_deposit_now'] = "Haz el ingreso ahora";
+
 
 ?>

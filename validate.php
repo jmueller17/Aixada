@@ -77,9 +77,13 @@
 				
 				}).change(function(){
 
-					if (!checkMadeDeposit()) return false;
-
+					
+					var last_uf = $('#deposit .insert_uf_id').text();
 					var uf_id = $("option:selected", this).val(); 
+
+					if (!checkMadeDeposit(last_uf, uf_id)) {
+						return false;
+					}
 					
 					if (uf_id <=0) {
 						resetFields();
@@ -173,6 +177,7 @@
 				}
 			});
 
+			//tbl_Shop checks for multiple non-validated carts; tbl_cart_listing is right hand list of carts
 			$('#tbl_Shop tbody tr, #tbl_cart_listing tbody tr')
 			.live('mouseover', function(){
 				$(this).removeClass('highlight').addClass('ui-state-hover');
@@ -184,12 +189,19 @@
 			})
 			.live('click',function(e){
 
-				if (!checkMadeDeposit()) return false;
+				var last_uf = $('#deposit .insert_uf_id').text();
+				var uf_id = $(this).attr('ufId');
+
+				
+				if (!checkMadeDeposit(last_uf, uf_id)) {
+					return false;
+				}
+				
 
 				
 				$('.showCartDate').removeClass('ui-state-highlight dim40');
 				
-				var uf_id = $(this).attr('ufId'); 
+ 
 				var validated = $(this).attr('validated');
 				var cart_id = $(this).attr('shopId'); 
 				var date_for_shop = $(this).attr('dateForShop'); 
@@ -212,6 +224,7 @@
 					$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
 				}
 
+				//if cart is not validated, load it
 				if (validated == "0000-00-00 00:00:00") {
 					$('.cartTitle').show();
 					$('.noCartTitle, .validatedCartTitle').hide();
@@ -221,17 +234,18 @@
 					$('.showCartDate').addClass(css).text(df);
 
 					loadCart(cart_id, date_for_shop);
+				//if already validated, the offer choice to see purchase details
 				} else {					
 					resetFields();
 					$.showMsg({
 						msg:"<?php echo $Text['msg_already_validated']; ?>",
 						width:500,
 						buttons: {
-							"Yes":function(){						
+							"<?=$Text['btn_ok'];?>":function(){						
 								window.location.href = "report_shop.php?detailForCart="+cart_id+"&lastPage=validate";
 								$( this ).dialog( "close" );
 							},
-							"Cancel" : function(){
+							"<?=$Text['btn_cancel'];?>" : function(){
 								$( this ).dialog( "close" );
 							}
 						},
@@ -596,12 +610,27 @@
 			 *	if new cart is selected for validation, shows warning message if for previous
 			 *  cart no deposit has been made
 			 */
-			function checkMadeDeposit(){
+			function checkMadeDeposit(depositUF, nextUF){
+				
 				//check if last uf made deposit and show warning if not
 				if (!gMadeDeposit){
+					
 					$.showMsg({
 						msg:"<?php echo $Text['msg_err_no_deposit'];?>",
+						buttons: {
+							"<?=$Text['btn_deposit_now'];?>":function(){						
+								$('#uf_cart_select').val(depositUF).attr('selected',true);
+								$( this ).dialog( "close" );
+							},
+							"<?=$Text['btn_load_cart'];?>": function(){
+								gMadeDeposit = true; //simulate we made a deposit!
+								$('#uf_cart_select').val(nextUF).attr('selected',true);
+								$('#uf_cart_select').trigger('change');
+								$( this ).dialog( "close" );
+							}
+						}, 
 						type: 'warning'});
+					
 					return false;
 				} else {
 					return true; 
