@@ -315,7 +315,7 @@
 
 				if (rowCount == 0){
 					$.showMsg({
-						msg:"Sorry, no stock corrections/adds found for this product!",
+						msg:"<?php echo $Text['msg_err_stock_mv']; ?>",
 						type: 'warning'});
 
 				}

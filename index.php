@@ -557,7 +557,7 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevPurchase"><?=$Text['previous'];?></button>&nbsp;&nbsp;Dates&nbsp;&nbsp;
+										<button id="btn_prevPurchase"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
 										<button id="btn_nextPurchase"><?=$Text['next'];?></button></p>
 									</td>
 								

@@ -164,7 +164,7 @@ $Text['active_roles'] = "Rols actius";
 $Text['products_cared_for'] = "Productes de què sóc responsable";
 $Text['providers_cared_for'] = "Proveïdors de què sóc responsable";
 $Text['notes'] = "Observacions";
-$Text['edit_uf'] = "Edita la unitat familiar";
+$Text['edit_uf'] = "Edita UF";
 //$Text['members_uf'] = "Membres de la unitat familiar";
 $Text['mentor_uf'] = "Unitat familiar amfitriona";
 $Text['unassigned_members'] = "Membres no assignats";
@@ -768,7 +768,9 @@ $Text['msg_err_responsible_uf'] = "No s'ha trobat cap responsable per aquest pro
 $Text['msg_err_finalize'] = "Ups... error al finalitzar comanda!";
 $Text['msg_err_cart_sync'] = "La teva comanda no esta sincronitzada amb la base de dades, dons s'ha modificat la teva cistella mentre estabas comprant. Torna a actualitzar la teva comanda!";
 $Text['msg_err_no_deposit'] = "La última UF no ha realitzat cap depòsit???!!!";
-$Text['btn_load_cart'] = "Continua amb la seguent UF";
+$Text['btn_load_cart'] = "Continua amb la següent UF";
 $Text['btn_deposit_now'] = "Fez el ingres ara";
+$Text['msg_err_stock_mv'] = "De moment n'en hi ha cap moviments d'estoc per aquet producte.";
+
 
 

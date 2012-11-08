@@ -711,7 +711,7 @@
 	<form id="c_balance_form">	
 		<table class="tblForms">
 			<tr>
-				<td>New balance:&nbsp;&nbsp;</td>
+				<td><?php echo $Text['current_balance']; ?>:&nbsp;&nbsp;</td>
 				<td><input type="text" name="c_balance_quantity" id="c_balance_quantity" class="ui-widget-content ui-corner-all " value=""/></td>
 			</tr>
 			<tr>

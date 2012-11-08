@@ -175,11 +175,20 @@ $Text['active_roles'] = "Roles activos";
 $Text['products_cared_for'] = "Productos de los que soy responsable";
 $Text['providers_cared_for'] = "Proveedores de los que soy responsable";
 $Text['notes'] = "Observaciones";
-$Text['edit_uf'] = "Editar la unidad familiar";
+$Text['edit_uf'] = "Editar UF";
 $Text['members_uf'] = "Miembros de la unidad familiar";
 $Text['mentor_uf'] = "Unidad familiar anfitriona";
 $Text['unassigned_members'] = "Miembros no asignados";
 $Text['edit_my_settings'] = "Editar mi configuración";
+
+$Text['nif'] = "NIF";
+$Text['bank_name'] = "Banco o Caja";
+$Text['bank_account'] = "Cuenta bancario";
+$Text['picture']  = "Imagen";
+$Text['offset_order_close'] = "Tiempo de procesamiento";
+$Text['iva_percent_id'] = "Typo de IVA";
+$Text['percent'] = "Porcentaje";
+$Text['adult'] = "Adulto";
 
 
 /**
@@ -718,7 +727,7 @@ $Text['btn_withdraw'] = "Reintegro";
 $Text['deposit_desc'] = "Ingreso en efectivo";
 $Text['withdraw_desc'] = "Reintegro de la caja";
 $Text['btn_set_balance'] = "Establecer el balance";
-$Text['set_bal_desc'] = "Reiniciar el balance al principio del primer turno.";
+$Text['set_bal_desc'] = "Corregir el balance al principio del primer turno.";
 $Text['maintenance_account'] = "Mantenimiento";
 $Text['posted_by'] = "Creado por"; //Posted by
 $Text['ostat_yet_received'] = "pendiente de recibir";
@@ -739,7 +748,7 @@ $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
 
-$Text['show_deactivated'] = "Mostrar productos no seleciondos"; 
+$Text['show_deactivated'] = "Mostrar desactivados"; 
 $Text['nav_report_sales'] = "Ventas"; 
 $Text['nav_help'] = "Ayuda"; 
 $Text['withdraw_from'] = "Retirar dinero ";  //account
@@ -769,6 +778,7 @@ $Text['msg_err_cart_sync'] = "Tu pedido no está sincronizado con la base de dat
 $Text['msg_err_no_deposit'] = "La última UF no ha realizado ningún depósito?!!!";
 $Text['btn_load_cart'] = "Continua con la siguiente UF";
 $Text['btn_deposit_now'] = "Haz el ingreso ahora";
+$Text['msg_err_stock_mv'] = "De momento, no han habido movimientos de estoc para este producto!";
 
 
 ?>

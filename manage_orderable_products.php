@@ -128,7 +128,7 @@
 					
 					for (var i=0; i<gdates.length; i++){
 						if (ispreorder){
-							apstr = '<td class="preorder" colspan="'+gdates.length+'"><p class="textAlignCenter"><?=$Text["preorder_item"];?></p></td>';
+							apstr = "<td class=\"preorder\" colspan=\"'+gdates.length+'\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
 							break;
 						}
 						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)

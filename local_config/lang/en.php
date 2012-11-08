@@ -773,6 +773,7 @@ $Text['msg_err_cart_sync'] = "Your shopping cart is out of synch with the databa
 $Text['msg_err_no_deposit'] = "The last household did not make any deposit???!!!";
 $Text['btn_load_cart'] = "Continue with next cart";
 $Text['btn_deposit_now'] = "Make desposit now";
+$Text['msg_err_stock_mv'] = "Sorry, no stock corrections/adds found for this product!";
 
 //$Text[''] = ""; 
 
