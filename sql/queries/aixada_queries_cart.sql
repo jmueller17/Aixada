@@ -1,6 +1,8 @@
 delimiter |
 
 
+
+
 /**
  * returns all items in aixada_shop_item for 
  * a specific date and an uf OR a given cart_id,
