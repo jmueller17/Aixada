@@ -100,7 +100,7 @@ class configuration_vars {
    * the email address of the admin; used for sending out pwd changes
    * and orders
    */
-  public $admin_email = "joerg@toytic.com";
+  public $admin_email = "admin@admin.com";
   
   
   /**
@@ -356,9 +356,6 @@ class configuration_vars {
              array('may_edit_incident')
              );
   
-  // Placing orders
-  public $use_sparklines = true;
-
 
   // from here on follow internals of the configuration_vars class.
   private static $instance = false;
