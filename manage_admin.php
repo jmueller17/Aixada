@@ -50,7 +50,7 @@
 					   },
 					   error : function(XMLHttpRequest, textStatus, errorThrown){
 						   $.showMsg({
-								msg:XMLHttpRequest.responseText,
+								msg:"An error has occured during the db backup!",
 								type: 'error'});
 						  
 					   },
