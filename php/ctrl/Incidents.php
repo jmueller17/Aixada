@@ -36,6 +36,10 @@ try{
 	        echo get_incidents_in_range(get_param('filter', 'prev2Month'), get_param('fromDate',0), get_param('toDate',0), get_param('type',1) );
 	    	exit; 
 	    	
+	    case 'getIncidentsById':
+	    	printXML(stored_query_XML_fields('get_incidents_by_ids', get_param('idlist'), get_param('type',0)));	
+	    	exit;
+	    	
 	    default:  
 	    	 throw new Exception("ctrlIncidents: oper={$_REQUEST['oper']} not supported");  
 	        break;

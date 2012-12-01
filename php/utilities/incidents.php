@@ -81,6 +81,7 @@ function extract_incident_form_values(){
 function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 	$today = date('Y-m-d', strtotime('Today'));
 	$tomorrow = date('Y-m-d', strtotime('Today + 2 day'));
+	$yesterday = date('Y-m-d', strtotime('Today - 1 day'));
 	$prev_2month = date('Y-m-d', strtotime('Today - 2 month'));
 	$prev_year	 = 	date('Y-m-d', strtotime('Today - 13 month'));
 	$prev_week = date('Y-m-d', strtotime('Today - 1 week'));
@@ -102,7 +103,7 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 			break;
 			
 		case 'today':
-			printXML(stored_query_XML_fields('get_incidents_listing', $today, $tomorrow, $filterType));
+			printXML(stored_query_XML_fields('get_incidents_listing', $yesterday, $tomorrow, $filterType));
 			break;
 			
 			
@@ -112,6 +113,11 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 	}
 	
 }
+
+
+
+
+
 
 	
 ?>

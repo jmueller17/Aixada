@@ -89,6 +89,14 @@ class configuration_vars {
   public $print_bill_template = 'bill_model1.php';
   
   
+  
+  /**
+   * 
+   * template for printing incidents
+   */
+  public $print_incidents_template = 'incidents_model1.php';
+  
+ 
   /**
    * 
    * diplays the language select on every page or not

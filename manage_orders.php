@@ -1353,7 +1353,7 @@
 				</thead>
 				<tbody>
 					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="clickable">
-						<td><input type="checkbox" name="bulkAction"/>
+						<td><input type="checkbox" name="bulkAction"/></td>
 						<td>{id}</td>
 						<td class="textAlignRight minPadding"><p class="textAlignLeft">{provider_name}</p></td>
 						<td>{date_for_order}</td>
