@@ -242,7 +242,7 @@
 						width:500,
 						buttons: {
 							"<?=$Text['btn_ok'];?>":function(){						
-								window.location.href = "report_shop.php?detailForCart="+cart_id+"&lastPage=validate";
+								window.location.href = "report_shop_ufs.php?detailForCart="+cart_id+"&lastPage=validate";
 								$( this ).dialog( "close" );
 							},
 							"<?=$Text['btn_cancel'];?>" : function(){

@@ -62,9 +62,52 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 			throw new Exception("get_orders_in_range: param={$time_period} not supported");  
 			break;
 	}
-
 	
 }
+
+
+function get_purchase_by_provider_in_range($filter, $from_date, $to_date, $provider_id=0){
+	
+	
+	$today = date('Y-m-d', strtotime("Today"));
+	$tomorrow = date('Y-m-d', strtotime("Today + 1 day"));
+	
+	$prevMonth = date('Y-m-d', strtotime('Today - 1 month'));
+	$prev3Month = date('Y-m-d', strtotime('Today - 3 month'));
+	$prevYear = date('Y-m-d', strtotime('Today - 1 year'));
+	$very_distant_future = '9999-12-30';
+	$very_distant_past	= '1980-01-01';
+	
+	switch ($filter) {
+		
+		case 'today':
+			printXML(stored_query_XML_fields('get_purchase_total_by_provider', $today, $tomorrow, $provider_id));
+			break;
+			
+		case 'prevMonth':
+			printXML(stored_query_XML_fields('get_purchase_total_by_provider', $prevMonth, $today, $provider_id));
+			break;
+			
+		case 'prev3Month':
+			printXML(stored_query_XML_fields('get_purchase_total_by_provider', $prev3Month, $today, $provider_id));
+			break;
+			
+		case 'all':
+			printXML(stored_query_XML_fields('get_purchase_total_by_provider', $very_distant_past, $very_distant_future, $provider_id));
+			break;
+			
+		case 'exact':
+			printXML(stored_query_XML_fields('get_purchase_total_by_provider', $from_date, $to_date, $provider_id));
+			break;
+			
+		default:
+			throw new Exception("get_orders_in_range: param={$time_period} not supported");  
+			break;
+	}
+	
+
+}
+
 
 	
 ?>

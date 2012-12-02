@@ -77,7 +77,7 @@ option 				{padding:1px 5px;}
 /** different table styles **/
 table.tblListingDefault				{width:100%;  border-collapse:collapse;}
 table.tblListingDefault th			{background:#f3f3f3; padding:4px 2px; text-align:left;}
-table.tblListingDefault td			{padding:2px 8px; text-align:left;}
+table.tblListingDefault td			{padding:2px 8px; text-align:left; vertical-align:bottom;}
 table.tblListingDefault tfoot td	{padding:2px 4px; margin:1px; text-align:right;}
 
 table.tblListingGrid			{width:100%;}

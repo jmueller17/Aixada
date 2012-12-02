@@ -119,9 +119,14 @@
 
 <div id="navReportItems" class="hidden">
 	<ul>
-		<li><a href="report_shop.php"><?php echo $Text['nav_report_sales']; ?></a></li>
+		<li><a href="#"><?php echo $Text['nav_report_sales']; ?></a>
+			<ul>
+				<li><a href="report_shop_ufs.php">Purchases by HUs</a></li>
+				<li><a href="report_shop_providers.php">Sales by providers</a></li>
+			</ul>
+		</li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
-		<li><a href="report_stats.php"><?php echo $Text['nav_report_daystats'];?></a></li>
+		<li><a href="report_torn.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>
                 <ul>
                  <li><a href="report_timelines.php?oper=uf"><?php echo $Text['nav_report_timelines_uf'];?></a></li>
