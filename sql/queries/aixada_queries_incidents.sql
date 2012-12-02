@@ -5,7 +5,7 @@ delimiter |
  * returns incidents for given list of ids
  */
 drop procedure if exists get_incidents_by_ids|
-create procedure get_incidents_by_ids(in the_ids varchar(255), in the_type int)
+create procedure get_incidents_by_ids(in the_ids text, in the_type int)
 begin
 	
 	set @q = concat("select 
@@ -30,7 +30,9 @@ begin
 	  	and i.operator_id = u.id
 	    and	u.member_id = mem.id
 	    and i.incident_type_id >= ",the_type,"
-	    and it.id = i.incident_type_id;");
+	    and it.id = i.incident_type_id
+	order by
+		i.ts desc;");
 	
 	prepare st from @q;
   	execute st;
