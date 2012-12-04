@@ -426,7 +426,7 @@
 					</ul>
 					</div>		
 		    	
-		    	<button id="btn_print" class="overviewElements">Print</button>
+		    	<button id="btn_print" class="overviewElements"><?=$Text['printout'];?></button>
 		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
 		    	
 		    	<button id="btn_new_incident" class="overviewElements btn_right hideInPrint"><?php echo $Text['btn_new_incident'];?></button>

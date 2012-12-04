@@ -301,6 +301,8 @@ $Text['nav_report_timelines_product'] = "Per productes";
 $Text['nav_report_daystats'] = "Estadístiques diàries";
 $Text['nav_report_preorder'] = "Comandes acumulatives";
 $Text['nav_report_incidents'] = "Incidents d'avui";
+$Text['nav_report_shop_hu'] = "Per UF";
+$Text['nav_report_shop_pv'] = "Per Proveidor";
 
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Navega / afegeix";
@@ -756,7 +758,7 @@ $Text['ti_mgn_stock_mov'] = "Moviments stock";
 $Text['stock_acc_loss_ever'] = "Pèrdua acumulada";
 $Text['closed'] = "tancat";
 $Text['preorder_item'] = "Aquest producte forma part d'una comanda acumulativa";
-$Text['do_preorder'] = "Activar/desactivar comanda";
+$Text['do_preorder'] = "Des-/activar com comanda acumulativa";
 $Text['do_deactivate_prod'] = "Activar/desactivar producte";
 $Text['msg_make_preorder_p'] = "Aixó es una comanda acumulativa, per tant encare no te data d'entrega";
 $Text['btn_ok_go'] = "Ok, endavant!";
@@ -772,5 +774,11 @@ $Text['btn_load_cart'] = "Continua amb la següent UF";
 $Text['btn_deposit_now'] = "Fez el ingres ara";
 $Text['msg_err_stock_mv'] = "De moment n'en hi ha cap moviments d'estoc per aquet producte.";
 
-
+$Text['ti_report_shop_pv'] = "Total ventas per proveidor";
+$Text['filter_all_sales'] = "Todas las ventas";
+$Text['filter_exact'] = "Escull dades";
+$Text['total_4date'] = "Total";
+$Text['total_4provider'] = "Suma";
+$Text['sel_sales_dates'] = "Per quines dades vols consultar les ventas?";
+$Text['sel_sales_dates_ti'] = "Escull un periodo"; 
 

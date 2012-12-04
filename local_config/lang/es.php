@@ -313,6 +313,8 @@ $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";
 $Text['nav_report_daystats'] = "Estadísticas diarias";
 $Text['nav_report_incidents'] = "Incidentes de hoy";
+$Text['nav_report_shop_hu'] = "Por UF";
+$Text['nav_report_shop_pv'] = "Por proveedores";
 
 
 $Text['nav_incidents'] = "Incidentes";
@@ -764,7 +766,7 @@ $Text['ti_mgn_stock_mov'] = "Movimientos de stock";
 $Text['stock_acc_loss_ever'] = "Perdida acumulada";
 $Text['closed'] = "cerrado";
 $Text['preorder_item'] = "Este producto forma parte de un pedido acumulativo";
-$Text['do_preorder'] = "Activar/desactivar pedido";
+$Text['do_preorder'] = "De-/activar cómo pedido acumulativo";
 $Text['do_deactivate_prod'] = "Activar/desactivar producto";
 $Text['msg_make_preorder_p'] = "Éste pedido es acumulativo, por lo tanto todavía no tiene fecha de entrega";
 $Text['btn_ok_go'] = "OK, adelante!";
@@ -779,6 +781,15 @@ $Text['msg_err_no_deposit'] = "La última UF no ha realizado ningún depósito?!
 $Text['btn_load_cart'] = "Continua con la siguiente UF";
 $Text['btn_deposit_now'] = "Haz el ingreso ahora";
 $Text['msg_err_stock_mv'] = "De momento, no han habido movimientos de estoc para este producto!";
+
+$Text['ti_report_shop_pv'] = "Total ventas por proveedor";
+$Text['filter_all_sales'] = "Todas las ventas";
+$Text['filter_exact'] = "Elegir periodo";
+$Text['total_4date'] = "Total para la fecha";
+$Text['total_4provider'] = "Suma";
+$Text['sel_sales_dates'] = "Muestra ventas por proveedor y el periodo selecionado:";
+$Text['sel_sales_dates_ti'] = "Elige un periodo"; 
+
 
 
 ?>

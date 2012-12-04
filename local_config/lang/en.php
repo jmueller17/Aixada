@@ -302,6 +302,9 @@ $Text['nav_report_timelines_product'] = "Products";
 $Text['nav_report_daystats'] = "Statistics of the day";
 $Text['nav_report_preorder'] = "Preorders";
 $Text['nav_report_incidents'] = "Today's incidents";
+$Text['nav_report_shop_hu'] = "By Households";
+$Text['nav_report_shop_pv'] = "By Providers";
+
 
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Browse / add";
@@ -774,6 +777,15 @@ $Text['msg_err_no_deposit'] = "The last household did not make any deposit???!!!
 $Text['btn_load_cart'] = "Continue with next cart";
 $Text['btn_deposit_now'] = "Make desposit now";
 $Text['msg_err_stock_mv'] = "Sorry, no stock corrections/adds found for this product!";
+
+$Text['ti_report_shop_pv'] = "Purchase total by provider";
+$Text['filter_all_sales'] = "Show all sales";
+$Text['filter_exact'] = "Exact dates";
+$Text['total_4date'] = "Total for date";
+$Text['total_4provider'] = "Overall total for provider";
+$Text['sel_sales_dates'] = "Show sales for provider for the given time period:";
+$Text['sel_sales_dates_ti'] = "Select time period"; 
+
 
 //$Text[''] = ""; 
 

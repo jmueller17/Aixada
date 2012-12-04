@@ -1318,7 +1318,7 @@
 						<li><a href="javascript:void(null)" id="preOrders"><?=$Text['nav_report_preorder'];?></a></li>
 					</ul>
 				</div>	
-				<button id="btn_print" class="overviewElements btn_right">Print</button>
+				<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
 		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
 		   	</div> 	
 		</div> <!--  end of title wrap -->

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_sales'] ;?></title>
+	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_sales'] . " - " . $Text['nav_report_shop_pv'] ;?></title>
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
@@ -20,7 +20,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
    	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_report_shop.min.js"></script>
+	   	<script type="text/javascript" src="js/js_for_report_shop_providers.min.js"></script>
     <?php }?>
    		
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
@@ -104,7 +104,7 @@
 
 						var nrows = $('.pvid_'+unique[i]).length; 
 						
-						$('.pvid_'+unique[i]).first().append('<td rowspan="'+nrows+'"><p class="textAlignRight boldStuff">'+sum_provider.toFixed(2)+'</p></td>');
+						$('.pvid_'+unique[i]).first().append('<td rowspan="'+nrows+'" id="sumCell_'+unique[i]+'" ><p class="textAlignRight boldStuff">'+sum_provider.toFixed(2)+'</p></td>');
 						
 
 					}
@@ -122,10 +122,14 @@
 		$('#tbl_Providers tbody tr')
 			.live('mouseover', function(){
 				$(this).removeClass('highlight').addClass('ui-state-hover');
+				var pvid = $(this).attr('providerId');
+				$('#sumCell_'+pvid).addClass('ui-state-hover');
 				
 			})
 			.live('mouseout',function(){
 				$(this).removeClass('ui-state-hover');
+				var pvid = $(this).attr('providerId');
+				$('#sumCell_'+pvid).removeClass('ui-state-hover');
 				
 			})
 			.live('click',function(e){
@@ -172,8 +176,8 @@
 		
 		$('#dialog_exactDate').dialog({
 			autoOpen:false,
-			width:740,
-			height:580,
+			width:680,
+			height:500,
 			buttons: {  
 				"<?=$Text['btn_ok'];?>" : function(){
 
@@ -207,12 +211,18 @@
 			url : 'php/ctrl/ShopAndOrder.php',
 			params : 'oper=getShopProviders',
 			loadOnInit: true,
-			offSet : 1
+			offSet : 2
 		}).change(function(){
 			gProviderId = $("option:selected", this).val();	
+			
+			if (gProviderId == 0){
+				var filter = 'prevMonth';
+			} else {
+				var filter = 'all'; 
+			}
 			$('#dialog_providerSelect').dialog("close");
 			$('#tbl_Providers tbody').xml2html('reload',{
-				params : 'oper=getTotalSalesByProviders&filter=all&provider_id='+gProviderId, 
+				params : 'oper=getTotalSalesByProviders&filter='+filter+'&provider_id='+gProviderId, 
 			});	
 		}); //end select change
 		
@@ -263,17 +273,17 @@
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
 				<!-- button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button-->
-		    	<h1 class="overviewElements">Purchase total by provider</h1>
+		    	<h1 class="overviewElements"><?php echo $Text['ti_report_shop_pv']; ?></h1>
 		    </div>
 		    <div id="titleRightCol">
 		    <button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['btn_filter']; ?></button>
 				
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="today">Today</a></li>
+						<li><a href="javascript:void(null)" id="today"><?=$Text['filter_todays'];?></a></li>
 						<li><a href="javascript:void(null)" id="prevMonth"><?=$Text['filter_month'] ; ?></a></li>
-						<li><a href="javascript:void(null)" id="all">All sales</a></li>
-						<li><a href="javascript:void(null)" id="exact">Exact dates</a></li>
+						<li><a href="javascript:void(null)" id="all"><?=$Text['filter_all_sales']; ?></a></li>
+						<li><a href="javascript:void(null)" id="exact"><?=$Text['filter_exact'];?></a></li>
 						<li><a href="javascript:void(null)" id="provider"><?=$Text['by_provider']  ; ?></a></li>
 					</ul>
 				</div>	
@@ -290,14 +300,14 @@
 				<table id="tbl_Providers" class="tblListingDefault">
 					<thead>
 						<tr>
-							<th class="textAlignCenter">Provider name </th>
-							<th class="textAlignCenter">Date of purchase </th>
-							<th><p class="textAlignRight">Total by date</p> </th>
-							<th><p class="textAlignRight">Total for provider</p></th>
+							<th class="textAlignCenter"><?php echo $Text['provider']; ?></th>
+							<th class="textAlignCenter"><?php echo $Text['purchase_date']; ?> </th>
+							<th><p class="textAlignRight"><?php echo $Text['total_4date']; ?></p> </th>
+							<th><p class="textAlignRight"><?php echo $Text['total_4provider']; ?></p></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="pvid_{provider_id}">
+						<tr class="pvid_{provider_id}" providerId="{provider_id}">
 							<td class="hidden">{provider_id}</td>
 							<td>{provider_name}</td>
 							<td>{date_for_shop}</td>
@@ -322,30 +332,28 @@
 <!-- end of wrap -->
 <!-- / END -->
 
-<div id="dialog_exactDate" title="Choose time period">
+<div id="dialog_exactDate" title="<?php echo $Text['sel_sales_dates_ti']; ?>">
 	<p>&nbsp;</p>
-	<p>Please choose an exact time period:</p>
+	<p><?php echo $Text['sel_sales_dates']; ?></p>
 	<br/>
 	<table>
 		<tr>
-			<td>From:<p id="setFromDate"></p></td>
-			<td>&nbsp;</td>
-			<td>To:<p id="setToDate"></p></td>
-		</tr>
-		<tr>
-		<td><div id="datepicker_from"></div></td>
-		<td>&nbsp;</td>
-		<td> <div type="text" id="datepicker_to"></div></td>
+			<td><?php echo $Text['date_from']; ?>:</td>
+			<td><input type="text" id="datepicker_from" class="ui-corner-all"/></td>
+			<td>&nbsp;&nbsp;</td>
+			<td><?php echo $Text['date_to']; ?>:</p></td>
+			<td><input type="text" id="datepicker_to"/></td>
 		</tr>
 	</table>
 
 </div>
 
 
-<div id="dialog_providerSelect" title="Filter by provider">
+<div id="dialog_providerSelect" title="<?php echo $Text['by_provider'];?>">
 	<p>&nbsp;</p>
 	<select id="providerSelect" class="longSelect">
     	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+    	<option value="0"><?php echo $Text['filter_all'];  ?></option>
         <option value="{id}"> {name}</option>                     
 	</select>
 </div>
