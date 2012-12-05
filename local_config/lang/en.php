@@ -790,7 +790,7 @@ $Text['sel_sales_dates_ti'] = "Select time period";
 
 $Text['instant_repeat'] = "Instant repeat";
 $Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
-$Text['msg_confirm_instantr'] = "Should this action be repeated for the same product in case its provider has further dates activated? Note that you can set this option under View Options > Instant Repeat";
+$Text['msg_confirm_instantr'] = "Do you want to repeat this action for the rest of the active dates?";
 $Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!"; 
 
 //$Text[''] = ""; 

@@ -783,10 +783,10 @@ $Text['filter_exact'] = "Escull dades";
 $Text['total_4date'] = "Total";
 $Text['total_4provider'] = "Suma";
 $Text['sel_sales_dates'] = "Per quines dades vols consultar les ventas?";
-$Text['sel_sales_dates_ti'] = "Escull un periodo"; 
+$Text['sel_sales_dates_ti'] = "Escull un període"; 
 
 $Text['instant_repeat'] = "Repeteix directament";
-$Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
-$Text['msg_confirm_instantr'] = "Should this action be repeated for the same product in case its provider has further dates activated? Note that you can set this option under View Options > Instant Repeat";
-$Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!";
+$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estás segur de desactivar-ho? Això esborarra la comanda d'aquest producte de las cistellas.";
+$Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per la resta de les dates activats?";
+$Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquest date. No es pot desactivar!";
 

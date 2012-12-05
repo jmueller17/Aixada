@@ -794,9 +794,9 @@ $Text['sel_sales_dates'] = "Muestra ventas por proveedor y el periodo selecionad
 $Text['sel_sales_dates_ti'] = "Elige un periodo";
  
 $Text['instant_repeat'] = "Repetir directamente";
-$Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
-$Text['msg_confirm_instantr'] = "Should this action be repeated for the same product in case its provider has further dates activated? Note that you can set this option under View Options > Instant Repeat";
-$Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!";
+$Text['msg_confirm_delordereditems'] = "Este producto ya se ha pedido este día. Estás seguro de desactivarlo? Esto  borrará el pedido de las cestas. ";
+$Text['msg_confirm_instantr'] = "Quieres repetir la misma accion para el resto de las fechas activas? ";
+$Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No se puede borrar.";
 
 
 ?>
