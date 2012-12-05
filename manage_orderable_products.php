@@ -34,6 +34,12 @@
 		//counter if provider has deactivated products 
 		var counterNotActive = 0; 
 
+		//when de-/activating a date, the action will be automatically repeated for all dates of the given product
+		var gInstantRepeat = 0; 
+
+		//toggle products asks first time if instant repeat is on/off. 
+		var gAskIRFirstTime = true; 
+
 		
 		/**
 		 * retrieve dates for a given time period and constructs the table header
@@ -176,7 +182,7 @@
 								$(selector).attr('closingdate', closingDate);		//a bit overkill. could be attached to each column header				
 								toggleCell(selector);
 
-								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight">'+hasItems+'</span></p>');
+								$(selector).append('<p class="infoTdLine"><span title="'+closingTitle+'" class="floatLeft ui-icon '+closingIcon+'"></span><span class="floatRight hasItemsIndicator">'+hasItems+'</span></p>');
 
 								if (closingIcon == 'ui-icon-mail-closed'){
 									$('.Date-'+date).addClass('dim60');																		
@@ -347,34 +353,71 @@
 		 */
 		$('td.interactiveCell')
 			.live('click', function(e){
-				
+
+				var hasItems = $('.hasItemsIndicator',this).text().match(/\d/);
+
+				//click on table cell for past dates
 				if ($(this).hasClass('dim40')){
 					$.showMsg({
 						msg:"<?=$Text['msg_err_past']; ?>",
 						type: 'warning'});
 					return false;
-			
+
+				//product has to be activated first
 				} else if ($(this).hasClass('deactivated')){
 					$.showMsg({
 						msg:"<?=$Text['msg_err_is_deactive_p'];?>",
 						type: 'warning'});
 					return false;
 
-					
-				} else if ($(this).hasClass('dim60')) {  //check if product is part of a finalized order. If not, this triggers deactivation of product
-
+				//check if product is part of a finalized order. If not, this triggers deactivation of product					
+				} else if ($(this).hasClass('dim60')) {  
 					$.showMsg({
 						msg:"<?=$Text['msg_err_deactivate_sent'];?>",
 						type: 'warning'});
 				   	return false; 
-					
-				} else {
 
-					var tdid = $(this).attr('id');		//table cell id
-					var dateID = tdid.split("_");	
-					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
+				//warning message when deactivating product with ordered items   	
+				} else if (new Number(hasItems) > 0){
+
+					/*$.showMsg({
+						msg:"<?=$Text['msg_confirm_delordereditems'];?>",
+						type: 'warning'});
+					return false;*/ 
 					
+				} 
+
+				var tdid = $(this).attr('id');		//table cell id
+				var dateID = tdid.split("_");	    //date and product_id
+					
+
+				//check if instant repeat should be turned on/off for the first time, if it has the default setting off
+				if (gAskIRFirstTime && !gInstantRepeat){
+					$.showMsg({
+						msg		: "<?=$Text['msg_confirm_instantr'];?>",
+						buttons: {
+							"<?=$Text['btn_repeat_all'];?>":function(){						
+								gAskIRFirstTime = false; 
+								gInstantRepeat = 1; 
+								$('#instantRepeat').children('span').addClass('ui-icon ui-icon-check');
+								toggleOrderableProduct(tdid, dateID[1], dateID[0]);
+								$(this).dialog("close");
+							},
+							"<?=$Text['btn_repeat_single'];?>" : function(){ 
+								gAskIRFirstTime = false;
+								toggleOrderableProduct(tdid, dateID[1], dateID[0]);
+								$( this ).dialog( "close" );
+							}
+						},
+						type: 'confirm'});
+
+				} else {
+					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
 				}
+
+				
+
+				
 	
 			});
 			
@@ -578,7 +621,7 @@
 		function toggleOrderableProduct(id, productId, orderDate){
 				$.ajax({
 					type: "POST",
-					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate,	
+					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate+"&instantRepeat="+gInstantRepeat,	
 					beforeSend : function (){
 						$('.loadSpinner').show();
 					},	
@@ -586,10 +629,19 @@
 						if (id == 'reloadTable'){ //we change from/to preorder and have to rebuild the entire row
 							$('#dot tbody').xml2html('reload');
 						} else { //otherwise just change the look of the individual cell
-							toggleCell('#'+id);
+							if (gInstantRepeat){
+								$('#dot tbody').xml2html('reload');
+							} else {
+								toggleCell('#'+id);
+							}
+							
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
+						if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+							XMLHttpRequest.responseText = "<?=$Text['msg_err_delorerable'];?>"; 
+
+						}
 						$.showMsg({
 							msg:XMLHttpRequest.responseText,
 							type: 'error'});
@@ -819,6 +871,7 @@
 								}
 							});
 							break;
+							
 						case 'plus7':
 							seekDateSteps += 7; 
 							$("#nextDates").trigger('click');
@@ -830,6 +883,17 @@
 								seekDateSteps -= 7;
 							} 
 							$("#prevDates").trigger('click');
+							break;
+							
+						case 'instantRepeat':
+							if (gInstantRepeat){
+								$(item).children('span').removeClass('ui-icon ui-icon-check');
+								gInstantRepeat = 0; 
+							} else {
+								$(item).children('span').addClass('ui-icon ui-icon-check');
+								gInstantRepeat = 1;
+							}
+
 							break;
 							
 					}; //end switch
@@ -933,6 +997,7 @@
 								<li><a href="javascript:void(null)" id="plus7"><?php echo $Text['plus_seven']; ?></a></li>
 								<li><a href="javascript:void(null)" id="minus7"><?php echo $Text['minus_seven']; ?></a></li></ul>
 						</li>
+						<li><a href="javascript:void(null)" id="instantRepeat"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['instant_repeat']; ?></a></li>
 						
 					</ul>
 				</div>

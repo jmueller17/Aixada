@@ -42,18 +42,21 @@ try{
 	  	exit; 	
 
 	  //makes a product orderable for the given date / or not
+	  //if instantRepeat is on, the procedure tries to de-/activate the product for all remaining dates automatically
 	  case 'toggleOrderableProduct':
-	  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'));
+	  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'), get_param('instantRepeat',0));
 	    exit;
 	        
 	  case 'getTypeOrderableProducts':
 	  	printXML(stored_query_XML_fields('get_type_orderable_products', get_param('provider_id') ));
 	  	exit;
-	  		
+
+	  //changes product status to "active" in general (independent of specific dates)
 	  case 'activateProduct':
 	  	echo do_stored_query('change_active_status_product', 1, get_param('product_id'));
 	  	exit;
-	  		
+
+	  //changes product status to deactive in general (independent of specific dates)
 	  case 'deactivateProduct':
 	  	echo do_stored_query('change_active_status_product', 0, get_param('product_id'));
 	  	exit;

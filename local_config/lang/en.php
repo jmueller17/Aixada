@@ -349,6 +349,8 @@ $Text['btn_view_list_lng'] = "View product list only";
 $Text['btn_view_both'] = "Both";
 $Text['btn_view_both_lng'] = "View both, product list and cart";
 $Text['btn_repeat'] = "Ok, repeat this!";
+$Text['btn_repeat_single'] = "No, just one"; 
+$Text['btn_repeat_all'] = "Ok, apply to all"; 
 
 
 
@@ -786,6 +788,10 @@ $Text['total_4provider'] = "Overall total for provider";
 $Text['sel_sales_dates'] = "Show sales for provider for the given time period:";
 $Text['sel_sales_dates_ti'] = "Select time period"; 
 
+$Text['instant_repeat'] = "Instant repeat";
+$Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
+$Text['msg_confirm_instantr'] = "Should this action be repeated for the same product in case its provider has further dates activated? Note that you can set this option under View Options > Instant Repeat";
+$Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!"; 
 
 //$Text[''] = ""; 
 

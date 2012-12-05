@@ -347,6 +347,9 @@ $Text['btn_view_list_lng'] = "Només veure els productes";
 $Text['btn_view_both'] = "Tot";
 $Text['btn_view_both_lng'] = "Veure tant productes com cistella";
 $Text['btn_repeat'] = "Entesos, repetim això!";
+$Text['btn_repeat_single'] = "No, unicament aquet"; 
+$Text['btn_repeat_all'] = "Si a tots"; 
+
 
 
 
@@ -781,4 +784,9 @@ $Text['total_4date'] = "Total";
 $Text['total_4provider'] = "Suma";
 $Text['sel_sales_dates'] = "Per quines dades vols consultar les ventas?";
 $Text['sel_sales_dates_ti'] = "Escull un periodo"; 
+
+$Text['instant_repeat'] = "Repeteix directament";
+$Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
+$Text['msg_confirm_instantr'] = "Should this action be repeated for the same product in case its provider has further dates activated? Note that you can set this option under View Options > Instant Repeat";
+$Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!";
 
