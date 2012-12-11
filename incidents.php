@@ -182,10 +182,46 @@
 				idList = idList.substring(0,idList.length-1);
 				printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
 				printWin.focus();
-				//printWin.print();
+				printWin.print();
+
+				window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
+				
+								
 			}			
 			
 		});
+
+
+		//global pdf button
+		$("#btn_pdf").button({
+			 icons: {
+	        		primary: "ui-icon-disk"
+	        	}
+			 })
+		.click(function(e){
+			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+				$.showMsg({
+					msg:"<?=$Text['msg_err_noselect'];?>",
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){						
+							$(this).dialog("close");
+						}
+					},
+					type: 'warning'});
+			} else {
+			
+				var idList = "";
+				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+						idList += $(this).parents('tr').attr('incidentId')+",";
+				});
+
+				idList = idList.substring(0,idList.length-1);
+				window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
+								
+			}			
+			
+		});
+		
 
 		//download selected as zip
 		/*$("#btn_zip").button({
@@ -427,6 +463,7 @@
 					</div>		
 		    	
 		    	<button id="btn_print" class="overviewElements"><?=$Text['printout'];?></button>
+		    	<button id="btn_pdf" class="overviewElements">pdf</button>
 		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
 		    	
 		    	<button id="btn_new_incident" class="overviewElements btn_right hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
@@ -595,5 +632,6 @@
 <!-- end of wrap -->
 
 <!-- / END -->
+<iframe name="dataFrame" style="display:none;"></iframe>
 </body>
 </html>

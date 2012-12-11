@@ -58,7 +58,9 @@
 					params : 'oper=getIncidentsById&idlist='+incidentsIdList,
 					loadOnInit: true,
 					complete : function(count){
-						
+						//var markup = document.documentElement.innerHTML;
+						//var markup = document.getElementById('tbl_incidents').innerHTML;
+						//alert(markup);
 					}
 			});
 

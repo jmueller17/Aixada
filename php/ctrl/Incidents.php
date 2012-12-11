@@ -39,6 +39,11 @@ try{
 	    case 'getIncidentsById':
 	    	printXML(stored_query_XML_fields('get_incidents_by_ids', get_param('idlist'), get_param('type',0)));	
 	    	exit;
+	  
+	    case 'getIncidentsAsPDF':
+	    	$pdf = get_incidents_as_pdf(get_param('idlist'));
+	    	$pdf->Output('incidencias'.date('Y-m-d', strtotime('Today')).'.pdf','D');
+	    	exit; 
 	    	
 	    default:  
 	    	 throw new Exception("ctrlIncidents: oper={$_REQUEST['oper']} not supported");  
