@@ -913,8 +913,8 @@ begin
 	
 	start transaction;
 	
-	-- insert first entry in aixada_prodcuts_orderable_for_date -- 
-	insert into
+	-- insert first entry in aixada_products_orderable_for_date -- 
+	replace into
 		aixada_product_orderable_for_date (date_for_order, product_id)
 	select
 		the_date_for_order, p.id
@@ -927,7 +927,7 @@ begin
 		and oi.date_for_order = '1234-01-23';
 		
 		
-	-- set the new date_for_order -- 
+	-- set the new date_for_order on ordered items-- 
 	update 
 		aixada_order_item oi,
 		aixada_product p

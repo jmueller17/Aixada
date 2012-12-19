@@ -44,13 +44,19 @@ try{
 	  //makes a product orderable for the given date / or not
 	  //if instantRepeat is on, the procedure tries to de-/activate the product for all remaining dates automatically
 	  case 'toggleOrderableProduct':
+	  	//a product can also be converted to a preorder item
 	  	if (get_param('date') == '1234-01-23'){
 	  		echo do_stored_query('toggle_preorder_product', get_param('product_id'), get_param('date'));
 	  	} else {
 		  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'), get_param('instantRepeat',0));
 	  	}
 	    exit;
-	        
+	    
+	  //dates with active products which have ordered items need to delete the corresponding order cart items first
+	  case 'unlockOrderableDate':
+	  	echo do_stored_query('deactivate_locked_order_date', get_param('product_id'), get_param('date'));
+	  	exit;
+	  	
 	  case 'getTypeOrderableProducts':
 	  	printXML(stored_query_XML_fields('get_type_orderable_products', get_param('provider_id') ));
 	  	exit;

@@ -268,11 +268,38 @@ begin
 		where
 			id = the_product_id; 
 			
-	end if; 
-		
-		
+	end if; 	
 end|
 
+
+/**
+ * By default only those dates in table aixada_product_orderable_for_date can be 
+ * deactivated that have no ordered items associated. This procedure can delete
+ * those dates where orders have been made, which implies to delete the associated items 
+ * from order carts as well. 
+ */
+drop procedure if exists deactivate_locked_order_date|
+create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
+begin
+	
+	start transaction; 
+	
+	delete from
+		aixada_order_item
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	delete from
+		aixada_product_orderable_for_date
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	
+	commit; 
+	
+end|
 
 
 /**

@@ -63,20 +63,39 @@
 		loadSuccess : updateCartLabel,
 		submitComplete : updateCartLabel,
 		submitError : function (err_msg){
-			$.showMsg({
-				msg:err_msg,
-				buttons: {
-					"<?=$Text['btn_ok'];?>":function(){						
 
-						$('#cartLayer').aixadacart('loadCart',{
-							loadCartURL		: 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart&date='+$.getSelectedDate('#datepicker'),
-							date 			: $.getSelectedDate('#datepicker')
-						}); //end loadCart
+			//foreign key exception; could be that orderable products have been changed while ordering and 
+			//the cart needs to be reloaded. 
+			if (err_msg.indexOf("ERROR 20") != -1){
 
-						$(this).dialog("close");
-					}
-				},
-				type: 'warning'});
+				$.showMsg({
+					msg:"<?=$Text['msg_err_modified_order'];?>",
+					type: 'warning'});
+
+				//remove items from cart
+				$('#cartLayer').aixadacart('resetCart');
+
+				//refresh page, including cart. 
+				refreshSelects($.getSelectedDate('#datepicker'));
+
+			//another serious error, now for real
+			} else {
+				
+				$.showMsg({
+					msg:err_msg + " Your cart will be reloaded.",
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){						
+
+							$('#cartLayer').aixadacart('resetCart');
+							
+							refreshSelects($.getSelectedDate('#datepicker'));
+	
+							$(this).dialog("close");
+						}	
+					},
+					type: 'error'});
+	
+			}
 		}
 	});
 

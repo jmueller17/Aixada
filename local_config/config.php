@@ -49,7 +49,7 @@ class configuration_vars {
    * for the next 4 years can be generated in advance. 
    * @var num
    */
-  public $max_month_orderable_dates = 24;
+  public $max_month_orderable_dates = 12;
   
   /**
    * 
@@ -65,6 +65,29 @@ class configuration_vars {
    */
   public $development = true; 
   
+  
+    /**
+   * the email address of the admin; used for sending out pwd changes
+   * and orders. can also be set from the admin > my account
+   */
+  public $admin_email = "admin@admin.com";
+  
+  
+  /**
+   * 
+   * is this a local install or accessible online. If online
+   * services such as sending emails will be active. 
+   * @var boolean
+   */
+  public $internet_connection = false; 
+  
+  
+  
+  
+  
+  /**
+   * HTML TEMPLATES
+   */
   
   /**
    * The default template for generating the print layout of the orders
@@ -103,22 +126,12 @@ class configuration_vars {
    */
   public $show_menu_language_select = false; 
   
-  
-  /**
-   * the email address of the admin; used for sending out pwd changes
-   * and orders
-   */
-  public $admin_email = "admin@admin.com";
+   
   
   
   /**
-   * 
-   * is this a local install or accessible online. If online
-   * services such as sending emails will be active. 
-   * @var boolean
+   * ORDER STUFF
    */
-  public $internet_connection = false; 
-  
   
   /**
    * if set to true, when finalizing orders they 
@@ -134,8 +147,37 @@ class configuration_vars {
   public $email_order_format = 3;
   
   
+  
   /**
-   * Code optimizations
+   * INCIDENTS STUFF
+   */
+  
+  /**
+   * email incidents 
+   */
+  public $email_incidents = false;
+  
+  
+  /**
+   * email incidents format: "single" | "bulk" incidents with distribution level 3 are either
+   * emailed individually or as one large text-doc 
+   */
+  public $incidents_distribution_format = "single";
+  
+  
+  /**
+   * if the incident emails should be send out to another distribution list. 
+   * if left blank, the incidents will be send out to the email addresses of the 
+   * users if available. 
+   */
+  public $incidents_email_list = ""; 
+  
+  
+  
+  
+  
+  /**
+   * CODE OPTIMIZATIONS
    */
 
   /**

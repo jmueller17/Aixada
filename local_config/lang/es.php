@@ -799,5 +799,7 @@ $Text['msg_confirm_instantr'] = "Quieres repetir la misma accion para el resto d
 $Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No se puede borrar.";
 $Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. Se crea una fecha de entrega. ";
 
+$Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
+$Text['btn_confirm_del'] = "Sí, eliminar!!";
 
 ?>

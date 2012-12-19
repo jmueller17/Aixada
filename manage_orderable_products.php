@@ -38,7 +38,7 @@
 		var gInstantRepeat = 0; 
 
 		//toggle products asks first time if instant repeat is on/off. 
-		var gAskIRFirstTime = true; 
+		var gAskIRFirstTime = false; 
 
 		
 		/**
@@ -356,6 +356,8 @@
 
 				var hasItems = $('.hasItemsIndicator',this).text().match(/\d/);
 
+				
+
 				//click on table cell for past dates
 				if ($(this).hasClass('dim40')){
 					$.showMsg({
@@ -379,16 +381,37 @@
 
 				//warning message when deactivating product with ordered items   	
 				} else if (new Number(hasItems) > 0){
-
-					/*$.showMsg({
+					var tdid = $(this).attr('id');		//table cell id
+					var dateID = tdid.split("_");	    //date and product_id
+					$.showMsg({
 						msg:"<?=$Text['msg_confirm_delordereditems'];?>",
+						buttons: {
+							"<?=$Text['btn_confirm_del']; ?>": function(){
+								$( this ).dialog( "close" );
+								$.post("php/ctrl/ActivateProducts.php",{
+											oper : "unlockOrderableDate",
+											product_id : dateID[1],
+											date: dateID[0]
+										}, function (data){
+											
+											toggleCell('#'+tdid);
+										});
+							},
+							"<?=$Text['btn_cancel'];?>":function(){
+								$( this ).dialog( "close" );
+							}
+
+						},
 						type: 'warning'});
-					return false;*/ 
-					
+					return false;
+
+
+				
 				} 
 
 				var tdid = $(this).attr('id');		//table cell id
 				var dateID = tdid.split("_");	    //date and product_id
+				
 					
 
 				//check if instant repeat should be turned on/off for the first time, if it has the default setting off
@@ -639,10 +662,7 @@
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-							XMLHttpRequest.responseText = "<?=$Text['msg_err_delorerable'];?>"; 
-
-						}
+						
 						$.showMsg({
 							msg:XMLHttpRequest.responseText,
 							type: 'error'});

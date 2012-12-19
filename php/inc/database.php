@@ -113,7 +113,7 @@ class DBWrap {
           $tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
           if (isset($Text[$tmp]))
               $bad_field = $Text[$tmp];
-          throw new ForeignKeyException('Foreign Key exception. Please check the field "' . 
+          throw new ForeignKeyException('ERROR 20: Foreign Key exception. Please check the field "' . 
                                         $bad_field . 
                                         '". It either does not exist in the db or does not fullfil a foreign key constraint?');
 
