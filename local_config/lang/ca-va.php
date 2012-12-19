@@ -789,4 +789,5 @@ $Text['instant_repeat'] = "Repeteix directament";
 $Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estás segur de desactivar-ho? Això esborarra la comanda d'aquest producte de las cistellas.";
 $Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per la resta de les dates activats?";
 $Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquest date. No es pot desactivar!";
+$Text['msg_pre2Order'] = "Converteix aquet comanda acumulativa a comanda normal. Pots trigar una date de entrega";
 

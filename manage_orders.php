@@ -1595,7 +1595,7 @@
 <div id="dialog_convertPreorder" title="Convert preorder to order">
 	<p>&nbsp;</p>
 	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"></p>
-	<p>Conver this preorder to a regular order. This will assign an order date, i.e. when the expected items will arrive.</p>
+	<p><?php echo $Text['msg_pre2Order']; ?></p>
 	<p>&nbsp;</p>
 	<div id="datepicker2"></div>
 </div>

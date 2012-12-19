@@ -248,6 +248,7 @@ begin
 		left join
 			aixada_order_item oi on
 			po.date_for_order = oi.date_for_order
+			and po.product_id = oi.product_id
 		where
 			po.date_for_order > today
 			and po.product_id = the_product_id
@@ -306,6 +307,7 @@ begin
 			left join
 				aixada_order_item oi on
 				po.date_for_order = oi.date_for_order
+				and po.product_id = oi.product_id
 			where
 				(po.date_for_order > today or po.date_for_order = '1234-01-23')
 				and po.product_id = the_product_id

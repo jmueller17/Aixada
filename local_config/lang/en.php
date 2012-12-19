@@ -792,6 +792,7 @@ $Text['instant_repeat'] = "Instant repeat";
 $Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
 $Text['msg_confirm_instantr'] = "Do you want to repeat this action for the rest of the active dates?";
 $Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!"; 
+$Text['msg_pre2Order'] = "Convert this preorder to a regular order. This will assign an order date, i.e. when the expected items will arrive.";
 
 //$Text[''] = ""; 
 

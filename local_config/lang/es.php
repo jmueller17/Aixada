@@ -797,6 +797,7 @@ $Text['instant_repeat'] = "Repetir directamente";
 $Text['msg_confirm_delordereditems'] = "Este producto ya se ha pedido este día. Estás seguro de desactivarlo? Esto  borrará el pedido de las cestas. ";
 $Text['msg_confirm_instantr'] = "Quieres repetir la misma accion para el resto de las fechas activas? ";
 $Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No se puede borrar.";
+$Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. Se crea una fecha de entrega. ";
 
 
 ?>
