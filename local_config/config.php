@@ -20,7 +20,7 @@ class configuration_vars {
   /**
    * General variables
    */
-  public $default_language = 'en';
+  public $default_language = 'es';
   
 
   /**

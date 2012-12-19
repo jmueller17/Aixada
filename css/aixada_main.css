@@ -96,6 +96,7 @@ table.tblListingBorder2		{width:100%; border-collapse:collapse;}
 table.tblListingBorder2 th	{background:#f3f3f3; padding:4px 8px; border:1px solid #c3c3c3;}
 table.tblListingBorder2 td	{padding:4px 8px; text-align:left; border:1px solid #c3c3c3; vertical-align:top;}
 
+
 table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padding-top:4px; vertical-align:middle;}
 table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
 table.tblForms 	td label 	{float:right;}

@@ -134,7 +134,7 @@
 					
 					for (var i=0; i<gdates.length; i++){
 						if (ispreorder){
-							apstr = "<td class=\"preorder\" colspan=\"'+gdates.length+'\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
+							apstr = "<td class=\"preorder\" colspan=\""+gdates.length+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
 							break;
 						}
 						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)
@@ -594,10 +594,11 @@
 						$('#'+product_id).attr('isactive',1);
 
 					} else if (oper == 'deactivateProduct'){
-						$('td.P-'+product_id).each(function(){
+						/*$('td.P-'+product_id).each(function(){
 							$(this).removeClass('notOrderable isOrderable').addClass('deactivated').empty();
-						});
+						});*/
 						$('#'+product_id).attr('isactive',0);
+						$('#dot tbody').xml2html('reload');
 
 					}
 				},

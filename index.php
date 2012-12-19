@@ -137,7 +137,7 @@
 					if (rowCount == 0){
 						$.showMsg({
 							msg:"<?php echo $Text['msg_err_noorder']; ?>",
-							type: 'error'});	
+							type: 'warning'});	
 					}
 					$('.loadSpinner').hide();
 					

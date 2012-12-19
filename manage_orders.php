@@ -396,10 +396,12 @@
 
 								$this.button('disable');
 								setTimeout(function(){
-									$this.dialog( "close" )
-
+									$this.dialog( "close" );
+									$('#tbl_orderOverview tbody').xml2html('reload',{
+										params : 'oper=getOrdersListing&filter=pastMonths2Future',
+									});
 									//switchTo('overview');
-								},2000);
+								},500);
 							},
 							error : function(XMLHttpRequest, textStatus, errorThrown){
 								$.showMsg({

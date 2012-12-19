@@ -44,7 +44,11 @@ try{
 	  //makes a product orderable for the given date / or not
 	  //if instantRepeat is on, the procedure tries to de-/activate the product for all remaining dates automatically
 	  case 'toggleOrderableProduct':
-	  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'), get_param('instantRepeat',0));
+	  	if (get_param('date') == '1234-01-23'){
+	  		echo do_stored_query('toggle_preorder_product', get_param('product_id'), get_param('date'));
+	  	} else {
+		  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'), get_param('instantRepeat',0));
+	  	}
 	    exit;
 	        
 	  case 'getTypeOrderableProducts':

@@ -176,7 +176,7 @@ end|
 
 /**
  * utility function to write the changes for the orderable products in the table
- * if is_active, the product for the given date will e deactivated and vice versa
+ * if is_active, the product for the given date will be deactivated and vice versa
  */
 drop procedure if exists write_toggle_to_db|
 create procedure write_toggle_to_db(in is_active int, in the_date date, in the_product_id int)
@@ -206,6 +206,70 @@ begin
 			and p.provider_id = pv.id;
 	end if;	
 	
+end|
+
+
+/**
+ *  converts a product into preorderable. all available order dates will be deleted 
+ *  and replaced by the fictive date  1234-01-23
+ */
+drop procedure if exists toggle_preorder_product|
+create procedure toggle_preorder_product(in the_product_id int, in the_date date)
+begin
+	
+	declare isPreorder int;
+	declare today date default date(sysdate());
+	
+	
+	select
+		count(*) into isPreorder
+	from 
+		aixada_product_orderable_for_date po
+	where
+		po.date_for_order = '1234-01-23'
+		and po.product_id = the_product_id;
+	
+	-- if is preorder convert back to normal order -- 
+	if isPreorder > 0 then	
+		
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = '1234-01-23';
+		
+	-- otherwise delete active dates and make it preorderable 		
+	else 
+	
+	    delete
+			po.*
+		from
+			aixada_product_orderable_for_date po
+		left join
+			aixada_order_item oi on
+			po.date_for_order = oi.date_for_order
+		where
+			po.date_for_order > today
+			and po.product_id = the_product_id
+			and oi.date_for_order is null;
+		
+		-- create preorder entry in table -- 
+		insert into 
+			aixada_product_orderable_for_date(product_id, date_for_order, closing_date)
+		values
+			(the_product_id, '1234-01-23', '9999-01-01');
+			
+		-- if the product is currently not active, make sure it is activated -- 
+		update 
+			aixada_product
+		set
+			active = 1
+		where
+			id = the_product_id; 
+			
+	end if; 
+		
+		
 end|
 
 
@@ -243,7 +307,7 @@ begin
 				aixada_order_item oi on
 				po.date_for_order = oi.date_for_order
 			where
-				po.date_for_order > today
+				(po.date_for_order > today or po.date_for_order = '1234-01-23')
 				and po.product_id = the_product_id
 				and oi.date_for_order is null;	
 	end if;

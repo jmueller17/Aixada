@@ -184,7 +184,7 @@
 				printWin.focus();
 				printWin.print();
 
-				window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
+				//window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
 				
 								
 			}			

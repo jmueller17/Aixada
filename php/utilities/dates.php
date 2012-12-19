@@ -31,7 +31,7 @@ function activate_all_for_date($provider_id, $date, $activate)
 	
 	foreach($product_ids as $id){
 		
-	 	do_stored_query('toggle_orderable_product', $id, $date);
+	 	do_stored_query('toggle_orderable_product', $id, $date, 0);
 		
 		
 	}
