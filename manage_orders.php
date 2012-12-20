@@ -1159,7 +1159,7 @@
 
 					//need to introduce a delay here in order to load all orders correctly. don't ask me why.... 
 					setTimeout(function(){
-						$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for printing
+						$('#tbl_reviseOrder tbody').xml2html("reload", {	//load order details for printing
 							params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 						})
 					}, 1000); 

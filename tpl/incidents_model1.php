@@ -7,7 +7,7 @@
 
 
 	<style type="text/css">
-		body 				{font-family:arial; }
+		body 				{font-family:arial; font-size:10px; }
 		table 				{width:100%; border-collapse:collapse;}
 		thead				{background:#efefef;}
 		th	 				{border:solid 1px black; padding:2px 5px; background:#efefef;}
@@ -41,14 +41,15 @@
  
 
 	<script type="text/javascript">
+
+
 		$(function(){
 
 			//prevent error msg when opening saved page
 			//if (window.opener == null) return false;
 
 			var incidentsIdList = $.getUrlVar('idlist');
-			
-
+			var asPDF = $.getUrlVar('asPDF');
 
 			/**
 			 *	incidents
@@ -58,9 +59,13 @@
 					params : 'oper=getIncidentsById&idlist='+incidentsIdList,
 					loadOnInit: true,
 					complete : function(count){
-						//var markup = document.documentElement.innerHTML;
-						//var markup = document.getElementById('tbl_incidents').innerHTML;
-						//alert(markup);
+
+						if (asPDF) {
+							var pathToImg = $('#coopLogo').attr('src');
+							$('#coopLogo').attr('src', "../"+pathToImg);
+							parent.downloadPDF();
+						}
+						
 					}
 			});
 
@@ -76,7 +81,7 @@
 	
 	<div id="header" class="section">
 		<div id="logo">
-			<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
+			<img id="coopLogo" alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
 		</div>
 		<div id="address">
 			<h2 class="txtAlignRight">COOPERATIVA NAME</h2>

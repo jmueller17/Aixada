@@ -801,5 +801,7 @@ $Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. 
 
 $Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
 $Text['btn_confirm_del'] = "Sí, eliminar!!";
+$Text['print_new_win'] = "Ventana nueva";
+$Text['print_pdf'] = "Descarga pdf";
 
 ?>

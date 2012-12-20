@@ -793,4 +793,6 @@ $Text['msg_pre2Order'] = "Converteix aquet comanda acumulativa a comanda normal.
 
 $Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
 $Text['btn_confirm_del'] = "Esborar! Estic segur";
+$Text['print_new_win'] = "Nou finestre";
+$Text['print_pdf'] = "Descarega pdf";
 

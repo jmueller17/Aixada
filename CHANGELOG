@@ -1,0 +1,35 @@
+Changelog
+
+v1.0 Done by Gilad Buzi back in 2005
+
+
+v2.0 
+* relaunch: major changes in database structure and interface which is now jquey based
+
+
+v2.5
+* new page: manage orders for revising individual quantities 
+* de-/activate dates for orders redone; has now table format and clickable cells
+* logic of turnos has own page which shortcuts for most common tasks
+* incidents have now distribution level and can be posted on portal entry
+* member management completely redone
+* orders have now closing dates
+* orders can be send directly to provider if platform has internet connection
+* added personal overview of ordered items and past purchases for each household
+* bill template; printable
+* order item and shop item linked for better control 
+* vat / iva groups to easy modify tax for product groups
+
+
+
+v2.6
+* direct PDF printing of incidents and bills
+* emailing of incidents
+* new page: purchase total ordered by provider
+* unlocking orderable products/dates with ordered items is now possible
+* de-/activating products for dates can be automatically repeated for all remaining dates
+* warning message when cart has been validated without money desposit.
+
+Bugfixes
+* creating preorders
+* deactivating orderable products failed when other product for the same date had ordered items

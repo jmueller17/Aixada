@@ -7,61 +7,6 @@ require_once ('general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
-include("../external/mpdf54/mpdf.php");
-
-function get_incidents_as_pdf($idlist){
-	
-	global $Text; 
-
-	$htmlstr = '<html><head><title>Incidents</title>';
-	$htmlstr .= '<style type="text/css">body {font-family:arial; font-size:10px; } table	{width:100%; border-collapse:collapse;} thead {background:#efefef;}th {border:solid 1px black; padding:2px 5px; background:#efefef;} td.headc	 		{border:solid 1px black; padding:2px 5px; background:#efefef; text-align:center;} td {padding:3px;} .section  {width:90%; clear:both; margin-bottom:10px;} .txtAlignRight		{text-align:right;} .txtAlignCenter		{text-align:center;} .tdAlignTop			{vertical-align:top;} .cellBorderList td	{border:solid 1px black; padding:2px 5px;}';
-	$htmlstr .= '</style></head><body>'; 
-	$htmlstr .= '<div id="logo"><img alt="coop logo" src="../../img/tpl_header_logo.png" width="500" height="180"/></div><br/><br/><br/>';
-	$htmlstr .= '<h2>'.$Text['ti_incidents'] .'</h2>';
-	$htmlstr .= '<table id="tbl_incidents" class="ui-widget"><thead>';
-	$htmlstr .= '<tr><th>id</th><th>priority</th><th>created_by</th>'; 
-	$htmlstr .=	'<th>'. $Text['created'] . '</th>';
-	$htmlstr .=	'<th>'.  $Text['status']. '</th>';
-	$htmlstr .=	'<th>'.  $Text['provider_name']. '</th>';
-	$htmlstr .=	'<th>'.  $Text['ufs_concerned']. '</th>';
-	$htmlstr .=	'<th>'.  $Text['comi_concerned']. '</th></tr></thead><tbody>';
-							
-
-	$rs = do_stored_query('get_incidents_by_ids', $idlist, 0);
-	
-	while ($row = $rs->fetch_assoc()) {
-								
-		$htmlstr .= '<tr><td class="headc">'.$row["id"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["priority"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["uf_id"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["ts"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["status"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["provider_name"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["ufs_concerned"].'</td>';
-		$htmlstr .= '<td class="headc">'.$row["commission_concerned"].'</td>';
-
-		$htmlstr .= '<tr><td></td>';
-		$htmlstr .= '<td>'.$Text['subject'].':</td>';
-		$htmlstr .= '<td colspan="10" class="noBorder">'.$row["subject"].'</td>';
-		$htmlstr .= '</tr><tr><td class="noBorder"></td>';
-		$htmlstr .= '<td class="tdAlignTop">'.$Text['message'].'</td>';
-		$htmlstr .= '<td class="tdAlignTop" colspan="10">'.$row["details"].'</td>';
-		$htmlstr .= '</tr><tr><td colspan="12" class="noBorder"><br/></td></tr>';
-		
-		
-		
-	}
-
-	$htmlstr .= '</tbody></table></body></html>';
-
-	$mpdf=new mPDF(); 
-
-	$mpdf->WriteHTML($htmlstr);
-	return $mpdf; 
-
-}
-
-
 /**
  * 
  * Creates new incident or edits existing one if incident_id is given. 

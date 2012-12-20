@@ -796,6 +796,8 @@ $Text['msg_pre2Order'] = "Convert this preorder to a regular order. This will as
 
 $Text['msg_err_modified_order'] = "Orderable products have been deactivated for the current date while you were ordering. Some products that you already had ordered are no longer available and will disappear from your cart after it has been reloaded.";
 $Text['btn_confirm_del'] = "Delete anyway!!";
+$Text['print_new_win'] = "New window";
+$Text['print_pdf'] = "Download pdf";
 
 //$Text[''] = ""; 
 

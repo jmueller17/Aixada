@@ -17,12 +17,14 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/loadPDF.js" ></script>
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_incidents.min.js"></script>
     <?php }?>
 
    
 	<script type="text/javascript">
+
 	
 	$(function(){
 
@@ -126,7 +128,7 @@
 	    .menu({
 			content: $('#tblIncidentsOptionsItems').html(),	
 			showSpeed: 50, 
-			width:280,
+			width:180,
 			flyOut: true, 
 			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
 				//show hide deactivated products
@@ -137,6 +139,56 @@
 				
 			}//end item selected 
 		});//end menu
+
+
+		//print incidents accoring to current incidents template in new window or download as pdf
+		$("#btn_print")
+		.button({
+			icons: {
+				primary: "ui-icon-print",
+	        	secondary: "ui-icon-triangle-1-s"
+			}
+	    })
+	    .menu({
+			content: $('#printOptionsItems').html(),	
+			showSpeed: 50, 
+			width:180,
+			flyOut: true, 
+			itemSelected: function(item){	
+				if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_noselect'];?>",
+						buttons: {
+							"<?=$Text['btn_ok'];?>":function(){						
+								$(this).dialog("close");
+							}
+						},
+						type: 'warning'});
+					return false; 
+				}
+
+				var link = $(item).attr('id');
+
+				var idList = "";
+				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+						idList += $(this).parents('tr').attr('incidentId')+",";
+				});
+				idList = idList.substring(0,idList.length-1);
+				
+				switch (link){
+					case "printWindow": 
+						printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
+						printWin.focus();
+						printWin.print();
+						break;
+	
+					case "printPDF": 
+						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1"; 
+						break;
+				}
+								
+			}//end item selected 
+		});//end print menu
 		
 
 	
@@ -156,71 +208,6 @@
 				e.stopPropagation();
 			});
 
-		//global header print buttun
-		$("#btn_print").button({
-		 icons: {
-        		primary: "ui-icon-print"
-        	}
-		 })
-		.click(function(e){
-			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-				$.showMsg({
-					msg:"<?=$Text['msg_err_noselect'];?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
-							$(this).dialog("close");
-						}
-					},
-					type: 'warning'});
-			} else {
-			
-				var idList = "";
-				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
-						idList += $(this).parents('tr').attr('incidentId')+",";
-				});
-
-				idList = idList.substring(0,idList.length-1);
-				printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
-				printWin.focus();
-				printWin.print();
-
-				//window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
-				
-								
-			}			
-			
-		});
-
-
-		//global pdf button
-		$("#btn_pdf").button({
-			 icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			 })
-		.click(function(e){
-			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-				$.showMsg({
-					msg:"<?=$Text['msg_err_noselect'];?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
-							$(this).dialog("close");
-						}
-					},
-					type: 'warning'});
-			} else {
-			
-				var idList = "";
-				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
-						idList += $(this).parents('tr').attr('incidentId')+",";
-				});
-
-				idList = idList.substring(0,idList.length-1);
-				window.location.href = "php/ctrl/Incidents.php?oper=getIncidentsAsPDF&idlist="+idList;
-								
-			}			
-			
-		});
 		
 
 		//download selected as zip
@@ -462,11 +449,18 @@
 					</ul>
 					</div>		
 		    	
-		    	<button id="btn_print" class="overviewElements"><?=$Text['printout'];?></button>
-		    	<button id="btn_pdf" class="overviewElements">pdf</button>
+		    	<button id="btn_new_incident" class="overviewElements  hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
+		    	
+		    	
+		    	<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
+		    		<div id="printOptionsItems" class="hidden hideInPrint">
+					<ul>
+					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
+					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
+					</ul>
+					</div>		
 		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
 		    	
-		    	<button id="btn_new_incident" class="overviewElements btn_right hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
 		    			
 		    </div>
 		</div>
@@ -632,6 +626,7 @@
 <!-- end of wrap -->
 
 <!-- / END -->
-<iframe name="dataFrame" style="display:none;"></iframe>
+<iframe name="dataFrame" style="display:none"></iframe>
+
 </body>
 </html>

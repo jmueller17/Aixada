@@ -7,13 +7,16 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
+
+include(__ROOT__ . "php/external/mpdf54/mpdf.php");
 
 
 if (!isset($_SESSION)) {
     session_start();
  }
 
-DBWrap::get_instance()->debug = true;
+global $Text; 
 
 try{
 
@@ -47,6 +50,13 @@ try{
 		case 'getExistingThemes':
 			printXML(get_existing_themes_XML());
 			exit;
+			
+		case 'printPDF':
+			$mpdf=new mPDF(); 
+			$mpdf->WriteHTML(get_param('htmlStr'));
+			$defaultFileName = $Text['coop_name'].date('Y-m-d', strtotime('Today')).'.pdf';
+			$mpdf->Output(get_param('fileName', $defaultFileName),'D');
+			exit; 
 
     default:
         throw new Exception('ctrlSmallQ.php: Operation ' . $_REQUEST['oper'] . ' not supported.');
