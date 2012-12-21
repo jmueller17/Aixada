@@ -792,9 +792,10 @@ $Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per la resta de les
 $Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquest date. No es pot desactivar!";
 $Text['msg_pre2Order'] = "Converteix aquet comanda acumulativa a comanda normal. Pots trigar una date de entrega";
 
-$Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
+$Text['msg_err_modified_order'] = "Algú ha modificat els productes per demanar per la data actual. Alguns productes que havíes demanat ja no estan disponibles i desapareixerà del teu carro una vegada recarregat.";
 $Text['btn_confirm_del'] = "Esborar! Estic segur";
 $Text['print_new_win'] = "Nou finestre";
-$Text['print_pdf'] = "Descarega pdf";
-$Text['msg_incident_emailed'] = "La incidencia s'ha enviat correctament!";
+$Text['print_pdf'] = "Descarregar pdf";
+$Text['msg_incident_emailed'] = "L'incident s'ha enviat correctament!";
+$Text['upcoming_orders'] = "Pròxims comandes";
 

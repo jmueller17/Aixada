@@ -369,11 +369,19 @@
 						if (validated == '0000-00-00 00:00:00'){
 							$(row).children().eq(2).html("-");	
 						} else {
-							$(row).children().eq(2).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
+							$(row).children().eq(2)
+								.addClass('okGreen')
+								.html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
 						}
 					},
 					complete : function(){
 						$('.loadSpinner').hide();
+						$('#tbl_Shop tbody td.shopDate').each(function(){
+							var date = $(this).text();
+
+							$(this).text($.getCustomDate(date, "D d M, yy")); 
+
+						})
 					}
 			});
 
@@ -401,6 +409,7 @@
 
 					$('#shop_'+shopId).after(itemRows).after(header);
 					$('.loadSpinner').hide();
+
 				}
 			});
 			
@@ -466,6 +475,26 @@
 				}	
 				return index*gShopLimit+","+(gShopLimit);
 			}
+
+
+			/**
+			 *	UPCOMING ORDERS
+			 */
+			 $('#tbl_UpcomingOrders tbody').xml2html('init',{
+					url : 'php/ctrl/Dates.php',
+					params : 'oper=getUpcomingOrders&range=3',  //time range counts in weeks. Here three weeks ahead. 
+					loadOnInit : true, 
+					complete : function(count){
+						$('#tbl_UpcomingOrders tbody tr:even').addClass('rowHighlight');
+
+						$('#tbl_UpcomingOrders tbody td.dateForOrder').each(function(){
+							var date = $(this).text();
+
+							$(this).text($.getCustomDate(date, "D d M, yy")); 
+
+						})	
+					}
+			 });
 			
 	});  //close document ready
 </script>
@@ -500,6 +529,8 @@
 				<ul>
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
+					<li><a href="#tabs-3"><h2><?=$Text['upcoming_orders'];?></h2></a></li>	
+					
 				</ul>
 				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 				<div id="tabs-1">
@@ -545,7 +576,7 @@
 						<tbody>
 							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" operatorName="{operator_name}" operatorUf="{operator_uf}">
 																				  <td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td class="textAlignCenter">{date_for_shop}</td>
+								<td class="textAlignLeft shopDate">{date_for_shop}</td>
 								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
 								<td class="textAlignRight">{purchase_total}€</td>
 							</tr>
@@ -566,6 +597,28 @@
 						</tfoot>
 					</table>
 				</div>
+				
+				<div id="tabs-3">
+					<table id="tbl_UpcomingOrders" class="tblListingDefault">
+						<thead>
+							<tr>
+									<th class="textAlignLeft"><?=$Text['provider_name'];?></th>
+									<th class=""><?=$Text['ordered_for'];?></th>
+									<th><?=$Text['closes_days'];?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="minPadding"><p class="textAlignLeft">{provider_name}</p></td>
+								<td class="dateForOrder textAlignLeft">{date_for_order}</td>
+								<td>{time_left}</td>
+							</tr>
+						</tbody>
+						
+					</table>
+				</div>
+				
+				
 			</div>	
 					
 		</div>

@@ -39,6 +39,10 @@ try{
   	case 'getAllOrderableDates':
   	  	echo get_dates('get_orderable_dates', $format='array');
   	  	exit;
+  	  	
+  	case 'getUpcomingOrders':
+  		echo get_upcoming_orders(get_param('range'));
+  		exit; 
       	
   	case 'getDateRangeAsXML':
 		 printXML(dateRange($_REQUEST['fromDate'],$_REQUEST['toDate'],'D d'));

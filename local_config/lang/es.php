@@ -802,5 +802,6 @@ $Text['btn_confirm_del'] = "Sí, eliminar!!";
 $Text['print_new_win'] = "Ventana nueva";
 $Text['print_pdf'] = "Descarga pdf";
 $Text['msg_incident_emailed'] = "El incidente se ha enviado por correo correctamente.";
+$Text['upcoming_orders'] = "Próximos pedidos";
 
 ?>

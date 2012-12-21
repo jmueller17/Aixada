@@ -374,6 +374,9 @@
 			});
 				
 
+			/**
+			 *	when closing a preorder, a delivery date needs to be set. 
+			 */
 			$('#dialog_convertPreorder').dialog({
 				autoOpen:false,
 				width:420,
@@ -482,6 +485,8 @@
 								    tooltip	: 	'<?=$Text['uf_short'];?> ' + col + '\n' + product + '\n<?=$Text['click_to_edit'];?>',
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
+										
+										recalcRowTotal($(this).parent().attr('row'));
 									} 
 						});
 
@@ -1274,8 +1279,20 @@
 					gSection = page; 
 				}
 
-				
-				
+
+				/**
+				 *	recalculates the total of the revised quantities
+				 */
+				function recalcRowTotal(product_id){
+					var totalQ = 0; 
+					$('td.Row-'+product_id).filter(':not(:hidden)').each(function(){
+						totalQ += new Number($("p",this).text());
+
+					});
+					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
+					$('#total_'+product_id+' span:first-child').text(totalQ);
+
+				}
 			
 			
 	});  //close document ready

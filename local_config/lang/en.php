@@ -799,6 +799,7 @@ $Text['btn_confirm_del'] = "Delete anyway!!";
 $Text['print_new_win'] = "New window";
 $Text['print_pdf'] = "Download pdf";
 $Text['msg_incident_emailed'] = "The incident has been emailed succesfully!";
+$Text['upcoming_orders'] = "Upcoming orders";
 
 //$Text[''] = ""; 
 
