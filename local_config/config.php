@@ -37,6 +37,8 @@ class configuration_vars {
   public $db_name = 'aixada';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
+  
+  
 
   /****************************************************************************
      You should not need to change anything past this point when installing.

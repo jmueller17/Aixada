@@ -340,10 +340,6 @@ begin
 end|
 
 
-delimiter ;
-
-   delimiter |
-
 
 /**
  * returns all items in aixada_shop_item for 
@@ -507,8 +503,6 @@ begin
 end |
 
 
-delimiter ; 
-delimiter |
 
 
 /**
@@ -540,6 +534,36 @@ begin
 end|
 
 
+/**
+ * returns list of open orders from today onwards until a 
+ * certain date in the near future. This is used to get an overview
+ * of which orders are upcoming and about to close. 
+ */
+drop procedure if exists get_upcoming_orders|
+create procedure get_upcoming_orders (in until date)
+begin
+	
+	declare today date default date(sysdate()); 
+	
+	select distinct
+		po.date_for_order,
+		pv.name as provider_name,
+		po.closing_date,
+		datediff(po.closing_date, today) as time_left
+	from
+		aixada_product_orderable_for_date po,
+		aixada_provider pv,
+		aixada_product p
+	where
+		po.closing_date > today
+		and po.date_for_order <= until
+		and po.product_id = p.id
+		and p.provider_id = pv.id
+	order by 
+		po.closing_date asc; 
+end |
+
+
 
 /**
  * returns dates that have unvalidated shopping carts. 
@@ -557,9 +581,6 @@ begin
   	date_for_shop desc;
 end|
 
-
-
-delimiter ;delimiter |
 
 
 /**
@@ -708,10 +729,6 @@ begin
   	i.ts desc;
 	
 end |
-
-
-delimiter ;
-delimiter |
 
 
 /**
@@ -1626,8 +1643,8 @@ begin
 	
 	start transaction;
 	
-	-- insert first entry in aixada_prodcuts_orderable_for_date -- 
-	insert into
+	-- insert first entry in aixada_products_orderable_for_date -- 
+	replace into
 		aixada_product_orderable_for_date (date_for_order, product_id)
 	select
 		the_date_for_order, p.id
@@ -1640,7 +1657,7 @@ begin
 		and oi.date_for_order = '1234-01-23';
 		
 		
-	-- set the new date_for_order -- 
+	-- set the new date_for_order on ordered items-- 
 	update 
 		aixada_order_item oi,
 		aixada_product p
@@ -1732,10 +1749,6 @@ begin
    group by p.id;
 end|
 
-
-
-delimiter ;
-delimiter |
 
 
 /**
@@ -1913,7 +1926,7 @@ end|
 
 /**
  * utility function to write the changes for the orderable products in the table
- * if is_active, the product for the given date will e deactivated and vice versa
+ * if is_active, the product for the given date will be deactivated and vice versa
  */
 drop procedure if exists write_toggle_to_db|
 create procedure write_toggle_to_db(in is_active int, in the_date date, in the_product_id int)
@@ -1945,6 +1958,98 @@ begin
 	
 end|
 
+
+/**
+ *  converts a product into preorderable. all available order dates will be deleted 
+ *  and replaced by the fictive date  1234-01-23
+ */
+drop procedure if exists toggle_preorder_product|
+create procedure toggle_preorder_product(in the_product_id int, in the_date date)
+begin
+	
+	declare isPreorder int;
+	declare today date default date(sysdate());
+	
+	
+	select
+		count(*) into isPreorder
+	from 
+		aixada_product_orderable_for_date po
+	where
+		po.date_for_order = '1234-01-23'
+		and po.product_id = the_product_id;
+	
+	-- if is preorder convert back to normal order -- 
+	if isPreorder > 0 then	
+		
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = '1234-01-23';
+		
+	-- otherwise delete active dates and make it preorderable 		
+	else 
+	
+	    delete
+			po.*
+		from
+			aixada_product_orderable_for_date po
+		left join
+			aixada_order_item oi on
+			po.date_for_order = oi.date_for_order
+			and po.product_id = oi.product_id
+		where
+			po.date_for_order > today
+			and po.product_id = the_product_id
+			and oi.date_for_order is null;
+		
+		-- create preorder entry in table -- 
+		insert into 
+			aixada_product_orderable_for_date(product_id, date_for_order, closing_date)
+		values
+			(the_product_id, '1234-01-23', '9999-01-01');
+			
+		-- if the product is currently not active, make sure it is activated -- 
+		update 
+			aixada_product
+		set
+			active = 1
+		where
+			id = the_product_id; 
+			
+	end if; 	
+end|
+
+
+/**
+ * By default only those dates in table aixada_product_orderable_for_date can be 
+ * deactivated that have no ordered items associated. This procedure can delete
+ * those dates where orders have been made, which implies to delete the associated items 
+ * from order carts as well. 
+ */
+drop procedure if exists deactivate_locked_order_date|
+create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
+begin
+	
+	start transaction; 
+	
+	delete from
+		aixada_order_item
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	delete from
+		aixada_product_orderable_for_date
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	
+	commit; 
+	
+end|
 
 
 /**
@@ -1979,8 +2084,9 @@ begin
 			left join
 				aixada_order_item oi on
 				po.date_for_order = oi.date_for_order
+				and po.product_id = oi.product_id
 			where
-				po.date_for_order > today
+				(po.date_for_order > today or po.date_for_order = '1234-01-23')
 				and po.product_id = the_product_id
 				and oi.date_for_order is null;	
 	end if;
@@ -2439,17 +2545,6 @@ begin
 end|
 
 
-
-
-
-
-
-
-
-
-delimiter ;delimiter |
-
-
 /**
  * returns the responsible users for a provider. 
  */
@@ -2676,8 +2771,6 @@ begin
   
 end|
 
-
-delimiter ;delimiter |
 
 
 /**
@@ -3019,9 +3112,6 @@ begin
 end|
 
 
-delimiter ;delimiter |
-
-
 drop procedure if exists get_purchase_total_by_provider|
 create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
 begin
@@ -3210,10 +3300,6 @@ end|
 
 
 
-
-delimiter ;
-delimiter |
-
 drop procedure if exists most_bought_products|
 create procedure most_bought_products(in the_year int)
 begin
@@ -3353,9 +3439,6 @@ begin
   order by ts desc, uf
   limit 1000;
 end|
-
-delimiter ;
-delimiter |
 
 
 /*******************************************
@@ -4020,12 +4103,6 @@ end|
 
 
 
-
-
-delimiter ;
-delimiter |
-
-
 /**
  * returns a list of all active ufs and the number of their non-validated
  * shoppping carts.
@@ -4167,101 +4244,12 @@ begin
 end|
 
 
-
-
-
-
-
-
-/*drop procedure if exists undo_validate|
-create procedure undo_validate(in the_uf_id int, in the_ts datetime, in the_operator int)
-begin
-  declare the_shop_date date, 
-    uf_balance decimal(10,2), 
-    caixa_balance decimal(10,2), 
-    shop_amount decimal(10,2);
-
-  start transaction;
-
-  select date_for_shop 
-  into the_shop_date
-  from aixada_shop_item where uf_id = the_uf_id and ts_validated = the_ts
-  limit 1;
-
-  start transaction;
-  update aixada_shop_item 
-  set ts_validated = 0
-  where uf_id = the_uf_id
-    and date_for_shop = the_shop_date;
-
-  select balance 
-  into uf_balance
-  from aixada_account_balance
-  where account_id = 1000 + the_uf_id;
-
-  select balance 
-  into caixa_balance
-  from aixada_account_balance
-  where account_id = -3;
-
-
-  select total_
-  into caixa_balance
-  from aixada_account_balance
-  where account_id = -3;
-
-  insert into aixada_account (
-    account_id, quantity, description, operator_id, balance    
-  ) values (
-    1000 + the_uf_id, 
-  )
-
- commit;
-
-  select date_for_shop 
-  into the_shop_date
-  from aixada_shop_item where uf_id = the_uf_id and ts_validated = the_ts
-  limit 1;
-
-  update aixada_shop_item 
-  set ts_validated = 0
-  where uf_id = the_uf_id
-    and date_for_shop = the_shop_date;
-
-  select balance 
-  into uf_balance
-  from aixada_account_balance
-  where account_id = 1000 + the_uf_id;
-
-  select balance 
-  into caixa_balance
-  from aixada_account_balance
-  where account_id = -3;
-
-
-  select total_
-  into caixa_balance
-  from aixada_account_balance
-  where account_id = -3;
-
-  insert into aixada_account (
-    account_id, quantity, description, operator_id, balance    
-  ) values (
-    1000 + the_uf_id, 
-  )
-
- commit;
-end|
-*/
-
-
-delimiter ;
 /* 
  * The contents of this file are generated automatically. 
  * Do not edit it, but instead run
  * php make_canned_responses.php
  */
-delimiter |
+
 
 drop procedure if exists aixada_account_list_all_query|
 create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
@@ -4273,15 +4261,13 @@ begin
       aixada_account.id,
       aixada_account.account_id,
       aixada_account.quantity,
-      aixada_payment_method.description as payment_method,
-      aixada_currency.name as currency,
+      aixada_account.payment_method_id,
+      aixada_account.currency_id,
       aixada_account.description,
       aixada_account.operator_id,
       aixada_account.ts,
       aixada_account.balance 
-    from aixada_account 
-    left join aixada_payment_method as aixada_payment_method on aixada_account.payment_method_id=aixada_payment_method.id
-    left join aixada_currency as aixada_currency on aixada_account.currency_id=aixada_currency.id";
+    from aixada_account ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -4454,11 +4440,11 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_order_item.id,
-      aixada_uf.name as uf,
-      aixada_cart.name as favorite_cart,
       aixada_order_item.order_id,
       aixada_order_item.unit_price_stamp,
       aixada_order_item.date_for_order,
+      aixada_uf.name as uf,
+      aixada_cart.name as favorite_cart,
       aixada_product.name as product,
       aixada_order_item.quantity,
       aixada_order_item.ts_ordered 
@@ -4598,11 +4584,10 @@ begin
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = "select
       aixada_product_orderable_for_date.id,
-      aixada_product.name as product,
+      aixada_product_orderable_for_date.product_id,
       aixada_product_orderable_for_date.date_for_order,
       aixada_product_orderable_for_date.closing_date 
-    from aixada_product_orderable_for_date 
-    left join aixada_product as aixada_product on aixada_product_orderable_for_date.product_id=aixada_product.id";
+    from aixada_product_orderable_for_date ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -4680,6 +4665,22 @@ begin
     from aixada_shop_item 
     left join aixada_cart as aixada_cart on aixada_shop_item.cart_id=aixada_cart.id
     left join aixada_product as aixada_product on aixada_shop_item.product_id=aixada_product.id";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_shopping_dates_list_all_query|
+create procedure aixada_shopping_dates_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_shopping_dates.shopping_date,
+      aixada_shopping_dates.available 
+    from aixada_shopping_dates ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -4773,21 +4774,6 @@ begin
   deallocate prepare st;
 end|
 
-drop procedure if exists aixada_user_role_list_all_query|
-create procedure aixada_user_role_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_user_role.user_id,
-      aixada_user_role.role 
-    from aixada_user_role ";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
 
 
 delimiter ;

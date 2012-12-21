@@ -29,7 +29,12 @@ v2.6
 * unlocking orderable products/dates with ordered items is now possible
 * de-/activating products for dates can be automatically repeated for all remaining dates
 * warning message when cart has been validated without money desposit.
+* overview of upcoming orders added to Home
 
 Bugfixes
 * creating preorders
 * deactivating orderable products failed when other product for the same date had ordered items
+* sum of revised orders is now updated when editing uf quantities
+
+
+
