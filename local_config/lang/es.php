@@ -4,8 +4,6 @@
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
-$coop = "la Aixada";
-
 $Text['es'] = 'Castellano';
 
 
@@ -16,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;;
 $Text['please_select'] = "Seleccionar...";
 $Text['loading'] = "Por favor, espere mientras se cargan los datos...";
 $Text['search'] = "Buscar";
@@ -66,7 +64,7 @@ $Text['validate'] = "Validar";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop;
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;;
 $Text['head_ti_order'] = "Pedido";
 $Text['head_ti_shop'] = "Comprar productos";
 $Text['head_ti_reports'] = "Informes"; 
@@ -262,7 +260,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Bienvenid@s a " . $coop . "!";
+$Text['welcome_logon'] = "Bienvenid@s a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
@@ -307,7 +305,7 @@ $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
 $Text['nav_report_account'] = "Cuentas";
 $Text['nav_report_preorder'] = "Prepedidos";
-$Text['nav_report_timelines'] = "Evolución de " . $coop;
+$Text['nav_report_timelines'] = "Evolución de " . configuration_vars::get_instance()->coop_name;;
 $Text['nav_report_timelines_uf'] = "Por UFs";
 $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";
@@ -803,5 +801,6 @@ $Text['msg_err_modified_order'] = "Someone has modified the orderable products f
 $Text['btn_confirm_del'] = "Sí, eliminar!!";
 $Text['print_new_win'] = "Ventana nueva";
 $Text['print_pdf'] = "Descarga pdf";
+$Text['msg_incident_emailed'] = "El incidente se ha enviado por correo correctamente.";
 
 ?>

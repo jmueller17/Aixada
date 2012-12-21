@@ -1,6 +1,6 @@
 <?php
 
-$coop = "Aixada";
+require_once(__ROOT__. 'local_config/config.php');
 
 // English translation file for aixada 
 
@@ -14,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;
 $Text['please_select'] = "Please select ...";
 $Text['loading'] = "Please wait while loading...";
 $Text['search'] = "Search";
@@ -60,7 +60,7 @@ $Text['validate'] = "Validate";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop . " platform";
+$Text['global_title'] = configuration_vars::get_instance()->coop_name . " platform";
 $Text['head_ti_validate'] = "Validate";
 
 $Text['head_ti_active_products'] = "De/activate orderable products";
@@ -249,7 +249,7 @@ $Text['ts_validated'] = 'Validated';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Welcome to " + $coop + "!";
+$Text['welcome_logon'] = "Welcome to " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "User";
 $Text['pwd']	= "Password";
 $Text['old_pwd'] = "Old Password";
@@ -798,6 +798,7 @@ $Text['msg_err_modified_order'] = "Orderable products have been deactivated for 
 $Text['btn_confirm_del'] = "Delete anyway!!";
 $Text['print_new_win'] = "New window";
 $Text['print_pdf'] = "Download pdf";
+$Text['msg_incident_emailed'] = "The incident has been emailed succesfully!";
 
 //$Text[''] = ""; 
 

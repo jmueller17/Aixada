@@ -26,7 +26,7 @@ class configuration_vars {
   /**
    * What is the name of this cooperative?
    */
-  public $coop_name = 'Aixada';
+  public $coop_name = 'L\'Aixada';
 
   
   /**
@@ -68,15 +68,16 @@ class configuration_vars {
   
     /**
    * the email address of the admin; used for sending out pwd changes
-   * and orders. can also be set from the admin > my account
+   * and orders. 
    */
   public $admin_email = "admin@admin.com";
   
   
   /**
    * 
-   * is this a local install or accessible online. If online
-   * services such as sending emails will be active. 
+   * Is this a local install or accessible online. Turns globally on/off 
+   * the emailing of reports and other internet related features. If set to "false" 
+   * emailing order reports and incidents will not work. 
    * @var boolean
    */
   public $internet_connection = false; 
@@ -130,7 +131,7 @@ class configuration_vars {
   
   
   /**
-   * ORDER STUFF
+   * ORDER REPORT VARS
    */
   
   /**
@@ -148,22 +149,12 @@ class configuration_vars {
   
   
   
-  /**
-   * INCIDENTS STUFF
-   */
   
   /**
-   * email incidents 
+   * INCIDENTS REPORTING VARS
    */
-  public $email_incidents = false;
   
-  
-  /**
-   * email incidents format: "single" | "bulk" incidents with distribution level 3 are either
-   * emailed individually or as one large text-doc 
-   */
-  public $incidents_distribution_format = "single";
-  
+
   
   /**
    * if the incident emails should be send out to another distribution list. 

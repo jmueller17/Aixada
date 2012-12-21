@@ -3,7 +3,8 @@
 // contribute by Cristóbal Cabeza-Cáceres; Jordi Losantos
 // Email: cristobal.cabeza@gmail.com; jordi@losantos.name
 
-$coop = "l'Aixada";
+require_once(__ROOT__. 'local_config/config.php');
+
 
 $Text['ca-va'] = 'Català';
 $Text['charset'] = "utf-8";
@@ -13,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aes
 /** 
  *  		Elements globals
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;
 $Text['please_select'] = "Seleccioneu...";
 $Text['loading'] = "Si us plau, espere mentre es carreguen les dades...";
 $Text['search'] = "Cerca";
@@ -59,7 +60,7 @@ $Text['validate'] = "Valida";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop;
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;
 $Text['head_ti_validate'] = "Valida";
 
 $Text['head_ti_active_products'] = "Activa/Desactiva Productes demanables";
@@ -248,7 +249,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Benvinguts/des a " . $coop . "!";
+$Text['welcome_logon'] = "Benvinguts/des a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuari";
 $Text['pwd']	= "Contrasenya";
 $Text['old_pwd'] = "Contrasenya antiga";
@@ -294,7 +295,7 @@ $Text['nav_mng'] = "Gestiona";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
 $Text['nav_report_account'] = "Comptes";
-$Text['nav_report_timelines'] = "Evolució " . $coop;
+$Text['nav_report_timelines'] = "Evolució " . configuration_vars::get_instance()->coop_name;
 $Text['nav_report_timelines_uf'] = "Per UFs";
 $Text['nav_report_timelines_provider'] = "Per proveidors";
 $Text['nav_report_timelines_product'] = "Per productes";
@@ -795,4 +796,5 @@ $Text['msg_err_modified_order'] = "Someone has modified the orderable products f
 $Text['btn_confirm_del'] = "Esborar! Estic segur";
 $Text['print_new_win'] = "Nou finestre";
 $Text['print_pdf'] = "Descarega pdf";
+$Text['msg_incident_emailed'] = "La incidencia s'ha enviat correctament!";
 
