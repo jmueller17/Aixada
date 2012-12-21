@@ -35,6 +35,7 @@ Bugfixes
 * creating preorders
 * deactivating orderable products failed when other product for the same date had ordered items
 * sum of revised orders is now updated when editing uf quantities
+* mentor household did not show when creating new HU
 
 
 
