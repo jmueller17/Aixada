@@ -17,7 +17,6 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/loadPDF.js" ></script>
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_incidents.min.js"></script>
     <?php }?>
@@ -183,7 +182,7 @@
 						break;
 	
 					case "printPDF": 
-						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1"; 
+						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1&outputFormat=D"; 
 						break;
 				}
 								

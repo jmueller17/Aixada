@@ -42,13 +42,20 @@
 
    	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	<script type="text/javascript" src="../js/aixadautilities/loadPDF.js" ></script>
+	
  
 
 	<script type="text/javascript">
 		$(function(){
 
 
+			//boolean to generate a pdf of this bill 
 			var asPDF = $.getUrlVar('asPDF');
+
+			//"F" opens the pdf in browser window, "D" forces file download
+			var outputFormat =  $.getUrlVar('outputFormat');
+			
 
 			
 			//prevent error msg when opening saved page
@@ -96,7 +103,7 @@
 					if (asPDF) {
 						var pathToImg = $('#coopLogo').attr('src');
 						$('#coopLogo').attr('src', "../"+pathToImg);
-						parent.downloadPDF();
+						downloadPDF(outputFormat, <?=$Text['bill'];?>);
 					}
 					
 				}

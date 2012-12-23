@@ -19,7 +19,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/loadPDF.js" ></script>
+
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_report_shop.min.js"></script>
     <?php }?>
@@ -209,7 +209,7 @@
 							break;
 		
 						case "printPDF": 
-							window.frames['dataFrame'].window.location = 'tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf+'&asPDF=1' 
+							window.frames['dataFrame'].window.location = 'tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf+'&asPDF=1&outputFormat=D' 
 							break;
 					}
 									

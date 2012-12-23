@@ -450,7 +450,11 @@
 										    total_quantity = total_quantity + parseFloat(quantity);
 										    var selector = '.Col-' + uf_id + '.Row-' + pid;
 										    
-										    $(selector).removeClass('toRevise').addClass('revised').text(quantity);
+										    $(selector)
+										    	.removeClass('toRevise')
+										    	.addClass('revised')
+										    	.children(':first')
+										    	.text(quantity);
 										    
 										})
 										$('#ckboxRevised_'+pid).attr('checked','checked');
