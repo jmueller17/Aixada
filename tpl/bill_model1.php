@@ -103,7 +103,7 @@
 					if (asPDF) {
 						var pathToImg = $('#coopLogo').attr('src');
 						$('#coopLogo').attr('src', "../"+pathToImg);
-						downloadPDF(outputFormat, <?=$Text['bill'];?>);
+						downloadPDF(outputFormat, '<?=$Text['bill'];?>');
 					}
 					
 				}
