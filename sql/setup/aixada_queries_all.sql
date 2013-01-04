@@ -340,9 +340,9 @@ begin
 end|
 
 
- 
+delimiter ;
 
-    
+   delimiter |
 
 
 /**
@@ -507,8 +507,8 @@ begin
 end |
 
 
-  
- 
+delimiter ; 
+delimiter |
 
 
 /**
@@ -559,7 +559,7 @@ end|
 
 
 
-  
+delimiter ;delimiter |
 
 /**
  * returns list of incident types.  
@@ -668,8 +668,8 @@ begin
 end |
 
 
- 
- 
+delimiter ;
+delimiter |
 
 
 /**
@@ -1692,8 +1692,8 @@ end|
 
 
 
- 
- 
+delimiter ;
+delimiter |
 
 
 /**
@@ -2338,7 +2338,7 @@ end|
 
 
 
-  
+delimiter ;delimiter |
 
 
 /**
@@ -2568,7 +2568,7 @@ begin
 end|
 
 
-  
+delimiter ;delimiter |
 
 
 /**
@@ -2910,7 +2910,7 @@ begin
 end|
 
 
-  
+delimiter ;delimiter |
 
 
 /**
@@ -3049,8 +3049,8 @@ end|
 
 
 
- 
- 
+delimiter ;
+delimiter |
 
 drop procedure if exists most_bought_products|
 create procedure most_bought_products(in the_year int)
@@ -3192,8 +3192,8 @@ begin
   limit 1000;
 end|
 
- 
- 
+delimiter ;
+delimiter |
 
 
 /*******************************************
@@ -3860,8 +3860,8 @@ end|
 
 
 
- 
- 
+delimiter ;
+delimiter |
 
 
 /**
@@ -4093,13 +4093,13 @@ end|
 */
 
 
- 
+delimiter ;
 /* 
  * The contents of this file are generated automatically. 
  * Do not edit it, but instead run
  * php make_canned_responses.php
  */
- 
+delimiter |
 
 drop procedure if exists aixada_account_list_all_query|
 create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
