@@ -374,6 +374,9 @@
 			});
 				
 
+			/**
+			 *	when closing a preorder, a delivery date needs to be set. 
+			 */
 			$('#dialog_convertPreorder').dialog({
 				autoOpen:false,
 				width:420,
@@ -396,10 +399,12 @@
 
 								$this.button('disable');
 								setTimeout(function(){
-									$this.dialog( "close" )
-
+									$this.dialog( "close" );
+									$('#tbl_orderOverview tbody').xml2html('reload',{
+										params : 'oper=getOrdersListing&filter=pastMonths2Future',
+									});
 									//switchTo('overview');
-								},2000);
+								},500);
 							},
 							error : function(XMLHttpRequest, textStatus, errorThrown){
 								$.showMsg({
@@ -445,7 +450,11 @@
 										    total_quantity = total_quantity + parseFloat(quantity);
 										    var selector = '.Col-' + uf_id + '.Row-' + pid;
 										    
-										    $(selector).removeClass('toRevise').addClass('revised').text(quantity);
+										    $(selector)
+										    	.removeClass('toRevise')
+										    	.addClass('revised')
+										    	.children(':first')
+										    	.text(quantity);
 										    
 										})
 										$('#ckboxRevised_'+pid).attr('checked','checked');
@@ -480,6 +489,8 @@
 								    tooltip	: 	'<?=$Text['uf_short'];?> ' + col + '\n' + product + '\n<?=$Text['click_to_edit'];?>',
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
+										
+										recalcRowTotal($(this).parent().attr('row'));
 									} 
 						});
 
@@ -1157,7 +1168,7 @@
 
 					//need to introduce a delay here in order to load all orders correctly. don't ask me why.... 
 					setTimeout(function(){
-						$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for printing
+						$('#tbl_reviseOrder tbody').xml2html("reload", {	//load order details for printing
 							params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 						})
 					}, 1000); 
@@ -1272,8 +1283,20 @@
 					gSection = page; 
 				}
 
-				
-				
+
+				/**
+				 *	recalculates the total of the revised quantities
+				 */
+				function recalcRowTotal(product_id){
+					var totalQ = 0; 
+					$('td.Row-'+product_id).filter(':not(:hidden)').each(function(){
+						totalQ += new Number($("p",this).text());
+
+					});
+					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
+					$('#total_'+product_id+' span:first-child').text(totalQ);
+
+				}
 			
 			
 	});  //close document ready
@@ -1318,7 +1341,7 @@
 						<li><a href="javascript:void(null)" id="preOrders"><?=$Text['nav_report_preorder'];?></a></li>
 					</ul>
 				</div>	
-				<button id="btn_print" class="overviewElements btn_right">Print</button>
+				<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
 		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
 		   	</div> 	
 		</div> <!--  end of title wrap -->
@@ -1353,7 +1376,7 @@
 				</thead>
 				<tbody>
 					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="clickable">
-						<td><input type="checkbox" name="bulkAction"/>
+						<td><input type="checkbox" name="bulkAction"/></td>
 						<td>{id}</td>
 						<td class="textAlignRight minPadding"><p class="textAlignLeft">{provider_name}</p></td>
 						<td>{date_for_order}</td>
@@ -1593,7 +1616,7 @@
 <div id="dialog_convertPreorder" title="Convert preorder to order">
 	<p>&nbsp;</p>
 	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"></p>
-	<p>Conver this preorder to a regular order. This will assign an order date, i.e. when the expected items will arrive.</p>
+	<p><?php echo $Text['msg_pre2Order']; ?></p>
 	<p>&nbsp;</p>
 	<div id="datepicker2"></div>
 </div>

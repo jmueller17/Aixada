@@ -23,6 +23,7 @@
 
    
 	<script type="text/javascript">
+
 	
 	$(function(){
 
@@ -126,7 +127,7 @@
 	    .menu({
 			content: $('#tblIncidentsOptionsItems').html(),	
 			showSpeed: 50, 
-			width:280,
+			width:180,
 			flyOut: true, 
 			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
 				//show hide deactivated products
@@ -137,8 +138,107 @@
 				
 			}//end item selected 
 		});//end menu
+
+
+		//print incidents accoring to current incidents template in new window or download as pdf
+		$("#btn_print")
+		.button({
+			icons: {
+				primary: "ui-icon-print",
+	        	secondary: "ui-icon-triangle-1-s"
+			}
+	    })
+	    .menu({
+			content: $('#printOptionsItems').html(),	
+			showSpeed: 50, 
+			width:180,
+			flyOut: true, 
+			itemSelected: function(item){	
+				if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_noselect'];?>",
+						buttons: {
+							"<?=$Text['btn_ok'];?>":function(){						
+								$(this).dialog("close");
+							}
+						},
+						type: 'warning'});
+					return false; 
+				}
+
+				var link = $(item).attr('id');
+
+				var idList = "";
+				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+						idList += $(this).parents('tr').attr('incidentId')+",";
+				});
+				idList = idList.substring(0,idList.length-1);
+				
+				switch (link){
+					case "printWindow": 
+						printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
+						printWin.focus();
+						printWin.print();
+						break;
+	
+					case "printPDF": 
+						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1&outputFormat=D"; 
+						break;
+				}
+								
+			}//end item selected 
+		});//end print menu
 		
 
+	
+		//bulk actions
+		$('input[name=bulkAction]')
+			.live('click', function(e){
+				e.stopPropagation();
+			})
+			
+		$('#toggleBulkActions')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="bulkAction"]').attr('checked','checked');
+				} else {
+					$('input:checkbox[name="bulkAction"]').attr('checked',false);
+				}
+				e.stopPropagation();
+			});
+
+		
+
+		//download selected as zip
+		/*$("#btn_zip").button({
+			 icons: {
+	        		primary: "ui-icon-suitcase"
+	        	}
+			 })
+    		.click(function(e){
+    			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_noselect'];?>",
+						buttons: {
+							"<?=$Text['btn_ok'];?>":function(){						
+								$(this).dialog("close");
+							}
+						},
+						type: 'warning'});
+    			} else {
+        		
+        			var orderRow = ''; 								
+					$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+						orderRow += '<input type="hidden" name="order_id[]" value="'+$(this).parents('tr').attr('orderId')+'"/>';
+						orderRow += '<input type="hidden" name="provider_id[]" value="'+$(this).parents('tr').attr('providerId')+'"/>';
+						orderRow += '<input type="hidden" name="date_for_order[]" value="'+$(this).parents('tr').attr('dateforOrder')+'"/>';
+					});
+					$('#submitZipForm').empty().append(orderRow);
+					getZippedOrders();
+    			}
+    		});*/
+
+		
 		
 		//DELETE incidents
 		$('.btn_del_incident')
@@ -240,7 +340,7 @@
 					$(this).removeClass('ui-state-highlight');
 				}
 			})
-			//click on uf table row
+			//click on table row
 			.live("click", function(e){
 
 				resetDetails();
@@ -334,20 +434,33 @@
 	<div id="stagewrap">
 	
 		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol">
+			<div id="titleLeftCol50">
 				<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
 		    </div>
-		    <div id="titleRightCol">
-		 <button	id="tblIncidentsViewOptions" class="overviewElements floatRight hideInPrint"><?=$Text['filter_incidents'];?></button>
-		    	<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
+		    <div id="titleRightCol50">
+		 		<button	id="tblIncidentsViewOptions" class="overviewElements btn_right hideInPrint"><?=$Text['filter_incidents'];?></button>
+		    		<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
 					<ul>
-		 <li><a href="javascript:void(null)" id="today"><?=$Text['filter_todays'];?></a></li>
-		 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['filter_recent'];?></a></li>
-		 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
+					 <li><a href="javascript:void(null)" id="today"><?=$Text['filter_todays'];?></a></li>
+					 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['filter_recent'];?></a></li>
+					 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
 					</ul>
-				</div>		
-		    	<button id="btn_new_incident" class="overviewElements floatLeft hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
+					</div>		
+		    	
+		    	<button id="btn_new_incident" class="overviewElements  hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
+		    	
+		    	
+		    	<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
+		    		<div id="printOptionsItems" class="hidden hideInPrint">
+					<ul>
+					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
+					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
+					</ul>
+					</div>		
+		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
+		    	
+		    			
 		    </div>
 		</div>
 		
@@ -358,7 +471,8 @@
 					<table id="tbl_incidents" class="tblListingDefault">
 					<thead>
 						<tr>
-							<th class="mwidth-30"><?php echo $Text['id'];?></th>
+							<th>&nbsp;<input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
+							<th class="mwidth-30"><p class="textAlignCenter"><?php echo $Text['id'];?></p></th>
 							<th hideInPrint"><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?>&nbsp;&nbsp;</th>
 							<th><?php echo $Text['created_by'];?></th>
@@ -374,6 +488,7 @@
 					</thead>
 					<tbody>
 						<tr class="clickable" incidentId="{id}">
+							<td><input type="checkbox" name="bulkAction"/></td>
 							<td field_name="incident_id">{id}</td>
 							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
 							<td field_name="priority"><p  class="textAlignCenter">{priority}</p></td>
@@ -510,5 +625,7 @@
 <!-- end of wrap -->
 
 <!-- / END -->
+<iframe name="dataFrame" style="display:none"></iframe>
+
 </body>
 </html>

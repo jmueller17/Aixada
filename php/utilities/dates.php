@@ -5,10 +5,19 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once ('general.php');
 
-//$firephp = FirePHP::getInstance(true);
-//ob_start(); // Starts FirePHP output buffering
 
 
+/**
+ * 
+ * returns a list of upcoming orders that are not closed
+ * @param unknown_type $time_range number of weeks to look into the future
+ */
+function get_upcoming_orders ($nr_weeks){
+	
+	$until_when = date('Y-m-d', strtotime("Today + ".$nr_weeks." week"));
+	
+	printXML(stored_query_XML_fields('get_upcoming_orders', $until_when));
+}
 
 /**
  * 
@@ -30,13 +39,9 @@ function activate_all_for_date($provider_id, $date, $activate)
 	
 	
 	foreach($product_ids as $id){
-		
-	 	do_stored_query('toggle_orderable_product', $id, $date);
-		
-		
+	 	do_stored_query('toggle_orderable_product', $id, $date, 0);	
 	}
 	DBWrap::get_instance()->free_next_results();
-	
 	
 	echo 1; //printXML(stored_query_XML_fields('get_products_of_provider', $provider_id, 1 ));
 }
@@ -143,8 +148,6 @@ function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 		//TODO server - client difference in time/date?!
 		$from_date = date('Y-m-d', strtotime("Today")); 
 	}
-	
-
 	
 	switch ($format){
 		case 'xml':

@@ -1,6 +1,6 @@
 <?php
 
-$coop = "Aixada";
+require_once(__ROOT__. 'local_config/config.php');
 
 // English translation file for aixada 
 
@@ -14,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;
 $Text['please_select'] = "Please select ...";
 $Text['loading'] = "Please wait while loading...";
 $Text['search'] = "Search";
@@ -60,7 +60,7 @@ $Text['validate'] = "Validate";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop . " platform";
+$Text['global_title'] = configuration_vars::get_instance()->coop_name . " platform";
 $Text['head_ti_validate'] = "Validate";
 
 $Text['head_ti_active_products'] = "De/activate orderable products";
@@ -249,7 +249,7 @@ $Text['ts_validated'] = 'Validated';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Welcome to " + $coop + "!";
+$Text['welcome_logon'] = "Welcome to " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "User";
 $Text['pwd']	= "Password";
 $Text['old_pwd'] = "Old Password";
@@ -302,6 +302,9 @@ $Text['nav_report_timelines_product'] = "Products";
 $Text['nav_report_daystats'] = "Statistics of the day";
 $Text['nav_report_preorder'] = "Preorders";
 $Text['nav_report_incidents'] = "Today's incidents";
+$Text['nav_report_shop_hu'] = "By Households";
+$Text['nav_report_shop_pv'] = "By Providers";
+
 
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Browse / add";
@@ -346,6 +349,8 @@ $Text['btn_view_list_lng'] = "View product list only";
 $Text['btn_view_both'] = "Both";
 $Text['btn_view_both_lng'] = "View both, product list and cart";
 $Text['btn_repeat'] = "Ok, repeat this!";
+$Text['btn_repeat_single'] = "No, just one"; 
+$Text['btn_repeat_all'] = "Ok, apply to all"; 
 
 
 
@@ -774,6 +779,27 @@ $Text['msg_err_no_deposit'] = "The last household did not make any deposit???!!!
 $Text['btn_load_cart'] = "Continue with next cart";
 $Text['btn_deposit_now'] = "Make desposit now";
 $Text['msg_err_stock_mv'] = "Sorry, no stock corrections/adds found for this product!";
+
+$Text['ti_report_shop_pv'] = "Purchase total by provider";
+$Text['filter_all_sales'] = "Show all sales";
+$Text['filter_exact'] = "Exact dates";
+$Text['total_4date'] = "Total for date";
+$Text['total_4provider'] = "Overall total for provider";
+$Text['sel_sales_dates'] = "Show sales for provider for the given time period:";
+$Text['sel_sales_dates_ti'] = "Select time period"; 
+
+$Text['instant_repeat'] = "Instant repeat";
+$Text['msg_confirm_delordereditems'] = "There are ordered items for this product/date. Are you absolutely sure to deactivate it? This will delete the ordered items from people's order-carts!";
+$Text['msg_confirm_instantr'] = "Do you want to repeat this action for the rest of the active dates?";
+$Text['msg_err_delorerable'] = "Items have been ordered for this product and date. It cannot be deactivated!"; 
+$Text['msg_pre2Order'] = "Convert this preorder to a regular order. This will assign an order date, i.e. when the expected items will arrive.";
+
+$Text['msg_err_modified_order'] = "Orderable products have been deactivated for the current date while you were ordering. Some products that you already had ordered are no longer available and will disappear from your cart after it has been reloaded.";
+$Text['btn_confirm_del'] = "Delete anyway!!";
+$Text['print_new_win'] = "New window";
+$Text['print_pdf'] = "Download pdf";
+$Text['msg_incident_emailed'] = "The incident has been emailed succesfully!";
+$Text['upcoming_orders'] = "Upcoming orders";
 
 //$Text[''] = ""; 
 

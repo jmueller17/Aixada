@@ -340,10 +340,6 @@ begin
 end|
 
 
-delimiter ;
-
-   delimiter |
-
 
 /**
  * returns all items in aixada_shop_item for 
@@ -507,9 +503,6 @@ begin
 end |
 
 
-delimiter ; 
-delimiter |
-
 
 /**
  * returns all orderable dates, irrespective if they have ordered items or not. 
@@ -540,6 +533,36 @@ begin
 end|
 
 
+/**
+ * returns list of open orders from today onwards until a 
+ * certain date in the near future. This is used to get an overview
+ * of which orders are upcoming and about to close. 
+ */
+drop procedure if exists get_upcoming_orders|
+create procedure get_upcoming_orders (in until date)
+begin
+	
+	declare today date default date(sysdate()); 
+	
+	select distinct
+		po.date_for_order,
+		pv.name as provider_name,
+		po.closing_date,
+		datediff(po.closing_date, today) as time_left
+	from
+		aixada_product_orderable_for_date po,
+		aixada_provider pv,
+		aixada_product p
+	where
+		po.closing_date > today
+		and po.date_for_order <= until
+		and po.product_id = p.id
+		and p.provider_id = pv.id
+	order by 
+		po.closing_date asc; 
+end |
+
+
 
 /**
  * returns dates that have unvalidated shopping carts. 
@@ -559,7 +582,46 @@ end|
 
 
 
-delimiter ;delimiter |
+/**
+ * returns incidents for given list of ids
+ */
+drop procedure if exists get_incidents_by_ids|
+create procedure get_incidents_by_ids(in the_ids text, in the_type int)
+begin
+	
+	set @q = concat("select 
+		i.*,
+		mem.name as user_name,
+	    mem.uf_id as uf_id,		
+	    it.id as distribution_level,
+	    it.description as type_description,
+	    pv.id as provider_id,
+	    pv.name as provider_name
+	from
+  		aixada_incident_type it,
+  		aixada_user u,
+  		aixada_member mem, 
+ 		aixada_incident i 
+  	left join 
+  		aixada_provider pv
+	on 
+		i.provider_concerned = pv.id
+  	where
+		i.id in (", the_ids,")
+	  	and i.operator_id = u.id
+	    and	u.member_id = mem.id
+	    and i.incident_type_id >= ",the_type,"
+	    and it.id = i.incident_type_id
+	order by
+		i.ts desc;");
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+	
+end|
+
+
 
 /**
  * returns list of incident types.  
@@ -666,10 +728,6 @@ begin
   	i.ts desc;
 	
 end |
-
-
-delimiter ;
-delimiter |
 
 
 /**
@@ -1584,8 +1642,8 @@ begin
 	
 	start transaction;
 	
-	-- insert first entry in aixada_prodcuts_orderable_for_date -- 
-	insert into
+	-- insert first entry in aixada_products_orderable_for_date -- 
+	replace into
 		aixada_product_orderable_for_date (date_for_order, product_id)
 	select
 		the_date_for_order, p.id
@@ -1598,7 +1656,7 @@ begin
 		and oi.date_for_order = '1234-01-23';
 		
 		
-	-- set the new date_for_order -- 
+	-- set the new date_for_order on ordered items-- 
 	update 
 		aixada_order_item oi,
 		aixada_product p
@@ -1689,11 +1747,6 @@ begin
    and i.date_for_order = '1234-01-23'
    group by p.id;
 end|
-
-
-
-delimiter ;
-delimiter |
 
 
 /**
@@ -1794,13 +1847,51 @@ end|
 
 /**
  * activates or deactives a given product for a given date depending on its current status. 
- * If the product is active for the given date, it will be deactivate and vice versa. 
+ * If the product is active for the given date, it will be deactivated and vice versa.
+ * If "repeat" is T then the product will be automatically de-/activated for all remaining (future)
+ * dates.  
  */
 drop procedure if exists toggle_orderable_product|
-create procedure toggle_orderable_product (in the_product_id int, in the_date date)
+create procedure toggle_orderable_product (in the_product_id int, in the_date date, in doRepeat boolean)
 begin
-	declare isActive int;
 	
+	declare done int default 0; 
+	declare isActive int;
+	declare dummy boolean; 
+
+	declare the_other_dates date; 
+	declare the_provider_id int default (select 
+							provider_id 
+						from 
+							aixada_product 
+						where 
+							id=the_product_id);
+	
+	-- are there future dates where other products by this provider are active? -- 
+	declare date_cursor cursor for 	
+		select distinct
+			po.date_for_order
+		from
+			aixada_product_orderable_for_date po
+		where 
+			product_id in (select 
+							p.id 
+						from 
+							aixada_product p
+						where 
+							p.provider_id = the_provider_id
+							and p.active = 1)
+			and po.date_for_order > the_date; 
+		
+	declare continue handler for not found
+		set done = 1; 
+		
+	-- declare exit handler for sqlexception rollback; --
+	-- declare exit handler for sqlwarning rollback; 	--
+	
+	
+	
+	-- decide what to do: deactivate or activate -- 
 	select 
 		count(*) into isActive
 	from 
@@ -1808,16 +1899,46 @@ begin
 	where 
 		po.date_for_order = the_date
 		and po.product_id = the_product_id;
+	
+	call write_toggle_to_db(isActive, the_date, the_product_id);
+	
+	-- do the same for all remaining dates... --
+	if (doRepeat > 0) then	
+		open date_cursor;	
+		set done = 0; 
+	
+		read_loop: loop
+			fetch date_cursor into the_other_dates;
+			if done then 
+				leave read_loop; 
+			end if;
 			
-		
-	if isActive > 0 then
+			call write_toggle_to_db(isActive, the_other_dates, the_product_id);
+			
+			
+		end loop;
+		close date_cursor;	
+	end if; 
+	
+end|
+
+/**
+ * utility function to write the changes for the orderable products in the table
+ * if is_active, the product for the given date will be deactivated and vice versa
+ */
+drop procedure if exists write_toggle_to_db|
+create procedure write_toggle_to_db(in is_active int, in the_date date, in the_product_id int)
+begin
+	
+	-- activate / deactivate the choosen cell
+	if is_active > 0 then
 		delete from 
 			aixada_product_orderable_for_date
 		where 
 			product_id = the_product_id
 			and date_for_order = the_date;
 	else 
-		insert into aixada_product_orderable_for_date (
+		replace into aixada_product_orderable_for_date (
 			product_id, 
 			date_for_order, 
 			closing_date)
@@ -1832,10 +1953,101 @@ begin
 			p.id = the_product_id
 			and p.provider_id = pv.id;
 	end if;	
+	
 end|
 
 
+/**
+ *  converts a product into preorderable. all available order dates will be deleted 
+ *  and replaced by the fictive date  1234-01-23
+ */
+drop procedure if exists toggle_preorder_product|
+create procedure toggle_preorder_product(in the_product_id int, in the_date date)
+begin
+	
+	declare isPreorder int;
+	declare today date default date(sysdate());
+	
+	
+	select
+		count(*) into isPreorder
+	from 
+		aixada_product_orderable_for_date po
+	where
+		po.date_for_order = '1234-01-23'
+		and po.product_id = the_product_id;
+	
+	-- if is preorder convert back to normal order -- 
+	if isPreorder > 0 then	
+		
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = '1234-01-23';
+		
+	-- otherwise delete active dates and make it preorderable 		
+	else 
+	
+	    delete
+			po.*
+		from
+			aixada_product_orderable_for_date po
+		left join
+			aixada_order_item oi on
+			po.date_for_order = oi.date_for_order
+			and po.product_id = oi.product_id
+		where
+			po.date_for_order > today
+			and po.product_id = the_product_id
+			and oi.date_for_order is null;
+		
+		-- create preorder entry in table -- 
+		insert into 
+			aixada_product_orderable_for_date(product_id, date_for_order, closing_date)
+		values
+			(the_product_id, '1234-01-23', '9999-01-01');
+			
+		-- if the product is currently not active, make sure it is activated -- 
+		update 
+			aixada_product
+		set
+			active = 1
+		where
+			id = the_product_id; 
+			
+	end if; 	
+end|
 
+
+/**
+ * By default only those dates in table aixada_product_orderable_for_date can be 
+ * deactivated that have no ordered items associated. This procedure can delete
+ * those dates where orders have been made, which implies to delete the associated items 
+ * from order carts as well. 
+ */
+drop procedure if exists deactivate_locked_order_date|
+create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
+begin
+	
+	start transaction; 
+	
+	delete from
+		aixada_order_item
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	delete from
+		aixada_product_orderable_for_date
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	
+	commit; 
+	
+end|
 
 
 /**
@@ -1870,8 +2082,9 @@ begin
 			left join
 				aixada_order_item oi on
 				po.date_for_order = oi.date_for_order
+				and po.product_id = oi.product_id
 			where
-				po.date_for_order > today
+				(po.date_for_order > today or po.date_for_order = '1234-01-23')
 				and po.product_id = the_product_id
 				and oi.date_for_order is null;	
 	end if;
@@ -1962,7 +2175,7 @@ end|
 
 /**
  *  returns all products (with details). This query is needed for the shop/order pages and its
- *  different mechanismos for searching: by provider, by category, or direct search. 
+ *  different mechanisms for searching: by provider, by category, or direct search. 
  *  As such this query shows available products for ordering or for purchase but does not handle any real 
  *  ordered or bought products. The search functionality is also called from the validate page. 
  * 
@@ -2330,17 +2543,6 @@ begin
 end|
 
 
-
-
-
-
-
-
-
-
-delimiter ;delimiter |
-
-
 /**
  * returns the responsible users for a provider. 
  */
@@ -2566,9 +2768,6 @@ begin
   end if; 
   
 end|
-
-
-delimiter ;delimiter |
 
 
 /**
@@ -2910,7 +3109,57 @@ begin
 end|
 
 
-delimiter ;delimiter |
+drop procedure if exists get_purchase_total_by_provider|
+create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
+begin
+	
+	if (the_provider_id > 0) then
+	
+		select 
+			sum(si.quantity * si.unit_price_stamp) as total,
+		 	pv.name as provider_name,
+		 	the_provider_id as provider_id,
+		 	c.date_for_shop
+		from 
+			aixada_shop_item si, 
+			aixada_provider pv,
+			aixada_product p,
+			aixada_cart c
+		where
+			c.date_for_shop between from_date and to_date
+			and c.id = si.cart_id
+			and si.product_id = p.id
+			and p.provider_id = the_provider_id
+			and pv.id = the_provider_id
+		group by
+			the_provider_id, c.date_for_shop
+		order by
+			pv.name asc, c.date_for_shop desc; 
+	
+	else 
+	
+		select 
+			sum(si.quantity * si.unit_price_stamp) as total,
+		 	pv.name as provider_name,
+		 	pv.id as provider_id,
+		 	c.date_for_shop
+		from 
+			aixada_shop_item si, 
+			aixada_provider pv,
+			aixada_product p,
+			aixada_cart c
+		where
+			c.date_for_shop between from_date and to_date
+			and c.id = si.cart_id
+			and si.product_id = p.id
+			and p.provider_id = pv.id
+		group by
+			pv.id, c.date_for_shop
+		order by
+			pv.name asc, c.date_for_shop desc; 
+	end if;
+	
+end|
 
 
 /**
@@ -3046,11 +3295,6 @@ begin
   return total_price;
 end|
 
-
-
-
-delimiter ;
-delimiter |
 
 drop procedure if exists most_bought_products|
 create procedure most_bought_products(in the_year int)
@@ -3191,9 +3435,6 @@ begin
   order by ts desc, uf
   limit 1000;
 end|
-
-delimiter ;
-delimiter |
 
 
 /*******************************************
@@ -3857,13 +4098,6 @@ begin
 end|
 
 
-
-
-
-delimiter ;
-delimiter |
-
-
 /**
  * returns a list of all active ufs and the number of their non-validated
  * shoppping carts.
@@ -4007,10 +4241,6 @@ end|
 
 
 
-
-
-
-
 /*drop procedure if exists undo_validate|
 create procedure undo_validate(in the_uf_id int, in the_ts datetime, in the_operator int)
 begin
@@ -4093,14 +4323,6 @@ end|
 */
 
 
-delimiter ;
-/* 
- * The contents of this file are generated automatically. 
- * Do not edit it, but instead run
- * php make_canned_responses.php
- */
-delimiter |
-
 drop procedure if exists aixada_account_list_all_query|
 create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
 begin
@@ -4136,7 +4358,8 @@ begin
       aixada_uf.name as uf,
       aixada_cart.date_for_shop,
       aixada_cart.operator_id,
-      aixada_cart.ts_validated 
+      aixada_cart.ts_validated,
+      aixada_cart.ts_last_saved 
     from aixada_cart 
     left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
   set @q = concat(@q, @lim);
@@ -4623,21 +4846,6 @@ begin
   deallocate prepare st;
 end|
 
-drop procedure if exists aixada_user_role_list_all_query|
-create procedure aixada_user_role_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
-begin
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = "select
-      aixada_user_role.user_id,
-      aixada_user_role.role 
-    from aixada_user_role ";
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
 
 
 delimiter ;

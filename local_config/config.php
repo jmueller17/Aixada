@@ -20,13 +20,13 @@ class configuration_vars {
   /**
    * General variables
    */
-  public $default_language = 'en';
+  public $default_language = 'es';
   
 
   /**
    * What is the name of this cooperative?
    */
-  public $coop_name = 'Aixada';
+  public $coop_name = 'L\'Aixada';
 
   
   /**
@@ -37,6 +37,8 @@ class configuration_vars {
   public $db_name = 'aixada';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
+  
+  
 
   /****************************************************************************
      You should not need to change anything past this point when installing.
@@ -49,7 +51,7 @@ class configuration_vars {
    * for the next 4 years can be generated in advance. 
    * @var num
    */
-  public $max_month_orderable_dates = 24;
+  public $max_month_orderable_dates = 12;
   
   /**
    * 
@@ -65,6 +67,30 @@ class configuration_vars {
    */
   public $development = true; 
   
+  
+    /**
+   * the email address of the admin; used for sending out pwd changes
+   * and orders. 
+   */
+  public $admin_email = "admin@admin.com";
+  
+  
+  /**
+   * 
+   * Is this a local install or accessible online. Turns globally on/off 
+   * the emailing of reports and other internet related features. If set to "false" 
+   * emailing order reports and incidents will not work. 
+   * @var boolean
+   */
+  public $internet_connection = false; 
+  
+  
+  
+  
+  
+  /**
+   * HTML TEMPLATES
+   */
   
   /**
    * The default template for generating the print layout of the orders
@@ -89,28 +115,26 @@ class configuration_vars {
   public $print_bill_template = 'bill_model1.php';
   
   
+  
+  /**
+   * 
+   * template for printing incidents
+   */
+  public $print_incidents_template = 'incidents_model1.php';
+  
+ 
   /**
    * 
    * diplays the language select on every page or not
    */
   public $show_menu_language_select = false; 
   
-  
-  /**
-   * the email address of the admin; used for sending out pwd changes
-   * and orders
-   */
-  public $admin_email = "admin@admin.com";
+   
   
   
   /**
-   * 
-   * is this a local install or accessible online. If online
-   * services such as sending emails will be active. 
-   * @var boolean
+   * ORDER REPORT VARS
    */
-  public $internet_connection = false; 
-  
   
   /**
    * if set to true, when finalizing orders they 
@@ -126,8 +150,27 @@ class configuration_vars {
   public $email_order_format = 3;
   
   
+  
+  
   /**
-   * Code optimizations
+   * INCIDENTS REPORTING VARS
+   */
+  
+
+  
+  /**
+   * if the incident emails should be send out to another distribution list. 
+   * if left blank, the incidents will be send out to the email addresses of the 
+   * users if available. 
+   */
+  public $incidents_email_list = ""; 
+  
+  
+  
+  
+  
+  /**
+   * CODE OPTIMIZATIONS
    */
 
   /**

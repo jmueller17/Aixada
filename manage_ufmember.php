@@ -42,6 +42,10 @@
 		//set to true once theme and lang select have been loaded
 		var gFormComplete = false; 
 
+		//should be changed to non-global 
+		var gMentorUf = -1; 
+		
+
 
 		//show/hide reset pwd. 
 		var isAdmin = "<?=$_SESSION['userdata']['current_role'];?>";
@@ -157,7 +161,9 @@
 				 $('.mentor_uf').append(sel);
 
 			}
-		});	
+		}).change(function(){
+			gMentorUf = $("option:selected", this).val();
+			});	
 
 
 		//new uf
@@ -167,6 +173,7 @@
 			})
 		    .click(function(e){
 		    	$('#create_uf_name').val('');
+		    	//$('#mentor_uf').val("-1").attr('selected','selected')
 				//$('#mentor_uf').xml2html('reload');
 				$('#dialog-uf').dialog( "open" );
 
@@ -255,6 +262,7 @@
 
 			
 		   	var mentorUf = $('#mentor_uf option:selected').val(); 
+			mentorUf = (mentorUf == -1)? gMentorUf:mentorUf; 
 			
 			if (ufId > 0){
 		   		var isActive = $('#uf_info').find('input:checkbox').attr('checked')? 1:0;
@@ -1046,7 +1054,7 @@
 								<button id="btn_edit_uf_save" class="floatRight"><?php echo $Text['btn_save']; ?></button>
 							</td>
 							<td>&nbsp;</td>
-							<td class="minwidth-180"> 
+							<td> 
 								<button id="btn_add_member"><?php echo $Text['btn_new_member'];?></button>
 							</td>
 						</tr>

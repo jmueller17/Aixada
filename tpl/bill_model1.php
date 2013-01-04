@@ -7,7 +7,7 @@
 
 
 	<style type="text/css">
-		body 				{font-family:arial; }
+		body 				{font-family:arial; font-size:10px;}
 		table 				{width:100%; border-collapse:collapse;}
 		
 		.section 			{width:90%; clear:both; margin-bottom:10px;}
@@ -42,13 +42,24 @@
 
    	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	<script type="text/javascript" src="../js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	<script type="text/javascript" src="../js/aixadautilities/loadPDF.js" ></script>
+	
  
 
 	<script type="text/javascript">
 		$(function(){
 
+
+			//boolean to generate a pdf of this bill 
+			var asPDF = $.getUrlVar('asPDF');
+
+			//"F" opens the pdf in browser window, "D" forces file download
+			var outputFormat =  $.getUrlVar('outputFormat');
+			
+
+			
 			//prevent error msg when opening saved page
-			if (window.opener == null) return false;
+			//if (window.opener == null) return false;
 
 			var shopId = $.getUrlVar('shopId');
 			var date = $.getUrlVar('date');
@@ -88,13 +99,19 @@
 					$('#total_iva').text(totals['totalIva']);
 					$('#total_revTax').text(totals['totalRevTax']);
 					$('#import_net').text(totals['total_net']);
+
+					if (asPDF) {
+						var pathToImg = $('#coopLogo').attr('src');
+						$('#coopLogo').attr('src', "../"+pathToImg);
+						downloadPDF(outputFormat, '<?=$Text['bill'];?>');
+					}
 					
 				}
 			});
 
 			
 
-			//load purchase detail (products and quantities)
+			//load load member info
 			$('#memberAddress').xml2html('init',{
 				url : '../php/ctrl/UserAndUf.php',
 				params : 'oper=getMemberInfo&member_id=-1', 
@@ -113,7 +130,7 @@
 	
 	<div id="header" class="section">
 		<div id="logo">
-			<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
+			<img id="coopLogo" alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
 		</div>
 		<div id="address">
 			<h2 class="txtAlignRight">COOPERATIVA NAME</h2>
@@ -186,7 +203,7 @@
 					<td class="width-80 txtAlignRight">{iva_percent}%</td>
 					<td class="width-80 txtAlignRight revTaxCol">{rev_tax_percent}%</td>
 					<td class="txtAlignRight itemPrice" iva="{iva_percent}" revTax="{rev_tax_percent}"></td>
-					<td class="hidden">{cart_id}</td>					
+									
 				</tr>
 			</tbody>
 						

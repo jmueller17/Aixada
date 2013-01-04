@@ -99,13 +99,51 @@ end|
 
 /**
  * activates or deactives a given product for a given date depending on its current status. 
- * If the product is active for the given date, it will be deactivate and vice versa. 
+ * If the product is active for the given date, it will be deactivated and vice versa.
+ * If "repeat" is T then the product will be automatically de-/activated for all remaining (future)
+ * dates.  
  */
 drop procedure if exists toggle_orderable_product|
-create procedure toggle_orderable_product (in the_product_id int, in the_date date)
+create procedure toggle_orderable_product (in the_product_id int, in the_date date, in doRepeat boolean)
 begin
-	declare isActive int;
 	
+	declare done int default 0; 
+	declare isActive int;
+	declare dummy boolean; 
+
+	declare the_other_dates date; 
+	declare the_provider_id int default (select 
+							provider_id 
+						from 
+							aixada_product 
+						where 
+							id=the_product_id);
+	
+	-- are there future dates where other products by this provider are active? -- 
+	declare date_cursor cursor for 	
+		select distinct
+			po.date_for_order
+		from
+			aixada_product_orderable_for_date po
+		where 
+			product_id in (select 
+							p.id 
+						from 
+							aixada_product p
+						where 
+							p.provider_id = the_provider_id
+							and p.active = 1)
+			and po.date_for_order > the_date; 
+		
+	declare continue handler for not found
+		set done = 1; 
+		
+	-- declare exit handler for sqlexception rollback; --
+	-- declare exit handler for sqlwarning rollback; 	--
+	
+	
+	
+	-- decide what to do: deactivate or activate -- 
 	select 
 		count(*) into isActive
 	from 
@@ -113,16 +151,46 @@ begin
 	where 
 		po.date_for_order = the_date
 		and po.product_id = the_product_id;
+	
+	call write_toggle_to_db(isActive, the_date, the_product_id);
+	
+	-- do the same for all remaining dates... --
+	if (doRepeat > 0) then	
+		open date_cursor;	
+		set done = 0; 
+	
+		read_loop: loop
+			fetch date_cursor into the_other_dates;
+			if done then 
+				leave read_loop; 
+			end if;
 			
-		
-	if isActive > 0 then
+			call write_toggle_to_db(isActive, the_other_dates, the_product_id);
+			
+			
+		end loop;
+		close date_cursor;	
+	end if; 
+	
+end|
+
+/**
+ * utility function to write the changes for the orderable products in the table
+ * if is_active, the product for the given date will be deactivated and vice versa
+ */
+drop procedure if exists write_toggle_to_db|
+create procedure write_toggle_to_db(in is_active int, in the_date date, in the_product_id int)
+begin
+	
+	-- activate / deactivate the choosen cell
+	if is_active > 0 then
 		delete from 
 			aixada_product_orderable_for_date
 		where 
 			product_id = the_product_id
 			and date_for_order = the_date;
 	else 
-		insert into aixada_product_orderable_for_date (
+		replace into aixada_product_orderable_for_date (
 			product_id, 
 			date_for_order, 
 			closing_date)
@@ -137,10 +205,101 @@ begin
 			p.id = the_product_id
 			and p.provider_id = pv.id;
 	end if;	
+	
 end|
 
 
+/**
+ *  converts a product into preorderable. all available order dates will be deleted 
+ *  and replaced by the fictive date  1234-01-23
+ */
+drop procedure if exists toggle_preorder_product|
+create procedure toggle_preorder_product(in the_product_id int, in the_date date)
+begin
+	
+	declare isPreorder int;
+	declare today date default date(sysdate());
+	
+	
+	select
+		count(*) into isPreorder
+	from 
+		aixada_product_orderable_for_date po
+	where
+		po.date_for_order = '1234-01-23'
+		and po.product_id = the_product_id;
+	
+	-- if is preorder convert back to normal order -- 
+	if isPreorder > 0 then	
+		
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = '1234-01-23';
+		
+	-- otherwise delete active dates and make it preorderable 		
+	else 
+	
+	    delete
+			po.*
+		from
+			aixada_product_orderable_for_date po
+		left join
+			aixada_order_item oi on
+			po.date_for_order = oi.date_for_order
+			and po.product_id = oi.product_id
+		where
+			po.date_for_order > today
+			and po.product_id = the_product_id
+			and oi.date_for_order is null;
+		
+		-- create preorder entry in table -- 
+		insert into 
+			aixada_product_orderable_for_date(product_id, date_for_order, closing_date)
+		values
+			(the_product_id, '1234-01-23', '9999-01-01');
+			
+		-- if the product is currently not active, make sure it is activated -- 
+		update 
+			aixada_product
+		set
+			active = 1
+		where
+			id = the_product_id; 
+			
+	end if; 	
+end|
 
+
+/**
+ * By default only those dates in table aixada_product_orderable_for_date can be 
+ * deactivated that have no ordered items associated. This procedure can delete
+ * those dates where orders have been made, which implies to delete the associated items 
+ * from order carts as well. 
+ */
+drop procedure if exists deactivate_locked_order_date|
+create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
+begin
+	
+	start transaction; 
+	
+	delete from
+		aixada_order_item
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	delete from
+		aixada_product_orderable_for_date
+	where
+		product_id = the_product_id
+		and date_for_order = the_date; 
+		
+	
+	commit; 
+	
+end|
 
 
 /**
@@ -175,8 +334,9 @@ begin
 			left join
 				aixada_order_item oi on
 				po.date_for_order = oi.date_for_order
+				and po.product_id = oi.product_id
 			where
-				po.date_for_order > today
+				(po.date_for_order > today or po.date_for_order = '1234-01-23')
 				and po.product_id = the_product_id
 				and oi.date_for_order is null;	
 	end if;
@@ -267,7 +427,7 @@ end|
 
 /**
  *  returns all products (with details). This query is needed for the shop/order pages and its
- *  different mechanismos for searching: by provider, by category, or direct search. 
+ *  different mechanisms for searching: by provider, by category, or direct search. 
  *  As such this query shows available products for ordering or for purchase but does not handle any real 
  *  ordered or bought products. The search functionality is also called from the validate page. 
  * 

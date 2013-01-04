@@ -4,6 +4,9 @@
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once ('general.php');
+require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
+
+
 
 
 /**
@@ -169,6 +172,7 @@ function change_password(){
  */
 function reset_password($user_id)
 {
+	global $Text;  
 	
 	//only admin 
 	 if (get_current_role() != 'Hacker Commission')

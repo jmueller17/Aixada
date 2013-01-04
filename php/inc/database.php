@@ -99,7 +99,7 @@ class DBWrap {
           $tmp = $msg_array[5]; // aixada_order_item_ibfk_2 in the example
           $upos = strrpos($tmp, '_');
           $upos = strrpos($tmp, '_', $upos-strlen($tmp)-1);
-          throw new ForeignKeyException('Cannot delete this entry, because entries in ' . substr($tmp, 0, $upos) . ' depend on it');
+          throw new ForeignKeyException('ERROR 10: Cannot modifiy this entry because entries in ' . substr($tmp, 0, $upos) . ' depend on it');
        
       case 1452:
           /*
@@ -113,7 +113,7 @@ class DBWrap {
           $tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
           if (isset($Text[$tmp]))
               $bad_field = $Text[$tmp];
-          throw new ForeignKeyException('Foreign Key exception. Please check the field "' . 
+          throw new ForeignKeyException('ERROR 20: Foreign Key exception. Please check the field "' . 
                                         $bad_field . 
                                         '". It either does not exist in the db or does not fullfil a foreign key constraint?');
 

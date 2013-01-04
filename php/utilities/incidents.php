@@ -4,30 +4,81 @@
 require_once(__ROOT__. 'php/inc/database.php');
 require_once(__ROOT__. 'local_config/config.php');
 require_once ('general.php');
+require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
 /**
  * 
  * Creates new incident or edits existing one if incident_id is given. 
+ * If internet connection is available and the distribution level of the incident
+ * is set to 2 (email) or 4 (post to portal and email) the incident will be emailed 
+ * to all members or to a distribution list set in the config vars. 
  */
 function manage_incident($incident_id){
 	
+	global $Text;  	
+	
+	$gVars = configuration_vars::get_instance(); 
 	
 	$params = extract_incident_form_values();
 	
-	$sendEmail = configuration_vars::get_instance()->internet_connection;
+	$msg = ""; 
 	
-	//email incident
-	if ($sendEmail &&  ($params["type"] == 2 || $params["type"] == 4)){
+	
+	//new incident with distribution level email or all
+	if ($incident_id == 0 && ($params["type"] == 2 || $params["type"] == 4) && $gVars->internet_connection){
 		
-		$to = "someone@someplace.com"; //here goes the user email list
-		$subject = "[Aixada] ".$params["subject"];
-		$message = $params["msg"];
-		$from = "admin@aixada.org";
-		$headers = "From:" . $from;
-		mail($to,$subject,$message,$headers);
+
+		//configuration_vars::get_instance()->$coop_name
 		
+		$to = "";
+		$reply_to = "";  
+		
+		//if an email list has been set, use it 
+		if ($gVars->incidents_email_list != ""){
+			$to = $gVars->incidents_email_list; 
+			$reply_to = $gVars->incidents_email_list; 
+			
+		//otherwise email to individual active users. 
+		} else {
+			$reply_to =  $gVars->admin_email;
+			
+			//get active members
+			$rs = do_stored_query('get_member_listing', 1); 
+			$member_emails = array();
+			while ($row = $rs->fetch_assoc()) {
+	      		array_push($member_emails, $row['email']);
+	    	}
+	    	
+	    	$to = implode(", ", $member_emails);
+	    	$db = DBWrap::get_instance();
+			$db->free_next_results();
+			
+		}
+		
+
+		
+		$from = $gVars->admin_email; 	
+		$headers = "From: $from \r\n";
+		$headers .= "Reply-To: $reply_to \r\n";
+		$headers .= "Return-Path: $from\r\n";
+		$headers .= "MIME-Version: 1.0\r\n";
+		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+		
+		$subject = "[".$gVars->coop_name . " - " . $Text['ti_incidents'] . "] " .$params["subject"];
+		$message = "Info: " . $params["author"] . " | " . $params["comis"] . " | " .$params["prov"] . " | " . $params["priority"]; 
+		$message .= "===============================================";
+		$message .= $params["msg"];
+
+		if (mail($to,$subject,$message,$headers)){
+			$msg = $Text['msg_incident_emailed'];			
+		} else {
+			$msg =  $Text['msg_err_emailed'];		
+		}
+
 	}
+	
+	
 	
 	echo do_stored_query('manage_incident', 
 						$incident_id, 
@@ -40,8 +91,9 @@ function manage_incident($incident_id){
 						$params["comis"],
 						$params["prov"],
 						$params["status"]);
+						 
 	
-}
+} // end manage incidents
 
 
 /**
@@ -81,6 +133,7 @@ function extract_incident_form_values(){
 function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 	$today = date('Y-m-d', strtotime('Today'));
 	$tomorrow = date('Y-m-d', strtotime('Today + 2 day'));
+	$yesterday = date('Y-m-d', strtotime('Today - 1 day'));
 	$prev_2month = date('Y-m-d', strtotime('Today - 2 month'));
 	$prev_year	 = 	date('Y-m-d', strtotime('Today - 13 month'));
 	$prev_week = date('Y-m-d', strtotime('Today - 1 week'));
@@ -102,7 +155,7 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 			break;
 			
 		case 'today':
-			printXML(stored_query_XML_fields('get_incidents_listing', $today, $tomorrow, $filterType));
+			printXML(stored_query_XML_fields('get_incidents_listing', $yesterday, $tomorrow, $filterType));
 			break;
 			
 			
@@ -112,6 +165,11 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 	}
 	
 }
+
+
+
+
+
 
 	
 ?>

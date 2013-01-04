@@ -4,8 +4,6 @@
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
-$coop = "la Aixada";
-
 $Text['es'] = 'Castellano';
 
 
@@ -16,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;;
 $Text['please_select'] = "Seleccionar...";
 $Text['loading'] = "Por favor, espere mientras se cargan los datos...";
 $Text['search'] = "Buscar";
@@ -58,7 +56,7 @@ $Text['sel_none'] = "Ninguno";
  */
 $Text['by_provider'] = "Por proveedor";
 $Text['by_category'] = "Por categoría de productos";
-$Text['special_offer'] = "Prepedido";
+$Text['special_offer'] = "Acumulativo";
 $Text['search_add'] = "Buscar y añadir otro artículo";
 $Text['validate'] = "Validar";
 
@@ -66,7 +64,7 @@ $Text['validate'] = "Validar";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop;
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;;
 $Text['head_ti_order'] = "Pedido";
 $Text['head_ti_shop'] = "Comprar productos";
 $Text['head_ti_reports'] = "Informes"; 
@@ -262,7 +260,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Bienvenid@s a " . $coop . "!";
+$Text['welcome_logon'] = "Bienvenid@s a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
@@ -307,12 +305,14 @@ $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
 $Text['nav_report_account'] = "Cuentas";
 $Text['nav_report_preorder'] = "Prepedidos";
-$Text['nav_report_timelines'] = "Evolución de " . $coop;
+$Text['nav_report_timelines'] = "Evolución de " . configuration_vars::get_instance()->coop_name;;
 $Text['nav_report_timelines_uf'] = "Por UFs";
 $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";
 $Text['nav_report_daystats'] = "Estadísticas diarias";
 $Text['nav_report_incidents'] = "Incidentes de hoy";
+$Text['nav_report_shop_hu'] = "Por UF";
+$Text['nav_report_shop_pv'] = "Por proveedores";
 
 
 $Text['nav_incidents'] = "Incidentes";
@@ -357,6 +357,9 @@ $Text['btn_view_list'] = "Productos";
 $Text['btn_view_list_lng'] = "Ver únicamente los productos";
 $Text['btn_view_both'] = "Ambos";
 $Text['btn_view_both_lng'] = "Ver tanto el carrito como los productos";
+$Text['btn_repeat_single'] = "No, uno solo"; 
+$Text['btn_repeat_all'] = "Ok, aplica a todas"; 
+ 
 
 /**
  * Incidents
@@ -480,8 +483,8 @@ $Text['category'] = 'Categoría';
 $Text['rev_tax_type'] = 'Tipo de impuesto revolucionario';
 $Text['unit_price'] = 'Precio por unidad';
 $Text['iva_percent'] = 'Porcentaje de IVA';
-$Text['unit_measure_order'] = 'Pedido por unidad';
-$Text['unit_measure_shop'] = 'Vendido por peso';
+$Text['unit_measure_order'] = 'Unidades para el pedido';
+$Text['unit_measure_shop'] = 'Unidades para la venta';
 $Text['stock_min'] = 'Cantidad mínima para tener en stock';
 $Text['stock_actual'] = 'Cantidad actual en stock';
 $Text['delta_stock'] = "Diferencia con el stock mínimo";
@@ -698,7 +701,7 @@ $Text['ostat_closed'] = "El pedido está cerrado";
 $Text['ostat_desc_fin_send'] = "El pedido se ha cerrado y enviado al proveedor. La referencia es: #";
 $Text['msg_err_past'] = "¡Esto es el pasado! <br/> Demasiado tarde para modificar cosas.";
 $Text['msg_err_is_deactive_p'] = "Este producto está desactivado. Para abrirlo para una fecha primero debes activarlo.";
-$Text['msg_err_deactivate_p'] = "Estás a punto de desactivar el producto. Esto quiere decir que las fechas en que se puede pedir también se eliminaran.<br/><br/>Estás seguro de que quieres desactivar el producto? También podrias desactivar las fechas en que se puede pedir clicando en las casillas correspondientes.";
+$Text['msg_err_deactivate_p'] = "Estás a punto de desactivar el producto. Esto quiere decir que las fechas en que se puede pedir también se eliminaran.<br/><br/>También podrias desactivar las fechas en que se puede pedir clicando en las casillas correspondientes.";
 $Text['msg_err_closing_date'] = "¡La fecha de cierre no puede ser posterior a la del pedido!";
 $Text['msg_err_sel_col'] = "¡La fecha seleccionada no tiene productos para pedir! Debe establecer un producto para pedir si quiere crear una  plantilla para esta fecha.";
 $Text['msg_err_closing'] = "Para modificar la fecha de cierre, hay que poner al menos un producto que puede pedir.";
@@ -764,7 +767,7 @@ $Text['ti_mgn_stock_mov'] = "Movimientos de stock";
 $Text['stock_acc_loss_ever'] = "Perdida acumulada";
 $Text['closed'] = "cerrado";
 $Text['preorder_item'] = "Este producto forma parte de un pedido acumulativo";
-$Text['do_preorder'] = "Activar/desactivar pedido";
+$Text['do_preorder'] = "De-/activar cómo pedido acumulativo";
 $Text['do_deactivate_prod'] = "Activar/desactivar producto";
 $Text['msg_make_preorder_p'] = "Éste pedido es acumulativo, por lo tanto todavía no tiene fecha de entrega";
 $Text['btn_ok_go'] = "OK, adelante!";
@@ -780,5 +783,25 @@ $Text['btn_load_cart'] = "Continua con la siguiente UF";
 $Text['btn_deposit_now'] = "Haz el ingreso ahora";
 $Text['msg_err_stock_mv'] = "De momento, no han habido movimientos de estoc para este producto!";
 
+$Text['ti_report_shop_pv'] = "Total ventas por proveedor";
+$Text['filter_all_sales'] = "Todas las ventas";
+$Text['filter_exact'] = "Elegir periodo";
+$Text['total_4date'] = "Total para la fecha";
+$Text['total_4provider'] = "Suma";
+$Text['sel_sales_dates'] = "Muestra ventas por proveedor y el periodo selecionado:";
+$Text['sel_sales_dates_ti'] = "Elige un periodo";
+ 
+$Text['instant_repeat'] = "Repetir directamente";
+$Text['msg_confirm_delordereditems'] = "Este producto ya se ha pedido este día. Estás seguro de desactivarlo? Esto  borrará el pedido de las cestas. ";
+$Text['msg_confirm_instantr'] = "Quieres repetir la misma accion para el resto de las fechas activas? ";
+$Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No se puede borrar.";
+$Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. Se crea una fecha de entrega. ";
+
+$Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
+$Text['btn_confirm_del'] = "Sí, eliminar!!";
+$Text['print_new_win'] = "Ventana nueva";
+$Text['print_pdf'] = "Descarga pdf";
+$Text['msg_incident_emailed'] = "El incidente se ha enviado por correo correctamente.";
+$Text['upcoming_orders'] = "Próximos pedidos";
 
 ?>

@@ -1,6 +1,59 @@
 delimiter |
 
 
+drop procedure if exists get_purchase_total_by_provider|
+create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
+begin
+	
+	if (the_provider_id > 0) then
+	
+		select 
+			sum(si.quantity * si.unit_price_stamp) as total,
+		 	pv.name as provider_name,
+		 	the_provider_id as provider_id,
+		 	c.date_for_shop
+		from 
+			aixada_shop_item si, 
+			aixada_provider pv,
+			aixada_product p,
+			aixada_cart c
+		where
+			c.date_for_shop between from_date and to_date
+			and c.id = si.cart_id
+			and si.product_id = p.id
+			and p.provider_id = the_provider_id
+			and pv.id = the_provider_id
+		group by
+			the_provider_id, c.date_for_shop
+		order by
+			pv.name asc, c.date_for_shop desc; 
+	
+	else 
+	
+		select 
+			sum(si.quantity * si.unit_price_stamp) as total,
+		 	pv.name as provider_name,
+		 	pv.id as provider_id,
+		 	c.date_for_shop
+		from 
+			aixada_shop_item si, 
+			aixada_provider pv,
+			aixada_product p,
+			aixada_cart c
+		where
+			c.date_for_shop between from_date and to_date
+			and c.id = si.cart_id
+			and si.product_id = p.id
+			and p.provider_id = pv.id
+		group by
+			pv.id, c.date_for_shop
+		order by
+			pv.name asc, c.date_for_shop desc; 
+	end if;
+	
+end|
+
+
 /**
  * retrieves non-validated carts for all ufs or every uf
  * also non-active ufs where there may be a non-validated cart

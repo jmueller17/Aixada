@@ -3,7 +3,8 @@
 // contribute by Cristóbal Cabeza-Cáceres; Jordi Losantos
 // Email: cristobal.cabeza@gmail.com; jordi@losantos.name
 
-$coop = "l'Aixada";
+require_once(__ROOT__. 'local_config/config.php');
+
 
 $Text['ca-va'] = 'Català';
 $Text['charset'] = "utf-8";
@@ -13,7 +14,7 @@ $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aes
 /** 
  *  		Elements globals
  */
-$Text['coop_name'] = $coop;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;
 $Text['please_select'] = "Seleccioneu...";
 $Text['loading'] = "Si us plau, espere mentre es carreguen les dades...";
 $Text['search'] = "Cerca";
@@ -59,7 +60,7 @@ $Text['validate'] = "Valida";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = $coop;
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;
 $Text['head_ti_validate'] = "Valida";
 
 $Text['head_ti_active_products'] = "Activa/Desactiva Productes demanables";
@@ -248,7 +249,7 @@ $Text['ts_validated'] = 'Validada';
 /**
  * 		Logon Screen
  */ 
-$Text['welcome_logon'] = "Benvinguts/des a " . $coop . "!";
+$Text['welcome_logon'] = "Benvinguts/des a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuari";
 $Text['pwd']	= "Contrasenya";
 $Text['old_pwd'] = "Contrasenya antiga";
@@ -294,13 +295,15 @@ $Text['nav_mng'] = "Gestiona";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
 $Text['nav_report_account'] = "Comptes";
-$Text['nav_report_timelines'] = "Evolució " . $coop;
+$Text['nav_report_timelines'] = "Evolució " . configuration_vars::get_instance()->coop_name;
 $Text['nav_report_timelines_uf'] = "Per UFs";
 $Text['nav_report_timelines_provider'] = "Per proveidors";
 $Text['nav_report_timelines_product'] = "Per productes";
 $Text['nav_report_daystats'] = "Estadístiques diàries";
 $Text['nav_report_preorder'] = "Comandes acumulatives";
 $Text['nav_report_incidents'] = "Incidents d'avui";
+$Text['nav_report_shop_hu'] = "Per UF";
+$Text['nav_report_shop_pv'] = "Per Proveidor";
 
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Navega / afegeix";
@@ -345,6 +348,9 @@ $Text['btn_view_list_lng'] = "Només veure els productes";
 $Text['btn_view_both'] = "Tot";
 $Text['btn_view_both_lng'] = "Veure tant productes com cistella";
 $Text['btn_repeat'] = "Entesos, repetim això!";
+$Text['btn_repeat_single'] = "No, unicament aquet"; 
+$Text['btn_repeat_all'] = "Si a tots"; 
+
 
 
 
@@ -756,7 +762,7 @@ $Text['ti_mgn_stock_mov'] = "Moviments stock";
 $Text['stock_acc_loss_ever'] = "Pèrdua acumulada";
 $Text['closed'] = "tancat";
 $Text['preorder_item'] = "Aquest producte forma part d'una comanda acumulativa";
-$Text['do_preorder'] = "Activar/desactivar comanda";
+$Text['do_preorder'] = "Des-/activar com comanda acumulativa";
 $Text['do_deactivate_prod'] = "Activar/desactivar producte";
 $Text['msg_make_preorder_p'] = "Aixó es una comanda acumulativa, per tant encare no te data d'entrega";
 $Text['btn_ok_go'] = "Ok, endavant!";
@@ -772,5 +778,24 @@ $Text['btn_load_cart'] = "Continua amb la següent UF";
 $Text['btn_deposit_now'] = "Fez el ingres ara";
 $Text['msg_err_stock_mv'] = "De moment n'en hi ha cap moviments d'estoc per aquet producte.";
 
+$Text['ti_report_shop_pv'] = "Total ventas per proveidor";
+$Text['filter_all_sales'] = "Todas las ventas";
+$Text['filter_exact'] = "Escull dades";
+$Text['total_4date'] = "Total";
+$Text['total_4provider'] = "Suma";
+$Text['sel_sales_dates'] = "Per quines dades vols consultar les ventas?";
+$Text['sel_sales_dates_ti'] = "Escull un període"; 
 
+$Text['instant_repeat'] = "Repeteix directament";
+$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estás segur de desactivar-ho? Això esborarra la comanda d'aquest producte de las cistellas.";
+$Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per la resta de les dates activats?";
+$Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquest date. No es pot desactivar!";
+$Text['msg_pre2Order'] = "Converteix aquet comanda acumulativa a comanda normal. Pots trigar una date de entrega";
+
+$Text['msg_err_modified_order'] = "Algú ha modificat els productes per demanar per la data actual. Alguns productes que havíes demanat ja no estan disponibles i desapareixerà del teu carro una vegada recarregat.";
+$Text['btn_confirm_del'] = "Esborar! Estic segur";
+$Text['print_new_win'] = "Nou finestre";
+$Text['print_pdf'] = "Descarregar pdf";
+$Text['msg_incident_emailed'] = "L'incident s'ha enviat correctament!";
+$Text['upcoming_orders'] = "Pròxims comandes";
 

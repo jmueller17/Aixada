@@ -19,6 +19,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
+
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_report_shop.min.js"></script>
     <?php }?>
@@ -174,27 +175,48 @@
 			});
 
 
-			$("#btn_print_detail").button({
-				 icons: {
-		        		primary: "ui-icon-print"
-		        	}
-				 })
-	    		.click(function(e){
 
-    				var shopId = gSelShopRow.attr('shopId');
+			//print incidents accoring to current incidents template in new window or download as pdf
+			$("#btn_print")
+			.button({
+				icons: {
+					primary: "ui-icon-print",
+		        	secondary: "ui-icon-triangle-1-s"
+				}
+		    })
+		    .menu({
+				content: $('#printOptionsItems').html(),	
+				showSpeed: 50, 
+				width:180,
+				flyOut: true, 
+				itemSelected: function(item){	
+					
+					var link = $(item).attr('id');
+
+					var shopId = gSelShopRow.attr('shopId');
     				var date = gSelShopRow.attr('dateForShop');
     				var op_name = gSelShopRow.attr('operatorName');
     				var op_uf = gSelShopRow.attr('operatorUf');
     			
     				
-    				printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
-    				printWin.focus();
-    				printWin.print();
 					
-	    	});
-			
+					switch (link){
+						case "printWindow": 
+							printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
+			    			
+							printWin.focus();
+							printWin.print();
+							break;
 		
-
+						case "printPDF": 
+							window.frames['dataFrame'].window.location = 'tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf+'&asPDF=1&outputFormat=D' 
+							break;
+					}
+									
+				}//end item selected 
+			});//end print menu
+	    	
+		
 			
 			
 			//uf select
@@ -294,7 +316,15 @@
 		    </div>
 		    <div id="titleRightCol">
 		    	<p class="floatLeft detailElements"><?php echo $Text['validated'];?>: <span class="ui-corner-all padding5x5 setValidateStatus"></span></p>
-		    	<button id="btn_print_detail" class="detailElements floatRight"><?php echo $Text['printout'] ; ?></button>
+		    	
+		    	<button id="btn_print" class="detailElements btn_right"><?=$Text['printout'];?></button>
+		    		<div id="printOptionsItems" class="hidden hideInPrint">
+					<ul>
+					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
+					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
+					</ul>
+					</div>	
+					
 		    	<p class="textAlignRight overviewElements">
 		    		<select id="uf_select">
 		    			<option value="-10" selected="selected"><?php echo $Text['filter_uf']; ?></option>
@@ -419,6 +449,6 @@
 </div>
 <!-- end of wrap -->
 <!-- / END -->
-
+<iframe name="dataFrame" style="display:none"></iframe>
 </body>
 </html>
