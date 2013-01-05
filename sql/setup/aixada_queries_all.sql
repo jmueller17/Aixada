@@ -340,6 +340,10 @@ begin
 end|
 
 
+delimiter ;
+
+   delimiter |
+
 
 /**
  * returns all items in aixada_shop_item for 
@@ -503,6 +507,9 @@ begin
 end |
 
 
+delimiter ; 
+delimiter |
+
 
 /**
  * returns all orderable dates, irrespective if they have ordered items or not. 
@@ -580,6 +587,10 @@ begin
   	date_for_shop desc;
 end|
 
+
+
+delimiter ;
+delimiter |
 
 
 /**
@@ -728,6 +739,10 @@ begin
   	i.ts desc;
 	
 end |
+
+
+delimiter ;
+delimiter |
 
 
 /**
@@ -1749,6 +1764,11 @@ begin
 end|
 
 
+
+delimiter ;
+delimiter |
+
+
 /**
  * given a provider_id and a certain day, make the associated orderable 
  * products of this provider orderable every X daysteps during nr_weeks into the future. 
@@ -2543,6 +2563,11 @@ begin
 end|
 
 
+
+delimiter ;
+delimiter |
+
+
 /**
  * returns the responsible users for a provider. 
  */
@@ -2768,6 +2793,10 @@ begin
   end if; 
   
 end|
+
+
+delimiter ;
+delimiter |
 
 
 /**
@@ -3109,6 +3138,10 @@ begin
 end|
 
 
+delimiter ;
+delimiter |
+
+
 drop procedure if exists get_purchase_total_by_provider|
 create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
 begin
@@ -3296,6 +3329,12 @@ begin
 end|
 
 
+
+
+delimiter ;
+
+delimiter |
+
 drop procedure if exists most_bought_products|
 create procedure most_bought_products(in the_year int)
 begin
@@ -3435,6 +3474,9 @@ begin
   order by ts desc, uf
   limit 1000;
 end|
+
+delimiter ;
+delimiter |
 
 
 /*******************************************
@@ -4098,6 +4140,13 @@ begin
 end|
 
 
+
+
+
+delimiter ;
+delimiter |
+
+
 /**
  * returns a list of all active ufs and the number of their non-validated
  * shoppping carts.
@@ -4241,6 +4290,10 @@ end|
 
 
 
+
+
+
+
 /*drop procedure if exists undo_validate|
 create procedure undo_validate(in the_uf_id int, in the_ts datetime, in the_operator int)
 begin
@@ -4323,6 +4376,14 @@ end|
 */
 
 
+delimiter ;
+/* 
+ * The contents of this file are generated automatically. 
+ * Do not edit it, but instead run
+ * php make_canned_responses.php
+ */
+delimiter |
+
 drop procedure if exists aixada_account_list_all_query|
 create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
 begin
@@ -4358,8 +4419,7 @@ begin
       aixada_uf.name as uf,
       aixada_cart.date_for_shop,
       aixada_cart.operator_id,
-      aixada_cart.ts_validated,
-      aixada_cart.ts_last_saved 
+      aixada_cart.ts_validated 
     from aixada_cart 
     left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
   set @q = concat(@q, @lim);
@@ -4846,6 +4906,21 @@ begin
   deallocate prepare st;
 end|
 
+drop procedure if exists aixada_user_role_list_all_query|
+create procedure aixada_user_role_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_user_role.user_id,
+      aixada_user_role.role 
+    from aixada_user_role ";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
 
 
 delimiter ;
