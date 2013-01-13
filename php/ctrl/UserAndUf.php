@@ -53,6 +53,11 @@ try{
 	    case 'updateMember':
 	    	echo update_member(get_param('member_id'));
 	    	exit;
+	    
+	    //deletes member/user but only if no references exist. 
+	    case 'delMember':
+	    	echo do_stored_query('del_user_member', get_param('member_id'));
+	    	exit; 
 	    	
 	    //creates a new user and member
 	    case 'createUserMember':

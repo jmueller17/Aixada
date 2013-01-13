@@ -401,6 +401,7 @@ $Text['msg_err_usershort'] = "The username is too short. Should have min. of thr
 $Text['msg_err_userexists'] = "The username already exists. Please choose another one.";
 $Text['msg_err_passshort'] = "The password is too short. Should be between 4 and 15 characters long.";
 $Text['msg_err_notempty'] = " field cannot be left empty!"; 
+$Text['msg_err_namelength'] = "The name and family name cannot be left empty or contain more than 255 characters!"; 
 $Text['msg_err_only_num'] = " field only allows numbers and cannot be empty!"; 
 $Text['msg_err_email'] = "The email format is not correct. Should be name@domain.com or similar.";
 //$Text['msg_err_select_uf'] = "In order to assign a new member to an HU you have to select an HU first by clicking on its name! If you need a new HU, create one first by clicking +New HU.";
@@ -800,6 +801,9 @@ $Text['print_new_win'] = "New window";
 $Text['print_pdf'] = "Download pdf";
 $Text['msg_incident_emailed'] = "The incident has been emailed succesfully!";
 $Text['upcoming_orders'] = "Upcoming orders";
+
+$Text['msg_confirm_del_mem'] = "Are you sure delete this user from the database?? This cannot be undone!";
+$Text['btn_del'] = "Delete";
 
 //$Text[''] = ""; 
 

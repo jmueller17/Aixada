@@ -409,6 +409,7 @@ $Text['msg_err_usershort'] = "El nombre de usuario es demasiado corto. Tiene que
 $Text['msg_err_userexists'] = "El nombre de usuario ya está ocupado. Elige otro.";
 $Text['msg_err_passshort'] = "La contraseña es demasiado corta. Tiene que tener entre 4 y 15 caracteres";
 $Text['msg_err_notempty'] = " no puede estar vacío."; 
+$Text['msg_err_namelength'] = "El nombre y apelido no puede estar vació y no puede tener más de 255 characters!"; 
 $Text['msg_err_only_num'] = " sólo acepta cifras y no puede estar vacío."; 
 $Text['msg_err_email'] = "El formato del correo electrónico no es correcto. Tiene que ser del estilo nombre@dominio.com o parecido.";
 $Text['msg_err_select_uf'] = "Para asignar un nuevo miembro a una UF primero tienes que seleccionar la UF clicando sobre ella. Si quieres crear una nueva UF, hazlo clicando en + Nueva UF.";
@@ -713,6 +714,7 @@ $Text['minus_seven'] = "Mostrar -7 días";
 $Text['btn_earlier'] = "Antes de"; //cómo más temprano
 $Text['btn_later'] = "después de"; //más tarde... futuro
 
+
 //la frase entera es: "activate the selected day and products for the next  1|2|3.... month(s) every week | second week | third week | fourth week.
 $Text['pattern_intro'] = "Activa los productos i días para los próximos ";
 $Text['pattern_scale'] = "meses ";
@@ -803,5 +805,11 @@ $Text['print_new_win'] = "Ventana nueva";
 $Text['print_pdf'] = "Descarga pdf";
 $Text['msg_incident_emailed'] = "El incidente se ha enviado por correo correctamente.";
 $Text['upcoming_orders'] = "Próximos pedidos";
+
+$Text['msg_confirm_del_mem'] = "Estas seguro de eliminar el usuario de la base de datos??";
+$Text['btn_del'] = "Eliminar";
+
+
+
 
 ?>

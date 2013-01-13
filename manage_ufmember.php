@@ -451,6 +451,51 @@
 				$('#dialog_assign_uf').dialog('option','memberId',member_id).dialog('open');
 			});
 
+		//delete unassigned member from database; throws error if member has existing references
+		//i.e. can only delete members that never really got active.  
+		$('.btn_delete')
+			.live('click', function(e){
+				var member_id = $(this).parents('tr').attr('memberId');
+
+				$.showMsg({
+					msg: "<?php echo $Text['msg_confirm_del_mem']; ?>",
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){
+							$this = $(this);
+							var urlStr = 'php/ctrl/UserAndUf.php?oper=delMember&member_id='+member_id; 
+
+							$.ajax({
+							   	url: urlStr,
+							   	type: 'POST',
+							   	success: function(msg){
+									//reload all members listing on overiew. 
+							   		$('#member_list_unassigned tbody').xml2html('reload');
+							   		$this.dialog( "close" ); 
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+										$this.dialog("close");
+										$.showMsg({
+												msg: "Cannot delete this member because db entries depend on it. The error thrown was: " + XMLHttpRequest.responseText,
+												type: 'error'});
+
+									}
+								   	
+	
+							   	}
+							}); //end ajax
+													
+							
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+				
+				
+			});
+
 		
 		//create new uf	 
 		$("#dialog_assign_uf").dialog({
@@ -562,7 +607,7 @@
 				} 
 
 
-				//remove member icon
+				//remove member from uf: member is now listed in the un-assigned members tab. 
 				$('.ibtn_remove_member')
 					.live('mouseover', function(e){
 						$(this).addClass('ui-state-hover');
@@ -583,6 +628,7 @@
 											$('#detail_member_'+$this.attr('memberId')).fadeOut(1000, function(){$(this).remove()});
 											dlog.dialog( "close" );
 											$('#member_list_unassigned tbody').xml2html('reload'); 
+											$('#member_list tbody').xml2html('reload'); 
 										}
 									})						
 									
@@ -698,6 +744,7 @@
 
 			var urlStr = 'php/ctrl/UserAndUf.php?oper=updateMember';
 			var isValid = true; 
+			var isValidItem = true; 
 			var err_msg = ''; 
 
 			//run some local checks
@@ -705,38 +752,43 @@
 
 				urlStr = "php/ctrl/UserAndUf.php?oper=createUserMember";
 			
-				isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
-				if (!isValid){
-					err_msg += "<?=$Text['msg_err_usershort'];?>"; 
+				isValidItem = $.checkFormLength($(mi +' input[name=login]'),3,50);
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_usershort'];?>" + "<br/><br/>"; 
 				}
-	
-				isValid = isValid &&  $.checkFormLength($(mi+' input[name=password]'),4,15);
-				if (!isValid){
-					err_msg += "<br/><br/>" + "<?=$Text['msg_err_passshort'];?>"; 
+
+				isValidItem = $.checkFormLength($(mi+' input[name=password]'),4,15);
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_passshort'];?>" + "<br/><br/>"; 
 				}
 				
-				isValid = isValid &&  $.checkPassword($(mi+' input[name=password]'), $('input[name=password_ctrl]'));
-				if (!isValid){
-					err_msg += "<br/><br/>" + "<?=$Text['msg_err_pwdctrl']; ?>";
+				isValidItem = $.checkPassword($(mi+' input[name=password]'), $('input[name=password_ctrl]'));
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_pwdctrl']; ?>"+ "<br/><br/>";
 				}
 
-				isValid = isValid &&  $.checkFormLength($(mi+' input[name="name"]'),4,15);
-				if (!isValid){
-					err_msg += "<br/><br/>" + "<?php echo $Text['name_person'] . $Text['msg_err_notempty']; ?>";
-				}
+				
 			}
 
-			
-
-			
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
-			if (!isValid){
-				err_msg += "<br/><br/>" + "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?>";
+			isValidItem = $.checkFormLength($(mi+' input[name="name"]'),2,150);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?php echo $Text['msg_err_namelength']; ?>"+ "<br/><br/>";
 			}
 
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-			if (!isValid){
-				err_msg += "<br/><br/>" + "<?=$Text['msg_err_email'] ?>";
+			isValidItem =  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
+			}
+
+			isValidItem =  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?=$Text['msg_err_email'] ?>"+ "<br/><br/>";
 			}
 
 			if (isValid){
@@ -745,6 +797,7 @@
 								
 				$.ajax({
 				   	url: urlStr,
+				   	type: 'POST',
 					data: sdata, 
 				   	beforeSend: function(){
 				   		$('.loadSpinner').show();
@@ -996,11 +1049,12 @@
 				<table id="member_list_unassigned" class="tblListingDefault">
 						<thead>
 						<tr>
-							<th><?=$Text['id'];?></th>
+							<th>&nbsp;&nbsp; <?=$Text['id'];?></th>
 							<th class="textAlignLeft"><?=$Text['name_person'];?></th>
 							<th><?=$Text['active'];?></th>	
-							<th><?=$Text['uf_short'];?></th>	
-							<th class="textAlignLeft">Contact</th>
+								
+							<th class="textAlignLeft"><?=$Text['phone_pl'];?></th>
+							<th><?=$Text['email'];?></th>
 							<th></th>
 						</tr>
 						</thead>
@@ -1009,13 +1063,15 @@
 								<td>{id}</td>
 								<td><p class="textAlignLeft">{name}</p></td>
 								<td>{active}</td>
-								<td><?=$Text['uf_short'];?>{uf_id}</td>
 								<td><p class="textAlignLeft">
-									{phone1} / {phone2}<br/>
-									{email}
+									{phone1} / {phone2}
 									</p>
 								</td>
-								<td><a href="javascript:void(null)" class="btn_assign"><?php echo $Text['btn_assign'];?></a></td>
+								<td>{email}</td>
+								<td>
+									<a href="javascript:void(null)" class="btn_assign"><?php echo $Text['btn_assign'];?></a> | 
+									<a href="javascript:void(null)" class="btn_delete"><?php echo $Text['btn_del']; ?></a>
+								</td>
 							</tr>						
 						</tbody>
 				</table>
