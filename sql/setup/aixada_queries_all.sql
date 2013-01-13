@@ -3600,6 +3600,7 @@ begin
 		aixada_user u
 	where
 		u.member_id = mem.id
+		and mem.uf_id is not null
 		and u.uf_id = uf.id
 		",wherec,"
 	order by
@@ -3608,6 +3609,7 @@ begin
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
+  
 	
 end|
 
@@ -3729,6 +3731,33 @@ begin
 	where 
 		id = the_member_id; 
 	
+end|
+
+
+drop procedure if exists del_user_member|
+create procedure del_user_member(in the_member_id int)
+begin
+	
+	
+	
+		delete from 
+			aixada_user_role
+		where
+			user_id = the_member_id; 
+	
+		delete from 
+			aixada_user 
+		where 
+			member_id = the_member_id; 
+		
+		delete from 
+			aixada_member
+		where
+			id = the_member_id; 
+	
+	
+	
+
 end|
 
 
