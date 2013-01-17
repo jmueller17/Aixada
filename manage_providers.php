@@ -40,6 +40,13 @@
 		var gSelProduct = null; 
 
 
+		//needed for setup of new provider form
+		var gFirstTimeNewProvider = true; 
+
+		//edit/save data 
+		var gTransaction = false; 
+
+
 		//clone the provider form. One is used as xml2html template the other for new providers
 		var tblProvider = $('#tbl_provider_edit tbody').clone();
 		$('#tbl_provider_new').append(tblProvider);
@@ -56,7 +63,8 @@
 			}).change(function(){
 			
 			});	
-			
+
+		
 
 	/***********************************************************
 	 *
@@ -80,9 +88,13 @@
 				$('tr:even', this).addClass('rowHighlight');
 				$('p.providerActiveStatus').each(function(){
 					if ($(this).text() == "1"){
-						$(this).parent().addClass("aix-style-ok-green");
+						//$(this).html('<input class="checkPActive" type="checkbox" checked/>')
+						//$(this).parent().addClass("aix-style-ok-green");
+						$(this).html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all')
 					} else {
-						$(this).parent().addClass("noRed");
+						//$(this).parent().addClass("noRed");
+						//$(this).html('<input class="checkPActive" type="checkbox" />');
+						$(this).html('<span class="ui-icon ui-icon-cancel"></span>').addClass("noRed ui-corner-all");
 					}
 
 				});
@@ -113,11 +125,13 @@
 			url : 'php/ctrl/Providers.php',
 			loadOnInit:false,
 			rowComplete : function (rowIndex, row){
-				var selectedUf = $('#responsibleUfSelect').text();
+				var selectedUf = $('#frm_provider_edit .responsibleUfSelect').text();
 				
-				var ufSelect = $('#ufSelect').clone(); 
+				var ufSelect = $('#ufSelect').clone();
+				 
 				$(ufSelect).val(selectedUf).attr('selected','selected');
-				$('#responsibleUfSelect').text('').append(ufSelect);
+
+				$('#frm_provider_edit .responsibleUfSelect').html('').append(ufSelect);
 
 				$('#frm_provider_edit input:checkbox').each(function(){
 					var bool = $(this).val(); 
@@ -143,7 +157,7 @@
 	        	}
 			})
 			.click(function(){
-				//prepareForm($('#frm_provider_new'));			
+				prepareForm($('#frm_provider_new'));			
 				switchTo('newProvider');
 			});
 
@@ -162,6 +176,8 @@
 						//prepareForm($('#frm_provider_edit'));
 					}
 				});
+
+				//$('#frm_provider_edit input[name=id]').val(gSelProvider.attr('providerId'));
 				
 				switchTo('editProvider');
 				e.stopPropagation();
@@ -175,8 +191,14 @@
 	        		primary: "ui-icon-disk"
 	        	}
 			})
-			.click(function(){			
-				
+			.click(function(e){	
+				if ($(this).hasClass('edit')){		
+					submitProvider('#pgProviderEdit', 'edit'); 
+				} else if ($(this).hasClass('new')){
+					submitProvider('#pgProviderNew', 'add');
+				}
+				e.stopPropagation();
+				return false; 
 			});
 
 		//cancel edits/forms
@@ -187,16 +209,37 @@
 	        	}
 			})
 			.click(function(e){			
-				if ($(this).hasClass('editProvider')){
+				if ($(this).hasClass('edit') || $(this).hasClass('new')){
 					 switchTo('overviewProvider');
 				}
+				return false; 
 		});
+
+		$('.checkPActive')
+			.live('click', function(e){
+				e.stopPropagation();
+			});
 
 
 		
 		function prepareForm(frm){
 
-			$('input:text, input:hidden', frm).val('');
+			//prepare the provider form the first time it is called
+			if (gFirstTimeNewProvider){
+
+				//clear id field
+				$('.setProviderId').html('&nbsp;');
+				
+				//insert responsible uf
+				var ufSelect = $('#ufSelect').clone();
+				$(ufSelect).val(-1).attr('selected','selected');
+				$('#frm_provider_new .responsibleUfSelect').html('').append(ufSelect);
+
+				gFirstTimeNewProvider = false; 
+			}
+
+			
+			$('input:text, input:hidden, textarea', frm).val('');
 			//$('select', frm).
 
 			
@@ -213,60 +256,69 @@
 		 *	submits the create/edit provider data
 		 *  mi: is the selector string of the layer that contains the whole member form and info
 		 */
-		function submitMember(action, mi){
+		function submitProvider(mi, action){
 
-			var urlStr = 'php/ctrl/Provider.php?oper=mngProvider';
 			var isValid = true; 
+			var isValidItem = true; 
 			var err_msg = ''; 
 
 			
 
-			isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
-			if (!isValid){
-				err_msg += "<?=$Text['msg_err_usershort'];?>"; 
+			isValidItem = $.checkFormLength($(mi +' input[name=name]'),2,150);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?=$Text['msg_err_providershort'];?>" + "<br/><br/>"; 
 			}
-	
+
 			
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
-			if (!isValid){
-				err_msg += "<br/><br/>" + "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?>";
-			}
+			if ($(mi+' input[name="email"]').val().length > 0){
+				isValidItem =  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_email'] ?>"+ "<br/><br/>";
+				}
+		 	}				
 
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-			if (!isValid){
-				err_msg += "<br/><br/>" + "<?=$Text['msg_err_email'] ?>";
-			}
 
+			isValidItem = $.checkSelect($(mi +' select[name=responsible_uf_id]'),-1);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?=$Text['msg_err_select_responsibleuf'];?>" + "<br/><br/>"; 
+			}
+			
 
 			
 			if (isValid){
 
+				//make sure an active=0 gets send if checkbox is unchecked
+				$(mi +' input:checkbox').each(function(){
+					var isChecked = $(this).attr('checked'); 
+					
+					if(isChecked){
+						$(this).val(1);
+					} else {
+						$(this).val(0);
+						$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
+					}
+					
+				});
+				
+				
 				var sdata = $(mi + ' form').serialize();
-								
+
+				
 				$.ajax({
-				   	url: urlStr,
+				   	url: 'php/ctrl/TableManager.php?oper='+action+'&table=aixada_provider',
 					data: sdata, 
 				   	beforeSend: function(){
 				   		$('.loadSpinner').show();
-				   		$('.btn_save_new_member').button('disable');
-					   	//$('button',mi).button('disable');
-					   	//myButton.button('disable');
-					  
+				   		$('.btn_save_provider').button('disable');
 					},
 				   	success: function(msg){
 				   	 	$.showMsg({
 							msg: "<?php echo $Text['msg_edit_success']; ?>",
 							type: 'success'});
-
-						//reload all members of this uf
-				   	 	$('#uf_detail_member_list').xml2html('reload',{
-							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid'),
-						});
-						//show them
-				   		switchTo('ufMemberView');
 				   		
-						//reload all members listing on overiew. 
-				   		$('#member_list tbody').xml2html('reload'); 
 				   	},
 				   	error : function(XMLHttpRequest, textStatus, errorThrown){
 					   $.showMsg({
@@ -275,7 +327,8 @@
 				   	},
 				   	complete : function(msg){
 				   		$('.loadSpinner').hide();
-				   		$('.btn_save_new_member').button('enable');
+				   		$('.btn_save_provider').button('enable');
+				   		gTransaction = true; 
 				   	}
 				}); //end ajax
 
@@ -285,6 +338,7 @@
 					msg:err_msg,
 					type: 'error'});
 			}
+			
 		}
 		
 		
@@ -316,21 +370,23 @@
 				}
 
 				
-				if (tds.eq(4).text() == "1"){
-					tds.eq(4).addClass("aix-style-ok-green");
+				if (tds.eq(4).children('p:first').text() == "1"){
+					//tds.eq(4).addClass("aix-style-ok-green");
+					tds.eq(4).children('p:first').html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all');
+					//tds.eq(4).html('<span class="ui-icon ui-icon-check"></span>');
 				} else {
-					tds.eq(4).addClass("noRed");
+					tds.eq(4).children('p:first').html('<span class="ui-icon ui-icon-closethick"></span>').addClass('noRed ui-corner-all');
 				}
 
 			},
 			complete : function (rowCount){
 				$('.loadSpinner').hide();
 				$('tr:even', this).addClass('rowHighlight');
-				if (rowCount == 0){
+				/*if (rowCount == 0){
 					$.showMsg({
 						msg:"<?php echo $Text['msg_no_active_products'];?>",
 						type: 'info'});
-				} 
+				} */
 
 				
 			}						
@@ -387,58 +443,6 @@
 
 			
 
-		/**
-		 *	saves the stock correction / add to the database
-		 * 	for "addStock" the current_stock = stock + quantity.
-		 * 	for "correctStock" current_stock = quantity; 
-		 */
-		function submitStock(oper, product_id, quantity){
-
-			var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
-			
-			
-			$.ajax({
-				type: "POST",
-				url: urlStr,
-				beforeSend : function(){
-					$('.inputAddStock, .inputCorrectStock')
-						.attr('disabled','disabled')
-						.val('Saving...');
-					/*$('.btn_save_new_stock, .btn_correct_stock')
-						.button('option','Saving...')
-						.button('disable');*/
-					
-				},
-				success: function(txt){
-					/*$('#add_stock_'+product_id+ ', #correct_stock_'+product_id)
-						.addClass('ui-state-success')
-						.val('Ok!');*/
-
-					setTimeout(function(){
-						$('#product_list_provider tbody').xml2html("reload");						
-					},500)
-
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
-				},
-				complete: function(){
-					$('.inputAddStock, .inputCorrectStock')
-						.removeAttr('disabled')
-						.val('');
-					/*$('.btn_save_new_stock, .btn_correct_stock')
-						.button('label','Save')
-						.button('enable');	*/
-				}
-			});
-		}
-
-
-
-		
 
 
 
@@ -450,7 +454,14 @@
 
 				case 'overviewProvider':
 					$('.pgProductListing, .pgProviderEdit, .pgProviderNew').hide();
+					if (gTransaction) { //if provider has been edited/new reload listing
+						$('#tbl_providers tbody').xml2html("reload"); 
+					}
+					
+
 					$('.pgProviderOverview').fadeIn(1000);
+					gTransaction = false; 
+					
 					break;
 	
 				case 'overviewProducts':
@@ -467,6 +478,7 @@
 					break;
 
 				case 'editProvider':
+					$('.setProviderName').html(gSelProvider.children().eq(2).text());
 					$('.pgProductListing, .pgProviderOverview, .pgProviderNew').hide();
 					$('.pgProviderEdit').fadeIn(1000);
 					
@@ -516,7 +528,7 @@
 						<button id="btn_overview" class="floatLeft pgProductListing pgProviderEdit pgProviderNew"><?php echo $Text['overview'];?></button>
 				    	<h1 class="pgProviderOverview">Manage providers & products</h1>
 				    	<h1 class="pgProductListing setProviderName"></h1>
-				    	<h1 class="pgProviderEdit">Edit provider <span class="setProviderName"></span></h1>
+				    	<h1 class="pgProviderEdit">Edit - <span class="setProviderName"></span></h1>
 				    	<h1 class="pgProviderNew">Create new provider</h1>
 		    		</div>
 		    		<div id="titleRightCol50">
@@ -526,6 +538,12 @@
 		    		</div>
 				</div><!-- end titlewrap -->
  
+ 
+ 
+				 <!-- 
+							PROVIDER LISTING
+							
+				 -->
 				<div class="ui-widget pgProviderOverview">
 					<div class="ui-widget-content ui-corner-all">
 						<h3 class="ui-widget-header">&nbsp;
@@ -553,7 +571,7 @@
 									<td>{name}</td>
 									<td>{phone1} / {phone2}</p></td>
 									<td>{email}</td>
-									<td><p class="providerActiveStatus textAlignCenter">{active}</p></td>
+									<td><p class="providerActiveStatus iconContainer">{active}</p></td>
 									<td><?php echo $Text['uf_short'];?>{responsible_uf_id} {responsible_uf_name}</td>
 									<td><a href="javascript:void(null)" class="btn_edit_provider">Edit</a></td>
 								</tr>						
@@ -569,7 +587,10 @@
 				
 				
 				
-
+				<!-- 
+							PRODUCT LISTING
+							
+				 -->
 				<div class="pgProductListing ui-widget">
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
@@ -594,7 +615,7 @@
 									<td>{id}</td>
 									<td>{name}</td>
 									<td>{orderable_type_id}</td>
-									<td><p class="textAlignCenter">{active}</p></td>
+									<td><p class="textAlignCenter iconContainer">{active}</p></td>
 									<td>{rev_tax_percent}%</td>
 									<td>{iva_percent}%</td>
 									<td>{unit}</td>	
@@ -609,19 +630,121 @@
 				
 				
 				
+				<!-- 
+							PRODUCT EDIT
+							
+				 -->
+				 <div class="pgProductEdit ui-widget">
+					<div class="ui-widget-content ui-corner-all">
+						<h4 class="ui-widget-header">Edit <span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<form id="frm_product_edit">
+						<table id="tbl_product_edit" class="tblListingDefault">
+							  <tr>
+							    <td>Provider</td>
+							    <td colspan="3"><select></select></td>
+							  </tr>
+							  <tr>
+							    <td><label for="product_name">Name</label></td>
+							    <td><input type="text" name="product_name" id="product_name" tabindex="1" /></td>
+							    <td><label for="responsible_uf_id">Responsible UF id</label></td>
+							    <td><select id="responsible_uf_id" tabindex="2"></select></td>
+							  </tr>
+							  <tr>
+							    <td><label for="description">Description</label></td>
+							    <td colspan="3">
+							      <textarea name="description" id="description" cols="45" rows="2" tabindex="3"></textarea>
+							 </td>
+							  </tr>
+							  <tr>
+							    <td>Web page</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td><label for="name3">Barcode</label></td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Active</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>&nbsp;</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Product type</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Product category</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Order units</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Purchase units</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Unit Price neto</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>&nbsp;</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Iva</td>
+							    <td>&nbsp;</td>
+							    <td>rev tax</td>
+							    <td>&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>&nbsp;</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Min stock</td>
+							    <td>&nbsp;</td>
+							    <td>&nbsp;</td>
+							    <td>&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>Min order amount</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td>&nbsp;</td>
+							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							</table>
+						</table>
+						</form>
+					</di
+				 
+				 
 				
-				<div class="pgProviderEdit ui-widget">
+				
+				<!-- 
+							PROVIDER EDIT
+							
+				 -->
+				<div class="pgProviderEdit ui-widget" id="pgProviderEdit">
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_edit">
-						<input type="hidden" name="provider_id" value="" />
+						
 						<table id="tbl_provider_edit" class="tblForms">
 						<tbody>
 						<tr providerId="{id}" responsibleUfId="{responsible_uf_id}">
 							<td><label for="provider_id"><?php echo $Text['id']; ?></label></td>
-							<td><p class="textAlignLeft ui-corner-all">{id}</p></td>
+							<td><p class="textAlignLeft ui-corner-all setProviderId">{id}</p></td>
 							<td><label for="active"><?php echo $Text['active'];?></label></td>
-							<td><input type="checkbox" name="active" value="{active}" class="floatLeft" /></td>							
+							<td><input type="checkbox" name="active" value="{active}" class="floatLeft" />
+								<input type="hidden" name="id" value="{id}" />
+							</td>							
 						</tr>
 						
 						<tr>
@@ -672,7 +795,7 @@
 						
 						<tr>
 							<td><label for="responsible_uf_id">&nbsp; <?php echo $Text['responsible_uf']; ?></label></td>
-							<td><p class="textAlignLeft ui-corner-all" id="responsibleUfSelect">{responsible_uf_id}</p></td>
+							<td><span class="textAlignLeft responsibleUfSelect">{responsible_uf_id}</span></td>
 							<td></td>
 							<td></td>						
 						</tr>
@@ -707,28 +830,26 @@
 							<td colspan="2"></td>
 							
 							<td colspan="2">
-							<p class="floatRight">
-								<button class="btn_cancel editProvider"><?php echo $Text['btn_cancel']; ?></button>
-								&nbsp;&nbsp;
-								<button class="btn_save_provider"><?php echo $Text['btn_save'];?></button>
-							</p>
+								<p class="floatRight">
+									<button class="btn_cancel edit"><?php echo $Text['btn_cancel']; ?></button>
+									&nbsp;&nbsp;
+									<button class="btn_save_provider edit"><?php echo $Text['btn_save'];?></button>
+								</p>
 							</td>
 						</tr>
 						</tfoot>
 						</table>
 					</form>
-
-
 					<p>&nbsp;</p>
-						
-				
-						
 				</div>
 			</div>
 			
 			
-			
-			<div class="pgProviderNew ui-widget hidden">
+			<!-- 
+							PROVIDER NEW
+							
+			-->
+			<div class="pgProviderNew ui-widget hidden" id="pgProviderNew">
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_new">
@@ -739,11 +860,10 @@
 							<tfoot>
 							<tr>
 								<td colspan="2"></td>
-								<td>
-								
-								</td>
-								<td><p class="floatRight">
-										<button class="btn_save_provider"><?php echo $Text['btn_save'];?></button>
+								<td colspan="2"><p class="floatRight">
+										<button class="btn_cancel new" ><?php echo $Text['btn_cancel']; ?></button>
+										&nbsp;&nbsp;
+										<button class="btn_save_provider new"><?php echo $Text['btn_save'];?></button>
 									</p>
 								</td>
 							</tr>
@@ -759,6 +879,7 @@
 				</div>
 			</div>
 				
+			
 				
 				
 				

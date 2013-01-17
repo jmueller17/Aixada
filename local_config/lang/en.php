@@ -808,6 +808,11 @@ $Text['btn_del'] = "Delete";
 
 $Text['btn_new_provider'] = "New provider";
 $Text['orderable'] = "Orderable"; //product type
+$Text['msg_err_providershort']  = "The provider name is too short. Should be between 2 and 150 characters long.";
+$Text['msg_err_select_responsibleuf'] = "You have to indicate the responsible household for this provider.";
+
+
+
 //$Text[''] = ""; 
 
 ?>

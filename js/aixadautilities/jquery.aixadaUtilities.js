@@ -80,6 +80,17 @@ $(function(){
 			}
 		},
 		
+		//checks if the given select field has something other than the default value selected
+		checkSelect : function(input, defaultValue){
+			var selval = input.val();
+			if (selval == defaultValue){
+				
+				return false; 
+			} else {
+				return true; 
+			} 
+		},
+		
 		//checks if input is numeric and replaces "," with decimal "." and rounds to fixed. 
 		checkNumber : function(input, resetValue, fixed){
 			
