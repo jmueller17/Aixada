@@ -1472,7 +1472,7 @@
 					</tr>
 					<tr>
 						<td>
-							<p><?php echo $Text['phone1']; ?></p>
+							<p><?php echo $Text['phone_pl']; ?></p>
 						</td>
 						<td>
 							 {phone1} / {phone2}

@@ -801,6 +801,9 @@ $Text['print_pdf'] = "Download pdf";
 $Text['msg_incident_emailed'] = "The incident has been emailed succesfully!";
 $Text['upcoming_orders'] = "Upcoming orders";
 
+
+$Text['btn_new_provider'] = "New provider";
+$Text['orderable'] = "Orderable"; //product type
 //$Text[''] = ""; 
 
 ?>

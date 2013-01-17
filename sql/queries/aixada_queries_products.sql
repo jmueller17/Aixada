@@ -446,34 +446,39 @@ drop procedure if exists get_products_detail|
 create procedure get_products_detail(	in the_provider_id int, 
 										in the_category_id int, 
 										in the_like varchar(255),
-										in the_date date)
+										in the_date date,
+										in include_inactive boolean)
 begin
 	
 	declare today date default date(sysdate());
     declare wherec varchar(255);
     declare fromc varchar(255);
     declare fieldc varchar(255);
+     
+    
+    /** show active products only or include inactive products as well **/
+    set wherec = if(include_inactive=1,"","and p.active=1 and pv.active = 1");	
+   
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = 	" and p.unit_measure_shop_id = u.id ";
+    	set wherec = 	concat(wherec, " and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ";
+    	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ");
     
     /** otherwise search for products with orderable dates **/
     else 
     	set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");
        	set fromc = 	"aixada_product_orderable_for_date po, ";
-    	set wherec = 	concat(" and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
+    	set wherec = 	concat(wherec, " and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
     end if;
-    
-    
+     
     
     /** get products by provider_id **/
     if the_provider_id > 0 then
@@ -492,11 +497,7 @@ begin
   
 	set @q = concat("
 	select
-		p.id,
-		p.name,
-		p.description,
-		p.category_id,
-		p.stock_actual,
+		p.*,
 		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price, 
 		pv.name as provider_name,	
 		u.unit,
@@ -511,9 +512,7 @@ begin
 		aixada_iva_type iva,
 		aixada_unit_measure u 
 	where 
-		p.active = 1
-		and pv.active = 1
-		and pv.id = p.provider_id	
+		pv.id = p.provider_id	
 		",wherec,"
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
