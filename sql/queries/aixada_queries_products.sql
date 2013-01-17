@@ -447,7 +447,8 @@ create procedure get_products_detail(	in the_provider_id int,
 										in the_category_id int, 
 										in the_like varchar(255),
 										in the_date date,
-										in include_inactive boolean)
+										in include_inactive boolean,
+										in the_product_id int)
 begin
 	
 	declare today date default date(sysdate());
@@ -480,8 +481,13 @@ begin
     end if;
      
     
+    
+    /** get a specific product **/
+    if the_product_id > 0 then 
+    	set wherec = concat(wherec, " and p.id = '", the_product_id, "' ");
+    	
     /** get products by provider_id **/
-    if the_provider_id > 0 then
+    elseif the_provider_id > 0 then
 		set wherec = concat(wherec, " and pv.id = '", the_provider_id, "' ");
     	
     /** get products by category_id **/
@@ -492,6 +498,7 @@ begin
     /** search for product name **/
     elseif the_like != "" then
     	set wherec 	= concat(wherec, " and p.name LIKE '%", the_like,"%' ");
+    	
     end if;
     
   

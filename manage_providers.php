@@ -46,31 +46,27 @@
 		//edit/save data 
 		var gTransaction = false; 
 
+		//data for constructing the select options for the provider form
+		var gProviderSelects = [['aixada_uf', 'sResponsibleUfId','id','name']];
 
-		//clone the provider form. One is used as xml2html template the other for new providers
-		var tblProvider = $('#tbl_provider_edit tbody').clone();
-		$('#tbl_provider_new').append(tblProvider);
-
-		//load mentor uf select listing
-		$('#ufSelect').xml2html('init',{
-				url: 'php/ctrl/UserAndUf.php',
-				params : 'oper=getUfListing&all=0',
-				loadOnInit:true,
-				offSet : 1,
-				complete : function(s){
-
-				}
-			}).change(function(){
-			
-			});	
-
+		//data for constructing the select options for the product form
+		//format is: [table, destinationClassSelector, field1, field2,...]
+		var gProductSelects = [	
+								['aixada_orderable_type', 'sOrderableTypeId', 'id', 'description'],
+								['aixada_uf', 'sResponsibleUfId','id','name'],
+								['aixada_product_category','sCategoryId', 'id', 'description'],
+								['aixada_rev_tax_type','sRevTaxTypeId', 'id', 'name'],
+								['aixada_iva_type','sIvaPercentId','id','name'],
+								['aixada_unit_measure','sUnitMeasureOrderId','id','name'],
+								['aixada_unit_measure','sUnitMeasureShopId','id','name']
+						];
 		
 
-	/***********************************************************
-	 *
-	 *  PROVIDER LISTING AND EDIT/NEW STUFF
-	 *
-	 ***********************************************************/
+		/***********************************************************
+		 *
+		 *  PROVIDER LISTING AND EDIT/NEW STUFF
+		 *
+		 ***********************************************************/
 
 		//list providers
 		$('#tbl_providers tbody').xml2html("init", {
@@ -98,6 +94,8 @@
 					}
 
 				});
+				
+				
 			}
 		});
 
@@ -125,23 +123,8 @@
 			url : 'php/ctrl/Providers.php',
 			loadOnInit:false,
 			rowComplete : function (rowIndex, row){
-				var selectedUf = $('#frm_provider_edit .responsibleUfSelect').text();
-				
-				var ufSelect = $('#ufSelect').clone();
-				 
-				$(ufSelect).val(selectedUf).attr('selected','selected');
-
-				$('#frm_provider_edit .responsibleUfSelect').html('').append(ufSelect);
-
-				$('#frm_provider_edit input:checkbox').each(function(){
-					var bool = $(this).val(); 
-					if (bool == "1") $(this).attr('checked',true);
-				});
-
-
-			},
-			complete : function(s){
-				
+				setCheckBoxes('#frm_provider_edit');
+				populateSelect(gProviderSelects,'#tbl_provider_edit');
 			}
 
 		});
@@ -157,7 +140,7 @@
 	        	}
 			})
 			.click(function(){
-				prepareForm($('#frm_provider_new'));			
+				prepareProviderForm();			
 				switchTo('newProvider');
 			});
 
@@ -171,13 +154,8 @@
 				gSelProvider.addClass('ui-state-highlight');
 				
 				$('#tbl_provider_edit tbody').xml2html('reload',{
-					params: 'oper=getProviders&all=1&provider_id='+gSelProvider.attr('providerId'),
-					complete: function(rows){
-						//prepareForm($('#frm_provider_edit'));
-					}
+					params: 'oper=getProviders&all=1&provider_id='+gSelProvider.attr('providerId')
 				});
-
-				//$('#frm_provider_edit input[name=id]').val(gSelProvider.attr('providerId'));
 				
 				switchTo('editProvider');
 				e.stopPropagation();
@@ -192,10 +170,14 @@
 	        	}
 			})
 			.click(function(e){	
-				if ($(this).hasClass('edit')){		
-					submitProvider('#pgProviderEdit', 'edit'); 
+				if ($(this).hasClass('edit')){
+					if (checkProviderForm('#pgProviderEdit')){
+						submitForm('#pgProviderEdit', 'edit');
+					}		 
 				} else if ($(this).hasClass('new')){
-					submitProvider('#pgProviderNew', 'add');
+					if (checkProviderForm('#pgProviderNew')){
+						submitForm('#pgProviderNew', 'add');
+					}
 				}
 				e.stopPropagation();
 				return false; 
@@ -215,55 +197,85 @@
 				return false; 
 		});
 
-		$('.checkPActive')
-			.live('click', function(e){
-				e.stopPropagation();
-			});
-
-
 		
-		function prepareForm(frm){
-
-			//prepare the provider form the first time it is called
-			if (gFirstTimeNewProvider){
-
-				//clear id field
-				$('.setProviderId').html('&nbsp;');
-				
-				//insert responsible uf
-				var ufSelect = $('#ufSelect').clone();
-				$(ufSelect).val(-1).attr('selected','selected');
-				$('#frm_provider_new .responsibleUfSelect').html('').append(ufSelect);
-
-				gFirstTimeNewProvider = false; 
-			}
-
+		//trick for setting the chosen option of the selects since generated selects don't have name!
+		$('select')
+			.live('change', function(){
+				$(this).parent().prev().val($('option:selected',this).val());
+			})
 			
-			$('input:text, input:hidden, textarea', frm).val('');
-			//$('select', frm).
-
-			
-			//set the checkboxes
-			$('input:checkbox', frm).each(function(){
-				$(this).attr('checked','checked');
+		//remove all eventual error styles on input fields. 
+		$('input')
+			.live('focus', function(e){
+				$(this).removeClass('ui-state-error');
 			});
+
+			
+		/**
+		 *	submits the create/edit provider data
+		 *  mi: is the selector string of the layer that contains the whole member form and info
+		 * 	assume form has been checked		 
+		 */
+		function submitForm(mi, action){
+
+
+			//make sure an active=0 gets send if checkbox is unchecked
+			$(mi +' input:checkbox').each(function(){
+				var isChecked = $(this).attr('checked'); 
+				
+				if(isChecked){
+					$(this).val(1);
+				} else {
+					$(this).val(0);
+					$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
+				}
+				
+			});
+			
+			
+			var sdata = $(mi + ' form').serialize();
+
+			
+			$.ajax({
+			   	url: 'php/ctrl/TableManager.php?oper='+action+'&table=aixada_provider',
+				data: sdata, 
+			   	beforeSend: function(){
+			   		$('.loadSpinner').show();
+			   		$('.btn_save_provider').button('disable');
+				},
+			   	success: function(msg){
+			   	 	$.showMsg({
+						msg: "<?php echo $Text['msg_edit_success']; ?>",
+						type: 'success',
+						autoclose:1000});
+			   		
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+				   $.showMsg({
+						msg: XMLHttpRequest.responseText,
+						type: 'error'});
+			   	},
+			   	complete : function(msg){
+			   		$('.loadSpinner').hide();
+			   		$('.btn_save_provider').button('enable');
+			   		gTransaction = true; 
+			   	}
+			}); //end ajax
+
 			
 		}
 
 
-
 		/**
-		 *	submits the create/edit provider data
-		 *  mi: is the selector string of the layer that contains the whole member form and info
+		 *	provider utility functions
 		 */
-		function submitProvider(mi, action){
+
+		function checkProviderForm(mi){
 
 			var isValid = true; 
 			var isValidItem = true; 
 			var err_msg = ''; 
-
 			
-
 			isValidItem = $.checkFormLength($(mi +' input[name=name]'),2,150);
 			if (!isValidItem){
 				isValid = false; 
@@ -280,68 +292,94 @@
 		 	}				
 
 
-			isValidItem = $.checkSelect($(mi +' select[name=responsible_uf_id]'),-1);
+			isValidItem = $.checkSelect($(mi +' input[name=responsible_uf_id]'),'');
 			if (!isValidItem){
 				isValid = false; 
 				err_msg += "<?=$Text['msg_err_select_responsibleuf'];?>" + "<br/><br/>"; 
 			}
-			
 
-			
-			if (isValid){
-
-				//make sure an active=0 gets send if checkbox is unchecked
-				$(mi +' input:checkbox').each(function(){
-					var isChecked = $(this).attr('checked'); 
-					
-					if(isChecked){
-						$(this).val(1);
-					} else {
-						$(this).val(0);
-						$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
-					}
-					
-				});
-				
-				
-				var sdata = $(mi + ' form').serialize();
-
-				
-				$.ajax({
-				   	url: 'php/ctrl/TableManager.php?oper='+action+'&table=aixada_provider',
-					data: sdata, 
-				   	beforeSend: function(){
-				   		$('.loadSpinner').show();
-				   		$('.btn_save_provider').button('disable');
-					},
-				   	success: function(msg){
-				   	 	$.showMsg({
-							msg: "<?php echo $Text['msg_edit_success']; ?>",
-							type: 'success'});
-				   		
-				   	},
-				   	error : function(XMLHttpRequest, textStatus, errorThrown){
-					   $.showMsg({
-							msg: XMLHttpRequest.responseText,
-							type: 'error'});
-				   	},
-				   	complete : function(msg){
-				   		$('.loadSpinner').hide();
-				   		$('.btn_save_provider').button('enable');
-				   		gTransaction = true; 
-				   	}
-				}); //end ajax
-
-			//form is not valid		 
+			if (isValid) {
+				return true; 
 			} else {
 				$.showMsg({
 					msg:err_msg,
 					type: 'error'});
+				return false; 
 			}
+
+		}
+
+		 
+		//creates the new provider form, which is copied one time from the provider edit form template
+		//resets input fields. 
+		function prepareProviderForm(){
+			var frm = $('#frm_provider_new'); 
+			//prepare the provider form the first time it is called
+			if (gFirstTimeNewProvider){
+				
+				//copy the provider form 
+				var tblStr = $('#tbl_provider_edit tbody').xml2html("getTemplate");
+				$('#tbl_provider_new tbody').append(tblStr);
+
+				//construct the responsible uf select
+				populateSelect(gProviderSelects,'#tbl_provider_new');
+
+				//new providers have no id
+				$('#tbl_provider_new input[name=id]').remove();
+
+				gFirstTimeNewProvider = false; 
+			}
+
+			//reset all textfields
+			$('input:text, input:hidden, textarea', frm).val('');
+
+			//assume that a new provider is active
+			$('input:checkbox', frm).each(function(){
+				$(this).attr('checked','checked');
+			});
+
+			//reset provider id. 
+			$('.setProviderId', frm).html('&nbsp;');
+
+			$('select', frm)
 			
 		}
+
+		//tranfors checkbox value in ticked box
+		function setCheckBoxes(selStr){
+			$(selStr +' input:checkbox').each(function(){
+				var bool = $(this).val(); 
+				if (bool == "1") $(this).attr('checked',true);
+			});
+		}
+
+		function loadSelectHTML(urlStr, destination){
+			$.post(urlStr, function(html){
+				var selValue = $(destination).append(html).prev().val(); 
+				$(destination).children('select').val(selValue).attr('selected','selected');
+				
+				//$(destination).find('option:first').remove();
+			})	
+
+		}
+
+		//loads the options for select boxes
+		function populateSelect(tbls, destTable){
+			for (var i=0; i<tbls.length; i++){
+				var urlStr = 'php/ctrl/SmallQ.php?oper=getFieldOptions&table='+tbls[i][0]; 
+				var destination = destTable +' .'+tbls[i][1]; 
+
+				for (var j=2; j<tbls[i].length; j++){
+					urlStr += '&field'+(j-1)+'='+tbls[i][j]; 	
+				}
+
+				loadSelectHTML(urlStr, destination);
+				
+			}	
+		} 
 		
-		
+
+
 		
 		
 		/*****************************************
@@ -387,11 +425,11 @@
 						msg:"<?php echo $Text['msg_no_active_products'];?>",
 						type: 'info'});
 				} */
-
 				
 			}						
 		});			
 
+		//products listing behavior
 		$('#tbl_products tbody tr')
 			.live('mouseenter', function(){
 				$(this).addClass('ui-state-hover');
@@ -406,54 +444,44 @@
 				gSelProduct = $(this);
 				gSelProduct.addClass('ui-state-highlight');
 				
-				//switchTo('overviewProducts');
+				$('#tbl_product_edit tbody').xml2html('reload',{
+					params: 'oper=getProductDetail&product_id='+gSelProduct.attr('productId')
+				});
+				
+				switchTo('editProduct');
+				e.stopPropagation();
+				
 			});
 
 		
-		
-	
-		/**
-		 *	provider SEARCH functionality 
-		 */
-		$("#search").keyup(function(e){
-					var minLength = 3; 						//search with min of X characters
-					var searchStr = $("#search").val(); 
-					
-					if (searchStr.length >= minLength){
-						
-						$('.loadAnimShop').show();
-						$('#tbl_providers tbody').xml2html("reload",{
-							params: 'oper=getShopProducts&like='+searchStr+'&date=1234-01-01',
-							complete : function(rowCount){
-								if (rowCount == 0){
-									$('#searchTips').show();
-								}
-								$('.loadAnimShop').hide();
-							}						
-						});	
-					} else {					 
-						$('#product_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
-						
-					}
-			e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
-		}); //end autocomplete
 
+		//load product for editing
+		$('#tbl_product_edit tbody').xml2html('init',{
+			url : 'php/ctrl/ShopAndOrder.php',
+			loadOnInit:false,
+			rowComplete : function (rowIndex, row){
+				setCheckBoxes('#frm_product_edit');
+				populateSelect(gProductSelects,'#tbl_product_edit');
+			}
 
-		
-
-			
+		});
 
 
 
 
 
+		/*****************************
+		 *
+		 *	GLOBAL (UTIL) FUNCTIONS
+		 *
+		 ****************************/
 		function switchTo(section){
 
 
 			switch(section){
 
 				case 'overviewProvider':
-					$('.pgProductListing, .pgProviderEdit, .pgProviderNew').hide();
+					$('.pgProductListing, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 					if (gTransaction) { //if provider has been edited/new reload listing
 						$('#tbl_providers tbody').xml2html("reload"); 
 					}
@@ -472,23 +500,29 @@
 
 						$('.setProviderName').html(gSelProvider.children().eq(2).text());
 					
-						$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew').hide();
+						$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 						$('.pgProductListing').fadeIn(1000);
 					}
 					break;
 
+					
 				case 'editProvider':
 					$('.setProviderName').html(gSelProvider.children().eq(2).text());
-					$('.pgProductListing, .pgProviderOverview, .pgProviderNew').hide();
+					$('.pgProviderOverview, .pgProductListing, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 					$('.pgProviderEdit').fadeIn(1000);
 					
 					break;
 
 				case 'newProvider':
-					$('.pgProductListing, .pgProviderOverview, .pgProviderEdit').hide();
+					$('.pgProviderOverview, .pgProductListing, .pgProviderEdit, .pgProductEdit, .pgProductNew').hide();
 					$('.pgProviderNew').fadeIn(1000);
 					
 					break;
+
+
+				case 'editProduct':
+					$('.pgProviderOverview, .pgProductListing, .pgProviderEdit, .pgProviderEdit, .pgProductNew').hide();
+					$('.pgProductEdit').fadeIn(1000);
 					
 					
 					
@@ -610,7 +644,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr id="{id}" productId="{id}">
+								<tr id="{id}" class="clickable" productId="{id}">
 									<td><input type="checkbox" name="bulkAction"/></td>
 									<td>{id}</td>
 									<td>{name}</td>
@@ -636,36 +670,37 @@
 				 -->
 				 <div class="pgProductEdit ui-widget">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header">Edit <span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
 						<form id="frm_product_edit">
-						<table id="tbl_product_edit" class="tblListingDefault">
+						<table id="tbl_product_edit" class="tblListingBorder">
+							  <tbody>
 							  <tr>
-							    <td>Provider</td>
-							    <td colspan="3"><select></select></td>
-							  </tr>
-							  <tr>
-							    <td><label for="product_name">Name</label></td>
-							    <td><input type="text" name="product_name" id="product_name" tabindex="1" /></td>
-							    <td><label for="responsible_uf_id">Responsible UF id</label></td>
-							    <td><select id="responsible_uf_id" tabindex="2"></select></td>
+							    <td><label for="name">Name</label></td>
+							    <td><input type="text" name="name" value="{name}" tabindex="1" class="ui-widget-content ui-corner-all inputTxtLarge" /></td>
+							    <td><label for="responsible_uf_id"> Responsible household</label></td>
+							    <td>
+							    	<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
+							    	<span class="textAlignLeft sResponsibleUfId"></span></td>
 							  </tr>
 							  <tr>
 							    <td><label for="description">Description</label></td>
-							    <td colspan="3">
-							      <textarea name="description" id="description" cols="45" rows="2" tabindex="3"></textarea>
-							 </td>
+							    <td>
+							      <textarea class="ui-widget-content ui-corner-all textareaLarge" name="description">{description}</textarea>
+							 	</td>
+							 	<td></td>
+							 	<td></td>
 							  </tr>
 							  <tr>
 							    <td>Web page</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3"><input type="text" name="description_url" value="{description_url}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
-							    <td><label for="name3">Barcode</label></td>
-							    <td colspan="3">&nbsp;</td>
+							    <td><label for="barcode">Barcode</label></td>
+							    <td colspan="3"><input type="text" name="barcode" value="{barcode}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
 							    <td>Active</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3"><input type="checkbox" name="active" value="{active}"/></td>
 							  </tr>
 							  <tr>
 							    <td>&nbsp;</td>
@@ -673,23 +708,31 @@
 							  </tr>
 							  <tr>
 							    <td>Product type</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3">
+							    	<input type="hidden" name="orderable_type_id" value="{orderable_type_id}"/>
+							    	<span class="textAlignLeft sOrderableTypeId"></span></td>
 							  </tr>
 							  <tr>
 							    <td>Product category</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3">
+							    	<input type="hidden" name="category_id" value="{category_id}"/>
+							    	<span class="textAlignLeft sCategoryId"></span></td>
 							  </tr>
 							  <tr>
 							    <td>Order units</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3">
+							    	<input type="hidden" name="unit_measure_order_id" value="{unit_measure_order_id}"/>
+							    	<span class="textAlignLeft sUnitMeasureOrderId"></span></td>
 							  </tr>
 							  <tr>
 							    <td>Purchase units</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3">
+							    	<input type="hidden" name="unit_measure_shop_id" value="{unit_measure_shop_id}"/>
+							    	<span class="textAlignLeft sUnitMeasureShopId"></span></td>
 							  </tr>
 							  <tr>
 							    <td>Unit Price neto</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3"><input type="text" name="unit_price" value="{unit_price}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
 							    <td>&nbsp;</td>
@@ -697,9 +740,16 @@
 							  </tr>
 							  <tr>
 							    <td>Iva</td>
-							    <td>&nbsp;</td>
-							    <td>rev tax</td>
-							    <td>&nbsp;</td>
+							    <td>
+							    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
+							    	<span class="textAlignLeft sIvaPercentId"></span></td>
+							  </tr>
+							  <tr>
+							  <td>rev tax</td>
+							    <td>
+							    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
+							    	<span class="textAlignLeft sRevTaxTypeId"></span></td>
+							  
 							  </tr>
 							  <tr>
 							    <td>&nbsp;</td>
@@ -707,24 +757,67 @@
 							  </tr>
 							  <tr>
 							    <td>Min stock</td>
-							    <td>&nbsp;</td>
+							    <td><input type="text" name="{stock_min}" value="{stock_min}" class="ui-widget-content ui-corner-all" /></td>
 							    <td>&nbsp;</td>
 							    <td>&nbsp;</td>
 							  </tr>
 							  <tr>
 							    <td>Min order amount</td>
-							    <td colspan="3">&nbsp;</td>
+							    <td colspan="3"><input type="text" name="order_min_quantity" value="{order_min_quantity}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-							</table>
+							  </tbody>
+							  <tfoot>
+								<tr>
+									<td colspan="2"></td>
+									
+									<td colspan="2">
+										<p class="floatRight">
+											<button class="btn_cancel edit_product"><?php echo $Text['btn_cancel']; ?></button>
+											&nbsp;&nbsp;
+											<button class="btn_save_provider edit_product"><?php echo $Text['btn_save'];?></button>
+										</p>
+									</td>
+								</tr>
+							</tfoot>
 						</table>
 						</form>
-					</di
+					</div>	
+				</div>
 				 
 				 
+				<!-- 
+							PRODUCT NEW
+							
+				 -->
+				 <div class="pgProductNew ui-widget hidden">
+					<div class="ui-widget-content ui-corner-all">
+						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<form id="frm_product_new">
+						<table id="tbl_product_new" class="tblListingDefault" border="1">
+							  
+							  <tfoot>
+								<tr>
+									<td colspan="2"></td>
+									
+									<td colspan="2">
+										<p class="floatRight">
+											<button class="btn_cancel new_product"><?php echo $Text['btn_cancel']; ?></button>
+											&nbsp;&nbsp;
+											<button class="btn_save_provider new_product"><?php echo $Text['btn_save'];?></button>
+										</p>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+						</form>
+					</div>	
+				</div>
+				 
+				
 				
 				
 				<!-- 
@@ -735,7 +828,6 @@
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_edit">
-						
 						<table id="tbl_provider_edit" class="tblForms">
 						<tbody>
 						<tr providerId="{id}" responsibleUfId="{responsible_uf_id}">
@@ -795,7 +887,10 @@
 						
 						<tr>
 							<td><label for="responsible_uf_id">&nbsp; <?php echo $Text['responsible_uf']; ?></label></td>
-							<td><span class="textAlignLeft responsibleUfSelect">{responsible_uf_id}</span></td>
+							<td>
+								<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}" />
+								<span class="textAlignLeft sResponsibleUfId"></span>
+							</td>
 							<td></td>
 							<td></td>						
 						</tr>
@@ -821,9 +916,6 @@
 							<td></td>
 							<td></td>
 						</tr>
-						
-						
-						
 						</tbody>
 						<tfoot>
 						<tr>
@@ -854,9 +946,9 @@
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_new">
 						<table id="tbl_provider_new" class="tblForms">
-						
-						
-						
+							<tbody>
+							
+							</tbody>
 							<tfoot>
 							<tr>
 								<td colspan="2"></td>

@@ -84,7 +84,6 @@ $(function(){
 		checkSelect : function(input, defaultValue){
 			var selval = input.val();
 			if (selval == defaultValue){
-				
 				return false; 
 			} else {
 				return true; 
@@ -234,6 +233,7 @@ $(function(){
 				title : '',
 				width: 400,
 				type: "default", 
+				autoclose : 0,
 				buttons :  [
 						     {
 							    	icons : { primary : "ui-icon-check" }, //does not work!
@@ -289,6 +289,12 @@ $(function(){
 									width:settings.width,
 									buttons : settings.buttons
 							}).dialog("open");
+			
+			if (settings.autoclose > 0){
+				setTimeout(function(){
+					$("#aixada_msg").dialog('close');
+				}, settings.autoclose)
+			}
 			
 
 		}, 
