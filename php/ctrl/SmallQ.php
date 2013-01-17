@@ -56,7 +56,17 @@ try{
 			$mpdf=new mPDF(); 
 			$mpdf->WriteHTML(get_param('htmlStr'));
 			$defaultFileName = $Text['coop_name'].date('Y-m-d', strtotime('Today')).'.pdf';
-			$mpdf->Output(get_param('fileName', $defaultFileName),'D');
+			$outputFormat = get_param('outParam','D'); 
+			// 'F' writes a file into local_config/reports and sends back the name ; 
+			//'D' sends back binary pdf and forces download
+			if ( $outputFormat == 'F'){
+				$fileName = __ROOT__. 'local_config/reports/'.get_param('fileName', $defaultFileName).'.pdf';
+			} else {
+				$fileName = get_param('fileName', $defaultFileName).'.pdf';
+				
+			}
+			$mpdf->Output($fileName,$outputFormat);
+			echo $fileName;
 			exit; 
 
     default:

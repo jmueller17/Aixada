@@ -401,6 +401,7 @@ $Text['msg_err_usershort'] = "El nom d'usuari és massa curt. Ha de tindre un m�
 $Text['msg_err_userexists'] = "El nom d'usuari ja està agafat. Trieu-ne un altre.";
 $Text['msg_err_passshort'] = "La contrasenya és massa curta. Ha de tindre entre 4 i 15 caràcters";
 $Text['msg_err_notempty'] = " no pot estar buit!"; 
+$Text['msg_err_namelength'] = "El nom i cognom no poden estar buit i no poden tener mes de 255 caràcters!"; 
 $Text['msg_err_only_num'] = " només accepta xifres i no pot estar buit!"; 
 $Text['msg_err_email'] = "El format del correu-e no és correcte. Ha de ser del tipus nom@domini.com o semblant a això.";
 //$Text['msg_err_select_uf'] = "Per assignar un membre nou a una UF primer heu de seleccionar la UF fent-hi clic! Si voleu crear una UF nova, feu-ho fent clic en + Nova UF.";
@@ -798,4 +799,8 @@ $Text['print_new_win'] = "Nou finestre";
 $Text['print_pdf'] = "Descarregar pdf";
 $Text['msg_incident_emailed'] = "L'incident s'ha enviat correctament!";
 $Text['upcoming_orders'] = "Pròxims comandes";
+
+$Text['msg_confirm_del_mem'] = "Estas segur de eliminar aquet usuari de la base de dades??";
+$Text['btn_del'] = "Esborar";
+
 

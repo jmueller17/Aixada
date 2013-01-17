@@ -54,11 +54,8 @@ $(function(){
 		checkFormLength : function (input, min, max, callbackfn) {
 			if ( input.val().length > max || input.val().length < min ) {
 				input.addClass( "ui-state-error" );
-				//$.updateTips(where,'error', msg);
-				//callbackfn.call(this, false);
 				return false; 
 			} else {
-				//callbackfn.call(this, true);
 				return true; 
 			}
 		},
@@ -66,7 +63,6 @@ $(function(){
 		checkRegexp : function ( o, regexp, n ) {
 			if ( !( regexp.test( o.val() ) ) ) {
 				o.addClass( "ui-state-error" );
-				//$.updateTips($('#registerMsg'), 'error', n );
 				return false;
 			} else {
 				return true;
