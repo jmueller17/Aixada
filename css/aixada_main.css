@@ -147,7 +147,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-title-with-icon {margin-left:100px;}
 
 .aix-layout-widget-left-col		{margin-right:20px; padding-bottom:2px;}
-.aix-layout-widget-right-col		{margin-left:20px; padding-bottom:2px;}
+.aix-layout-widget-right-col	{margin-left:20px; padding-bottom:2px;}
 .aix-layout-widget-center-col	{margin:0px 5%; padding-bottom:2px;}
 
 .aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
@@ -309,6 +309,7 @@ div#colActionIcons  		{width:280px; padding:4px;}
 h3#orderInfoDate			{font-size:1.5em;}
 .btn_right					{margin-right:-2em; margin-left:4px; float:right;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
+.btn_back					{vertical-align:middle; margin-right:20px; margin-top:1em;}
 .tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
 td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
 td.revised	{background:#D1F3D1;}

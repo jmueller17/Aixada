@@ -81,13 +81,16 @@ $(function(){
 		},
 		
 		//checks if the given select field has something other than the default value selected
-		checkSelect : function(input, defaultValue){
+		checkSelect : function(input, defaultValues){
 			var selval = input.val();
-			if (selval == defaultValue){
-				return false; 
-			} else {
-				return true; 
-			} 
+			var ok = true; 
+			for (var i=0; i<defaultValues.length; i++){
+				if (selval == defaultValues[i]){
+					ok = false;
+					break;
+				}
+			}
+			return ok; 
 		},
 		
 		//checks if input is numeric and replaces "," with decimal "." and rounds to fixed. 

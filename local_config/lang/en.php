@@ -78,19 +78,16 @@ $Text['head_ti_cashbox'] = "Cashbox control";
 
 
 
+
+
 /**
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "De-/activate products for ordering";
-//$Text['ti_mng_arrived_products'] = "The following products have arrived on ";
 $Text['ti_mng_activate_roles'] = "Manage roles of user ";
 $Text['ti_mng_activate_users'] = "Activate users for ";
-//$Text['ti_mng_move_orders'] = "Move orders";
 $Text['ti_mng_activate_preorders'] = "Convert preorder to order";
 $Text['ti_mng_members'] = "Manage member";
-//$Text['ti_mng_ufs'] = "Manage households";
-//$Text['ti_mng_dates'] = "De-/activate products for ordering";	 /*delme*/
-//$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates"; /*delme*/
 $Text['ti_mng_db'] = "Backup database"; 
 $Text['ti_order'] = "Place your order for ";
 $Text['ti_shop'] = "Buy stuff ";
@@ -156,7 +153,7 @@ $Text['city'] = "City";
 $Text['phone1'] = "Phone1";
 $Text['phone2'] = "Phone2";
 $Text['email'] = "Email";
-$Text['web'] = "URLs";
+$Text['web'] = "Web";
 $Text['last_logon'] = "Last seen";
 $Text['created'] = "Created on";
 $Text['active'] = "Active";
@@ -472,12 +469,12 @@ $Text['description'] = 'Description';
 $Text['barcode'] = 'Barcode';
 $Text['orderable_type'] = 'Product type';
 $Text['category'] = 'Category';
-$Text['rev_tax_type'] = 'Type of Revolutionary Tax';
+$Text['rev_tax_type'] = 'Revolutionary Tax';
 $Text['unit_price'] = 'Unit Price';
 $Text['iva_percent'] = 'VAT in Percent';
 $Text['unit_measure_order'] = 'Ordered in which units';
 $Text['unit_measure_shop'] = 'Sold in which units';
-$Text['stock_min'] = 'Minimal amount to have in stock';
+$Text['stock_min'] = 'Alert when stock below';
 $Text['stock_actual'] = 'Current amount in stock';
 $Text['delta_stock'] = 'Difference to minimal stock';
 $Text['description_url'] = 'URL of description';
@@ -807,9 +804,22 @@ $Text['btn_del'] = "Delete";
 
 
 $Text['btn_new_provider'] = "New provider";
+$Text['btn_new_product'] = "Add product";
 $Text['orderable'] = "Orderable"; //product type
-$Text['msg_err_providershort']  = "The provider name is too short. Should be between 2 and 150 characters long.";
-$Text['msg_err_select_responsibleuf'] = "You have to indicate the responsible household for this provider.";
+$Text['msg_err_providershort']  = "The provider cannot be empty and should be at least 2 characters long.";
+$Text['msg_err_productshort']  = "The product name cannot be empty and should be at least 2 characters long.";
+$Text['msg_err_select_responsibleuf'] = "Who is in charge? Please select a responsible household.";
+$Text['msg_err_product_category'] = "Please select a product category.";
+$Text['msg_err_order_unit'] = "Please select a order unit measure.";
+$Text['msg_err_shop_unit'] = "Please select a shop unit measure.";
+$Text['click_row_edit'] = "Click to edit!";
+$Text['click_to_list'] = "Click to list products!";
+$Text['head_ti_provider'] = "Manage provider & products"; 
+$Text['edit'] = "Edit";
+$Text['ti_create_provider'] = "Create new provider";
+$Text['ti_add_product'] = "Add product";
+$Text['order_min'] = "Min. order amount";
+
 
 
 
