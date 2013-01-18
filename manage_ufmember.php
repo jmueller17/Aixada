@@ -476,7 +476,7 @@
 									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
 										$this.dialog("close");
 										$.showMsg({
-												msg: "Cannot delete this member because db entries depend on it. The error thrown was: " + XMLHttpRequest.responseText,
+												msg: "<?=$Text['msg_err_del_member'];?>" + XMLHttpRequest.responseText,
 												type: 'error'});
 
 									}

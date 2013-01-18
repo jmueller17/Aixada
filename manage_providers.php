@@ -192,6 +192,52 @@
 				return false; 
 		});
 
+		//delete provider
+		$('.btn_del_provider')
+			.live('click', function(e){
+
+				var providerId = $(this).parents('tr').attr('providerId');
+					
+				$.showMsg({
+					msg: "<?php echo $Text['msg_confirm_del_provider']; ?>",
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){
+							$this = $(this);
+							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
+
+							$.ajax({
+							   	url: urlStr,
+							   	type: 'POST',
+							   	success: function(msg){
+									//reload all members listing on overiew. 
+							   		$('#tbl_providers tbody').xml2html('reload');
+							   		$this.dialog( "close" ); 
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+										$this.dialog("close");
+										$.showMsg({
+												msg: "<?=$Text['msg_err_del_provider']; ?>" + XMLHttpRequest.responseText,
+												type: 'error'});
+
+									}
+								   	
+	
+							   	}
+							}); //end ajax
+													
+							
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+
+				e.stopPropagation();
+				
+			})
+
 			
 
 		/**
@@ -311,6 +357,11 @@
 				$('.loadSpinner').hide();
 				$('tr:even', this).addClass('rowHighlight');
 				
+				if (gSelProduct != null && gSelProduct.attr('productId') > 0){
+					gSelProduct.addClass('ui-state-highlight');
+				}
+		
+				
 			}						
 		});			
 
@@ -406,6 +457,53 @@
 				switchTo('overviewProducts');
 				return false;
 		});
+
+		//delete prodcut
+		$('.btn_del_product')
+			.live('click', function(e){
+
+				var productId = $(this).parents('tr').attr('productId');
+					
+				$.showMsg({
+					msg: "<?php echo $Text['msg_confirm_del_product']; ?>",
+					buttons: {
+						"<?=$Text['btn_ok'];?>":function(){
+							$this = $(this);
+							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_product&id='+productId; 
+
+							$.ajax({
+							   	url: urlStr,
+							   	type: 'POST',
+							   	success: function(msg){
+									//reload all members listing on overiew. 
+							   		$('#tbl_products tbody').xml2html('reload');
+							   		$this.dialog( "close" ); 
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+										$this.dialog("close");
+										$.showMsg({
+												msg: "<?=$Text['msg_err_del_product']; ?>" + XMLHttpRequest.responseText,
+												type: 'error'});
+
+									}
+								   	
+	
+							   	}
+							}); //end ajax
+													
+							
+						},
+						"<?=$Text['btn_cancel'];?>" : function(){
+							$( this ).dialog( "close" );
+						}
+					},
+					type: 'confirm'});
+
+				e.stopPropagation();
+				
+			})
+		
 
 
 
@@ -549,7 +647,7 @@
 					
 						$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 						$('.pgProductOverview').fadeIn(1000);
-
+							
 						gProductListReload = false; 
 					}
 					break;
@@ -711,7 +809,10 @@
 				$(this).removeClass('ui-state-error');
 			});
 		
-		
+		$('input[name=bulkAction]')
+			.live('click', function(e){
+				e.stopPropagation();
+			})		
 
 		
 		//overview buttons
@@ -752,12 +853,12 @@
 					<div id="titleLeftCol50">
 						<button id="btn_overview_provider" class="floatLeft btn_back pgProductOverview pgProviderEdit pgProviderNew"><?php echo $Text['overview'];?></button>
 						<button id="btn_overview_product" class="floatLeft btn_back pgProductEdit pgProductNew"><?php echo $Text['overview'];?></button>
-				    	<h1 class="pgProviderOverview"><?php echo $Text['head_ti_provider']; ?></h1>
+				    	<h1 class="pgProviderOverview"> <?php echo $Text['head_ti_provider']; ?></h1>
 				    	<h1 class="pgProductOverview setProviderName"></h1>
-				    	<h1 class="pgProviderEdit"><?php echo $Text['edit']; ?> - <span class="setProviderName"></span></h1>
-				    	<h1 class="pgProviderNew"><?php echo $Text['ti_create_provider'] ; ?></h1>
-				    	<h1 class="pgProductEdit"><?php echo $Text['edit']; ?> - <span class="setProviderName"></span> - <span class="setProductName"></span></h1>
-				    	<h1 class="pgProductNew"><span class="setProviderName"></span> - <?php echo $Text['ti_add_product']; ?></h1>
+				    	<h1 class="pgProviderEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="setProviderName"></span></h1>
+				    	<h1 class="pgProviderNew">&nbsp;&nbsp;<?php echo $Text['ti_create_provider'] ; ?></h1>
+				    	<h1 class="pgProductEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="setProviderName"></span> - <span class="setProductName"></span></h1>
+				    	<h1 class="pgProductNew">&nbsp;&nbsp;<span class="setProviderName"></span> - <?php echo $Text['ti_add_product']; ?></h1>
 		    		</div>
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
@@ -790,15 +891,15 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="clickable" providerId="{id}" title="<?php echo $Text['click_to_list']; ?>">
+								<tr class="clickable" providerId="{id}" >
 									<td><input type="checkbox" name="bulkAction"/></td>
 									<td><p class="textAlignRight">{id}</p></td>
-									<td>{name}</td>
+									<td title="<?php echo $Text['click_to_list']; ?>">{name}</td>
 									<td>{phone1} / {phone2}</p></td>
 									<td>{email}</td>
 									<td><p class="providerActiveStatus iconContainer">{active}</p></td>
 									<td><?php echo $Text['uf_short'];?>{responsible_uf_id} {responsible_uf_name}</td>
-									<td><a href="javascript:void(null)" class="btn_edit_provider"><?php echo $Text['edit']; ?></a></td>
+									<td><a href="javascript:void(null)" class="btn_edit_provider"><?php echo $Text['edit']; ?></a> | <a href="javascript:void(null)" class="btn_del_provider"><?php echo $Text['btn_del']; ?></a></td>
 								</tr>						
 							</tbody>
 							<tfoot>
@@ -831,14 +932,15 @@
 									<th><?php echo $Text['iva']; ?></th>
 									<th><?php echo $Text['unit'];?></th>
 									<th><?php echo $Text['price'];?></th>
-									<th>stock</th>
+									<th><?php echo $Text['stock'];?></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr id="{id}" class="clickable" productId="{id}" title="<?php echo $Text['click_row_edit']; ?>">
+								<tr id="{id}" class="clickable" productId="{id}">
 									<td><input type="checkbox" name="bulkAction"/></td>
 									<td>{id}</td>
-									<td>{name}</td>
+									<td title="<?php echo $Text['click_row_edit']; ?>">{name}</td>
 									<td>{orderable_type_id}</td>
 									<td><p class="textAlignCenter iconContainer">{active}</p></td>
 									<td>{rev_tax_percent}%</td>
@@ -846,6 +948,7 @@
 									<td>{unit}</td>	
 									<td>{unit_price}</td>	
 									<td><p class="formatQty">{stock_actual}</p></td>
+									<td><a href="javascript:void(null)" class="btn_del_product"><?php echo $Text['btn_del'];?></a></td>
 								</tr>						
 							</tbody>
 						</table>

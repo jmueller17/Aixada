@@ -819,9 +819,11 @@ $Text['edit'] = "Edit";
 $Text['ti_create_provider'] = "Create new provider";
 $Text['ti_add_product'] = "Add product";
 $Text['order_min'] = "Min. order amount";
-
-
-
+$Text['msg_confirm_del_product'] = "Are you sure to delete this product?"; 
+$Text['msg_err_del_product'] = "This product cannot be deleted since other database entries depend on it. Error thrown: ";
+$Text['msg_err_del_member'] = "This user cannot be delete because other database entries reference it. <br/> Error thrown: ";
+$Text['msg_confirm_del_provider'] = "Are you sure to delete this provider?";
+$Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting its products first!";
 
 //$Text[''] = ""; 
 
