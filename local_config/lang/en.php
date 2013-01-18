@@ -824,6 +824,7 @@ $Text['msg_err_del_product'] = "This product cannot be deleted since other datab
 $Text['msg_err_del_member'] = "This user cannot be delete because other database entries reference it. <br/> Error thrown: ";
 $Text['msg_confirm_del_provider'] = "Are you sure to delete this provider?";
 $Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting its products first!";
+$Text['price_net'] = "Price netto";
 
 //$Text[''] = ""; 
 

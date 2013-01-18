@@ -88,7 +88,7 @@
 			},
 			complete : function(rowCount){
 				$('.loadSpinner').hide();
-				$('tr:even', this).addClass('rowHighlight');
+				//$('tr:even', this).addClass('rowHighlight');
 				$('p.providerActiveStatus').each(function(){
 					if ($(this).text() == "1"){
 						$(this).html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all')
@@ -352,10 +352,21 @@
 					tds.eq(4).children('p:first').html('<span class="ui-icon ui-icon-closethick"></span>').addClass('noRed ui-corner-all');
 				}
 
+				//calculate netto price
+				var iva = new Number(tds.eq(7).text());
+				var rev = new Number(tds.eq(6).children(':first').text());
+				var price = new Number(tds.eq(8).children(':first').text());
+
+				//alert(iva + " " + rev + " " + price);
+				
+				var tax = 1 + (iva+rev)/100; 
+				var net = price / tax;
+				tds.eq(5).children(':first').text(net.toFixed(2)); 
+
 			},
 			complete : function (rowCount){
 				$('.loadSpinner').hide();
-				$('tr:even', this).addClass('rowHighlight');
+				//$('tr:even', this).addClass('rowHighlight');
 				
 				if (gSelProduct != null && gSelProduct.attr('productId') > 0){
 					gSelProduct.addClass('ui-state-highlight');
@@ -885,7 +896,7 @@
 									<th><?php echo $Text['provider_name']; ?></th>						
 									<th><?php echo $Text['phone_pl']; ?></th>
 									<th><?php echo $Text['email']; ?></th>
-									<th><?php echo $Text['active']; ?></th>
+									<th class="textAlignLeft"><?php echo $Text['active']; ?></th>
 									<th><?php echo $Text['responsible_uf'];?></th>
 									<th></th>
 								</tr>
@@ -927,11 +938,16 @@
 									<th><?php echo $Text['id'];?></th>
 									<th><?php echo $Text['name_item'];?></th>						
 									<th><?php echo $Text['orderable_type']; ?></th>
-									<th><p class="textAlignCenter"><?php echo $Text['active']; ?></p></th>
+									<th><?php echo $Text['active']; ?></th>
+									
+									<th><p class="textAlignRight"><?php echo $Text['price_net'];?> &nbsp;</p></th>
 									<th><?php echo $Text['revtax_abbrev']; ?></th>
 									<th><?php echo $Text['iva']; ?></th>
+									
+									
+									<th><p class="textAlignRight"><?php echo $Text['price'];?> &bsp;</p></th>
 									<th><?php echo $Text['unit'];?></th>
-									<th><?php echo $Text['price'];?></th>
+									
 									<th><?php echo $Text['stock'];?></th>
 									<th></th>
 								</tr>
@@ -943,10 +959,11 @@
 									<td title="<?php echo $Text['click_row_edit']; ?>">{name}</td>
 									<td>{orderable_type_id}</td>
 									<td><p class="textAlignCenter iconContainer">{active}</p></td>
-									<td>{rev_tax_percent}%</td>
-									<td>{iva_percent}%</td>
+									<td><p class="textAlignRight"></p> </td>
+									<td><p class="textAlignCenter">{rev_tax_percent}</p></td>
+									<td>{iva_percent}</td>
+									<td><p class="textAlignRight">{unit_price} </p></td>
 									<td>{unit}</td>	
-									<td>{unit_price}</td>	
 									<td><p class="formatQty">{stock_actual}</p></td>
 									<td><a href="javascript:void(null)" class="btn_del_product"><?php echo $Text['btn_del'];?></a></td>
 								</tr>						
@@ -967,6 +984,7 @@
 						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
 						<form id="frm_product_edit">
 						<table id="tbl_product_edit" class="tblForms">
+							  <thead><tr><td colspan="4">&nbsp;</td></tr></thead>
 							  <tbody>
 							  <tr productId="{id}" responsibleUfId="{responsible_uf_id}">
 									<td><label for="product_id"><?php echo $Text['id']; ?></label></td>
@@ -1104,6 +1122,7 @@
 						<form id="frm_product_new">
 						<input type="hidden" name="provider_id" value=""/>
 						<table id="tbl_product_new" class="tblForms">
+							<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
 							  <tbody>
 							  </tbody>
 							  <tfoot>
@@ -1137,6 +1156,7 @@
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_edit">
 						<table id="tbl_provider_edit" class="tblForms">
+						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
 						<tbody>
 						<tr providerId="{id}" responsibleUfId="{responsible_uf_id}">
 							<td><label for="provider_id"><?php echo $Text['id']; ?></label></td>
@@ -1254,6 +1274,7 @@
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
 						<form id="frm_provider_new">
 						<table id="tbl_provider_new" class="tblForms">
+						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
 							<tbody>
 							
 							</tbody>
