@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " /*.  $Text['head_ti_'.strtolower($_REQUEST['what'])]*/; ?></title>
-	
+
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
@@ -12,48 +12,48 @@
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
 
-	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
 		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	    	
+	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_shop_and_order.min.js"></script>
     <?php }?>
-   		
+
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
- 		
- 	
+
+
 	<script type="text/javascript">
-	
+
 	$(function(){
 
-				
-		
+
+
 	//decide what to do in which section
 	var what = $.getUrlVar('what');
 
 
-	//detect form submit and prevent page navigation; we use ajax. 
-	$('form').submit(function() { 
-		// submit the form 
-		$(this).ajaxSubmit(); 
+	//detect form submit and prevent page navigation; we use ajax.
+	$('form').submit(function() {
+		// submit the form
+		$(this).ajaxSubmit();
     	// return false to prevent normal browser submit
-		return false; 
-	});			
+		return false;
+	});
 
 	$("#tabs").tabs();
 
 	//layer inform that provider has passed closing date for order
-	var counterClosed = 0; 
+	var counterClosed = 0;
 	$("#providerClosedStatus").hide();
 
 
-	//init cart 
+	//init cart
 	$('#cartLayer').aixadacart("init",{
 		saveCartURL : 'php/ctrl/ShopAndOrder.php?what='+what+'&oper=commit',
 		loadCartURL : 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart',
@@ -64,8 +64,8 @@
 		submitComplete : updateCartLabel,
 		submitError : function (err_msg){
 
-			//foreign key exception; could be that orderable products have been changed while ordering and 
-			//the cart needs to be reloaded. 
+			//foreign key exception; could be that orderable products have been changed while ordering and
+			//the cart needs to be reloaded.
 			if (err_msg.indexOf("ERROR 20") != -1){
 
 				$.showMsg({
@@ -75,26 +75,26 @@
 				//remove items from cart
 				$('#cartLayer').aixadacart('resetCart');
 
-				//refresh page, including cart. 
+				//refresh page, including cart.
 				refreshSelects($.getSelectedDate('#datepicker'));
 
 			//another serious error, now for real
 			} else {
-				
+
 				$.showMsg({
 					msg:err_msg + " Your cart will be reloaded.",
 					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
+						"<?=$Text['btn_ok'];?>":function(){
 
 							$('#cartLayer').aixadacart('resetCart');
-							
+
 							refreshSelects($.getSelectedDate('#datepicker'));
-	
+
 							$(this).dialog("close");
-						}	
+						}
 					},
 					type: 'error'});
-	
+
 			}
 		}
 	});
@@ -108,8 +108,8 @@
 			params : 'oper=getPreorderableProducts',
 			loadOnInit : true
 	});
-	
-	
+
+
 	/**
 	 * build Provider SELECT
 	 */
@@ -120,7 +120,7 @@
 					$('#product_list_provider tbody').xml2html('removeAll');	//empty the list
 					$('#providerClosedStatus').hide();
 					counterClosed = 0;
-					
+
 					if (id < 0) { return true;}
 
 					$('.loadSpinner').show();
@@ -141,9 +141,9 @@
 								$('#providerClosedStatus').show();
 							}
 
-							
-						}						
-					});							
+
+						}
+					});
 	}); //end select change
 
 
@@ -155,10 +155,10 @@
 			loadOnInit: false
 		}).change(function(){
 					//get the id of the provider
-					var id = $("option:selected", this).val(); 
+					var id = $("option:selected", this).val();
 					$('#product_list_category tbody').xml2html('removeAll');
-					
-					if (id < 0) {return true;} 
+
+					if (id < 0) {return true;}
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
@@ -173,42 +173,42 @@
 									msg:"<?php echo $Text['msg_no_active_products'];?>",
 									type: 'info'});
 							}
-						}						
-					});							
+						}
+					});
 	}); //end select change
 
-	
+
 	/**
-	 *	product SEARCH functionality 
+	 *	product SEARCH functionality
 	 */
 	$("#search").keyup(function(e){
 				var minLength = 3; 						//search with min of X characters
-				var searchStr = $("#search").val(); 
-				
+				var searchStr = $("#search").val();
+
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
 						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
-						}, 
+						},
 						complete : function(rowCount){
 							$('.loadSpinner').hide();
-						}						
-					});	
-				} else {					 
-					$('#product_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;		
-					
+						}
+					});
+				} else {
+					$('#product_list_search tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;
+
 				}
-		e.preventDefault();						//prevent default event propagation. once the list is build, just stop here. 		
+		e.preventDefault();						//prevent default event propagation. once the list is build, just stop here.
 	}); //end autocomplete
 
 
-	
+
 	//dates available to make orders; start with dummy date
 	var availableDates = ["2011-00-00"];
 
-	
+
 	$("#datepicker").datepicker({
 				dateFormat 	: 'DD d M, yy',
 				showAnim	: '',
@@ -216,7 +216,7 @@
 					if (what == 'Order'){
 						var ymd = $.datepicker.formatDate('yy-mm-dd', date);
 						if ($.inArray(ymd, availableDates) == -1) {
-						    return [false,"","Unavailable"];			    
+						    return [false,"","Unavailable"];
 						} else {
 							  return [true, ""];
 						}
@@ -225,7 +225,7 @@
 					}
 				},
 				onSelect 	: function (dateText, instance){
-					refreshSelects($.getSelectedDate('#datepicker'));							
+					refreshSelects($.getSelectedDate('#datepicker'));
 				}//end select
 
 	}).show();//end date pick
@@ -234,7 +234,7 @@
    	/**
    	 *	init the datepicker
    	 */
-	if (what == "Shop") { 
+	if (what == "Shop") {
 		$('#tabs ul').children('li:gt(2)').hide(); 			//preorder tab is only available for ordering
 		$("#datepicker").hide();							//hide date input field for shop
 
@@ -242,27 +242,27 @@
 			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
 			$("#datepicker").datepicker("refresh");
 			refreshSelects(date[0]);
-		});	
+		});
 
 	} else {
-		
+
 		$.getAixadaDates('getAllOrderableDates', function (dates){
-			//if no dates are available, products have to be activated first!! 
+			//if no dates are available, products have to be activated first!!
 			if (dates.length == 0){
 				$.showMsg({
 					msg:"<?php echo $Text['msg_no_active_products'];?>",
 					type: 'error'});
-				return false; 
+				return false;
 			}
-		
+
 			availableDates = dates;
 			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', availableDates[0]));
 			$("#datepicker").datepicker("refresh");
 			refreshSelects(dates[0]);
 		});
 	}
-            
-		
+
+
 	/**
 	 *  show hide item list, cart or both
 	*/
@@ -274,21 +274,21 @@
 			var which = $("input[@name=viewCol]:checked").attr('id');
 
 			if (which == "view_list"){
-				$('#rightCol').hide();						
+				$('#rightCol').hide();
 				$('#leftCol').css('width', $('#stagewrap').innerWidth()).show();
 			} else if (which == "view_cart"){
-				$('#leftCol').hide();						
+				$('#leftCol').hide();
 				$('#rightCol').css('width', $('#stagewrap').innerWidth()).show();
 			} else {
 				$('#leftCol').css('width', leftColWidth).show();
-				$('#rightCol').css('width', rightColWidth).show();						
+				$('#rightCol').css('width', rightColWidth).show();
 			}
 		});
 
-			
+
 
 	/**
-	 *	product item info column. Constructs context menu for item 
+	 *	product item info column. Constructs context menu for item
 	 */
 	$(".rowProductInfo")
 		.live("mouseenter", function(){
@@ -296,7 +296,7 @@
 			if (!$(this).attr("hasMenu")){
 				//selected tab
 				var selTab = $("#tabs").tabs('option', 'selected')
-	
+
 				var itemInfo = '<ul>';
 				//only show stock if we buy; order has no stock
 				if (what == 'Shop') itemInfo += '<li><?=$Text["curStock"];?>: ' + $(this).attr("stock") + '</li>';
@@ -305,28 +305,28 @@
 				itemInfo += '<li>IVA: '+$(this).attr("iva_percent")+'%</li>';
 				itemInfo += '<li><?=$Text['revtax_abbrev'];?>: '+$(this).attr("rev_tax_percent")+'%</li>'
 				itemInfo += '</ul>';
-	
+
 				//init the context menu
 				$(this).menu({
-					content: itemInfo,	
+					content: itemInfo,
 					width: 280,
-					showSpeed: 50, 
+					showSpeed: 50,
 					flyOut: false
 				});
-				
-				$(this).attr("hasMenu", 1);			
+
+				$(this).attr("hasMenu", 1);
 			}
 		})
 		.live("mouseleave", function(){
 			$(this).removeClass('ui-state-hover');
 	});
-		
 
-	//attach event listeners for the product input fields; change of quantity will put the 
-	//item into the cart. 
+
+	//attach event listeners for the product input fields; change of quantity will put the
+	//item into the cart.
 	$('.product_list tbody')
 		.find("input")
-		.live("change", function (e){						
+		.live("change", function (e){
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
 			var isPreorder = $(this).parents("tr").attr('preorder')? true:false; 	//check if this is a preorder item
 
@@ -344,11 +344,11 @@
 					});
 				return false;
 			}
-			
+
 			//if quantity has changed, add it to the cart.
 			$('#cartLayer').aixadacart("addItem",{
 					id 				: $(row).attr("id"),
-					isPreorder 		: isPreorder, 
+					isPreorder 		: isPreorder,
 					provider_name 	: $("td.item_provider_name", row).text(),
 					name 			: $("td.item_name", row).text(),
 					price 			: parseFloat($("td.item_price", row).text()),
@@ -360,8 +360,8 @@
 
 			//sets nr of items in cart hide/view button
 			updateCartLabel();
-																
-	});//end event listener for product list 
+
+	});//end event listener for product list
 
 	//update the cart show/hide button
 	function updateCartLabel (){
@@ -370,11 +370,11 @@
     	var label = "<?=$Text['btn_view_cart'];?> ("+nItems+")";
 		$( "#view_cart" ).button( "option", "label",label);
 	}
-	
+
 
 	//if date gets changed, then selects need a refresh because providers available might change
 	function refreshSelects(dateText){
-		
+
 		$('#cartLayer').aixadacart('loadCart',{
 			loadCartURL		: 'php/ctrl/ShopAndOrder.php?oper=get'+what+'Cart&date='+dateText,
 			date 			: dateText
@@ -383,7 +383,7 @@
 		$("#providerSelect").xml2html("reload", {
 			params : 'oper=get'+what+'Providers&date='+dateText,
 			rowComplete : function(rowIndex, row){
-				//read here if provider's order is still open or not. 
+				//read here if provider's order is still open or not.
 
 			}
 		})
@@ -397,23 +397,23 @@
 		$('#product_list_search tbody').xml2html("removeAll");
 
 		$('#providerClosedStatus').hide();
-		counterClosed = 0; 
+		counterClosed = 0;
 
 	};
 
 
 	/**
-	 *	utility function to format product rows 
-	 */		
+	 *	utility function to format product rows
+	 */
 	function formatRow(row){
 
 		var days2Closing = $(row).attr("closingdate");
-		var id =  $(row).attr("id"); 
+		var id =  $(row).attr("id");
 		var qu = $("#cart_quantity_"+id).val();
 		qu = (qu > 0)? qu:0;
 		$("#quantity_"+id).val(qu);
 
-		
+
 		if (!days2Closing || days2Closing <0){
 			$(row).addClass('dim60');
 			$('td', row).addClass('ui-state-error');
@@ -422,8 +422,8 @@
 		}
 
 	}
-	
-	
+
+
 	/**
 	 *	show hide the datepicker
 	 */
@@ -433,9 +433,9 @@
 
 
 	//loading animation
-	$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+	$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif");
 	$('#leftCol .loadSpinner').hide();
-							
+
 	});  //close document ready
 </script>
 
@@ -447,13 +447,13 @@
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	
-	
+
+
 	<div id="stagewrap" class="ui-widget">
-	
+
 		<div id="titlewrap">
 			<div id="titleLeftCol">
-		    	<h1><?php if ($_REQUEST['what'] == 'Order') { 
+		    	<h1><?php if ($_REQUEST['what'] == 'Order') {
 		    					echo $Text['ti_order'];
 		    				} else if ($_REQUEST['what'] == 'Shop') {
 		    					echo $Text['ti_shop'];
@@ -483,22 +483,22 @@
 				<div class="wrapSelect">
 					<select id="providerSelect" class="longSelect">
                     	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    	<option value="{id}"> {name}</option>                     
+                    	<option value="{id}"> {name}</option>
 					</select>
 
 				</div>
-				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div> 
+				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div>
 				<div class="product_list_wrap">
 					<table id="product_list_provider" class="product_list" >
 						<thead>
 							<tr>
 								<th><?php echo $Text['id'];?></th>
 								<th><?php echo $Text['info'];?></th>
-								<th><?php echo $Text['name_item'];?></th>						
+								<th><?php echo $Text['name_item'];?></th>
 								<th><?php echo $Text['quantity'];?></th>
 								<th><?php echo $Text['unit'];?></th>
 								<th><?php echo $Text['price'];?></th>
-								
+
 							</tr>
 						</thead>
 						<tbody>
@@ -508,11 +508,11 @@
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name hidden">{provider_name}</td>
 								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>	
+								<td class="item_unit">{unit}</td>
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
+								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>						
+							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -522,7 +522,7 @@
 					<label for="categorySelect"></label>
 					<select id="categorySelect" class="longSelect">
 						<option value="-1" selected="selected"><?php echo $Text['sel_category']; ?></option>
-                    	<option value="{id}">{description}</option>                 	
+                    	<option value="{id}">{description}</option>
 					</select>
 				</div>
 				<div class="product_list_wrap">
@@ -546,11 +546,11 @@
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input class="ui-corner-all"  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>	
+								<td class="item_unit">{unit}</td>
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
+								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>						
+							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -582,18 +582,18 @@
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>	
+								<td class="item_unit">{unit}</td>
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
+								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>							
+							</tr>
 						</tbody>
 					</table>
 				</div>
 
 			</div>
 			<div id="tabs-4">
-				
+
 				<table id="product_list_preorder" class="product_list" >
 						<thead>
 							<tr>
@@ -614,24 +614,24 @@
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>	
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>	
+								<td class="item_unit">{unit}</td>
+								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
+								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>						
+							</tr>
 						</tbody>
 					</table>
-				
-				
+
+
 			</div>
 		</div><!-- end tabs -->
 		</div><!-- end left Col -->
-		
+
 		<!-- Shopping cart starts -->
-		<div id="rightCol" class="aix-layout-splitW40 floatLeft aix-layout-widget-right-col">	
+		<div id="rightCol" class="aix-layout-splitW40 floatLeft aix-layout-widget-right-col">
 			<div id="cartLayer"></div>
 		</div>
-		
+
 	</div>
 	<!-- end of stage wrap -->
 </div>
