@@ -1,18 +1,18 @@
 
 /***********************************************
- *	Aixada DB Structure 
+ *	Aixada DB Structure
  *
  **********************************************/
 
 /**
- *  If a table has two or more foreign keys that reference the same 
- *  external table, the field names should be of the form 
+ *  If a table has two or more foreign keys that reference the same
+ *  external table, the field names should be of the form
  *  {external table}_{external key name}_{internal name of the field}
- *  For example 
+ *  For example
  *  aixada_product.unit_measure_order_id,
  *  aixada_product.unit_measure_shop_id,
  *  aixada_uf_account.aixada_member_member,
- *  aixada_uf_account.aixada_member_operator 
+ *  aixada_uf_account.aixada_member_operator
  **/
 
 
@@ -23,7 +23,7 @@
 create table aixada_uf (
   id   	     		int				not null,
   name				varchar(255)    not null,
-  active     		tinyint 		default 1,   	
+  active     		tinyint 		default 1,
   created			timestamp 		default current_timestamp,
   mentor_uf         int             default null,
   primary key (id)
@@ -48,9 +48,9 @@ create table aixada_member (
   web				varchar(255) 	default null,
   picture           varchar(255)    default null,
   notes  	 		text 			default null,
-  active     	  	tinyint			default 1, 
+  active     	  	tinyint			default 1,
   participant		bool 			default true,
-  adult		        bool			default true, 
+  adult		        bool			default true,
   ts			  	timestamp not null default current_timestamp,
   primary key (id),
   foreign key (uf_id)  references aixada_uf(id)
@@ -70,10 +70,10 @@ create table aixada_provider (
   city				varchar(255) 	default null,
   phone1    	  	varchar(50) 	default null,
   phone2			varchar(50) 	default null,
-  fax	     	  	varchar(100) 	default null,	
+  fax	     	  	varchar(100) 	default null,
   email				varchar(100) 	default null,
   web				varchar(255) 	default null,
-  bank_name 		varchar(255) 	default null, 
+  bank_name 		varchar(255) 	default null,
   bank_account 		varchar(40) 	default null,
   picture 			varchar(255) 	default null,
   notes  			text 			default null,
@@ -98,7 +98,7 @@ create table aixada_user (
   password   			varchar(255) 	not null,
   email			 		varchar(100) 	not null,
   uf_id                 int,
-  member_id             int, 
+  member_id             int,
   provider_id           int,
   language              char(5)        default 'en',
   gui_theme	       		varchar(50)    default null,
@@ -108,7 +108,7 @@ create table aixada_user (
   primary key (id),
   foreign key (uf_id) references aixada_uf(id),
   foreign key (member_id) references aixada_member(id),
-  foreign key (provider_id) references aixada_provider(id)  
+  foreign key (provider_id) references aixada_provider(id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 
@@ -121,14 +121,14 @@ create table aixada_user_role (
   primary key (user_id, role),
   foreign key (user_id)	references aixada_user(id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
-  
+
 
 /**
  * different product categories
  **/
 create table aixada_product_category (
   id   				int				not null,
-  description		varchar(255) 	not null, 
+  description		varchar(255) 	not null,
   primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
@@ -138,7 +138,7 @@ create table aixada_product_category (
  **/
 create table aixada_orderable_type (
   id   				tinyint			not null auto_increment,
-  description		varchar(255) 	not null, 
+  description		varchar(255) 	not null,
   primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
@@ -163,15 +163,15 @@ create table aixada_rev_tax_type (
   rev_tax_percent	decimal(10,2),
   primary key (id)
 ) engine=InnoDB default character set utf8;
- 
+
 
 /**
  * iva types associated then to different products
  */
 create table aixada_iva_type (
   id   			     	smallint		not null auto_increment,
-  name                  varchar(255) 	not null, 
-  percent				decimal(10,2) 	not null, 
+  name                  varchar(255) 	not null,
+  percent				decimal(10,2) 	not null,
   description 		    varchar(100)	default null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
@@ -195,10 +195,10 @@ create table aixada_iva_type (
   unit_price       		decimal(10,2) 	default 0.0,
   unit_measure_order_id	tinyint			default 1,
   unit_measure_shop_id	tinyint			default 1,
-  stock_min    	      	decimal(10,4) 	default 0, 
-  stock_actual 	      	decimal(10,4) 	default 0, 
+  stock_min    	      	decimal(10,4) 	default 0,
+  stock_actual 	      	decimal(10,4) 	default 0,
   delta_stock           decimal(10,4)   default 0,
-  description_url 		varchar(255)	default null,	
+  description_url 		varchar(255)	default null,
   picture 				varchar(255) 	default null,
   ts			  		timestamp 		not null default current_timestamp,
   primary key (id),
@@ -218,7 +218,7 @@ create table aixada_iva_type (
 
 
 /**
- * products orderable for a given date	
+ * products orderable for a given date
  */
 create table aixada_product_orderable_for_date (
   id   	                int     	not null auto_increment,
@@ -229,8 +229,8 @@ create table aixada_product_orderable_for_date (
   			key (date_for_order),
   foreign 	key (product_id) references aixada_product(id),
   unique 	key (product_id, date_for_order)
-) engine=InnoDB default character set utf8;       
- 
+) engine=InnoDB default character set utf8;
+
 
 /**
  * aixada_order
@@ -239,11 +239,11 @@ create table aixada_order (
 	id 				int 			not null auto_increment,
 	provider_id		int				not null,
 	date_for_order	date			not null,
-	ts_sent_off		timestamp		default 0,	
+	ts_sent_off		timestamp		default 0,
 	date_received	date			default null,
 	date_for_shop	date			default null,
 	total			decimal(10,2)	default 0,
-	notes			varchar(255)	default null,	
+	notes			varchar(255)	default null,
 	revision_status	int				default 1,
 	delivery_ref	varchar(255)	default null,
 	payment_ref		varchar(255)	default null,
@@ -254,7 +254,7 @@ create table aixada_order (
 	foreign key (provider_id) references aixada_provider(id),
 	foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order),
 	unique key (date_for_order, provider_id, ts_sent_off)
-) engine=InnoDB default character set utf8;     
+) engine=InnoDB default character set utf8;
 
 
 /**
@@ -267,7 +267,7 @@ create table aixada_cart (
 	uf_id 			int 			not null,
 	date_for_shop	date			not null,
 	operator_id		int				default null,
-	ts_validated	timestamp		default 0, 
+	ts_validated	timestamp		default 0,
 	ts_last_saved	timestamp		default current_timestamp,
 	primary key (id),
 	key (date_for_shop),
@@ -278,17 +278,17 @@ create table aixada_cart (
 
 
 /**
- *	aixada_order_item. 
+ *	aixada_order_item.
  */
 create table aixada_order_item (
   id  	     		int		  	not null auto_increment,
-  uf_id     	  	int 		not null,	
+  uf_id     	  	int 		not null,
   favorite_cart_id	int			default null,
   order_id			int 		default null,
   unit_price_stamp	decimal(10,2)	default 0,
   date_for_order 	date		not null,
-  product_id	  	int 		not null,	
-  quantity 	  		float(10,4) default 0.0,				
+  product_id	  	int 		not null,
+  quantity 	  		float(10,4) default 0.0,
   ts_ordered   	  	timestamp 	default current_timestamp,
   primary key (id),
   foreign key (order_id) references aixada_order(id),
@@ -297,13 +297,13 @@ create table aixada_order_item (
   foreign key (favorite_cart_id) references aixada_cart(id),
   foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
   unique  key (order_id, uf_id, product_id)
-) engine=InnoDB default character set utf8; 
+) engine=InnoDB default character set utf8;
 
 
 
 /**
- *	stores the individual product items, quantity, price for a given sale. 
- *  the unit_price_stamp field stores price incl. iva + rev tax! 
+ *	stores the individual product items, quantity, price for a given sale.
+ *  the unit_price_stamp field stores price incl. iva + rev tax!
  */
 create table aixada_shop_item (
   id 	          	int				not null auto_increment,
@@ -317,7 +317,7 @@ create table aixada_shop_item (
   primary key (id),
   foreign key (cart_id) references aixada_cart(id),
   foreign key (order_item_id) references aixada_order_item(id),
-  foreign key (product_id) references aixada_product(id),	
+  foreign key (product_id) references aixada_product(id),
   unique key (cart_id, product_id, order_item_id)
 ) ENGINE=InnoDB default character set utf8;
 
@@ -325,14 +325,14 @@ create table aixada_shop_item (
 /**
  * temporary table where order items gets stored during revision of
  * products. once revision is finished, items get copied into aixada_shop_item
- * and deleted here. 
+ * and deleted here.
  */
 create table aixada_order_to_shop (
   order_item_id  	int		  	not null,
-  uf_id     	  	int 		not null,	
+  uf_id     	  	int 		not null,
   order_id			int 		default null,
   unit_price_stamp	decimal(10,2)	default 0,
-  product_id	  	int 		not null,	
+  product_id	  	int 		not null,
   quantity 	  		float(10,4) default 0.0,
   arrived 			boolean		default true,
   revised			boolean 	default false,
@@ -344,7 +344,7 @@ create table aixada_order_to_shop (
 
 /**
  *	stock movements
- *	
+ *
  */
 create table aixada_stock_movement (
   id          		int			not null auto_increment,
@@ -355,7 +355,7 @@ create table aixada_stock_movement (
   resulting_amount	decimal(10,4),
   ts   	  			timestamp 	default current_timestamp,
   primary key (id),
-  foreign key (product_id) references aixada_product(id), 
+  foreign key (product_id) references aixada_product(id),
   foreign key (operator_id) references aixada_user(id),
   key (ts)
 ) engine=InnoDB default character set utf8;
@@ -380,18 +380,18 @@ create table aixada_payment_method (
 create table aixada_currency (
   id   	     	tinyint   		not null auto_increment,
   name		 	varchar(50) 	not null,
-  one_euro	 	decimal(10,4)  	not null, 
+  one_euro	 	decimal(10,4)  	not null,
   primary key (id)
 ) engine=InnoDB default character set utf8;
 
 
-/* 
+/*
  *   Account numbers:
  *  -1          Manteniment
  *  -2	       	Consum
  *  1001..1999  regular UF accounts of the form 1000 + uf_id
  *  2001..2999  regular provider account of the form 2000 + provider_id
- */   
+ */
 
 create table aixada_account (
   id   	     		  	int	        	not null auto_increment,
@@ -414,7 +414,7 @@ create table aixada_account (
 
 
 /**
- *	Types of incidents 
+ *	Types of incidents
  **/
 create table aixada_incident_type (
   id        		tinyint		not null auto_increment,
@@ -439,7 +439,7 @@ create table aixada_incident (
   ufs_concerned         int,
   commission_concerned  int,
   provider_concerned    int,
-  ts					timestamp 	default current_timestamp,  
+  ts					timestamp 	default current_timestamp,
   status                varchar(10)     default 'Open',
   primary key (id),
   foreign key (incident_type_id) references aixada_incident_type(id),
