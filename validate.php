@@ -10,35 +10,35 @@
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
-	
-    
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+
+
+    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
 	     <script type="text/javascript" src="js/jquery/jquery.js"></script>
 		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	 	
+	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_validate.min.js"></script>
     <?php }?>
-   
+
     <script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
- 	
-   
-  
+
+
+
 	<script type="text/javascript">
 	$(function(){
 
 			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide();
 
 
 			//made deposit
-			var gMadeDeposit = true; 
-			
+			var gMadeDeposit = true;
+
 
 			//get the operator user id to prevent own validation
 			var gTornUfId = <?=get_session_uf_id();?>;
@@ -48,10 +48,10 @@
 			var gToday = null;
 
 			$.getAixadaDates('getToday', function (date){
-				gToday = date[0]; 
-				//var today = $.datepicker.parseDate('yy-mm-dd', date[0]);	
-			});	
-			
+				gToday = date[0];
+				//var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
+			});
+
 
 
 			/**
@@ -62,7 +62,7 @@
 					url 	: 'php/ctrl/Validate.php',
 					params 	: 'oper=getUFsCartCount',
 					rowComplete : function(rowIndex, row){
-					
+
 						//show number of non_validated carts for uf
 						var non_validated_carts = $(row).attr('cc');
 						non_validated_carts = (non_validated_carts > 0)? '&nbsp;&nbsp;(#'+non_validated_carts+')':'';
@@ -72,24 +72,24 @@
 						if ($(row).val() == gTornUfId){	//cannot validate yourself
 							$(row).addClass('dim60');
 						}
-					}, 
+					},
 					loadOnInit:true
-				
+
 				}).change(function(){
 
-					
+
 					var last_uf = $('#deposit .insert_uf_id').text();
-					var uf_id = $("option:selected", this).val(); 
+					var uf_id = $("option:selected", this).val();
 
 					if (!checkMadeDeposit(last_uf, uf_id)) {
 						return false;
 					}
-					
+
 					if (uf_id <=0) {
 						resetFields();
 						resetDeposit();
-						return false; 
-						
+						return false;
+
 					} else if (uf_id == gTornUfId){ //cannot validate your own cart
 						$.showMsg({
 							msg:"<?php echo $Text['msg_err_validate_self'];?>",
@@ -97,10 +97,10 @@
 						resetFields();
 						resetDeposit();
 						return false;
-						
+
 					}
-	
-	
+
+
 					//activate the deposit pane
 					$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
 					$('.showCartDate').removeClass('ui-state-highlight dim40').text('');
@@ -108,26 +108,26 @@
 					$('.noCartTitle, .validatedCartTitle').hide();
 					$('#deposit_submit').button('enable');
 					$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
-	
-					//how many carts are there? 
+
+					//how many carts are there?
 					$('#tbl_Shop tbody').xml2html('reload',{
 						url : 'php/ctrl/Validate.php',
 						params : 'oper=getNonValidatedCarts&uf_id='+uf_id
 					});
-			}); //end of listing 
+			}); //end of listing
 
-			
+
 
 			//load purchase listing: how may carts does this uf have?
 			$('#tbl_Shop tbody').xml2html('init',{
 					url : 'php/ctrl/Shop.php',
-					loadOnInit : false, 
+					loadOnInit : false,
 					rowComplete : function(rowIndex, row){
 						var validated = $(row).children().eq(2).text();
 						if (validated == "0000-00-00 00:00:00"){
 							$(row).children().eq(2).html('<span class="ui-state-error ui-corner-all"><?php echo $Text['not_validated'];?></span>');
 						}
-					}, 
+					},
 					complete: function(rowCount){
 						//more than one cart to validate
 						if (rowCount > 1){
@@ -139,17 +139,17 @@
 								type: 'warning'});
 								$('#cartLayer').aixadacart('resetCart');
 								//resetFields();
-						
+
 						//one, should be today!
 						} else {
 							var cart_id = $('#tbl_Shop tbody tr').attr('shopId');
 							var date_for_shop = $('#tbl_Shop tbody tr').attr('dateForShop');
-							var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40'; 
+							var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40';
 							var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
-							
+
 							$('.showCartDate').removeClass('ui-state-highlight dim40').addClass(css).text(df);
-							
-																			
+
+
 							if (cart_id > 0 ){
 								loadCart(cart_id, date_for_shop);
 							} else {
@@ -162,18 +162,18 @@
 
 
 
-		
+
 			/**
 			 * MULTIPLE CARTS TO VALIDATE / SELECT
-			 */	
+			 */
 			$('#dialog_select_cart').dialog({
 				autoOpen:false,
 				width:500,
-				buttons: {  
+				buttons: {
 					"<?=$Text['btn_cancel'];?>"	: function(){
-						
+
 						$( this ).dialog( "close" );
-						} 
+						}
 				}
 			});
 
@@ -181,30 +181,30 @@
 			$('#tbl_Shop tbody tr, #tbl_cart_listing tbody tr')
 			.live('mouseover', function(){
 				$(this).removeClass('highlight').addClass('ui-state-hover');
-				
+
 			})
 			.live('mouseout',function(){
 				$(this).removeClass('ui-state-hover');
-				
+
 			})
 			.live('click',function(e){
 
 				var last_uf = $('#deposit .insert_uf_id').text();
 				var uf_id = $(this).attr('ufId');
 
-				
+
 				if (!checkMadeDeposit(last_uf, uf_id)) {
 					return false;
 				}
-				
 
-				
+
+
 				$('.showCartDate').removeClass('ui-state-highlight dim40');
-				
- 
+
+
 				var validated = $(this).attr('validated');
-				var cart_id = $(this).attr('shopId'); 
-				var date_for_shop = $(this).attr('dateForShop'); 
+				var cart_id = $(this).attr('shopId');
+				var date_for_shop = $(this).attr('dateForShop');
 
 				if (uf_id == gTornUfId){ //cannot validate your own cart
 					$.showMsg({
@@ -214,12 +214,12 @@
 					resetDeposit();
 					return false;
 				}
-				
+
 				//means we come from cart observe
 				if (uf_id > 0){
 					$('#uf_cart_select').val(uf_id).attr('selected','selected');
 					$('.insert_uf_id').html('<strong>'+uf_id+'</strong>');
-					
+
 					$('#deposit_submit').button('enable');
 					$('#deposit_amount, #deposit_note, #search').attr('disabled',false);
 				}
@@ -229,19 +229,19 @@
 					$('.cartTitle').show();
 					$('.noCartTitle, .validatedCartTitle').hide();
 
-					var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40'; 
+					var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40';
 					var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
 					$('.showCartDate').addClass(css).text(df);
 
 					loadCart(cart_id, date_for_shop);
 				//if already validated, the offer choice to see purchase details
-				} else {					
+				} else {
 					resetFields();
 					$.showMsg({
 						msg:"<?php echo $Text['msg_already_validated']; ?>",
 						width:500,
 						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
+							"<?=$Text['btn_ok'];?>":function(){
 								window.location.href = "report_shop_ufs.php?detailForCart="+cart_id+"&lastPage=validate";
 								$( this ).dialog( "close" );
 							},
@@ -251,17 +251,17 @@
 						},
 						type: 'warning'});
 				}
-			
-				
+
+
 				$('#dialog_select_cart').dialog('close');
 			});
-			
 
-			
+
+
 			//init tabs
 			$("#tabs").tabs();
-			
-			//init cart 
+
+			//init cart
 			$('#cartLayer').aixadacart("init",{
 				saveCartURL : 'php/ctrl/Validate.php',
 				cartType	: 'simple',
@@ -269,22 +269,22 @@
 				saveOnDelete: false,
 				submitSuccess : function (msg){
 					//alert(msg.cart_id  + " " + msg.ts_last_saved);
-					$('#tbl_cart_listing tbody').xml2html('reload'); 
+					$('#tbl_cart_listing tbody').xml2html('reload');
 					$('#list_account tbody').xml2html('reload');
 
 					//update nr of unvalidated carts in select
 					var txt = $('#uf_cart_select option:selected').text();
 					var nr = new Number(txt.substring(txt.lastIndexOf('#')+1, txt.length-1));
-					var rplstr = (nr == 1)? '':'(#'+(nr-1)+')'; 
+					var rplstr = (nr == 1)? '':'(#'+(nr-1)+')';
 					var newTxt = txt.replace('(#'+nr+')', rplstr);
-			
-					$('#uf_cart_select option:selected').text(newTxt);
-					
-					//reloadValidationUfs();					
-					//empty the cart
-					$(this).aixadacart("resetCart");	
 
-					gMadeDeposit = false; 
+					$('#uf_cart_select option:selected').text(newTxt);
+
+					//reloadValidationUfs();
+					//empty the cart
+					$(this).aixadacart("resetCart");
+
+					gMadeDeposit = false;
 				},
 				submitError : function (err_msg){
 					$.showMsg({
@@ -294,14 +294,14 @@
 			});
 
 
-	
-			
+
+
 		    //init xml2html product search
 			$('#product_list_search tbody').xml2html('init',{
 					url : 'php/ctrl/ShopAndOrder.php'
 				});
 
-				
+
 			/**
 			 *	MAKE A DEPOSIT
 			 */
@@ -311,38 +311,38 @@
 
 					var description = $('#deposit_note').val();
 					var uf_account_id = 1000 + new Number($("#uf_cart_select option:selected").val());
-			
-					var quantity = $.checkNumber($('#deposit_amount'), '', 2);		
-					
-					if (!quantity) { 
+
+					var quantity = $.checkNumber($('#deposit_amount'), '', 2);
+
+					if (!quantity) {
 						$.showMsg({
 									msg:"<?php echo $Text['msg_enter_deposit_amount'];?>",
 									type: 'warning'});
 						return false;
-						
+
 					} else if (uf_account_id <= 1000 || uf_account_id == '' || typeof(uf_account_id) != 'number' ){
 						$.showMsg({
 									msg:"<?php echo $Text['msg_please_set_ufid_deposit'];?>",
 									type: 'error'});
-						return false; 
+						return false;
 					}
-					
-	
+
+
 					$('#deposit_submit').button('disable');
-				
+
 					$.ajax({
 						type: "POST",
-						url: "php/ctrl/Account.php?oper=deposit&account_id="+uf_account_id+"&quantity="+quantity+"&description="+description,	
+						url: "php/ctrl/Account.php?oper=deposit&account_id="+uf_account_id+"&quantity="+quantity+"&description="+description,
 						beforeSend : function (){
 							$('#deposit .loadSpinner').show();
-						},	
+						},
 						success: function(msg){
 							$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
 							resetDeposit();
-							
-							$('#dailyStats tbody').xml2html('reload');		
+
+							$('#dailyStats tbody').xml2html('reload');
 							$('#list_account tbody').xml2html('reload');
-							gMadeDeposit = true; 
+							gMadeDeposit = true;
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);
@@ -357,7 +357,7 @@
 
 
 
-			
+
 
 			/**
 			 * 	MONITOR Money, daily stats, negative ufs, stock
@@ -367,21 +367,21 @@
 					params	: 'oper=latestMovements',
 					loadOnInit: true,
 					rowComplete : function (rowIndex, row){
-						$.formatQuantity(row);						
-					}, 
+						$.formatQuantity(row);
+					},
 					complete : function (rowCount){
-						$('#list_account tbody tr:even').addClass('rowHighlight'); 
+						$('#list_account tbody tr:even').addClass('rowHighlight');
 					}
 			});
 
 
-			
+
   			 //carts to validate today
 			 $('#tbl_cart_listing tbody').xml2html('init',{
 					url		: 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&filter=today', 
+					params : 'oper=getShopListing&filter=today',
                     autoReload: 100200,
-                    loadOnInit:true, 
+                    loadOnInit:true,
                     beforeLoad : function(){
 						$('#dailyStats .loadSpinner').show();
 					},
@@ -389,25 +389,25 @@
 						var validated = $(row).children().eq(3).text();
 
 						if (validated == '0000-00-00 00:00:00'){
-							$(row).children().eq(3).html('<p class="textAlignCenter">-</p>');	
+							$(row).children().eq(3).html('<p class="textAlignCenter">-</p>');
 						} else {
 							$(row).children().eq(3).addClass('okGreen').html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at']; ?>: '+validated+'"></span>');
-						}		
+						}
 					},
 					complete : function(){
 						$('tr:even', this).addClass('rowHighlight');
 						$('#dailyStats .loadSpinner').hide();
 					}
 			});
-				
-				
+
+
   			 //negative ufs
 			 $('#negative_ufs tbody').xml2html('init',{
 					url		: 'php/ctrl/Account.php',
 					params	: 'oper=getNegativeAccounts',
 					loadOnInit: true,
 					rowName : 'account',
-                    autoReload: 103020, 
+                    autoReload: 103020,
                     beforeLoad : function(){
 						$('#negative_ufs .loadSpinner').show();
 					},
@@ -420,7 +420,7 @@
 			 $('#dailyStats tbody').xml2html('init',{
 					url		: 'php/ctrl/Account.php',
 					params	: 'oper=getIncomeSpendingBalance',
-                 	//autoReload: 100200, 
+                 	//autoReload: 100200,
                  	loadOnInit:true,
                  	beforeLoad : function(){
 						$('#dailyStats .loadSpinner').show();
@@ -428,14 +428,14 @@
 					complete : function(){
 						$('#dailyStats .loadSpinner').hide();
 					}
-			});	
+			});
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
 					url		: 'php/ctrl/Shop.php',
 					params	: 'oper=getProductsBelowMinStock',
 					loadOnInit: false,
-                    autoReload: 100010, 
+                    autoReload: 100010,
                     beforeLoad : function(){
 						$('#min_stock .loadSpinner').show();
 					},
@@ -446,7 +446,7 @@
 						//reformat numbers to two decimal places
 						var currentStock = new Number($(row).children().last().text());
 						var minStock = new Number($(row).children().eq(3).text());
-						
+
 						$(row).children().last().text(currentStock.toFixed(2));
 						$(row).children().eq(3).text(minStock.toFixed(2));
 					},
@@ -467,7 +467,7 @@
 				} else {
 					$(this).removeClass('ui-icon-circle-triangle-e').addClass('ui-icon-triangle-1-e');
 				}
-				
+
 			})
 			.bind("click", function(){
 				$(this).parent().next().toggle();
@@ -478,57 +478,57 @@
 				}
 			});
 
-			
 
-			
+
+
 
 			/**
-			 *	init ufs for account deposit select 
+			 *	init ufs for account deposit select
 			 */
-			$('#uf_account_select').hide();	
+			$('#uf_account_select').hide();
 			$('#toggle_uf_account_select').click(function(){
 				$('#uf_account_select').toggle();
-			});	
-			
-				
+			});
+
+
 
 			/**
-			 *	product search functionality 
+			 *	product search functionality
 			 */
 			$("#search").keyup(function(e){
 						//search with min of X characters
-						var minLength = 3; 
-						
+						var minLength = 3;
+
 						//retrieve search input
-						var searchStr = $("#search").val(); 
-					
+						var searchStr = $("#search").val();
+
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
 								params: 'oper=getShopProducts&date=0&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-									var id =  $(row).attr("id"); 
+									var id =  $(row).attr("id");
 									var qu = $("#cart_quantity_"+id).val();
 									$("#quantity_"+id).val(qu);
-								}							
-							});		
+								}
+							});
 						} else {
-							//delete all product entries in the table if we are below minLength; but 
-							$('#product_list_search tbody').xml2html("removeAll");						
+							//delete all product entries in the table if we are below minLength; but
+							$('#product_list_search tbody').xml2html("removeAll");
 						}
-				//prevent default event propagation. once the list is build, just stop here. 		
+				//prevent default event propagation. once the list is build, just stop here.
 				e.preventDefault();
 			}); //end autocomplete
-			
+
 
 			/**
 			 * attach event listeners for the product input fields; change of quantity will put the
-			 * item into the cart. 
-			 */ 
-			$('.product_list tbody').find("input").live("change", function (e){						
-										
+			 * item into the cart.
+			 */
+			$('.product_list tbody').find("input").live("change", function (e){
+
 									//check if a cart/UF is selected, only then can one add items
 									if ($('#uf_cart_select option:selected').val() > 0){
-				
+
 										//retrieve the current table row where quantity has been changed
 										var row = $(this).parents("tr");
 
@@ -538,11 +538,11 @@
 											$(this).val(0);
 											return false;
 										}
-										
+
 										//if quantity has changed, add it to the cart.
 										$('#cartLayer').aixadacart("addItem",{
 												id 				: $(row).attr("id"),
-												isPreorder 		: false, 
+												isPreorder 		: false,
 												name 			: $("td.item_name", row).text(),
 												provider_name 	: $("td.item_provider_name", row).text(),
 												price 			: parseFloat($("td.item_price", row).text()),
@@ -550,36 +550,36 @@
 												unit 			: $("td.item_unit", row).text(),
 												rev_tax_percent : parseFloat( $("td.item_rev_tax_percent", row).text()),
 												iva_percent		: $("td.item_iva_percent", row).text()
-												
-										}); //end addItem to cart	
-										
+
+										}); //end addItem to cart
+
 
 										//switch back to item listing
-										$("#tabs").tabs('select',0);					
+										$("#tabs").tabs('select',0);
 
-									//if no cart is selected 
+									//if no cart is selected
 									} else {
-										
+
 										$.showMsg({
 											msg: "<?php echo $Text['msg_select_cart_first'];?>",
 											type: 'error'
 											});
-									}					
-			});//end event listener for product list 
+									}
+			});//end event listener for product list
 
 
 
 
-			
+
 			/**
-			 * resets all input fields 
+			 * resets all input fields
 			 */
 			function resetFields(){
-				
-				$('#cartLayer').aixadacart('resetCart');		
+
+				$('#cartLayer').aixadacart('resetCart');
 				$('.cartTitle').show();
 				$('.noCartTitle, .validatedCartTitle').hide();
-								
+
 				$('.insert_uf_id').html('<strong>??</strong>');
 				$('.showCartDate').removeClass('ui-state-highlight dim40').text('');
 				$('#uf_cart_select').val(-10);
@@ -587,13 +587,13 @@
 				$('#deposit_submit').button('disable');
 				$('#deposit_amount, #deposit_note').attr('disabled',true);
 
-			
+
 			}
 
 			//reset the deposit pane
 			function resetDeposit(){
-				$('#deposit_amount').val(''); 
-				$('#deposit_note').val('');	
+				$('#deposit_amount').val('');
+				$('#deposit_note').val('');
 				$('.deposit_status').hide();
 			}
 
@@ -611,14 +611,14 @@
 			 *  cart no deposit has been made
 			 */
 			function checkMadeDeposit(depositUF, nextUF){
-				
+
 				//check if last uf made deposit and show warning if not
 				if (!gMadeDeposit){
-					
+
 					$.showMsg({
 						msg:"<?php echo $Text['msg_err_no_deposit'];?>",
 						buttons: {
-							"<?=$Text['btn_deposit_now'];?>":function(){						
+							"<?=$Text['btn_deposit_now'];?>":function(){
 								$('#uf_cart_select').val(depositUF).attr('selected',true);
 								$( this ).dialog( "close" );
 							},
@@ -628,23 +628,23 @@
 								$('#uf_cart_select').trigger('change');
 								$( this ).dialog( "close" );
 							}
-						}, 
+						},
 						type: 'warning'});
-					
+
 					return false;
 				} else {
-					return true; 
-				}					
+					return true;
+				}
 			}
-			
+
 
 			/**
-			 *	load items for given cart. 
+			 *	load items for given cart.
 			 *	date_for_shop is not needed for loading, however for submitting(!)
 			 */
 			function loadCart(cart_id, date_for_shop){
 				var uf_id = $("#uf_cart_select option:selected").val();
-				var account = 1000+parseInt(uf_id); 
+				var account = 1000+parseInt(uf_id);
 
 				//set the uf_id and date for the saveCartURL when submitting
 				//TODO this should be replaced with the cart_id...! however this means
@@ -665,7 +665,7 @@
 
 			}
 
-			
+
 			/*function getSelectedDate(){
 				return $('#selDate4Validation option:selected').val();
 			}*/
@@ -678,14 +678,14 @@
 					//var ti = $(this).attr("tabindex");
 					//$(this).attr("tabindex",ti+1);
 					e.stopPropagation();
-					return false; 
+					return false;
 				}
 			})
-			
-			
+
+
 			resetFields();
 			resetDeposit();
-			
+
 	});  //close document ready
 </script>
 
@@ -697,12 +697,12 @@
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	
-	
-	
+
+
+
 	<div id="stagewrap" class="ui-widget">
-	
-		
+
+
 		<div id="titlewrap">
 			<div id="titleLeftCol">
 				<p class="floatLeft"><img src="img/validar.png" style="margin-top:4px; height:60px;"/></p>
@@ -713,7 +713,7 @@
 		    	</div>
 		    </div>
 		    <div id="titleRightCol">
-				
+
 		    	<p class="textAlignRight">
 		    		<select id="uf_cart_select">
 		    			<option value="-10" selected="selected"><?php echo $Text['sel_uf']; ?></option>
@@ -722,7 +722,7 @@
 		    	</p>
 		    </div>
 		</div>
-	
+
 
 		<div class="aix-layout-splitW60 floatLeft">
 			<div id="tabs">
@@ -732,13 +732,13 @@
 				<li><a href="#tabs-2"><?php echo $Text['search_add']; ?></a></li>
 			</ul>
 			<div id="tabs-1">
-				
-                
+
+
 						<div id="cartLayer"></div>
-				
-				
+
+
 			</div>
-			
+
 			<div id="tabs-2">
 				<div class="ui-widget">
                                  <label for="search"><?php echo $Text['search'];?></label>
@@ -749,7 +749,7 @@
 					<table id="product_list_search" class="product_list" >
 						<thead>
 						<tr>
-							
+
 							<th><?php echo $Text['id'];?></th>
 							<th><?php echo $Text['name_item'];?></th>
 							<th><?php echo $Text['provider_name'];?></th>
@@ -757,7 +757,7 @@
 							<th><?php echo $Text['unit'];?></th>
 							<th><?php echo $Text['revtax_abbrev'];?></th>
 							<th><?php echo $Text['price'];?></th>
-						
+
 						</tr>
 						</thead>
 						<tbody>
@@ -767,22 +767,22 @@
 								<td class="item_provider_name">{provider_name}</td>
 								<td class="item_quantity"><input name="{id}" class="ui-corner-all" value="0.00"  size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
-								<td class="item_iva_percent hidden">{iva_percent}</td>	
-								<td class="item_rev_tax_percent">{rev_tax_percent}</td>	
-								<td class="item_price">{unit_price}</td>			
-							</tr>						
+								<td class="item_iva_percent hidden">{iva_percent}</td>
+								<td class="item_rev_tax_percent">{rev_tax_percent}</td>
+								<td class="item_price">{unit_price}</td>
+							</tr>
 						</tbody>
-						
-						
+
+
 					</table>
 				</div>
 
 			</div>
 		</div><!-- end tabs -->
 		</div><!-- end left col -->
-		
+
 		<div class="aix-layout-splitW40 floatRight">
-			
+
 			<div id="deposit" class="ui-widget">
 				<div class="aix-style-observer-widget ui-widget-content ui-corner-all" >
 					<h3 class="ui-widget-header ui-corner-all"><?php echo $Text['make_deposit'];?> <span class="insert_uf_id account">??</span><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
@@ -795,17 +795,17 @@
 							<td></td>
 							<td><button id="deposit_submit"><?=$Text['btn_make_deposit']; ?></button></td>
 						</tr>
-						
+
 						<tr>
 							<td colspan="2">
-							
+
 							</td>
 						</tr>
 						</table>
 					</div>
 				</div>
 			</div>
-			
+
 			<div id="monitorFlows" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['latest_movements'];?> <span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
@@ -815,7 +815,7 @@
 							<th><?php echo $Text['account'];?></th>
 							<th><?php echo $Text['uf_short'];?></th>
 							<th><?php echo $Text['transfer_type'];?></th>
-							
+
 							<th class="textAlignRight"><?php echo $Text['amount'];?></th>
 							<th class="textAlignRight"><?php echo $Text['balance'];?></th>
 						</tr>
@@ -832,10 +832,10 @@
 					</table>
 				</div>
 			</div>
-		
-			
-			
-			
+
+
+
+
 			<div id="monitorCarts" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['todays_carts']; ?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
@@ -861,12 +861,12 @@
 					</table>
 				</div>
 			</div>
-			
-		
+
+
 			<div id="monitorUFs" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeUfs'];?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-					
+
 						<table id="negative_ufs" class="tblListingDefault">
 							<thead>
 								<tr>
@@ -885,10 +885,10 @@
 								</tr>
 							</tbody>
 						</table>
-					
+
 				</div>
 			</div>
-			
+
 			<div id="monitorGlobals" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['name_cash_account']; ?><span class="loadAnim floatRight hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
@@ -896,18 +896,18 @@
 						<tbody>
 							<tr><td><p><?php echo $Text['totalIncome'];?></p></td><td><p class="textAlignRight">{income}</p></td></tr>
 							<tr><td><p><?php echo $Text['totalSpending'];?></p></td><td><p class="textAlignRight">{spending}</p></td></tr>
-							<tr><td><p><?php echo $Text['balance'];?></p></td><td><p class="textAlignRight">{balance}</p></td></tr>							
+							<tr><td><p><?php echo $Text['balance'];?></p></td><td><p class="textAlignRight">{balance}</p></td></tr>
 						</tbody>
 					</table>
-					
+
 				</div>
 			</div>
-			
-			
+
+
 			<div id="monitorStock" class="ui-widget hidden">
 				<div class="rightCol-Observer ui-widget-content ui-corner-all  aix-style-observer-widget">
 					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeStock'];?><span class="loadAnim floatRight hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-					
+
 						<table id="min_stock" class="tblListingDefault">
 							<thead>
 								<tr>
@@ -928,15 +928,15 @@
 								</tr>
 							</tbody>
 						</table>
-					
+
 				</div>
 			</div>
-			
-		
+
+
 		</div>
-		
-		
-		
+
+
+
 	</div>
 	<!-- end of stage wrap -->
 </div>
