@@ -5,12 +5,6 @@
  */ 
 
 
-
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-  //ob_start(); // Starts FirePHP output buffering
 require_once(__ROOT__ . 'php/lib/abstract_cart_manager.php');
 
 
@@ -126,10 +120,7 @@ class shop_cart_manager extends abstract_cart_manager {
     		//check if cart has been modified in the meanwhile in the db
     		$rs = $db->Execute("select ts_last_saved from aixada_cart where id=:1q", $this->_cart_id); 
     		$row = $rs->fetch_assoc();
-    		
-    		//global $firephp; 
-    		//$firephp->log($row['ts_last_saved'], "row ts_last_saved");
-    		//$firephp->log($this->_last_saved, "this->last_saved");
+
     		
     		if (strtotime($this->_last_saved) < strtotime($row['ts_last_saved'])){
     			throw new Exception($Text['msg_err_cart_sync']);

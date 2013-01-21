@@ -39,3 +39,17 @@ Bugfixes
 
 
 
+
+Next release
+* provider new/edit form rewrite for better required form-fields checking
+* product new/edit rewrite for better required form-fields checking
+* new field in aixada_product: min order (requires to run dbUpgradeAixada2.6To2.7.sql
+* config.sample.php added; copy this file and rename it to config.php to configure your local install
+
+
+Bugfixes
+* delete members now possible for unassigned members
+* member validation issues
+
+
+

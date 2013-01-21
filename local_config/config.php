@@ -184,8 +184,12 @@ class configuration_vars {
   public $use_canned_responses = true;
 
 
-  // Menu control
 
+  /**
+   * 
+   * MENU AND RIGHTS
+   * 
+   */
   private $default_menus = array(
                       'navHome'      => 'enable',
                       'navWizard'    => 'disable',
@@ -399,6 +403,22 @@ class configuration_vars {
              array('may_edit_incident')
              );
   
+             
+  //import control
+	public $allow_import_for = 
+			array(
+					'product' => 
+						array(	'unit_price' => 'allow', 
+								'name' => 'allow',
+								'description' => 'nope',
+								'barcode' => 'allow',
+								'rev_tax_type_id' => 'nope',
+								'iva_percent_id' => 'nope'));
+             
+             
+             
+             
+             
 
   // from here on follow internals of the configuration_vars class.
   private static $instance = false;
