@@ -922,7 +922,7 @@
 				<div class="pgProductOverview ui-widget">
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
-						<table id="tbl_products" class="tblListingBorder">
+						<table id="tbl_products" class="tblListingDefault">
 							<thead>
 								<tr>
 									<th>&nbsp;<input type="checkbox" id="toggleBulkActionsProducts" name="toggleBulk"/></th>
@@ -932,14 +932,14 @@
 									<th><?php echo $Text['active']; ?></th>
 									
 									<th><p class="textAlignRight"><?php echo $Text['price_net'];?> </p></th>
-									<th> <?php echo $Text['revtax_abbrev']; ?></th>
-									<th> <?php echo $Text['iva']; ?></th>
+									<th><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
+									<th><p class="textAlignCenter"><?php echo $Text['iva']; ?></p></th>
 									
 									
 									<th><p class="textAlignRight"><?php echo $Text['price'];?> </p></th>
-									<th><?php echo $Text['unit'];?></th>
+									<th><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>
 									
-									<th><?php echo $Text['stock'];?></th>
+									<th><p class="textAlignRight"><?php echo $Text['stock'];?></p></th>
 									<th></th>
 								</tr>
 							</thead>
@@ -952,10 +952,10 @@
 									<td><p class="textAlignCenter iconContainer">{active}</p></td>
 									<td><p class="textAlignRight">{unit_price_netto}</p> </td>
 									<td><p class="textAlignCenter">{rev_tax_percent}%</p></td>
-									<td>{iva_percent}%</td>
+									<td><p class="textAlignCenter">{iva_percent}%</p></td>
 									<td><p class="textAlignRight">{unit_price} </p></td>
-									<td>{unit}</td>	
-									<td><p class="formatQty">{stock_actual}</p></td>
+									<td><p class="textAlignCenter">{unit}</p></td>	
+									<td><p class="formatQty textAlignRight">{stock_actual}</p></td>
 									<td><a href="javascript:void(null)" class="btn_del_product"><?php echo $Text['btn_del'];?></a></td>
 								</tr>						
 							</tbody>

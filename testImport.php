@@ -36,7 +36,7 @@ require_once('php/lib/import_products.php');
     		header('HTTP/1.0 401 ' . $e->getMessage());
     		die ($e->getMessage());
 		}   
-	}
+	
 
 ?>
 </body>
