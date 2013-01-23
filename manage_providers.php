@@ -339,29 +339,19 @@
 				if (tds.eq(3).text() == "1"){
 					tds.eq(3).text("<?=$Text['stock'];?>");
 					$.formatQuantity(tds.eq(9));
+					
 				//orderable
 				} else if (tds.eq(3).text() == "2"){
 					tds.eq(3).text("<?=$Text['orderable'];?>");
-					tds.eq(9).text(""); //delete stock info
+					tds.eq(10).text(""); //delete stock info
 				}
 
-				
+				//active
 				if (tds.eq(4).children('p:first').text() == "1"){
 					tds.eq(4).children('p:first').html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all');
 				} else {
 					tds.eq(4).children('p:first').html('<span class="ui-icon ui-icon-closethick"></span>').addClass('noRed ui-corner-all');
 				}
-
-				//calculate netto price
-				var iva = new Number(tds.eq(7).text());
-				var rev = new Number(tds.eq(6).children(':first').text());
-				var price = new Number(tds.eq(8).children(':first').text());
-
-				//alert(iva + " " + rev + " " + price);
-				
-				var tax = 1 + (iva+rev)/100; 
-				var net = price / tax;
-				tds.eq(5).children(':first').text(net.toFixed(2)); 
 
 			},
 			complete : function (rowCount){
@@ -389,7 +379,7 @@
 	
 				$('#tbl_products tbody tr').removeClass('ui-state-highlight');
 				gSelProduct = $(this);
-				gSelProduct.addClass('ui-state-highlight');
+				gSelProduct.addClass('ui-state-highlight');				
 
 				$('#tbl_product_edit tbody').xml2html('reload',{
 					params: 'oper=getProductDetail&product_id='+gSelProduct.attr('productId')
@@ -409,6 +399,7 @@
 			rowComplete : function (rowIndex, row){
 				setCheckBoxes('#frm_product_edit');
 				populateSelect(gProductSelects,'#tbl_product_edit');
+
 			}
 
 		});
@@ -931,7 +922,7 @@
 				<div class="pgProductOverview ui-widget">
 					<div class="ui-widget-content ui-corner-all">
 						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
-						<table id="tbl_products" class="tblListingDefault">
+						<table id="tbl_products" class="tblListingBorder">
 							<thead>
 								<tr>
 									<th>&nbsp;<input type="checkbox" id="toggleBulkActionsProducts" name="toggleBulk"/></th>
@@ -940,12 +931,12 @@
 									<th><?php echo $Text['orderable_type']; ?></th>
 									<th><?php echo $Text['active']; ?></th>
 									
-									<th><p class="textAlignRight"><?php echo $Text['price_net'];?> &nbsp;</p></th>
-									<th><?php echo $Text['revtax_abbrev']; ?></th>
-									<th><?php echo $Text['iva']; ?></th>
+									<th><p class="textAlignRight"><?php echo $Text['price_net'];?> </p></th>
+									<th> <?php echo $Text['revtax_abbrev']; ?></th>
+									<th> <?php echo $Text['iva']; ?></th>
 									
 									
-									<th><p class="textAlignRight"><?php echo $Text['price'];?> &bsp;</p></th>
+									<th><p class="textAlignRight"><?php echo $Text['price'];?> </p></th>
 									<th><?php echo $Text['unit'];?></th>
 									
 									<th><?php echo $Text['stock'];?></th>
@@ -959,9 +950,9 @@
 									<td title="<?php echo $Text['click_row_edit']; ?>">{name}</td>
 									<td>{orderable_type_id}</td>
 									<td><p class="textAlignCenter iconContainer">{active}</p></td>
-									<td><p class="textAlignRight"></p> </td>
-									<td><p class="textAlignCenter">{rev_tax_percent}</p></td>
-									<td>{iva_percent}</td>
+									<td><p class="textAlignRight">{unit_price_netto}</p> </td>
+									<td><p class="textAlignCenter">{rev_tax_percent}%</p></td>
+									<td>{iva_percent}%</td>
 									<td><p class="textAlignRight">{unit_price} </p></td>
 									<td>{unit}</td>	
 									<td><p class="formatQty">{stock_actual}</p></td>
@@ -1012,12 +1003,16 @@
 							    <td><label for="description_url"><?php echo $Text['web']; ?></label></td>
 							    <td colspan="3"><input type="text" name="description_url" value="{description_url}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
 							  </tr>
+							   <tr>
+							    <td><label for="custom_ref"><?php echo $Text['custom_product_ref']; ?></label></td>
+							    <td colspan="3"><input type="text" name="custom_product_ref" value="{custom_product_ref}" class="ui-widget-content ui-corner-all" /></td>
+							  </tr>
 							  <tr>
 							    <td><label for="barcode"><?php echo $Text['barcode']; ?></label></td>
 							    <td colspan="3"><input type="text" name="barcode" value="{barcode}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
-								<td><label for="responsible_uf_id"> <?php echo $Text['responsible_uf']; ?></label></td>
+								<td><label for="responsible_uf_id">&nbsp; <?php echo $Text['responsible_uf']; ?></label></td>
 								<td>
 							    	<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
 							    	<span class="textAlignLeft sResponsibleUfId"></span>
@@ -1062,20 +1057,25 @@
 							  
 							
 							  <tr>
-							    <td><label for="unit_price"><?php echo $Text['unit_price']; ?></label></td>
-							    <td><input type="text" name="unit_price" value="{unit_price}" class="ui-widget-content ui-corner-all" /></td>
+							    <td><label for="unit_price"><?php echo $Text['price_net']; ?></label></td>
+							    <td><input type="text" name="unit_price" value="{unit_price_netto}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
-							    <td><label for="iva_percent_id"><?php echo $Text['iva_percent']; ?></label></td>
+							    <td><label for="iva_percent_id">+ <?php echo $Text['iva_percent']; ?></label></td>
 							    <td>
 							    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
 							    	<span class="textAlignLeft sIvaPercentId"></span></td>
 							  </tr>
 							  <tr>
-							  <td><label for="rev_tax_type_id"><?php echo $Text['rev_tax_type']; ?></label></td>
-							    <td>
+							    <td><label for="rev_tax_type_id">+ <?php echo $Text['rev_tax_type']; ?></label></td>
+								  <td>
 							    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
 							    	<span class="textAlignLeft sRevTaxTypeId"></span></td>
+							  </tr>
+							  <tr>
+							    <td><label><?php echo $Text['unit_price']; ?></label></td>
+								<td><p class="boldStuff ui-corner-all aix-layout-fixW80">{unit_price}</p></td>
+
 							  </tr>
 							  
 							  
@@ -1105,6 +1105,7 @@
 										</p>
 									</td>
 								</tr>
+								<tr><td>&nbsp;</td></tr>
 							</tfoot>
 						</table>
 						</form>

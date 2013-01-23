@@ -407,11 +407,12 @@ class configuration_vars {
   //import control
 	public $allow_import_for = 
 			array(
-					'product' => 
+					'aixada_product' => 
 						array(	'unit_price' => 'allow', 
 								'name' => 'allow',
 								'description' => 'nope',
-								'barcode' => 'allow',
+								'barcode' => 'nope',
+								'custom_product_ref' => 'allow',
 								'rev_tax_type_id' => 'nope',
 								'iva_percent_id' => 'nope'));
              

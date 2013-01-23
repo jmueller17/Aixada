@@ -610,7 +610,7 @@ $Text['mng_members_uf'] = "Gestionar los miembros de la UF ";
 $Text['uf_name'] = "Nombre";
 $Text['btn_new_member'] = "Nuevo miembro";
 $Text['ti_add_member'] = "Añadir nuevo miembro a la UF";
-$Text['custom_member_ref'] = "Ref. Personalizada";
+$Text['custom_member_ref'] = "Ref. personalizada";
 $Text['theme'] = "Tema";
 $Text['member_id'] = "Id del miembro";
 $Text['ti_mng_stock'] = "Gestionar stock";
@@ -808,6 +808,30 @@ $Text['upcoming_orders'] = "Próximos pedidos";
 
 $Text['msg_confirm_del_mem'] = "Estas seguro de eliminar el usuario de la base de datos??";
 $Text['btn_del'] = "Eliminar";
+
+$Text['btn_new_provider'] = "Nuevo proveedor";
+$Text['btn_new_product'] = "Añadir producto";
+$Text['orderable'] = "Pedido directo"; //product type
+$Text['msg_err_providershort'] = "El nombre del proveedor no puede quedar vacío y debe contener al menos 2 caracteres.";
+$Text['msg_err_productshort'] = "El nombre del producto no puede quedar vacío y debe contener al menos 2 caracteres.";
+$Text['msg_err_select_responsibleuf'] = "¿Quién se encarga? Hay que seleccionar un responsable.";
+$Text['msg_err_product_category'] = "Hay que seleccionar una categoría de producto.";
+$Text['msg_err_order_unit'] = "Hay que seleccionar una unidad de medida para el pedido.";
+$Text['msg_err_shop_unit'] = "Hay que seleccionar una unidad de medida para la venta.";
+$Text['click_row_edit'] = "Haz clic para editar.";
+$Text['click_to_list'] = "Haz clic para desplegar la lista de productos.";
+$Text['head_ti_provider'] = "Gestión de proveedores y productos";
+$Text['edit'] = "Editar";
+$Text['ti_create_provider'] = "Añadir proveedor";
+$Text['ti_add_product'] = "Añadir producto";
+$Text['order_min'] = "Cantidad mínima para el pedido.";
+$Text['msg_confirm_del_product'] = "¿Seguro que quieres borrar este producto?";
+$Text['msg_err_del_product'] = "No se puede borrar este producto porque hay entradas que dependen de él en la base de datos. Mensaje de error: ";
+$Text['msg_err_del_member'] = "No se puede borrar este usuario porque hay referencias al mismo en la base de datos<br/> Mensaje de error: ";
+$Text['msg_confirm_del_provider'] = "¿Seguro que quieres borrar este proveedor?";
+$Text['msg_err_del_provider'] = "No se puede borrar este proveedor. Borra sus productos antes y vuelve a probar.";
+$Text['price_net'] = "Precio neto";
+$Text['custom_product_ref'] = "Id externo"; 
 
 
 

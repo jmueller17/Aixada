@@ -12,6 +12,8 @@
  */
 alter table 
       aixada_product
-      add  order_min_quantity	decimal(10,4)	default 0 after orderable_type_id;
+      add  custom_product_ref	varchar(100)	default null after barcode,		
+      add  order_min_quantity	decimal(10,4)	default 0 after orderable_type_id,
+      add unique key (custom_product_ref, provider_id);
 
       

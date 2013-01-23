@@ -462,16 +462,16 @@ $Text['prdcat_misc']			= "Everything else..." ;
 $Text['name'] = 'Name';
 $Text['contact'] = 'Contact';
 $Text['fax'] = 'Fax';
-$Text['responsible_mem_name'] = 'Responsible Member';
+$Text['responsible_mem_name'] = 'Responsible member';
 $Text['responsible_uf'] = 'Responsible household';
 $Text['provider'] = 'Provider';
 $Text['description'] = 'Description';
 $Text['barcode'] = 'Barcode';
 $Text['orderable_type'] = 'Product type';
 $Text['category'] = 'Category';
-$Text['rev_tax_type'] = 'Revolutionary Tax';
-$Text['unit_price'] = 'Unit Price';
-$Text['iva_percent'] = 'VAT in Percent';
+$Text['rev_tax_type'] = 'Revolutionary tax';
+$Text['unit_price'] = 'Unit price';
+$Text['iva_percent'] = 'VAT in percent';
 $Text['unit_measure_order'] = 'Ordered in which units';
 $Text['unit_measure_shop'] = 'Sold in which units';
 $Text['stock_min'] = 'Alert when stock below';
@@ -825,6 +825,8 @@ $Text['msg_err_del_member'] = "This user cannot be delete because other database
 $Text['msg_confirm_del_provider'] = "Are you sure to delete this provider?";
 $Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting its products first!";
 $Text['price_net'] = "Price netto";
+
+$Text['custom_product_ref'] = "Custom ID"; 
 
 //$Text[''] = ""; 
 

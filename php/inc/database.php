@@ -1,5 +1,9 @@
 <?php
 
+require_once(__ROOT__ .'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 /** 
  * @package Aixada
  */ 
@@ -32,7 +36,7 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
  */ 
 
 class DBWrap {
-  public $debug = false;
+  public $debug = true;
 
   private $type;
   private $host;
@@ -139,8 +143,8 @@ class DBWrap {
     if (!$rs) 
       $this->handle_execute_error($this->mysqli->errno, $this->mysqli->error, $safe_sql_string);
     if ($this->debug) {
-      //global $firephp;
-      //$firephp->log($safe_sql_string, 'query');
+      global $firephp;
+      $firephp->log($safe_sql_string, 'query');
     }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;

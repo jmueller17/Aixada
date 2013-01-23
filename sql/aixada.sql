@@ -186,6 +186,7 @@ create table aixada_iva_type (
   name	     	      	varchar(255) 	not null,
   description	      	text,
   barcode 	 			varchar(50)		default null,
+  custom_product_ref	varchar(100)	default null,		
   active     	      	tinyint			default 1,
   responsible_uf_id     int             default null,
   orderable_type_id		tinyint			default 2,
@@ -212,7 +213,8 @@ create table aixada_iva_type (
   foreign key (iva_percent_id)			references aixada_iva_type(id),
   foreign key (unit_measure_order_id) 	references aixada_unit_measure(id),
   foreign key (unit_measure_shop_id) 	references aixada_unit_measure(id),
-  key(delta_stock)
+  		  key (delta_stock),
+  unique  key (custom_product_ref, provider_id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 
