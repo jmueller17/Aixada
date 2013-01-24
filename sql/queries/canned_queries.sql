@@ -40,7 +40,8 @@ begin
       aixada_uf.name as uf,
       aixada_cart.date_for_shop,
       aixada_cart.operator_id,
-      aixada_cart.ts_validated 
+      aixada_cart.ts_validated,
+      aixada_cart.ts_last_saved 
     from aixada_cart 
     left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
   set @q = concat(@q, @lim);
