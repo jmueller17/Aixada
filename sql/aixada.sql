@@ -448,4 +448,17 @@ create table aixada_incident (
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 
+/**
+ *	Evolution of prices
+ **/
+create table aixada_price (
+  product_id     	int		not null,
+  ts                    timestamp       default current_timestamp,
+  current_price    	decimal(10,2)   default 0,
+  primary key (product_id, ts)  
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
+
+
+
 
