@@ -117,7 +117,7 @@ class abstract_import_manager {
     			}
     		} else {
     			global $firephp; 
-    			$firephp->log("Import warning: import to field '{$field}' is now allowed. Column will be ignored!");
+    			$firephp->log("Import warning: import to field '{$field}' is not allowed. Column will be ignored!");
     		}
     	}
     	
