@@ -827,6 +827,9 @@ $Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting it
 $Text['price_net'] = "Price netto";
 
 $Text['custom_product_ref'] = "Custom ID"; 
+$Text['btn_back_products'] = "Edit products";
+$Text['copy_column'] = "Copy column";
+$Text['paste_column'] = "Paste";
 
 //$Text[''] = ""; 
 

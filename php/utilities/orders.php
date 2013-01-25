@@ -62,6 +62,11 @@ function finalize_order($provider_id, $date_for_order)
 	$config_vars = configuration_vars::get_instance(); 
 	$msg = ''; 
 	
+	
+	//check here if an order_id already exists for this date and provider. 
+	
+	
+	
 	if ($config_vars->internet_connection && $config_vars->email_orders){
 		
 		
@@ -143,6 +148,8 @@ function finalize_order($provider_id, $date_for_order)
 		
 		
 	}
+	
+	
 	
 	
 	if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){
