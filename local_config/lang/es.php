@@ -758,7 +758,7 @@ $Text['nav_report_sales'] = "Ventas";
 $Text['nav_help'] = "Ayuda"; 
 $Text['withdraw_from'] = "Retirar dinero ";  //account
 $Text['withdraw_to_bank'] = "Retirar dinero de banco";
-$Text['withdraw_uf'] = "Retirr dinero de cuenta HU";
+$Text['withdraw_uf'] = "Retirar dinero de cuenta HU";
 $Text['withdraw_cuota'] = "Retirar dinero de quota";
 $Text['msg_err_noorder'] = "No hay pedidos para la selección!";
 $Text['primer_torn'] = "Primer Turno";
@@ -832,6 +832,10 @@ $Text['msg_confirm_del_provider'] = "¿Seguro que quieres borrar este proveedor?
 $Text['msg_err_del_provider'] = "No se puede borrar este proveedor. Borra sus productos antes y vuelve a probar.";
 $Text['price_net'] = "Precio neto";
 $Text['custom_product_ref'] = "Id externo"; 
+$Text['btn_back_products'] = "Volver a productos";
+
+$Text['copy_column'] = "Copiar columna";
+$Text['paste_column'] = "Pegar";
 
 
 

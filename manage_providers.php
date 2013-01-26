@@ -344,6 +344,7 @@
 				} else if (tds.eq(3).text() == "2"){
 					tds.eq(3).text("<?=$Text['orderable'];?>");
 					tds.eq(10).text(""); //delete stock info
+					tds.eq(11).text("");
 				}
 
 				//active
@@ -376,7 +377,7 @@
 			})
 			//click on table row
 			.live("click", function(e){
-	
+				
 				$('#tbl_products tbody tr').removeClass('ui-state-highlight');
 				gSelProduct = $(this);
 				gSelProduct.addClass('ui-state-highlight');				
@@ -384,6 +385,17 @@
 				$('#tbl_product_edit tbody').xml2html('reload',{
 					params: 'oper=getProductDetail&product_id='+gSelProduct.attr('productId')
 				});
+
+				if (gSelProduct.index() == 0) {
+					$('#btn_prev_product').button('disable');
+				}
+
+				if (gSelProduct.index() == gSelProduct.parent().children().length -1) {
+					$('#btn_next_product').button('disable');
+				}
+
+				$('#setProductPagination').html((gSelProduct.index()+1) + "/" + gSelProduct.parent().children().length+"&nbsp;&nbsp;")
+				
 				
 				switchTo('editProduct');
 				e.stopPropagation();
@@ -505,9 +517,48 @@
 				e.stopPropagation();
 				
 			})
+
+			
+		//jump to stock editing page
+		$('.btn_edit_stock')
+			.live("click", function(e){
+					//var incidentId = $(this).parents('tr').attr('incidentId'); 
+					window.location.href = 'manage_stock.php?lastPage=manage_stock.php&stockProvider='+gSelProvider.attr("providerId");
+					e.stopPropagation();
+			});	
+			
+		//next product when on editing form
+		$('#btn_next_product')
+		.button({
+				icons: {
+	        		secondary: "ui-icon-triangle-1-e"
+	        	},text:false
+			})
+			.click(function(e){			
+				gSelProduct.next().trigger("click");
+				$('#btn_prev_product').button('enable');	
+				return false; 
+		});
+
+		$('#btn_prev_product')
+		.button({
+				icons: {
+	        		primary: "ui-icon-triangle-1-w"
+	        	},text:false
+			})
+			.click(function(e){			
+				gSelProduct.prev().trigger("click");
+				$('#btn_next_product').button('enable');	
+				return false; 
+		});
+
 		
-
-
+		//edit price, updates brutto field
+		$('input[name=unit_price]')	
+			.live("blur", function(e){
+				var frm = $(this).parents('form');
+				calcBruttoPrice(frm);
+		})
 
 		//product utility functions
 		/**
@@ -601,6 +652,9 @@
 			//reset provider id. 
 			$('.setProductId', frm).html('&nbsp;');
 			$('.setProductName').text('');
+
+			//clear unit_price paragraph
+			$('.unit_price_brutto').text('');
 			
 			//set provider id
 			$('#frm_product_new input[name=provider_id]').val(gSelProvider.attr('providerId'));
@@ -712,7 +766,13 @@
 					$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
 				}	
 			});
-						
+
+			//custom_product_ref has unique index which requires "null" value to be passed
+			var ref = $('input[name=custom_product_ref]').val();			
+			ref = (ref == '')? 'null':ref; 
+			$('input[name=custom_product_ref]').val(ref);
+
+			//serialize 
 			var sdata = $(mi + ' form').serialize();
 
 			$.ajax({
@@ -797,12 +857,33 @@
 				loadSelectHTML(urlStr, destination);	
 			}
 		} 
+
+
+		//for a given unit price, apply rev tax and iva and indicate the final price
+		function calcBruttoPrice(frm){
+			var price = new Number($('input[name=unit_price]', frm).val());
+			
+			var rev = new Number($('input[name=rev_tax_type_id]', frm).val());
+			var iva = new Number($('input[name=iva_percent_id]', frm).val());
+			var price = price * (1+ (iva+rev)/100); 
+
+			$('.unit_price_brutto', frm).text(price.toFixed(2));
+		}
 		
 
 		//trick for setting the chosen option of the selects since generated selects don't have name!
 		$('select')
 			.live('change', function(){
-				$(this).parent().prev().val($('option:selected',this).val());
+
+				var selOption = $('option:selected',this).val(); 
+				$(this).parent().prev().val(selOption);
+								
+				//update the brutto price if iva or rev tax is changed
+				var which = $(this).parent().prev().attr('name');
+				if (which == 'rev_tax_type_id' || which == 'iva_percent_id'){
+					var frm = $(this).parents('form');
+					calcBruttoPrice(frm);
+				}
 			})
 			
 		//remove all eventual error styles on input fields. 
@@ -856,7 +937,7 @@
 						<button id="btn_overview_provider" class="floatLeft btn_back pgProductOverview pgProviderEdit pgProviderNew"><?php echo $Text['overview'];?></button>
 						<button id="btn_overview_product" class="floatLeft btn_back pgProductEdit pgProductNew"><?php echo $Text['overview'];?></button>
 				    	<h1 class="pgProviderOverview"> <?php echo $Text['head_ti_provider']; ?></h1>
-				    	<h1 class="pgProductOverview setProviderName"></h1>
+				    	<h1 class="pgProductOverview setProviderName" style="padding-left:150px;"></h1>
 				    	<h1 class="pgProviderEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="setProviderName"></span></h1>
 				    	<h1 class="pgProviderNew">&nbsp;&nbsp;<?php echo $Text['ti_create_provider'] ; ?></h1>
 				    	<h1 class="pgProductEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="setProviderName"></span> - <span class="setProductName"></span></h1>
@@ -866,7 +947,9 @@
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
-
+						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
+							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
+						</div>
 		    		</div>
 				</div><!-- end titlewrap -->
  
@@ -939,7 +1022,8 @@
 									<th><p class="textAlignRight"><?php echo $Text['price'];?> </p></th>
 									<th><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>
 									
-									<th><p class="textAlignRight"><?php echo $Text['stock'];?></p></th>
+									<th colspan="2"><p class="textAlignRight"><?php echo $Text['stock'];?></p></th>
+									
 									<th></th>
 								</tr>
 							</thead>
@@ -955,7 +1039,14 @@
 									<td><p class="textAlignCenter">{iva_percent}%</p></td>
 									<td><p class="textAlignRight">{unit_price} </p></td>
 									<td><p class="textAlignCenter">{unit}</p></td>	
-									<td><p class="formatQty textAlignRight">{stock_actual}</p></td>
+									<td>
+										<p class="formatQty textAlignRight btn_edit_stock">{stock_actual}</p>
+									</td>
+									<td>
+										<p class="ui-corner-all iconContainer ui-state-default" title="Edit stock">
+											<span class="btn_edit_stock ui-icon ui-icon-pencil"></span>
+										</p>	
+									</td>
 									<td><a href="javascript:void(null)" class="btn_del_product"><?php echo $Text['btn_del'];?></a></td>
 								</tr>						
 							</tbody>
@@ -972,10 +1063,9 @@
 				 -->
 				 <div class="pgProductEdit ui-widget" id="pgProductEdit">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span></h4>
 						<form id="frm_product_edit">
 						<table id="tbl_product_edit" class="tblForms">
-							  <thead><tr><td colspan="4">&nbsp;</td></tr></thead>
 							  <tbody>
 							  <tr productId="{id}" responsibleUfId="{responsible_uf_id}">
 									<td><label for="product_id"><?php echo $Text['id']; ?></label></td>
@@ -1074,7 +1164,7 @@
 							  </tr>
 							  <tr>
 							    <td><label><?php echo $Text['unit_price']; ?></label></td>
-								<td><p class="boldStuff ui-corner-all aix-layout-fixW80">{unit_price}</p></td>
+								<td><p class="boldStuff ui-corner-all aix-layout-fixW80 unit_price_brutto">{unit_price}</p></td>
 
 							  </tr>
 							  

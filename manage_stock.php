@@ -29,6 +29,13 @@
 	
 	$(function(){
 
+		//coming from other page
+		var gStockProvider = (typeof $.getUrlVar('stockProvider') == "string")? $.getUrlVar('stockProvider'):false;
+
+
+		//go back to manage provider/products page
+		var gBackTo = (typeof $.getUrlVar('lastPage') == "string")? $.getUrlVar('lastPage'):false;
+		
 	
 
 
@@ -65,10 +72,15 @@
 			params : 'oper=getStockProviders',
 			offSet : 1,
 			loadOnInit:true,
+			complete : function(){
+				if (gStockProvider > 0){
+					$("#providerSelect").val(gStockProvider);
+					$("#providerSelect").trigger("change");
+				}
+			}
 			
 		}).change(function(){
 				var provider_id = $("option:selected", this).val();					//get the id of the provider
-
 				$('#product_list_provider tbody').xml2html('removeAll');			//empty the list
 						
 				if (provider_id < 0) { return true;}
@@ -89,7 +101,7 @@
 				});							
 		}); //end select change
 
-	
+		
 		/**
 		 *	product SEARCH functionality 
 		 */
@@ -328,25 +340,27 @@
 
 
 		function switchTo(section){
-
-
 			switch(section){
 
 				case 'overview':
 					$('.detailElements').hide();
 					$('.overviewElements').fadeIn(1000);
+					if (gStockProvider > 0) {
+						$('.backElements').fadeIn(1000);
+					}
 					break;
 	
 				case 'detail':
-					$('.overviewElements').hide();
+					$('.overviewElements, .backElements').hide();
 					$('.detailElements').fadeIn(1000);
 					break;
 			}
 
+	
+
 		}
 
-		switchTo('overview');
-
+		
 
 		$("#btn_overview").button({
 			icons: {
@@ -356,6 +370,22 @@
     		.click(function(e){
 				switchTo('overview'); 
     		});
+
+		$("#btn_back_products").button({
+			icons: {
+	        		primary: "ui-icon-circle-arrow-w"
+	        	}
+			 })
+			.hide()
+    		.click(function(e){
+    			if (gBackTo != ''){
+					window.location.href = 'manage_providers.php';
+				}
+    		});
+
+		
+		switchTo('overview');
+		
 		 
 							
 	});  //close document ready
@@ -375,8 +405,9 @@
 				<div id="titlewrap" class="ui-widget">
 					<div id="titleLeftCol50">
 						<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
-				    	<h1 class="overviewElements"><?php echo $Text['ti_mng_stock']; ?></h1>
-				    	<h1 class="detailElements"><?php echo $Text['ti_mgn_stock_mov']; ?></h1>
+						<button id="btn_back_products" class="floatLeft btn_back backElements"><?php echo $Text['btn_back_products'];?></button>
+				    	<h1 class="overviewElements"> <?php echo $Text['ti_mng_stock']; ?></h1>
+				    	<h1 class="detailElements"> <?php echo $Text['ti_mgn_stock_mov']; ?></h1>
 		    		</div>
 		    		<div id="titleRightCol50">
 						<select id="providerSelect" class="overviewElements">
