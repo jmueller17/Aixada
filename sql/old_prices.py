@@ -6,6 +6,33 @@ import pickle
 def get_db():
     return connect(user="aixada", passwd="aixada", db="aixada")
 
+def get_iva(db):
+    c = db.cursor()
+    c.execute("""
+select 
+  p.id, i.percent
+from 
+  aixada_product p
+left join
+  aixada_iva_type i
+  on p.iva_percent_id = i.id
+""");
+    return dict([[r[0], float(r[1])] for r in c.fetchall()])
+
+def get_rev_tax(db):
+    c = db.cursor()
+    c.execute("""
+select 
+  p.id, i.rev_tax_percent
+from 
+  aixada_product p
+left join
+  aixada_rev_tax_type i
+  on p.rev_tax_type_id = i.id
+""");
+    return dict([[r[0], float(r[1])] for r in c.fetchall()])
+    
+
 def shop_dates(db):
 #    return ['2005-01-12', '2005-01-19']
     c = db.cursor()
@@ -73,10 +100,11 @@ def ptolname(date, uf):
 def ntolname(date, uf):
     return 'n' + str(uf) + '_' + date
 
-def make_eqs(date, uf, products, spent, eqs):
+def make_eqs(date, uf, products, iva, rev_tax, spent, eqs):
     if spent is not None:
         eqstr = 'uf' + str(uf) + '_' + date + ': ' + \
-            ' + '.join([str(p[0]) + ' ' + xname(date, p[1]) for p in products]) + \
+            ' + '.join([str(p[0] * (1.0 + iva[p[1]]/100.0) * (1.0 + rev_tax[p[1]]/100)) + \
+                            ' ' + xname(date, p[1]) for p in products]) + \
             ' + ' + ptolname(date, uf) + \
             ' - ' + ntolname(date, uf) + \
             ' = ' + str(spent)
@@ -120,7 +148,7 @@ def solution(special_product_var):
         if linearray[0] == special_product_var:
             return round(float(linearray[1]),2)
 
-def make_bounds(date, bounds):
+def make_bounds(date, iva, rev_tax, bounds):
     eqs = []
     vars = []
     vdate = replace(date, '-', '_')
@@ -130,7 +158,7 @@ def make_bounds(date, bounds):
         for p in pb:
             vars.append(xname(vdate, p[1]))
         ts = total_spent(db, uf, date)
-        make_eqs(vdate, uf, pb, ts, eqs)
+        make_eqs(vdate, uf, pb, iva, rev_tax, ts, eqs)
     product_vars = set(vars)
     for v in product_vars:
         min_res = bound(vdate, eqs, ufs, product_vars, v, 0)
@@ -156,10 +184,13 @@ values (%s, %s, %s, %s)
 if __name__ == "__main__":
     db = get_db()
     bounds = dict()
-    dates = [date[0].strftime("%Y-%m-%d") for date in shop_dates(db)]
-    
+#    dates = [date[0].strftime("%Y-%m-%d") for date in shop_dates(db)]
+    dates = ['2013-01-03']
+    iva = get_iva(db)
+    rev_tax = get_rev_tax(db)
+
     for date in dates:
         print date
-        bounds = make_bounds(date, bounds)
+        bounds = make_bounds(date, iva, rev_tax, bounds)
         save_bounds(db, bounds)
         db.commit()
