@@ -4448,7 +4448,8 @@ begin
       aixada_uf.name as uf,
       aixada_cart.date_for_shop,
       aixada_cart.operator_id,
-      aixada_cart.ts_validated 
+      aixada_cart.ts_validated,
+      aixada_cart.ts_last_saved 
     from aixada_cart 
     left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
   set @q = concat(@q, @lim);
@@ -4468,6 +4469,25 @@ begin
       aixada_currency.name,
       aixada_currency.one_euro 
     from aixada_currency ";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_estimated_prices_list_all_query|
+create procedure aixada_estimated_prices_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_estimated_prices.product_id,
+      aixada_estimated_prices.ts,
+      aixada_estimated_prices.min_estimated_price,
+      aixada_estimated_prices.max_estimated_price,
+      aixada_estimated_prices.true_price 
+    from aixada_estimated_prices ";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -4673,6 +4693,25 @@ begin
       aixada_payment_method.description,
       aixada_payment_method.details 
     from aixada_payment_method ";
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_price_list_all_query|
+create procedure aixada_price_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+begin
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = "select
+      aixada_product.name as product,
+      aixada_price.ts,
+      aixada_price.current_price,
+      aixada_price.operator_id 
+    from aixada_price 
+    left join aixada_product as aixada_product on aixada_price.product_id=aixada_product.id";
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;

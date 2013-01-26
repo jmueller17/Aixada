@@ -452,10 +452,13 @@ create table aixada_incident (
  *	Evolution of prices
  **/
 create table aixada_price (
-  product_id     	int		not null,
+  product_id     	int   not null,
   ts                    timestamp       default current_timestamp,
-  current_price    	decimal(10,2)   default 0,
-  primary key (product_id, ts)  
+  current_price    	decimal(10,2)   not null,
+  operator_id           int,
+  primary key (product_id, ts),
+  foreign key (product_id) references aixada_product(id),
+  foreign key (operator_id) references aixada_user(id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 
