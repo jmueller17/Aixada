@@ -1,15 +1,26 @@
 from MySQLdb import connect
 from subprocess import call 
 from string import replace
+import pickle
 
 def get_db():
     return connect(user="aixada", passwd="aixada", db="aixada")
 
 def shop_dates(db):
-    return ['2005-01-12']
-#    c = db.cursor()
-#    c.execute("""select """)
-#    res = c.fetchall()
+#    return ['2005-01-12', '2005-01-19']
+    c = db.cursor()
+    c.execute("""
+select 
+  distinct date_for_order 
+from 
+  aixada_order_item 
+where
+  date_for_order >= '1950-01-01'
+order by
+  date_for_order;
+""")
+    return c.fetchall()
+    
 
 def ufs_at_date(db, date):
     c = db.cursor()
@@ -107,14 +118,11 @@ def solution(special_product_var):
             continue
         linearray = line.split(' ')
         if linearray[0] == special_product_var:
-            return float(linearray[1])
+            return round(float(linearray[1]),2)
 
-
-if __name__ == "__main__":
-    db = get_db()
+def make_bounds(date, bounds):
     eqs = []
     vars = []
-    date = '2005-01-12'
     vdate = replace(date, '-', '_')
     ufs = [_uf[0] for _uf in ufs_at_date(db, date)]
     for uf in ufs:
@@ -124,10 +132,34 @@ if __name__ == "__main__":
         ts = total_spent(db, uf, date)
         make_eqs(vdate, uf, pb, ts, eqs)
     product_vars = set(vars)
-    bounds = dict()
     for v in product_vars:
         min_res = bound(vdate, eqs, ufs, product_vars, v, 0)
         max_res = bound(vdate, eqs, ufs, product_vars, v, 1)
         bounds[v] = [min_res, max_res]
-        
-    print bounds
+    return bounds
+
+def save_bounds(db, bounds):
+    entries = []
+    for var, bd in bounds.iteritems():
+        [xproduct, y, m, d] = var.split('_')
+        entries.append([xproduct[1:], y + '-' + m + '-' + d, bd[0], bd[1]])
+
+    print entries
+    c = db.cursor()
+    c.executemany("""
+replace into
+  aixada_estimated_prices (product_id, ts, min_estimated_price, max_estimated_price)
+values (%s, %s, %s, %s)
+""", (entries))
+
+
+if __name__ == "__main__":
+    db = get_db()
+    bounds = dict()
+    dates = [date[0].strftime("%Y-%m-%d") for date in shop_dates(db)]
+    
+    for date in dates:
+        print date
+        bounds = make_bounds(date, bounds)
+        save_bounds(db, bounds)
+        db.commit()
