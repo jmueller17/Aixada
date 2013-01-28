@@ -911,13 +911,14 @@ drop procedure if exists convert_preorder|
 create procedure convert_preorder(in the_provider_id int, in the_date_for_order date)
 begin
 	
+	
 	start transaction;
 	
 	-- insert first entry in aixada_products_orderable_for_date -- 
 	replace into
-		aixada_product_orderable_for_date (date_for_order, product_id)
+		aixada_product_orderable_for_date (date_for_order, product_id, closing_date)
 	select
-		the_date_for_order, p.id
+		the_date_for_order, p.id, now()
 	from
 		aixada_product p,
 		aixada_order_item oi
