@@ -1,11 +1,6 @@
 <?php
 
 
-require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-
 
 /** 
  * @package Aixada

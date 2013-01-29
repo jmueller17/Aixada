@@ -19,9 +19,6 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
 	   	<script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
-	   	
-	   	
-
 	   	  
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_orders.min.js"></script>

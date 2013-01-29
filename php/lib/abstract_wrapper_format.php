@@ -1,7 +1,5 @@
 <?php
 
-require_once(__ROOT__ . 'php/lib/abstract_import_manager.php');
-
 
 /**
  * 

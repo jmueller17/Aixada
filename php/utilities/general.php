@@ -395,6 +395,24 @@ function get_config_menu($user_role)
 }
 
 
+function get_import_rights($db_table_name)
+{
+	//get the import rights for the db table and fields
+	$import_rights = configuration_vars::get_instance()->allow_import_for; 
+	
+	if (!isset($import_rights[$db_table_name])) {
+        throw new Exception("Import error: no imports allowed for '" . $db_table_name . ".' Check local_config/config.php");
+    }
+    $xml = '<rows>';
+    
+	foreach ($import_rights[$db_table_name] as $field => $value) {
+	    		if ($value == 'allow'){
+		    		$xml .= '<row><db_field>'.$field.'</db_field></row>';
+	    		} 
+    		}
+	return $xml . "</rows>";
+}
+
 
 
 function get_field_options_live($table, $field1, $field2)
