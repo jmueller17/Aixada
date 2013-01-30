@@ -1070,7 +1070,9 @@
 				 -->
 				 <div class="pgProductEdit ui-widget" id="pgProductEdit">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span>
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_product_edit">
 						<table id="tbl_product_edit" class="tblForms">
 							  <tbody>
@@ -1216,7 +1218,9 @@
 				 -->
 				 <div class="pgProductNew ui-widget" id="pgProductNew">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> 
+							<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_product_new">
 						<input type="hidden" name="provider_id" value=""/>
 						<table id="tbl_product_new" class="tblForms">
@@ -1251,7 +1255,9 @@
 				 -->
 				<div class="pgProviderEdit ui-widget" id="pgProviderEdit">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span>
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_provider_edit">
 						<table id="tbl_provider_edit" class="tblForms">
 						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
@@ -1369,7 +1375,9 @@
 			-->
 			<div class="pgProviderNew ui-widget hidden" id="pgProviderNew">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span>
+							<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_provider_new">
 						<table id="tbl_provider_new" class="tblForms">
 						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
