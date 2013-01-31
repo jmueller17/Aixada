@@ -28,6 +28,11 @@
 	
 	$(function(){
 
+
+		//loading Spinner
+		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+		
+
 		//decide what to do in which section
 		var what = $.getUrlVar('what');
 
@@ -56,6 +61,13 @@
 
 		$('#btn_pwd_cancel')
 			.button({icons: {primary: "ui-icon-close"}});
+
+		//remove all eventual error styles on input fields. 
+		$('input')
+			.live('focus', function(e){
+				$(this).removeClass('ui-state-error');
+			});
+		
 		
 
 
@@ -99,46 +111,54 @@
 
 			var urlStr = 'php/ctrl/UserAndUf.php?oper=updateMember';
 			var isValid = true; 
+			var isValidItem = true; 
 			var err_msg = ''; 
 
 			//run some local checks
 			if (action == 'pwd'){
 
 				urlStr = "php/ctrl/UserAndUf.php?oper=changePassword";
-			
-				isValid = isValid && $.checkFormLength($(mi +' input[name=login]'),3,50);
-				if (!isValid){
-					err_msg += "<?=$Text['msg_err_usershort'];?><br/><br/>"; 
+
+
+				isValidItem = $.checkFormLength($(mi +' input[name=login]'),3,50);
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_usershort'];?>" + "<br/><br/>"; 
 				}
-	
-				isValid = isValid &&  $.checkFormLength($(mi+' input[name=password]'),4,15);
-				if (!isValid){
-					err_msg += "<?=$Text['msg_err_passshort'];?><br/><br/>"; 
+
+				isValidItem = $.checkFormLength($(mi+' input[name=password]'),4,15);
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_passshort'];?>" + "<br/><br/>"; 
 				}
 				
-				isValid = isValid &&  $.checkPassword($(mi+' input[name=password]'), $('input[name=password_ctrl]'));
-				if (!isValid){
-					err_msg += "<?=$Text['msg_err_pwdctrl']; ?><br/><br/>";
+				isValidItem = $.checkPassword($(mi+' input[name=password]'), $('input[name=password_ctrl]'));
+				if (!isValidItem){
+					isValid = false; 
+					err_msg += "<?=$Text['msg_err_pwdctrl']; ?>"+ "<br/><br/>";
 				}
 
-				
+								
 			}
 
-			
-			isValid = isValid &&  $.checkFormLength($(mi+' input[name="name"]'),4,15);
-			if (!isValid){
-				err_msg += "<?php echo $Text['name_person'] . $Text['msg_err_notempty']; ?> <br/><br/>";
-			}
-			
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
-			if (!isValid){
-				err_msg += "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?><br/><br/>";
+			isValidItem = $.checkFormLength($(mi+' input[name="name"]'),2,150);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?php echo $Text['msg_err_namelength']; ?>"+ "<br/><br/>";
 			}
 
-			isValid = isValid &&  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-			if (!isValid){
-				err_msg += "<?=$Text['msg_err_email'] ?>";
+			isValidItem =  $.checkRegexp($(mi+' input[name="phone1"]'),/^([0-9\s\+])+$/);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?php echo $Text['phone1'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
 			}
+
+			isValidItem =  $.checkRegexp($(mi+' input[name="email"]'),/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+			if (!isValidItem){
+				isValid = false; 
+				err_msg += "<?=$Text['msg_err_email'] ?>"+ "<br/><br/>";
+			}
+
 
 			if (isValid){
 
@@ -334,7 +354,9 @@
 		
 			<div id="edit_my_settings" class="ui-widget editMemberElements">
 					<div class="ui-widget-content ui-corner-all member-info" id="detail_member_{id}">
-					<h3 class="ui-widget-header ui-corner-all">&nbsp;<span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all">&nbsp;
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+					</h3>
 						<p>&nbsp;</p>
 						<form id="frm_save_member_{id}">
 							<input type="hidden" name="member_id" value="{id}"/>

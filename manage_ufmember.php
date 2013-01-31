@@ -1246,6 +1246,7 @@
 							<td><label for="notes"><?php echo $Text['notes'];?></label></td>
 							<td colspan="5"><input type="text" name="notes" value="" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
 						</tr>
+						
 						<tr>
 							<td><label for="member_active"><?php echo $Text['active'];?></label></td>
 							<td><input type="checkbox" name="member_active" value="" class="floatLeft" /></td>
