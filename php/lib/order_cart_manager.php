@@ -6,9 +6,6 @@
 
 
 
-/*require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);*/
 
 //ob_start(); // Starts FirePHP output buffering
 require_once(__ROOT__ . 'php/lib/abstract_cart_manager.php');

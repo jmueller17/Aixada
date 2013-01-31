@@ -6,23 +6,40 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 
 require_once(__ROOT__ . "php/external/jquery-fileupload/UploadHandler.php");
 require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/lib/csv_wrapper.php");
+//require_once(__ROOT__ . "php/lib/csv_wrapper.php");
 require_once(__ROOT__ . "php/lib/import_products.php");
+require_once(__ROOT__ . "php/utilities/general.php");
+
+ require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
+ require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
 
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+
+require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
 
-/*function get_file_name() {
-        return isset($_GET['file']) ? basename(stripslashes($_GET['file'])) : null;
-}*/
+
+function parseSpreadSheet($path){
+	
+	$row = 0;
+  	$_data_table = null; 						
+									
+ 	$Reader = new SpreadsheetReader($path);
+	foreach ($Reader as $Row){
+		    {
+	  	$_data_table[$row++] = $Row; 
+
+	}						
+									
+	return new data_table($_data_table, true);
+}
  	
 
 try{ 
    
-	
+	global $firephp; 
 	
  	switch (get_param('oper')) {
 
@@ -30,16 +47,15 @@ try{
  		case 'uploadFile':
 			$options = array(	
 				'upload_dir' => __ROOT__ . 'local_config/upload/',
-				'accept_file_types' => '/\.(gif|jpe?g|png|csv)$/i'
+				'accept_file_types' => '/\.(gif|jpe?g|png|csv|xlsx|xls|ods)$/i'
 			);
 			$upload_handler = new UploadHandler($options);
 			exit; 
  		
  		case 'parseFile':
  			$path = __ROOT__ .'local_config/upload/' . get_param('file');
-			$csv = new csv_wrapper($path);
-	
-			$dt = $csv->parse();
+
+			$dt = parseSpreadSheet($path);
 			
 			echo $dt->get_html_table();
 	
@@ -54,14 +70,10 @@ try{
     		
     		
  		case 'import':
- 			global $firephp; 
- 			
- 			$firephp->log($_SESSION['import_file'], "path");
-			
- 			//make map
- 			$csv = new csv_wrapper($_SESSION['import_file']);
-	
-			$dt = $csv->parse();
+ 						
+
+			$dt = parseSpreadSheet($_SESSION['import_file']);
+									
 			
 			//$map = array('custom_product_ref'=>0, 'unit_price'=>1, 'name'=>2);
 			$map = array();
@@ -71,12 +83,10 @@ try{
 			
 			$firephp->log($map, "the map");
 			
-			
-			//data_table, dt to db map, provider_id
 			$pi = new import_products($dt, $map, get_param('provider_id'));
+		
 			
-			//append_new = true
-			$pi->import(true);
+			$pi->import(get_param('new_items', false));
 		
 			echo 1; 
 			
