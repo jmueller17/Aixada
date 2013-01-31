@@ -28,12 +28,12 @@ function parseSpreadSheet($path){
 									
  	$Reader = new SpreadsheetReader($path);
 	foreach ($Reader as $Row){
-		    {
+		    
 	  	$_data_table[$row++] = $Row; 
 
 	}						
 									
-	return new data_table($_data_table, true);
+	return new data_table($_data_table, false);
 }
  	
 

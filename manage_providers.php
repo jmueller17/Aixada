@@ -417,6 +417,18 @@
 		});
 
 
+		//import produts
+		$('#btn_import')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				var myWin = window.open("manage_import.php?providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=900, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				myWin.focus();
+				
+			});
 
 		//product buttons
 		$('#btn_new_product')
@@ -952,7 +964,8 @@
 		    		</div>
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
-						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>
+						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
+						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
 						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
 							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;

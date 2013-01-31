@@ -222,18 +222,34 @@
 					
 					
 		 -->
-		 <div class="ui-widget"> 
+		 <div class="ui-widget aix-layout-fixW450"> 
 			<h4>1. Choose a file</h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
 				<form id="frmFileUpload">
 				<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
 				</form>
 				<br/>	<br/>
+				<button id="btn_upload">Preview</button> <span class="setFileName"></span>
 			</div>		
 		</div>
-		<br/><br/> 
+		<br/><br/>
+		
+		<div class="ui-widget opDataPreview hidden"> 
+			<h4>2. Preview data and match columns</h4>
+			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
+				<form id="frmColMap">
+					<input type="hidden" name="provider_id" value=""/>
+					<div id="preview" style="max-height:300px; overflow:auto;">
+				
+					</div>
+				</form>
+				<br/>
+				<button id="btn_import">Import</button>
+			</div>		
+		</div>
+		
 		 
-		<div class="ui-widget">
+		<!-- div class="ui-widget">
 			<h4>2. CSV import settings for: <span class="setFileName"></span></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
 				<form id="frm_csv_settings">
@@ -271,25 +287,12 @@
 				</table>
 				</form>
 				<br/>
-				<button id="btn_upload">Preview</button>
+
 			</div>
 			
-		</div>	 
+		</div-->	 
 		<br/><br/>
 		
-		<div class="ui-widget opDataPreview hidden"> 
-			<h4>3. Preview data and match columns</h4>
-			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
-				<form id="frmColMap">
-					<input type="hidden" name="provider_id" value=""/>
-					<div id="preview" style="max-height:300px; overflow:auto;">
-				
-					</div>
-				</form>
-				<br/>
-				<button id="btn_import">Import</button>
-			</div>		
-		</div>
 				
 		<br/><br/><br/><br/>			
 	</div>
