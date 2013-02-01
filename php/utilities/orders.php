@@ -8,10 +8,6 @@ require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
-//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
-
 
 /**
  * 

@@ -101,6 +101,12 @@ table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padd
 table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
 table.tblForms 	td label 	{float:right;}
 
+table.tblFormsSettings		{width:100%}
+table.tblFormsSettings	th	{background:#eaeaea; padding:4px 4px; text-align:left;}
+table.tblFormsSettings	td	{text-align:left; padding-right:10px; padding-left:4px; padding-top:4px; vertical-align:top;}
+table.tblFormsSettings 	td p {border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
+table.tblFormsSettings 	td label 	{float:left;}
+
 
 
 /** common layout **/

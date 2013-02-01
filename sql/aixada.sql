@@ -46,6 +46,8 @@ create table aixada_member (
   phone1    		varchar(50) 	default null,
   phone2			varchar(50) 	default null,
   web				varchar(255) 	default null,
+  bank_name 		varchar(255) 	default null, 
+  bank_account 		varchar(40) 	default null,
   picture           varchar(255)    default null,
   notes  	 		text 			default null,
   active     	  	tinyint			default 1, 
@@ -449,6 +451,8 @@ create table aixada_incident (
   foreign key (operator_id) references aixada_user(id),
   key (ts)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
+
 
 
 

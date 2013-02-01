@@ -1,6 +1,6 @@
 <?php
 
-require_once(__ROOT__ .'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+require_once(__ROOT__ .'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
@@ -26,8 +26,7 @@ if (!isset($_SESSION)) {
 
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 
-//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//$firephp = FirePHP::getInstance(true);
+
 
 /** 
  * The Singleton class that abstracts the database interface. 

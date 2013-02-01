@@ -1655,13 +1655,14 @@ drop procedure if exists convert_preorder|
 create procedure convert_preorder(in the_provider_id int, in the_date_for_order date)
 begin
 	
+	
 	start transaction;
 	
 	-- insert first entry in aixada_products_orderable_for_date -- 
 	replace into
-		aixada_product_orderable_for_date (date_for_order, product_id)
+		aixada_product_orderable_for_date (date_for_order, product_id, closing_date)
 	select
-		the_date_for_order, p.id
+		the_date_for_order, p.id, now()
 	from
 		aixada_product p,
 		aixada_order_item oi
@@ -2214,37 +2215,48 @@ drop procedure if exists get_products_detail|
 create procedure get_products_detail(	in the_provider_id int, 
 										in the_category_id int, 
 										in the_like varchar(255),
-										in the_date date)
+										in the_date date,
+										in include_inactive boolean,
+										in the_product_id int)
 begin
 	
 	declare today date default date(sysdate());
     declare wherec varchar(255);
     declare fromc varchar(255);
     declare fieldc varchar(255);
+     
+    
+    /** show active products only or include inactive products as well **/
+    set wherec = if(include_inactive=1,"","and p.active=1 and pv.active = 1");	
+   
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = 	" and p.unit_measure_shop_id = u.id ";
+    	set wherec = 	concat(wherec, " and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ";
+    	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ");
     
     /** otherwise search for products with orderable dates **/
     else 
     	set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");
        	set fromc = 	"aixada_product_orderable_for_date po, ";
-    	set wherec = 	concat(" and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
+    	set wherec = 	concat(wherec, " and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
     end if;
+     
     
     
-    
+    /** get a specific product **/
+    if the_product_id > 0 then 
+    	set wherec = concat(wherec, " and p.id = '", the_product_id, "' ");
+    	
     /** get products by provider_id **/
-    if the_provider_id > 0 then
+    elseif the_provider_id > 0 then
 		set wherec = concat(wherec, " and pv.id = '", the_provider_id, "' ");
     	
     /** get products by category_id **/
@@ -2255,17 +2267,15 @@ begin
     /** search for product name **/
     elseif the_like != "" then
     	set wherec 	= concat(wherec, " and p.name LIKE '%", the_like,"%' ");
+    	
     end if;
     
   
 	set @q = concat("
 	select
-		p.id,
-		p.name,
-		p.description,
-		p.category_id,
-		p.stock_actual,
-		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price, 
+		p.*,
+		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price,
+		p.unit_price as unit_price_netto, 
 		pv.name as provider_name,	
 		u.unit,
 		iva.percent as iva_percent,
@@ -2279,9 +2289,7 @@ begin
 		aixada_iva_type iva,
 		aixada_unit_measure u 
 	where 
-		p.active = 1
-		and pv.active = 1
-		and pv.id = p.provider_id	
+		pv.id = p.provider_id	
 		",wherec,"
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
@@ -2696,6 +2704,42 @@ begin
 end|
 
 
+/**
+ *	returns a list of all active providers
+ *	with sometimes, always orderable items, stock, preorder
+ */
+drop procedure if exists get_provider_listing|
+create procedure get_provider_listing(in the_provider_id int, in include_inactive boolean)
+begin
+	
+	declare wherec varchar(255) default '';
+	
+	-- show all providers including inactive or just active ones -- 
+	set wherec = if(include_inactive=1,"","and pv.active = 1");	
+	
+	-- filter for specific provider --
+	if the_provider_id > 0 then
+		set wherec = concat(wherec, " and pv.id=",the_provider_id);
+	end if; 
+		
+	set @q = concat("select
+	     pv.*, 
+		 uf.id as responsible_uf_id, 
+		 uf.name as responsible_uf_name
+	  from 
+	  	aixada_provider pv,
+	  	aixada_uf uf
+	  where  
+	  	pv.responsible_uf_id = uf.id
+	    ",wherec,"
+	  order by pv.name, pv.id;");
+	  
+	  prepare st from @q;
+	  execute st;
+	  deallocate prepare st;
+	  
+end|
+
 
 
 /*************************************************
@@ -2793,6 +2837,7 @@ begin
   end if; 
   
 end|
+
 
 
 delimiter ;
@@ -4554,6 +4599,8 @@ begin
       aixada_member.phone1,
       aixada_member.phone2,
       aixada_member.web,
+      aixada_member.bank_account,
+      aixada_member.bank_name,
       aixada_member.picture,
       aixada_member.notes,
       aixada_member.active,
@@ -4692,9 +4739,11 @@ begin
       aixada_product.name,
       aixada_product.description,
       aixada_product.barcode,
+      aixada_product.custom_product_ref,
       aixada_product.active,
       concat(aixada_uf.id, ' ', aixada_uf.name) as responsible_uf,
       aixada_orderable_type.description as orderable_type,
+      aixada_product.order_min_quantity,
       aixada_product_category.description as category,
       aixada_rev_tax_type.name as rev_tax_type,
       aixada_iva_type.name as iva_percent,

@@ -6,9 +6,6 @@
 
 
 
-/*require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);*/
 
 //ob_start(); // Starts FirePHP output buffering
 require_once(__ROOT__ . 'php/lib/abstract_cart_manager.php');
@@ -21,11 +18,11 @@ require_once(__ROOT__ . 'php/lib/abstract_cart_manager.php');
  * @subpackage Shop_and_Orders
  */
 class order_item extends abstract_cart_row {
-
+	
 	
     public function commit_string() 
     {
-        return '(null, '					//order_id is always null; set when order is send_off/closed
+        return '(null, '	//order_id is always null; set when order is send_off/closed
         	. $this->_cart_id . ","
             . "'" . $this->_date . "',"
             . $this->_uf_id . ','
@@ -47,7 +44,13 @@ class order_item extends abstract_cart_row {
  * @subpackage Shop_and_Orders
  */
 class order_cart_manager extends abstract_cart_manager {
+		
+	
+	//which of the order items pertain to a closed order. 
+	protected $_closed_orders = array(); 
 
+	
+	
     /**
      * Although aixada_order_item has a field order_id, this is set to null by default.
      * @param int $uf_id
@@ -79,19 +82,55 @@ class order_cart_manager extends abstract_cart_manager {
     	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favori te" cart
     	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
     	
+    	     	
+    	$db = DBWrap::get_instance();
+    	
+    	//get already closed orders for the current date and this uf. 
+    	//closed orders cannot be update anymore
+    	$sql = "select
+    				oi.product_id
+    			from 
+    				aixada_order_item oi
+    			where
+    				oi.date_for_order ='". $this->_date."'
+    				and oi.product_id in (";
+    	
+		    	foreach ($arrProdId as $id){
+		    		$sql .= $id . ",";
+				}		
+		
+		$sql = rtrim($sql, ",") .") and oi.uf_id=".$this->_uf_id." and oi.order_id > 0;";
+    	
+       	$rs = $db->Execute($sql);	
+       	
+       
+   		while ($row = $rs->fetch_array()){
+    		array_push($this->_closed_orders, $row['product_id']); 
+    	}
+       	
+       	$db->free_next_results();
+            	
+    	
+    	
         for ($i=0; $i < count($arrQuant); ++$i) {
             if ($arrPreOrder[$i] == 'false'){
             	
-                $this->_rows[] = new order_item($this->_date,
-                                                $this->_uf_id,
-                                                $arrProdId[$i], 
-                                                $arrQuant[$i],  
-                                                $this->_cart_id, 
-                                                $arrPrice[$i]);
+            	//if product id exists in closed orders, don't update it. 
+            	$closed = array_search($arrProdId[$i], $this->_closed_orders);
+
+            	if ($closed === false){
+	                $this->_rows[] = new order_item($this->_date,
+	                                                $this->_uf_id,
+	                                                $arrProdId[$i], 
+	                                                $arrQuant[$i],  
+	                                                $this->_cart_id, 
+	                                                $arrPrice[$i]);
+            	}
             } 
                                                 
         }
     }
+    
     
 
     /**
@@ -101,7 +140,9 @@ class order_cart_manager extends abstract_cart_manager {
     protected function _delete_rows()
     {
     	$db = DBWrap::get_instance();
-        $db->Execute("delete from aixada_order_item where uf_id=:1q and (date_for_order=:2q or date_for_order='1234-01-23')", $this->_uf_id, $this->_date);	
+        
+    	//only delete those order items which don't have an order_id yet. 
+    	$db->Execute("delete from aixada_order_item where uf_id=:1q and order_id is null and (date_for_order=:2q or date_for_order='1234-01-23')", $this->_uf_id, $this->_date);	
     }
     
     

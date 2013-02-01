@@ -4,9 +4,6 @@
  */
 
 
-//require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
 
 require_once 'inc/cookie.inc.php';
 require_once 'inc/authentication.inc.php';

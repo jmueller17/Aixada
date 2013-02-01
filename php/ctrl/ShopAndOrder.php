@@ -11,10 +11,6 @@ require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
 
 if (!isset($_SESSION)) {
     session_start();

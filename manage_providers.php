@@ -417,6 +417,18 @@
 		});
 
 
+		//import produts
+		$('#btn_import')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				var myWin = window.open("manage_import.php?providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=900, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				myWin.focus();
+				
+			});
 
 		//product buttons
 		$('#btn_new_product')
@@ -767,14 +779,18 @@
 				}	
 			});
 
-			//custom_product_ref has unique index which requires "null" value to be passed
-			var ref = $('input[name=custom_product_ref]').val();			
-			ref = (ref == '')? 'null':ref; 
-			$('input[name=custom_product_ref]').val(ref);
+			var cus = null;
+			//custom_product_ref has unique index and needs null value
+			if ($('input[name=custom_product_ref]').val() == '') {
+				cus = $('input[name=custom_product_ref]').remove();
+			}
 
 			//serialize 
 			var sdata = $(mi + ' form').serialize();
 
+			//append again the custom_product_id input
+			$(cus).appendTo('.customProdutRefHook');
+			
 			$.ajax({
 			   	url: 'php/ctrl/TableManager.php?oper='+action+'&table=aixada_'+table,
 			   	method: 'POST',
@@ -861,7 +877,10 @@
 
 		//for a given unit price, apply rev tax and iva and indicate the final price
 		function calcBruttoPrice(frm){
-			var price = new Number($('input[name=unit_price]', frm).val());
+
+			var price = $.checkNumber($('input[name="unit_price"]', frm),0.00, 2);
+			$('input[name=unit_price]', frm).val(price);
+			
 			
 			var rev = new Number($('input[name=rev_tax_type_id]', frm).val());
 			var iva = new Number($('input[name=iva_percent_id]', frm).val());
@@ -945,7 +964,8 @@
 		    		</div>
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
-						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>
+						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
+						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
 						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
 							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
@@ -1063,7 +1083,9 @@
 				 -->
 				 <div class="pgProductEdit ui-widget" id="pgProductEdit">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span>
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_product_edit">
 						<table id="tbl_product_edit" class="tblForms">
 							  <tbody>
@@ -1095,7 +1117,7 @@
 							  </tr>
 							   <tr>
 							    <td><label for="custom_ref"><?php echo $Text['custom_product_ref']; ?></label></td>
-							    <td colspan="3"><input type="text" name="custom_product_ref" value="{custom_product_ref}" class="ui-widget-content ui-corner-all" /></td>
+							    <td colspan="3" class="customProdutRefHook"><input type="text" name="custom_product_ref" value="{custom_product_ref}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							  <tr>
 							    <td><label for="barcode"><?php echo $Text['barcode']; ?></label></td>
@@ -1209,7 +1231,9 @@
 				 -->
 				 <div class="pgProductNew ui-widget" id="pgProductNew">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> </h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span> 
+							<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_product_new">
 						<input type="hidden" name="provider_id" value=""/>
 						<table id="tbl_product_new" class="tblForms">
@@ -1244,7 +1268,9 @@
 				 -->
 				<div class="pgProviderEdit ui-widget" id="pgProviderEdit">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span>
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_provider_edit">
 						<table id="tbl_provider_edit" class="tblForms">
 						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
@@ -1362,7 +1388,9 @@
 			-->
 			<div class="pgProviderNew ui-widget hidden" id="pgProviderNew">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
+						<h3 class="ui-widget-header"><span class="setProviderName"></span>
+							<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h3>
 						<form id="frm_provider_new">
 						<table id="tbl_provider_new" class="tblForms">
 						<thead><tr><td colspan="4">&nbsp;</td></tr></thead>

@@ -1,11 +1,6 @@
 <?php
 
 
-require_once('FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-
 
 /** 
  * @package Aixada
@@ -18,19 +13,20 @@ require_once(__ROOT__ . 'php/lib/abstract_wrapper_format.php');
 class csv_wrapper extends abstract_wrapper_format {
 	  
 
-	public $delimiter = "\t"; //single quotes does not work
+	public $delimiter = ","; //single quotes does not work
 
 	public $quote 	  = ""; 
 	
 	public $header 	= true; 
 	
+	private $delimiters = array(",", ";", "\t", "\s", "\"", "\'");
 	
 	
-	public function __construct($uri, $header=true, $delimiter="\t", $quote="\'")
+	public function __construct($uri, $header=true, $del_index=0, $txt_index=4)
 	{
 		
-		$this->delimiter = $delimiter;
-		$this->quote = $quote;
+		$this->delimiter = $this->delimiters[$del_index];
+		$this->quote = $this->delimiters[$txt_index];
 		$this->header = $header;  
 	    
 	    parent::__construct($uri);

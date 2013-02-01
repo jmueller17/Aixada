@@ -17,3 +17,16 @@ alter table
       add unique key (custom_product_ref, provider_id);
 
       
+/**
+ * MEMBER has now bank_name and bank_account
+ */
+alter table 
+	aixada_member
+	add bank_account 	varchar(40) 	default null after web,
+	add bank_name 		varchar(255) 	default null after web;
+
+
+
+
+
+      

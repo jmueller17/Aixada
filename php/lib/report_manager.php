@@ -15,9 +15,7 @@ if (!isset($_SESSION)) {
 
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 require_once(__ROOT__ . 'php/inc/database.php');
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+
 
 
 /**
@@ -434,8 +432,7 @@ class report_manager {
    */
   private function rowset_to_HTML_with_rollup($rs, $headings, $totals, $styles, $options)
   {
-//     global $firephp;
-//     $firephp->log($headings, 'headings');
+
     if (isset($options['standalone_HTML']) and $options['standalone_HTML']) {
       $strHTML = "<html><head><title>{$options['title']}</title></head>\n" 
 	. '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
@@ -444,7 +441,6 @@ class report_manager {
       $strHTML = '';
     }
 
-    global $firephp;
     $hkeys = array_keys($headings);
     $skeys = array_keys($styles);
     $hct = count($hkeys);
@@ -474,8 +470,7 @@ class report_manager {
       } 
       $tmp = '';
       if ($i == $hct-2) {
-// 	$firephp->log($skeys[$i], 'skeys');
-// 	$firephp->log($styles[$skeys[$i]], 'style');
+
 	$tmp 
 	  .= "\n" . '<span class="' . $styles['total_quantity'] . '">'
 	  .  $totals['total_quantity'] . ': ' . clean_zeros($row['total_quantity']) 
@@ -502,7 +497,7 @@ class report_manager {
 	$stack = array();
       }
     } //while ($row = $rs->fetch_assoc())
-    //    $firephp->log($strHTML);
+
     return $strHTML;
   }
 
@@ -516,8 +511,7 @@ class report_manager {
    */
   private function rowset_to_HTML_without_rollup($rs, $headings, $styles, $options)
   {
-//     global $firephp;
-//     $firephp->log($headings, 'headings');
+
     if (isset($options['standalone_HTML']) and $options['standalone_HTML']) {
       $strHTML = "<html><head><title>{$options['title']}</title></head>\n" 
 	. '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'

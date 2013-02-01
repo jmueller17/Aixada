@@ -351,6 +351,15 @@
 			beforeLoad : function(){
 				$('.loadSpinner').show();
 			},
+			rowComplete : function(rowIndex, row){
+				var tds = $(row).children();
+				//active
+				if (tds.eq(2).children('p:first').text() == "1"){
+					tds.eq(2).children('p:first').html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all');
+				} else {
+					tds.eq(2).children('p:first').html('<span class="ui-icon ui-icon-closethick"></span>').addClass('noRed ui-corner-all');
+				}
+			},
 			complete : function(){
 				$('.loadSpinner').hide();
 				$('#member_list tbody tr:even').addClass('rowHighlight'); 
@@ -406,6 +415,15 @@
 			params : "oper=searchMember",
 			beforeLoad: function(){
 				$('.loadSpinner').show();
+			},
+			rowComplete : function(rowIndex, row){
+				var tds = $(row).children();
+				//active
+				if (tds.eq(2).children('p:first').text() == "1"){
+					tds.eq(2).children('p:first').html('<span class="ui-icon ui-icon-check"></span>').addClass('aix-style-ok-green ui-corner-all');
+				} else {
+					tds.eq(2).children('p:first').html('<span class="ui-icon ui-icon-closethick"></span>').addClass('noRed ui-corner-all');
+				}
 			},
 			complete : function(){
 				$('#member_list_search tbody tr:even').addClass('rowHighlight');
@@ -1005,7 +1023,7 @@
 							<tr class="clickable memberOfUf_{uf_id}" memberId="{id}" ufId="{uf_id}">
 								<td>{id}</td>
 								<td><p>{name}</p></td>
-								<td><p class="textAlignCenter">{active}</p></td>
+								<td><p class="textAlignCenter iconContainer">{active}</p></td>
 								<td><?=$Text['uf_short'];?>{uf_id}</td>
 								<td>{phone1} / {phone2}</p></td>
 								<td>{email}</td>
@@ -1032,7 +1050,7 @@
 							<tr class="clickable" memberId="{id}">
 								<td>{id}</td>
 								<td><p class="textAlignLeft">{name}</p></td>
-								<td>{active}</td>
+								<td><p class="textAlignCenter iconContainer">{active}</p></td>
 								<td><?=$Text['uf_short'];?>{uf_id}</td>
 								<td><p class="textAlignLeft">
 									{phone1} / {phone2}<br/>
@@ -1228,6 +1246,7 @@
 							<td><label for="notes"><?php echo $Text['notes'];?></label></td>
 							<td colspan="5"><input type="text" name="notes" value="" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
 						</tr>
+						
 						<tr>
 							<td><label for="member_active"><?php echo $Text['active'];?></label></td>
 							<td><input type="checkbox" name="member_active" value="" class="floatLeft" /></td>
