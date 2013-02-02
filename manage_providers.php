@@ -860,7 +860,7 @@
 		//loads the options for select boxes. The whole story is  that the selects
 		//delivered from the getFieldsOptions of the TableManger don't have the name attribute set
 		//and they get added after the xml2html template was triggered. So we mirror the value with a simple 
-		//hidden intput field and the corresponding name
+		//hidden input field and the corresponding name
 		function populateSelect(tbls, destTable){
 			for (var i=0; i<tbls.length; i++){
 				var urlStr = 'php/ctrl/SmallQ.php?oper=getFieldOptions&table='+tbls[i][0]; 

@@ -837,6 +837,7 @@ $Text['btn_back_products'] = "Volver a productos";
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Pegar";
 
+$Text['search_provider'] = "Buscar proveidor";
 
 
 

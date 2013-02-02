@@ -826,9 +826,10 @@ $Text['msg_confirm_del_provider'] = "¿Seguro que quieres borrar este proveedor?
 $Text['msg_err_del_provider'] = "No se puede borrar este proveedor. Borra sus productos antes y vuelve a probar.";
 $Text['price_net'] = "Precio neto";
 $Text['custom_product_ref'] = "Id externo"; 
-$Text['btn_back_products'] = "Volver a productos";
+$Text['btn_back_products'] = "Tornar a productes";
 
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Pegar";
 
+$Text['search_provider'] = "Buscar proveidor";
 

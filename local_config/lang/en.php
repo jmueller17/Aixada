@@ -612,7 +612,6 @@ $Text['msg_err_no_stock'] = "This provider seems to have no stock";
 $Text['msg_err_qu'] = "Quantity needs to be numeric and bigger than 0!";
 $Text['msg_correct_stock'] = "Adjusting stock this way should be the exception! New stock should always be ADDED. Are you sure to correct the stock for this product?";
 $Text['btn_yes_corret'] = "Yes, make correction!";
-$Text['ti_mng_stock'] = "Manage stock";
 $Text['search_product'] = "Search a product";
 $Text['add_stock'] = "Add stock";
 $Text['click_to_edit'] = "Click table cells to edit!";
@@ -831,6 +830,7 @@ $Text['btn_back_products'] = "Edit products";
 $Text['copy_column'] = "Copy column";
 $Text['paste_column'] = "Paste";
 
+$Text['search_provider'] = "Search for provider";
 //$Text[''] = ""; 
 
 ?>

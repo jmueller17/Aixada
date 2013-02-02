@@ -121,6 +121,21 @@ function get_list_all_XML()
 }
 
 
+function post_edit_hook($request) 
+{
+    switch ($request['table']) {
+    case 'aixada_product': 
+	$db = DBWrap::get_instance();
+	$row = $db->Execute("select current_price from aixada_price where product_id=:1", $request['id'])->fetch_array();
+	if ($row[0] != $request['unit_price']) {
+	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], $_SESSION['userdata']['uf_id']);
+	}
+	break;
+    default:
+	break;
+    }
+}
+
 // code starts here
 
 
@@ -151,6 +166,7 @@ try{
   case 'edit':
     $arrData = array_diff_key($_REQUEST, $ignore_keys); 
     DBWrap::get_instance()->Update($_REQUEST['table'], $arrData);
+    post_edit_hook($_REQUEST);
     echo '1';
     exit;
     
