@@ -567,7 +567,7 @@
 	function calculateTotal(){
 		 
 			var total = 0; 
-			var subtotal = 0;
+			var total_net = 0;
 			var rev_tax_total = 0; 
 			var iva_tax_total = 0; 
 			
@@ -576,24 +576,23 @@
 				var id = $(this).attr("id");
 				var quantity 	= parseFloat($("#cart_quantity_"+id, $(this)).val());
 				var price    	= parseFloat($("#cart_price_"+id, $(this)).val());
-				var rev_tax	 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
+				var rev_tax 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
 				var iva_tax 	= parseFloat($("#cart_iva_percent_"+id, $(this)).val());
 				
-				var tax = 1+(rev_tax+iva_tax)/100; 
 				var item_total 	= price * quantity; 
 				
-				var item_net = item_total / tax; 
+  			        var item_net = item_total / (1 + rev_tax/100) / (1 + iva_tax/100);
 				
 				//iva and revtax is contained in the unit_price
 				iva_tax_total += item_net * (iva_tax/100);
 				rev_tax_total += item_net * (rev_tax/100);
 	
-				subtotal += item_net;
+				total_net += item_net;
 				
 				total += item_total;
 			});
 
-			$('#aixada_cart_list td.subtotal').text(String(subtotal.toFixed(2)));
+			$('#aixada_cart_list td.total_net').text(String(total_net.toFixed(2)));
 			$('#aixada_cart_list td.iva_tax_total').text(String(iva_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.rev_tax_total').text(String(rev_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.total').text(String(total.toFixed(2)));
@@ -661,7 +660,7 @@
 		tbl_head += '</thead>';
 		
 		var tbl_foot = 	'<tfoot>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="subtotal_label">'+$.aixadacart.subtotal+'</td><td class="subtotal cart_dblBorderTop">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_net_label">'+$.aixadacart.total_net+'</td><td class="total_net cart_dblBorderTop">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="5" class="rev_tax_label">'+$.aixadacart.revTaxInclAbbrev+'</td><td class="rev_tax_total">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="5" class="iva_tax_label">'+$.aixadacart.ivaTaxInclAbbrev+'</td><td class="iva_tax_total">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr>';

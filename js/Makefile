@@ -26,11 +26,11 @@ FILEROOTS = \
 
 CANONICAL_DEPS = \
 	jquery/jquery.js \
-	jquery/jquery-ui-1.8.custom.min.js \
+	jqueryui/jqueryui.js \
 	fgmenu/fg.menu.js \
-	jquery/jquery.aixadaMenu.js \
-        jquery/jquery.aixadaXML2HTML.js \
-        jquery/jquery.aixadaUtilities.js
+	aixadautilities/jquery.aixadaMenu.js \
+        aixadautilities/jquery.aixadaXML2HTML.js \
+        aixadautilities/jquery.aixadaUtilities.js
 
 JSFILES = $(patsubst %,js_for_%.min.js,$(FILEROOTS))
 
@@ -53,9 +53,9 @@ js_for_activate_roles.js: \
 
 js_for_login.js: \
 	jquery/jquery.js \
-	jquery/jquery-ui-1.8.custom.min.js \
-        jquery/jquery.aixadaXML2HTML.js \
-        jquery/jquery.aixadaUtilities.js
+	jqueryui/jqueryui.js \
+        aixadautilities/jquery.aixadaXML2HTML.js \
+        aixadautilities/jquery.aixadaUtilities.js
 	cat $^ > $@
 
 js_for_incidents.js: \
@@ -64,9 +64,9 @@ js_for_incidents.js: \
 
 js_for_index.js: \
 	jquery/jquery.js \
-	jquery/jquery-ui-1.8.custom.min.js \
+	jqueryui/jqueryui.js \
 	fgmenu/fg.menu.js \
-	jquery/jquery.aixadaMenu.js 
+	aixadautilities/jquery.aixadaMenu.js 
 	cat $^ > $@
 
 js_for_manage_mysettings.js: \
@@ -87,8 +87,7 @@ js_for_report_stats.js: \
 
 js_for_shop_and_order.js: \
 	$(CANONICAL_DEPS) \
-        aixadacart/jquery.aixadacart.js \
-        jquery/jquery.sparkline-1.5.1.min.js
+        aixadacart/jquery.aixadacart.js 
 	cat $^ > $@
 
 js_for_validate.js: \

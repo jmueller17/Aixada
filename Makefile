@@ -9,13 +9,13 @@
 #
 # The next nontrivial line is the one you should uncomment:
 #
-export FINAL = true
+#export FINAL = true
 #
 
 config_dir:=local_config
 
-all: $(wildcard canned_responses*.php) sql/all $(config_dir)/config.php 
-#sql/all js/all css/all
+all: $(wildcard canned_responses*.php) sql/all $(config_dir)/config.php js/all
+#sql/all css/all
 
 
 sql/all:
@@ -24,8 +24,8 @@ sql/all:
 # css/all:
 # 	$(MAKE) -C css
 
-# js/all:
-# 	$(MAKE) -C js
+js/all:
+	$(MAKE) -C js
 
 canned_responses%.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
 	php/lib/table_with_ref.php php/inc/name_mangling.php make_canned_responses.php

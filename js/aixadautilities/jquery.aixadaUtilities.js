@@ -17,8 +17,7 @@ $(function(){
 					var price = new Number($(this).text());
 					var iva = new Number($(this).attr('iva'));
 					var rev = new Number($(this).attr('revTax'));
-					var tax = 1 + (iva+rev)/100; 
-					var net = price / tax; 
+				        var net = price / (1 + rev/100) / (1 + iva/100); 
 					
 					total += price; 
 					totalNet += net;

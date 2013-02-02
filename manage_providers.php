@@ -884,7 +884,7 @@
 			
 			var rev = new Number($('input[name=rev_tax_type_id]', frm).val());
 			var iva = new Number($('input[name=iva_percent_id]', frm).val());
-			var price = price * (1+ (iva+rev)/100); 
+			var price = price * (1 + iva/100) * (1 + rev/100); 
 
 			$('.unit_price_brutto', frm).text(price.toFixed(2));
 		}

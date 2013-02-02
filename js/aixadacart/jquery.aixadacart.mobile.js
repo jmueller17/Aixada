@@ -508,25 +508,34 @@
 	function calculateTotal(){
 		 
 			var total = 0; 
-			var subtotal = 0;
+			var total_net = 0;
 			var rev_tax_total = 0; 
+			var iva_tax_total = 0; 
 			
 			$("#aixada_cart_list tbody tr").each(function(){
 				
 				var id = $(this).attr("id");
 				var quantity 	= parseFloat($("#cart_quantity_"+id, $(this)).val());
 				var price    	= parseFloat($("#cart_price_"+id, $(this)).val());
-				var rev_tax	 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
+				var rev_tax 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
+				var iva_tax 	= parseFloat($("#cart_iva_percent_"+id, $(this)).val());
 				
 				var item_total 	= price * quantity; 
-				var rev_tax_item = (item_total * rev_tax)/100; 
+				
+  			        var item_net = item_total / (1 + rev_tax/100) / (1 + iva_tax/100);
+				
+				//iva and revtax is contained in the unit_price
+				iva_tax_total += item_net * (iva_tax/100);
+				rev_tax_total += item_net * (rev_tax/100);
 	
-				subtotal += item_total;
-				rev_tax_total += rev_tax_item;
-				total = subtotal + rev_tax_total;
+				total_net += item_net;
+				
+				total += item_total;
 			});
 
-			$('#aixada_cart_list td.subtotal').text(String(subtotal.toFixed(2)));
+
+			$('#aixada_cart_list td.total_net').text(String(total_net.toFixed(2)));
+			$('#aixada_cart_list td.iva_tax_total').text(String(iva_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.rev_tax_total').text(String(rev_tax_total.toFixed(2)));
 			$('#aixada_cart_list td.total').text(String(total.toFixed(2)));
 	}
@@ -592,7 +601,7 @@
 		tbl_head += '</thead>';
 		
 		var tbl_foot = 	'<tfoot>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="subtotal_label">'+$.aixadacart.total+'</td><td class="subtotal cart_dblBorderTop">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_net_label">'+$.aixadacart.total+'</td><td class="total_net cart_dblBorderTop">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="rev_tax_label">+'+$.aixadacart.revTaxAbbrev+'</td><td class="rev_tax_total">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr>';
 		tbl_foot += '		<tr><td colspan="3"><p id="cartMsg"></p></td><td colspan="3"><button type="submit" id="btn_submit">'+$.aixadacart.submit+'</button></td></tr>';

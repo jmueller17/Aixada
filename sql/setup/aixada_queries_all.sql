@@ -2274,7 +2274,7 @@ begin
 	set @q = concat("
 	select
 		p.*,
-		round((p.unit_price * (1 + (iva.percent+t.rev_tax_percent)/100)),2) as unit_price,
+		round((p.unit_price * (1 + iva.percent/100) * (1 + t.rev_tax_percent/100)),2) as unit_price,
 		p.unit_price as unit_price_netto, 
 		pv.name as provider_name,	
 		u.unit,
@@ -2346,7 +2346,7 @@ begin
         pv.id as provider_id,
         pv.name as provider_name,
         u.unit,
-   		round((p.unit_price * (1 + (iva.percent+r.rev_tax_percent)/100)),2) as unit_price,
+   		round((p.unit_price * (1 + iva.percent/100) * (1 + r.rev_tax_percent/100)),2) as unit_price,
 		iva.percent as iva_percent,
    		r.rev_tax_percent,
         p.unit_price

@@ -253,7 +253,7 @@ update
 	aixada_iva_type iva,
 	aixada_rev_tax_type r
 set
-	oi.unit_price_stamp = p.unit_price * (1 + (iva.percent+r.rev_tax_percent)/100)
+	oi.unit_price_stamp = p.unit_price * (1 + iva.percent/100) * (1 + r.rev_tax_percent/100)
 where
 	oi.product_id = p.id
 	and p.iva_percent_id = iva.id
@@ -332,7 +332,7 @@ update
 	aixada_iva_type iva,
 	aixada_rev_tax_type r
 set
-	si.unit_price_stamp = p.unit_price * (1 + (iva.percent+r.rev_tax_percent)/100)
+	si.unit_price_stamp = p.unit_price * (1 + iva.percent/100) * (1 + r.rev_tax_percent/100)
 where
 	si.product_id = p.id
 	and p.iva_percent_id = iva.id
