@@ -18,3 +18,10 @@ create table aixada_price (
   foreign key (operator_id) references aixada_user(id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
+replace into aixada_price 
+	(product_id, ts, current_price) 
+select distinct 
+       s.product_id, date(c.ts_validated), s.unit_price_stamp 
+from aixada_cart c 
+left join aixada_shop_item s 
+on c.id=s.cart_id;
