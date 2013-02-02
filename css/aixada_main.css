@@ -101,6 +101,12 @@ table.tblForms	td			{text-align:left; padding-right:10px; padding-left:1px; padd
 table.tblForms 	td p		{border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
 table.tblForms 	td label 	{float:right;}
 
+table.tblFormsSettings		{width:100%}
+table.tblFormsSettings	th	{background:#eaeaea; padding:4px 4px; text-align:left;}
+table.tblFormsSettings	td	{text-align:left; padding-right:10px; padding-left:4px; padding-top:4px; vertical-align:top;}
+table.tblFormsSettings 	td p {border:1px solid #f3f3f3; background:#fafafa; padding:4px; }
+table.tblFormsSettings 	td label 	{float:left;}
+
 
 
 /** common layout **/
@@ -147,7 +153,7 @@ div#withSelected	{margin-left:15px; margin-top:-20px; margin-bottom:5px;}
 .aix-layout-title-with-icon {margin-left:100px;}
 
 .aix-layout-widget-left-col		{margin-right:20px; padding-bottom:2px;}
-.aix-layout-widget-right-col		{margin-left:20px; padding-bottom:2px;}
+.aix-layout-widget-right-col	{margin-left:20px; padding-bottom:2px;}
 .aix-layout-widget-center-col	{margin:0px 5%; padding-bottom:2px;}
 
 .aix-style-entry-widget			{margin-top:30px; margin-bottom:20px; padding-bottom:2px;}
@@ -309,6 +315,7 @@ div#colActionIcons  		{width:280px; padding:4px;}
 h3#orderInfoDate			{font-size:1.5em;}
 .btn_right					{margin-right:-2em; margin-left:4px; float:right;}
 #btn_overview				{vertical-align:middle; margin-right:20px; margin-top:1em;}
+.btn_back					{vertical-align:middle; margin-right:20px; margin-top:1em;}
 .tblReviseOrder	td			{background:#EBEBEB; padding:4px; margin:0px;}
 td.cellInfo	{font-size:0.6em; background:#ff; opacity:.8; margin:0px; padding:0px;}
 td.revised	{background:#D1F3D1;}

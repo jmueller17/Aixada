@@ -10,9 +10,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+
 
 /**
  * The following class implements cookies, based on an
@@ -124,8 +122,6 @@ class Cookie {
 		      'language' => $this->current_language_key,
 		      'theme' => $this->theme);
       $_SESSION['userdata'] = $userdata;
-      //global $firephp;
-      //$firephp->log($_COOKIE, 'cookie in cookie.inc');
       $_COOKIE[self::$cookiename] = $cookie;
       //      setcookie(self::$cookiename, $cookie); 
       //  don't do this, because it leads to a duplicate cookie.

@@ -43,6 +43,7 @@ try{
 	        printXML(existing_languages_XML());
 	        exit;
 	        
+	    //returns a list of all active providers for shopping (ony name and id). 
 		case 'getActiveProviders':
 			printXML(stored_query_XML_fields('get_all_active_providers'));
 			exit;

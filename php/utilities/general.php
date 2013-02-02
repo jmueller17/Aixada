@@ -3,13 +3,6 @@
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 
-//$language = ( (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') ? $_SESSION['userdata']['language'] : configuration_vars::get_instance()->default_language );
-//require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. $language . '.php');
-
-//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
-
 
 /**
  * 
@@ -104,11 +97,7 @@ function get_current_role()
  */
 function get_param($param_name, $default=null, $transform = ''){
 	$value; 
-	/*
-	  global $firephp;
-	  $firephp->log($param_name, 'parameter');
-	  $firephp->log($default, 'default');
-	*/
+
 	if (isset($_REQUEST[$param_name])) {
 		$value = $_REQUEST[$param_name];
 		if (($value == '' || $value == 'undefined') && isset($default)){
@@ -221,7 +210,7 @@ class output_formatter {
 
   public function row_to_XML($row)
   {
-      //      global $firephp;
+
       global $Text;
       $strXML = '<row id="' . $row['id'] . '">';
       $rowXML = '';
@@ -232,7 +221,7 @@ class output_formatter {
               .= '<' . $field . ' f="' . $field 
               . '"><![CDATA[' . clean_zeros($value) . "]]></$field>";
       }
-      //      $firephp->log($rowXML, 'row_xml'));
+
       $strXML .= $rowXML . '</row>';
       return $strXML;
   }
@@ -395,6 +384,24 @@ function get_config_menu($user_role)
 }
 
 
+function get_import_rights($db_table_name)
+{
+	//get the import rights for the db table and fields
+	$import_rights = configuration_vars::get_instance()->allow_import_for; 
+	
+	if (!isset($import_rights[$db_table_name])) {
+        throw new Exception("Import error: no imports allowed for '" . $db_table_name . ".' Check local_config/config.php");
+    }
+    $xml = '<rows>';
+    
+	foreach ($import_rights[$db_table_name] as $field => $value) {
+	    		if ($value == 'allow'){
+		    		$xml .= '<row><db_field>'.$field.'</db_field></row>';
+	    		} 
+    		}
+	return $xml . "</rows>";
+}
+
 
 
 function get_field_options_live($table, $field1, $field2)
@@ -477,11 +484,11 @@ function get_roles()
 
 function get_commissions()
 {
-    //    global $firephp;
+
     $XML = '<rows>';
     foreach (array_keys(configuration_vars::get_instance()->forbidden_pages) as $role) {
         if (!in_array($role, array('Consumer', 'Checkout', 'Producer'))) {
-            //            $firephp->log($role);
+
             $XML .= "<row><description>{$role}</description></row>";
         }
     }

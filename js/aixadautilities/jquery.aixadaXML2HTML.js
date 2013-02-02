@@ -110,6 +110,11 @@
 	  			return $(this).data('xml2html').xml;
 	  		},
 	  		
+	  		getTemplate : function(){
+	  			return $(this).data('xml2html').tpl;
+	  			
+	  		},
+	  		
 	  		reload : function( options ) {
 					
 	  			

@@ -40,6 +40,9 @@
 		//toggle products asks first time if instant repeat is on/off. 
 		var gAskIRFirstTime = false; 
 
+		//clipboard for copying columns
+		var gColClipboard = [];
+
 		
 		/**
 		 * retrieve dates for a given time period and constructs the table header
@@ -246,14 +249,17 @@
 				var curId = $(this).parent().attr('productId');
 				
 				$('#rowActionItems').attr('currentRowId',curId);
+
+				
 				
 				$( "#rowActionItems" )
 	    			.show()
 	    			.position({
-						of: $(this),
+	    				of: e,
 						my: 'left top',
-						at: 'left bottom',
-						offset: '10 0'
+						at: 'left top',
+						offset: '0 0',
+						collision:"flipfit flipfit"
 					})
 					.bind('mouseleave', function(e){
 						$( "#rowActionItems" ).hide();
@@ -332,18 +338,18 @@
 				$( "#colActionIcons" )
 		    		.show()
 		    		.position({
-						of: $(selector),
+						of: e,
 						my: 'left top',
 						at: 'left bottom',
-						offset: '0 -10',
-						collision: 'flip'
+						offset: '0 -20',
+						collision: 'flip flip'
 	
 					})
 				.bind('mouseleave', function(e){
 					$( "#colActionIcons" ).hide();
 				});
 			
-			
+				
 				
 			});
 				
@@ -490,6 +496,8 @@
 			var provider_id = getProviderId();
 			var provider_name = $("option:selected", this).text();
 			counterNotActive = 0; //reset the counter for the deactivated products
+
+			gColClipboard = []; //reset clipboard
 			
 			if (provider_id){ 
 				//reload the products 
@@ -819,6 +827,39 @@
 			}
 		}
 
+
+		
+		//copy give column
+		function copyColumn(selDate){
+			var i=0; 
+			$("td.Date-"+selDate).each(function(){
+				gColClipboard[i++] = $(this).hasClass('isOrderable')
+			});
+		}
+
+		//if the clipboard is full, paste it into the current column
+		function pasteColumn(selDate){
+			var i=0; 
+			
+			
+			$("td.Date-"+selDate).each(function(){
+				var tdid = $(this).attr('id');		//table cell id
+				var dateID = tdid.split("_");
+
+				//should be active
+				if (gColClipboard[i] && $(this).hasClass('notOrderable')){
+					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
+	
+				} else if (!gColClipboard[i] && $(this).hasClass('isOrderable')) {				
+					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
+				}
+				i++; 
+				 
+			});
+
+			
+			
+		}
 		
 		
 		/**
@@ -975,6 +1016,15 @@
 					case 'tfIconCol-close':
 						checkSetClosing(selDate);
 						break;
+
+					case 'tfIconCol-copy':
+						copyColumn(selDate);
+						break;
+
+					case 'tfIconCol-paste':
+						pasteColumn(selDate);
+						break;
+						
 				}
 				$('#colActionIcons').hide();
 		});
@@ -1102,6 +1152,9 @@
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-close"><span class="ui-icon ui-icon-locked tfIcon" title="Modify closing date"></span> <?php echo $Text['btn_mod_date']; ?></a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-selrow"><span class="ui-icon ui-icon-circle-arrow-n tfIcon" title="de-/activate entire row"></span> <?php echo $Text['btn_entire_row']; ?></a></p>
 	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-repeat"><span class="ui-icon ui-icon-circle-arrow-e tfIcon" title="Click to repeat this!"></span> <?php echo $Text['btn_repeat']; ?></a></p>
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-copy"><span class="ui-icon ui-icon-copy tfIcon" title="Copy!"></span> <?php echo $Text['copy_column']; ?></a></p>
+	<p class="tfIconCol ui-corner-all"><a href="javascript:void(null)" id="tfIconCol-paste"><span class="ui-icon ui-icon-clipboard tfIcon" title="Paste!"></span> <?php echo $Text['paste_column']; ?></a></p>
+
 </div>
 
 <div id="rowActionItems" class="ui-widget ui-widget-content ui-corner-all hidden aix-layout-fixW250 aix-style-padding3x3" currentRowId="">

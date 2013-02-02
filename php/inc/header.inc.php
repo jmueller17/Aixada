@@ -7,9 +7,7 @@ require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
-require_once(__ROOT__ . 'FirePHPCore'.DS.'lib'.DS.'FirePHPCore'.DS.'FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+
 
 $default_theme = get_session_theme();
 $dev = configuration_vars::get_instance()->development;

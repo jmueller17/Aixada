@@ -11,10 +11,6 @@ require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
 
 if (!isset($_SESSION)) {
     session_start();
@@ -58,22 +54,26 @@ try{
 	     * retrieve products for providers. We assume
 	     * if date = 0, look for all active products (stock + orderable)
 	     * else 		look for orderable products for specified date
-	     * if provider_id > 0   get products according to provider_id
-	     * if category_id > 0 	get products according to category_id
-	     * if like != '' 		search product names
+	     * if product_id > 0 	get specific product
+	     * elseif provider_id > 0   get products according to provider_id
+	     * elseif category_id > 0 	get products according to category_id
+	     * elseif like != '' 		search product names
 	     */
 	    case 'getOrderProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date')));
+	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date'), get_param('all',0), get_param('product_id',0)));
 	    	exit;
 	
 	    case 'getShopProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date',0)));
+	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date',0), get_param('all',0), get_param('product_id',0)));
 	    	exit;
 	    	
   		case 'getPreorderableProducts':
 	        printXML(stored_query_XML_fields('get_preorderable_products'));
 	        exit;
 	        
+  		case 'getProductDetail':
+  			printXML(stored_query_XML_fields('get_products_detail', 0,0,'',0,get_param('all',1),get_param('product_id')));
+			exit;	        
 	
 
 	   	/**

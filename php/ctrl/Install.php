@@ -5,17 +5,11 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
 
 $config_dir = __ROOT__ . 'local_config/';
 
 function process_language_file($coop_name, $lang_file)
 {
-    global $firephp;
-    $firephp->log($coop_name, 'coop_name');
-    $firephp->log($lang_file, 'lang_file');
     $tmpname = $lang_file . '.tmp';
     copy($lang_file, $tmpname);
     $inhandle = @fopen($tmpname, 'r');
@@ -23,9 +17,7 @@ function process_language_file($coop_name, $lang_file)
         throw new Exception("Couldn't open {$tmpname} for reading. Make sure that {$lang_file} and all directories above it can be universally written!");
     }
     $outhandle = @fopen($lang_file, 'w');
-    //    $firephp->log($outhandle, 'outhandle');
-    //    if ($outhandle==FALSE)
-	//	$firephp->log($outhandle, "it was false");
+
     if ($outhandle==FALSE) {
         throw new Exception("Couldn't open {$lang_file} for writing. Make sure that {$lang_file} has 'www-data' as owner.");
     }
@@ -54,7 +46,7 @@ function process_languages($coop_name)
 
 function create_setup_file($db_name)
 {
-    //    global $firephp;
+
     global $config_dir;
     $aixada_filename = $config_dir . 'aixada_setup.sql';
     $db_filename = $config_dir . "{$db_name}_setup.sql";

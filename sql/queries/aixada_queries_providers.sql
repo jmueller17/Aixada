@@ -129,6 +129,42 @@ begin
 end|
 
 
+/**
+ *	returns a list of all active providers
+ *	with sometimes, always orderable items, stock, preorder
+ */
+drop procedure if exists get_provider_listing|
+create procedure get_provider_listing(in the_provider_id int, in include_inactive boolean)
+begin
+	
+	declare wherec varchar(255) default '';
+	
+	-- show all providers including inactive or just active ones -- 
+	set wherec = if(include_inactive=1,"","and pv.active = 1");	
+	
+	-- filter for specific provider --
+	if the_provider_id > 0 then
+		set wherec = concat(wherec, " and pv.id=",the_provider_id);
+	end if; 
+		
+	set @q = concat("select
+	     pv.*, 
+		 uf.id as responsible_uf_id, 
+		 uf.name as responsible_uf_name
+	  from 
+	  	aixada_provider pv,
+	  	aixada_uf uf
+	  where  
+	  	pv.responsible_uf_id = uf.id
+	    ",wherec,"
+	  order by pv.name, pv.id;");
+	  
+	  prepare st from @q;
+	  execute st;
+	  deallocate prepare st;
+	  
+end|
+
 
 
 /*************************************************
@@ -226,6 +262,7 @@ begin
   end if; 
   
 end|
+
 
 
 delimiter ;

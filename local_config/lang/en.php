@@ -78,19 +78,16 @@ $Text['head_ti_cashbox'] = "Cashbox control";
 
 
 
+
+
 /**
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "De-/activate products for ordering";
-//$Text['ti_mng_arrived_products'] = "The following products have arrived on ";
 $Text['ti_mng_activate_roles'] = "Manage roles of user ";
 $Text['ti_mng_activate_users'] = "Activate users for ";
-//$Text['ti_mng_move_orders'] = "Move orders";
 $Text['ti_mng_activate_preorders'] = "Convert preorder to order";
 $Text['ti_mng_members'] = "Manage member";
-//$Text['ti_mng_ufs'] = "Manage households";
-//$Text['ti_mng_dates'] = "De-/activate products for ordering";	 /*delme*/
-//$Text['ti_mng_dates_pattern'] = "Bulk de-/activate order dates"; /*delme*/
 $Text['ti_mng_db'] = "Backup database"; 
 $Text['ti_order'] = "Place your order for ";
 $Text['ti_shop'] = "Buy stuff ";
@@ -156,7 +153,7 @@ $Text['city'] = "City";
 $Text['phone1'] = "Phone1";
 $Text['phone2'] = "Phone2";
 $Text['email'] = "Email";
-$Text['web'] = "URLs";
+$Text['web'] = "Web";
 $Text['last_logon'] = "Last seen";
 $Text['created'] = "Created on";
 $Text['active'] = "Active";
@@ -465,19 +462,19 @@ $Text['prdcat_misc']			= "Everything else..." ;
 $Text['name'] = 'Name';
 $Text['contact'] = 'Contact';
 $Text['fax'] = 'Fax';
-$Text['responsible_mem_name'] = 'Responsible Member';
+$Text['responsible_mem_name'] = 'Responsible member';
 $Text['responsible_uf'] = 'Responsible household';
 $Text['provider'] = 'Provider';
 $Text['description'] = 'Description';
 $Text['barcode'] = 'Barcode';
 $Text['orderable_type'] = 'Product type';
 $Text['category'] = 'Category';
-$Text['rev_tax_type'] = 'Type of Revolutionary Tax';
-$Text['unit_price'] = 'Unit Price';
-$Text['iva_percent'] = 'VAT in Percent';
+$Text['rev_tax_type'] = 'Revolutionary tax';
+$Text['unit_price'] = 'Unit price';
+$Text['iva_percent'] = 'VAT in percent';
 $Text['unit_measure_order'] = 'Ordered in which units';
 $Text['unit_measure_shop'] = 'Sold in which units';
-$Text['stock_min'] = 'Minimal amount to have in stock';
+$Text['stock_min'] = 'Alert when stock below';
 $Text['stock_actual'] = 'Current amount in stock';
 $Text['delta_stock'] = 'Difference to minimal stock';
 $Text['description_url'] = 'URL of description';
@@ -804,6 +801,35 @@ $Text['upcoming_orders'] = "Upcoming orders";
 
 $Text['msg_confirm_del_mem'] = "Are you sure delete this user from the database?? This cannot be undone!";
 $Text['btn_del'] = "Delete";
+
+
+$Text['btn_new_provider'] = "New provider";
+$Text['btn_new_product'] = "Add product";
+$Text['orderable'] = "Orderable"; //product type
+$Text['msg_err_providershort']  = "The provider cannot be empty and should be at least 2 characters long.";
+$Text['msg_err_productshort']  = "The product name cannot be empty and should be at least 2 characters long.";
+$Text['msg_err_select_responsibleuf'] = "Who is in charge? Please select a responsible household.";
+$Text['msg_err_product_category'] = "Please select a product category.";
+$Text['msg_err_order_unit'] = "Please select a order unit measure.";
+$Text['msg_err_shop_unit'] = "Please select a shop unit measure.";
+$Text['click_row_edit'] = "Click to edit!";
+$Text['click_to_list'] = "Click to list products!";
+$Text['head_ti_provider'] = "Manage provider & products"; 
+$Text['edit'] = "Edit";
+$Text['ti_create_provider'] = "Create new provider";
+$Text['ti_add_product'] = "Add product";
+$Text['order_min'] = "Min. order amount";
+$Text['msg_confirm_del_product'] = "Are you sure to delete this product?"; 
+$Text['msg_err_del_product'] = "This product cannot be deleted since other database entries depend on it. Error thrown: ";
+$Text['msg_err_del_member'] = "This user cannot be delete because other database entries reference it. <br/> Error thrown: ";
+$Text['msg_confirm_del_provider'] = "Are you sure to delete this provider?";
+$Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting its products first!";
+$Text['price_net'] = "Price netto";
+
+$Text['custom_product_ref'] = "Custom ID"; 
+$Text['btn_back_products'] = "Edit products";
+$Text['copy_column'] = "Copy column";
+$Text['paste_column'] = "Paste";
 
 //$Text[''] = ""; 
 

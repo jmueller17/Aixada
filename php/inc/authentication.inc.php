@@ -14,9 +14,6 @@ require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'php'.DS.'lib'.DS.'table_with_ref.php');
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
 
 DBWrap::get_instance()->debug = true;
 

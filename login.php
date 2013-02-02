@@ -10,9 +10,6 @@ require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
-require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
 
 $default_theme = get_session_theme();
 $language = get_session_language();

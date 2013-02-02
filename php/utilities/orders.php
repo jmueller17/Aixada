@@ -8,10 +8,6 @@ require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
-//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
-
 
 /**
  * 
@@ -61,6 +57,11 @@ function finalize_order($provider_id, $date_for_order)
 	global $Text;  	
 	$config_vars = configuration_vars::get_instance(); 
 	$msg = ''; 
+	
+	
+	//check here if an order_id already exists for this date and provider. 
+	
+	
 	
 	if ($config_vars->internet_connection && $config_vars->email_orders){
 		
@@ -143,6 +144,8 @@ function finalize_order($provider_id, $date_for_order)
 		
 		
 	}
+	
+	
 	
 	
 	if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){

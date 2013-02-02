@@ -11,10 +11,6 @@ require_once(__ROOT__ . "php/utilities/dates.php");
 require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
-//require_once(__ROOT__ . 'FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-//ob_start(); // Starts FirePHP output buffering
-//$firephp = FirePHP::getInstance(true);
-
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.
