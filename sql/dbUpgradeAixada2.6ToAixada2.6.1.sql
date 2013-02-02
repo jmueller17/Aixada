@@ -1,6 +1,6 @@
 /*******************************************
  * UPGRADE FILE 
- * to switch from Aixada v 2.6 to Aixada 2.7
+ * to switch from Aixada v 2.6 to Aixada 2.6.1
  * 
  * NOTE: source the dump of v2.6 Then source this file. 
  */
