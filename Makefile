@@ -9,7 +9,7 @@
 #
 # The next nontrivial line is the one you should uncomment:
 #
-#export FINAL = true
+export FINAL = true
 #
 
 config_dir:=local_config
