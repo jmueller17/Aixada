@@ -324,6 +324,10 @@
 		</div><!-- end tabs -->
 		</div><!-- end left Col -->
 
+		<!-- Shopping cart starts -->
+		<div id="rightCol" class="aix-layout-splitW40 floatLeft aix-layout-widget-right-col">
+			<div id="cartLayer"></div>
+		</div>
   </div>
   <!-- end of stage wrap -->
 </div>
