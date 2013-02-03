@@ -40,6 +40,7 @@ $Text['sun'] = 'Dimuenge';
  * 				seleccions
  */
 $Text['sel_provider'] = "Seleccioneu un proveïdor...";
+$Text['sel_product'] = "Seleccioneu un producte...";
 $Text['sel_user'] = "Seleccioneu un usuari...";
 $Text['sel_category'] = "Seleccioneu una categoria de productes...";
 $Text['sel_uf'] = "Seleccioneu una unitat familiar...";
@@ -833,3 +834,4 @@ $Text['paste_column'] = "Pegar";
 
 $Text['search_provider'] = "Buscar proveidor";
 
+$Text['ti_visualization'] = "Visualitzacions";

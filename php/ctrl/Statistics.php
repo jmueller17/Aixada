@@ -5,6 +5,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 require_once(__ROOT__ . "php/utilities/statistics.php");
+require_once(__ROOT__ . "php/utilities/visualization.php");
 
 
 $use_session_cache = true; 
@@ -23,9 +24,11 @@ try{
 	    case 'uf':
 	        echo make_active_time_lines('uf');
 	        exit;
+
 	    case 'provider':
 	        echo make_active_time_lines('provider');
 	        exit;
+
 	    case 'product':
 	        echo make_active_time_lines('product');
 	        exit;
@@ -33,6 +36,10 @@ try{
 	    case 'balances':
 	        echo make_balances();
 	        exit;
+
+            case 'product_prices':
+		echo product_prices_json($_REQUEST['product_id_array'], $_REQUEST['year_array']);
+		exit;
 
     default:
         throw new Exception("ctrlStatistics: operation {$_REQUEST['oper']} not supported");

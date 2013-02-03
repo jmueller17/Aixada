@@ -40,6 +40,7 @@ $Text['sun'] = 'Sunday';
  * 				selects
  */
 $Text['sel_provider'] = "Please select a provider...";
+$Text['sel_product'] = "Please select a product...";
 $Text['sel_user'] = "Please select a user...";
 $Text['sel_category'] = "Please select a product category...";
 $Text['sel_uf'] = "Please select household...";
@@ -832,5 +833,7 @@ $Text['paste_column'] = "Paste";
 
 $Text['search_provider'] = "Search for provider";
 //$Text[''] = ""; 
+
+$Text['ti_visualization'] = "Visualization";
 
 ?>

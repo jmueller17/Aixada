@@ -44,6 +44,7 @@ $Text['sun'] = 'Domingo';
  * 				selects
  */
 $Text['sel_provider'] = "Seleccionar un proveedor...";
+$Text['sel_product'] = "Seleccionar un producto...";
 $Text['sel_user'] = "Seleccionar un usuario...";
 $Text['sel_category'] = "Seleccionar una categoría de productos...";
 $Text['sel_uf'] = "Seleccionar una unidad familiar...";
@@ -839,6 +840,6 @@ $Text['paste_column'] = "Pegar";
 
 $Text['search_provider'] = "Buscar proveidor";
 
-
+$Text['ti_visualization'] = "Visualizaciones";
 
 ?>
