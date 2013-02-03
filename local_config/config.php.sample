@@ -294,7 +294,6 @@ class configuration_vars {
                   'activate_roles.php',
                   'activate_all_roles.php',
                   'manage_preorders.php',
-                  'manage_user.php',
                   'all_prevorders.php'
                   ),
             
@@ -346,7 +345,6 @@ class configuration_vars {
                   'report_order.php',
                   'report_account.php',
                   'manage_preorders.php',
-                  'manage_user.php',
                   'all_prevorders.php'
                   )
             );

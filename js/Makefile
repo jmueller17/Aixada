@@ -16,7 +16,6 @@ FILEROOTS = \
 	index \
 	manage_dates \
 	manage_mysettings \
-	manage_user \
 	manage_ufs \
 	report_account \
 	report_order \
@@ -96,10 +95,6 @@ js_for_validate.js: \
 	cat $^ > $@
 
 js_for_manage_dates.js: \
-	$(CANONICAL_DEPS) 
-	cat $^ > $@
-
-js_for_manage_user.js: \
 	$(CANONICAL_DEPS) 
 	cat $^ > $@
 
