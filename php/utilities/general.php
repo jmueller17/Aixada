@@ -133,9 +133,8 @@ function get_param($param_name, $default=null, $transform = ''){
 		
 		case 'array2String':
 			$str = "";
-			foreach ($value as $v){
+			foreach ($value as $v) {
 				$str .= $v.",";
-				
 			}
 			$value = rtrim($str,",");
 			break;

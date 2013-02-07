@@ -93,9 +93,38 @@ try{
  			exit; 
  			
  			
- 			
-  		
-	  default:
+	case 'exportProviderInfo':
+	    $format = get_param('format', 'csv'); // or xml
+	    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 'aixada_provider.name', 'asc', 0, 1, 'aixada_provider.id = ' . get_param('provider_id',0));
+	    printXML($xml);
+	    exit;
+
+	case 'exportProviderProducts':
+	    $format = get_param('format', 'csv'); // or xml
+	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 'aixada_product.name', 'asc', 0, 1000, 'aixada_product.provider_id = ' . get_param('provider_id',0));
+	    exit;
+
+	case 'exportProducts':
+	    $format = get_param('format', 'csv'); // or xml
+	    $ids = '(' . get_param('product_ids', 0, 'array2String') . ')';
+	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 'aixada_product.name', 'asc', 0, 1000, 'aixada_product.id in ' . $ids);
+	    printXML($xml);
+	    exit;
+
+	case 'exportMembers':
+	    $format = get_param('format', 'csv'); // or xml
+	    $xml = stored_query_XML_fields('aixada_member_list_all_query', 'aixada_member.name', 'asc', 0, 1000, 'active=1');
+	    printXML($xml);
+	    exit;
+
+	case 'exportAccountMovements':
+	    // require user to be econo-legal or hacker
+	    get_param('account_id', -3);
+	    get_param('from_date', null); // null means one month ago
+	    get_param('to_date', null); // null means today
+	    exit;
+	    
+	default:
 	    throw new Exception("ctrl Import: operation {$_REQUEST['oper']} not supported");
     
   	}
