@@ -48,21 +48,22 @@ function csv_filename($root, $provider_id, $provider_name)
     return $filename;
 }
 
-function XML_add_metadata($xml, $what, $provider_id=null, $provider_name=null)
+function XML_add_metadata($xml, $what, $metadata=null)
 {
-    return 
+    $xml_out = 
 	'<' . $what . '>'
 	. '<timestamp>' 
 	  . date('Y-m-d_h:i') 
-	. '</timestamp>'
-	. (($provider_id != null || $provider_name != null) ? 
-	   '<provider>'
-	   .   '<provider_id>' . $provider_id . '</provider_id>'
-	   .   '<provider_name>' . $provider_name . '</provider_name>'
-	   . '</provider>'
-	   : '')
-	. $xml
+	. '</timestamp>';
+    if (isset($metadata)) {
+	$xml_out .= '<' . $metadata['name'] . '>';
+	foreach($metadata['data'] as $key => $value) 
+	    $xml_out .= '<' . $key . '>' . $value . '</' . $key . '>';
+	$xml_out .= '</' . $metadata['name'] . '>';
+    }
+    $xml_out .= $xml
 	. '</' . $what . '>';
+    return $xml_out;
 }
 
 try{ 
@@ -125,16 +126,25 @@ try{
 	    $format = get_param('format', 'csv'); // or xml
 	    $provider_id = get_param('provider_id',0);
 	    $provider_name = get_param('provider_name', null);
-	    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 'aixada_provider.name', 'asc', 0, 1, 'aixada_provider.id = ' . $provider_id);
+	    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
+					   'aixada_provider.name', 
+					   'asc', 
+					   0, 
+					   1, 
+					   'aixada_provider.id = ' . $provider_id);
 	    $what = 'product_info';
 	    switch ($format) {
 	    case 'csv':
-		printCSV(XML2csv($xml),  csv_filename($what, $provider_id, $provider_name));
+		printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
 		exit;
 
 	    case 'xml':
-		printXML(XML_add_metadata($xml, $what, $provider_id, $provider_name));
+		$metadata = array( 'name' => 'provider', 
+				   'data' => array( 'provider_id' => $provider_id,
+						    'provider_name' => $provider_name));
+		printXML(XML_add_metadata($xml, $what, $metadata));
 		exit;
+
 	    default:
 		throw new Exception('Export file format"' . $format . '" not supported');
 	    }
@@ -154,11 +164,14 @@ try{
 	    $what = 'product_info';
 	    switch ($format) {
 	    case 'csv':
-		printCSV(XML2csv($xml),  csv_filename($what, $provider_id, $provider_name));
+		printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
 		exit;
 
 	    case 'xml':
-		printXML(XML_add_metadata($xml, $what, $provider_id, $provider_name));
+		$metadata = array( 'name' => 'provider', 
+				   'data' => array( 'provider_id' => $provider_id,
+						    'provider_name' => $provider_name));
+		printXML(XML_add_metadata($xml, $what, $metadata));
 		exit;
 		
 	    default:
@@ -216,10 +229,40 @@ try{
 
 	case 'exportAccountMovements':
 	    // require user to be econo-legal or hacker
-	    get_param('account_id', -3);
-	    get_param('from_date', null); // null means one month ago
-	    get_param('to_date', null); // null means today
-	    exit;
+	    if ($_SESSION['userdata']['current_role'] != 'Hacker Commission' and
+		$_SESSION['userdata']['current_role'] != 'Econo-Legal Commission') {
+		throw new Exception('You do not have sufficient privileges to see account movements');
+	    }
+	    $account_id = get_param('account_id', -3);
+	    $from_date = get_param('from_date', strtotime('-1 month'));
+	    $from_date_day = date('Y-m-d', $from_date);
+	    $to_date = get_param('to_date', strtotime('now')); 
+	    $to_date_day = date('Y-m-d', $to_date);
+	    $to_date_next_day = date('Y-m-d', strtotime($to_date_day . ' +1 day'));
+	    $format = get_param('format', 'csv'); // or xml
+	    $xml = stored_query_XML_fields('aixada_account_list_all_query', 
+					   'ts', 
+					   'desc', 
+					   0, 
+					   1000000, 
+					   'account_id=' . $account_id . ' and ts between "' . $from_date_day . '" and "' . $to_date_next_day . '"');
+	    switch ($format) {
+	    case 'csv':
+		printCSV(XML2csv($xml), 'account_movements_' . $account_id . '_' . $from_date_day . '_' . $to_date_day . '.csv');
+		exit;
+
+	    case 'xml':
+		$metadata = array( 'name' => 'account', 
+				   'data' => array( 'account_id' => $account_id,
+						    'from_date' => $from_date_day,
+						    'to_date' => $to_date_day ));
+		printXML(XML_add_metadata($xml, 'account_movements', $metadata));
+		exit;
+
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
+	    break;
 	    
 	default:
 	    throw new Exception("ctrl Import: operation {$_REQUEST['oper']} not supported");

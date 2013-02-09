@@ -138,7 +138,9 @@ function make_canned_queries()
   foreach ($tables as $table) {
     $query_name = $table . '_list_all_query';
     $fkm = new foreign_key_manager($table);
-    $order_by_clause = (in_array($table, array('aixada_unit_measure', 'aixada_iva_type')) ? 
+    $order_by_clause = (in_array($table, array('aixada_unit_measure', 
+					       'aixada_iva_type',
+					       'aixada_account')) ? 
                         "' order by '" :
                         "' order by active desc, '");
     $strSQL .= <<<EOD

@@ -21,7 +21,7 @@ begin
     from aixada_account ";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @lim = concat(@lim, the_filter, ' order by ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
