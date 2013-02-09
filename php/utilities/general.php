@@ -518,7 +518,6 @@ function clean_zeros($value)
 
 function XML2csv($xml)
 {
-    global $firephp;
     $fieldnames = array();
     $csv_rows = array();
     $tok = strtok($xml, '<>');
@@ -559,7 +558,6 @@ function XML2csv($xml)
 	$csv_rows[] = $csv_row;
     }    
     array_unshift($csv_rows, $fieldnames);
-    $firephp->log($csv_rows);
     return $csv_rows;
 }
 ?>
