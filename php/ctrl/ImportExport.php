@@ -43,10 +43,27 @@ function csv_filename($root, $provider_id, $provider_name)
 	$filename .= '_' . $provider_name;
     else
 	$filename .= '_provider_' . $provider_id;
+    $filename .= '_' . date('Y-m-d_h:i');
     $filename .= '.csv';
     return $filename;
 }
 
+function XML_add_metadata($xml, $what, $provider_id=null, $provider_name=null)
+{
+    return 
+	'<' . $what . '>'
+	. '<timestamp>' 
+	  . date('Y-m-d_h:i') 
+	. '</timestamp>'
+	. (($provider_id != null || $provider_name != null) ? 
+	   '<provider>'
+	   .   '<provider_id>' . $provider_id . '</provider_id>'
+	   .   '<provider_name>' . $provider_name . '</provider_name>'
+	   . '</provider>'
+	   : '')
+	. $xml
+	. '</' . $what . '>';
+}
 
 try{ 
    
@@ -109,41 +126,93 @@ try{
 	    $provider_id = get_param('provider_id',0);
 	    $provider_name = get_param('provider_name', null);
 	    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 'aixada_provider.name', 'asc', 0, 1, 'aixada_provider.id = ' . $provider_id);
-	    if ($format == 'csv') 
-		printCSV(XML2csv($xml),  csv_filename('product_info', $provider_id, $provider_name));
-	    else 
-		printXML($xml);
-	    exit;
+	    $what = 'product_info';
+	    switch ($format) {
+	    case 'csv':
+		printCSV(XML2csv($xml),  csv_filename($what, $provider_id, $provider_name));
+		exit;
+
+	    case 'xml':
+		printXML(XML_add_metadata($xml, $what, $provider_id, $provider_name));
+		exit;
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
+	    break;
+
 
 	case 'exportProviderProducts':
 	    $format = get_param('format', 'csv'); // or xml
 	    $provider_id = get_param('provider_id',0);
 	    $provider_name = get_param('provider_name', null);
-	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 'aixada_product.name', 'asc', 0, 1000000, 'aixada_product.provider_id = ' . $provider_id);
-	    if ($format == 'csv') 
-		printCSV(XML2csv($xml),  csv_filename('product_info', $provider_id, $provider_name));
-	    else 
-		printXML($xml);
-	    exit;
+	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 
+					   'aixada_product.name', 
+					   'asc', 
+					   0, 
+					   1000000, 
+					   'aixada_product.provider_id = ' . $provider_id);
+	    $what = 'product_info';
+	    switch ($format) {
+	    case 'csv':
+		printCSV(XML2csv($xml),  csv_filename($what, $provider_id, $provider_name));
+		exit;
+
+	    case 'xml':
+		printXML(XML_add_metadata($xml, $what, $provider_id, $provider_name));
+		exit;
+		
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
+	    break;
+
 
 	case 'exportProducts':
 	    $format = get_param('format', 'csv'); // or xml
 	    $ids = '(' . get_param('product_ids', 0, 'array2String') . ')';
-	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 'aixada_product.name', 'asc', 0, 1000000, 'aixada_product.id in ' . $ids);
-	    if ($format == 'csv') 
+	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 
+					   'aixada_product.name', 
+					   'asc', 
+					   0, 
+					   1000000, 
+					   'aixada_product.id in ' . $ids);
+	    switch ($format) {
+	    case 'csv':
 		printCSV(XML2csv($xml), 'product_list.csv');
-	    else 
-		printXML($xml);
-	    exit;
+		exit;
+
+	    case 'xml':
+		printXML(XML_add_metadata($xml, 'product_list'));
+		exit;
+
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
+	    break;
+
 
 	case 'exportMembers':
 	    $format = get_param('format', 'csv'); // or xml
-	    $xml = stored_query_XML_fields('aixada_member_list_all_query', 'aixada_member.name', 'asc', 0, 1000000, 'active=1');
-	    if ($format == 'csv') 
+	    $xml = stored_query_XML_fields('aixada_member_list_all_query', 
+					   'aixada_member.name', 
+					   'asc', 
+					   0, 
+					   1000000, 
+					   'active=1');
+	    switch ($format) {
+	    case 'csv':
 		printCSV(XML2csv($xml), 'member_list.csv');
-	    else 
-		printXML($xml);
-	    exit;
+		exit;
+
+	    case 'xml':
+		printXML(XML_add_metadata($xml, 'member_list'));
+		exit;
+
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
+	    break;
+
 
 	case 'exportAccountMovements':
 	    // require user to be econo-legal or hacker
