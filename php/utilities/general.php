@@ -9,9 +9,9 @@ require_once(__ROOT__ . 'local_config'.DS.'config.php');
  * Returns the user_id of the logged user; wraps a check around this, in order to make sure
  * the value is set. 
  */
-function get_session_user_id(){
+function get_session_user_id() {
 	
-	if (isset($_SESSION['userdata']['user_id']) && $_SESSION['userdata']['user_id'] > 0 ){
+	if (isset($_SESSION['userdata']['user_id']) && $_SESSION['userdata']['user_id'] > 0 ) {
 		return $_SESSION['userdata']['user_id'];
 	} else {
 		throw new Exception("$_Session data user_id is not set!! ");
@@ -23,9 +23,9 @@ function get_session_user_id(){
  * 
  * returns the uf of the logged user. 
  */
-function get_session_uf_id(){
+function get_session_uf_id() {
 	
-	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ){
+	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ) {
 		return $_SESSION['userdata']['uf_id'];
 	} else {
 		throw new Exception("$_Session data uf_id is not set!! ");
@@ -37,9 +37,9 @@ function get_session_uf_id(){
  * 
  * Returns the member_id of the logged user. 
  */
-function get_session_member_id(){
+function get_session_member_id() {
 	
-	if (isset($_SESSION['userdata']['member_id']) && $_SESSION['userdata']['member_id'] > 0 ){
+	if (isset($_SESSION['userdata']['member_id']) && $_SESSION['userdata']['member_id'] > 0 ) {
 		return $_SESSION['userdata']['member_id'];
 	} else {
 		throw new Exception("$_Session data member_id is not set!! ");
@@ -51,7 +51,7 @@ function get_session_member_id(){
  * 
  * returns the language for the logged user
  */
-function get_session_language(){
+function get_session_language() {
     if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
 	return $_SESSION['userdata']['language'];
     } else {
@@ -64,7 +64,7 @@ function get_session_language(){
  * 
  * returns the theme for the logged user
  */
-function get_session_theme(){
+function get_session_theme() {
     if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
 		return $_SESSION['userdata']['theme'];
     } else {
@@ -95,34 +95,34 @@ function get_current_role()
  * @param str $transform basic string transforms applied to the value of the parameter
  * @throws Exception
  */
-function get_param($param_name, $default=null, $transform = ''){
+function get_param($param_name, $default=null, $transform = '') {
 	$value; 
 
 	if (isset($_REQUEST[$param_name])) {
 		$value = $_REQUEST[$param_name];
-		if (($value == '' || $value == 'undefined') && isset($default)){
+		if (($value == '' || $value == 'undefined') && isset($default)) {
 			$value = $default;
 		} else if (($value == '' || $value == 'undefined') && !isset($default)) {
 			throw new Exception("get_param: Parameter: {$param_name} has no value and no default value");
 		}	
 			
-	} else if (isset($default) and $default !== null){
+	} else if (isset($default) and $default !== null) {
 		$value= $default;
 	} else {
 		throw new Exception("get_param: Missing or wrong parameter name: {$param_name} in URL");
 	}
 	
 	//utility hack to retrieve uf_id or user_id from session. e.g. &uf_id=-1
-	if ($param_name == "uf_id" && $value==-1){
+	if ($param_name == "uf_id" && $value==-1) {
 		$value = get_session_uf_id();	
-	} else if ($param_name == "user_id" && $value==-1){
+	} else if ($param_name == "user_id" && $value==-1) {
 		$value = get_session_user_id();
-	} else if ($param_name == "member_id" && $value==-1){
+	} else if ($param_name == "member_id" && $value==-1) {
 		$value = get_session_member_id();
 	}
 	
 	
-	switch ($transform){
+	switch ($transform) {
 		case 'lowercase':
 			$value = strtolower($value);
 			break;
@@ -340,7 +340,7 @@ function query_XML_noparam($queryname)
   return $strXML;
 }
 
-function printXML($str){
+function printXML($str) {
   $newstr = '<?xml version="1.0" encoding="utf-8"?>';  
   $newstr .= $str; 
   header('Content-Type: text/xml');
@@ -350,6 +350,19 @@ function printXML($str){
   header('Expires: '. date(DATE_RFC822, time() - 3600));
   header('Content-Length: ' . strlen($newstr));
   echo $newstr;
+}
+
+function printCSV($arr, $filename) {
+  header('Content-Type: text/csv');
+  header('Content-Disposition: attachment;filename='.$filename);
+  header('Last-Modified: '.date(DATE_RFC822));
+  header('Pragma: no-cache');
+  header('Cache-Control: no-cache, must-revalidate');
+  header('Expires: '. date(DATE_RFC822, time() - 3600));
+  $fp = fopen('php://output', 'w');
+  foreach ($arr as $row) 
+      fputcsv($fp, $row);
+  fclose($fp);
 }
 
 function HTMLwrite($strHTML, $filename)
@@ -394,7 +407,7 @@ function get_import_rights($db_table_name)
     $xml = '<rows>';
     
 	foreach ($import_rights[$db_table_name] as $field => $value) {
-	    		if ($value == 'allow'){
+	    		if ($value == 'allow') {
 		    		$xml .= '<row><db_field>'.$field.'</db_field></row>';
 	    		} 
     		}
@@ -502,4 +515,51 @@ function clean_zeros($value)
 	  : $value);
 }
 
+
+function XML2csv($xml)
+{
+    global $firephp;
+    $fieldnames = array();
+    $csv_rows = array();
+    $tok = strtok($xml, '<>');
+    $expected = 'rowset';
+    if ($tok != $expected)
+	throw new XMLParseException($expected, $tok, $xml);
+    $tok = strtok('<>');
+    $first_row = true;
+    while ($tok != '/rowset') {
+	$ex = explode(' ', $tok);
+	$fieldname = $ex[0];
+	$expected = 'row';
+	if ($fieldname != $expected)
+	    throw new XMLParseException($expected, $fieldname, $xml);
+	$tok = strtok('<>');
+	$csv_row = array();
+	while ($tok != '/row') {
+	    $ex = explode(' ', $tok);
+	    $fieldname = $ex[0];
+	    if ($first_row)
+		$fieldnames[] = $fieldname;
+	    $tok = strtok('<>');
+	    $expected = '![CDATA[';
+	    $l_expected = strlen($expected);
+	    if (substr($tok, 0, $l_expected) != $expected) 
+		throw new XMLParseException($expected, $tok, $xml);
+	    $value = substr($tok, $l_expected, 
+			    strpos($tok, ']]', $l_expected)-$l_expected);
+	    $csv_row[] = $value;
+	    $tok = strtok('<>');
+	    $expected = '/' . $fieldname;
+	    if ($tok != $expected)
+		throw new XMLParseException($expected, $tok, $xml);
+	    $tok = strtok('<>');
+	}
+	$tok = strtok('<>');
+	$first_row = false;
+	$csv_rows[] = $csv_row;
+    }    
+    array_unshift($csv_rows, $fieldnames);
+    $firephp->log($csv_rows);
+    return $csv_rows;
+}
 ?>

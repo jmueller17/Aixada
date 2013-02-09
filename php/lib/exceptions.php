@@ -64,4 +64,18 @@ class AuthException extends Exception {}
  */ 
 class SignonException extends Exception {}
 
+/** 
+ * @package Aixada
+ * @subpackage Exceptions
+ */ 
+class XMLParseException extends Exception {
+    public function __construct($expected, $found, $xml)
+    {
+	parent::__construct();
+	$this->message = 'XML parse error. Expected ' . $expected
+	    . ', found ' . $found 
+	    . ' in ' . $xml;
+    }
+}
+
 ?>

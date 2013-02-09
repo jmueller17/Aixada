@@ -50,7 +50,7 @@
 		 *
 		 ***********************************************************/
 	    $('#fileupload').fileupload({
-		    url : 'php/ctrl/Import.php?oper=uploadFile',
+		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
 		        
@@ -75,7 +75,7 @@
 					var fdata = $('#frm_csv_settings').serialize();
 					
 					$.ajax({
-						url: 'php/ctrl/Import.php?oper=parseFile&file='+file.name,
+						url: 'php/ctrl/ImportExport.php?oper=parseFile&file='+file.name,
 					   	method: 'POST',
 					   	data : fdata, 
 					   	dataType:'html',
@@ -111,7 +111,7 @@
 
 	  //load mentor uf select listing
 		$('#assignColumns').xml2html('init',{
-			url: 'php/ctrl/Import.php',
+			url: 'php/ctrl/ImportExport.php',
 			params : 'oper=getAllowedFields&table=aixada_product',
 			loadOnInit:true,
 			offSet : 1
@@ -166,7 +166,7 @@
 			var sdata = $('#frmColMap').serialize() +$('#frm_csv_settings').serialize();
 		
 			$.ajax({
-			   	url: 'php/ctrl/Import.php?oper=import',
+			   	url: 'php/ctrl/ImportExport.php?oper=import',
 			   	method: 'POST',
 				data: sdata, 
 			   	beforeSend: function(){

@@ -22,7 +22,7 @@
 		
 	    $('#fileupload').fileupload({
 		    //url : 'php/external/jquery-fileupload/server/php/',
-		    url : 'php/ctrl/Import.php?oper=uploadFile',
+		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
 		        
@@ -42,7 +42,7 @@
 					alert("Somethign went wrong during the upload: " + file.error);
 
 				} else { //ok, 
-					urlstr = 'php/ctrl/Import.php?oper=parseFile&file='+file.name;
+					urlstr = 'php/ctrl/ImportExport.php?oper=parseFile&file='+file.name;
 					$.post(urlstr, function(tbl){
 						$('#preview').html(tbl);
 
@@ -76,7 +76,7 @@
 
 	  //load mentor uf select listing
 		$('#opt').xml2html('init',{
-			url: 'php/ctrl/Import.php',
+			url: 'php/ctrl/ImportExport.php',
 			params : 'oper=getAllowedFields&table=aixada_product',
 			loadOnInit:true,
 			offSet : 1,
@@ -92,7 +92,7 @@
 			var sdata = $('#colSelect').serialize();
 			
 			$.ajax({
-			   	url: 'php/ctrl/Import.php?oper=import',
+			   	url: 'php/ctrl/ImportExport.php?oper=import',
 			   	method: 'POST',
 				data: sdata, 
 			   	beforeSend: function(){
