@@ -166,6 +166,29 @@
 			});	
 
 
+	    // export ufs
+		$('#btn_export')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				$.ajax({
+				    url: 'php/ctrl/ImportExport.php?oper=exportMembers&format=csv',
+				    type: 'POST',
+				    error : function(XMLHttpRequest, textStatus, errorThrown){
+					    if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+						$this.dialog("close");
+						$.showMsg({
+						    msg: "<?=$Text['msg_err_export']; ?>" + XMLHttpRequest.responseText,
+							    type: 'error'});
+						
+					    }
+					}
+				    }); // end ajax
+			    }); // end function
+
 		//new uf
 		$("#btn_new_uf")
 			.button({
@@ -960,6 +983,7 @@
 		    </div>
 		    <div id="titleRightCol">
 		    	<!-- p class="textAlignRight"><?php echo $Text['search_memberuf'];?>: <input type="text" name="search_member" id="search_member" class="inputTxtMiddle ui-widget-content ui-corner-all" /></p-->
+      <button id="btn_export" class="overviewElements floatRight"><?php echo $Text['export_uf']; ?>...</button>&nbsp;
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
 		  

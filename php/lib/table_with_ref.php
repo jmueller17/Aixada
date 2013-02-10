@@ -380,9 +380,16 @@ class foreign_key_manager {
         if ($substituted_alias[$field] == 'responsible_uf') {
             $select_clause
                 .= "\n      "  //"concat('" . $Text['uf_short'] 
-                . "concat(aixada_uf.id, ' ', aixada_uf.name) as "
-                . $substituted_alias[$field] . ',';
-        } else {
+		. "aixada_uf.id as responsible_uf_id,\n"
+		. "aixada_uf.name as responsible_uf_name,";
+        } else if ($substituted_alias[$field] == 'uf') {
+	    // add both the number and the name of the UF
+	    $select_clause
+		.= "\n      "
+		. $this->_table_name . ".uf_id,"
+                . "\n      " . $substituted_name[$field]
+                . ' as uf_name,';
+	} else {
             $select_clause 
                 .= "\n      " . $substituted_name[$field]
                 . ' as ' . $substituted_alias[$field] . ',';

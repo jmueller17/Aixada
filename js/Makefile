@@ -41,7 +41,6 @@ ifdef FINAL
 else
 	cp $< $@
 endif
-	rm $<
 
 js_for_activate_products.js: \
 	$(CANONICAL_DEPS) 
