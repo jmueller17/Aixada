@@ -13,6 +13,7 @@
 			saving	: "Saving...",
 			searchAdd : "Search and add another item",
 			total : "Total",
+			total_net : "Net Total",
 			subtotal : "Subtotal",
 			ivaTax : "Value Added Tax",
 			ivaTaxAbbrev : "VAT",

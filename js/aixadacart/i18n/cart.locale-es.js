@@ -13,6 +13,7 @@
 			saving	: "Guardando...",
 			searchAdd : "Buscar otro producto",
 			total : "Total",
+			total_net : "Sin impuestos",
 			subtotal : "Subtotal",
 			ivaTax : "Impuesto Valor Añadido",
 			ivaTaxAbbrev : "IVA",

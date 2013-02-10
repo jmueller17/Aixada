@@ -13,6 +13,7 @@
 			saving	: "Guardant...",
 			searchAdd : "Cerca un altre producte",
 			total : "Total",
+			total_net : "Sense impostos",
 			subtotal : "Subtotal",
 			ivaTax : "IVA",
 			ivaTaxAbbrev : "IVA",
