@@ -832,4 +832,6 @@ $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Pegar";
 
 $Text['search_provider'] = "Buscar proveidor";
+$Text['msg_err_export'] = "Error exportant dades";
+$Text['export_uf'] = "Exportar Membres";
 

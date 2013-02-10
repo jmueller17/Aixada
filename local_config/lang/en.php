@@ -596,7 +596,7 @@ $Text['active_changed_uf'] = "Active state changed for HU";
 $Text['msg_err_mentoruf'] = "The mentor household must be different from the HU itself!";
 $Text['msg_err_ufexists'] = "The HU name already exists. Please choose another one!";
 $Text['msg_err_form_init'] = "Seems like the form for creating a new member did not initialize correctly. Reload the page and then try again...   ";
-$Text['ti_mng_hu_members'] = "Manage households and its members"; 
+$Text['ti_mng_hu_members'] = "Manage households and their members"; 
 $Text['list_ufs'] = "List of households";
 $Text['search_members'] = "Member search";
 $Text['member_pl'] = "Members";
@@ -820,9 +820,9 @@ $Text['ti_add_product'] = "Add product";
 $Text['order_min'] = "Min. order amount";
 $Text['msg_confirm_del_product'] = "Are you sure to delete this product?"; 
 $Text['msg_err_del_product'] = "This product cannot be deleted since other database entries depend on it. Error thrown: ";
-$Text['msg_err_del_member'] = "This user cannot be delete because other database entries reference it. <br/> Error thrown: ";
-$Text['msg_confirm_del_provider'] = "Are you sure to delete this provider?";
-$Text['msg_err_del_provider'] = "This provider cannot be delete. Try deleting its products first!";
+$Text['msg_err_del_member'] = "This user cannot be deleted because other database entries reference it. <br/> Error thrown: ";
+$Text['msg_confirm_del_provider'] = "Are you sure you want to delete this provider?";
+$Text['msg_err_del_provider'] = "This provider cannot be deleted. Try deleting its products first!";
 $Text['price_net'] = "Price netto";
 
 $Text['custom_product_ref'] = "Custom ID"; 
@@ -831,6 +831,8 @@ $Text['copy_column'] = "Copy column";
 $Text['paste_column'] = "Paste";
 
 $Text['search_provider'] = "Search for provider";
+$Text['msg_err_export'] = "Error in exporting data";
+$Text['export_uf'] = "Export Members";
 //$Text[''] = ""; 
 
 ?>

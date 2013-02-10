@@ -207,11 +207,11 @@ try{
 	case 'exportMembers':
 	    $format = get_param('format', 'csv'); // or xml
 	    $xml = stored_query_XML_fields('aixada_member_list_all_query', 
-					   'aixada_member.name', 
-					   'asc', 
+					   'aixada_member.uf_id', 
+					   'desc', 
 					   0, 
 					   1000000, 
-					   'active=1');
+					   'aixada_member.active=1');
 	    switch ($format) {
 	    case 'csv':
 		printCSV(XML2csv($xml), 'member_list.csv');

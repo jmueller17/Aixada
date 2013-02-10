@@ -445,7 +445,7 @@
 					    if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
 						$this.dialog("close");
 						$.showMsg({
-						    msg: "<?=$Text['msg_err_del_product']; ?>" + XMLHttpRequest.responseText,
+						    msg: "<?=$Text['msg_err_export']; ?>" + XMLHttpRequest.responseText,
 							    type: 'error'});
 						
 					    }
