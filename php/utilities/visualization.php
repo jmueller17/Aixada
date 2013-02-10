@@ -5,8 +5,11 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/config.php');
 
+require_once(__ROOT__ .'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
 
-function product_prices_json($product_id_array, $year_array)
+function product_prices_times_years($product_id_array, $year_array)
 {
     $json = '[';
     $first_series = true;
@@ -22,13 +25,19 @@ function product_prices_json($product_id_array, $year_array)
 		$piy .= '{"day":' . $row['day'] 
 		    . ',"price":' . $row['price'] . '}';
 	    }
+	    DBWrap::get_instance()->free_next_results();
 	    $piy .= ']';
 	    if ($first_series) {
 		$first_series = false;
 	    } else $json .= ',';
-	    $json .= $piy;
+	    $json .= '[[' . $product_id . ','
+		. $year . '],'
+		. $piy
+		. ']';
 	}
     }
+    global $firephp;
+    $firephp->log($json);
     return $json;
 }
 

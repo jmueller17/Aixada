@@ -37,8 +37,8 @@ try{
 	        echo make_balances();
 	        exit;
 
-            case 'product_prices':
-		echo product_prices_json($_REQUEST['product_id_array'], $_REQUEST['year_array']);
+            case 'product_prices_times_years':
+		echo product_prices_times_years($_REQUEST['product_id_array'], $_REQUEST['year_array']);
 		exit;
 
     default:
