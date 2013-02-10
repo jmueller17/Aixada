@@ -14,6 +14,7 @@
 		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+		<script type="text/javascript" src="js/d3.v3.min.js"></script>
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_visualization.min.js"></script>
     <?php }?>
@@ -21,21 +22,11 @@
 	<script type="text/javascript">
 	
       $(function(){
-	      $.ajax({
-		  type: "POST",
-			  url: "php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=861&product_id_array[]=647&year_array[]=2011&year_array[]=2012",
-			  beforeSend : function (){
-			  $('#pty_graphic .loadSpinner').show();
-		      },
-			  success: function(data) {
-		      }, 
-			  error : function(XMLHttpRequest, textStatus, errorThrown) {
-			  alert(textStatus);
-		      },
-			  complete : function(msg){
-			  $('#pty_graphic .loadSpinner').hide();
-		      }
-		  }); //end ajax
+	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=861&product_id_array[]=647&year_array[]=2011&year_array[]=2012",
+	      function(data) {
+		  $('#pty_graphic .loadSpinner').hide();
+		  
+	      }); //end json
 			  
 
       });  //close document ready

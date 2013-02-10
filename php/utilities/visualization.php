@@ -30,12 +30,13 @@ function product_prices_times_years($product_id_array, $year_array)
 	    if ($first_series) {
 		$first_series = false;
 	    } else $json .= ',';
-	    $json .= '[[' . $product_id . ','
-		. $year . '],'
+	    $json .= '['
+		.'[' . $product_id . ',' . $year . '],'
 		. $piy
 		. ']';
 	}
     }
+    $json .= ']';
     global $firephp;
     $firephp->log($json);
     return $json;
