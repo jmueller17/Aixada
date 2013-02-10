@@ -263,6 +263,34 @@ try{
 		throw new Exception('Export file format"' . $format . '" not supported');
 	    }
 	    break;
+
+
+	case 'orderableProductsForDateRange':
+	    $from_date = get_param('from_date', date('Y-m-d', strtotime('now')));
+	    $to_date = get_param('to_date', date('Y-m-d', strtotime('now +1 month'))); 
+	    $provider_id = get_param('provider_id', 0);
+	    $format = get_param('format', 'csv'); // or xml
+	    $xml = stored_query_XML_fields('get_orderable_products_for_dates',
+					   $from_date, 
+					   $to_date,
+					   $provider_id);
+
+	    switch ($format) {
+	    case 'csv':
+		printCSV(XML2csv($xml), 'orderable_products_' . $provider_id . '_' . $from_date . '_' . $to_date . '.csv');
+		exit;
+
+	    case 'xml':
+		$metadata = array( 'name' => 'provider_and_range', 
+				   'data' => array( 'provider_id' => $provider_id,
+						    'from_date' => $from_date,
+						    'to_date' => $to_date ));
+		printXML(XML_add_metadata($xml, 'orderable_products', $metadata));
+		exit;
+
+	    default:
+		throw new Exception('Export file format"' . $format . '" not supported');
+	    }
 	    
 	default:
 	    throw new Exception("ctrl Import: operation {$_REQUEST['oper']} not supported");
