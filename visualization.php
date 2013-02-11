@@ -25,6 +25,50 @@
 	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=861&product_id_array[]=647&year_array[]=2011&year_array[]=2012",
 	      function(data) {
 		  $('#pty_graphic .loadSpinner').hide();
+		  gymax = 0.0;
+		  var all = new Array(365);
+		  for (var d=0; d<365; d++) {
+		      all[d] = new Array(data.length);
+		  }
+		  for (var i=0; i<data.length; i++) {
+		      var pts = data[i][1];
+		      for (var j=0; j<pts.length; j++) {
+			  var price = pts[j]['price'];
+			  all[pts[j]['day']][j] = price;
+			  if (price > gymax) {
+			      gymax = price;
+			  }
+		      }
+		  }
+
+		      /*
+		  for (var i=0; i<data.length; i++) {
+		      var plot = data[i],
+			  product_id = plot[0][0],
+			  year = plot[0][1],
+			  pts = plot[1],
+
+		      var pts = data[i][1],
+			  lymax = d3.max(pts, function(d) { return d['price']; });
+		      if (lymax > gymax) {
+			  gymax = lymax;
+		      }
+		  }
+		      */
+		  var  w = 800,
+		      h = 500,
+		      x = d3.scale.linear().domain([0, 365]).range([0, w]),
+		      y = d3.scale.linear().domain([0, gymax]).range([h, 0]),
+		      p = 30;
+
+		  var vis = d3.select("#paired-line-chart")
+		      .data([val_array1])
+		      .append("svg:svg")
+		      .attr("width", w + p * 2)
+		      .attr("height", h + p * 2)
+		      .append("svg:g")
+		      .attr("transform", "translate(" + p + "," + p + ")");
+
 		  
 	      }); //end json
 			  
