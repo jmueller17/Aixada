@@ -133,29 +133,19 @@
 
 		  for (var i=0; i<data.length; i++) {
 		      vis.append("svg:rect")
-			  .attr("x", w/2 - 20)
+			  .attr("x", w/2 - 150)
 			  .attr("y", 50 + 30*i)
 			  .attr("stroke", colors[i % data.length])
 			  .attr("height", 2)
 			  .attr("width", 40);
 
 		      vis.append("svg:text")
-			  .attr("x", 30 + w/2)
+			  .attr("x", w/2 - 100)
 			  .attr("y", 55 + 30*i)
+			  .attr("stroke", colors[i % data.length])
 			  .text(data[i][0][0] + ' ' + data[i][0][1] + ' ' + data[i][0][2]);
 		  }
 
-		  vis.append("svg:rect")
-		      .attr("x", w/2 - 20)
-		      .attr("y", 80)
-		      .attr("stroke", "maroon")
-		      .attr("height", 2)
-		      .attr("width", 40);
-
-		  vis.append("svg:text")
-		      .attr("x", 30 + w/2)
-		      .attr("y", 85)
-		      .text("Top 1% households");
 		  
 	      }); //end json
 			  
