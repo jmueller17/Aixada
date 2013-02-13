@@ -22,53 +22,140 @@
 	<script type="text/javascript">
 	
       $(function(){
-	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=861&product_id_array[]=647&year_array[]=2011&year_array[]=2012",
+	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=1198&product_id_array[]=1078&year_array[]=2011&year_array[]=2012",
 	      function(data) {
 		  $('#pty_graphic .loadSpinner').hide();
 		  gymax = 0.0;
-		  var all = new Array(365);
-		  for (var d=0; d<365; d++) {
-		      all[d] = new Array(data.length);
+		  var all_prices = new Array(52);
+		  for (var w=0; w<52; w++) {
+		      all_prices[w] = new Array(data.length+1);
+		      all_prices[w][0] = w;
 		  }
 		  for (var i=0; i<data.length; i++) {
-		      var pts = data[i][1];
-		      for (var j=0; j<pts.length; j++) {
-			  var price = pts[j]['price'];
-			  all[pts[j]['day']][j] = price;
+		      var pts = data[i][1],
+			  j = 0,
+			  w = 0,
+			  price = 0;
+
+		      for (; w<52 && j<pts.length; w++) {
+			  if (pts[j]['week'] <= w) {
+			      price = pts[j]['price'];
+			      j++;
+			  }
+			  all_prices[w][i+1] = price;
 			  if (price > gymax) {
 			      gymax = price;
 			  }
 		      }
-		  }
-
-		      /*
-		  for (var i=0; i<data.length; i++) {
-		      var plot = data[i],
-			  product_id = plot[0][0],
-			  year = plot[0][1],
-			  pts = plot[1],
-
-		      var pts = data[i][1],
-			  lymax = d3.max(pts, function(d) { return d['price']; });
-		      if (lymax > gymax) {
-			  gymax = lymax;
+		      while (w<52) {
+			  all_prices[w][i+1] = price;
+			  w++;
 		      }
 		  }
-		      */
-		  var  w = 800,
+
+		  var w = 800,
 		      h = 500,
-		      x = d3.scale.linear().domain([0, 365]).range([0, w]),
+		      x = d3.scale.linear().domain([0, 52]).range([0, w]),
 		      y = d3.scale.linear().domain([0, gymax]).range([h, 0]),
 		      p = 30;
 
-		  var vis = d3.select("#paired-line-chart")
-		      .data([val_array1])
+		  var vis = d3.select("#pty_graphic")
+		      .data([all_prices])
 		      .append("svg:svg")
 		      .attr("width", w + p * 2)
 		      .attr("height", h + p * 2)
 		      .append("svg:g")
 		      .attr("transform", "translate(" + p + "," + p + ")");
 
+		  var rules = vis.selectAll("g.rule")
+		      .data(x.ticks(15))
+		      .enter().append("svg:g")
+		      .attr("class", "rule");
+
+		  // Draw grid lines
+		  rules.append("svg:line")
+		      .attr("x1", x)
+		      .attr("x2", x)
+		      .attr("y1", 0)
+		      .attr("y2", h - 1);
+
+		  rules.append("svg:line")
+		      .attr("class", function(d) { return d ? null : "axis"; })
+		      .data(y.ticks(10))
+		      .attr("y1", y)
+		      .attr("y2", y)
+		      .attr("x1", 0)
+		      .attr("x2", w - 10);
+
+		  // Place axis tick labels
+		  rules.append("svg:text")
+		      .attr("x", x)
+		      .attr("y", h + 15)
+		      .attr("dy", ".71em")
+		      .attr("text-anchor", "middle")
+		      .text(x.tickFormat(10))
+		      .text(String);
+
+		  rules.append("svg:text")
+		      .data(y.ticks(12))
+		      .attr("y", y)
+		      .attr("x", -10)
+		      .attr("dy", ".35em")
+		      .attr("text-anchor", "end")
+		      .text(y.tickFormat(5));
+		  
+		  var colors = ['blue', 'magenta', 'lightsalmon', 'chartreuse', 'mediumvioletred'];
+
+		  for (var i=0; i<data.length; i++) {
+		      vis.append("svg:path")
+			  .attr("class", "line")
+			  .attr("fill", "none")
+			  .attr("stroke", colors[i % colors.length])
+			  .attr("stroke-width", 2)
+			  .attr("d", d3.svg.line()
+				.x(function(d) { return x(d[0]); })
+				.y(function(d) { return y(d[i+1]); }));
+
+		      vis.select("circle.line")
+			  .data(all_prices)
+			  .enter().append("svg:circle")
+			  .attr("class", "line")
+			  .attr("fill", colors[i % colors.length] )
+			  .attr("cx", function(d) { return x(d[0]); })
+			  .attr("cy", function(d) { return y(d[i+1]); })
+			  .attr("r", 10);
+		  }
+
+		  vis.append("svg:text")
+		      .attr("x", w/4)
+		      .attr("y", 20)
+		      .text("Evolution of prices");
+
+		  for (var i=0; i<data.length; i++) {
+		      vis.append("svg:rect")
+			  .attr("x", w/2 - 20)
+			  .attr("y", 50 + 30*i)
+			  .attr("stroke", colors[i % data.length])
+			  .attr("height", 2)
+			  .attr("width", 40);
+
+		      vis.append("svg:text")
+			  .attr("x", 30 + w/2)
+			  .attr("y", 55 + 30*i)
+			  .text(data[i][0][0] + ' ' + data[i][0][1] + ' ' + data[i][0][2]);
+		  }
+
+		  vis.append("svg:rect")
+		      .attr("x", w/2 - 20)
+		      .attr("y", 80)
+		      .attr("stroke", "maroon")
+		      .attr("height", 2)
+		      .attr("width", 40);
+
+		  vis.append("svg:text")
+		      .attr("x", 30 + w/2)
+		      .attr("y", 85)
+		      .text("Top 1% households");
 		  
 	      }); //end json
 			  

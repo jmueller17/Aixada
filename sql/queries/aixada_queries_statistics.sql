@@ -145,7 +145,7 @@ create procedure product_prices_in_year(in the_product_id int, in the_year int)
 begin
   declare first_day date default makedate(the_year, 1);
   select
-     datediff(ts, first_day) as day, 
+     round(datediff(ts, first_day)/7.0, 1) as week, 
      current_price as price
   from 
      aixada_price
