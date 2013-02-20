@@ -39,12 +39,10 @@ function parseSpreadSheet($path){
 function csv_filename($root, $provider_id, $provider_name)
 {
     $filename = $root;
-    if ($provider_name != null)
+    if ($provider_name != null && $provider_name != "")
 	$filename .= '_' . $provider_name;
     else
-	$filename .= '_provider_' . $provider_id;
-    $filename .= '_' . date('Y-m-d_h:i');
-    $filename .= '.csv';
+	$filename .= '_providers_' .date('Y-m-d_h:i') . '.csv'; 
     return $filename;
 }
 
@@ -123,18 +121,19 @@ try{
  			
  			
 		case 'exportProviderInfo':
+			
 		    $format = get_param('format', 'csv'); // or xml
-		    $provider_id = get_param('provider_id',0);
-		    $provider_name = get_param('provider_name', null);
+		    //$provider_id = get_param('provider_id',0);
+		    $provider_name = get_param('provider_name', "");
 		    
-		    //$ids = '(' . get_param('product_ids', 0, 'array2String') . ')';
+		    $provider_id = '(' . get_param('provider_id', 0, 'array2String') . ')';
 		    
 		    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
 						   'aixada_provider.name', 
 						   'asc', 
 						   0, 
-						   1, 
-						   'aixada_provider.id = ' . $provider_id);
+						   1000000, 
+						   'aixada_provider.id in ' . $provider_id);
 	    	$what = 'product_info';
 	    	switch ($format) {
 	    		case 'csv':
@@ -193,16 +192,16 @@ try{
 					   1000000, 
 					   'aixada_product.id in ' . $ids);
 	    switch ($format) {
-	    case 'csv':
-		printCSV(XML2csv($xml), 'product_list.csv');
-		exit;
-
-	    case 'xml':
-		printXML(XML_add_metadata($xml, 'product_list'));
-		exit;
-
-	    default:
-		throw new Exception('Export file format"' . $format . '" not supported');
+		    case 'csv':
+			printCSV(XML2csv($xml), 'product_list.csv');
+			exit;
+	
+		    case 'xml':
+			printXML(XML_add_metadata($xml, 'product_list'));
+			exit;
+	
+		    default:
+			throw new Exception('Export file format"' . $format . '" not supported');
 	    }
 	    break;
 
