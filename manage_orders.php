@@ -117,7 +117,7 @@
 					url: 'php/ctrl/UserAndUf.php?oper=getUfListing&all=0',
 					dataType:"xml",
 					success: function(xml){
-						var theadStr = ''; 
+						var theadStr = '<th><?=$Text['total'];?></th>'; 
 						$(xml).find('row').each(function(){
 							var id = $(this).find('id').text();
 							var colClass = 'Col-'+id;
@@ -146,8 +146,9 @@
 				url : 'php/ctrl/Orders.php',
 				loadOnInit : false, 
 				rowComplete : function (rowIndex, row){
-					var tbodyStr = '';
+					
 					var product_id = $(row).children(':first').text();
+					var tbodyStr = '<td class="nobr totalQu total_'+product_id+'"></td>';
 					
 					for (var i=0; i<header.length; i++){
 						var colClass = 'Col-'+header[i];
@@ -156,7 +157,7 @@
 					}
 
 					//product total quantities
-					tbodyStr += '<td id="total_'+product_id+'" class="nobr totalQu"></td>';
+					tbodyStr += '<td class="nobr totalQu total_'+product_id+'"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -214,9 +215,9 @@
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
 								
-								var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
+								var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span>";
 								
-								$('#total_'+lastId).html(total);
+								$('.total_'+lastId).html(total);
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
@@ -228,8 +229,8 @@
 						});
 
 						
-						var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span> " + $('#unit_'+lastId).text();
-						$('#total_'+lastId).html(total);
+						var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span>";
+						$('.total_'+lastId).html(total);
 
 
 						//don't need revised and arrived column for viewing order
@@ -455,7 +456,10 @@
 										    
 										})
 										$('#ckboxRevised_'+pid).attr('checked','checked');
-										$('#total_' + pid).children(':first').empty().text(total_quantity.toFixed(2));
+										
+										$('.total_' + pid).each(function(){
+											$(this).children(':first').empty().text(total_quantity.toFixed(2));
+										}) 
 									}//end callback 
 							});
 					}
@@ -1291,7 +1295,7 @@
 
 					});
 					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
-					$('#total_'+product_id+' span:first-child').text(totalQ);
+					$('.total_'+product_id+' span:first-child').text(totalQ);
 
 				}
 			

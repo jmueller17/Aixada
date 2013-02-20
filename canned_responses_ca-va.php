@@ -13,9 +13,6 @@ class canned_table_manager {
  case 'aixada_currency':
      return "['id','Nom','TRANSLATION(one_euro)']";
 
- case 'aixada_estimated_prices':
-     return "['TRANSLATION(product_id)','TRANSLATION(ts)','TRANSLATION(min_estimated_price)','TRANSLATION(max_estimated_price)','TRANSLATION(true_price)']";
-
  case 'aixada_incident':
      return "['id','Assumpte','Tipus','TRANSLATION(operator_id)','Detalls','Prioritat','UFs afectades','TRANSLATION(commission_concerned)','Per al prove\u00efdor','TRANSLATION(ts)','Estat']";
 
@@ -42,9 +39,6 @@ class canned_table_manager {
 
  case 'aixada_payment_method':
      return "['id','Descripci\u00f3','Detalls']";
-
- case 'aixada_price':
-     return "['TRANSLATION(product)','TRANSLATION(ts)','TRANSLATION(current_price)','TRANSLATION(operator_id)']";
 
  case 'aixada_product':
      return "['id','Prove\u00efdor','Nom','Descripci\u00f3','Codi de barres','Id externo','Actiu','Unitat familiar responsable','Tipus de producte','TRANSLATION(order_min_quantity)','Categoria','Tipus d_impost revolucionari','Percentatge d_IVA','Preu per unitat','Unitat de comanda','Unitat de venda','Quantitat m\u00ednima per tindre en estoc','Quantitat actual en estoc','Difer\u00e8ncia amb l_estoc m\u00ednim','URL de descripci\u00f3','Imatge','TRANSLATION(ts)']";
@@ -96,9 +90,6 @@ class canned_table_manager {
  case 'aixada_currency':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'name',index:'name',label:'Nom',width:'50',xmlmap:'name',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'one_euro',index:'one_euro',label:'TRANSLATION(one_euro)',width:'150',xmlmap:'one_euro',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
- case 'aixada_estimated_prices':
-     return "[{name:'product_id',index:'product_id',label:'TRANSLATION(product_id)',width:'150',xmlmap:'product_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'min_estimated_price',index:'min_estimated_price',label:'TRANSLATION(min_estimated_price)',width:'150',xmlmap:'min_estimated_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'max_estimated_price',index:'max_estimated_price',label:'TRANSLATION(max_estimated_price)',width:'150',xmlmap:'max_estimated_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'true_price',index:'true_price',label:'TRANSLATION(true_price)',width:'150',xmlmap:'true_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
-
  case 'aixada_incident':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'subject',index:'subject',label:'Assumpte',width:'255',xmlmap:'subject',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'incident_type_id',index:'incident_type',label:'TRANSLATION(incident_type_id)',width:'300',xmlmap:'incident_type',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_incident_type&field1=id&field2=description'}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'details',index:'details',label:'Detalls',width:'300',xmlmap:'details',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'priority',index:'priority',label:'Prioritat',width:'150',xmlmap:'priority',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ufs_concerned',index:'ufs_concerned',label:'UFs afectades',width:'100',xmlmap:'ufs_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'commission_concerned',index:'commission_concerned',label:'TRANSLATION(commission_concerned)',width:'100',xmlmap:'commission_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'provider_concerned',index:'provider_concerned',label:'Per al prove\u00efdor',width:'100',xmlmap:'provider_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'status',index:'status',label:'Estat',width:'150',xmlmap:'status',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
@@ -125,9 +116,6 @@ class canned_table_manager {
 
  case 'aixada_payment_method':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'description',index:'description',label:'Descripci\u00f3',width:'50',xmlmap:'description',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'details',index:'details',label:'Detalls',width:'255',xmlmap:'details',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
-
- case 'aixada_price':
-     return "[{name:'product_id',index:'product',label:'TRANSLATION(product_id)',width:'300',xmlmap:'product',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_product&field1=id&field2=name'}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'current_price',index:'current_price',label:'TRANSLATION(current_price)',width:'150',xmlmap:'current_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
  case 'aixada_product':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'provider_id',index:'provider',label:'TRANSLATION(provider_id)',width:'300',xmlmap:'provider',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_provider&field1=id&field2=name'}},{name:'name',index:'name',label:'Nom',width:'255',xmlmap:'name',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'description',index:'description',label:'Descripci\u00f3',width:'300',xmlmap:'description',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'barcode',index:'barcode',label:'Codi de barres',width:'50',xmlmap:'barcode',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'custom_product_ref',index:'custom_product_ref',label:'Id externo',width:'100',xmlmap:'custom_product_ref',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'active',index:'active',label:'Actiu',width:'150',xmlmap:'active',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true},edittype:'checkbox',editoptions:{value:'1:0'}},{name:'responsible_uf_id',index:'responsible_uf',label:'TRANSLATION(responsible_uf_id)',width:'300',xmlmap:'responsible_uf',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_uf&field1=id&field2=name'}},{name:'orderable_type_id',index:'orderable_type',label:'TRANSLATION(orderable_type_id)',width:'300',xmlmap:'orderable_type',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_orderable_type&field1=id&field2=description'}},{name:'order_min_quantity',index:'order_min_quantity',label:'TRANSLATION(order_min_quantity)',width:'150',xmlmap:'order_min_quantity',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'category_id',index:'category',label:'TRANSLATION(category_id)',width:'300',xmlmap:'category',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_product_category&field1=id&field2=description'}},{name:'rev_tax_type_id',index:'rev_tax_type',label:'TRANSLATION(rev_tax_type_id)',width:'300',xmlmap:'rev_tax_type',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_rev_tax_type&field1=id&field2=name'}},{name:'iva_percent_id',index:'iva_percent',label:'Tipus d_IVA',width:'300',xmlmap:'iva_percent',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_iva_type&field1=id&field2=name'}},{name:'unit_price',index:'unit_price',label:'Preu per unitat',width:'150',xmlmap:'unit_price',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'unit_measure_order_id',index:'unit_measure_order',label:'TRANSLATION(unit_measure_order_id)',width:'300',xmlmap:'unit_measure_order',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_unit_measure&field1=id&field2=name'}},{name:'unit_measure_shop_id',index:'unit_measure_shop',label:'TRANSLATION(unit_measure_shop_id)',width:'300',xmlmap:'unit_measure_shop',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_unit_measure&field1=id&field2=name'}},{name:'stock_min',index:'stock_min',label:'Quantitat m\u00ednima per tindre en estoc',width:'150',xmlmap:'stock_min',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'stock_actual',index:'stock_actual',label:'Quantitat actual en estoc',width:'150',xmlmap:'stock_actual',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'delta_stock',index:'delta_stock',label:'Difer\u00e8ncia amb l_estoc m\u00ednim',width:'150',xmlmap:'delta_stock',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'description_url',index:'description_url',label:'URL de descripci\u00f3',width:'255',xmlmap:'description_url',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'picture',index:'picture',label:'Imatge',width:'255',xmlmap:'picture',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
@@ -179,9 +167,6 @@ class canned_table_manager {
  case 'aixada_currency':
      return "[]";
 
- case 'aixada_estimated_prices':
-     return "[]";
-
  case 'aixada_incident':
      return "[incident_type_id]";
 
@@ -208,9 +193,6 @@ class canned_table_manager {
 
  case 'aixada_payment_method':
      return "[]";
-
- case 'aixada_price':
-     return "[product_id]";
 
  case 'aixada_product':
      return "[provider_id,responsible_uf_id,orderable_type_id,category_id,rev_tax_type_id,iva_percent_id,unit_measure_order_id,unit_measure_shop_id]";

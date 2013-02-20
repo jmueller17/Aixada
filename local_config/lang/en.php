@@ -833,6 +833,8 @@ $Text['paste_column'] = "Paste";
 $Text['search_provider'] = "Search for provider";
 $Text['msg_err_export'] = "Error in exporting data";
 $Text['export_uf'] = "Export Members";
+$Text['btn_export'] = "Export";
+
 //$Text[''] = ""; 
 
 ?>

@@ -16,7 +16,7 @@ require_once(__ROOT__ . "php/utilities/general.php");
 
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+ob_start();
 $firephp = FirePHP::getInstance(true);
 
 
@@ -122,62 +122,65 @@ try{
  			exit; 
  			
  			
-	case 'exportProviderInfo':
-	    $format = get_param('format', 'csv'); // or xml
-	    $provider_id = get_param('provider_id',0);
-	    $provider_name = get_param('provider_name', null);
-	    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
-					   'aixada_provider.name', 
-					   'asc', 
-					   0, 
-					   1, 
-					   'aixada_provider.id = ' . $provider_id);
-	    $what = 'product_info';
-	    switch ($format) {
-	    case 'csv':
-		printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
-		exit;
+		case 'exportProviderInfo':
+		    $format = get_param('format', 'csv'); // or xml
+		    $provider_id = get_param('provider_id',0);
+		    $provider_name = get_param('provider_name', null);
+		    
+		    //$ids = '(' . get_param('product_ids', 0, 'array2String') . ')';
+		    
+		    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
+						   'aixada_provider.name', 
+						   'asc', 
+						   0, 
+						   1, 
+						   'aixada_provider.id = ' . $provider_id);
+	    	$what = 'product_info';
+	    	switch ($format) {
+	    		case 'csv':
+					printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
+					exit;
 
-	    case 'xml':
-		$metadata = array( 'name' => 'provider', 
-				   'data' => array( 'provider_id' => $provider_id,
-						    'provider_name' => $provider_name));
-		printXML(XML_add_metadata($xml, $what, $metadata));
-		exit;
+			    case 'xml':
+					$metadata = array( 'name' => 'provider', 
+						   'data' => array( 'provider_id' => $provider_id,
+								    'provider_name' => $provider_name));
+					printXML(XML_add_metadata($xml, $what, $metadata));
+				exit;
 
-	    default:
-		throw new Exception('Export file format"' . $format . '" not supported');
-	    }
-	    break;
+	    		default:
+				throw new Exception('Export file format"' . $format . '" not supported');
+			}
+	    	break;
 
 
-	case 'exportProviderProducts':
-	    $format = get_param('format', 'csv'); // or xml
-	    $provider_id = get_param('provider_id',0);
-	    $provider_name = get_param('provider_name', null);
-	    $xml = stored_query_XML_fields('aixada_product_list_all_query', 
-					   'aixada_product.name', 
-					   'asc', 
-					   0, 
-					   1000000, 
-					   'aixada_product.provider_id = ' . $provider_id);
-	    $what = 'product_info';
-	    switch ($format) {
-	    case 'csv':
-		printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
-		exit;
-
-	    case 'xml':
-		$metadata = array( 'name' => 'provider', 
-				   'data' => array( 'provider_id' => $provider_id,
-						    'provider_name' => $provider_name));
-		printXML(XML_add_metadata($xml, $what, $metadata));
-		exit;
+		case 'exportProviderProducts':
+		    $format = get_param('format', 'csv'); // or xml
+		    $provider_id = get_param('provider_id',0);
+		    $provider_name = get_param('provider_name', null);
+		    $xml = stored_query_XML_fields('aixada_product_list_all_query', 
+						   'aixada_product.name', 
+						   'asc', 
+						   0, 
+						   1000000, 
+						   'aixada_product.provider_id = ' . $provider_id);
+	    	$what = 'product_info';
+		    switch ($format) {
+			    case 'csv':
+					printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
+					exit;
 		
-	    default:
-		throw new Exception('Export file format"' . $format . '" not supported');
-	    }
-	    break;
+			    case 'xml':
+					$metadata = array( 'name' => 'provider', 
+						   'data' => array( 'provider_id' => $provider_id,
+								    'provider_name' => $provider_name));
+					printXML(XML_add_metadata($xml, $what, $metadata));
+					exit;
+				
+			    default:
+					throw new Exception('Export file format"' . $format . '" not supported');
+			}
+	    	break;
 
 
 	case 'exportProducts':
@@ -204,27 +207,28 @@ try{
 	    break;
 
 
-	case 'exportMembers':
-	    $format = get_param('format', 'csv'); // or xml
-	    $xml = stored_query_XML_fields('aixada_member_list_all_query', 
-					   'aixada_member.uf_id', 
-					   'desc', 
-					   0, 
-					   1000000, 
-					   'aixada_member.active=1');
-	    switch ($format) {
-	    case 'csv':
-		printCSV(XML2csv($xml), 'member_list.csv');
-		exit;
-
-	    case 'xml':
-		printXML(XML_add_metadata($xml, 'member_list'));
-		exit;
-
-	    default:
-		throw new Exception('Export file format"' . $format . '" not supported');
-	    }
-	    break;
+		case 'exportMembers':
+		    $format = get_param('format', 'csv'); // or xml
+		    $xml = stored_query_XML_fields('aixada_member_list_all_query', 
+						   'aixada_member.uf_id', 
+						   'desc', 
+						   0, 
+						   1000000, 
+						   'aixada_member.active=1');
+		    switch ($format) {
+			    case 'csv':
+					printCSV(XML2csv($xml), 'member_list.csv');
+					exit;
+	
+			    case 'xml':
+					printXML(XML_add_metadata($xml, 'member_list'));
+					exit;
+	
+			    default:
+					throw new Exception('Export file format"' . $format . '" not supported');
+		    }
+		    
+		   	break;
 
 
 	case 'exportAccountMovements':

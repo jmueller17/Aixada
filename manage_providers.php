@@ -438,20 +438,13 @@
 	        	}
 			})
 			.click(function(e){
-				$.ajax({
-				    url: 'php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv',
-				    type: 'POST',
-				    error : function(XMLHttpRequest, textStatus, errorThrown){
-					    if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-						$this.dialog("close");
-						$.showMsg({
-						    msg: "<?=$Text['msg_err_export']; ?>" + XMLHttpRequest.responseText,
-							    type: 'error'});
-						
-					    }
-					}
-				    }); // end ajax
-			    }); // end function
+
+				//dowload this stuff through the iframe (see bottom of html)
+				$('#exportChannel').attr('src','php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv'); 
+
+
+			 }); // end function
+			    
 
 		//product buttons
 		$('#btn_new_product')
@@ -988,8 +981,8 @@
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
-						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
-						<button class="floatRight pgProductOverview" id="btn_export"><?php echo "Export"; ?></button>
+						<!-- button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button-->
+						<button class="floatRight pgProductOverview" id="btn_export"><?php echo $Text['btn_export']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
 						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
 							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
@@ -1452,7 +1445,7 @@
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
-
+<iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 
 <!-- / END -->
 </body>
