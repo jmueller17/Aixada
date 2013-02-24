@@ -841,6 +841,7 @@ $Text['paste_column'] = "Pegar";
 $Text['search_provider'] = "Buscar proveidor";
 $Text['msg_err_export'] = "Error al exportar datos";
 $Text['export_uf'] = "Exportar Miembros";
+$Text['btn_export'] = "Exportar";
 
 $Text['ti_visualization'] = "Visualizaciones";
 

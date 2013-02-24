@@ -88,7 +88,7 @@
 		</li>
 		
 		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_providers'];?></a></li>
-		<li><a href="manage_table.php?table=aixada_product"><?php echo $Text['nav_mng_products'];?></a>
+		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_products'];?></a>
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
@@ -134,7 +134,7 @@
                  <li><a href="report_timelines.php?oper=product"><?php echo $Text['nav_report_timelines_product'];?></a></li>
                 </ul>
                 </li>
-		<li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li>
+		<!-- li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li-->
 	</ul>
 </div>
 

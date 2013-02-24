@@ -85,31 +85,31 @@ class order_cart_manager extends abstract_cart_manager {
     	     	
     	$db = DBWrap::get_instance();
     	
-    	//get already closed orders for the current date and this uf. 
-    	//closed orders cannot be update anymore
-    	$sql = "select
-    				oi.product_id
-    			from 
-    				aixada_order_item oi
-    			where
-    				oi.date_for_order ='". $this->_date."'
-    				and oi.product_id in (";
-    	
-		    	foreach ($arrProdId as $id){
-		    		$sql .= $id . ",";
-				}		
-		
-		$sql = rtrim($sql, ",") .") and oi.uf_id=".$this->_uf_id." and oi.order_id > 0;";
-    	
-       	$rs = $db->Execute($sql);	
-       	
-       
-   		while ($row = $rs->fetch_array()){
-    		array_push($this->_closed_orders, $row['product_id']); 
-    	}
-       	
-       	$db->free_next_results();
-            	
+    	//make sure we don't have an empty cart (when deleting all items from order)
+    	if (count($arrProdId) > 0){
+	    	//get already closed orders for the current date and this uf. 
+	    	//closed orders cannot be update anymore
+	    	$sql = "select
+	    				oi.product_id
+	    			from 
+	    				aixada_order_item oi
+	    			where
+	    				oi.date_for_order ='". $this->_date."'
+	    				and oi.product_id in (";
+	    	
+			    	foreach ($arrProdId as $id){
+			    		$sql .= $id . ",";
+					}		
+			
+				$sql = rtrim($sql, ",") .") and oi.uf_id=".$this->_uf_id." and oi.order_id > 0;";
+
+			$rs = $db->Execute($sql);	
+	       	
+	   		while ($row = $rs->fetch_array()){
+	    		array_push($this->_closed_orders, $row['product_id']); 
+	    	}
+	       	$db->free_next_results();
+    	}	
     	
     	
         for ($i=0; $i < count($arrQuant); ++$i) {

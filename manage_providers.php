@@ -192,6 +192,43 @@
 				return false; 
 		});
 
+	    // export products
+		$('#btn_provider_export')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+
+				if ($('input:checkbox[name="providerBulkAction"][checked="checked"]').length  == 0){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_noselect'];?>",
+						buttons: {
+							"<?=$Text['btn_ok'];?>":function(){						
+								$(this).dialog("close");
+							}
+						},
+						type: 'warning'});
+				} else {
+
+					var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&format=csv";
+					
+					$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
+						urlStr += "&provider_id[]=" + $(this).parents('tr').attr('providerId');
+					})
+					$('#exportChannel').attr('src',urlStr); 
+
+				}
+
+				
+				//dowload this stuff through the iframe (see bottom of html)
+				//
+		
+
+			}); // end function
+				
+
 		//delete provider
 		$('.btn_del_provider')
 			.live('click', function(e){
@@ -237,7 +274,23 @@
 				e.stopPropagation();
 				
 			})
+			
+			
+		$('#toggleProviderBulkActions')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="providerBulkAction"]').attr('checked','checked');
+				} else {
+					$('input:checkbox[name="providerBulkAction"]').attr('checked',false);
+				}
+				e.stopPropagation();
+			});
 
+		//bulk actions
+		$('input[name=providerBulkAction]')
+			.live('click', function(e){
+				e.stopPropagation();
+			})
 			
 
 		/**
@@ -431,27 +484,20 @@
 			});
 
 	    // export products
-		$('#btn_export')
+		$('#btn_product_export')
 			.button({
 				icons: {
 					primary: "ui-icon-transferthick-e-w"
 	        	}
 			})
 			.click(function(e){
-				$.ajax({
-				    url: 'php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv',
-				    type: 'POST',
-				    error : function(XMLHttpRequest, textStatus, errorThrown){
-					    if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-						$this.dialog("close");
-						$.showMsg({
-						    msg: "<?=$Text['msg_err_export']; ?>" + XMLHttpRequest.responseText,
-							    type: 'error'});
-						
-					    }
-					}
-				    }); // end ajax
-			    }); // end function
+
+				//dowload this stuff through the iframe (see bottom of html)
+				$('#exportChannel').attr('src','php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv'); 
+
+
+			 }); // end function
+			    
 
 		//product buttons
 		$('#btn_new_product')
@@ -594,6 +640,22 @@
 				var frm = $(this).parents('form');
 				calcBruttoPrice(frm);
 		})
+		
+		$('#toggleProductBulkActions')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="productBulkAction"]').attr('checked','checked');
+				} else {
+					$('input:checkbox[name="productBulkAction"]').attr('checked',false);
+				}
+				e.stopPropagation();
+			});
+
+		//bulk actions
+		$('input[name=productBulkAction]')
+			.live('click', function(e){
+				e.stopPropagation();
+			})
 
 		//product utility functions
 		/**
@@ -694,6 +756,10 @@
 			//set provider id
 			$('#frm_product_new input[name=provider_id]').val(gSelProvider.attr('providerId'));
 
+			//set responsible_uf same as provider. Doesn't work the first time when the form select gets constructed for the first time...
+			var rufid = gSelProvider.attr('responsibleUfId');
+			$('#tbl_product_new span.sResponsibleUfId').children('select').val(rufid).attr('selected','selected');
+			
 			/*$('select', frm).each(function(){
 				var firstElementValue = $(this).children(':first').val();
 				$(this).val(firstElementValue).attr('selected','selected').parent().prev().attr('value',firstElementValue);
@@ -988,8 +1054,9 @@
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
-						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
-						<button class="floatRight pgProductOverview" id="btn_export"><?php echo "Export"; ?></button>
+						<!-- button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button-->
+						<button class="floatRight pgProductOverview" id="btn_product_export"><?php echo $Text['btn_export']; ?></button>
+						<button class="floatRight pgProviderOverview" id="btn_provider_export"><?php echo $Text['btn_export']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
 						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
 							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
@@ -1009,7 +1076,7 @@
 						<table id="tbl_providers" class="tblListingDefault" >
 							<thead>
 								<tr>
-									<th>&nbsp;&nbsp;<input type="checkbox" id="toggleBulkActionsProviders" name="toggleBulk"/></th>
+									<th>&nbsp;&nbsp;<input type="checkbox" id="toggleProviderBulkActions" name="toggleProviderBulk"/></th>
 									<th><p class="textAlignCenter"><?php echo $Text['id'];?></p></th>
 									<th><?php echo $Text['provider_name']; ?></th>						
 									<th><?php echo $Text['phone_pl']; ?></th>
@@ -1020,8 +1087,8 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="clickable" providerId="{id}" >
-									<td><input type="checkbox" name="bulkAction"/></td>
+								<tr class="clickable" providerId="{id}" responsibleUfId="{responsible_uf_id}" >
+									<td><input type="checkbox" name="providerBulkAction"/></td>
 									<td><p class="textAlignRight">{id}</p></td>
 									<td title="<?php echo $Text['click_to_list']; ?>">{name}</td>
 									<td>{phone1} / {phone2}</p></td>
@@ -1052,7 +1119,7 @@
 						<table id="tbl_products" class="tblListingDefault">
 							<thead>
 								<tr>
-									<th>&nbsp;<input type="checkbox" id="toggleBulkActionsProducts" name="toggleBulk"/></th>
+									<th>&nbsp;<input type="checkbox" id="toggleProductBulkActions" name="toggleProductBulk"/></th>
 									<th><?php echo $Text['id'];?></th>
 									<th><?php echo $Text['name_item'];?></th>						
 									<th><?php echo $Text['orderable_type']; ?></th>
@@ -1073,7 +1140,7 @@
 							</thead>
 							<tbody>
 								<tr id="{id}" class="clickable" productId="{id}">
-									<td><input type="checkbox" name="bulkAction"/></td>
+									<td><input type="checkbox" name="productBulkAction"/></td>
 									<td>{id}</td>
 									<td title="<?php echo $Text['click_row_edit']; ?>">{name}</td>
 									<td>{orderable_type_id}</td>
@@ -1452,7 +1519,7 @@
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
-
+<iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 
 <!-- / END -->
 </body>

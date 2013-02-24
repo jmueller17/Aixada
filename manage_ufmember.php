@@ -174,6 +174,9 @@
 	        	}
 			})
 			.click(function(e){
+
+				$("#exportChannel").attr('src', 'php/ctrl/ImportExport.php?oper=exportMembers&format=csv');
+				/*
 				$.ajax({
 				    url: 'php/ctrl/ImportExport.php?oper=exportMembers&format=csv',
 				    type: 'POST',
@@ -187,7 +190,8 @@
 					    }
 					}
 				    }); // end ajax
-			    }); // end function
+			 	*/   
+			 }); // end function
 
 		//new uf
 		$("#btn_new_uf")
@@ -983,7 +987,7 @@
 		    </div>
 		    <div id="titleRightCol">
 		    	<!-- p class="textAlignRight"><?php echo $Text['search_memberuf'];?>: <input type="text" name="search_member" id="search_member" class="inputTxtMiddle ui-widget-content ui-corner-all" /></p-->
-      <button id="btn_export" class="overviewElements floatRight"><?php echo $Text['export_uf']; ?>...</button>&nbsp;
+      			<button id="btn_export" class="overviewElements"><?php echo $Text['btn_export']; ?></button>
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
 		    </div>	  	
 		  
@@ -1367,6 +1371,7 @@
 	<option value="{name}"> {name}</option>
 </select>
 </div>
+<iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 <!-- / END -->
 </body>
 </html>
