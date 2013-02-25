@@ -64,6 +64,33 @@ function XML_add_metadata($xml, $what, $metadata=null)
     return $xml_out;
 }
 
+
+function get_products($provider_id, $product_ids=null){
+	$xml = stored_query_XML_fields('aixada_product_list_all_query', 
+						   'aixada_product.name', 
+						   'asc', 
+						   0, 
+						   1000000, 
+						   'aixada_product.provider_id = ' . $provider_id);		   
+	
+	DBWrap::get_instance()->free_next_results();
+	return $xml; 
+
+}
+
+function get_provider($provider_id){
+	 $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
+						   'aixada_provider.name', 
+						   'asc', 
+						   0, 
+						   1000000, 
+						   'aixada_provider.id = ' . $provider_id);	
+	DBWrap::get_instance()->free_next_results();					   
+	return $xml; 
+
+	
+}
+
 try{ 
    
 	global $firephp; 
@@ -97,58 +124,65 @@ try{
     		
     		
  		case 'import':
- 						
-
 			$dt = parseSpreadSheet($_SESSION['import_file']);
-									
-			
 			//$map = array('custom_product_ref'=>0, 'unit_price'=>1, 'name'=>2);
 			$map = array();
 			foreach($_REQUEST['table_col'] as $key => $value){
 				$map[$value] = $key;  
 			}
-			
 			$firephp->log($map, "the map");
-			
 			$pi = new import_products($dt, $map, get_param('provider_id'));
-		
-			
 			$pi->import(get_param('new_items', false));
 		
 			echo 1; 
-			
  			exit; 
  			
- 			
+ 		//exports provider info only. Should have option for including provider products?!!	
 		case 'exportProviderInfo':
 			
 		    $format = get_param('format', 'csv'); // or xml
-		    //$provider_id = get_param('provider_id',0);
-		    $provider_name = get_param('provider_name', "");
+		    $file_name = get_param('fileName');
+		    $destination = get_param('destination'); //to disc or online google drive
+		    $make_public = get_param('makePublic', 0); //share on the web
+		    $firephp->log($make_public, "make_public");
+		    $provider_ids = '(' . get_param('provider_id', 0, 'array2String') . ')';
 		    
-		    $provider_id = '(' . get_param('provider_id', 0, 'array2String') . ')';
-		    
+		    /*$provider_ids = get_param('provider_id');
+
+		    $xmlstr = ''; 
+	 		foreach ($provider_ids as $id) {
+				$xmlstr .= get_provider($id);
+				if (get_param('include_products', true)){
+					$xmlstr .= '<products>';
+					$xmlstr .= get_products($id);
+					$xmlstr .= '</products>';
+				}
+			}*/
+
 		    $xml = stored_query_XML_fields('aixada_provider_list_all_query', 
 						   'aixada_provider.name', 
 						   'asc', 
 						   0, 
 						   1000000, 
-						   'aixada_provider.id in ' . $provider_id);
-	    	$what = 'product_info';
+						   'aixada_provider.id in ' . $provider_ids);
+					   
+	    	
 	    	switch ($format) {
 	    		case 'csv':
-					printCSV(XML2csv($xml), csv_filename($what, $provider_id, $provider_name));
+					printCSV(XML2csv($xml), $file_name .".csv", $make_public);
 					exit;
 
 			    case 'xml':
-					$metadata = array( 'name' => 'provider', 
+					$metadata = array();
+					/*$metadata = array( 'name' => 'provider', 
 						   'data' => array( 'provider_id' => $provider_id,
-								    'provider_name' => $provider_name));
-					printXML(XML_add_metadata($xml, $what, $metadata));
-				exit;
+								    'provider_name' => $provider_name));*/
+			    	$xmlstr = XML_add_metadata($xml, 'provider_info'); 
+					downloadXML($xmlstr, $file_name.'.xml', $make_public);
+					exit;
 
 	    		default:
-				throw new Exception('Export file format"' . $format . '" not supported');
+					throw new Exception('Export file format"' . $format . '" not supported');
 			}
 	    	break;
 

@@ -222,7 +222,7 @@
 	        	}
 			})
 			.click(function(e){
-
+				//anything selected? 
 				if ($('input:checkbox[name="providerBulkAction"][checked="checked"]').length  == 0){
 					$.showMsg({
 						msg:"<?=$Text['msg_err_noselect'];?>",
@@ -233,20 +233,12 @@
 						},
 						type: 'warning'});
 				} else {
-
-					var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&format=csv";
-					
-					$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
-						urlStr += "&provider_id[]=" + $(this).parents('tr').attr('providerId');
-					})
-					$('#exportChannel').attr('src',urlStr); 
-
+					$('#dialog_export_options')
+						.data('export', 'provider')
+						.dialog("open");
 				}
 
-				
-				//dowload this stuff through the iframe (see bottom of html)
-				//
-		
+						
 
 			}); // end function
 				
@@ -527,12 +519,10 @@
 	        	}
 			})
 			.click(function(e){
-
-				//dowload this stuff through the iframe (see bottom of html)
-				$('#exportChannel').attr('src','php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv'); 
-
-
-			 }); // end function
+				$('#dialog_export_options')
+					.data("export", "product")
+					.dialog("open");
+			 }); 
 			    
 
 		//product buttons
@@ -1013,6 +1003,77 @@
 
 			$('.unit_price_brutto', frm).text(price.toFixed(2));
 		}
+
+
+		/**
+		 * EXPORT selected providers
+		 */
+		function exportProviders(){
+
+			var format = $('input[name=exportFormat]:checked').val();
+			var dest = $('input[name=exportDestination]:checked').val();
+			var makePublic = $('input[name=makePublic]:checked').val();
+			makePublic = (makePublic == 'on')? 1:0; 
+			var fileName = $('input[name=exportName]').val(); 
+			
+			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
+				$.showMsg({
+					msg:"File name cannot be empty!",
+					type: 'error'});
+				return false;
+			}
+			
+			var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&format="+format+"&destination="+dest+"&fileName="+fileName + "&makePublic="+makePublic;
+			
+			$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
+				urlStr += "&provider_id[]=" + $(this).parents('tr').attr('providerId');
+			})
+			//alert(urlStr);
+			//load the stuff through the export channel
+			$('#exportChannel').attr('src',urlStr);
+
+		}
+
+		function exportProducts(){
+			//dowload this stuff through the iframe (see bottom of html)
+			//$('#exportChannel').attr('src','php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv'); 
+
+		}
+
+
+		//export options dialog
+		$('#dialog_export_options').dialog({
+			autoOpen:false,
+			width:520,
+			height:500,
+			buttons: {  
+				"<?=$Text['btn_ok'];?>" : function(){
+						if ($(this).data('export') == "provider"){
+							exportProviders();
+						} else if ($(this).data('export') == "product") {
+							exportProducts();
+						}
+					},
+			
+				"<?=$Text['btn_close'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+		$('input[name=exportName]').on('keyup', function(){
+			$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
+		})
+		
+		$('#makePublic').on('click', function(){
+			if ($(this).attr("checked") == "checked"){
+				$('#exportURL').show();
+			} else {
+				$('#exportURL').hide();
+			}
+
+		})
+		
 		
 
 		//trick for setting the chosen option of the selects since generated selects don't have name!
@@ -1060,6 +1121,8 @@
     		.click(function(e){
 				switchTo('overviewProducts'); 
     		});
+
+		
 		 
 							
 	});  //close document ready
@@ -1558,6 +1621,28 @@
 <!-- end of wrap -->
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 
+<div id="dialog_export_options" title="Export options">
+
+<h4>File name</h4>
+<input type="text" name="exportName" value="" id="export_name" class="ui-widget ui-corner-all"/>
+<br/><br/>
+
+<h4>Export format</h4>
+<input type="radio" name="exportFormat" id="export_csv" value="csv" checked="checked" class="freeInput"/> <label for="export_csv">CSV</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="exportFormat" id="export_xml" value="xml" class="freeInput"/> <label for="export_xml">XML</label>
+<br/><br/>
+
+<h4>Destination</h4>
+<input type="radio" name="exportDestination" id="export_dest_local" value="disc" checked="checked" class="freeInput"/> <label for="export_dest_local">Download</label>&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="exportDestination" id="export_dest_gdrive" value="gdrive" class="freeInput"/> <label for="export_dest_gdrive">Google drive</label>
+<br/><br/>
+
+<h4>Others</h4>
+<input type="checkbox" name="makePublic" id="makePublic" checked="checked" class="freeInput"/> <label for="makePublic">Make export file public at:</label>
+<br/>
+<p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class="">http://yourdomain.com/loca_config/export/<span id="showExportFileName"></span></span></p>
+<br/>
+</div>
 <!-- / END -->
 </body>
 </html>

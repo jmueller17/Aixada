@@ -352,18 +352,65 @@ function printXML($str) {
   echo $newstr;
 }
 
-function printCSV($arr, $filename) {
-  header('Content-Type: text/csv');
-  header('Content-Disposition: attachment;filename='.$filename);
+
+function downloadXML($str, $filename="", $publish=false) {
+	
+	//write a copy of the file to the export directory
+  	if ($publish){
+  		$publish_filename = __ROOT__ . 'local_config/export/'.$filename;
+  		
+  		$outhandle = @fopen($publish_filename, 'w');
+  		if (!$outhandle)
+        	throw new Exception("Couldn't open {$publish_filename} for publishing to the web. Make sure that local_config/export is a writable directory");
+  
+		fwrite($outhandle, $str);
+		
+  		fclose($outhandle);
+  	}	
+	
+  $newstr = '<?xml version="1.0" encoding="utf-8"?>';  
+  $newstr .= $str; 
+  header('Content-Type: text/xml');
+  header("Content-disposition: attachment; filename=\"".$filename."\""); 
+  header('Content-Type: application/octet-stream');
   header('Last-Modified: '.date(DATE_RFC822));
   header('Pragma: no-cache');
   header('Cache-Control: no-cache, must-revalidate');
   header('Expires: '. date(DATE_RFC822, time() - 3600));
-  $fp = fopen('php://output', 'w');
-  foreach ($arr as $row) 
-      fputcsv($fp, $row);
-  fclose($fp);
+  header('Content-Length: ' . strlen($newstr));
+  echo $newstr;
 }
+
+
+function printCSV($arr, $filename, $publish=false) {
+  	//write a copy of the file to the export directory
+  	if ($publish){
+  		$publish_filename = __ROOT__ . 'local_config/export/'.$filename;
+  		
+  		$outhandle = @fopen($publish_filename, 'w');
+  		if (!$outhandle)
+        	throw new Exception("Couldn't open {$publish_filename} for publishing to the web. Make sure that local_config/export is a writable directory");
+  
+  		foreach ($arr as $row) 
+      		fputcsv($outhandle, $row);
+  		fclose($outhandle);
+  	}	
+	    
+ 	//offer file for download
+	header('Content-Type: text/csv');
+	header('Content-Disposition: attachment;filename='.$filename);
+	header('Last-Modified: '.date(DATE_RFC822));
+	header('Pragma: no-cache');
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: '. date(DATE_RFC822, time() - 3600));
+	$fp = fopen('php://output', 'w');
+	foreach ($arr as $row) 
+	    fputcsv($fp, $row);
+	fclose($fp);
+	  
+}
+
+
 
 function HTMLwrite($strHTML, $filename)
 {
