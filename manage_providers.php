@@ -18,6 +18,7 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_providers.min.js"></script>
     <?php }?>
@@ -96,8 +97,29 @@
 						$(this).html('<span class="ui-icon ui-icon-cancel"></span>').addClass("noRed ui-corner-all");
 					}
 				});
+				$("#tbl_providers").trigger("update"); 
 			}
 		});
+
+		$("#tbl_providers").tablesorter({
+			textExtraction: function(node){
+				  //should be made faster??	
+		          if ($(node).find('.aix-style-ok-green').length == 1) {
+		            return 1;
+		          } else if ($(node).find('.noRed').length == 1){
+					return 0; 
+			      } else {
+		            return $(node).text();
+		          }
+			}
+		}); 
+		
+		/*$("#tbl_providers").bind('sortEnd', function(){
+			$('tr',this).removeClass('rowHighlight')
+			$('tr:even',this).addClass('rowHighlight');
+		});*/
+
+		
 
 		//interactivity of provider listing table
 		$('#tbl_providers tbody tr')
@@ -415,10 +437,24 @@
 				if (gSelProduct != null && gSelProduct.attr('productId') > 0){
 					gSelProduct.addClass('ui-state-highlight');
 				}
+				$("#tbl_products").trigger("update"); 
 		
 				
 			}						
 		});			
+
+		$("#tbl_products").tablesorter({
+			textExtraction: function(node){
+				  //should be made faster??	
+		          if ($(node).find('.aix-style-ok-green').length == 1) {
+		            return 1;
+		          } else if ($(node).find('.noRed').length == 1){
+					return 0; 
+			      } else {
+		            return $(node).text();
+		          }
+			}
+		}); 
 
 		//products listing behavior
 		$('#tbl_products tbody tr')
@@ -1077,13 +1113,13 @@
 							<thead>
 								<tr>
 									<th>&nbsp;&nbsp;<input type="checkbox" id="toggleProviderBulkActions" name="toggleProviderBulk"/></th>
-									<th><p class="textAlignCenter"><?php echo $Text['id'];?></p></th>
-									<th><?php echo $Text['provider_name']; ?></th>						
-									<th><?php echo $Text['phone_pl']; ?></th>
-									<th><?php echo $Text['email']; ?></th>
-									<th class="textAlignLeft"><?php echo $Text['active']; ?></th>
-									<th><?php echo $Text['responsible_uf'];?></th>
-									<th></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['id'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['provider_name']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>						
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['phone_pl']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['email']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="textAlignLeft clickable"><?php echo $Text['active']; ?>&nbsp; </th>
+									<th class="clickable" colspan="2"><p class="floatLeft"><?php echo $Text['responsible_uf'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									
 								</tr>
 							</thead>
 							<tbody>
@@ -1120,22 +1156,23 @@
 							<thead>
 								<tr>
 									<th>&nbsp;<input type="checkbox" id="toggleProductBulkActions" name="toggleProductBulk"/></th>
-									<th><?php echo $Text['id'];?></th>
-									<th><?php echo $Text['name_item'];?></th>						
-									<th><?php echo $Text['orderable_type']; ?></th>
-									<th><?php echo $Text['active']; ?></th>
+									<th class="clickable"> <p class="floatLeft"><?php echo $Text['id'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['name_item'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>						
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['orderable_type']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['active']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
 									
-									<th><p class="textAlignRight"><?php echo $Text['price_net'];?> </p></th>
-									<th><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
-									<th><p class="textAlignCenter"><?php echo $Text['iva']; ?></p></th>
+									<th class="clickable"><p class="textAlignRight"><?php echo $Text['price_net'];?> </p></th>
+									<th class="clickable"><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
+									<th class="clickable"><p class="textAlignCenter"><?php echo $Text['iva']; ?></p></th>
 									
 									
-									<th><p class="textAlignRight"><?php echo $Text['price'];?> </p></th>
-									<th><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>
+									<th class="clickable"><p class="textAlignRight"><?php echo $Text['price'];?> </p></th>
+									<th class="clickable"><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>
 									
-									<th colspan="2"><p class="textAlignRight"><?php echo $Text['stock'];?></p></th>
+									<th><p class="textAlignRight"><?php echo $Text['stock'];?></p></th>
 									
-									<th></th>
+									<th><p>&nbsp;</p></th>
+									<th><p>&nbsp;</p></th>
 								</tr>
 							</thead>
 							<tbody>
