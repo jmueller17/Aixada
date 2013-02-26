@@ -500,13 +500,16 @@
 			gColClipboard = []; //reset clipboard
 			
 			if (provider_id){ 
+				$('#btn_export').fadeIn(500);
 				//reload the products 
 				$('#dot tbody').xml2html('reload',{
 					url : 'php/ctrl/ActivateProducts.php',
 					params:'oper=getTypeOrderableProducts&provider_id='+provider_id,
 				});
 			} else {
+				$('#btn_export').fadeOut(500);
 				provider_name = '';
+				$('#dot tbody').xml2html('removeAll');
 			}
 				//set the provider name
 				$('#providerName').text(provider_name);
@@ -556,6 +559,71 @@
 			}
 		});
 
+
+	    
+	    /**
+	     *	export stuff
+	     */
+		$('#dialog_export_options').dialog({
+			autoOpen:false,
+			width:520,
+			height:500,
+			buttons: {  
+				"<?=$Text['btn_ok'];?>" : function(){
+						
+						//exportProviders();
+						
+					},
+			
+				"<?=$Text['btn_close'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+	    
+		$('#btn_export')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				$('#dialog_export_options')
+					.data("export", "product")
+					.dialog("open");
+			 })
+			 .hide(); 
+
+
+		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+
+			$('input[name=exportName]').on('keyup', function(){
+				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
+			})
+			
+			$('#makePublic').on('click', function(){
+				if ($(this).attr("checked") == "checked"){
+					$('#exportURL').show();
+				} else {
+					$('#exportURL').hide();
+				}
+
+			})
+			
+			
+			$('input[name=exportFormat]').on('click', function(){
+				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+					$('#export_authentication').fadeIn(1000);
+				} else {
+					$('#export_authentication').fadeOut(1000);
+				}
+
+			})
+			
+			$('#export_authentication').hide();
+
+		});
+		
 
 		/**
 		 *	check if product can be made preorderable
@@ -1059,6 +1127,7 @@
 	                    	<option value="{id}">{id} {name}</option>
 					</select>
 				</div>
+				<button class="floatLeft" id="btn_export"><?php echo $Text['btn_export']; ?></button>
 		   		<div class="textAlignRight"><button	id="tblOptions"><?php echo $Text['view_opt']; ?></button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
@@ -1162,6 +1231,10 @@
 	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-preorder"><?php echo $Text['do_preorder']; ?></a></p>
 </div>
 
+
+<iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
+
+<div id="dialog_export_options" title="Export options">
 
 <!-- / END -->
 </body>

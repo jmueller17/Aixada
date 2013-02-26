@@ -353,62 +353,6 @@ function printXML($str) {
 }
 
 
-function downloadXML($str, $filename="", $publish=false) {
-	
-	//write a copy of the file to the export directory
-  	if ($publish){
-  		$publish_filename = __ROOT__ . 'local_config/export/'.$filename;
-  		
-  		$outhandle = @fopen($publish_filename, 'w');
-  		if (!$outhandle)
-        	throw new Exception("Couldn't open {$publish_filename} for publishing to the web. Make sure that local_config/export is a writable directory");
-  
-		fwrite($outhandle, $str);
-		
-  		fclose($outhandle);
-  	}	
-	
-  $newstr = '<?xml version="1.0" encoding="utf-8"?>';  
-  $newstr .= $str; 
-  header('Content-Type: text/xml');
-  header("Content-disposition: attachment; filename=\"".$filename."\""); 
-  header('Content-Type: application/octet-stream');
-  header('Last-Modified: '.date(DATE_RFC822));
-  header('Pragma: no-cache');
-  header('Cache-Control: no-cache, must-revalidate');
-  header('Expires: '. date(DATE_RFC822, time() - 3600));
-  header('Content-Length: ' . strlen($newstr));
-  echo $newstr;
-}
-
-
-function printCSV($arr, $filename, $publish=false) {
-  	//write a copy of the file to the export directory
-  	if ($publish){
-  		$publish_filename = __ROOT__ . 'local_config/export/'.$filename;
-  		
-  		$outhandle = @fopen($publish_filename, 'w');
-  		if (!$outhandle)
-        	throw new Exception("Couldn't open {$publish_filename} for publishing to the web. Make sure that local_config/export is a writable directory");
-  
-  		foreach ($arr as $row) 
-      		fputcsv($outhandle, $row);
-  		fclose($outhandle);
-  	}	
-	    
- 	//offer file for download
-	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename='.$filename);
-	header('Last-Modified: '.date(DATE_RFC822));
-	header('Pragma: no-cache');
-	header('Cache-Control: no-cache, must-revalidate');
-	header('Expires: '. date(DATE_RFC822, time() - 3600));
-	$fp = fopen('php://output', 'w');
-	foreach ($arr as $row) 
-	    fputcsv($fp, $row);
-	fclose($fp);
-	  
-}
 
 
 
@@ -562,49 +506,4 @@ function clean_zeros($value)
 	  : $value);
 }
 
-
-function XML2csv($xml)
-{
-    $fieldnames = array();
-    $csv_rows = array();
-    $tok = strtok($xml, '<>');
-    $expected = 'rowset';
-    if ($tok != $expected)
-	throw new XMLParseException($expected, $tok, $xml);
-    $tok = strtok('<>');
-    $first_row = true;
-    while ($tok != '/rowset') {
-	$ex = explode(' ', $tok);
-	$fieldname = $ex[0];
-	$expected = 'row';
-	if ($fieldname != $expected)
-	    throw new XMLParseException($expected, $fieldname, $xml);
-	$tok = strtok('<>');
-	$csv_row = array();
-	while ($tok != '/row') {
-	    $ex = explode(' ', $tok);
-	    $fieldname = $ex[0];
-	    if ($first_row)
-		$fieldnames[] = $fieldname;
-	    $tok = strtok('<>');
-	    $expected = '![CDATA[';
-	    $l_expected = strlen($expected);
-	    if (substr($tok, 0, $l_expected) != $expected) 
-		throw new XMLParseException($expected, $tok, $xml);
-	    $value = substr($tok, $l_expected, 
-			    strpos($tok, ']]', $l_expected)-$l_expected);
-	    $csv_row[] = $value;
-	    $tok = strtok('<>');
-	    $expected = '/' . $fieldname;
-	    if ($tok != $expected)
-		throw new XMLParseException($expected, $tok, $xml);
-	    $tok = strtok('<>');
-	}
-	$tok = strtok('<>');
-	$first_row = false;
-	$csv_rows[] = $csv_row;
-    }    
-    array_unshift($csv_rows, $fieldnames);
-    return $csv_rows;
-}
 ?>
