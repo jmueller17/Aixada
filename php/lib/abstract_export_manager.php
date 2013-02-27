@@ -185,7 +185,12 @@ class abstract_export_manager {
     }
     
     
-    
+    /**
+     * 
+     * Returns the xml version of the data to be exported. Creates a local copy if publish=true
+     * @param boolean $download download file to client can be turned off
+     * @throws Exception
+     */
     private function write_xml($download=true){
     	
     	$this->format = 'xml';
@@ -216,7 +221,15 @@ class abstract_export_manager {
     }
     
     
-    
+    /**
+     * 
+     * Exports data to google drive. 
+     * Uses the Zend Gdata library to do this which is "slightly" outdated as Google API has moved on to v3. 
+     * If this is really a feature that will be used the whole thing should probably be rewritten using the
+     * Google Drive Api @link https://developers.google.com/drive/quickstart-php
+     * @param string $email google account authentication email
+     * @param string $pwd	google account authentication pwd
+     */
 	private function write_gdrive($email, $pwd){
     	global $firephp; 
     	

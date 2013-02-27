@@ -570,9 +570,7 @@
 			height:500,
 			buttons: {  
 				"<?=$Text['btn_ok'];?>" : function(){
-						
-						//exportProviders();
-						
+						exportDates(); 
 					},
 			
 				"<?=$Text['btn_close'];?>"	: function(){
@@ -589,7 +587,6 @@
 			})
 			.click(function(e){
 				$('#dialog_export_options')
-					.data("export", "product")
 					.dialog("open");
 			 })
 			 .hide(); 
@@ -622,7 +619,31 @@
 			
 			$('#export_authentication').hide();
 
+			$('#export_ufs').hide();
+
 		});
+
+
+		/**
+		 * EXPORT products dates
+		 */
+		function exportDates(){
+
+			var frmData = $('#frm_export_options').serialize();
+			
+			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
+				$.showMsg({
+					msg:"File name cannot be empty!",
+					type: 'error'});
+				return false;
+			}
+			
+			var urlStr = "php/ctrl/ImportExport.php?oper=orderableProductsForDateRange&providerId="+getProviderId()+"&" + frmData; 
+		
+			//load the stuff through the export channel
+			$('#exportChannel').attr('src',urlStr);
+
+		}
 		
 
 		/**

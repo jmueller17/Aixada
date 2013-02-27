@@ -45,11 +45,16 @@ Next release
 * product new/edit rewrite for better required form-fields checking
 * new field in aixada_product: min order (requires to run dbUpgradeAixada2.6To2.7.sql
 * config.sample.php added; copy this file and rename it to config.php to configure your local install
+* provider/product listing sortable
+* export providers, products, orderable dates, members to csv, xml, google drive. 
+
 
 
 Bugfixes
 * delete members now possible for unassigned members
 * member validation issues
+* delete order cart completely bug 
+* iva and revolutionary tax price calculation fix
 
 
 

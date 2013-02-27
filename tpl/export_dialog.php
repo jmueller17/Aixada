@@ -4,8 +4,10 @@
 <body>
 
 <div id="container">
+<form id="frm_export_options">
 <h4>File name</h4>
-<input type="text" name="exportName" value="" id="export_name" class="ui-widget ui-corner-all"/>
+<input type="text" name="exportName" value="" id="export_name" class="ui-widget ui-corner-all"/> 
+<p class="floatRight" id="export_ufs"><input type="checkbox" name="onlyActiveUfs" id="export_active_ufs" checked="checked" class="freeInput"/> <label for="onlyActiveUfs">Only active HUs</label>&nbsp;</p>
 <br/><br/>
 
 <h4>Export format</h4>
@@ -33,6 +35,7 @@
 <br/>
 <p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class="">http://yourdomain.com/loca_config/export/<span id="showExportFileName"></span></span></p>
 <br/>
+</form>
 </div>
 </body>
 </html>

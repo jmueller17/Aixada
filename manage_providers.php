@@ -1010,19 +1010,14 @@
 		}
 
 
+		
 		/**
 		 * EXPORT selected providers
 		 */
 		function exportProviders(){
 
-			var format = $('input[name=exportFormat]:checked').val();
-			var dest = $('input[name=exportDestination]:checked').val();
-			var makePublic = $('input[name=makePublic]:checked').val();
-			makePublic = (makePublic == 'on')? 1:0; 
-			var fileName = $('input[name=exportName]').val(); 
-			var email = $('input[name=email]').val(); 
-			var pwd = $('input[name=password]').val();
-			
+			var frmData = $('#frm_export_options').serialize();
+		
 			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
 				$.showMsg({
 					msg:"File name cannot be empty!",
@@ -1030,27 +1025,23 @@
 				return false;
 			}
 			
-			var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&email="+email+"&password="+pwd+"&format="+format+"&destination="+dest+"&fileName="+fileName + "&makePublic="+makePublic;
-			
+			var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&"+frmData;
 			$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
-				urlStr += "&provider_id[]=" + $(this).parents('tr').attr('providerId');
+				urlStr += "&providerId[]=" + $(this).parents('tr').attr('providerId');
 			})
-			//alert(urlStr);
+
 			//load the stuff through the export channel
 			$('#exportChannel').attr('src',urlStr);
-
 		}
 
+
+		/**
+		 *	read export options and make the export call for products. 
+		 */
 		function exportProducts(){
 
-			var format = $('input[name=exportFormat]:checked').val();
-			var dest = $('input[name=exportDestination]:checked').val();
-			var makePublic = $('input[name=makePublic]:checked').val();
-			makePublic = (makePublic == 'on')? 1:0; 
-			var fileName = $('input[name=exportName]').val(); 
-			var email = $('input[name=email]').val(); 
-			var pwd = $('input[name=password]').val();
-			
+			var frmData = $('#frm_export_options').serialize();
+		
 			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
 				$.showMsg({
 					msg:"File name cannot be empty!",
@@ -1058,20 +1049,15 @@
 				return false;
 			}
 			
-			var urlStr = "php/ctrl/ImportExport.php?oper=exportProducts&email="+email+"&password="+pwd+"&provider_id="+gSelProvider.attr('providerId')+"&format="+format+"&destination="+dest+"&fileName="+fileName + "&makePublic="+makePublic;
+			var urlStr = "php/ctrl/ImportExport.php?oper=exportProducts&providerId=" + gSelProvider.attr('providerId') +"&" + frmData; 
 			
 			$('input:checkbox[name="productBulkAction"][checked="checked"]').each(function(){
-				urlStr += "&product_ids[]=" + $(this).parents('tr').attr('productId');
+				urlStr += "&productIds[]=" + $(this).parents('tr').attr('productId');
 			})
-			//alert(urlStr);
+
 			//load the stuff through the export channel
 			$('#exportChannel').attr('src',urlStr);
 			
-
-			
-			//dowload this stuff through the iframe (see bottom of html)
-			//$('#exportChannel').attr('src','php/ctrl/ImportExport.php?oper=exportProviderProducts&provider_id=' + gSelProvider.attr('providerId') + '&provider_name=' + gSelProvider.children().eq(2).text() + '&format=csv'); 
-
 		}
 
 
@@ -1173,6 +1159,8 @@
 			})
 			
 			$('#export_authentication').hide();
+
+			$('#export_ufs').hide();
 
 		});
 

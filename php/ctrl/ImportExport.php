@@ -10,6 +10,8 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/lib/import_products.php");
 require_once(__ROOT__ . "php/lib/export_providers.php");
 require_once(__ROOT__ . "php/lib/export_products.php");
+require_once(__ROOT__ . "php/lib/export_dates4products.php");
+require_once(__ROOT__ . "php/lib/export_members.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
  require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
@@ -90,47 +92,33 @@ try{
  			
  		//exports provider info only. Should have option for including provider products?!!	
 		case 'exportProviderInfo':
-		    $ep = new export_providers(get_param('fileName'), get_param('provider_id',0));
-		    $ep->export(get_param('makePublic', 0), get_param('format', 'csv'), get_param('email',''), get_param('password',''));
+			$publish = (get_param('makePublic','off')=='on')? 1:0; 	
+		    $ep = new export_providers(get_param('exportName'), get_param('providerId',0));
+		    $ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
 	    	break;
 
 
-		case 'exportProducts':			
-			$ep = new export_products(get_param('fileName'), get_param('provider_id',0), get_param('product_ids',0));
-		    $ep->export(get_param('makePublic', 0), get_param('format', 'csv'), get_param('email',''), get_param('password',''));
+		case 'exportProducts':	
+			$publish = (get_param('makePublic','off')=='on')? 1:0; 		
+			$ep = new export_products(get_param('exportName'), get_param('providerId',0), get_param('productIds',0));
+		    $ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
 	    	break;
 	    	
 		case 'orderableProductsForDateRange':
-			$ep = new export_dates4product(get_param('fileName'), get_param('provider_id'), get_param('from_date',''), get_param('to_date',''));
-			$ep->export(get_param('makePublic', 0), get_param('format', 'csv'), get_param('email',''), get_param('password',''));		    
+			$publish = (get_param('makePublic','off')=='on')? 1:0; 
+			$ep = new export_dates4products(get_param('exportName'), get_param('providerId'), get_param('fromDate',''), get_param('toDate',''));
+			$ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));		    
+			break;
+			
+		case 'exportMembers':
+			$publish = (get_param('makePublic','off')=='on')? 1:0; 
+			$active = (get_param('onlyActiveUfs','off')=='on')? 1:0;
+			$ep = new export_members(get_param('exportName'), $active);
+			$ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
 			break;
 
 
-		/*
-		case 'exportMembers':
-		    $format = get_param('format', 'csv'); // or xml
-		    $xml = stored_query_XML_fields('aixada_member_list_all_query', 
-						   'aixada_member.uf_id', 
-						   'desc', 
-						   0, 
-						   1000000, 
-						   'aixada_member.active=1');
-		    switch ($format) {
-			    case 'csv':
-					printCSV(XML2csv($xml), 'member_list.csv');
-					exit;
-	
-			    case 'xml':
-					printXML(XML_add_metadata($xml, 'member_list'));
-					exit;
-	
-			    default:
-					throw new Exception('Export file format"' . $format . '" not supported');
-		    }
-		    
-		   	break;
-
-
+	/*
 	case 'exportAccountMovements':
 	    // require user to be econo-legal or hacker
 	    if ($_SESSION['userdata']['current_role'] != 'Hacker Commission' and

@@ -165,34 +165,7 @@
 			gMentorUf = $("option:selected", this).val();
 			});	
 
-
-	    // export ufs
-		$('#btn_export')
-			.button({
-				icons: {
-					primary: "ui-icon-transferthick-e-w"
-	        	}
-			})
-			.click(function(e){
-
-				$("#exportChannel").attr('src', 'php/ctrl/ImportExport.php?oper=exportMembers&format=csv');
-				/*
-				$.ajax({
-				    url: 'php/ctrl/ImportExport.php?oper=exportMembers&format=csv',
-				    type: 'POST',
-				    error : function(XMLHttpRequest, textStatus, errorThrown){
-					    if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-						$this.dialog("close");
-						$.showMsg({
-						    msg: "<?=$Text['msg_err_export']; ?>" + XMLHttpRequest.responseText,
-							    type: 'error'});
-						
-					    }
-					}
-				    }); // end ajax
-			 	*/   
-			 }); // end function
-
+			 
 		//new uf
 		$("#btn_new_uf")
 			.button({
@@ -280,6 +253,92 @@
 				e.stopPropagation(); 
 
 		});
+
+
+
+	    /**
+	     *	export ufs
+	     */
+		$('#dialog_export_options').dialog({
+			autoOpen:false,
+			width:520,
+			height:500,
+			buttons: {  
+				"<?=$Text['btn_ok'];?>" : function(){
+						exportUfs(); 
+					},
+			
+				"<?=$Text['btn_close'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+	    
+		$('#btn_export')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				$('#dialog_export_options')
+					.dialog("open");
+			 })
+			 .hide(); 
+
+
+		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+
+			$('input[name=exportName]').on('keyup', function(){
+				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
+			})
+			
+			$('#makePublic').on('click', function(){
+				if ($(this).attr("checked") == "checked"){
+					$('#exportURL').fadeIn(500);
+				} else {
+					$('#exportURL').fadeOut(500);
+				}
+
+			})
+			
+			
+			$('input[name=exportFormat]').on('click', function(){
+				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+					$('#export_authentication').fadeIn(1000);
+				} else {
+					$('#export_authentication').fadeOut(1000);
+				}
+
+			})
+			
+			$('#export_authentication').hide();
+
+			$('#export_ufs').show();
+
+		});
+
+
+		/**
+		 * EXPORT products dates
+		 */
+		function exportUfs(){
+
+			var frmData = $('#frm_export_options').serialize();
+			
+			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
+				$.showMsg({
+					msg:"File name cannot be empty!",
+					type: 'error'});
+				return false;
+			}
+			
+			var urlStr = "php/ctrl/ImportExport.php?oper=exportMembers&" + frmData; 
+		
+			//load the stuff through the export channel
+			$('#exportChannel').attr('src',urlStr);
+
+		}
 
 
 		/**
@@ -1371,7 +1430,10 @@
 	<option value="{name}"> {name}</option>
 </select>
 </div>
+
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
+<div id="dialog_export_options" title="Export options">
+
 <!-- / END -->
 </body>
 </html>
