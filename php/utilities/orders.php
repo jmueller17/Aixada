@@ -194,6 +194,11 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
 		case 'ordersForToday':
 			printXML(stored_query_XML_fields('get_orders_listing', $today, $today, $uf_id,0,$limit));
 			break;
+			
+		// all orders where date_for_order = today
+		case 'ordersForTodayLimbo':
+			//printXML(stored_query_XML_fields('get_orders_listing', $today, $today, $uf_id,30,$limit));
+			break;
 		
 		//all orders 
 		case 'all':
