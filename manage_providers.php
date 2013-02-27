@@ -1213,7 +1213,9 @@
 				 -->
 				<div class="ui-widget pgProviderOverview">
 					<div class="ui-widget-content ui-corner-all">
-					<h4 class="ui-widget-header">&nbsp;</h4>
+					<h4 class="ui-widget-header">&nbsp;
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+					</h4>
 						<table id="tbl_providers" class="tblListingDefault" >
 							<thead>
 								<tr>
@@ -1256,7 +1258,9 @@
 				 -->
 				<div class="pgProductOverview ui-widget">
 					<div class="ui-widget-content ui-corner-all">
-						<h4 class="ui-widget-header"><span class="setProviderName"></span></h4>
+						<h4 class="ui-widget-header"><span class="setProviderName"></span>
+						<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+						</h4>
 						<table id="tbl_products" class="tblListingDefault">
 							<thead>
 								<tr>
@@ -1651,10 +1655,7 @@
 						
 				</div>
 			</div>
-				
-			
-				
-				
+								
 				
 
 	</div>
