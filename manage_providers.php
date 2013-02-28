@@ -632,12 +632,17 @@
 
 			
 		//jump to stock editing page
-		$('.btn_edit_stock')
+		/*$('.btn_edit_stock')
 			.live("click", function(e){
 					//var incidentId = $(this).parents('tr').attr('incidentId'); 
 					window.location.href = 'manage_stock.php?lastPage=manage_stock.php&stockProvider='+gSelProvider.attr("providerId");
 					e.stopPropagation();
-			});	
+			});	*/
+
+
+
+
+		
 			
 		//next product when on editing form
 		$('#btn_next_product')
@@ -749,7 +754,8 @@
 
 		}
 
-		//creates the new product from first time called; otherwise resets fields 
+
+		//creates the new product form first time called; otherwise resets fields 
 		function prepareProductForm(){
 			var frm = $('#frm_product_new'); 
 			//prepare the provider form the first time it is called
@@ -765,7 +771,7 @@
 
 				//new providers have no id
 				$('#tbl_product_new input[name=id]').remove();
-
+				
 				gFirstTimeNewProduct = false; 
 			}
 
@@ -781,6 +787,9 @@
 			$('.setProductId', frm).html('&nbsp;');
 			$('.setProductName').text('');
 
+			//nuevos productos se tienen que crear primero antes de introducir stock
+			$('.btn_edit_stocks').button('disable');
+			
 			//clear unit_price paragraph
 			$('.unit_price_brutto').text('');
 			
@@ -790,11 +799,16 @@
 			//set responsible_uf same as provider. Doesn't work the first time when the form select gets constructed for the first time...
 			var rufid = gSelProvider.attr('responsibleUfId');
 			$('#tbl_product_new span.sResponsibleUfId').children('select').val(rufid).attr('selected','selected');
+
+			$('.setStockActualProductPage').text(0);
+
 			
 			/*$('select', frm).each(function(){
 				var firstElementValue = $(this).children(':first').val();
 				$(this).val(firstElementValue).attr('selected','selected').parent().prev().attr('value',firstElementValue);
 			})*/
+
+			
 			
 		}
 
@@ -924,6 +938,10 @@
 						msg: "<?php echo $Text['msg_edit_success']; ?>",
 						type: 'success',
 						autoclose:1000});
+
+						if (table = 'product'){
+							$('.btn_edit_stocks').button('enable');
+						}
 			   		
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -959,23 +977,6 @@
 			});
 		}
 
-		function loadSelectHTML(urlStr, destination){
-			$.post(urlStr, function(html){
-				var selValue = $(destination).append(html).prev().val(); 
-
-				//new provider/product have no value, so we take the first option
-				//this needs to be set manually, otherwise with a new form, no values get send
-				if (selValue == ''){
-					var selValue = $(destination).children('select:first').val();				
-					$(destination).prev().attr('value',selValue);
-				} else {
-				
-					$(destination).children('select').val(selValue).attr('selected','selected');
-				}						
-				
-			})	
-
-		}
 
 		//loads the options for select boxes. The whole story is  that the selects
 		//delivered from the getFieldsOptions of the TableManger don't have the name attribute set
@@ -992,8 +993,108 @@
 
 				loadSelectHTML(urlStr, destination);	
 			}
-		} 
 
+		} 
+		
+
+		
+		function loadSelectHTML(urlStr, destination){
+			$.post(urlStr, function(html){
+				var selValue = $(destination).append(html).prev().val(); 
+				//new provider/product have no value, so we take the first option
+				//this needs to be set manually, otherwise with a new form, no values get send
+				if (selValue == ''){
+					var selValue = $(destination).children('select:first').val();				
+					$(destination).prev().attr('value',selValue);
+				} else {
+					$(destination).children('select').val(selValue).attr('selected','selected');
+				}						
+				
+				if (destination.indexOf('sOrderableTypeId') > 0){// && !$('#btn_edit_stocks').is(':data(autocomplete)') ){
+					 manageEditStockBtn();
+				}
+
+				if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 1){
+					$('.stockElements').show();
+				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 2) {
+					$('.stockElements').hide();
+				}
+				
+			})	
+		}
+
+
+		function manageEditStockBtn(){
+			//since the whole product form runs through the xml2html class
+			//we need to init this stock edit button after it has 
+			//been inserted into the dom. make sure this happens only once  
+			
+				$('.btn_edit_stocks')
+				.button({
+						icons: {
+			        		primary: "ui-icon-pencil",
+			        		secondary: "ui-icon-triangle-1-s"
+			        	},text:true
+					}).menu({
+				content: $('#StockOptionsItems').html(),	
+				showSpeed: 50, 
+				width:280,
+				flyOut: true, 
+				itemSelected: function(item){
+					var action = $(item).attr('id');
+					var stockActual = gSelProduct.children().eq(10).text();
+					var unit = gSelProduct.children().eq(9).text();
+					switch (action){
+					case 'correct':
+						prepareStockForm('correct',stockActual,unit, gSelProduct.attr('productId'));  						
+						break;
+					case 'add':
+						prepareStockForm('add',stockActual,unit, gSelProduct.attr('productId'));  						
+						break;
+					case 'consult':
+						setTimeout(function(){window.location.href = 'manage_stock.php?lastPage=manage_stock.php&stockProvider='+gSelProvider.attr("providerId")},500);
+						
+						break;
+					}
+				}//end item selected 
+			});//end menu
+
+		}
+
+
+
+		$('#dialog_edit_stock').dialog({
+			autoOpen:false,
+			width:480,
+			height:400,
+			modal:true,
+			buttons: {  
+				"<?=$Text['btn_save'];?>" : function(){
+					
+						if ($(this).data('info').edit == "add"){
+							addStock($(this).data('info').id);
+						} else if ($(this).data('info').edit == "correct"){
+							correctStock($(this).data('info').id);
+						}
+					},
+			
+				"<?=$Text['btn_cancel'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+
+		
+
+		
+		$('#dialog_edit_stock').load('tpl/stock_dialog.php #container', function(){
+			$('#infoStockProductPage').show();
+			$('#infoStockPage').hide();
+			
+		});
+
+		
 
 		//for a given unit price, apply rev tax and iva and indicate the final price
 		function calcBruttoPrice(frm){
@@ -1081,10 +1182,41 @@
 			}
 		});
 
-		
-		
-		
 
+		//
+		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+
+			$('input[name=exportName]').on('keyup', function(){
+				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
+			})
+			
+			$('#makePublic').on('click', function(){
+				if ($(this).attr("checked") == "checked"){
+					$('#exportURL').show();
+				} else {
+					$('#exportURL').hide();
+				}
+
+			})
+			
+			
+			$('input[name=exportFormat]').on('click', function(){
+				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+					$('#export_authentication').fadeIn(1000);
+				} else {
+					$('#export_authentication').fadeOut(1000);
+				}
+
+			})
+			
+			$('#export_authentication').hide();
+
+			$('#export_ufs').hide();
+
+		});
+
+		
+		
 		//trick for setting the chosen option of the selects since generated selects don't have name!
 		$('select')
 			.live('change', function(){
@@ -1097,6 +1229,13 @@
 				if (which == 'rev_tax_type_id' || which == 'iva_percent_id'){
 					var frm = $(this).parents('form');
 					calcBruttoPrice(frm);
+				}	
+
+				//show hide stock btn depending on orderable_type
+				if (which == 'orderable_type_id' && selOption == 1){
+					$('.stockElements').fadeIn(500);
+				} else if (which == 'orderable_type_id' && selOption == 2){
+					$('.stockElements').fadeOut(500);
 				}
 			})
 			
@@ -1132,38 +1271,7 @@
     		});
 
 
-		//
-		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
-
-			$('input[name=exportName]').on('keyup', function(){
-				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
-			})
-			
-			$('#makePublic').on('click', function(){
-				if ($(this).attr("checked") == "checked"){
-					$('#exportURL').show();
-				} else {
-					$('#exportURL').hide();
-				}
-
-			})
-			
-			
-			$('input[name=exportFormat]').on('click', function(){
-				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-					$('#export_authentication').fadeIn(1000);
-				} else {
-					$('#export_authentication').fadeOut(1000);
-				}
-
-			})
-			
-			$('#export_authentication').hide();
-
-			$('#export_ufs').hide();
-
-		});
-
+		<?php include('js/aixadautilities/stock.js.php'); ?> 
 		
 		 
 							
@@ -1297,12 +1405,9 @@
 									<td><p class="textAlignRight">{unit_price} </p></td>
 									<td><p class="textAlignCenter">{unit}</p></td>	
 									<td>
-										<p class="formatQty textAlignRight btn_edit_stock">{stock_actual}</p>
+										<p class="formatQty textAlignRight">{stock_actual}</p>
 									</td>
 									<td>
-										<p class="ui-corner-all iconContainer ui-state-default" title="Edit stock">
-											<span class="btn_edit_stock ui-icon ui-icon-pencil"></span>
-										</p>	
 									</td>
 									<td><a href="javascript:void(null)" class="btn_del_product"><?php echo $Text['btn_del'];?></a></td>
 								</tr>						
@@ -1318,6 +1423,15 @@
 							PRODUCT EDIT
 							
 				 -->
+				 
+				 <div id="StockOptionsItems" class="hidden">
+					<ul>
+						<li><a href="javascript:void(null)" id="add">Add stock</a></li>
+						<li><a href="javascript:void(null)" id="correct">Correct stock</a></li>
+						<li><a href="javascript:void(null)" id="consult">Consult movements</a></li>
+					</ul>
+				</div>	
+				 
 				 <div class="pgProductEdit ui-widget" id="pgProductEdit">
 					<div class="ui-widget-content ui-corner-all">
 						<h3 class="ui-widget-header"><span class="setProviderName"></span> - <span class="setProductName"></span>
@@ -1373,9 +1487,10 @@
 							  </tr>
 							  <tr>
 							    <td><label for="orderable_type_id"><?php echo $Text['orderable_type']; ?></label></td>
-							    <td colspan="3">
+							    <td>
 							    	<input type="hidden" name="orderable_type_id" value="{orderable_type_id}"/>
-							    	<span class="textAlignLeft sOrderableTypeId"></span></td>
+							    	<span class="textAlignLeft sOrderableTypeId"></span>
+							    </td colspan="3">
 							  </tr>
 							  <tr>
 							    <td><label for="category_id"><?php echo $Text['category']; ?></label></td>
@@ -1398,6 +1513,15 @@
 							  <tr>
 							    <td><label for="order_min_quantity"><?php echo $Text['order_min']; ?></label></td>
 							    <td colspan="3"><input type="text" name="order_min_quantity" value="{order_min_quantity}" class="ui-widget-content ui-corner-all" /></td>
+							  </tr>
+							   <tr>
+							    <td><label class="stockElements" for="stock_actual"><?php echo $Text['stock']; ?></label></td>
+							    <td>
+							    	<p class="stockElements setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
+							    </td>
+							    <td colspan="2">
+							    	<button class="btn_edit_stocks stockElements">Edit stock</button>
+							    </td>
 							  </tr>
 							   <tr>
 							    <td>&nbsp;</td>
@@ -1663,12 +1787,8 @@
 </div>
 <!-- end of wrap -->
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
-
-
-<div id="dialog_export_options" title="Export options">
-
-
-</div>
+<div id="dialog_export_options" title="Export options"></div>
+<div id="dialog_edit_stock"></div>
 <!-- / END -->
 </body>
 </html>

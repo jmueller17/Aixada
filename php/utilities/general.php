@@ -466,12 +466,17 @@ function existing_languages()
 
 function existing_languages_XML()
 {
+	$static = true; 
     // We require that a line of the form 
     // $Text['es_es'] = 'Español'
     // exists in each language file
     $XML = '<languages>';
-    foreach (existing_languages() as $lang => $lang_desc) {
-        $XML .= "<language><id>{$lang}</id><description>{$lang_desc} ({$lang})</description></language>";
+    if ($static){
+    	$XML .= "<language><id>ca-va</id><description>Català (ca-va)</description></language><language><id>en</id><description>English (en)</description></language><language><id>es</id><description>Castellano (es)</description></language>";
+    } else {
+	    foreach (existing_languages() as $lang => $lang_desc) {
+	        $XML .= "<language><id>{$lang}</id><description>{$lang_desc} ({$lang})</description></language>";
+	    }
     }
     return $XML . '</languages>';
 }

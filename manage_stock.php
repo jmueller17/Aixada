@@ -18,6 +18,7 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_stock.min.js"></script>
     <?php }?>
@@ -144,53 +145,6 @@
 			$(this).removeClass('ui-state-hover');
 		});
 
-						
-
-		/**
-		 *	saves the stock correction / add to the database
-		 * 	for "addStock" the current_stock = stock + quantity.
-		 * 	for "correctStock" current_stock = quantity; 
-		 */
-		function submitStock(oper, product_id, quantity){
-
-			var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
-			
-			
-			$.ajax({
-				type: "POST",
-				url: urlStr,
-				beforeSend : function(){
-					$('#stock_actual').attr('disabled', 'disabled');
-				},
-				success: function(txt){
-					$.showMsg({
-						msg: "<?php echo $Text['msg_edit_success']; ?>",
-						type: 'success',
-						autoclose:800});
-					
-					$('#dialog_edit_stock').dialog("close");
-					
-					setTimeout(function(){
-						$('#product_list_provider tbody').xml2html("reload");						
-					},500)
-
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
-				},
-				complete: function(){
-					$('#stock_actual')
-						.removeAttr('disabled')
-						.val('');
-					/*$('.btn_save_new_stock, .btn_correct_stock')
-						.button('label','Save')
-						.button('enable');	*/
-				}
-			});
-		}
 
 
 
@@ -277,35 +231,18 @@
 				}
     		});
 
-		$('.btn_add_stock').live('click',function(e){
-
-			$('.addStockElements').show();
-			$('.correctStockElements').hide();
-
-			$('.sumStock').text(" " + $(this).attr('stockActual')+" "+$(this).attr('unit') + " ");
-			$('#setStockUnit').text($(this).attr('unit'))
-			$('#dialog_edit_stock')
-				.data('info', {edit:'add', id:$(this).attr('productId')})
-				.dialog('open');
-			  
-		})
+		$('.btn_add_stock')
+			.live('click',function(e){
+				prepareStockForm('add',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
 		
 		
-		$('.btn_correct_stock').live('click',function(e){
-
-			$('.addStockElements').hide();
-			$('.correctStockElements').show();
-			$('.sumStock').text(" " + $(this).attr('stockActual')+" "+$(this).attr('unit') + " ");
-			$('#setStockUnit').text($(this).attr('unit'))
-			
-			$('#dialog_edit_stock')
-				.data('info', {edit:'correct', id:$(this).attr('productId')})
-				.dialog('open');
+		$('.btn_correct_stock')
+			.live('click',function(e){
+				prepareStockForm('correct',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
 			
 			
-		})
-		
-
 
 		$('#dialog_edit_stock').dialog({
 			autoOpen:false,
@@ -329,58 +266,16 @@
 		});
 
 	    
-		function addStock(productId){
-			var addQu = $.checkNumber($('#stock_value'),'',3);
-			if (addQu >= 0){		
-				submitStock('addStock',productId,addQu);
-			} else {
-				$.showMsg({
-					msg: "<?php echo $Text['msg_err_qu']; ?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
-							$(this).dialog("close");
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
-						}
-					},
-					type: 'warning'});
-			}
-		}
-
-
-
-		function correctStock(productId){
-			var absStock = $.checkNumber($('#stock_value'),'',3);	
-			
-			if (absStock >= 0){
-				submitStock('correctStock',productId,absStock);
-				
-			} else {
-				$.showMsg({
-					msg: "<?php echo $Text['msg_err_qu']; ?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){						
-							$(this).dialog("close");
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
-						}
-					},
-					type: 'warning'});
-				return false; 
-			}
-
-		}
-
+		
 		
 		$('#dialog_edit_stock').load('tpl/stock_dialog.php #container', function(){
 			$('#infoStockProductPage').hide();
 		});
 		
 		switchTo('overview');
+
 		
-		 
+		<?php include('js/aixadautilities/stock.js.php'); ?> 
 							
 	});  //close document ready
 </script>
@@ -424,7 +319,7 @@
 									<th><?php echo $Text['provider_name']; ?></th>						
 									<th><?php echo $Text['curStock']; ?></th>
 									<th><?php echo $Text['unit'];?></th>
-									<th class="width-280 textAlignLeft"><?php echo $Text['add_stock']; ?></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -436,9 +331,9 @@
 										<p class="textAlignRight setStockActual">{stock_actual}</p>
 							
 									</td>
-									<td><p>{unit}</p></td>
+									<td><p class="textAlignCenter">{unit}</p></td>
 									<td>
-										<p><a class="btn_add_stock" unit="{unit}" productId="{id}" stockActual="{stock_actual}" href="javascript:void(null)"><?php echo $Text['add_stock']; ?></a> | <a class="btn_correct_stock" productId="{id}" stockActual="{stock_actual}" unit="{unit}" href="javascript:void(null)">Correct stock</a> </p>
+										<p class="textAlignCenter"><a class="btn_add_stock" unit="{unit}" productId="{id}" stockActual="{stock_actual}" href="javascript:void(null)"><?php echo $Text['add_stock']; ?></a>&nbsp;&nbsp; | &nbsp;&nbsp;<a class="btn_correct_stock" productId="{id}" stockActual="{stock_actual}" unit="{unit}" href="javascript:void(null)">Correct stock</a> </p>
 									</td>
 								</tr>						
 							</tbody>

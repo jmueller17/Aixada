@@ -17,8 +17,7 @@
 </p>
 <br/><br/>
 <p id="infoStockPage">Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!</p>
-<p id="infoStockProductPage">Note: you can consult all previous stock movements (adds, corrections and overall loss) by going to Manage &lt; products &lt; Stock and 
-then clicking on the product name.</p>
+<p id="infoStockProductPage">Note: you can consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.</p>
 </form>
 </div>
 </body>
