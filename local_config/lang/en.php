@@ -846,6 +846,11 @@ $Text['export_options'] = "Export options";
 $Text['correct_stock'] = "Correct stock";
 $Text['btn_edit_stock'] = "Edit stock";
 $Text['consult_mov_stock'] = "Consult movements";
+$Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase is: total stock = current stock of X units + new stock
+$Text['correct_stock_frase'] = "Current stock is not";
+$Text['stock_but'] = "but"; //current stock is not x units but...
+$Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
+$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
 
 //$Text[''] = ""; 
 

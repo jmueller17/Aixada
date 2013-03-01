@@ -1085,12 +1085,11 @@
 		
 
 		
-		$('#dialog_edit_stock').load('tpl/stock_dialog.php #container', function(){
-			$('#infoStockProductPage').show();
-			$('#infoStockPage').hide();
+		
+		$('#infoStockProductPage').show();
+		$('#infoStockPage').hide();
 			
-		});
-
+		
 		
 
 		//for a given unit price, apply rev tax and iva and indicate the final price
@@ -1796,7 +1795,9 @@
 <div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
 <?php include("tpl/export_dialog.php");?>
 </div>
-<div id="dialog_edit_stock"></div>
+<div id="dialog_edit_stock">
+<?php include('tpl/stock_dialog.php');?>
+</div>
 <!-- / END -->
 </body>
 </html>

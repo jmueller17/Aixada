@@ -266,11 +266,8 @@
 		});
 
 	    
+		$('#infoStockProductPage').hide();
 		
-		
-		$('#dialog_edit_stock').load('tpl/stock_dialog.php #container', function(){
-			$('#infoStockProductPage').hide();
-		});
 		
 		switchTo('overview');
 
@@ -392,7 +389,7 @@
 
 
 <div id="dialog_edit_stock">
-
+<?php include('tpl/stock_dialog.php');?>
 </div>
 
 <!-- / END -->
