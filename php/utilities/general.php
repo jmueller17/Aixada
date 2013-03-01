@@ -466,7 +466,7 @@ function existing_languages()
 
 function existing_languages_XML()
 {
-	$static = true; 
+	$static = false; 
     // We require that a line of the form 
     // $Text['es_es'] = 'Español'
     // exists in each language file

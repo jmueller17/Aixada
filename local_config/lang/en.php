@@ -835,6 +835,18 @@ $Text['msg_err_export'] = "Error in exporting data";
 $Text['export_uf'] = "Export Members";
 $Text['btn_export'] = "Export";
 
+
+$Text['file_name'] = "File name";
+$Text['active_ufs'] = "Only active HU's";
+$Text['export_format'] = "Export format";
+$Text['google_account'] = "Google account";
+$Text['other_options'] = "Other options";
+$Text['export_publish'] = "Make export file public at:";
+$Text['export_options'] = "Export options";
+$Text['correct_stock'] = "Correct stock";
+$Text['btn_edit_stock'] = "Edit stock";
+$Text['consult_mov_stock'] = "Consult movements";
+
 //$Text[''] = ""; 
 
 ?>

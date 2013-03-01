@@ -286,37 +286,41 @@
 			 })
 			 .hide(); 
 
+		//create public available copy of export file option
+		$('#makePublic').on('click', function(){
+			if ($(this).attr("checked") == "checked"){
+				$('#exportURL').show();
+			} else {
+				$('#exportURL').hide();
+			}
 
-		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+		})
 
-			$('input[name=exportName]').on('keyup', function(){
-				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
-			})
-			
-			$('#makePublic').on('click', function(){
-				if ($(this).attr("checked") == "checked"){
-					$('#exportURL').fadeIn(500);
-				} else {
-					$('#exportURL').fadeOut(500);
-				}
+		//indicate file name for publishing on own web
+		$('input[name=exportName]').on('keyup', function(){
+			var fext = ($('input[name=exportFormat]:checked').val() == 'gdrive')? 'csv':$('input[name=exportFormat]:checked').val();   
+			$('#showExportFileName').text($(this).val() + "." + fext);
+		})
+		
+		
+		//control switching between export format options
+		$('input[name=exportFormat]').on('click', function(){
+			var name = ''; 
+			if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+				$('#export_authentication').fadeIn(1000);
+				name = $('input[name=exportName]').val() + ".csv"; 
+				 
+			} else {
+				$('#export_authentication').fadeOut(1000);
+				name = $('input[name=exportName]').val() + "." + $('input[name=exportFormat]:checked').val();
+			}
 
-			})
-			
-			
-			$('input[name=exportFormat]').on('click', function(){
-				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-					$('#export_authentication').fadeIn(1000);
-				} else {
-					$('#export_authentication').fadeOut(1000);
-				}
+			$('#showExportFileName').text(name);
 
-			})
-			
-			$('#export_authentication').hide();
-
-			$('#export_ufs').show();
-
-		});
+		})
+		
+		//initially hide authenticate and specific uf stuff. 
+		$('#export_authentication').hide();
 
 
 		/**
@@ -1432,7 +1436,9 @@
 </div>
 
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
-<div id="dialog_export_options" title="Export options">
+<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
+<?php include("tpl/export_dialog.php");?>
+</div>
 
 <!-- / END -->
 </body>

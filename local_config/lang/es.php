@@ -824,7 +824,7 @@ $Text['head_ti_provider'] = "Gestión de proveedores y productos";
 $Text['edit'] = "Editar";
 $Text['ti_create_provider'] = "Añadir proveedor";
 $Text['ti_add_product'] = "Añadir producto";
-$Text['order_min'] = "Cantidad mínima para el pedido.";
+$Text['order_min'] = "Cantidad mínima para el pedido";
 $Text['msg_confirm_del_product'] = "¿Seguro que quieres borrar este producto?";
 $Text['msg_err_del_product'] = "No se puede borrar este producto porque hay entradas que dependen de él en la base de datos. Mensaje de error: ";
 $Text['msg_err_del_member'] = "No se puede borrar este usuario porque hay referencias al mismo en la base de datos<br/> Mensaje de error: ";
@@ -841,6 +841,17 @@ $Text['search_provider'] = "Buscar proveidor";
 $Text['msg_err_export'] = "Error al exportar datos";
 $Text['export_uf'] = "Exportar Miembros";
 $Text['btn_export'] = "Exportar";
+
+$Text['file_name'] = "File name";
+$Text['active_ufs'] = "Only active HU's";
+$Text['export_format'] = "Export format";
+$Text['google_account'] = "Google account";
+$Text['other_options'] = "Other options";
+$Text['export_publish'] = "Make export file public at:";
+$Text['export_options'] = "Export options";
+$Text['correct_stock'] = "Correct stock";
+$Text['btn_edit_stock'] = "Edit stock";
+$Text['consult_mov_stock'] = "Consult movements";
 
 
 

@@ -937,11 +937,7 @@
 			   	 	$.showMsg({
 						msg: "<?php echo $Text['msg_edit_success']; ?>",
 						type: 'success',
-						autoclose:1000});
-
-						if (table = 'product'){
-							$('.btn_edit_stocks').button('enable');
-						}
+						autoclose:800});
 			   		
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -955,6 +951,7 @@
 			   		if (table == 'provider'){
 				   		gProviderListReload = true; 
 			   		} else if (table == 'product'){
+			   			$('.btn_edit_stocks').button('enable');
 						gProductListReload = true; 
 				   	}
 
@@ -1165,8 +1162,8 @@
 		//export options dialog
 		$('#dialog_export_options').dialog({
 			autoOpen:false,
-			width:520,
-			height:500,
+			width:580,
+			height:550,
 			buttons: {  
 				"<?=$Text['btn_ok'];?>" : function(){
 						if ($(this).data('export') == "provider"){
@@ -1182,38 +1179,43 @@
 			}
 		});
 
+		
+		//create public available copy of export file option
+		$('#makePublic').on('click', function(){
+			if ($(this).attr("checked") == "checked"){
+				$('#exportURL').show();
+			} else {
+				$('#exportURL').hide();
+			}
 
-		//
-		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+		})
 
-			$('input[name=exportName]').on('keyup', function(){
-				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
-			})
-			
-			$('#makePublic').on('click', function(){
-				if ($(this).attr("checked") == "checked"){
-					$('#exportURL').show();
-				} else {
-					$('#exportURL').hide();
-				}
+		//indicate file name for publishing on own web
+		$('input[name=exportName]').on('keyup', function(){
+			var fext = ($('input[name=exportFormat]:checked').val() == 'gdrive')? 'csv':$('input[name=exportFormat]:checked').val();   
+			$('#showExportFileName').text($(this).val() + "." + fext);
+		})
+		
+		
+		//control switching between export format options
+		$('input[name=exportFormat]').on('click', function(){
+			var name = ''; 
+			if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+				$('#export_authentication').fadeIn(1000);
+				name = $('input[name=exportName]').val() + ".csv"; 
+				 
+			} else {
+				$('#export_authentication').fadeOut(1000);
+				name = $('input[name=exportName]').val() + "." + $('input[name=exportFormat]:checked').val();
+			}
 
-			})
-			
-			
-			$('input[name=exportFormat]').on('click', function(){
-				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-					$('#export_authentication').fadeIn(1000);
-				} else {
-					$('#export_authentication').fadeOut(1000);
-				}
+			$('#showExportFileName').text(name);
 
-			})
-			
-			$('#export_authentication').hide();
-
-			$('#export_ufs').hide();
-
-		});
+		})
+		
+		//initially hide authenticate and specific uf stuff. 
+		$('#export_authentication').hide();
+		$('#export_ufs').hide();
 
 		
 		
@@ -1426,9 +1428,9 @@
 				 
 				 <div id="StockOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="add">Add stock</a></li>
-						<li><a href="javascript:void(null)" id="correct">Correct stock</a></li>
-						<li><a href="javascript:void(null)" id="consult">Consult movements</a></li>
+						<li><a href="javascript:void(null)" id="add"><?php echo $Text['add_stock'];?></a></li>
+						<li><a href="javascript:void(null)" id="correct"><?php echo $Text['correct_stock'];?></a></li>
+						<li><a href="javascript:void(null)" id="consult"><?php echo $Text['consult_mov_stock'];?></a></li>
 					</ul>
 				</div>	
 				 
@@ -1515,15 +1517,6 @@
 							    <td colspan="3"><input type="text" name="order_min_quantity" value="{order_min_quantity}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
 							   <tr>
-							    <td><label class="stockElements" for="stock_actual"><?php echo $Text['stock']; ?></label></td>
-							    <td>
-							    	<p class="stockElements setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
-							    </td>
-							    <td colspan="2">
-							    	<button class="btn_edit_stocks stockElements">Edit stock</button>
-							    </td>
-							  </tr>
-							   <tr>
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
@@ -1555,6 +1548,15 @@
 							  <tr>
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
+							  </tr>
+							  <tr>
+							    <td><label class="stockElements" for="stock_actual"><?php echo $Text['stock']; ?></label></td>
+							    <td>
+							    	<p class="stockElements setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
+							    </td>
+							    <td colspan="2">
+							    	<button class="btn_edit_stocks stockElements"><?php echo $Text['btn_edit_stock'];?></button>
+							    </td>
 							  </tr>
 							  <tr>
 							    <td><label for="stock_min"><?php echo $Text['stock_min']; ?></label></td>
@@ -1741,6 +1743,8 @@
 					<p>&nbsp;</p>
 				</div>
 			</div>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
 			
 			
 			<!-- 
@@ -1779,6 +1783,8 @@
 						
 				</div>
 			</div>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
 								
 				
 
@@ -1787,7 +1793,9 @@
 </div>
 <!-- end of wrap -->
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
-<div id="dialog_export_options" title="Export options"></div>
+<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
+<?php include("tpl/export_dialog.php");?>
+</div>
 <div id="dialog_edit_stock"></div>
 <!-- / END -->
 </body>
