@@ -843,7 +843,7 @@ $Text['google_account'] = "Google account";
 $Text['other_options'] = "Altres opcions";
 $Text['export_publish'] = "Fes fitxer d'exportació públic en:";
 $Text['export_options'] = "Opcions d'exportació";
-$Text['correct_stock'] = "Corregir estoc";
+$Text['correct_stock'] = "Corregeix estoc";
 $Text['btn_edit_stock'] = "Edita estoc";
 $Text['consult_mov_stock'] = "Consulta moviments";
 $Text['add_stock_frase'] = "Estoc total = estoc actual de "; //complete frase is: total stock = current stock of X units + new stock
