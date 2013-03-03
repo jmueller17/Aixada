@@ -825,7 +825,7 @@ $Text['head_ti_provider'] = "Gestión de proveedores y productos";
 $Text['edit'] = "Editar";
 $Text['ti_create_provider'] = "Añadir proveedor";
 $Text['ti_add_product'] = "Añadir producto";
-$Text['order_min'] = "Cantidad mínima para el pedido.";
+$Text['order_min'] = "Cantidad mínima para el pedido";
 $Text['msg_confirm_del_product'] = "¿Seguro que quieres borrar este producto?";
 $Text['msg_err_del_product'] = "No se puede borrar este producto porque hay entradas que dependen de él en la base de datos. Mensaje de error: ";
 $Text['msg_err_del_member'] = "No se puede borrar este usuario porque hay referencias al mismo en la base de datos<br/> Mensaje de error: ";
@@ -844,5 +844,21 @@ $Text['export_uf'] = "Exportar Miembros";
 $Text['btn_export'] = "Exportar";
 
 $Text['ti_visualization'] = "Visualizaciones";
+$Text['file_name'] = "File name";
+$Text['active_ufs'] = "Only active HU's";
+$Text['export_format'] = "Export format";
+$Text['google_account'] = "Google account";
+$Text['other_options'] = "Other options";
+$Text['export_publish'] = "Make export file public at:";
+$Text['export_options'] = "Export options";
+$Text['correct_stock'] = "Correct stock";
+$Text['btn_edit_stock'] = "Edit stock";
+$Text['consult_mov_stock'] = "Consult movements";
+$Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase is: total stock = current stock of X units + new stock
+$Text['correct_stock_frase'] = "Current stock is not";
+$Text['stock_but'] = "but"; //current stock is not x units but...
+$Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
+$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+
 
 ?>

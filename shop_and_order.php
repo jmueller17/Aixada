@@ -302,7 +302,7 @@
 				if (what == 'Shop') itemInfo += '<li><?=$Text["curStock"];?>: ' + $(this).attr("stock") + '</li>';
 				//add description of product
 				itemInfo += '<li><?=$Text['description'];?>: '+$(this).attr("description")+'</li>';
-				itemInfo += '<li>IVA: '+$(this).attr("iva_percent")+'%</li>';
+				itemInfo += '<li><?=$Text['iva'];?>: '+$(this).attr("iva_percent")+'%</li>';
 				itemInfo += '<li><?=$Text['revtax_abbrev'];?>: '+$(this).attr("rev_tax_percent")+'%</li>'
 				itemInfo += '</ul>';
 

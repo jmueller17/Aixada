@@ -144,7 +144,7 @@ try{
   $ignore_keys = array('oper' => 1, 'table' => 2, 'key' => 3, 'val' => 4, 
                        'USERAUTH' => 5, 'PHPSESSID' => 6, 'logintheme' => 7, 
                        'cprelogin' => 8, 'cpsession' => 9, 'lang' => 10, 
-                       'langedit' => 11);
+                       'langedit' => 11, '__utma'=>12, '__utmz'=>13);
     // we need the => 1 etc values for array_diff_key to work later on.
 
   if (!isset($_REQUEST['oper']))

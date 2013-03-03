@@ -836,6 +836,23 @@ $Text['msg_err_export'] = "Error in exporting data";
 $Text['export_uf'] = "Export Members";
 $Text['btn_export'] = "Export";
 
+
+$Text['file_name'] = "File name";
+$Text['active_ufs'] = "Only active HU's";
+$Text['export_format'] = "Export format";
+$Text['google_account'] = "Google account";
+$Text['other_options'] = "Other options";
+$Text['export_publish'] = "Make export file public at:";
+$Text['export_options'] = "Export options";
+$Text['correct_stock'] = "Correct stock";
+$Text['btn_edit_stock'] = "Edit stock";
+$Text['consult_mov_stock'] = "Consult movements";
+$Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase is: total stock = current stock of X units + new stock
+$Text['correct_stock_frase'] = "Current stock is not";
+$Text['stock_but'] = "but"; //current stock is not x units but...
+$Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
+$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+
 //$Text[''] = ""; 
 
 $Text['ti_visualization'] = "Visualization";

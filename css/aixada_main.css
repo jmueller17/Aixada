@@ -65,6 +65,7 @@ option 				{padding:1px 5px;}
 .centerDiv			{margin:0px auto;}
 .adaptHeight		{overflow:auto;}
 .nobr				{white-space:nowrap;}
+.freeInput			{vertical-align:middle;}
 
 .ui-widget-content h2 	{padding-left:15px;}
 .ui-state-success		{background-color:#d2f3d2; border:1px solid #7eca7e;}

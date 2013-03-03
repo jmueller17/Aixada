@@ -20,52 +20,22 @@
     <?php }?>
    
 	<script type="text/javascript">
-	
-      $(function(){
-	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=1198&product_id_array[]=1078&year_array[]=2011&year_array[]=2012",
-	      function(data) {
-		  $('#pty_graphic .loadSpinner').hide();
-		  gymax = 0.0;
-		  var all_prices = new Array(52);
-		  for (var w=0; w<52; w++) {
-		      all_prices[w] = new Array(data.length+1);
-		      all_prices[w][0] = w;
-		  }
-		  for (var i=0; i<data.length; i++) {
-		      var pts = data[i][1],
-			  j = 0,
-			  w = 0,
-			  price = 0;
 
-		      for (; w<52 && j<pts.length; w++) {
-			  if (pts[j]['week'] <= w) {
-			      price = pts[j]['price'];
-			      j++;
-			  }
-			  all_prices[w][i+1] = price;
-			  if (price > gymax) {
-			      gymax = price;
-			  }
-		      }
-		      while (w<52) {
-			  all_prices[w][i+1] = price;
-			  w++;
-		      }
-		  }
-
-		  var w = 800,
+	 function do_plot(tag, data, max_val, legend) {
+		 var  n = data[0].length,
+		      w = 800,
 		      h = 500,
 		      x = d3.scale.linear().domain([0, 52]).range([0, w]),
-		      y = d3.scale.linear().domain([0, gymax]).range([h, 0]),
+		      y = d3.scale.linear().domain([0, max_val]).range([h, 0]),
 		      p = 30;
 
-		  var vis = d3.select("#pty_graphic")
-		      .data([all_prices])
+		  var vis = d3.select(tag)
+		      .data([data])
 		      .append("svg:svg")
 		      .attr("width", w + p * 2)
 		      .attr("height", h + p * 2)
 		      .append("svg:g")
-		      .attr("transform", "translate(" + p + "," + p + ")");
+		      .attr("transform", "translate(" + 2*p + "," + p + ")");
 
 		  var rules = vis.selectAll("g.rule")
 		      .data(x.ticks(15))
@@ -106,7 +76,7 @@
 		  
 		  var colors = ['blue', 'magenta', 'lightsalmon', 'chartreuse', 'mediumvioletred'];
 
-		  for (var i=0; i<data.length; i++) {
+		  for (var i=0; i<n; i++) {
 		      vis.append("svg:path")
 			  .attr("class", "line")
 			  .attr("fill", "none")
@@ -117,7 +87,7 @@
 				.y(function(d) { return y(d[i+1]); }));
 
 		      vis.select("circle.line")
-			  .data(all_prices)
+			  .data(data)
 			  .enter().append("svg:circle")
 			  .attr("class", "line")
 			  .attr("fill", colors[i % colors.length] )
@@ -131,21 +101,66 @@
 		      .attr("y", 20)
 		      .text("Evolution of prices");
 
-		  for (var i=0; i<data.length; i++) {
+		  for (var i=0; i<n; i++) {
 		      vis.append("svg:rect")
 			  .attr("x", w/2 - 150)
 			  .attr("y", 50 + 30*i)
-			  .attr("stroke", colors[i % data.length])
+			  .attr("stroke", colors[i % n])
 			  .attr("height", 2)
 			  .attr("width", 40);
 
 		      vis.append("svg:text")
 			  .attr("x", w/2 - 100)
 			  .attr("y", 55 + 30*i)
-			  .attr("stroke", colors[i % data.length])
-			  .text(data[i][0][0] + ' ' + data[i][0][1] + ' ' + data[i][0][2]);
+			  .attr("stroke", colors[i % n])
+			  .text(legend[i]);
 		  }
+	     }
+	
+function data_to_plot(data, key_tag, val_tag, n_pts=52) {
+		  var max_val = 0.0,
+		      m = data.length,
+		      plot = new Array(n_pts);
+		  for (var w=0; w<n_pts; w++) {
+		      plot[w] = new Array(m+1);
+		      plot[w][0] = w;
+		  }
+		  for (var i=0; i<m; i++) {
+		      var pts = data[i][1],
+			  j = 0,
+			  w = 0,
+			  value = 0;
 
+		      for (; w<n_pts && j<pts.length; w++) {
+			  if (pts[j][key_tag] <= w) {
+			      value = pts[j][val_tag];
+			      j++;
+			  }
+			  plot[w][i+1] = value;
+			  if (value > max_val) {
+			      max_val = value;
+			  }
+		      }
+		      while (w<n_pts) {
+			  plot[w][i+1] = value;
+			  w++;
+		      }
+		  }
+		  return { 'max_val': max_val, 'plot': plot };
+   }
+
+      $(function(){
+	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=1198&product_id_array[]=1078&year_array[]=2011&year_array[]=2012",
+	      function(data) {
+		  $('#pty_graphic .loadSpinner').hide();
+		  var m = data.length;
+		  var plot_data = data_to_plot(data, 'week', 'price');
+		  var legend = new Array(m);
+		  for (var i=0; i<m; i++) {
+		      legend[i] = data[i][0][0] + ' ' + data[i][0][1] + ' ' + data[i][0][2];
+		  }
+		  
+		  do_plot('#pty_graphic', plot_data['plot'], plot_data['max_val'], legend);
 		  
 	      }); //end json
 			  

@@ -18,6 +18,7 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_stock.min.js"></script>
     <?php }?>
@@ -49,14 +50,17 @@
 			.live('mouseout',function(){
 				$(this).removeClass('ui-state-hover');
 				
-			})
+			});
+		
+		$('.showStockMovement')
 			.live('click',function(e){
-
-				$('.setProductName').text($(this).attr('productName'));
+				var pname = $(this).parents('tr').attr('productName');
+				var pid = $(this).parents('tr').attr('productId');
+				$('.setProductName').text(pname);
 				
 				
 				$("#tbl_stock_movements tbody").xml2html("reload", {
-					params : 'oper=stockMovements&product_id='+	$(this).attr('productId'),
+					params : 'oper=stockMovements&product_id='+	pid,
 				});
 				switchTo('detail');
 
@@ -141,162 +145,6 @@
 			$(this).removeClass('ui-state-hover');
 		});
 
-
-		//add stock 
-		$('.inputAddStock')
-			.live('click', function(e){
-				e.stopPropagation();
-			})
-			.live('focus', function(e){
-				
-				//hide other active field, buttons
-				$('.correctStock').show();
-				$('.inputCorrectStock').hide();
-				$('.btn_save_new_stock .btn_correct_stock').hide();
-				
-			})
-			.live('keyup',function(e){
-				//submit change on add stock
-				if (e.keyCode == 13){
-					
-					//var absStock = $.checkNumber($(this),'',3);	
-					var product_id = $(this).attr('productId'); 
-					
-					var addQu = $.checkNumber($(this),'',3);
-					if (addQu >= 0){		
-						submitStock('addStock',$(this).attr('productId'),addQu);
-					} else {
-						$.showMsg({
-							msg: "<?php echo $Text['msg_err_qu']; ?>",
-							buttons: {
-								"<?=$Text['btn_ok'];?>":function(){						
-									$(this).dialog("close");
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'warning'});
-					}
-					
-				}
-
-			})
-
-		
-
-		//correct stock
-		$('.inputCorrectStock')
-			.live('blur', function(e){
-				$(this).toggle();
-				$(this).prev().toggle();
-			})
-			.live('keyup', function(e){
-
-				//submit change on enter
-				if (e.keyCode == 13){
-					
-					var absStock = $.checkNumber($(this),'',3);	
-					var product_id = $(this).attr('productId'); 
-					
-					if (absStock >= 0){
-						$.showMsg({
-							msg: "<?php echo $Text['msg_correct_stock']; ?>",
-							buttons: {
-								"<?=$Text['btn_yes_corret'];?>":function(){						
-									submitStock('correctStock',product_id,absStock);
-									$(this).dialog("close");
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'confirm'});
-					
-												
-					} else {
-						$.showMsg({
-							msg: "<?php echo $Text['msg_err_qu']; ?>",
-							buttons: {
-								"<?=$Text['btn_ok'];?>":function(){						
-									$(this).dialog("close");
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'warning'});
-						return false; 
-					}
-
-						
-				}
-
-			})
-			
-			
-		$('td.interactiveCell')
-			.live('click',function(e){
-
-				$('.correctStock').show();
-				$('.inputCorrectStock').hide();
-				$('.btn_save_new_stock, .btn_correct_stock').hide();
-				
-				$(this).children(':last').toggle().focus();
-				$(this).children(':first').toggle();
-
-				e.stopPropagation();
-			});
-			
-
-		/**
-		 *	saves the stock correction / add to the database
-		 * 	for "addStock" the current_stock = stock + quantity.
-		 * 	for "correctStock" current_stock = quantity; 
-		 */
-		function submitStock(oper, product_id, quantity){
-
-			var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
-			
-			
-			$.ajax({
-				type: "POST",
-				url: urlStr,
-				beforeSend : function(){
-					$('.inputAddStock, .inputCorrectStock')
-						.attr('disabled','disabled')
-						.val('Saving...');
-					/*$('.btn_save_new_stock, .btn_correct_stock')
-						.button('option','Saving...')
-						.button('disable');*/
-					
-				},
-				success: function(txt){
-					/*$('#add_stock_'+product_id+ ', #correct_stock_'+product_id)
-						.addClass('ui-state-success')
-						.val('Ok!');*/
-
-					setTimeout(function(){
-						$('#product_list_provider tbody').xml2html("reload");						
-					},500)
-
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
-					
-				},
-				complete: function(){
-					$('.inputAddStock, .inputCorrectStock')
-						.removeAttr('disabled')
-						.val('');
-					/*$('.btn_save_new_stock, .btn_correct_stock')
-						.button('label','Save')
-						.button('enable');	*/
-				}
-			});
-		}
 
 
 
@@ -383,10 +231,48 @@
 				}
     		});
 
+		$('.btn_add_stock')
+			.live('click',function(e){
+				prepareStockForm('add',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
+		
+		
+		$('.btn_correct_stock')
+			.live('click',function(e){
+				prepareStockForm('correct',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
+			
+			
+
+		$('#dialog_edit_stock').dialog({
+			autoOpen:false,
+			width:480,
+			height:400,
+			modal:true,
+			buttons: {  
+				"<?=$Text['btn_save'];?>" : function(){
+					
+						if ($(this).data('info').edit == "add"){
+							addStock($(this).data('info').id);
+						} else if ($(this).data('info').edit == "correct"){
+							correctStock($(this).data('info').id);
+						}
+					},
+			
+				"<?=$Text['btn_cancel'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+	    
+		$('#infoStockProductPage').hide();
+		
 		
 		switchTo('overview');
+
 		
-		 
+		<?php include('js/aixadautilities/stock.js.php'); ?> 
 							
 	});  //close document ready
 </script>
@@ -430,35 +316,24 @@
 									<th><?php echo $Text['provider_name']; ?></th>						
 									<th><?php echo $Text['curStock']; ?></th>
 									<th><?php echo $Text['unit'];?></th>
-									<th class="width-280 textAlignLeft"><?php echo $Text['add_stock']; ?></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr productId="{id}" productName="{name}">
 									<td><p class="textAlignRight">{id}</p></td>
-									<td class="clickable">{name}</td>
+									<td class="clickable showStockMovement">{name}</td>
 									<td><p class="textAlignCenter">{provider_name}</p></td>
-									<td class="interactiveCell">
-										<p class="textAlignRight correctStock">{stock_actual}</p>
-										<input type="text" class="ui-corner-all inputCorrectStock hidden textAlignRight floatRight" value="{stock_actual}" size="5" productId="{id}" id="correct_stock_{id}" />
+									<td>
+										<p class="textAlignRight setStockActual">{stock_actual}</p>
 							
 									</td>
-									<td><p>{unit}</p></td>
+									<td><p class="textAlignCenter">{unit}</p></td>
 									<td>
-										<p class="floatLeft iconContainerNull"><span class="ui-icon ui-icon-plusthick"></span></p>
-										&nbsp;<input class="ui-corner-all inputAddStock textAlignRight" value=""  productId="{id}" id="add_stock_{id}" size="5"/>
-										&nbsp;&nbsp;&nbsp;<button class="btn_save_new_stock hidden" productId="{id}"><?php echo $Text['btn_save'];?></button>
+										<p class="textAlignCenter"><a class="btn_add_stock" unit="{unit}" productId="{id}" stockActual="{stock_actual}" href="javascript:void(null)"><?php echo $Text['add_stock']; ?></a>&nbsp;&nbsp; | &nbsp;&nbsp;<a class="btn_correct_stock" productId="{id}" stockActual="{stock_actual}" unit="{unit}" href="javascript:void(null)"><?php echo $Text['correct_stock']; ?></a> </p>
 									</td>
 								</tr>						
 							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="3">&nbsp;</td>
-									<td><p class="textAlignCenter dim80 ui-state-highlight ui-corner-all"><?php echo $Text['click_to_edit']; ?></p></td>
-									<td>&nbsp;</td>
-									<td></td>
-								</tr>
-							</tfoot>
 						</table>
 					</div>
 				</div>		
@@ -511,6 +386,11 @@
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
+
+
+<div id="dialog_edit_stock">
+<?php include('tpl/stock_dialog.php');?>
+</div>
 
 <!-- / END -->
 </body>
