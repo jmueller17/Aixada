@@ -842,21 +842,21 @@ $Text['msg_err_export'] = "Error al exportar datos";
 $Text['export_uf'] = "Exportar Miembros";
 $Text['btn_export'] = "Exportar";
 
-$Text['file_name'] = "File name";
-$Text['active_ufs'] = "Only active HU's";
-$Text['export_format'] = "Export format";
+$Text['file_name'] = "Nombre de archivo";
+$Text['active_ufs'] = "Sólo UF activas";
+$Text['export_format'] = "Formato de exportación";
 $Text['google_account'] = "Google account";
-$Text['other_options'] = "Other options";
-$Text['export_publish'] = "Make export file public at:";
-$Text['export_options'] = "Export options";
-$Text['correct_stock'] = "Correct stock";
-$Text['btn_edit_stock'] = "Edit stock";
-$Text['consult_mov_stock'] = "Consult movements";
-$Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase is: total stock = current stock of X units + new stock
-$Text['correct_stock_frase'] = "Current stock is not";
-$Text['stock_but'] = "but"; //current stock is not x units but...
-$Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
-$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+$Text['other_options'] = "Otras opciones";
+$Text['export_publish'] = "Hacer público el archivo de exportación en:";
+$Text['export_options'] = "Opciones de exportación";
+$Text['correct_stock'] = "Corregir stock";
+$Text['btn_edit_stock'] = "Editar stock";
+$Text['consult_mov_stock'] = "Consultar movimientos";
+$Text['add_stock_frase'] = "Stock total = stock actual de "; //complete frase is: total stock = current stock of X units + new stock
+$Text['correct_stock_frase'] = "El stock actual no es ";
+$Text['stock_but'] = "sino"; //current stock is not x units but...
+$Text['stock_info'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas) con sólo hacer clic en el nombre del producto aquí abajo.";
+$Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Gestionar &gt; Productos &gt; Stock.";
 
 
 
