@@ -164,9 +164,9 @@ class DBWrap {
    * If the last sql command executed was an insert, returns
    * the id generate by auto_increment. 
    */
-  public function get_last_id()
+  public function last_insert_id()
   {
-  		return $this->mysqli->insert_id; 
+      return $this->mysqli->insert_id; 
   }
 
   
@@ -251,22 +251,29 @@ class DBWrap {
    */
   public function Insert ($table_name, $arrData)
   {
-    $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
-    $strVAL = 'VALUES (';
-    $ct = 0;
-    foreach ($arrData as $field => $value) {
-      if ($ct > 0) {
-	$strSQL .= ',';
-	$strVAL .= ',';
-      } else $ct++;
+      $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
+      $strVAL = 'VALUES (';
+      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
+      if (!array_key_exists($table_name, $all_col_names)) {
+	  throw new InternalException('Inserting into table ' . $table_name . ' not permitted');
+      }
+      $col_names = $all_col_names[$table_name];
+      $ct = 0;
+      foreach ($arrData as $field => $value) {
+	  if (in_array($field, $col_names)) {
+	      if ($ct > 0) {
+		  $strSQL .= ',';
+		  $strVAL .= ',';
+	      } else $ct++;
 
-      $strSQL .= $this->mysqli->real_escape_string($field);
-      $strVAL .= "'" . $this->mysqli->real_escape_string($value) . "'";
-    }
-    $strSQL .= ') ' . $strVAL . ');';
-    if (isset($_SESSION['fkeys'][$table_name]))
-      unset($_SESSION['fkeys'][$table_name]);
-    return $this->do_Execute($strSQL); // TODO: extract new index
+	      $strSQL .= $this->mysqli->real_escape_string($field);
+	      $strVAL .= "'" . $this->mysqli->real_escape_string($value) . "'";
+	  }
+      }
+      $strSQL .= ') ' . $strVAL . ');';
+      if (isset($_SESSION['fkeys'][$table_name]))
+	  unset($_SESSION['fkeys'][$table_name]);
+      return $this->do_Execute($strSQL); // TODO: extract new index
   }
 
   /**
@@ -281,15 +288,11 @@ class DBWrap {
 	  throw new InternalException('Update: Input array ' . $arrData . ' for table ' . $table_name . ' does not contain a field named "id"');
       $strSQL = 'UPDATE ' . $this->mysqli->real_escape_string($table_name) . ' SET ';
 
-      global $firephp;
-      $firephp->log(__ROOT__ .'col_names.php', 'filename');
       $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
-
       if (!array_key_exists($table_name, $all_col_names)) {
 	  throw new InternalException('Updating table ' . $table_name . ' not permitted');
       }
       $col_names = $all_col_names[$table_name];
-      $firephp->log($col_names, 'col_names');
 
       $ct=0;
       foreach ($arrData as $field => $value) {
@@ -303,8 +306,6 @@ class DBWrap {
       if (isset($_SESSION['fkeys'][$table_name]))
 	  unset($_SESSION['fkeys'][$table_name]);
       
-      $firephp->log($strSQL, 'strSQL');
-
       $success = $this->do_Execute($strSQL);
     
       if ($table_name == 'aixada_provider') {
@@ -322,9 +323,23 @@ class DBWrap {
   public function Delete($_tn, $_id)
   {
       $table_name = $this->mysqli->real_escape_string($_tn);
+      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
+      if (!array_key_exists($table_name, $all_col_names)) {
+	  throw new InternalException('Deleting from table ' . $table_name . ' not permitted');
+      }
       $id = $this->mysqli->real_escape_string($_id);
-      $strSQL = "delete from {$table_name} where id='{$id}'";
-      return $this->do_Execute($strSQL);
+      if ($table_name == 'aixada_product') {
+	  $strSQL = "
+start transaction; 
+delete from aixada_price where product_id='{$id}'; 
+delete from aixada_product where id='{$id}';
+commit;";
+	  $multi = true;
+      } else {
+	  $strSQL = "delete from {$table_name} where id='{$id}'";
+	  $multi = false;
+      }
+      return $this->do_Execute($strSQL, $multi);
   }
 
   /**

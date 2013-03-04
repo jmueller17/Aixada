@@ -98,7 +98,7 @@ class shop_cart_manager extends abstract_cart_manager {
     		
     		try {
 	    		$rs = $db->Execute('replace into aixada_cart (uf_id, date_for_shop) values (:1q, :2q)', $this->_uf_id, $this->_date);
-	        	$this->_cart_id = $db->get_last_id();
+	        	$this->_cart_id = $db->last_insert_id();
 	        	
     		} catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());

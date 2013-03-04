@@ -18,7 +18,6 @@ $language = ( (isset($_SESSION['userdata']['language']) and
 require_once(__ROOT__ . 'local_config/lang/' . $language . '.php');
 require_once(__ROOT__ . "php/utilities/tables.php");
 
-//$firephp = FirePHP::getInstance(true);
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
 $use_canned_responses = configuration_vars::get_instance()->use_canned_responses;
 
@@ -136,6 +135,17 @@ function post_edit_hook($request)
     }
 }
 
+function post_create_hook($index, $request) 
+{
+    switch ($request['table']) {
+    case 'aixada_product': 
+	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], $_SESSION['userdata']['uf_id']);
+	break;
+    default:
+	break;
+    }
+}
+
 // code starts here
 
 
@@ -172,10 +182,12 @@ try{
     
   case 'add':
     $arrData = array_diff_key($_REQUEST, $ignore_keys);
-    return DBWrap::get_instance()->Insert($_REQUEST['table'], $arrData);
-//     $tm->create($_REQUEST);
-//     echo '1';
-    break;
+    $db = DBWrap::get_instance();
+    $db->Insert($_REQUEST['table'], $arrData);
+    $index = $db->last_insert_id();
+    post_create_hook($index, $_REQUEST);
+    echo $index;
+    exit;
     
   case 'del':
       DBWrap::get_instance()->Delete($_REQUEST['table'], $_REQUEST['id']);
@@ -187,8 +199,6 @@ try{
   if (!$special_table)
     $tm = new table_manager($_REQUEST['table'], 
 			    configuration_vars::get_instance()->use_session_cache);
-  //  $firephp->log($tm, 'tm');
-  //  $firephp->log($_REQUEST, 'request');
 
   switch ($_REQUEST['oper']) {
   case 'get_by_id':

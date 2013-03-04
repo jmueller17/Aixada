@@ -460,14 +460,11 @@ class table_with_ref extends foreign_key_manager {
    */
   protected function _clean_and_validate_data(&$arrData)
   {
-//     global $firephp;
-//     $firephp->log($arrData, 'entrance');
     if (!array_key_exists($this->_primary_key, $arrData) ||
 	$arrData[$this->_primary_key] == '_empty')
       if ($this->_primary_key_unique) 
 	$this->_get_next_free_key($arrData);
     $arrData = array_diff_key($arrData, array('oper' => 1, 'table' => 2, 'key' => 3, 'val' => 4, 'retype_password' => 5)); // we need the => 1 etc values for array_diff_key to work.
-//     $firephp->log($arrData, 'second');
     foreach ($arrData as $field => $value) {
       if (!array_key_exists($field,  $this->_table_cols)) 
 	throw new Exception('Field ' . $field . ' does not exist in database ' . $this->_table_name);
