@@ -592,36 +592,36 @@
 			 .hide(); 
 
 
-		$('#dialog_export_options').load('tpl/export_dialog.php #container', function(){
+		
 
-			$('input[name=exportName]').on('keyup', function(){
-				$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
-			})
+		$('input[name=exportName]').on('keyup', function(){
+			$('#showExportFileName').text($(this).val() + "." + $('input[name=exportFormat]:checked').val());
+		})
 			
-			$('#makePublic').on('click', function(){
-				if ($(this).attr("checked") == "checked"){
-					$('#exportURL').show();
-				} else {
-					$('#exportURL').hide();
-				}
+		$('#makePublic').on('click', function(){
+			if ($(this).attr("checked") == "checked"){
+				$('#exportURL').show();
+			} else {
+				$('#exportURL').hide();
+			}
 
-			})
+		})
 			
 			
-			$('input[name=exportFormat]').on('click', function(){
-				if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-					$('#export_authentication').fadeIn(1000);
-				} else {
-					$('#export_authentication').fadeOut(1000);
-				}
+		$('input[name=exportFormat]').on('click', function(){
+			if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
+				$('#export_authentication').fadeIn(1000);
+			} else {
+				$('#export_authentication').fadeOut(1000);
+			}
 
-			})
-			
-			$('#export_authentication').hide();
+		})
+		
+		$('#export_authentication').hide();
 
-			$('#export_ufs').hide();
+		$('#export_ufs').hide();
 
-		});
+	
 
 
 		/**
@@ -1255,7 +1255,9 @@
 
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 
-<div id="dialog_export_options" title="Export options">
+<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
+<?php include("tpl/export_dialog.php");?>
+</div>
 
 <!-- / END -->
 </body>

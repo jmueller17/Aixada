@@ -55,6 +55,7 @@ Bugfixes
 * member validation issues
 * delete order cart completely bug 
 * iva and revolutionary tax price calculation fix
-
+* table manager checks fields against database before updating 
+* warning message when creating new cart on validated
 
 
