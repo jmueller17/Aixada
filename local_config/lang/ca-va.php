@@ -838,20 +838,20 @@ $Text['export_uf'] = "Exportar membres";
 $Text['btn_export'] = "Exportar";
 
 $Text['ti_visualization'] = "Visualitzacions";
-$Text['file_name'] = "File name";
-$Text['active_ufs'] = "Only active HU's";
-$Text['export_format'] = "Export format";
+$Text['file_name'] = "Nom de fitxer";
+$Text['active_ufs'] = "Només UFs actives";
+$Text['export_format'] = "Format d'exportació";
 $Text['google_account'] = "Google account";
-$Text['other_options'] = "Other options";
-$Text['export_publish'] = "Make export file public at:";
-$Text['export_options'] = "Export options";
-$Text['correct_stock'] = "Correct stock";
-$Text['btn_edit_stock'] = "Edit stock";
-$Text['consult_mov_stock'] = "Consult movements";
-$Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase is: total stock = current stock of X units + new stock
-$Text['correct_stock_frase'] = "Current stock is not";
-$Text['stock_but'] = "but"; //current stock is not x units but...
-$Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
-$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+$Text['other_options'] = "Altres opcions";
+$Text['export_publish'] = "Fes fitxer d'exportació públic en:";
+$Text['export_options'] = "Opcions d'exportació";
+$Text['correct_stock'] = "Corregeix estoc";
+$Text['btn_edit_stock'] = "Edita estoc";
+$Text['consult_mov_stock'] = "Consulta moviments";
+$Text['add_stock_frase'] = "Estoc total = estoc actual de "; //complete frase is: total stock = current stock of X units + new stock
+$Text['correct_stock_frase'] = "L'estoc actual no és de";
+$Text['stock_but'] = "sinó"; //current stock is not x units but...
+$Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues) fent clic al nom del producte aquí baix.";
+$Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Gestiona&gt; Productes&gt; Estoc.";
 
 ?>

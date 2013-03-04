@@ -47,6 +47,10 @@
 			//stores todays date
 			var gToday = null;
 
+
+			//indicates if cart is not yet validated. 
+			var gActiveCart = 0; 
+
 			$.getAixadaDates('getToday', function (date){
 				gToday = date[0];
 				//var today = $.datepicker.parseDate('yy-mm-dd', date[0]);
@@ -285,6 +289,7 @@
 					$(this).aixadacart("resetCart");
 
 					gMadeDeposit = false;
+					gActiveCart = false; 
 				},
 				submitError : function (err_msg){
 					$.showMsg({
@@ -527,7 +532,7 @@
 			$('.product_list tbody').find("input").live("change", function (e){
 
 									//check if a cart/UF is selected, only then can one add items
-									if ($('#uf_cart_select option:selected').val() > 0){
+									if ($('#uf_cart_select option:selected').val() > 0 && gActiveCart){
 
 										//retrieve the current table row where quantity has been changed
 										var row = $(this).parents("tr");
@@ -617,6 +622,8 @@
 
 					$.showMsg({
 						msg:"<?php echo $Text['msg_err_no_deposit'];?>",
+						width:600,
+						height:400,
 						buttons: {
 							"<?=$Text['btn_deposit_now'];?>":function(){
 								$('#uf_cart_select').val(depositUF).attr('selected',true);
@@ -660,6 +667,7 @@
 					loadCartURL		: 'php/ctrl/Validate.php?oper=getShopCart&cart_id='+cart_id,
 					loadSuccess : function (){
 						$('#cartAnim').hide();
+						gActiveCart = true; 
 					}
 				}); //end loadCart
 
