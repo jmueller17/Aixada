@@ -856,5 +856,6 @@ $Text['stock_info_product'] = "Note: consult all previous stock movements (adds,
 //$Text[''] = ""; 
 
 $Text['ti_visualization'] = "Visualization";
+$Text['info_stock_page'] = "Info_stock_page";
 
 ?>
