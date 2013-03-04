@@ -56,11 +56,10 @@ class export_dates4products extends abstract_export_manager {
 		
 		
 		$this->xml_result = $xml_tmp; 
-		/*
-		$metadata = array( 'name' => 'provider_and_range', 
-				   'data' => array( 'provider_id' => $provider_id,
+		$this->xml_metadata = array( 'name' => 'provider_and_range', 
+					     'data' => array( 'provider_id' => $provider_id,
 						    'from_date' => $from_date,
-						    'to_date' => $to_date ));*/
+						    'to_date' => $to_date ));
 		
 	
 	}

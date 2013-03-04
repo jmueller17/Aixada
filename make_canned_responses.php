@@ -82,6 +82,11 @@ EOD;
   fclose($handle);
 }
 
+function write_column_names($col_names)
+{
+    file_put_contents('col_names.php', serialize($col_names));
+}
+
 function make_canned_responses($language = 'en')
 {
     $strPHP = <<<EOD
@@ -91,6 +96,7 @@ EOD;
 
 $tables = array();
 $col_names = array();
+$col_names_raw = array();
 $col_models = array();
 $active_fields = array();
 global $db;
@@ -101,12 +107,15 @@ require 'local_config/lang/' . $language . '.php';
 
 $rs = $db->Execute('SHOW TABLES');
 while ($row = $rs->fetch_array()) {
-  $tables[] = $row[0];
-  $tm = new table_manager($row[0]);
-  $col_names     [$row[0]] = get_names($tm);
-  $col_models    [$row[0]] = get_model($tm);
-  $active_fields [$row[0]] = get_active_field_names($tm);
- }
+    $current_table = $row[0];
+    $tables[] = $current_table;
+    $tm = new table_manager($current_table);
+    $col_names     [$current_table] = get_names($tm);
+    $col_names_raw [$current_table] = array_keys($tm->get_table_cols());
+    $col_models    [$current_table] = get_model($tm);
+    $active_fields [$current_table] = get_active_field_names($tm);
+}
+write_column_names($col_names_raw);
 $strPHP .= print_response('col_names', $col_names);
 $strPHP .= print_response('col_model', $col_models);
 $strPHP .= print_response('active_fields', $active_fields);
@@ -145,7 +154,7 @@ function make_canned_queries()
                         "' order by active desc, '");
     $strSQL .= <<<EOD
 drop procedure if exists {$query_name}|
-create procedure {$query_name} (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure {$query_name} (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "{$fkm->make_canned_list_all_query()}";
   set @lim = ' ';				 

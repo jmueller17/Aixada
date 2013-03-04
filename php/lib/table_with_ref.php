@@ -15,30 +15,33 @@ require_once(__ROOT__ . 'php'.DS.'inc'.DS.'name_mangling.php');
  * @subpackage General_Table_Management
  */
 class table_col {
-  private $_field, $_type, $_max_length;
-  public function __construct ($field, $type) 
-  {
-    $this->_field = $field; 
-    if (!strstr($type, '(')) {
-      $this->_type  = $type;
-      $_max_length = false;
-    } else {
-      $this->_type = strtok($type, '(');
-      $this->_max_length = strtok(',)'); // this correctly parses "float(10,2)" -> 10 and "varchar(255) -> 255"
+    private $_field, $_type, $_max_length;
+    public function __construct ($field, $type) 
+    {
+	$this->_field = $field; 
+	if (!strstr($type, '(')) {
+	    $this->_type  = $type;
+	    $_max_length = false;
+	} else {
+	    $this->_type = strtok($type, '(');
+	    $this->_max_length = strtok(',)'); // this correctly parses "float(10,2)" -> 10 and "varchar(255) -> 255"
+	}
     }
-  }
-  public function get_field()
-  {
-    return $this->_field;
-  }
-  public function get_type()
-  {
-    return $this->_type;
-  }
-  public function get_max_length()
-  {
-    return $this->_max_length;
-  }
+
+    public function get_field()
+    {
+	return $this->_field;
+    }
+
+    public function get_type()
+    {
+	return $this->_type;
+    }
+
+    public function get_max_length()
+    {
+	return $this->_max_length;
+    }
 }
 
 /**
@@ -159,14 +162,10 @@ class foreign_key_manager {
    */
   private function _get_col_descriptions ($desc)
   {
-//      global $firephp;
-//      $firephp->log($desc, 'desc');
     $da = preg_split("/,+\s+/", $desc);
     $da[0] = substr($da[0], strpos($da[0], '(') + 1); // remove CREATE TABLE
     foreach ($da as $fieldstr) {
-//        $firephp->log($fieldstr, 'fieldstr');
       $parts = explode('`', $fieldstr);
-//        $firephp->log($parts, 'parts');
       if (strpos($parts[0], 'PRIMARY') !== false)
 	break;
       $field = $parts[1];
@@ -174,7 +173,6 @@ class foreign_key_manager {
       $pp = strpos($type, ')');
       if ($pp !== false)
 	$type = substr($type, 0, $pp+1);
-//       $firephp->log(array($field,$type), 'field+type');
       $this->_table_cols[$field] = new table_col($field, $type);      
     }
   }

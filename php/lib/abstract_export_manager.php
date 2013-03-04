@@ -86,6 +86,14 @@ class abstract_export_manager {
 	 * @var string
 	 */
 	protected $export_table = "";
+
+
+	/**
+	 * 
+	 * Additional information about the exported data to be included in the XML file
+	 * @var string
+	 */
+	protected $xml_metadata = "";
 	
 	
 	
@@ -155,8 +163,10 @@ class abstract_export_manager {
     private function write_csv($download=true){
     	
     	$this->format = 'csv';
-    	$this->filename = $this->filename . '.csv';
-    	
+	if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'csv') {
+	    $this->filename = $this->filename . '.csv';
+    	}
+
     	//convert the xml result to csv
     	if ($this->xml_result == null || strlen($this->xml_result)==0){
     		throw new Exception("Export exception: Empty dataset. Nothing to be exported!");
@@ -194,7 +204,9 @@ class abstract_export_manager {
     private function write_xml($download=true){
     	
     	$this->format = 'xml';
-    	$this->filename = $this->filename . '.xml';
+	if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'xml') {
+	    $this->filename = $this->filename . '.xml';
+    	}
     	
 		//any results?
     	if ($this->xml_result == null || strlen($this->xml_result)==0){

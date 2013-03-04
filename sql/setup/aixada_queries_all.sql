@@ -2162,6 +2162,9 @@ begin
 	
 	select
 		po.product_id,
+		p.name as product_name,
+		p.provider_id,
+		pv.name as provider_name,
 		po.date_for_order,
 		po.closing_date,
 		datediff(po.closing_date, today) as time_left,
@@ -2183,13 +2186,18 @@ begin
 		 	p.id=oi.product_id
 		 	and oi.date_for_order = po.date_for_order) as has_ordered_items
 	from 
-		aixada_product_orderable_for_date po,
+		aixada_product_orderable_for_date po
+        left join
 		aixada_product p
+        on 
+	        p.id = po.product_id
+        left join 
+		aixada_provider pv
+        on 
+	        p.provider_id = pv.id
 	where 
-		p.id = po.product_id
-		and p.provider_id = the_provider_id
-		and po.date_for_order >= fromDate
-		and po.date_for_order <= toDate;
+		    p.provider_id = the_provider_id
+		and po.date_for_order between fromDate and toDate;
 end|
 
 
@@ -3520,6 +3528,21 @@ begin
   limit 1000;
 end|
 
+drop procedure if exists product_prices_in_year|
+create procedure product_prices_in_year(in the_product_id int, in the_year int)
+begin
+  declare first_day date default makedate(the_year, 1);
+  select
+     round(datediff(ts, first_day)/7.0, 1) as week, 
+     current_price as price
+  from 
+     aixada_price
+  where
+     product_id = the_product_id and
+     year(ts) = the_year;
+end|
+    
+
 delimiter ;
 delimiter |
 
@@ -4459,7 +4482,7 @@ delimiter ;
 delimiter |
 
 drop procedure if exists aixada_account_list_all_query|
-create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_account_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_account.id,
@@ -4482,7 +4505,7 @@ begin
 end|
 
 drop procedure if exists aixada_cart_list_all_query|
-create procedure aixada_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_cart.id,
@@ -4505,7 +4528,7 @@ begin
 end|
 
 drop procedure if exists aixada_currency_list_all_query|
-create procedure aixada_currency_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_currency_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_currency.id,
@@ -4521,8 +4544,27 @@ begin
   deallocate prepare st;
 end|
 
+drop procedure if exists aixada_estimated_prices_list_all_query|
+create procedure aixada_estimated_prices_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_estimated_prices.product_id,
+      aixada_estimated_prices.ts,
+      aixada_estimated_prices.min_estimated_price,
+      aixada_estimated_prices.max_estimated_price,
+      aixada_estimated_prices.true_price 
+    from aixada_estimated_prices ";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
 drop procedure if exists aixada_incident_list_all_query|
-create procedure aixada_incident_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_incident_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_incident.id,
@@ -4548,7 +4590,7 @@ begin
 end|
 
 drop procedure if exists aixada_incident_type_list_all_query|
-create procedure aixada_incident_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_incident_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_incident_type.id,
@@ -4565,7 +4607,7 @@ begin
 end|
 
 drop procedure if exists aixada_iva_type_list_all_query|
-create procedure aixada_iva_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_iva_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_iva_type.id,
@@ -4583,7 +4625,7 @@ begin
 end|
 
 drop procedure if exists aixada_member_list_all_query|
-create procedure aixada_member_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_member_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_member.id,
@@ -4618,7 +4660,7 @@ begin
 end|
 
 drop procedure if exists aixada_order_list_all_query|
-create procedure aixada_order_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_order_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_order.id,
@@ -4644,7 +4686,7 @@ begin
 end|
 
 drop procedure if exists aixada_order_item_list_all_query|
-create procedure aixada_order_item_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_order_item_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_order_item.id,
@@ -4671,7 +4713,7 @@ begin
 end|
 
 drop procedure if exists aixada_order_to_shop_list_all_query|
-create procedure aixada_order_to_shop_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_order_to_shop_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_order_to_shop.order_item_id,
@@ -4699,7 +4741,7 @@ begin
 end|
 
 drop procedure if exists aixada_orderable_type_list_all_query|
-create procedure aixada_orderable_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_orderable_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_orderable_type.id,
@@ -4715,7 +4757,7 @@ begin
 end|
 
 drop procedure if exists aixada_payment_method_list_all_query|
-create procedure aixada_payment_method_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_payment_method_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_payment_method.id,
@@ -4731,8 +4773,27 @@ begin
   deallocate prepare st;
 end|
 
+drop procedure if exists aixada_price_list_all_query|
+create procedure aixada_price_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_product.name as product,
+      aixada_price.ts,
+      aixada_price.current_price,
+      aixada_price.operator_id 
+    from aixada_price 
+    left join aixada_product as aixada_product on aixada_price.product_id=aixada_product.id";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
 drop procedure if exists aixada_product_list_all_query|
-create procedure aixada_product_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_product_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_product.id,
@@ -4777,7 +4838,7 @@ aixada_uf.name as responsible_uf_name,
 end|
 
 drop procedure if exists aixada_product_category_list_all_query|
-create procedure aixada_product_category_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_product_category_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_product_category.id,
@@ -4793,7 +4854,7 @@ begin
 end|
 
 drop procedure if exists aixada_product_orderable_for_date_list_all_query|
-create procedure aixada_product_orderable_for_date_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_product_orderable_for_date_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_product_orderable_for_date.id,
@@ -4811,7 +4872,7 @@ begin
 end|
 
 drop procedure if exists aixada_provider_list_all_query|
-create procedure aixada_provider_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_provider_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_provider.id,
@@ -4847,7 +4908,7 @@ aixada_uf.name as responsible_uf_name,
 end|
 
 drop procedure if exists aixada_rev_tax_type_list_all_query|
-create procedure aixada_rev_tax_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_rev_tax_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_rev_tax_type.id,
@@ -4865,7 +4926,7 @@ begin
 end|
 
 drop procedure if exists aixada_shop_item_list_all_query|
-create procedure aixada_shop_item_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_shop_item_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_shop_item.id,
@@ -4889,7 +4950,7 @@ begin
 end|
 
 drop procedure if exists aixada_shopping_dates_list_all_query|
-create procedure aixada_shopping_dates_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_shopping_dates_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_shopping_dates.shopping_date,
@@ -4905,7 +4966,7 @@ begin
 end|
 
 drop procedure if exists aixada_stock_movement_list_all_query|
-create procedure aixada_stock_movement_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_stock_movement_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_stock_movement.id,
@@ -4927,7 +4988,7 @@ begin
 end|
 
 drop procedure if exists aixada_uf_list_all_query|
-create procedure aixada_uf_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_uf_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_uf.id,
@@ -4946,7 +5007,7 @@ begin
 end|
 
 drop procedure if exists aixada_unit_measure_list_all_query|
-create procedure aixada_unit_measure_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_unit_measure_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_unit_measure.id,
@@ -4963,7 +5024,7 @@ begin
 end|
 
 drop procedure if exists aixada_user_list_all_query|
-create procedure aixada_user_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_user_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_user.id,
@@ -4993,7 +5054,7 @@ begin
 end|
 
 drop procedure if exists aixada_user_role_list_all_query|
-create procedure aixada_user_role_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter char(100))
+create procedure aixada_user_role_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_user_role.user_id,
