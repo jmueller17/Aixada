@@ -150,7 +150,7 @@ function data_to_plot(data, key_tag, val_tag, n_pts=52) {
    }
 
       $(function(){
-	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=1198&product_id_array[]=1078&year_array[]=2011&year_array[]=2012",
+	      d3.json("php/ctrl/Statistics.php?oper=product_prices_times_years&product_id_array[]=20&product_id_array[]=1078&year_array[]=2011&year_array[]=2012",
 	      function(data) {
 		  $('#pty_graphic .loadSpinner').hide();
 		  var m = data.length;

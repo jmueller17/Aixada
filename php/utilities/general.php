@@ -411,7 +411,14 @@ function get_field_options_live($table, $field1, $field2)
 {
     global $Text;
     $strXML = '<select>';
-    $rs = DBWrap::get_instance()->Execute('select :1, :2 from :3', $field1, $field2, $table);
+    $strSQL = 'select :1, :2 from :3';
+    if (in_array($table, array('aixada_unit_measure'))) {
+	$strSQL .= ' order by name';
+    } else if (in_array($table, array('aixada_orderable_type'))) {
+	$strSQL .= ' order by description';
+    }
+
+    $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $table);
     if ($table == 'aixada_uf') {
         $strXML .= "<option value=''></option>";
     }
@@ -420,7 +427,11 @@ function get_field_options_live($table, $field1, $field2)
         if ($table == 'aixada_uf')
             $ot = //$Text['uf_short'] . ' ' . 
                 $row[0] . ' ' . $ot;
-        $strXML .= "<option value='{$row[0]}'>{$ot}</option>";
+        $strXML .= "<option value='{$row[0]}'";
+	if ($row[0] == 1) {
+	    $strXML .= ' selected';
+	}
+	$strXML .= ">{$ot}</option>";
     }
     return $strXML . '</select>';
 }
