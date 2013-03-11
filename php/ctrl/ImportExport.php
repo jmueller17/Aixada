@@ -14,9 +14,11 @@ require_once(__ROOT__ . "php/lib/export_dates4products.php");
 require_once(__ROOT__ . "php/lib/export_members.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
- require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
- require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
+require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
+require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
+ 
 
+require_once(__ROOT__ . 'php/lib/gdrive.php'); //Zend Gdata throws stupid PHP Strict Warning 
 
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
@@ -50,7 +52,7 @@ try{
 	
  	switch (get_param('oper')) {
 
- 		
+ 		//upload files from clients computer
  		case 'uploadFile':
 			$options = array(	
 				'upload_dir' => __ROOT__ . 'local_config/upload/',
@@ -58,10 +60,21 @@ try{
 			);
 			$upload_handler = new UploadHandler($options);
 			exit; 
+			
+		//fetch file from online URL	
+ 		case 'fetchFile':
+ 			$saveFileTo = __ROOT__ . 'local_config/upload/tmpdownload.csv'; 			
+ 	 		gDrive::fetchFile(get_param('url'), 'csv', $saveFileTo);
+ 	 		echo $saveFileTo; 
+ 			exit; 
  		
+ 		//parse the file and retur HTML table
  		case 'parseFile':
- 			$path = __ROOT__ .'local_config/upload/' . get_param('file');
-
+ 			$path = get_param('fullpath','');
+ 			if ($path == ''){ 
+	 			$path = __ROOT__ .'local_config/upload/' . get_param('file');
+ 			}
+ 			$firephp->log($path, "the path from parseFile");
 			$dt = parseSpreadSheet($path);
 			
 			echo $dt->get_html_table();

@@ -10,18 +10,12 @@ $firephp = FirePHP::getInstance(true);
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
-
-
+require_once(__ROOT__ . 'php/lib/gdrive.php');
 
 /**
  * @see Zend_Loader
  */
 //$dirs = array(__ROOT__.'php/external/ZendGdata-1.12.2/library'); 
-
-
-
-//require_once(__ROOT__ . 'php/lib/gdrive.php');
-
 
 
 
@@ -245,8 +239,6 @@ class abstract_export_manager {
 	private function write_gdrive($email, $pwd){
     	global $firephp; 
     	
-    	//throws strict standards warnig related to gzend which then ends up in the csv?! 
-    	require_once(__ROOT__ . 'php/lib/gdrive.php');
         
     	$remove_local_copy = !$this->publish; 
     	

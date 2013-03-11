@@ -31,8 +31,9 @@
 	$(function(){
 
 		//loading animation
-		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
-
+		$('.loadSpinner').hide(); //attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+		$('.uploadMsgElements').hide();
+		
 		//which db table data is imported to
 		var gImportTo 	=	(typeof $.getUrlVar('import2Table') == "string")? $.getUrlVar('import2Table'):false;
 
@@ -53,16 +54,21 @@
 		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
-		        
-		        $('.setFileName').text(data.files[0].name).fadeIn(1000); 
-		        $("#btn_upload").fadeIn(1000);
+		       
+		        //$('.setFileName').text(data.files[0].name).fadeIn(1000); 
+		        //$("#btn_upload").fadeIn(1000);
 
-					data.context = $('#btn_upload').button().click(function(e){
- 			 			data.submit();
-						});
+		        $('#btn_fetch').button("disable");
+		        $('#msg_file_upload').fadeIn(600);
+		        $('.loadSpinner').show();
+		        
+				/*data.context = $('#btn_upload').button().click(function(e){
+ 			 		data.submit();
+				});*/
+				data.submit();
 	        },
 	        done: function (e, data) {
-
+				
 	        	var file = data.result.files[0]; 
 	        	
 
@@ -72,33 +78,8 @@
 							type: 'error'});
 
 				} else { //ok, 
-					var fdata = $('#frm_csv_settings').serialize();
-					
-					$.ajax({
-						url: 'php/ctrl/ImportExport.php?oper=parseFile&file='+file.name,
-					   	method: 'POST',
-					   	data : fdata, 
-					   	dataType:'html',
-					   	beforeSend: function(){
-					   		$('.loadSpinner').show();
-					   	
-						},
-					   	success: function(tbl){
-					   		constructPreviewTable(tbl);			   		
-					   	},
-					   	error : function(XMLHttpRequest, textStatus, errorThrown){
-						   $.showMsg({
-								msg: XMLHttpRequest.responseText,
-								type: 'error'});
-					   	},
-					   	complete : function(msg){
-					   		$('.loadSpinner').hide();
-					   		
-
-					   	}
-					}); //end ajax
-
-					
+					//var fdata = $('#frm_csv_settings').serialize();
+					praseFile(file.name, '');	
 				}
 	        },
 	        fail : function (e, data){
@@ -109,7 +90,11 @@
 	    }); //end failupload
 
 
-	  //load mentor uf select listing
+	    $('#importURL').focus(function(){
+		    $(this).val('');
+			$('#btn_fetch').button("enable");
+		})
+	 
 		$('#assignColumns').xml2html('init',{
 			url: 'php/ctrl/ImportExport.php',
 			params : 'oper=getAllowedFields&table=aixada_product',
@@ -118,8 +103,45 @@
 		});
 
 
-		$("#btn_upload").button()
-			.hide();
+		$("#btn_fetch")
+			.button({
+				disabled:true
+			})
+			.click(function(e){
+				
+				//download file to the upload directory and parse it. 
+				//https://docs.google.com/spreadsheet/ccc?key=0AnNH_85fehf9dHB0QVVxdk5uam9yeDdVX0tXSE5RV0E&usp=sharing
+				var fetchURL = "url="+encodeURIComponent($('#importURL').val());
+			
+				$.ajax({
+				   	url: 'php/ctrl/ImportExport.php?oper=fetchFile',
+				   	method: 'POST',
+					data: fetchURL, 
+				   	beforeSend: function(){
+				   		$('.loadSpinner').show();
+					    $('#msg_fetch_file').fadeIn(600);
+					    $('#btn_fetch').button("disable");
+				   	
+					},
+				   	success: function(fullPath){
+						parseFile('',fullPath); 
+
+				   	},
+				   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					   $.showMsg({
+							msg: XMLHttpRequest.responseText,
+							type: 'error'});
+				   	},
+				   	complete : function(msg){
+				   		$('.uploadMsgElements').hide();
+				   		$('.loadSpinner').hide();
+				   		
+	
+				   	}
+				}); //end ajax
+			
+
+		})
 
 		//save edited provider new provider
 		$('#btn_import')
@@ -135,7 +157,35 @@
 			});
 
 
+		
+		function parseFile(fileName, fullPath){
+			$.ajax({
+				url: 'php/ctrl/ImportExport.php?oper=parseFile&file='+fileName+'&fullpath='+fullPath,
+			   	method: 'POST',
+			   	//data : fdata, //parse options 
+			   	dataType:'html',
+			   	beforeSend: function(){
+			   		$('.loadSpinner').show();
+			   	
+				},
+			   	success: function(tbl){
+			   		$('.loadSpinner').hide();
+			   		$('.uploadMsgElements').hide();
+			   		constructPreviewTable(tbl);			   		
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+				   $.showMsg({
+						msg: XMLHttpRequest.responseText,
+						type: 'error'});
+			   	},
+			   	complete : function(msg){
+			   		$('.loadSpinner').hide();
+			   		
 
+			   	}
+			}); //end ajax
+
+		}
 		
 		function constructPreviewTable(tbl){
 			$('#preview').html(tbl);
@@ -209,7 +259,7 @@
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol50">
-		    	<h1 class="pgProviderOverview"> Import products</h1>
+		    	<h1 class="pgProviderOverview">Import data</h1>
     		</div>
     		<div id="titleRightCol50">
 
@@ -222,14 +272,29 @@
 					
 					
 		 -->
-		 <div class="ui-widget aix-layout-fixW450"> 
+		 <div class="ui-widget"> 
 			<h4>1. Choose a file</h4>
-			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
-				<form id="frmFileUpload">
-				<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
-				</form>
-				<br/>	<br/>
-				<button id="btn_upload">Preview</button> <span class="setFileName"></span>
+			<div class="ui-widget-content ui-corner-all aix-style-padding8x8 adaptHeight">
+				<div class="floatLeft aix-layout-fixW450">
+					<form id="frmFileUpload">
+					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
+					</form>
+					<br/>
+					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx</p>
+					<br/>	<br/>
+				</div>
+				<div class="floatLeft">
+					<p class="boldStuff">Public URL</p><br/>
+					<input type="text" name="importURL" id="importURL" value="http://" class="ui-widget ui-corner-all"/>
+					<br/><br/>
+					<button id="btn_fetch">Load file</button> <span class="setFileName"></span>
+				</div>
+				<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader_fff.gif"/></span>
+				<div style="clear:both">
+					<p id="msg_file_upload" class="uploadMsgElements">Uploading file and generating preview, please wait...!</p>
+					<p id="msg_fetch_file" class="uploadMsgElements">Reading file from server and parsing, please wait...!</p>
+					
+				</div>
 			</div>		
 		</div>
 		<br/><br/>

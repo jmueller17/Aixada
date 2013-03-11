@@ -5,14 +5,14 @@
  * mimeType add-on from http://blog.artistandesigns.com/2011/02/zendgdata-lacks-document-download.html
  */
 
-require_once (__ROOT__.'php/external/ZendGdata-1.12.2/library/Zend/Loader.php');
+@require_once (__ROOT__.'php/external/ZendGdata-1.12.2/library/Zend/Loader.php');
 set_include_path(__ROOT__."php/external/ZendGdata-1.12.2/library:.");
-Zend_Loader::loadClass('Zend_Gdata');
-Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
-Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');
-Zend_Loader::loadClass('Zend_Gdata_App_AuthException');
-Zend_Loader::loadClass('Zend_Http_Client');
-Zend_Loader::loadClass('Zend_Gdata_Docs');
+@Zend_Loader::loadClass('Zend_Gdata');
+@Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+@Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');
+@Zend_Loader::loadClass('Zend_Gdata_App_AuthException');
+@Zend_Loader::loadClass('Zend_Http_Client');
+@Zend_Loader::loadClass('Zend_Gdata_Docs');
 
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
@@ -54,7 +54,60 @@ class gDrive{
         $this->docs = new Zend_Gdata_Docs($this->client);
         
     }
+    
+    
+    /**
+     * 
+     * Utility function to download and store without authentication remote files. 
+     * @param string $sharedLink Full URI to file
+     * @param string $format Expected format of the file; important for Google Spreadsheets, specifies in which format file will be downloaded
+     * @param string $uploadDir path to location where files will be stored locally
+     * @throws Exception
+     */
+    public static function fetchFile($sharedLink, $format='csv', $saveFileTo){
+    	
+    	
+    	//downloading google spreadhsheet
+    	if (stripos($sharedLink, "google") > 0 ){
+    		//shared links have this format: 
+    	   	//https://docs.google.com/spreadsheet/ccc?key=0AnNH_85fehf9dHB0QVVxdk5uam9yeDdVX0tXSE5RV0E#gid=0
+    	   	//but for downloadin this has to be turned into
+    	   	//https://docs.google.com/feeds/download/spreadsheets/Export?key={id}&exportFormat=csv&format=csv
+    	   	$start = stripos($sharedLink, "key=");
+    		$docId = substr($sharedLink,$start, 48);
+    		$url = "https://docs.google.com/feeds/download/spreadsheets/Export?".$docId."&exportFormat=".$format."&format=".$format;
+    	
+    	//all other
+    	} else {
+    		$url = $sharedLink; 
+    	}
+    	
+    	global $firephp;
+    	$firephp->log($url, "download url");
 
+    	     
+		$outhandle = fopen($saveFileTo, 'w');
+		
+		if (!$outhandle)
+	        throw new Exception("Export exception. Could not open {$uploadTmpFile} to store fetched file. Make sure that local_config/upload is a writable directory");
+	  
+	 
+		$ch = curl_init($url);
+	    curl_setopt($ch, CURLOPT_FILE, $outhandle);
+	    
+	    curl_exec($ch);
+	    
+	    //can't get file name from the download URL of google directly
+	    //$responseURL = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);  
+    	//$firephp->log($responseContent, "curl url");
+	    	
+	    curl_close($ch);
+	    fclose($outhandle);
+	    
+	    return $saveFileTo; 
+    }
+    
+    
     
     function nameExists($filename){
         	
@@ -418,5 +471,18 @@ class gDrive{
         
         // http://code.google.com/apis/documents/docs/3.0/developers_guide_protocol.html#DownloadingDocs
     }
+
+    
+    
+   /*public static function generateFileName($length=8) {
+		$chars = "abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$i = 0;
+		$name = "";
+		while ($i <= $length) {
+			$name .= $chars{mt_rand(0,strlen($chars))};
+			$i++;
+		}
+		return $name;
+	}*/
 
 }

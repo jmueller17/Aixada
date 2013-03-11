@@ -26,9 +26,10 @@
  		
  	
 	<script type="text/javascript">
-	
+
 	$(function(){
 
+		
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 		
@@ -1304,7 +1305,7 @@
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
-						<!-- button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button-->
+						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_product_export"><?php echo $Text['btn_export']; ?></button>
 						<button class="floatRight pgProviderOverview" id="btn_provider_export"><?php echo $Text['btn_export']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
