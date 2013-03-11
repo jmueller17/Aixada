@@ -157,8 +157,8 @@ class abstract_export_manager {
     private function write_csv($download=true){
     	
     	$this->format = 'csv';
-	if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'csv') {
-	    $this->filename = $this->filename . '.csv';
+		if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'csv') {
+	   	 	$this->filename = $this->filename . '.csv';
     	}
 
     	//convert the xml result to csv

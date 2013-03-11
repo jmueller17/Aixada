@@ -79,7 +79,7 @@
 
 				} else { //ok, 
 					//var fdata = $('#frm_csv_settings').serialize();
-					praseFile(file.name, '');	
+					parseFile(file.name, '');	
 				}
 	        },
 	        fail : function (e, data){
@@ -109,8 +109,6 @@
 			})
 			.click(function(e){
 				
-				//download file to the upload directory and parse it. 
-				//https://docs.google.com/spreadsheet/ccc?key=0AnNH_85fehf9dHB0QVVxdk5uam9yeDdVX0tXSE5RV0E&usp=sharing
 				var fetchURL = "url="+encodeURIComponent($('#importURL').val());
 			
 				$.ajax({
@@ -280,7 +278,7 @@
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
 					</form>
 					<br/>
-					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx</p>
+					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
 				</div>
 				<div class="floatLeft">
@@ -365,7 +363,7 @@
 </div>
 <!-- end of wrap -->
 <select id="assignColumns" name="table_col[]" class="hidden">
-	<option value="-1">Please select...</option>
+	<option value="-1">Match column...</option>
 	<option value="{db_field}">{db_field}</option>
 </select>
 

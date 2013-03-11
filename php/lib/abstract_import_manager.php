@@ -1,5 +1,7 @@
 <?php
 
+require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
+require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start(); // Starts FirePHP output buffering
@@ -287,6 +289,55 @@ class abstract_import_manager {
 		
 		return $duplicates; 
     }
+    
+    
+    
+    /**
+     * 
+     * utility wrapper for parsing different uploaded files and returning a 2d array (data_table) with the values
+     * @param string $path2File the full path to the file 
+     */
+    public static function parse_file($path2File){
+    	$rowc = 0;
+  		$_data_table = null; 		
+
+  		$extension = substr($path2File, -4);
+
+  	 	if ($extension == '.xml') {
+
+  	 		$xml = simplexml_load_file($path2File);
+
+			foreach ($xml->children() as $row) {
+				$values = array();
+				$fieldnames = array();
+				
+				foreach($row->children() as $elem){
+					$values[] = $elem;
+					$fieldnames[] = $elem->getName(); 
+				}
+				
+				$_data_table[$rowc++] = $values; 
+			}
+			
+			array_unshift($_data_table, $fieldnames);
+			
+			
+  		} else if (in_array($Extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
+	 		$Reader = new SpreadsheetReader($path2File);
+			foreach ($Reader as $Row){    
+			  	$_data_table[$row++] = $Row; 
+	
+			}			
+		
+  		}
+		
+									
+		return new data_table($_data_table, false);
+    
+    }
+    
+    
+    
     
 
 }
