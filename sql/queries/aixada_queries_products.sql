@@ -798,6 +798,7 @@ end|
 drop function if exists calc_delta_price|
 create function calc_delta_price(the_diff_amount decimal(10,4), the_unit_price decimal(10,2), the_iva_percent decimal(10,2))
 returns decimal(10,2)
+DETERMINISTIC
 begin
 	
 	declare result decimal(10,2) default 0.00;
