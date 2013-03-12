@@ -53,34 +53,44 @@ try{
  			if ($path == ''){ 
 	 			$path = __ROOT__ .'local_config/upload/' . get_param('file');
  			}
- 			$firephp->log($path, "the path from parseFile");
-			$dt = abstract_import_manager::parse_file($path);
-		
+ 			
+ 			$dt = abstract_import_manager::parse_file($path, get_param('import2Table',''));
 			echo $dt->get_html_table();
-	
-			
 			$_SESSION['import_file'] = $path; 
-			
  			exit;
 
- 		case 'getAllowedFields':
-    		printXML(get_import_rights(get_param('table'))); 
-    		exit; 
+ 	
     		
     		
  		case 'import':
- 			$dt = abstract_import_manager::parse_file($_SESSION['import_file']);
-			//$map = array('custom_product_ref'=>0, 'unit_price'=>1, 'name'=>2);
-			$map = array();
+ 			
+ 			
+ 			//$map = array('custom_product_ref'=>0, 'unit_price'=>1, 'name'=>2);
+		 	$map = array();
 			foreach($_REQUEST['table_col'] as $key => $value){
-				$map[$value] = $key;  
+				$map[$value] = $key;
 			}
-			$firephp->log($map, "the map");
-			$pi = new import_products($dt, $map, get_param('provider_id'));
-			$pi->import(get_param('new_items', false));
-		
+ 			
+ 			 
+ 			switch(get_param('import2Table')){
+ 				case 'aixada_product':
+ 					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_product');
+ 					$pi = new import_products($dt, $map, get_param('provider_id'));
+					$pi->import(get_param('append_new', false));
+ 					exit; 
+ 				
+ 				case 'aixada_product_orderable_for_date':
+ 					exit;  
+ 				
+ 			}
+			
+
 			echo 1; 
  			exit; 
+ 	
+ 		case 'getAllowedFields':
+    		printXML(get_import_rights(get_param('table'))); 
+    		exit; 
  			
  		//exports provider info only. Should have option for including provider products?!!	
 		case 'exportProviderInfo':

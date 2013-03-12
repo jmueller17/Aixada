@@ -141,8 +141,8 @@
 
 		})
 
-		//save edited provider new provider
-		$('#btn_import')
+		//import data
+		$('.btn_import')
 			.button({
 			icons: {
 	        		primary: "ui-icon-transferthick-e-w"
@@ -154,11 +154,19 @@
 				return false; 
 			});
 
+		//show preview table
+		$('.btn_preview')
+			.button()
+			.click(function(e){	
+				$('.previewOwnElements').hide();
+				$('.previewTableElements').show();
+			});
+
 
 		
 		function parseFile(fileName, fullPath){
 			$.ajax({
-				url: 'php/ctrl/ImportExport.php?oper=parseFile&file='+fileName+'&fullpath='+fullPath,
+				url: 'php/ctrl/ImportExport.php?oper=parseFile&import2Table='+gImportTo+'&file='+fileName+'&fullpath='+fullPath,
 			   	method: 'POST',
 			   	//data : fdata, //parse options 
 			   	dataType:'html',
@@ -195,11 +203,20 @@
 			thead += '</tr></thead>';
 
 			$('#preview table').append(thead);
-
-
 			$('#assignColumns').clone().appendTo('.mapSelect').show();
 
-			$('.opDataPreview').fadeIn(1000);
+			
+			if($('#preview table').attr('isown')){
+				$('.previewOwnElements').show();
+				$('.previewTableElements').hide();
+			} else {
+				$('.previewOwnElements').hide();
+				$('.previewTableElements').show();
+			}			
+
+			$('.previewElements').fadeIn(1000);
+
+			
 
 		}
 		
@@ -214,7 +231,7 @@
 			var sdata = $('#frmColMap').serialize() +$('#frm_csv_settings').serialize();
 		
 			$.ajax({
-			   	url: 'php/ctrl/ImportExport.php?oper=import',
+			   	url: 'php/ctrl/ImportExport.php?oper=import&import2Table='+gImportTo,
 			   	method: 'POST',
 				data: sdata, 
 			   	beforeSend: function(){
@@ -297,9 +314,19 @@
 		</div>
 		<br/><br/>
 		
-		<div class="ui-widget opDataPreview hidden"> 
+		<div class="ui-widget previewElements hidden"> 
 			<h4>2. Preview data and match columns</h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
+				
+				<div class="ui-style-info previewOwnElements" >
+					<p class="ui-style-warning">Good news: most data (columns) could be recognized and match local database fields. You could try to automatically import
+					the data or preview the content first and manually match the table columns. </p>
+					<br/>
+					<button class="btn_import">Import directly</button>
+					<button class="btn_preview">Preview first</button>
+				</div>
+				
+				<div class="previewTableElements">
 				<form id="frmColMap">
 					<input type="hidden" name="provider_id" value=""/>
 					<div id="preview" style="max-height:300px; overflow:auto;">
@@ -307,7 +334,10 @@
 					</div>
 				</form>
 				<br/>
-				<button id="btn_import">Import</button>
+				<button class="btn_import">Import</button>
+				</div>
+
+
 			</div>		
 		</div>
 		

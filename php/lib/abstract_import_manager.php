@@ -14,6 +14,8 @@ $firephp = FirePHP::getInstance(true);
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
+require_once(__ROOT__ . 'php/lib/data_table.php');
+
 
 
 /**
@@ -77,6 +79,14 @@ class abstract_import_manager {
 	 * @var int
 	 */
 	protected $_match_col_index = null; 
+	
+	
+	/**
+	 * 
+	 * array that stores the foreign keys for given import data table columns. 
+	 * @var 2d array
+	 */
+	protected $_foreign_keys = array();
 
 	
 	/**
@@ -124,7 +134,8 @@ class abstract_import_manager {
     	}
     	
     	$this->_col_map = $map;
-
+		
+    	
         	
 		if (count($this->_import_fields) == 0){
 			throw new Exception("Import error: can't find any allowed fields for importing into table '{$destination_table}'. Check your config.php!  ");	
@@ -138,10 +149,11 @@ class abstract_import_manager {
 		//retrieves all rows of the data_table column against which the db entries are matched 
 		$this->_match_col = $this->_import_data_table->get_col_as_array($this->_match_col_index);
 		
+		
 		//should be unique values
 		$dup = $this->_check_duplicates($this->_match_col);
 		if (count($dup) > 0){
-			throw new Exception ("Import error: unique reference required but duplicate key found in table column '{$this->_db_match_field}': " . implode(",",$dup));
+			throw new Exception ("Import error: unique reference required but empty/duplicate key found in table column '{$this->_db_match_field}': " . implode(",",$dup));
 			exit; 
 		}    	       	   
     	   
@@ -297,9 +309,10 @@ class abstract_import_manager {
      * utility wrapper for parsing different uploaded files and returning a 2d array (data_table) with the values
      * @param string $path2File the full path to the file 
      */
-    public static function parse_file($path2File){
+    public static function parse_file($path2File, $db_table=''){
     	$rowc = 0;
-  		$_data_table = null; 		
+  		$_data_table = null; 
+  		$_header = false; 		
 
   		$extension = substr($path2File, -4);
 
@@ -310,203 +323,35 @@ class abstract_import_manager {
 			foreach ($xml->children() as $row) {
 				$values = array();
 				$fieldnames = array();
-				
 				foreach($row->children() as $elem){
-					$values[] = $elem;
+					$values[] = (string)$elem;
 					$fieldnames[] = $elem->getName(); 
 				}
-				
 				$_data_table[$rowc++] = $values; 
 			}
-			
 			array_unshift($_data_table, $fieldnames);
+			$_header=true; 
+			global $firephp; 
+			$firephp->log($_data_table, "xml table");
 			
-			
-  		} else if (in_array($Extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
+  		} else if (in_array($extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
 	 		$Reader = new SpreadsheetReader($path2File);
 			foreach ($Reader as $Row){    
-			  	$_data_table[$row++] = $Row; 
+			  	$_data_table[$rowc++] = $Row; 
 	
 			}			
 		
   		}
-		
-									
-		return new data_table($_data_table, false);
-    
+							
+		return new data_table($_data_table, $_header, $db_table);
     }
     
     
-    
-    
 
-}
+} //end class abstract_import_manager
 
 
-/**
- * 
- * Represents the data to be imported in a 2d array (table). Defines some common util functions
- * in order to retrieve all values of a certain column, but also specific functions that need
- * to be overwritten with respect to the values of the database. 
- * @author joerg
- *
- */
-class data_table {
-	
-	protected $_data_table = null; 
-	
-	
-	protected $_header = false; 
-	
-	
-	private $_nr_rows = 0; 
-	
-	
-	private $_nr_cols = 0; 
-	
 
-	/**
-	 * 
-	 * Table class to hold the import data in form of a two dimensional array. Defines some utility functions
-	 * to operate on the data table. 
-	 * @param array $data_table 2D representation of the data to be imported
-	 * @param boolean $header indicates if the first row is interpreted as header containing column names
-	 */	
-	public function __construct($data_table, $header=false){
-		
-		if (count($data_table) == 0){
-    		throw new Exception ("Import error: the data table is empty. Nothing to import!!");
-    		exit; 
-    	}
-    	
-		$this->_data_table = $data_table; 
-		
-		$this->_header = $header; 
-		
-		$this->_nr_rows = count($data_table);
-		
-		//returns always max nr. of cols??
-		$this->_nr_cols = count($data_table[0]);
-	}
-	
-	
-	/**
-	 * 
-	 * Returns the row index of the data table by search for the given $needle in the specified column
-	 * @param unknown_type $col_index
-	 * @param unknown_type $needle
-	 */
-	public function search_row_index($col_index, $needle){
-		$row_index = false; 
-		//find the row in the data_table that corresponds to the current custom_ref field
-		for($i=0; $i<$this->_nr_rows; $i++){
-			
-			if ($this->_data_table[$i][$col_index] == $needle){
-				$row_index = $i; 
-				break;
-			}; 
-		}
-		return $row_index; 
-	}
-	
-	
-	public function search_row($col_index, $needle){
-		$row_index = $this->search_row_index($col_index, $needle);
-		
-		if ($row_index !== false){
-			return $this->_data_table[$row_index];	
-		} else {
-			return array(); 
-		}
-	}
-	
-	
-	
-	public function get_row($rindex){
-		return $this->_data_table[$rindex];
-	}
-	
-	
-	
-	/**
-	 * 
-	 * Returns the row values of the specified column of the table. 
-	 * @param int or string $col_ref returns all values of the specified column. Either is the index (starting at 0) 
-	 * or the name of the column. If a name is given as $col_ref then the data_table needs a header which contains column 
-	 * names
-	 */
-	public function get_col_as_array($col_ref){
-		$col_data = array(); 
-		
-		if (is_string($col_ref)){
-			
-			
-			if (!$this->_header){
-				throw new Exception("Import error: missing data table header; can't access columns by name!");	
-				exit; 			
-			}
-						
-			$index = array_search($col_ref, $this->_data_table[0]);
-			
-			//column name exists in data table
-			if ($index === false){
-				throw new Exception("Import error: specified column name '{$col_ref}' does not exist in data table");
-				exit; 
-			} else {
-				$col_ref = $index;
-			}
-		
-		}
-		
-		if (is_numeric($col_ref)){
-			$c = 0; 
-			$start = ($this->_header) ? 1:0; 
-			for ($i = $start; $i < $this->_nr_rows; $i++){
-				$col_data[$c++] = $this->_data_table[$i][$col_ref];
-			}
-		}
-		
-		return $col_data; 
-	}
-	
-	/**
-	 * 
-	 * Returns the row-wise data of the specified column as a string joined by the separator
-	 * @param mixed $col_ref the name of the column of the original data table
-	 * @param unknown_type $separator
-	 * @throws Exception
-	 */
-	public function get_col_as_string($col_ref, $separator=","){
-		$col_data = $this->get_col_as_array($col_ref);
-		return implode($separator, $col_data);
-	}
-	
-
-	/**
-	 * 
-	 * Returns the contents of the data_table as HTML table. 
-	 * @param string $css an existing CSS rule to be applied to the table
-	 */
- 	public function get_html_table($css=''){
-	  	//global $firephp; 
-	    //$firephp->log($this->_data, "data");
-	    
-	  	$table = '<table class="'.$css.'">';
-	  	for ($r=0; $r<$this->_nr_rows; $r++){
-	  		$table .= '<tr>';
-	  		for ($c=0; $c<$this->_nr_cols; $c++){
-	  			$table .= '<td>'.$this->_data_table[$r][$c] .'</td>';
-	  			
-	  		}
-	  		$table .= '</tr>';
-	  	}
-	  	$table .= '</table>';
-	
-	  	return $table; 
- 	}
- 	
-		
-}
 
 
 

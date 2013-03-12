@@ -402,21 +402,58 @@ class configuration_vars {
              );
   
              
-  //import control
-	public $allow_import_for = 
+    /**
+     *  IMPORT CONTROLS
+     *
+     *
+     * if set to true and the import columns/fields match db fields, user will be presented
+     * with an option to try to import all allowed columns without explicit column matching. 
+     * This makes sense for transfers between aixada platforms where we can assume that columns match
+     */  
+    public $allow_global_import = true;  
+     
+
+	/**
+	 *	Enable / disable individual import fields. If $allow_global_import is set to false
+	 *  users can select from the allowed fields to match the import data. If set to true, 
+	 *  the script will try to import/match automatically all allowed fields. 
+	 */     
+		public $allow_import_for = 
 			array(
 					'aixada_product' => 
-						array(	'unit_price' => 'allow', 
+						array(	 
 								'name' => 'allow',
-								'description' => 'nope',
-								'barcode' => 'nope',
+								'provider_id' => 'nope',
+								'description' => 'allow',
+								'barcode' => 'allow',
 								'custom_product_ref' => 'allow',
+								'active' => 'allow',
+								'responsible_uf_id' => 'nope',
+								'orderable_type_id' => 'nope',
+								'order_min_quantity' => 'allow',
+								'category_id' => 'nope',
 								'rev_tax_type_id' => 'nope',
-								'iva_percent_id' => 'nope'));
-             
-             
-             
-             
+								'iva_percent_type_id' => 'nope',
+								'unit_price' => 'allow',
+								'unit_measure_order_id' => 'nope',
+								'unit_measure_shop_id' => 'nope',
+								'stock_min' => 'allow',
+								'stock_actual' => 'nope',
+								'description_url' => 'allow',
+								'picture' => 'allow',
+								'ts' => 'nope'), 
+					'aixada_provider' => 
+						array( 	'name' => 'allow',
+								'contact' => 'allow',
+								'address' => 'allow' ),
+						
+					'aixada_product_orderable_for_date' => 
+						array(	'product_id' => 'allow',
+								'date_for_order' => 'allow',
+								'closing_date' => 'allow')
+								);
+ 
+ 
              
 
   // from here on follow internals of the configuration_vars class.
