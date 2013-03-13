@@ -80,13 +80,7 @@ class abstract_import_manager {
 	 */
 	protected $_match_col_index = null; 
 	
-	
-	/**
-	 * 
-	 * array that stores the foreign keys for given import data table columns. 
-	 * @var 2d array
-	 */
-	protected $_foreign_keys = array();
+
 
 	
 	/**
@@ -149,13 +143,7 @@ class abstract_import_manager {
 		//retrieves all rows of the data_table column against which the db entries are matched 
 		$this->_match_col = $this->_import_data_table->get_col_as_array($this->_match_col_index);
 		
-		
-		//should be unique values
-		$dup = $this->_check_duplicates($this->_match_col);
-		if (count($dup) > 0){
-			throw new Exception ("Import error: unique reference required but empty/duplicate key found in table column '{$this->_db_match_field}': " . implode(",",$dup));
-			exit; 
-		}    	       	   
+    	       	   
     	   
     } 
         
@@ -175,17 +163,26 @@ class abstract_import_manager {
 
     	//data table rows that do not match existing rows in the database  
     	$insert_ids = array_diff($this->_match_col, $update_ids);
-    	
+    		
     	
     	if (count($update_ids) > 0){
+	    	//should be unique values
+			/*$dup = $this->_check_duplicates($this->_match_col);
+			if (count($dup) > 0){
+				throw new Exception ("Import error: unique reference required but empty/duplicate key found in table column '{$this->_db_match_field}': " . implode(",",$dup));
+				exit; 
+			}*/
+	    		
     		$this->update_rows($update_ids);
     	}
     	
     	if ($append_new && count($insert_ids)){
-    		$this->insert_rows($insert_ids);
-    		
+    		$this->insert_rows($insert_ids);	
     	}
 
+    	
+    	
+    
         
     }
     

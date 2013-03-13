@@ -154,6 +154,21 @@
 
 
 		//PROVIDER BUTTONS
+		
+		
+		//import providers
+		$('#btn_import_provider')
+			.button({
+				icons: {
+					primary: "ui-icon-transferthick-e-w"
+	        	}
+			})
+			.click(function(e){
+				var myWin = window.open("manage_import.php?import2Table=aixada_provider", "aname", "height=600, width=900, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				myWin.focus();
+				
+			});
+		
 		//new provider
 		$('#btn_new_provider')
 			.button({
@@ -505,7 +520,7 @@
 
 
 		//import produts
-		$('#btn_import')
+		$('#btn_import_products')
 			.button({
 				icons: {
 					primary: "ui-icon-transferthick-e-w"
@@ -1305,7 +1320,8 @@
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
-						<button class="floatRight pgProductOverview" id="btn_import"><?php echo "Import"; ?></button>
+						<button class="floatRight pgProductOverview" id="btn_import_products"><?php echo "Import"; ?></button>
+						<button class="floatRight pgProviderOverview" id="btn_import_provider"><?php echo "Import"; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_product_export"><?php echo $Text['btn_export']; ?></button>
 						<button class="floatRight pgProviderOverview" id="btn_provider_export"><?php echo $Text['btn_export']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->

@@ -97,7 +97,7 @@
 	 
 		$('#assignColumns').xml2html('init',{
 			url: 'php/ctrl/ImportExport.php',
-			params : 'oper=getAllowedFields&table=aixada_product',
+			params : 'oper=getAllowedFields&table='+gImportTo,
 			loadOnInit:true,
 			offSet : 1
 		});

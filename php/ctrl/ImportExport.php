@@ -8,6 +8,8 @@ require_once(__ROOT__ . "php/external/jquery-fileupload/UploadHandler.php");
 require_once(__ROOT__ . "local_config/config.php");
 
 require_once(__ROOT__ . "php/lib/import_products.php");
+require_once(__ROOT__ . "php/lib/import_providers.php");
+
 require_once(__ROOT__ . "php/lib/export_providers.php");
 require_once(__ROOT__ . "php/lib/export_products.php");
 require_once(__ROOT__ . "php/lib/export_dates4products.php");
@@ -81,6 +83,12 @@ try{
  				
  				case 'aixada_product_orderable_for_date':
  					exit;  
+ 					
+ 				case 'aixada_provider':
+ 					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_provider');
+ 					$pi = new import_providers($dt, $map);
+ 					$pi->import(get_param('append_new', false));
+ 					exit; 
  				
  			}
 			
