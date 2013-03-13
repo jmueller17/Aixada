@@ -308,13 +308,15 @@ class DBWrap {
       
       $success = $this->do_Execute($strSQL);
     
-      if ($table_name == 'aixada_provider') {
+      //the check happens on the client side now
+      //for import data, updates should be possible without updating the responsible_uf_id
+      /*if ($table_name == 'aixada_provider') {
 	  $strSQL = "update aixada_product set responsible_uf_id='"
 	      . $this->mysqli->real_escape_string($arrData['responsible_uf_id'])
 	      . "' where provider_id="
 	      . $this->mysqli->real_escape_string($arrData['id']);
 	  $success = $this->do_Execute($strSQL);
-      }
+      }*/
       return $success;
 
   }

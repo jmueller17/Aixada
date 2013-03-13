@@ -13,9 +13,6 @@ class canned_table_manager {
  case 'aixada_currency':
      return "['id','Nom','TRANSLATION(one_euro)']";
 
- case 'aixada_estimated_prices':
-     return "['TRANSLATION(product_id)','TRANSLATION(ts)','TRANSLATION(min_estimated_price)','TRANSLATION(max_estimated_price)','TRANSLATION(true_price)']";
-
  case 'aixada_incident':
      return "['id','Assumpte','Tipus','TRANSLATION(operator_id)','Detalls','Prioritat','UFs afectades','TRANSLATION(commission_concerned)','Per al prove\u00efdor','TRANSLATION(ts)','Estat']";
 
@@ -96,9 +93,6 @@ class canned_table_manager {
  case 'aixada_currency':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'name',index:'name',label:'Nom',width:'50',xmlmap:'name',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'one_euro',index:'one_euro',label:'TRANSLATION(one_euro)',width:'150',xmlmap:'one_euro',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
- case 'aixada_estimated_prices':
-     return "[{name:'product_id',index:'product_id',label:'TRANSLATION(product_id)',width:'150',xmlmap:'product_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'min_estimated_price',index:'min_estimated_price',label:'TRANSLATION(min_estimated_price)',width:'150',xmlmap:'min_estimated_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'max_estimated_price',index:'max_estimated_price',label:'TRANSLATION(max_estimated_price)',width:'150',xmlmap:'max_estimated_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'true_price',index:'true_price',label:'TRANSLATION(true_price)',width:'150',xmlmap:'true_price',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
-
  case 'aixada_incident':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'subject',index:'subject',label:'Assumpte',width:'255',xmlmap:'subject',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'incident_type_id',index:'incident_type',label:'TRANSLATION(incident_type_id)',width:'300',xmlmap:'incident_type',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_incident_type&field1=id&field2=description'}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'details',index:'details',label:'Detalls',width:'300',xmlmap:'details',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'priority',index:'priority',label:'Prioritat',width:'150',xmlmap:'priority',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ufs_concerned',index:'ufs_concerned',label:'UFs afectades',width:'100',xmlmap:'ufs_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'commission_concerned',index:'commission_concerned',label:'TRANSLATION(commission_concerned)',width:'100',xmlmap:'commission_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'provider_concerned',index:'provider_concerned',label:'Per al prove\u00efdor',width:'100',xmlmap:'provider_concerned',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'status',index:'status',label:'Estat',width:'150',xmlmap:'status',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
@@ -177,9 +171,6 @@ class canned_table_manager {
      return "[uf_id]";
 
  case 'aixada_currency':
-     return "[]";
-
- case 'aixada_estimated_prices':
      return "[]";
 
  case 'aixada_incident':

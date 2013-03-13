@@ -27,6 +27,10 @@
  	
 	<script type="text/javascript">
 
+	function reloadWhat(){
+		window.location.href = "manage_providers.php"; 
+	}
+
 	$(function(){
 
 		
@@ -164,7 +168,7 @@
 	        	}
 			})
 			.click(function(e){
-				var myWin = window.open("manage_import.php?import2Table=aixada_provider", "aname", "height=600, width=900, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				var myWin = window.open("manage_import.php?import2Table=aixada_provider", "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
 				myWin.focus();
 				
 			});
@@ -527,7 +531,7 @@
 	        	}
 			})
 			.click(function(e){
-				var myWin = window.open("manage_import.php?import2Table=aixada_product&providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=900, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				var myWin = window.open("manage_import.php?import2Table=aixada_product&providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
 				myWin.focus();
 				
 			});

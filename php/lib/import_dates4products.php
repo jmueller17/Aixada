@@ -5,7 +5,7 @@ require_once(__ROOT__ . 'php/lib/abstract_import_manager.php');
 
 
 
-class import_products extends abstract_import_manager {
+class import_dates4products extends abstract_import_manager {
 
 	
 	/**
@@ -18,7 +18,7 @@ class import_products extends abstract_import_manager {
 	 * 
 	 * matches the db of the product table to the export file format
 	 * @var array
-	
+	 */
 	private $auto_map = array('name' => 'name',
 								'description' => 'description',
 								'barcode' => '',
@@ -37,12 +37,12 @@ class import_products extends abstract_import_manager {
 								'stock_actual' => 'stock_actual',
 								'description_url' => 'description_url',
 								'picture' => 'picture',
-								'ts' => 'ts'); */
+								'ts' => 'ts');
 	
 	
 	/**
 	 * 
-	 * Constructor of import manager specific for products. 
+	 * Constructor of import manager specific for products_orderable_for_date. 
 	 * @param int $provider_id requires the id of an existing provider to which products pertain
 	 * @throws Exception
 	 */
@@ -59,32 +59,20 @@ class import_products extends abstract_import_manager {
 		//the provider
 		$this->provider_id = $provider_id;
 		
-		//every product needs the provider id
-		$this->_db_insert_row_prefix = array("provider_id"=>$this->provider_id);
-		
 		//set field used for matching external and internal entries. 
-		$this->_db_match_field = 'custom_product_ref';
+		$this->_db_match_field = 'product_id';
 		
 		
 		//no columns are matched manually; try automatic
-		if (($map== null || count($map) == 1) && $data_table->is_match()){
+		/*if (($map== null || count($map) == 1) && $data_table->is_match()){
 			$map = array();
 			//construct map automatically 
-			/*foreach($this->auto_map as $dbfield => $colname){
+			foreach($this->auto_map as $dbfield => $colname){
 				$map[$dbfield] = $data_table->get_col_index($colname); //assign the index 
-			}*/
-			
-			$db = DBWrap::get_instance();
-			$rs = $db->Execute('select * from aixada_product limit 1');
-			$row = $rs->fetch_assoc();
-			
-			foreach($row as $key => $value){
-				$map[$key] = $data_table->get_col_index($key); //assign the index 
 			}
-			
-		}
+		}*/
 		
-		parent::__construct('aixada_product', $data_table, $map);
+		parent::__construct('aixada_product_orderable_for_date', $data_table, $map);
 	}
 	
 	
@@ -100,9 +88,7 @@ class import_products extends abstract_import_manager {
 		
 		$sql = "select id, custom_product_ref from aixada_product where provider_id=$this->provider_id and custom_product_ref in (";
 		foreach($checkIds as $id){
-			if ($id != ''){
-				$sql .= "'".$id . "',";
-			}
+			$sql .= $id . ",";
 		}		
 		$sql = rtrim($sql, ",") .")";
     	$rs =  $db->Execute($sql);
@@ -120,7 +106,7 @@ class import_products extends abstract_import_manager {
 	
 
     
-	/*protected function insert_rows($insert_ids){
+	protected function insert_rows($insert_ids){
     	$db = DBWrap::get_instance();
 		
 		global $firephp; 
@@ -153,7 +139,7 @@ class import_products extends abstract_import_manager {
     		
     		
     	}  
-    }*/
+    }
 	
 }
 

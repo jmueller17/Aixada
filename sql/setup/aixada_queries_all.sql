@@ -4546,25 +4546,6 @@ begin
   deallocate prepare st;
 end|
 
-drop procedure if exists aixada_estimated_prices_list_all_query|
-create procedure aixada_estimated_prices_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
-begin
-  set @q = "select
-      aixada_estimated_prices.product_id,
-      aixada_estimated_prices.ts,
-      aixada_estimated_prices.min_estimated_price,
-      aixada_estimated_prices.max_estimated_price,
-      aixada_estimated_prices.true_price 
-    from aixada_estimated_prices ";
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
 drop procedure if exists aixada_incident_list_all_query|
 create procedure aixada_incident_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin

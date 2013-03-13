@@ -132,6 +132,8 @@ class data_table {
 			$ratio1 = $exact_matches / count($this->_data_table[0]); 
 			$ratio2 = $moreorless /  count($this->_data_table[0]);
 			
+			global $firephp; 
+			$firephp->log($ratio1."-".$ratio2, "nr of matches with dbfields");
 		
     		//do this heuristically... most fields match means this is our table
 			if ($ratio1 > .5 && $ratio2 > .8){

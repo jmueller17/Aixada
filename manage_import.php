@@ -33,6 +33,7 @@
 		//loading animation
 		$('.loadSpinner').hide(); //attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 		$('.uploadMsgElements').hide();
+		$('.showFileInfo').hide();
 		
 		//which db table data is imported to
 		var gImportTo 	=	(typeof $.getUrlVar('import2Table') == "string")? $.getUrlVar('import2Table'):false;
@@ -55,8 +56,9 @@
 	        dataType: 'json',
 	        add: function (e, data) {
 		       
-		        //$('.setFileName').text(data.files[0].name).fadeIn(1000); 
-		        //$("#btn_upload").fadeIn(1000);
+		        $('.setFileName').text(data.files[0].name); 
+		        $('.showFileInfo').fadeIn(1000);
+
 
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
@@ -228,7 +230,7 @@
 	
 			
 			//serialize 
-			var sdata = $('#frmColMap').serialize() +$('#frm_csv_settings').serialize();
+			var sdata = $('#frmColMap').serialize() + "&" + $('#frmImpOptions').serialize();
 		
 			$.ajax({
 			   	url: 'php/ctrl/ImportExport.php?oper=import&import2Table='+gImportTo,
@@ -240,9 +242,19 @@
 				},
 			   	success: function(msg){
 			   	 	$.showMsg({
-						msg: "<?php echo $Text['msg_edit_success']; ?>",
-						type: 'success',
-						autoclose:1000});
+						msg: "Import has been successful. Do you want to import another file?",
+						buttons: {
+							"Import another":function(){						
+								resetUpload();
+								$(this).dialog("close");
+							},
+							"No, thanks!":function(){						
+								//$(this).dialog("close");
+								window.opener.reloadWhat();
+								window.close();
+							}
+						},
+						type: 'success'});
 			   		
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -256,8 +268,14 @@
 
 			   	}
 			}); //end ajax
+		}//end submit
 
-			
+
+		function resetUpload(){
+			$('.showFileInfo').hide();
+			$('.setFileName').text('');
+			$('.previewElements').hide();
+
 		}
 
 		 
@@ -297,12 +315,13 @@
 					<br/>
 					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
+					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8">Import file: <span class="setFileName"></span></p>
 				</div>
 				<div class="floatLeft">
 					<p class="boldStuff">Public URL</p><br/>
 					<input type="text" name="importURL" id="importURL" value="http://" class="ui-widget ui-corner-all"/>
 					<br/><br/>
-					<button id="btn_fetch">Load file</button> <span class="setFileName"></span>
+					<button id="btn_fetch">Load file</button> 
 				</div>
 				<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader_fff.gif"/></span>
 				<div style="clear:both">
@@ -319,23 +338,31 @@
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
 				
 				<div class="ui-style-info previewOwnElements" >
-					<p class="ui-style-warning">Good news: most data (columns) could be recognized and match local database fields. You could try to automatically import
-					the data or preview the content first and manually match the table columns. </p>
+					<p class="ui-style-warning">Good news: most data (columns) could be recognized and you could try to automatically import
+					the file. As a more secure alternative, preview the content first and match the table columns by hand. </p>
 					<br/>
-					<button class="btn_import">Import directly</button>
-					<button class="btn_preview">Preview first</button>
 				</div>
 				
 				<div class="previewTableElements">
 				<form id="frmColMap">
 					<input type="hidden" name="provider_id" value=""/>
 					<div id="preview" style="max-height:300px; overflow:auto;">
-				
 					</div>
 				</form>
-				<br/>
-				<button class="btn_import">Import</button>
 				</div>
+				<br/>
+				
+				<p>What should happen with data that does not exist in the database?</p> 
+				<p>
+					<form id="frmImpOptions">
+					<input type="radio" name="append_new" value="1" /> Create new entries <br/>
+					<input type="radio" name="append_new" value="0" checked="checked"/> Just update existing rows
+					</form>
+				</p>
+				<br/>
+				<button class="btn_import previewOwnElements">Import directly</button>
+				<button class="btn_import previewTableElements">Import</button>
+				<button class="btn_preview previewOwnElements">Preview first</button>
 
 
 			</div>		

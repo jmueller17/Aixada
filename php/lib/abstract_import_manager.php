@@ -15,6 +15,7 @@ require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'php/lib/data_table.php');
+require_once(__ROOT__ . 'php/utilities/general.php');
 
 
 
@@ -80,7 +81,21 @@ class abstract_import_manager {
 	 */
 	protected $_match_col_index = null; 
 	
+	
+	/**
+	 * 
+	 * Entries get attached to each insert sql query 
+	 * @var unknown_type
+	 */
+	protected $_db_insert_row_prefix = array(); 
+	
 
+	/**
+	 * 
+	 * Entries get attached to each update row query
+	 * @var unknown_type
+	 */
+	protected $_db_update_row_prefix = array(); 
 
 	
 	/**
@@ -127,6 +142,14 @@ class abstract_import_manager {
     		}
     	}
     	
+    	//check if db_match_field is in map
+    	if (!isset($map[$this->_db_match_field])){
+    		throw new Exception("Import error: required match field '{$this->_db_match_field}' not found. You are either trying to import the wrong data for this table or have not associated the right column in the table preview!");
+    		exit; 
+    		
+    	}
+    	
+    	
     	$this->_col_map = $map;
 		
     	
@@ -164,14 +187,18 @@ class abstract_import_manager {
     	//data table rows that do not match existing rows in the database  
     	$insert_ids = array_diff($this->_match_col, $update_ids);
     		
+    	global $firephp; 
+    	$firephp->log($update_ids, "update ids");
+    	$firephp->log($insert_ids, "insert ids");
+    	$firephp->log($append_new, "append new");
     	
     	if (count($update_ids) > 0){
 	    	//should be unique values
-			/*$dup = $this->_check_duplicates($this->_match_col);
+			$dup = $this->_check_duplicates($update_ids);
 			if (count($dup) > 0){
 				throw new Exception ("Import error: unique reference required but empty/duplicate key found in table column '{$this->_db_match_field}': " . implode(",",$dup));
 				exit; 
-			}*/
+			}
 	    		
     		$this->update_rows($update_ids);
     	}
@@ -179,11 +206,6 @@ class abstract_import_manager {
     	if ($append_new && count($insert_ids)){
     		$this->insert_rows($insert_ids);	
     	}
-
-    	
-    	
-    
-        
     }
     
     
@@ -211,16 +233,18 @@ class abstract_import_manager {
     		
     		//retrieve row from import data table
     		$row = $this->_import_data_table->search_row($this->_match_col_index, $match_id);
-
+    		
     		//real db id to the row; required for the database wrapper update function
     		$db_update_row = array("id"=>$id);
 
+    		//add any additional entries, set in the subclass
+    		array_merge($db_update_row, $this->_db_update_row_prefix);
     		
     		//take fields to be imported
     		foreach($this->_import_fields as $db_field){
     			//lookup its corresponding column in the import data table 	
     			$col_index = $this->_col_map[$db_field];
-
+    			
     			//add it to the import_row	
 				$db_update_row[$db_field] = $row[$col_index];	
 			}
@@ -252,10 +276,10 @@ class abstract_import_manager {
     		
     		//retrieve row from import data table
     		$row = $this->_import_data_table->search_row($this->_match_col_index, $match_id);
-
     		
-    		$db_insert_row = array();
-
+    		//add any additional entries, set in the subclass
+    		$db_insert_row = $this->_db_insert_row_prefix;
+    		
     		//take fields to be imported
     		foreach($this->_import_fields as $db_field){
     			//lookup its corresponding column in the import data table 	
@@ -265,7 +289,6 @@ class abstract_import_manager {
 				$db_insert_row[$db_field] = $row[$col_index];	
 			}
 
-			
 			//do sql
 			try {
 				$db->Insert($this->_db_table, $db_insert_row);
@@ -307,6 +330,7 @@ class abstract_import_manager {
      * @param string $path2File the full path to the file 
      */
     public static function parse_file($path2File, $db_table=''){
+    	global $firephp; 
     	$rowc = 0;
   		$_data_table = null; 
   		$_header = false; 		
@@ -328,16 +352,28 @@ class abstract_import_manager {
 			}
 			array_unshift($_data_table, $fieldnames);
 			$_header=true; 
-			global $firephp; 
-			$firephp->log($_data_table, "xml table");
 			
   		} else if (in_array($extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
 	 		$Reader = new SpreadsheetReader($path2File);
 			foreach ($Reader as $Row){    
 			  	$_data_table[$rowc++] = $Row; 
 	
-			}			
-		
+			}	
+
+			//do some heuristics to detect if the first row contains column names. 
+			$tmph = $_data_table[0];
+			$hcount = 0; 
+			
+			//check empty cells
+			foreach($tmph as $cell=>$value){
+				if (is_string($value) && $value != '' && strlen($value)>1 && !is_numeric($value)){
+					$hcount++;
+				}
+			}
+			$_header = ($hcount == count($tmph))? true:false; 
+			
+
+			$firephp->log($_header, "data table has header");
   		}
 							
 		return new data_table($_data_table, $_header, $db_table);
