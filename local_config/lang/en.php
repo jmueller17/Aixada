@@ -836,7 +836,7 @@ $Text['msg_err_export'] = "Error in exporting data";
 $Text['export_uf'] = "Export Members";
 $Text['btn_export'] = "Export";
 
-
+$Text['ti_visualization'] = "Visualization";
 $Text['file_name'] = "File name";
 $Text['active_ufs'] = "Only active HU's";
 $Text['export_format'] = "Export format";
@@ -855,7 +855,6 @@ $Text['stock_info_product'] = "Note: consult all previous stock movements (adds,
 
 //$Text[''] = ""; 
 
-$Text['ti_visualization'] = "Visualization";
-$Text['info_stock_page'] = "Info_stock_page";
+
 
 ?>

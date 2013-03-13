@@ -11,7 +11,9 @@
 <input type="text" name="stockValue" id="stock_value" class="ui-widget ui-corner-all inputTxtTiny freeInput"/> <span id="setStockUnit"></span>
 </p>
 <br/><br/>
-<p id="infoStockPage"><?php echo $Text['info_stock_page']; ?></p>
-<p id="infoStockProductPage"><?php echo $Text['stock_info_product']; ?></p>
+<p class="correctStockElements ui-state-highlight aix-style-padding8x8 ui-corner-all"><?php echo $Text['msg_correct_stock']; ?>
+<br/><br/>
+<p id="infoStockPage" class="aix-style-padding8x8"><?php echo $Text['stock_info']; ?></p>
+<p id="infoStockProductPage" class="aix-style-padding8x8"><?php echo $Text['stock_info_product']; ?></p>
 </form>
 </div>
