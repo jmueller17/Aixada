@@ -531,7 +531,7 @@
 	        	}
 			})
 			.click(function(e){
-				var myWin = window.open("manage_import.php?import2Table=aixada_product&providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				var myWin = window.open("manage_import.php?import2Table=aixada_product&providerName="+gSelProvider.children().eq(2).text()+"&providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
 				myWin.focus();
 				
 			});

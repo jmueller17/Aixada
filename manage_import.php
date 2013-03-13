@@ -7,6 +7,7 @@
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -34,6 +35,7 @@
 		$('.loadSpinner').hide(); //attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 		$('.uploadMsgElements').hide();
 		$('.showFileInfo').hide();
+
 		
 		//which db table data is imported to
 		var gImportTo 	=	(typeof $.getUrlVar('import2Table') == "string")? $.getUrlVar('import2Table'):false;
@@ -41,8 +43,39 @@
 		//for products we need provider id
 		var gSelProvider = (typeof $.getUrlVar('providerId') == "string")? $.getUrlVar('providerId'):false;
 
+		//for products we need provider id
+		var gSelProviderName = (typeof $.getUrlVar('providerName') == "string")? $.getUrlVar('providerName'):false;
+
 		
+		//required table column for mapping input to db fields for the different tables. 
+		var gMatchField = {'aixada_provider':'nif', 'aixada_product':'custom_product_ref'};
+		
+
+		//pass provider id to the form
 		$('input[name=provider_id]').val(gSelProvider);
+
+		//set the title import destination
+		switch(gImportTo){
+	
+			case 'aixada_provider':
+				title = "Import providers";
+				break;
+
+			case 'aixada_product':
+				title = "Import or update products for " + decodeURIComponent(gSelProviderName);
+				break;
+
+			default: 
+				title='??';
+
+		}
+		
+		
+		$('.setImportDestTitle').text(title);
+
+
+		$('.setRequiredColumn').text(gMatchField[gImportTo]);
+
 
 		
 
@@ -194,6 +227,8 @@
 			}); //end ajax
 
 		}
+
+
 		
 		function constructPreviewTable(tbl){
 			$('#preview').html(tbl);
@@ -221,13 +256,60 @@
 			
 
 		}
-		
 
+
+		
+		function checkForm(){
+
+			var valid = true; 
+
+			var err_msg = ''; 
+
+			var nrmatches = 0; 
+			
+			//previewing, need to make sure at least one column and the required one is selected. 
+			if ($('.previewTableElements').is(':visible')){
+				valid = false; 
+				//is the required matching column selected?
+				$('#preview select option:selected').each(function(){
+					if ($(this).val() == gMatchField[gImportTo]){
+						valid = true;  
+					}
+				})
+				
+				if (!valid) err_msg = "Need to match up database entries with table rows! Please assign the required matching column " + "<span class='boldStuff'>"+gMatchField[gImportTo] + "</span><br/><br/>";
+
+				//and apart from that? 
+				$('#preview select option:selected').each(function(){
+					if ($(this).val() != -1){
+						nrmatches++; 
+					}
+				})
+
+				if (nrmatches <= 1) {
+					err_msg += "Apart from the required column which table columns do you want to import?";
+					valid = false; 
+				}
+
+				 $.showMsg({
+						msg: err_msg,
+						type: 'error'});
+
+		
+			}
+
+			return valid; 
+
+		}
+
+		
 		/**
 		 * 
 		 */
 		function submitForm(){
-	
+
+			if (!checkForm()) return false; 
+
 			
 			//serialize 
 			var sdata = $('#frmColMap').serialize() + "&" + $('#frmImpOptions').serialize();
@@ -291,11 +373,8 @@
 	<div id="stagewrap">
 	
 		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol50">
-		    	<h1 class="pgProviderOverview">Import data</h1>
-    		</div>
-    		<div id="titleRightCol50">
-
+			<div >
+		    	<h1 class="pgProviderOverview setImportDestTitle"></h1>
     		</div>
 		</div><!-- end titlewrap -->
  
@@ -336,7 +415,8 @@
 		<div class="ui-widget previewElements hidden"> 
 			<h4>2. Preview data and match columns</h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
-				
+				<br/>
+				<p class="previewTableElements">Required column: <span class="setRequiredColumn ui-state-highlight aix-style-padding8x8 ui-corner-all"></span></p><br/>
 				<div class="ui-style-info previewOwnElements" >
 					<p class="ui-style-warning">Good news: most data (columns) could be recognized and you could try to automatically import
 					the file. As a more secure alternative, preview the content first and match the table columns by hand. </p>

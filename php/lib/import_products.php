@@ -14,31 +14,6 @@ class import_products extends abstract_import_manager {
 	protected $provider_id = 0; 
 	
 	
-	/**
-	 * 
-	 * matches the db of the product table to the export file format
-	 * @var array
-	
-	private $auto_map = array('name' => 'name',
-								'description' => 'description',
-								'barcode' => '',
-								'custom_product_ref' => 'custom_product_ref',
-								'active' => 'active',
-								'responsible_uf_id' => 'responsible_uf_id',
-								'orderable_type_id' => 'orderable_type',
-								'order_min_quantity' => 'order_min_quantity',
-								'category_id' => 'category',
-								'rev_tax_type_id' => 'rev_tax_type',
-								'iva_percent_type_id' => 'iva_percent_type',
-								'unit_price' => 'unit_price',
-								'unit_measure_order_id' => 'unit_measure_order',
-								'unit_measure_shop_id' => 'unit_measure_shop',
-								'stock_min' => 'stock_min',
-								'stock_actual' => 'stock_actual',
-								'description_url' => 'description_url',
-								'picture' => 'picture',
-								'ts' => 'ts'); */
-	
 	
 	/**
 	 * 
@@ -69,10 +44,6 @@ class import_products extends abstract_import_manager {
 		//no columns are matched manually; try automatic
 		if (($map== null || count($map) == 1) && $data_table->is_match()){
 			$map = array();
-			//construct map automatically 
-			/*foreach($this->auto_map as $dbfield => $colname){
-				$map[$dbfield] = $data_table->get_col_index($colname); //assign the index 
-			}*/
 			
 			$db = DBWrap::get_instance();
 			$rs = $db->Execute('select * from aixada_product limit 1');
@@ -120,40 +91,6 @@ class import_products extends abstract_import_manager {
 	
 
     
-	/*protected function insert_rows($insert_ids){
-    	$db = DBWrap::get_instance();
-		
-		global $firephp; 
-    	
-    	foreach($insert_ids as $id => $match_id){
-    		
-    		//retrieve row from import data table
-    		$row = $this->_import_data_table->search_row($this->_match_col_index, $match_id);
-
-    		
-    		$db_insert_row = array("provider_id"=>$this->provider_id);
-
-    		//take fields to be imported
-    		foreach($this->_import_fields as $db_field){
-    			//lookup its corresponding column in the import data table 	
-    			$col_index = $this->_col_map[$db_field];
-
-    			//add it to the import_row	
-				$db_insert_row[$db_field] = $row[$col_index];	
-			}
-
-			
-			//do sql
-			try {
-				$db->Insert($this->_db_table, $db_insert_row);
-			}  catch(Exception $e) {
-    			header('HTTP/1.0 401 ' . $e->getMessage());
-    			die ($e->getMessage());
-			} 
-    		
-    		
-    	}  
-    }*/
 	
 }
 
