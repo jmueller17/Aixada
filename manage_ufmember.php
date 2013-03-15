@@ -17,6 +17,7 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
    	<?php  } else { ?>
    	    <script type="text/javascript" src="js/js_for_manage_ufs.min.js"></script>
     <?php }?>
@@ -286,38 +287,16 @@
 			 })
 			 .hide(); 
 
-		//create public available copy of export file option
-		$('#makePublic').on('click', function(){
-			if ($(this).attr("checked") == "checked"){
-				$('#exportURL').show();
-			} else {
-				$('#exportURL').hide();
+		function checkExportForm(){
+			var frmData = $('#frm_export_options').serialize();
+			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
+				$.showMsg({
+					msg:"File name cannot be empty!",
+					type: 'error'});
+				return false;
 			}
-
-		})
-
-		//indicate file name for publishing on own web
-		$('input[name=exportName]').on('keyup', function(){
-			var fext = ($('input[name=exportFormat]:checked').val() == 'gdrive')? 'csv':$('input[name=exportFormat]:checked').val();   
-			$('#showExportFileName').text($(this).val() + "." + fext);
-		})
-		
-		
-		//control switching between export format options
-		$('input[name=exportFormat]').on('click', function(){
-			var name = ''; 
-			if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-				$('#export_authentication').fadeIn(1000);
-				name = $('input[name=exportName]').val() + ".csv"; 
-				 
-			} else {
-				$('#export_authentication').fadeOut(1000);
-				name = $('input[name=exportName]').val() + "." + $('input[name=exportFormat]:checked').val();
-			}
-
-			$('#showExportFileName').text(name);
-
-		})
+			return frmData; 
+		}
 		
 		//initially hide authenticate and specific uf stuff. 
 		$('#export_authentication').hide();
@@ -327,21 +306,12 @@
 		 * EXPORT ufs
 		 */
 		function exportUfs(){
-
-			var frmData = $('#frm_export_options').serialize();
-			
-			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
-				$.showMsg({
-					msg:"File name cannot be empty!",
-					type: 'error'});
-				return false;
+			var frmData = checkExportForm(); 
+			if (frmData){
+				var urlStr = "php/ctrl/ImportExport.php?oper=exportMembers&" + frmData; 
+				//load the stuff through the export channel
+				$('#exportChannel').attr('src',urlStr);
 			}
-			
-			var urlStr = "php/ctrl/ImportExport.php?oper=exportMembers&" + frmData; 
-		
-			//load the stuff through the export channel
-			$('#exportChannel').attr('src',urlStr);
-
 		}
 
 

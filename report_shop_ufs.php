@@ -247,6 +247,8 @@
 			});		
 
 
+
+			
 			//EXPORT STUFF
 			$('#dialog_export_options').dialog({
 				autoOpen:false,
@@ -299,7 +301,11 @@
 
 
 			
-			
+			/**********************************
+			 *
+			 *  SWITCHING STUFF 
+			 *
+			 **********************************/
 			function switchTo(section){
 				switch (section){
 					case 'detail':
