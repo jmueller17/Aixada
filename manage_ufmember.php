@@ -324,7 +324,7 @@
 
 
 		/**
-		 * EXPORT products dates
+		 * EXPORT ufs
 		 */
 		function exportUfs(){
 
@@ -1050,8 +1050,8 @@
 		    </div>
 		    <div id="titleRightCol">
 		    	<!-- p class="textAlignRight"><?php echo $Text['search_memberuf'];?>: <input type="text" name="search_member" id="search_member" class="inputTxtMiddle ui-widget-content ui-corner-all" /></p-->
-      			<button id="btn_export" class="overviewElements"><?php echo $Text['btn_export']; ?></button>
 		    	<button id="btn_new_uf" class="overviewElements floatRight"><?php echo $Text['create_uf']; ?>...</button>
+		    	<button id="btn_export" class="overviewElements floatRight"><?php echo $Text['btn_export']; ?></button>
 		    </div>	  	
 		  
 		</div>

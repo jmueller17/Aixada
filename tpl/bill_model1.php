@@ -63,7 +63,7 @@
 
 			var shopId = $.getUrlVar('shopId');
 			var date = $.getUrlVar('date');
-			var operatorName = $.getUrlVar('operatorName');
+			var operatorName = decodeURIComponent($.getUrlVar('operatorName'));
 			var operatorUf = $.getUrlVar('operatorUf');
 
 			

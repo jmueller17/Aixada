@@ -3,11 +3,11 @@
 require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reader2.php');
 require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
 
-if ($_SESSION["dev"]){
-	require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-	ob_start(); // Starts FirePHP output buffering
-	$firephp = FirePHP::getInstance(true);
-}
+
+require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
+
 
 
   /** 
@@ -370,13 +370,7 @@ class abstract_import_manager {
 	    	//if it is foreign key, then check if import value already exists. 
 	    	$allow_import = in_array($import_value, $this->_foreign_keys[$table_field]);
     	}  
-    	
-    	if ($_SESSION["dev"]){
-    		global $firephp; 
-	  		$firephp->log($table_field . "->" . $import_value . ": " . $allow_import, "allow import for: ");
-    	}
 
-    	
     	return $allow_import; 
     }
     
