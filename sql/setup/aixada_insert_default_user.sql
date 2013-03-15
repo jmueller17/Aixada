@@ -21,7 +21,7 @@
       'axgSb.Vaqch9E', 
       1,
       1,
-      'en', 
+      'es', 
       sysdate());
       
      /*on duplicate key update login='admin', password='axgSb.Vaqch9E', language='en', created_on=sysdate();*/
