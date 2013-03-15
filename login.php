@@ -13,7 +13,6 @@ require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 $default_theme = get_session_theme();
 $language = get_session_language();
-$dev = configuration_vars::get_instance()->development;
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS.'' . $language  . '.php');
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
@@ -34,14 +33,12 @@ if (!isset($_SESSION)) {
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 	
-   <?php if (isset($dev) && $dev == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>	
-   	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_login.min.js"></script>
-    <?php }?>
+   
+	<script type="text/javascript" src="js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>	
+   	
 	   	
 	
 	   	

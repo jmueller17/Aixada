@@ -47,23 +47,27 @@ class import_providers extends abstract_import_manager {
 	 * the rows of the file to import that do not exist in the db.  
 	 */
 	protected function match_db_entries(){
-		
 		$db = DBWrap::get_instance();
 		$checkIds = $this->_import_data_table->get_col_as_array($this->_match_col_index);
 		
+		$got_ids = 0; 
 		$sql = "select id, nif from aixada_provider where nif in (";
 		foreach($checkIds as $id){
 			if ($id != ''){
 				$sql .="'". $id . "',";
+				$got_ids++;
 			}
 		}		
 		$sql = rtrim($sql, ",") .")";
-    	$rs =  $db->Execute($sql);
-    	
-    	//which of the given entries do already exist in the db
-    	$_existing_rows = array();    	
-    	while ($row = $rs->fetch_array()){
-    		$_existing_rows[$row['id']] = $row['nif']; 
+		
+		$_existing_rows = array();    	
+    	if ($got_ids > 0) {
+    		$rs =  $db->Execute($sql);
+	    	//which of the given entries do already exist in the db
+	    	
+	    	while ($row = $rs->fetch_array()){
+	    		$_existing_rows[$row['id']] = $row['nif']; 
+	    	}
     	}
     	return $_existing_rows;
 	}
