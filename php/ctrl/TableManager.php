@@ -147,11 +147,6 @@ function post_create_hook($index, $request)
 
 try{
   $special_table = ($_REQUEST['table'] == "aixada_user");
-  $ignore_keys = array('oper' => 1, 'table' => 2, 'key' => 3, 'val' => 4, 
-                       'USERAUTH' => 5, 'PHPSESSID' => 6, 'logintheme' => 7, 
-                       'cprelogin' => 8, 'cpsession' => 9, 'lang' => 10, 
-                       'langedit' => 11, '__utma'=>12, '__utmz'=>13);
-    // we need the => 1 etc values for array_diff_key to work later on.
 
   if (!isset($_REQUEST['oper']))
     throw new Exception("ctrlTableManager: variable oper not set in query");
@@ -170,16 +165,14 @@ try{
     exit;
 
   case 'edit':
-    $arrData = array_diff_key($_REQUEST, $ignore_keys); 
-    DBWrap::get_instance()->Update($_REQUEST['table'], $arrData);
+    DBWrap::get_instance()->Update($_REQUEST);
     post_edit_hook($_REQUEST);
     echo '1';
     exit;
     
   case 'add':
-    $arrData = array_diff_key($_REQUEST, $ignore_keys);
     $db = DBWrap::get_instance();
-    $db->Insert($_REQUEST['table'], $arrData);
+    $db->Insert($_REQUEST);
     $index = $db->last_insert_id();
     post_create_hook($index, $_REQUEST);
     echo $index;
