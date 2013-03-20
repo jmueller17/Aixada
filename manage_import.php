@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - "?></title>
+	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_import'];?></title>
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
@@ -58,11 +58,11 @@
 		switch(gImportTo){
 	
 			case 'aixada_provider':
-				title = "Import providers";
+				title = "<?=$Text['ti_import_providers'];?>";
 				break;
 
 			case 'aixada_product':
-				title = "Import or update products for " + decodeURIComponent(gSelProviderName);
+				title = "<?=$Text['ti_import_products'];?>" + decodeURIComponent(gSelProviderName);
 				break;
 
 			default: 
@@ -88,32 +88,22 @@
 		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
-		       
 		        $('.setFileName').text(data.files[0].name); 
 		        $('.showFileInfo').fadeIn(1000);
-
-
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
 		        $('.loadSpinner').show();
-		        
-				/*data.context = $('#btn_upload').button().click(function(e){
- 			 		data.submit();
-				});*/
+		   
 				data.submit();
 	        },
 	        done: function (e, data) {
-				
 	        	var file = data.result.files[0]; 
-	        	
-
 		        if (file.error && file.error.length > 1){
 		        	 $.showMsg({
-							msg: "Somethign went wrong during the upload: " + file.error,
+							msg: "<?=$Text['msg_err_upload'];?>" + file.error,
 							type: 'error'});
 
-				} else { //ok, 
-					//var fdata = $('#frm_csv_settings').serialize();
+				} else { 
 					parseFile(file.name, '');	
 				}
 	        },
@@ -207,7 +197,6 @@
 			   	dataType:'html',
 			   	beforeSend: function(){
 			   		$('.loadSpinner').show();
-			   	
 				},
 			   	success: function(tbl){
 			   		$('.loadSpinner').hide();
@@ -229,7 +218,7 @@
 		}
 
 
-		
+		//constructs the HTML table to preview the uploaded spreadsheet 
 		function constructPreviewTable(tbl){
 			$('#preview').html(tbl);
 
@@ -241,7 +230,6 @@
 
 			$('#preview table').append(thead);
 			$('#assignColumns').clone().appendTo('.mapSelect').show();
-
 			
 			if($('#preview table').attr('isown')){
 				$('.previewOwnElements').show();
@@ -252,19 +240,15 @@
 			}			
 
 			$('.previewElements').fadeIn(1000);
-
-			
-
 		}
 
 
-		
+
+		//before submitting import, need to make sure that at least one column from the preview table is 
+		//selected part from the matching column. 
 		function checkForm(){
-
 			var valid = true; 
-
 			var err_msg = ''; 
-
 			var nrmatches = 0; 
 			
 			//previewing, need to make sure at least one column and the required one is selected. 
@@ -277,7 +261,7 @@
 					}
 				})
 				
-				if (!valid) err_msg = "Need to match up database entries with table rows! Please assign the required matching column " + "<span class='boldStuff'>"+gMatchField[gImportTo] + "</span><br/><br/>";
+				if (!valid) err_msg = "<?=$Text['msg_import_matchcol'];?>" + "<span class='boldStuff'>"+gMatchField[gImportTo] + "</span><br/><br/>";
 
 				//and apart from that? 
 				$('#preview select option:selected').each(function(){
@@ -287,15 +271,13 @@
 				})
 
 				if (nrmatches <= 1) {
-					err_msg += "Apart from the required column which table columns do you want to import?";
+					err_msg += "<?=$Text['msg_import_furthercol'];?>";
 					valid = false; 
 				}
 
 				 $.showMsg({
 						msg: err_msg,
 						type: 'error'});
-
-		
 			}
 
 			return valid; 
@@ -324,14 +306,13 @@
 				},
 			   	success: function(msg){
 			   	 	$.showMsg({
-						msg: "Import has been successful. Do you want to import another file?",
+						msg: "<?=$Text['msg_import_success'];?>",
 						buttons: {
-							"Import another":function(){						
+							"<?=$Text['btn_import_another'];?>":function(){						
 								resetUpload();
 								$(this).dialog("close");
 							},
-							"No, thanks!":function(){						
-								//$(this).dialog("close");
+							"<?=$Text['btn_nothx']; ?>":function(){						
 								window.opener.reloadWhat();
 								window.close();
 							}
@@ -385,27 +366,27 @@
 					
 		 -->
 		 <div class="ui-widget"> 
-			<h4>1. Choose a file</h4>
+			<h4>1. <?=$Text['import_step1']; ?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8 adaptHeight">
 				<div class="floatLeft aix-layout-fixW450">
 					<form id="frmFileUpload">
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
 					</form>
 					<br/>
-					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
+					<p>&nbsp;<?=$Text['import_allowed']; ?>: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
-					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8">Import file: <span class="setFileName"></span></p>
+					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8"><?=$Text['import_file']; ?>: <span class="setFileName"></span></p>
 				</div>
 				<div class="floatLeft">
-					<p class="boldStuff">Public URL</p><br/>
+					<p class="boldStuff"><?=$Text['public_url'];?></p><br/>
 					<input type="text" name="importURL" id="importURL" value="http://" class="ui-widget ui-corner-all"/>
 					<br/><br/>
-					<button id="btn_fetch">Load file</button> 
+					<button id="btn_fetch"><?=$Text['btn_load_file']; ?></button> 
 				</div>
 				<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader_fff.gif"/></span>
 				<div style="clear:both">
-					<p id="msg_file_upload" class="uploadMsgElements">Uploading file and generating preview, please wait...!</p>
-					<p id="msg_fetch_file" class="uploadMsgElements">Reading file from server and parsing, please wait...!</p>
+					<p id="msg_file_upload" class="uploadMsgElements"><?=$Text['msg_uploading']; ?></p>
+					<p id="msg_fetch_file" class="uploadMsgElements"><?=$Text['msg_parsing']; ?></p>
 					
 				</div>
 			</div>		
@@ -413,13 +394,12 @@
 		<br/><br/>
 		
 		<div class="ui-widget previewElements hidden"> 
-			<h4>2. Preview data and match columns</h4>
+			<h4>2. <?=$Text['import_step2'];?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
 				<br/>
-				<p class="previewTableElements">Required column: <span class="setRequiredColumn ui-state-highlight aix-style-padding8x8 ui-corner-all"></span></p><br/>
+				<p class="previewTableElements"><?=$Text['import_reqcol'];?>: <span class="setRequiredColumn ui-state-highlight aix-style-padding8x8 ui-corner-all"></span></p><br/>
 				<div class="ui-style-info previewOwnElements" >
-					<p class="ui-style-warning">Good news: most data (columns) could be recognized and you could try to automatically import
-					the file. As a more secure alternative, preview the content first and match the table columns by hand. </p>
+					<p class="ui-style-warning"><?=$Text['import_auto'];?> </p>
 					<br/>
 				</div>
 				
@@ -432,17 +412,17 @@
 				</div>
 				<br/>
 				
-				<p>What should happen with data that does not exist in the database?</p> 
+				<p><?=$Text['import_qnew'];?></p> 
 				<p>
 					<form id="frmImpOptions">
-					<input type="radio" name="append_new" value="1" /> Create new entries <br/>
-					<input type="radio" name="append_new" value="0" checked="checked"/> Just update existing rows
+					<input type="radio" name="append_new" value="1" /> <?=$Text['import_createnew'];?> <br/>
+					<input type="radio" name="append_new" value="0" checked="checked"/> <?=$Text['import_update'];?>
 					</form>
 				</p>
 				<br/>
-				<button class="btn_import previewOwnElements">Import directly</button>
-				<button class="btn_import previewTableElements">Import</button>
-				<button class="btn_preview previewOwnElements">Preview first</button>
+				<button class="btn_import previewOwnElements"><?=$Text['btn_imp_direct'];?></button>
+				<button class="btn_import previewTableElements"><?=$Text['btn_import'];?></button>
+				<button class="btn_preview previewOwnElements"><?=$Text['btn_preview'];?></button>
 
 
 			</div>		
@@ -500,7 +480,7 @@
 </div>
 <!-- end of wrap -->
 <select id="assignColumns" name="table_col[]" class="hidden">
-	<option value="-1">Match column...</option>
+	<option value="-1"><?=$Text['sel_matchcol'];?></option>
 	<option value="{db_field}">{db_field}</option>
 </select>
 

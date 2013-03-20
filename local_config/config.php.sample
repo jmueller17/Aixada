@@ -418,7 +418,7 @@ class configuration_vars {
 	 *  users can select from the allowed fields to match the import data. If set to true, 
 	 *  the script will try to import/match automatically all allowed fields. 
 	 */     
-		public $allow_import_for = 
+	public $allow_import_for = 
 			array(
 					'aixada_product' => 
 						array(	 
@@ -429,14 +429,14 @@ class configuration_vars {
 								'custom_product_ref' => 'allow',
 								'active' => 'allow',
 								'responsible_uf_id' => 'nope',
-								'orderable_type_id' => 'nope',
+								'orderable_type_id' => 'allow',
 								'order_min_quantity' => 'allow',
 								'category_id' => 'allow',
-								'rev_tax_type_id' => 'nope',
-								'iva_percent_type_id' => 'nope',
+								'rev_tax_type_id' => 'allow',
+								'iva_percent_type_id' => 'allow',
 								'unit_price' => 'allow',
-								'unit_measure_order_id' => 'nope',
-								'unit_measure_shop_id' => 'nope',
+								'unit_measure_order_id' => 'allow',
+								'unit_measure_shop_id' => 'allow',
 								'stock_min' => 'allow',
 								'stock_actual' => 'nope',
 								'description_url' => 'allow',
@@ -457,7 +457,7 @@ class configuration_vars {
 								'bank_name' => 'allow',
 								'bank_account' => 'allow',
 								'notes' => 'allow',
-								'active' => 'nope',
+								'active' => 'alow',
 								'offset_order_close' => 'allow',
 								'ts' => 'nope'),
 						

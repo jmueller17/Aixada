@@ -246,7 +246,7 @@
 				//anything selected? 
 				if ($('input:checkbox[name="providerBulkAction"][checked="checked"]').length  == 0){
 					$.showMsg({
-						msg:"Are you sure you want to export all providers?",
+						msg:"<?=$Text['msg_confirm_prov'];?>",
 						buttons: {
 							"<?=$Text['btn_ok'];?>":function(){						
 								$('#dialog_export_options')
@@ -1290,8 +1290,8 @@
 		    		<div id="titleRightCol50">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
-						<button class="floatRight pgProductOverview" id="btn_import_products"><?php echo "Import"; ?></button>
-						<button class="floatRight pgProviderOverview" id="btn_import_provider"><?php echo "Import"; ?></button>
+						<button class="floatRight pgProductOverview" id="btn_import_products"><?php echo $Text['btn_import'] ; ?></button>
+						<button class="floatRight pgProviderOverview" id="btn_import_provider"><?php echo $Text['btn_import'] ; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_product_export"><?php echo $Text['btn_export']; ?></button>
 						<button class="floatRight pgProviderOverview" id="btn_provider_export"><?php echo $Text['btn_export']; ?></button>
 						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
