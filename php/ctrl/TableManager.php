@@ -11,11 +11,8 @@ if (!isset($_SESSION)) {
     session_start();
  }
 
-$language = ( (isset($_SESSION['userdata']['language']) and 
-               $_SESSION['userdata']['language'] != '') ? 
-              $_SESSION['userdata']['language'] : 
-              configuration_vars::get_instance()->default_language );
-require_once(__ROOT__ . 'local_config/lang/' . $language . '.php');
+              
+require_once(__ROOT__ . 'local_config/lang/' . get_session_language() . '.php');
 require_once(__ROOT__ . "php/utilities/tables.php");
 
 $use_session_cache = configuration_vars::get_instance()->use_session_cache;
@@ -26,10 +23,9 @@ $use_canned_responses = configuration_vars::get_instance()->use_canned_responses
 function get_columns_as_JSON()
 {
   global $special_table;
-  global $language;
   global $Text;
   $Text = array();
-  require(__ROOT__ . 'canned_responses_' . $language . '.php');
+  require(__ROOT__ . 'canned_responses_' . get_session_language() . '.php');
   $ctm = new canned_table_manager();
   $table = $_REQUEST['table'];
   return '{"col_names":"' . $ctm->get_col_names_as_JSON($table)

@@ -1364,7 +1364,7 @@
 									<th class="clickable"> <p class="floatLeft"><?php echo $Text['id'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
 									<th class="clickable"><p class="floatLeft"><?php echo $Text['name_item'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>						
 									<th class="clickable"><p class="floatLeft"><?php echo $Text['orderable_type']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
-									<th class="clickable"><p class="floatLeft"><?php echo $Text['active']; ?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
+									<th class="clickable"><p class="floatLeft"><?php echo $Text['active']; ?></p></th>
 									
 									<th class="clickable"><p class="textAlignRight"><?php echo $Text['price_net'];?> </p></th>
 									<th class="clickable"><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
