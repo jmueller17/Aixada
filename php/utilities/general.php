@@ -458,7 +458,7 @@ function existing_languages()
     $languages = array();
     foreach (glob(__ROOT__ . "local_config/lang/*.php") as $lang_file) {
         $a = strpos($lang_file, 'lang/');
-        $lang = substr($lang_file, $a+5, strpos($lang_file, '.')-$a-5);
+        $lang = substr($lang_file, $a+5, strpos($lang_file, '.', $a)-$a-5);
         $handle = @fopen($lang_file, "r");
         $line = fgets($handle);
         while (strpos($line, "Text['{$lang}']") === false and !feof($handle)) {
