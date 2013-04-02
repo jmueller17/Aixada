@@ -216,7 +216,7 @@
 					}		 
 				} else if ($(this).hasClass('add')){
 					if (checkProviderForm('#pgProviderNew')){
-						submitForm('#pgProviderNew', 'add', 'provider');
+						submitForm('#pgProviderNew', 'add', 'provider', 'overviewProvider');
 					}
 				}
 				e.stopPropagation();
@@ -793,14 +793,20 @@
 
 				//new providers have no id
 				$('#tbl_product_new input[name=id]').remove();
+
+				//clear all fields first time
+				$('input:text, input:hidden, textarea', frm).val('');
 				
 				gFirstTimeNewProduct = false; 
 			}
 
-			//reset all textfields
-			$('input:text, input:hidden, textarea', frm).val('');
+			//reset some textfields
+			$('input[name=name], textarea[name=description], input[name=custom_product_ref], input[name=unit_price], input[name=barcode], input[name=description_url]', frm).val('');
 
-			//assume that a new provider is active
+			//clear unit_price paragraph
+			$('.unit_price_brutto').text('');
+			
+			//assume that a new product is active
 			$('input:checkbox', frm).each(function(){
 				$(this).attr('checked','checked');
 			});
@@ -811,27 +817,21 @@
 
 			//nuevos productos se tienen que crear primero antes de introducir stock
 			$('.btn_edit_stocks').button('disable');
+
 			
-			//clear unit_price paragraph
-			$('.unit_price_brutto').text('');
+			$('.setStockActualProductPage').text(0);			
 			
 			//set provider id
 			$('#frm_product_new input[name=provider_id]').val(gSelProvider.attr('providerId'));
 
 			//set responsible_uf same as provider. Doesn't work the first time when the form select gets constructed for the first time...
 			var rufid = gSelProvider.attr('responsibleUfId');
+			$('#tbl_product_new span.sResponsibleUfId').prev().val(rufid);
 			$('#tbl_product_new span.sResponsibleUfId').children('select').val(rufid).attr('selected','selected');
-
-			$('.setStockActualProductPage').text(0);
-
-			
-			/*$('select', frm).each(function(){
-				var firstElementValue = $(this).children(':first').val();
-				$(this).val(firstElementValue).attr('selected','selected').parent().prev().attr('value',firstElementValue);
-			})*/
-
 			
 			
+
+						
 		}
 
 
