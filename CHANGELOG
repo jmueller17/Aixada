@@ -40,7 +40,7 @@ Bugfixes
 
 
 
-v2.7
+v2.7 Released 2 April 2013
 * provider new/edit form rewrite for better required form-fields checking
 * product new/edit rewrite for better required form-fields checking
 * new field in aixada_product: min order (requires to run dbUpgradeAixada2.6To2.7.sql
@@ -60,6 +60,7 @@ Bugfixes
 * #41 illegal collation fix
 * #36 install language issue (thanks marc0s!) fix
 * #37 filter session variables for table manager fix
+* ...and others
 
 
 
