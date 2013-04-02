@@ -40,15 +40,15 @@ Bugfixes
 
 
 
-Next release
+v2.7
 * provider new/edit form rewrite for better required form-fields checking
 * product new/edit rewrite for better required form-fields checking
 * new field in aixada_product: min order (requires to run dbUpgradeAixada2.6To2.7.sql
 * config.sample.php added; copy this file and rename it to config.php to configure your local install
 * provider/product listing sortable
-* export providers, products, orderable dates, members to csv, xml, google drive. 
-
-
+* export architecture; works for providers, products, members to csv, xml, google drive.
+* import architecture; works for providers and products (formats: csv, ods, xls, xlsx, xml) 
+* change of licence to GPL  
 
 Bugfixes
 * delete members now possible for unassigned members
@@ -56,6 +56,11 @@ Bugfixes
 * delete order cart completely bug 
 * iva and revolutionary tax price calculation fix
 * table manager checks fields against database before updating 
-* warning message when creating new cart on validated
+* correct warning message when creating new cart on validated
+* #41 illegal collation fix
+* #36 install language issue (thanks marc0s!) fix
+* #37 filter session variables for table manager fix
+
+
 
 
