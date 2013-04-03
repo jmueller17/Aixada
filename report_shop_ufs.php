@@ -18,7 +18,10 @@
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
+	   	
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
+	   	
 
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_report_shop.min.js"></script>
@@ -241,10 +244,68 @@
 					})
 				}
 
-			});			
+			});		
+
 
 
 			
+			//EXPORT STUFF
+			$('#dialog_export_options').dialog({
+				autoOpen:false,
+				width:520,
+				height:500,
+				buttons: {  
+					"<?=$Text['btn_ok'];?>" : function(){
+						exportCart(); 
+					},
+					"<?=$Text['btn_close'];?>"	: function(){
+						$( this ).dialog( "close" );
+					} 
+				}
+			});
+
+
+			$('#btn_export')
+				.button({
+					icons: {
+						primary: "ui-icon-transferthick-e-w"
+			    	}
+				})
+				.click(function(e){
+					$('#dialog_export_options')
+						.dialog("open");
+				 })
+				 .hide(); 
+
+			function checkExportForm(){
+				var frmData = $('#frm_export_options').serialize();
+				if (!$.checkFormLength($('input[name=exportName]'),1,150)){
+					$.showMsg({
+						msg:"File name cannot be empty!",
+						type: 'error'});
+					return false;
+				}
+				return frmData; 
+			}
+
+			//export cart
+			function exportCart(){
+				var frmData = checkExportForm(); 
+				if (frmData){
+					var urlStr = "php/ctrl/ImportExport.php?oper=exportCart&shopId="+gSelShopRow.attr('shopId')+"&" + frmData; 
+					//load the stuff through the export channel
+					$('#exportChannel').attr('src',urlStr);
+				}
+			}
+
+
+
+			
+			/**********************************
+			 *
+			 *  SWITCHING STUFF 
+			 *
+			 **********************************/
 			function switchTo(section){
 				switch (section){
 					case 'detail':
@@ -312,11 +373,11 @@
 			<div id="titleLeftCol">
 				<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
 		    	<h1 class="overviewElements"><?php echo $Text['ti_all_sales']; ?></h1>
-		    	<h1 class="detailElements"><?php echo $Text['purchase_details']; ?><span class="setCartId"></span></h1>
+		    	<h1 class="detailElements"><?php echo $Text['purchase_details']; ?><span class="setCartId"></span></h1>	
+		    	<p class="floatRight detailElements"><?php echo $Text['validated'];?>: <span class="ui-corner-all padding5x5 setValidateStatus"></span></p>
+		    
 		    </div>
-		    <div id="titleRightCol">
-		    	<p class="floatLeft detailElements"><?php echo $Text['validated'];?>: <span class="ui-corner-all padding5x5 setValidateStatus"></span></p>
-		    	
+		    <div id="titleRightCol">		    	
 		    	<button id="btn_print" class="detailElements btn_right"><?=$Text['printout'];?></button>
 		    		<div id="printOptionsItems" class="hidden hideInPrint">
 					<ul>
@@ -324,6 +385,7 @@
 					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
 					</ul>
 					</div>	
+				<button id="btn_export" class="detailElements floatRight"><?php echo $Text['btn_export']; ?></button>
 					
 		    	<p class="textAlignRight overviewElements">
 		    		<select id="uf_select">
@@ -331,7 +393,6 @@
 		    			<option value="{id}">{id} {name}</option>
 		    		</select>
 		    	</p>
-		    	
 		    </div>
 		</div>
 	
@@ -450,5 +511,9 @@
 <!-- end of wrap -->
 <!-- / END -->
 <iframe name="dataFrame" style="display:none"></iframe>
+<iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
+<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
+<?php include("tpl/export_dialog.php");?>
+</div>
 </body>
 </html>

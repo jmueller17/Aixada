@@ -10,7 +10,7 @@ require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 
 $default_theme = get_session_theme();
-$dev = configuration_vars::get_instance()->development;
+//$dev = configuration_vars::get_instance()->development;
 $tpl_print_orders = configuration_vars::get_instance()->print_order_template;
 $tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_template;
 $tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
@@ -22,7 +22,7 @@ $language = get_session_language();
 
 
 //should be deleted in the end, and globally set. 
-$_SESSION['dev'] = true;
+$_SESSION['dev'] = configuration_vars::get_instance()->development;
 
    try {
        $cookie = new Cookie();

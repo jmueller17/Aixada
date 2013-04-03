@@ -245,12 +245,15 @@ class DBWrap {
   /**
    * Inserts arbitrary columns into a table.
    *
-   * @param string $table_name the name of the table in the database
    * @param array $arrData an array with entries of the form field => value . The values are inserted into the corresponding fields of the table.
    *
    */
-  public function Insert ($table_name, $arrData)
+  public function Insert ($arrData)
   {
+      if (!array_key_exists('table', $arrData))
+	  throw new InternalException('Update: Input array ' . $arrData . ' does not contain a field named "table"');
+      $table_name = $arrData['table'];
+
       $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
       $strVAL = 'VALUES (';
       $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
@@ -282,8 +285,12 @@ class DBWrap {
    * @param array $arrData the array that contains the data to be updated must contain a field named 'id' that contains the unique id.
    * @see Insert
    */ 
-  public function Update($table_name, $arrData)
+  public function Update($arrData)
   {
+      if (!array_key_exists('table', $arrData))
+	  throw new InternalException('Update: Input array ' . $arrData . ' does not contain a field named "table"');
+      $table_name = $arrData['table'];
+
       if (!array_key_exists('id', $arrData))
 	  throw new InternalException('Update: Input array ' . $arrData . ' for table ' . $table_name . ' does not contain a field named "id"');
       $strSQL = 'UPDATE ' . $this->mysqli->real_escape_string($table_name) . ' SET ';
@@ -308,13 +315,15 @@ class DBWrap {
       
       $success = $this->do_Execute($strSQL);
     
-      if ($table_name == 'aixada_provider') {
+      //the check happens on the client side now
+      //for import data, updates should be possible without updating the responsible_uf_id
+      /*if ($table_name == 'aixada_provider') {
 	  $strSQL = "update aixada_product set responsible_uf_id='"
 	      . $this->mysqli->real_escape_string($arrData['responsible_uf_id'])
 	      . "' where provider_id="
 	      . $this->mysqli->real_escape_string($arrData['id']);
 	  $success = $this->do_Execute($strSQL);
-      }
+      }*/
       return $success;
 
   }

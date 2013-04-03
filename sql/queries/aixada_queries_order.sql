@@ -385,6 +385,7 @@ end|
 drop function if exists is_under_revision|
 create function is_under_revision(the_order_id int)
 returns boolean
+reads sql data
 begin
 	declare is_edited int default 0; 
 	

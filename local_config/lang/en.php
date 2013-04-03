@@ -836,7 +836,7 @@ $Text['msg_err_export'] = "Error in exporting data";
 $Text['export_uf'] = "Export Members";
 $Text['btn_export'] = "Export";
 
-
+$Text['ti_visualization'] = "Visualization";
 $Text['file_name'] = "File name";
 $Text['active_ufs'] = "Only active HU's";
 $Text['export_format'] = "Export format";
@@ -853,9 +853,38 @@ $Text['stock_but'] = "but"; //current stock is not x units but...
 $Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
 $Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
 
+
+$Text['msg_confirm_prov'] = "Are you sure you want to export all providers?"; 
+$Text['msg_err_upload'] = "An error occured during uploading the file "; 
+$Text['msg_import_matchcol'] = "Need to match up database entries with table rows! Please assign the required matching column "; //+ here then comes the name of the matching column, e.g. custom_product_ref
+$Text['msg_import_furthercol'] = "Apart from the required column which table columns do you want to import?"; 
+$Text['msg_import_success'] = "Import has been successful. Do you want to import another file?"; 
+$Text['btn_import_another'] = "Import another"; 
+$Text['btn_nothx'] = "No, thanks!"; 
+$Text['import_allowed'] = "Allowed formats"; //as in allowed file formats
+$Text['import_file'] = "Import file"; 
+$Text['public_url'] = "Public URL";
+$Text['btn_load_file'] = "Load file";
+$Text['msg_uploading'] = "Uploading file and generating preview, please wait...!";
+$Text['msg_parsing'] = "Reading file from server and parsing, please wait...!";
+$Text['import_step1'] = "Choose a file";
+$Text['import_step2'] = "Preview data and match columns";
+$Text['import_reqcol'] = "Required column";
+$Text['import_auto'] = "Good news: most data (columns) could be recognized and you could try to automatically import the file. As a more secure alternative, preview the content first and match the table columns by hand.";
+$Text['import_qnew'] = "What should happen with data that does not exist in the database?";
+$Text['import_createnew'] = "Create new entries";
+$Text['import_update'] = "Just update existing rows";
+$Text['btn_imp_direct'] = "Import directly";
+$Text['btn_import'] = "Import";
+$Text['btn_preview'] = "Preview first"; 
+$Text['sel_matchcol'] = "Match column..."; 
+$Text['ti_import_products'] = "Import or update products for "; 
+$Text['ti_import_providers'] = "Import providers"; 
+$Text['head_ti_import'] = "Import wizard";
+
+
 //$Text[''] = ""; 
 
-$Text['ti_visualization'] = "Visualization";
-$Text['info_stock_page'] = "Info_stock_page";
+
 
 ?>

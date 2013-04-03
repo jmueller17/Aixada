@@ -389,7 +389,8 @@ class foreign_key_manager {
                 . ' as uf_name,';
 	} else {
             $select_clause 
-                .= "\n      " . $substituted_name[$field]
+                .= "\n      " . $this->_table_name . '.' . $field . ','
+		. "\n      " . $substituted_name[$field]
                 . ' as ' . $substituted_alias[$field] . ',';
         }
 	$join_clause 

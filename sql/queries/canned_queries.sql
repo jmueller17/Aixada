@@ -68,31 +68,13 @@ begin
   deallocate prepare st;
 end|
 
-drop procedure if exists aixada_estimated_prices_list_all_query|
-create procedure aixada_estimated_prices_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
-begin
-  set @q = "select
-      aixada_estimated_prices.product_id,
-      aixada_estimated_prices.ts,
-      aixada_estimated_prices.min_estimated_price,
-      aixada_estimated_prices.max_estimated_price,
-      aixada_estimated_prices.true_price 
-    from aixada_estimated_prices ";
-  set @lim = ' ';				 
- if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
-  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
-  set @q = concat(@q, @lim);
-  prepare st from @q;
-  execute st;
-  deallocate prepare st;
-end|
-
 drop procedure if exists aixada_incident_list_all_query|
 create procedure aixada_incident_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
       aixada_incident.id,
       aixada_incident.subject,
+      aixada_incident.incident_type_id,
       aixada_incident_type.description as incident_type,
       aixada_incident.operator_id,
       aixada_incident.details,
@@ -188,6 +170,7 @@ create procedure aixada_order_list_all_query (in the_index char(50), in the_sens
 begin
   set @q = "select
       aixada_order.id,
+      aixada_order.provider_id,
       aixada_provider.name as provider,
       aixada_order.date_for_order,
       aixada_order.ts_sent_off,
@@ -219,7 +202,9 @@ begin
       aixada_order_item.date_for_order,
       aixada_order_item.uf_id,
       aixada_uf.name as uf_name,
+      aixada_order_item.favorite_cart_id,
       aixada_cart.name as favorite_cart,
+      aixada_order_item.product_id,
       aixada_product.name as product,
       aixada_order_item.quantity,
       aixada_order_item.ts_ordered 
@@ -245,6 +230,7 @@ begin
       aixada_uf.name as uf_name,
       aixada_order_to_shop.order_id,
       aixada_order_to_shop.unit_price_stamp,
+      aixada_order_to_shop.product_id,
       aixada_product.name as product,
       aixada_order_to_shop.quantity,
       aixada_order_to_shop.arrived,
@@ -301,6 +287,7 @@ drop procedure if exists aixada_price_list_all_query|
 create procedure aixada_price_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
   set @q = "select
+      aixada_price.product_id,
       aixada_product.name as product,
       aixada_price.ts,
       aixada_price.current_price,
@@ -321,6 +308,7 @@ create procedure aixada_product_list_all_query (in the_index char(50), in the_se
 begin
   set @q = "select
       aixada_product.id,
+      aixada_product.provider_id,
       aixada_provider.name as provider,
       aixada_product.name,
       aixada_product.description,
@@ -329,13 +317,19 @@ begin
       aixada_product.active,
       aixada_uf.id as responsible_uf_id,
 aixada_uf.name as responsible_uf_name,
+      aixada_product.orderable_type_id,
       aixada_orderable_type.description as orderable_type,
       aixada_product.order_min_quantity,
+      aixada_product.category_id,
       aixada_product_category.description as category,
+      aixada_product.rev_tax_type_id,
       aixada_rev_tax_type.name as rev_tax_type,
+      aixada_product.iva_percent_id,
       aixada_iva_type.name as iva_percent,
       aixada_product.unit_price,
+      aixada_product.unit_measure_order_id,
       aixada_unit_measure_order.name as unit_measure_order,
+      aixada_product.unit_measure_shop_id,
       aixada_unit_measure_shop.name as unit_measure_shop,
       aixada_product.stock_min,
       aixada_product.stock_actual,
@@ -454,9 +448,11 @@ create procedure aixada_shop_item_list_all_query (in the_index char(50), in the_
 begin
   set @q = "select
       aixada_shop_item.id,
+      aixada_shop_item.cart_id,
       aixada_cart.name as cart,
       aixada_shop_item.order_item_id,
       aixada_shop_item.unit_price_stamp,
+      aixada_shop_item.product_id,
       aixada_product.name as product,
       aixada_shop_item.quantity,
       aixada_shop_item.iva_percent,
@@ -494,6 +490,7 @@ create procedure aixada_stock_movement_list_all_query (in the_index char(50), in
 begin
   set @q = "select
       aixada_stock_movement.id,
+      aixada_stock_movement.product_id,
       aixada_product.name as product,
       aixada_stock_movement.operator_id,
       aixada_stock_movement.amount_difference,
@@ -557,7 +554,9 @@ begin
       aixada_user.email,
       aixada_user.uf_id,
       aixada_uf.name as uf_name,
+      aixada_user.member_id,
       aixada_member.name as member,
+      aixada_user.provider_id,
       aixada_provider.name as provider,
       aixada_user.language,
       aixada_user.gui_theme,

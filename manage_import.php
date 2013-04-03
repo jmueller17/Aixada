@@ -3,10 +3,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title'] . " - "?></title>
+	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_import'];?></title>
 	
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -33,6 +34,8 @@
 		//loading animation
 		$('.loadSpinner').hide(); //attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 		$('.uploadMsgElements').hide();
+		$('.showFileInfo').hide();
+
 		
 		//which db table data is imported to
 		var gImportTo 	=	(typeof $.getUrlVar('import2Table') == "string")? $.getUrlVar('import2Table'):false;
@@ -40,8 +43,39 @@
 		//for products we need provider id
 		var gSelProvider = (typeof $.getUrlVar('providerId') == "string")? $.getUrlVar('providerId'):false;
 
+		//for products we need provider id
+		var gSelProviderName = (typeof $.getUrlVar('providerName') == "string")? $.getUrlVar('providerName'):false;
+
 		
+		//required table column for mapping input to db fields for the different tables. 
+		var gMatchField = {'aixada_provider':'nif', 'aixada_product':'custom_product_ref'};
+		
+
+		//pass provider id to the form
 		$('input[name=provider_id]').val(gSelProvider);
+
+		//set the title import destination
+		switch(gImportTo){
+	
+			case 'aixada_provider':
+				title = "<?=$Text['ti_import_providers'];?>";
+				break;
+
+			case 'aixada_product':
+				title = "<?=$Text['ti_import_products'];?>" + decodeURIComponent(gSelProviderName);
+				break;
+
+			default: 
+				title='??';
+
+		}
+		
+		
+		$('.setImportDestTitle').text(title);
+
+
+		$('.setRequiredColumn').text(gMatchField[gImportTo]);
+
 
 		
 
@@ -54,31 +88,22 @@
 		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
-		       
-		        //$('.setFileName').text(data.files[0].name).fadeIn(1000); 
-		        //$("#btn_upload").fadeIn(1000);
-
+		        $('.setFileName').text(data.files[0].name); 
+		        $('.showFileInfo').fadeIn(1000);
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
 		        $('.loadSpinner').show();
-		        
-				/*data.context = $('#btn_upload').button().click(function(e){
- 			 		data.submit();
-				});*/
+		   
 				data.submit();
 	        },
 	        done: function (e, data) {
-				
 	        	var file = data.result.files[0]; 
-	        	
-
 		        if (file.error && file.error.length > 1){
 		        	 $.showMsg({
-							msg: "Somethign went wrong during the upload: " + file.error,
+							msg: "<?=$Text['msg_err_upload'];?>" + file.error,
 							type: 'error'});
 
-				} else { //ok, 
-					//var fdata = $('#frm_csv_settings').serialize();
+				} else { 
 					parseFile(file.name, '');	
 				}
 	        },
@@ -97,7 +122,7 @@
 	 
 		$('#assignColumns').xml2html('init',{
 			url: 'php/ctrl/ImportExport.php',
-			params : 'oper=getAllowedFields&table=aixada_product',
+			params : 'oper=getAllowedFields&table='+gImportTo,
 			loadOnInit:true,
 			offSet : 1
 		});
@@ -141,8 +166,8 @@
 
 		})
 
-		//save edited provider new provider
-		$('#btn_import')
+		//import data
+		$('.btn_import')
 			.button({
 			icons: {
 	        		primary: "ui-icon-transferthick-e-w"
@@ -154,17 +179,24 @@
 				return false; 
 			});
 
+		//show preview table
+		$('.btn_preview')
+			.button()
+			.click(function(e){	
+				$('.previewOwnElements').hide();
+				$('.previewTableElements').show();
+			});
+
 
 		
 		function parseFile(fileName, fullPath){
 			$.ajax({
-				url: 'php/ctrl/ImportExport.php?oper=parseFile&file='+fileName+'&fullpath='+fullPath,
+				url: 'php/ctrl/ImportExport.php?oper=parseFile&import2Table='+gImportTo+'&file='+fileName+'&fullpath='+fullPath,
 			   	method: 'POST',
 			   	//data : fdata, //parse options 
 			   	dataType:'html',
 			   	beforeSend: function(){
 			   		$('.loadSpinner').show();
-			   	
 				},
 			   	success: function(tbl){
 			   		$('.loadSpinner').hide();
@@ -184,7 +216,9 @@
 			}); //end ajax
 
 		}
-		
+
+
+		//constructs the HTML table to preview the uploaded spreadsheet 
 		function constructPreviewTable(tbl){
 			$('#preview').html(tbl);
 
@@ -195,26 +229,75 @@
 			thead += '</tr></thead>';
 
 			$('#preview table').append(thead);
-
-
 			$('#assignColumns').clone().appendTo('.mapSelect').show();
+			
+			if($('#preview table').attr('isown')){
+				$('.previewOwnElements').show();
+				$('.previewTableElements').hide();
+			} else {
+				$('.previewOwnElements').hide();
+				$('.previewTableElements').show();
+			}			
 
-			$('.opDataPreview').fadeIn(1000);
+			$('.previewElements').fadeIn(1000);
+		}
+
+
+
+		//before submitting import, need to make sure that at least one column from the preview table is 
+		//selected part from the matching column. 
+		function checkForm(){
+			var valid = true; 
+			var err_msg = ''; 
+			var nrmatches = 0; 
+			
+			//previewing, need to make sure at least one column and the required one is selected. 
+			if ($('.previewTableElements').is(':visible')){
+				valid = false; 
+				//is the required matching column selected?
+				$('#preview select option:selected').each(function(){
+					if ($(this).val() == gMatchField[gImportTo]){
+						valid = true;  
+					}
+				})
+				
+				if (!valid) err_msg = "<?=$Text['msg_import_matchcol'];?>" + "<span class='boldStuff'>"+gMatchField[gImportTo] + "</span><br/><br/>";
+
+				//and apart from that? 
+				$('#preview select option:selected').each(function(){
+					if ($(this).val() != -1){
+						nrmatches++; 
+					}
+				})
+
+				if (nrmatches <= 1) {
+					err_msg += "<?=$Text['msg_import_furthercol'];?>";
+					valid = false; 
+				}
+
+				 $.showMsg({
+						msg: err_msg,
+						type: 'error'});
+			}
+
+			return valid; 
 
 		}
-		
 
+		
 		/**
 		 * 
 		 */
 		function submitForm(){
-	
+
+			if (!checkForm()) return false; 
+
 			
 			//serialize 
-			var sdata = $('#frmColMap').serialize() +$('#frm_csv_settings').serialize();
+			var sdata = $('#frmColMap').serialize() + "&" + $('#frmImpOptions').serialize();
 		
 			$.ajax({
-			   	url: 'php/ctrl/ImportExport.php?oper=import',
+			   	url: 'php/ctrl/ImportExport.php?oper=import&import2Table='+gImportTo,
 			   	method: 'POST',
 				data: sdata, 
 			   	beforeSend: function(){
@@ -223,9 +306,18 @@
 				},
 			   	success: function(msg){
 			   	 	$.showMsg({
-						msg: "<?php echo $Text['msg_edit_success']; ?>",
-						type: 'success',
-						autoclose:1000});
+						msg: "<?=$Text['msg_import_success'];?>",
+						buttons: {
+							"<?=$Text['btn_import_another'];?>":function(){						
+								resetUpload();
+								$(this).dialog("close");
+							},
+							"<?=$Text['btn_nothx']; ?>":function(){						
+								window.opener.reloadWhat();
+								window.close();
+							}
+						},
+						type: 'success'});
 			   		
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -239,8 +331,14 @@
 
 			   	}
 			}); //end ajax
+		}//end submit
 
-			
+
+		function resetUpload(){
+			$('.showFileInfo').hide();
+			$('.setFileName').text('');
+			$('.previewElements').hide();
+
 		}
 
 		 
@@ -256,11 +354,8 @@
 	<div id="stagewrap">
 	
 		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol50">
-		    	<h1 class="pgProviderOverview">Import data</h1>
-    		</div>
-    		<div id="titleRightCol50">
-
+			<div >
+		    	<h1 class="pgProviderOverview setImportDestTitle"></h1>
     		</div>
 		</div><!-- end titlewrap -->
  
@@ -271,43 +366,65 @@
 					
 		 -->
 		 <div class="ui-widget"> 
-			<h4>1. Choose a file</h4>
+			<h4>1. <?=$Text['import_step1']; ?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8 adaptHeight">
 				<div class="floatLeft aix-layout-fixW450">
 					<form id="frmFileUpload">
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
 					</form>
 					<br/>
-					<p>&nbsp;Allowed formats: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
+					<p>&nbsp;<?=$Text['import_allowed']; ?>: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
+					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8"><?=$Text['import_file']; ?>: <span class="setFileName"></span></p>
 				</div>
 				<div class="floatLeft">
-					<p class="boldStuff">Public URL</p><br/>
+					<p class="boldStuff"><?=$Text['public_url'];?></p><br/>
 					<input type="text" name="importURL" id="importURL" value="http://" class="ui-widget ui-corner-all"/>
 					<br/><br/>
-					<button id="btn_fetch">Load file</button> <span class="setFileName"></span>
+					<button id="btn_fetch"><?=$Text['btn_load_file']; ?></button> 
 				</div>
 				<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader_fff.gif"/></span>
 				<div style="clear:both">
-					<p id="msg_file_upload" class="uploadMsgElements">Uploading file and generating preview, please wait...!</p>
-					<p id="msg_fetch_file" class="uploadMsgElements">Reading file from server and parsing, please wait...!</p>
+					<p id="msg_file_upload" class="uploadMsgElements"><?=$Text['msg_uploading']; ?></p>
+					<p id="msg_fetch_file" class="uploadMsgElements"><?=$Text['msg_parsing']; ?></p>
 					
 				</div>
 			</div>		
 		</div>
 		<br/><br/>
 		
-		<div class="ui-widget opDataPreview hidden"> 
-			<h4>2. Preview data and match columns</h4>
+		<div class="ui-widget previewElements hidden"> 
+			<h4>2. <?=$Text['import_step2'];?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
+				<br/>
+				<p class="previewTableElements"><?=$Text['import_reqcol'];?>: <span class="setRequiredColumn ui-state-highlight aix-style-padding8x8 ui-corner-all"></span></p><br/>
+				<div class="ui-style-info previewOwnElements" >
+					<p class="ui-style-warning"><?=$Text['import_auto'];?> </p>
+					<br/>
+				</div>
+				
+				<div class="previewTableElements">
 				<form id="frmColMap">
 					<input type="hidden" name="provider_id" value=""/>
 					<div id="preview" style="max-height:300px; overflow:auto;">
-				
 					</div>
 				</form>
+				</div>
 				<br/>
-				<button id="btn_import">Import</button>
+				
+				<p><?=$Text['import_qnew'];?></p> 
+				<p>
+					<form id="frmImpOptions">
+					<input type="radio" name="append_new" value="1" /> <?=$Text['import_createnew'];?> <br/>
+					<input type="radio" name="append_new" value="0" checked="checked"/> <?=$Text['import_update'];?>
+					</form>
+				</p>
+				<br/>
+				<button class="btn_import previewOwnElements"><?=$Text['btn_imp_direct'];?></button>
+				<button class="btn_import previewTableElements"><?=$Text['btn_import'];?></button>
+				<button class="btn_preview previewOwnElements"><?=$Text['btn_preview'];?></button>
+
+
 			</div>		
 		</div>
 		
@@ -363,7 +480,7 @@
 </div>
 <!-- end of wrap -->
 <select id="assignColumns" name="table_col[]" class="hidden">
-	<option value="-1">Match column...</option>
+	<option value="-1"><?=$Text['sel_matchcol'];?></option>
 	<option value="{db_field}">{db_field}</option>
 </select>
 

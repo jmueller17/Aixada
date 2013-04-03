@@ -274,7 +274,7 @@ $Text['nav_wiz'] = "Torn";
 	$Text['nav_wiz_validate'] = "Valida";
 //  $Text['nav_wiz_open'] = "Obre";
 //  $Text['nav_wiz_close'] = "Tanca";
-//  $Text['nav_wiz_torn'] = "Resum torn";
+  $Text['nav_wiz_torn'] = "Resum torn";
 	$Text['nav_wiz_cashbox'] = "Caixa";
 $Text['nav_shop'] = "Compra avui";
 $Text['nav_order'] = "Propera comanda";
@@ -853,6 +853,35 @@ $Text['correct_stock_frase'] = "L'estoc actual no és de";
 $Text['stock_but'] = "sinó"; //current stock is not x units but...
 $Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues) fent clic al nom del producte aquí baix.";
 $Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Gestiona&gt; Productes&gt; Estoc.";
-$Text['info_stock_page'] = "Info_stock_page";
+
+
+$Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
+$Text['msg_err_upload'] = "S'ha produït un error en la càrrega de l'arxiu "; 
+$Text['msg_import_matchcol'] = "Cal fer coincidir les entrades de la base de dades amb les files de la taula. Has assignar la columna que correspon a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
+$Text['msg_import_furthercol'] = "Quines altres columnes de la taula vols importar a més de la columna necessària?"; 
+$Text['msg_import_success'] = "L'importació ha funcionat correctament. Vols importar un altre arxiu?"; 
+$Text['btn_import_another'] = "Importar un altre"; 
+$Text['btn_nothx'] = "No, gràcies"; 
+$Text['import_allowed'] = "Formats compatibles"; //as in allowed file formats
+$Text['import_file'] = "Arxiu d'importació"; 
+$Text['public_url'] = "URL pública";
+$Text['btn_load_file'] = "Afegi arxiu";
+$Text['msg_uploading'] = "S'està carregant el fitxer i s'està generant la vista prèvia. Espera ...";
+$Text['msg_parsing'] = "S'està llegint l'arxiu del servidor i s'està analitzant. Espera ...";
+$Text['import_step1'] = "Afegi arxiu";
+$Text['import_step2'] = "Vista prèvia de les dades i assignació de columnes";
+$Text['import_reqcol'] = "Columna necessària";
+$Text['import_auto'] = "Tinc bones notícies: gairebé totes les dades (columnes) s'han pogut reconèixer i pots intentar la importació automàtica. De tota manera, l'opció més segura és previsualitzar primer el contingut i després realitzar l'assignació de columnes de la taula manualment.";
+$Text['import_qnew'] = "Què vols fer amb les dades que no existeixen a la base de dades actual?";
+$Text['import_createnew'] = "Crear entrades noves";
+$Text['import_update'] = "Actualitzar només les files existents";
+$Text['btn_imp_direct'] = "Importar directament";
+$Text['btn_import'] = "Importar";
+$Text['btn_preview'] = "Vista prèvia"; 
+$Text['sel_matchcol'] = "Assignar columna ..."; 
+$Text['ti_import_products'] = "Importar o actualitzar els productes de "; 
+$Text['ti_import_providers'] = "Importar proveedores"; 
+$Text['head_ti_import'] = "Assistent d'importació";
+
 
 ?>

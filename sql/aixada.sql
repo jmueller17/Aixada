@@ -26,7 +26,7 @@ create table aixada_uf (
   created			timestamp 		default current_timestamp,
   mentor_uf         int             default null,
   primary key (id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -55,7 +55,7 @@ create table aixada_member (
   ts			  	timestamp not null default current_timestamp,
   primary key (id),
   foreign key (uf_id)  references aixada_uf(id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -85,7 +85,7 @@ create table aixada_provider (
   primary key (id),
   key (active),
   foreign key (responsible_uf_id) references aixada_uf(id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -110,7 +110,7 @@ create table aixada_user (
   foreign key (uf_id) references aixada_uf(id),
   foreign key (member_id) references aixada_member(id),
   foreign key (provider_id) references aixada_provider(id)  
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -121,7 +121,7 @@ create table aixada_user_role (
   role  			varchar(100)	not null,
   primary key (user_id, role),
   foreign key (user_id)	references aixada_user(id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
   
 
 /**
@@ -131,7 +131,7 @@ create table aixada_product_category (
   id   				int				not null,
   description		varchar(255) 	not null, 
   primary key (id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -141,7 +141,7 @@ create table aixada_orderable_type (
   id   				tinyint			not null auto_increment,
   description		varchar(255) 	not null, 
   primary key (id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -153,7 +153,7 @@ create table aixada_unit_measure (
   name 				varchar(255) not null,
   unit				varchar(50)	 not null,
   primary key (id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -163,7 +163,7 @@ create table aixada_rev_tax_type (
   description		varchar(50)	 	not null,
   rev_tax_percent	decimal(10,2),
   primary key (id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
  
 
 /**
@@ -175,7 +175,7 @@ create table aixada_iva_type (
   percent				decimal(10,2) 	not null, 
   description 		    varchar(100)	default null,
   primary key (id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -216,7 +216,7 @@ create table aixada_iva_type (
   foreign key (unit_measure_shop_id) 	references aixada_unit_measure(id),
   		  key (delta_stock),
   unique  key (custom_product_ref, provider_id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -233,7 +233,7 @@ create table aixada_product_orderable_for_date (
   			key (date_for_order),
   foreign 	key (product_id) references aixada_product(id),
   unique 	key (product_id, date_for_order)
-) engine=InnoDB default character set utf8;       
+) engine=InnoDB default character set utf8 collate utf8_general_ci;       
  
 
 /**
@@ -258,7 +258,7 @@ create table aixada_order (
 	foreign key (provider_id) references aixada_provider(id),
 	foreign key (date_for_order) references aixada_product_orderable_for_date(date_for_order),
 	unique key (date_for_order, provider_id, ts_sent_off)
-) engine=InnoDB default character set utf8;     
+) engine=InnoDB default character set utf8 collate utf8_general_ci;     
 
 
 /**
@@ -278,7 +278,7 @@ create table aixada_cart (
 	foreign key (uf_id) references aixada_uf(id),
 	foreign key (operator_id) references aixada_user(id),
 	unique key (uf_id, date_for_shop, ts_validated)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -301,7 +301,7 @@ create table aixada_order_item (
   foreign key (favorite_cart_id) references aixada_cart(id),
   foreign key (product_id, date_for_order) references aixada_product_orderable_for_date(product_id, date_for_order),
   unique  key (order_id, uf_id, product_id)
-) engine=InnoDB default character set utf8; 
+) engine=InnoDB default character set utf8 collate utf8_general_ci; 
 
 
 
@@ -323,7 +323,7 @@ create table aixada_shop_item (
   foreign key (order_item_id) references aixada_order_item(id),
   foreign key (product_id) references aixada_product(id),	
   unique key (cart_id, product_id, order_item_id)
-) ENGINE=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -343,7 +343,7 @@ create table aixada_order_to_shop (
   foreign key (order_id) references aixada_order(id),
   foreign key (product_id) references aixada_product(id),
   foreign key (uf_id) references aixada_uf(id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -362,7 +362,7 @@ create table aixada_stock_movement (
   foreign key (product_id) references aixada_product(id), 
   foreign key (operator_id) references aixada_user(id),
   key (ts)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -386,7 +386,7 @@ create table aixada_currency (
   name		 	varchar(50) 	not null,
   one_euro	 	decimal(10,4)  	not null, 
   primary key (id)
-) engine=InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /* 
@@ -413,7 +413,7 @@ create table aixada_account (
   foreign key(operator_id) references aixada_user(id),
   foreign key(payment_method_id) references aixada_payment_method(id),
   foreign key(currency_id) references aixada_currency(id)
-) engine = InnoDB default character set utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -425,7 +425,7 @@ create table aixada_incident_type (
   description 		varchar(255)   	not null,
   definition 		text 		not null,
   primary key (id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 
@@ -449,7 +449,7 @@ create table aixada_incident (
   foreign key (incident_type_id) references aixada_incident_type(id),
   foreign key (operator_id) references aixada_user(id),
   key (ts)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 /**
@@ -463,5 +463,5 @@ create table aixada_price (
   primary key (product_id, ts),
   foreign key (product_id) references aixada_product(id),
   foreign key (operator_id) references aixada_user(id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
