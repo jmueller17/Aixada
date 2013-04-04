@@ -1120,9 +1120,12 @@
 			var price = $.checkNumber($('input[name="unit_price"]', frm),0.00, 2);
 			$('input[name=unit_price]', frm).val(price);
 			
+			var revp = $('span.sIvaPercentId', frm).children('select').children('option:selected').text();
+			var ivap = $('span.sRevTaxTypeId', frm).children('select').children('option:selected').text();
 			
-			var rev = new Number($('input[name=rev_tax_type_id]', frm).val());
-			var iva = new Number($('input[name=iva_percent_id]', frm).val());
+			var rev = new Number(revp);
+			var iva = new Number(ivap);
+			
 			var price = price * (1 + iva/100) * (1 + rev/100); 
 
 			$('.unit_price_brutto', frm).text(price.toFixed(2));
