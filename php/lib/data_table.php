@@ -173,6 +173,18 @@ class data_table {
 		}
 	}
 	
+	public function has_header(){
+		return $this->_header; 
+	}
+	
+	public function get_nrows(){
+		return $this->_nr_rows; 	
+	}
+	
+	public function get_nrcols(){
+		return $this->_nr_cols; 
+		
+	}
 	
 	
 	public function get_row($rindex){

@@ -37,6 +37,7 @@ class import_products extends abstract_import_manager {
 		//every product needs the provider id
 		$this->_db_insert_row_prefix = array("provider_id"=>$this->provider_id);
 		
+		
 		//set field used for matching external and internal entries. 
 		$this->_db_match_field = 'custom_product_ref';
 		
@@ -89,7 +90,7 @@ class import_products extends abstract_import_manager {
 	    	}
 	    	$db->free_next_results();
 		} 
-    	
+   
     	return $_existing_rows;
     	
 	}

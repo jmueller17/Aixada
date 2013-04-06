@@ -20,7 +20,7 @@ class import_providers extends abstract_import_manager {
 		$this->_db_match_field = 'nif';
 		
 		//if new providers will be created, need a responsible uf_id
-		$this->_db_insert_row_prefix = array('responsible_uf_id'=>get_session_uf_id());
+		$this->_db_insert_row_prefix = array('table'=>'aixada_provider', 'responsible_uf_id'=>get_session_uf_id());
 		
 		
 		//no columns are matched manually; try automatic

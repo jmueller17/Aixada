@@ -251,7 +251,7 @@ class DBWrap {
   public function Insert ($arrData)
   {
       if (!array_key_exists('table', $arrData))
-	  throw new InternalException('Update: Input array ' . $arrData . ' does not contain a field named "table"');
+	  	throw new InternalException('Insert: Input array ' . $arrData . ' does not contain a field named "table"');
       $table_name = $arrData['table'];
 
       $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';

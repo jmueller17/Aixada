@@ -138,7 +138,7 @@ class abstract_import_manager {
     		exit;
     	}
 
-    	
+  	
         if (count($data_table) == 0){
     		throw new Exception ("Import error: the data table is empty. Nothing to import!!");
     		exit; 
@@ -154,6 +154,7 @@ class abstract_import_manager {
 	    			array_push($this->_import_fields, $field);
     			}
     		} else {
+    			global $firephp;
     			$firephp->log("Import warning: import to field '{$field}' is not allowed. Column will be ignored!");
     		}
     	}
@@ -182,6 +183,8 @@ class abstract_import_manager {
 		//get foreign key contraints of the destination table
     	$fkm = new foreign_key_manager($this->_db_table);
     	$this->_build_foreign_key_cache($fkm->get_keys());
+    	
+    	
         	   
     } 
     
@@ -209,8 +212,14 @@ class abstract_import_manager {
     	//format array('db_id'=>'custom_ref', ...)
     	$update_ids = $this->match_db_entries();
 
-    	//data table rows that do not match existing rows in the database  
-    	$insert_ids = array_diff($this->_match_col, $update_ids);
+    	//data table rows that do not match existing rows in the database
+    	//either because the ref does not exist or they are left empty (and hence cannot be matched)
+    	$insert_rows = $this->_get_new_rows($update_ids);
+    	
+    	
+    	/*global $firephp; 
+    	$firephp->log($update_ids, "update_ids");
+    	$firephp->log($insert_rows, "insert_rows");*/
     	
     	if (count($update_ids) > 0){
 	    	//should be unique values
@@ -223,8 +232,8 @@ class abstract_import_manager {
     		$this->update_rows($update_ids);
     	}
     	
-    	if ($append_new && count($insert_ids)){
-    		$this->insert_rows($insert_ids);	
+    	if ($append_new && count($insert_rows)){
+    		$this->insert_rows($insert_rows);	
     	}
     }
     
@@ -239,6 +248,8 @@ class abstract_import_manager {
 
     	$db = DBWrap::get_instance();
 
+    	global $firephp; 
+    	
     	
     	foreach($update_ids as $id => $match_id){
     		
@@ -246,7 +257,7 @@ class abstract_import_manager {
     		$row = $this->_import_data_table->search_row($this->_match_col_index, $match_id);
     		
     		//real db id to the row; required for the database wrapper update function
-    		$db_update_row = array("id"=>$id);
+    		$db_update_row = array("table"=>$this->_db_table,"id"=>$id);
 
     		//add any additional entries, set in the subclass
     		array_merge($db_update_row, $this->_db_update_row_prefix);
@@ -267,10 +278,12 @@ class abstract_import_manager {
     			//add it to the import_row	
 				$db_update_row[$db_field] = $row[$col_index];	
 			}
+
+    		$firephp->log($db_update_row, "update row");
 			
-			//do sql
+			//do sqlupdate row
 			try {
-				$db->Update($this->_db_table, $db_update_row);
+				$db->Update($db_update_row);
 			}  catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());
     			die ($e->getMessage());
@@ -289,15 +302,19 @@ class abstract_import_manager {
      */
 	protected function insert_rows($insert_ids){
     	$db = DBWrap::get_instance();
+    	global $firephp; 
     	
-    	foreach($insert_ids as $id => $match_id){
+    	
+    	foreach($insert_ids as $id => $index){	
+    		//retrieve row from import data table could have an external id or not!!
+    		$row = $this->_import_data_table->get_row($index);
+    		    		
+    		//set the db import table
+    		$db_insert_row =  array("table"=>$this->_db_table);
     		
-    		//retrieve row from import data table
-    		$row = $this->_import_data_table->search_row($this->_match_col_index, $match_id);
-    		
-    		//add any additional entries, set in the subclass
-    		$db_insert_row = $this->_db_insert_row_prefix;
-    		
+    		//add prefix stuff
+    		$db_insert_row = array_merge($db_insert_row, $this->_db_insert_row_prefix);
+    		    		
     		//take fields to be imported
     		foreach($this->_import_fields as $db_field){
     			//lookup its corresponding column in the import data table 	
@@ -310,14 +327,23 @@ class abstract_import_manager {
     			if (!$this->_foreign_key_exists($db_field, $import_value)){
     				continue; 
     			}
-
-    			//add it to the import_row	
-				$db_insert_row[$db_field] = $row[$col_index];	
+    			
+    			//for aixada_products, the required custom_product_ref fields is unique with provider_id 
+    			//because this field is empty when importing new products, we need to set the custom_product_ref to null
+    			//i.e. leave it out of the sql insert string. Same would happen for nif of providers, although this has not a unique constraint
+    			if ($db_field == $this->_db_match_field){
+    				//$db_insert_row[$db_field] = null;  don't  uncomment this.. leave it to sql to insert null
+    			} else {
+    				//add it to the import_row	
+					$db_insert_row[$db_field] = $row[$col_index];	
+    			}
 			}
 
+			$firephp->log($db_insert_row, "insert row");
+			
 			//do sql
 			try {
-				$db->Insert($this->_db_table, $db_insert_row);
+				$db->Insert($db_insert_row);
 			}  catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());
     			die ($e->getMessage());
@@ -386,15 +412,36 @@ class abstract_import_manager {
 		$idcount = array_count_values($this->_match_col);
    		
 		$duplicates = array();
-		foreach($idcount as $id => $count ){
-		    if( $count > 1 ){
-		        array_push($duplicates, $id );
+		foreach($idcount as $value => $count ){
+		    if( $count > 1 && $value != ''){     //don't count empty cells as duplicates since they could be used for inserting
+		        array_push($duplicates, $value );
 		    }
 		}
 		
 		return $duplicates; 
     }
     
+    
+    /**
+     * 
+     * Retrieves the row index from the import data table that do not match any entries on the matching column.
+     * If allow_update is set to true, then these entries will be added to the db. 
+     * @param array $update_ids
+     */
+    private function _get_new_rows($update_ids){
+    	$nr = $this->_import_data_table->get_nrows();
+    	$insert_rows = array();
+    	$i = ($this->_import_data_table->has_header())? 1:0; 
+    	
+    	for ($i; $i<$nr; $i++){
+    		$row = $this->_import_data_table->get_row($i);	
+    		//if the match_col value of the current does not exist, save this row for inserting
+    		if (!in_array($row[$this->_match_col_index], $update_ids)){
+    			array_push($insert_rows, $i);		
+    		}
+    	}
+    	return $insert_rows; 
+    }
     
     
     /**
