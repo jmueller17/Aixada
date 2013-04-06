@@ -27,7 +27,7 @@ try{
 	        exit;
 	        
 	    case 'getFieldOptions':
-	        echo get_field_options_live($_REQUEST['table'], $_REQUEST['field1'], $_REQUEST['field2']);
+	        echo get_field_options_live(get_param('table'), get_param('field1',''), get_param('field2',''), get_param('field3',''));
 	        exit;
 	
 	        

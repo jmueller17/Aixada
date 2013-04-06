@@ -407,27 +407,46 @@ function get_import_rights($db_table_name)
 
 
 
-function get_field_options_live($table, $field1, $field2)
+function get_field_options_live($table, $field1, $field2, $field3='')
 {
     global $Text;
     $strXML = '<select>';
-    $strSQL = 'select :1, :2 from :3';
+    if ($field3 != ''){
+    	$strSQL = 'select :1, :2, :3 from :4';
+    } else {
+    	$strSQL = 'select :1, :2 from :3';
+    }
+    
     if (in_array($table, array('aixada_unit_measure'))) {
 	$strSQL .= ' order by name';
     } else if (in_array($table, array('aixada_orderable_type'))) {
 	$strSQL .= ' order by description';
     }
 
-    $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $table);
+   
+	if ($field3 != ''){
+         $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $field3, $table);    	       	
+        } else {
+        $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $table);
+    }
+    
     if ($table == 'aixada_uf') {
-        $strXML .= "<option value=''></option>";
+        $strXML .= "<option value='-1'>".$Text['sel_uf']."</option>";
     }
     while ($row = $rs->fetch_array()) {
         $ot = (isset($Text[$row[1]]) ? $Text[$row[1]] : $row[1]);
-        if ($table == 'aixada_uf')
+        if ($table == 'aixada_uf'){
             $ot = //$Text['uf_short'] . ' ' . 
                 $row[0] . ' ' . $ot;
-        $strXML .= "<option value='{$row[0]}'";
+        }
+        
+        if ($field3 != ''){
+         $strXML .= "<option value='{$row[0]}' addInfo='{$row[2]}'";        	       	
+        } else {
+        	$strXML .= "<option value='{$row[0]}'";
+        }
+                
+
 	if ($row[0] == 1) {
 	    $strXML .= ' selected';
 	}
