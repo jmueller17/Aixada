@@ -398,7 +398,7 @@
 			}
 
 			//reset all textfields
-			$('input:text, input:hidden, textarea', frm).val('');
+			$('input:text, textarea', frm).val('');
 
 			//assume that a new provider is active
 			$('input:checkbox', frm).each(function(){
