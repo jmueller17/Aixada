@@ -611,6 +611,50 @@ begin
 end|
 
 
+/**
+ * retrieves the value of available stock for the given product or provider in given date range
+ */
+drop procedure if exists get_stock_value|
+create procedure get_stock_value(in the_provider_id int)
+begin
+	
+	declare wherec varchar(255) default "";
+	
+	if (the_provider_id > 0) then
+		set wherec = concat("and p.provider_id=",the_provider_id);
+	end if; 
+	
+	set @q = concat("select 
+		p.stock_actual,
+		p.orderable_type_id,
+		p.name,	
+		p.unit_price,
+		round((p.stock_actual * p.unit_price),2) as total_netto_stock_value,
+		round((p.stock_actual * p.unit_price * (1 + iva.percent/100) * (1 + rev.rev_tax_percent/100)),2) as total_brutto_stock_value,
+		iva.percent as iva_percent,
+		rev.rev_tax_percent,
+		u.unit as shop_unit
+	from 
+		aixada_product p,
+		aixada_iva_type iva,
+		aixada_rev_tax_type rev,
+		aixada_unit_measure u
+	where 
+		p.active = 1
+		and p.stock_actual >= 0	
+		and p.rev_tax_type_id = rev.id
+		and p.iva_percent_id = iva.id
+		and p.unit_measure_shop_id = u.id
+		",wherec,"
+		and p.orderable_type_id = 1;");
+		
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+	
+end|
+
 
 /**
  * correct stock. this should be the exception since stock is normally added
