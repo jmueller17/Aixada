@@ -879,7 +879,7 @@ $Text['btn_import'] = "Importar";
 $Text['btn_preview'] = "Vista prèvia"; 
 $Text['sel_matchcol'] = "Assignar columna ..."; 
 $Text['ti_import_products'] = "Importar o actualitzar els productes de "; 
-$Text['ti_import_providers'] = "Importar proveedores"; 
+$Text['ti_import_providers'] = "Importar proveïdor"; 
 $Text['head_ti_import'] = "Assistent d'importació";
 
 
