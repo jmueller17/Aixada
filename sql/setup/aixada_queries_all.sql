@@ -341,8 +341,7 @@ end|
 
 
 delimiter ;
-
-   delimiter |
+delimiter |
 
 
 /**
