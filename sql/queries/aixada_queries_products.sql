@@ -624,7 +624,8 @@ begin
 		set wherec = concat("and p.provider_id=",the_provider_id);
 	end if; 
 	
-	set @q = concat("select 
+	set @q = concat("select
+		p.id as product_id, 
 		p.stock_actual,
 		p.orderable_type_id,
 		p.name,	
@@ -640,8 +641,7 @@ begin
 		aixada_rev_tax_type rev,
 		aixada_unit_measure u
 	where 
-		p.active = 1
-		and p.stock_actual >= 0	
+		p.active = 1	
 		and p.rev_tax_type_id = rev.id
 		and p.iva_percent_id = iva.id
 		and p.unit_measure_shop_id = u.id

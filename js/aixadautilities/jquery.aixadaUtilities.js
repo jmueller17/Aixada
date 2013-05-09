@@ -32,7 +32,16 @@ $(function(){
 				sums['totalRevTax'] = totalRevTax.toFixed(2); 
 				sums['total_net'] = totalNet.toFixed(2);
 				return sums; 
-			},			
+			},		
+			sumSimpleItems : function (sel){
+				var total = 0; 
+				$(sel).each(function(){
+					var price = new Number($(this).text());					
+					total += price; 
+				});
+				return total.toFixed(2); 
+				
+			},
 			formatQuantity : function(obj){
 				
 				$('.formatQty',obj).each(function(){

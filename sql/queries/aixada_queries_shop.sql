@@ -1,6 +1,17 @@
 delimiter |
 
 
+drop procedure if exists get_purchase_total_by_product|
+create procedure get_purchase_total_by_product(in from_date date, in to_date date, in the_provider_id int, in the_product_id int)
+begin
+	
+	
+	
+end|
+
+/**
+ * returns the total of sold items for a given provider
+ */
 drop procedure if exists get_purchase_total_by_provider|
 create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
 begin
