@@ -28,7 +28,8 @@
 	
 	$(function(){
 
-
+			//set the balance of cashbox(-3) or consume account (-2)
+			var gSetBalanceAId = -3; 
 
 		
 			/**
@@ -160,12 +161,6 @@
   	  			var amount = $.checkNumber($('#withdraw_amount'), '', 2);
   	  			var uf_id = parseInt($("#withdraw_form .uf_account_select option:selected").val()) - 1000;
 				
-  	  			//alert(withdraw_type + " " + amount + " " + uf_id);
-  	  			/*if (withdraw_type == 3 || withdraw_type ==4){
-					allow = allow && (uf_id > 0) && (amount > 0);
-  	  	  		} else {
-  	  	  			allow = allow && (amount > 0);
-  	  	  	  	}*/
   	  			allow = allow && (amount > 0) && (((withdraw_type == 2 || withdraw_type == 1 || withdraw_type == 5) || ((uf_id > 0) && (withdraw_type == 3 || withdraw_type == 4))));
 
   	  			if (allow) {
@@ -296,16 +291,6 @@
 
 			});
 
-			
-			$('#correct_balance').button({
-				disabled:false,
-				icons: {
-	                primary: "ui-icon-pencil"
-	            }
-			}).click(function(){
-				$("#dialog_c_balance").dialog("open");
-
-			});
 
 					
 
@@ -331,11 +316,11 @@
   							//
   							$.ajax({
   								type: "POST",
-								url : "php/ctrl/Account.php?oper=correctBalance&account_id=-3&balance="+amount+"&description="+notes,
+								url : "php/ctrl/Account.php?oper=correctBalance&account_id="+gSetBalanceAId+"&balance="+amount+"&description="+notes,
   						        success :  function(msg){
 
-  						        	$('.setTotalCashbox').addClass(css).text(amount).fadeIn(1000);
-  						        	
+  						        	//$('.setTotalCashbox').addClass(css).text(amount).fadeIn(1000);
+  						        	getGlobalBalances();
 
   									$('#c_balance_quantity').val("");  
   									$("#dialog_c_balance").dialog( "close" );
@@ -370,73 +355,97 @@
         		}).hide();
   			
 
+  			/**
+  			 *	Main cashbox menu buttons
+  			 */
   			$('#btn_nav_dCashbox')
   				.button()
   				.click(function(e){
-
 					switchTo('deposit');
-
   	  			});
 
   			$('#btn_nav_wCashbox')
 				.button()
 				.click(function(e){
-
 					switchTo('withdraw');
-
 	  			});
 
   			$('#btn_nav_cCashbox')
 				.button()
 				.click(function(e){
+					gSetBalanceAId = -3; 
 					$("#dialog_c_balance").dialog('open');
+					$("#dialog_c_balance").dialog({ title: "<?php echo $Text['set_balance'];?>" });
   				});
 
   			
-  			
 
-  			//retrieve balance of global accounts
-  			$.ajax({
-					type: "POST",
-					url : "php/ctrl/Account.php?oper=globalAccountsBalance",
-					dataType : 'xml',
-			        success :  function(xml){
+  			/**
+  			 *	Main consum account menu buttons
+  			 */
+  			$('#btn_nav_dCAccount')
+  				.button()
+  				.click(function(e){
+					switchTo('deposit');
+  	  			});
 
-				        	$(xml).find('row').each(function(){
-					        	
-				        		var id = $(this).find('account_id').text();
-					        	var balance = $(this).find('balance').text();
+  			$('#btn_nav_wCAccount')
+				.button()
+				.click(function(e){
+					switchTo('withdraw');
+	  			});
 
-					        	var css = (new Number(balance) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
-					        	
-					        	switch(id){
-					        		case '-3':
-						        		$('.setTotalCashbox').addClass(css).text(balance);
-						        		break;
-					        		case '-2':
-					        			$('.setTotalConsum').addClass(css).text(balance);
-					       				break;
-					        		case '-1':
-					        			$('.setTotalMaintenance').addClass(css).text(balance);
-					       				break;
-					        	}
+  			$('#btn_nav_cCAccount')
+				.button()
+				.click(function(e){
+					gSetBalanceAId = -2; 
+					$("#dialog_c_balance").dialog('open');
+					$("#dialog_c_balance").dialog({ title: "Set balance for consume account" });
 
-					        });
+  				});
+
+	  			
+			function getGlobalBalances(){
+	  			//retrieve balance of global accounts
+	  			$.ajax({
+						type: "POST",
+						url : "php/ctrl/Account.php?oper=globalAccountsBalance",
+						dataType : 'xml',
+				        success :  function(xml){
 	
-					}, 
-					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-				   	} 		
-			});
-
+					        	$(xml).find('row').each(function(){
+						        	
+					        		var id = $(this).find('account_id').text();
+						        	var balance = $(this).find('balance').text();
+	
+						        	var css = (new Number(balance) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
+						        	
+						        	switch(id){
+						        		case '-3':
+							        		$('.setTotalCashbox').addClass(css).text(balance);
+							        		break;
+						        		case '-2':
+						        			$('.setTotalConsum').addClass(css).text(balance);
+						       				break;
+						        		case '-1':
+						        			$('.setTotalMaintenance').addClass(css).text(balance);
+						       				break;
+						        	}
+	
+						        });
+		
+						}, 
+						error : function(XMLHttpRequest, textStatus, errorThrown){
+							$.showMsg({
+								msg:XMLHttpRequest.responseText,
+								type: 'error'});
+					   	} 		
+				});
+			}
 	
 
 			function switchTo(section){
-				
-				//$('.uf_account_select option[value="-10"]').attr('selected','selected')
-				
+								
 				//reset selects; 
 				$('#sel_withdraw_type option[value="-1"]').attr('selected','selected');
 				$('#sel_deposite_type option[value="-1"]').attr('selected','selected');
@@ -466,6 +475,7 @@
 			}
   			
 			switchTo('overview');	
+			getGlobalBalances();
 					
 	});  //close document ready
 	</script>
@@ -518,18 +528,25 @@
 			<h2><?php echo $Text['consum_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> €</span></h2>
 			<table>
 				<tr>
-					<td class="aix-layout-fixW150">
-						
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_dCAccount">Deposit money in account</button>
 					</td>
-					<td><p>...</p></td>
+					<td><p><?php echo $Text['deposit_desc']; ?></p></td>
 				</tr>
 				
 				<tr>
 					<td>
-						
+						<button class="aix-layout-fixW150" id="btn_nav_wCAccount">Withdraw or make transference to providers</button>
 					</td>
-					<td><p></p></td>
+					<td><p><?php echo $Text['withdraw_desc']; ?></p></td>
 				</tr>
+				<tr>
+					<td>
+						<button class="aix-layout-fixW150" id="btn_nav_cCAccount"><?php echo $Text['btn_set_balance']; ?></button>
+					</td>
+					<td><p><?php echo $Text['set_bal_desc']; ?></p></td>
+				</tr>
+				
 			</table>
 			<p>&nbsp;</p>
 			<h2><?php echo $Text['maintenance_account']; ?>  <span class="floatRight"><?=$Text['current_balance'];?><span class="setTotalMaintenance">-</span></span></h2>
@@ -705,7 +722,7 @@
 	</div><!-- end of stage wrap -->
 <div/>
 <!-- end of wrap -->
-<div id="dialog_c_balance" title="<?php echo $Text['set_balance'];?>">
+<div id="dialog_c_balance" title="">
 	<p id="c_balance_Msg" class="minPadding ui-corner-all"></p>
 	<p><br/></p>
 	<form id="c_balance_form">	

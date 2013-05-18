@@ -201,6 +201,13 @@ end|
  * cash withdrawls. this usually refers to withdraw some cash for paying bills. 
  * cash can only be withdrawn from cashbox -3. TODO: how this gets reflected on the other
  * accounts needs to be clarified. 
+ * 
+ * sel_withdraw_type 	1 - Pay provider
+ * 						2 - Withdraw cash for bank
+ * 						3 - Withdraw from HU account
+ * 						4 - Withdraw member quota
+ * 						5 - All other withdrawals
+ * 
  */
 drop procedure if exists withdrawal|
 create procedure withdrawal (in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in the_operator_id int, in the_type int)
@@ -208,6 +215,7 @@ begin
 		
 	declare current_balance decimal(10,2);
 	
+	--read the current balance--
 	select 
   		balance 
   	into 
@@ -219,6 +227,7 @@ begin
   	order by ts desc
   	limit 1; 
 		
+  	
 	insert into 
   		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
   	values 

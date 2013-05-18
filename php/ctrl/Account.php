@@ -54,7 +54,7 @@ try{
 	    	exit; 
 	    	
 	    case 'withdraw':
-	    	echo do_stored_query('withdrawal', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id(),10);
+	    	echo do_stored_query('withdrawal', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id(),get_param('sel_withdraw_type','-1'));
 	    	exit; 
 	    	
 	    case 'globalAccountsBalance':
