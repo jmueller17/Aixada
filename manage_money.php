@@ -39,7 +39,7 @@
 					url				: 'php/ctrl/Account.php',
 					params			: 'oper=accountExtract&account_id=-3&start_date=2200-01-01&num_rows=400',
 					resultsPerPage 	: 20,
-					loadOnInit 		: true, 
+					loadOnInit 		: false, 
 					paginationNav 	: '#list_account tfoot td',
 					beforeLoad 		: function(){
 						$('#cashbox_listing .loadAnim').show();
@@ -142,7 +142,7 @@
   				var uf_id = parseInt($("#deposit_form .uf_account_select option:selected").val()) - 1000;
 
   				
-  	  			allow = allow && (amount > 0) && (deposit_type==2 || ((uf_id > 0) && (deposit_type == 1)));
+  	  			allow = allow && (amount > 0) && (deposit_type==3 || (deposit_type==2 || ((uf_id > 0) && (deposit_type == 1))));
 
   	  			if (allow) {
   	  				$('#deposit_submit').button('enable');
@@ -361,13 +361,13 @@
   			$('#btn_nav_dCashbox')
   				.button()
   				.click(function(e){
-					switchTo('deposit');
+					switchTo('depositCash');
   	  			});
 
   			$('#btn_nav_wCashbox')
 				.button()
 				.click(function(e){
-					switchTo('withdraw');
+					switchTo('withdrawCash');
 	  			});
 
   			$('#btn_nav_cCashbox')
@@ -386,13 +386,13 @@
   			$('#btn_nav_dCAccount')
   				.button()
   				.click(function(e){
-					switchTo('deposit');
+					switchTo('depositBanc');
   	  			});
 
   			$('#btn_nav_wCAccount')
 				.button()
 				.click(function(e){
-					switchTo('withdraw');
+					switchTo('withdrawBanc');
 	  			});
 
   			$('#btn_nav_cCAccount')
@@ -452,23 +452,36 @@
 
 				resetDeposit();
 				resetWithdrawal();
+
+				$('.overviewElements, .withdrawElements, .withdrawCashElements, .withdrawBancElements, .depositElements, .depositBancElements, .depositCashElements, .movementElements').hide();
 				
 				switch(section){
 
 				case 'overview':
-					$('.depositElements, .withdrawElements, .movementElements').hide();
+					//$('.depositElements, .withdrawElements, .movementElements').hide();
 					$('.overviewElements').fadeIn(1000);
 					break;
 					
-				case 'deposit':
-					$('.overviewElements, .withdrawElements').hide();
-					$('.depositElements').fadeIn(1000);
+				case 'depositCash':
+					$('.depositElements, .depositCashElements').fadeIn(1000);
 					break;
 
-				case 'withdraw':
-					$('.overviewElements, .depositElements').hide();
-					$('.withdrawElements').fadeIn(1000);
+				case 'depositBanc':
+					//$('.overviewElements, .withdrawElements').hide();
+					$('.depositElements, .depositBancElements').fadeIn(1000);
 					break;
+				
+
+				case 'withdrawCash':
+					//$('.overviewElements, .depositElements').hide();
+					$('.withdrawElements, .withdrawCashElements').fadeIn(1000);
+					break;
+
+				case 'withdrawBanc':
+					//$('.overviewElements, .depositElements').hide();
+					$('.withdrawElements, .withdrawBancElements').fadeIn(1000);
+					break;
+				
 					
 
 				}
@@ -529,16 +542,16 @@
 			<table>
 				<tr>
 					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCAccount">Deposit money in account</button>
+						<button class="aix-layout-fixW150" id="btn_nav_dCAccount"><?php echo $Text['btn_deposit']; ?></button>
 					</td>
-					<td><p><?php echo $Text['deposit_desc']; ?></p></td>
+					<td><p><?php echo $Text['deposit_desc_banc']; ?></p></td>
 				</tr>
 				
 				<tr>
 					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCAccount">Withdraw or make transference to providers</button>
+						<button class="aix-layout-fixW150" id="btn_nav_wCAccount"><?php echo $Text['btn_make_withdrawal']; ?></button>
 					</td>
-					<td><p><?php echo $Text['withdraw_desc']; ?></p></td>
+					<td><p><?php echo $Text['withdraw_desc_banc']; ?></p></td>
 				</tr>
 				<tr>
 					<td>
@@ -549,6 +562,7 @@
 				
 			</table>
 			<p>&nbsp;</p>
+			<span class="hidden">
 			<h2><?php echo $Text['maintenance_account']; ?>  <span class="floatRight"><?=$Text['current_balance'];?><span class="setTotalMaintenance">-</span></span></h2>
 			<table>
 				<tr>
@@ -565,14 +579,17 @@
 					<td><p></p></td>
 				</tr>
 			</table>
-		
+			</span>
 		</div>
 		</div>
+
+
+		<!-- DESPOT CASH / BANC SECTION -->
 
 		<div id="deposit_cash" class="ui-widget aix-layout-center60 depositElements">
 		<div class="aix-style-highlight-deposit ui-corner-all" >
 			<div class="ui-widget-content ui-corner-all">
-				<h2 class="ui-widget-header ui-corner-all"><?=$Text['deposit_cashbox'];?> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
+				<h2 class="ui-widget-header ui-corner-all"><span class="depositCashElements"><?=$Text['deposit_cashbox'];?></span><span class="depositBancElements"><?=$Text['deposit_banc'];?></span> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="depositMsg" class="ui-corner-all"></p>
 				<div id="deposit_cash_content" class="padding10x5">
 					<form id="deposit_form">
@@ -589,8 +606,11 @@
 							<td>
 								<select id="sel_deposite_type">
 									<option value="-1"><?=$Text['please_select'];?></option>
-									<option value="1"><?=$Text['deposit_by_uf'];?></option>
+									<option class="depositCashElements" value="1"><?=$Text['deposit_by_uf'];?></option>
+									<option class="depositBancElements" value="3">Deposit sales cash</option>
 									<option value="2"><?=$Text['deposit_other'];?></option>
+
+									
 								</select>
 							</td>
 						</tr>
@@ -628,7 +648,7 @@
 		<div id="withdraw_cash" class="ui-widget  aix-layout-center60 withdrawElements">
 			<div class="aix-style-highlight-withdrawl ui-corner-all"> 
 			<div class="ui-widget-content ui-corner-all" >
-				<h2 class="ui-widget-header ui-corner-all"><?php echo $Text['widthdraw_cashbox'];?> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
+				<h2 class="ui-widget-header ui-corner-all"><span class="withdrawCashElements"><?php echo $Text['widthdraw_cashbox'];?></span> <span class="withdrawBancElements"><?php echo $Text['withdraw_banc'];?></span> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="withdrawMsg" class="ui-corner-all></p>
 				<div id="withdraw_cash_content" class="padding10x5">
 					<form id="withdraw_form">
@@ -647,9 +667,9 @@
 								<select id="sel_withdraw_type">
 									<option value="-1"><?php echo $Text['please_select'];?></option>
 									<option value="1"><?php echo $Text['withdraw_provider']; ?></option>
-									<option value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
-									<option value="3"><?php echo $Text['withdraw_uf']; ?></option>
-									<option value="4"><?php echo $Text['withdraw_cuota']; ?></option>
+									<option class="withdrawCashElements" value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
+									<option class="withdrawCashElements" value="3"><?php echo $Text['withdraw_uf']; ?></option>
+									<option class="withdrawCashElements" value="4"><?php echo $Text['withdraw_cuota']; ?></option>
 									<option value="5"><?php echo $Text['withdraw_other'];?></option>
 								</select>
 							</td>

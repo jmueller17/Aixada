@@ -183,8 +183,8 @@ $Text['adult'] = "Adult";
 /**
  *  			wiz stuff
  */
-$Text['deposit_cashbox'] = 'Deposit money'; 	//changed
-$Text['widthdraw_cashbox'] = 'Withdraw money';	//changed
+$Text['deposit_cashbox'] = 'Deposit money in cashbox'; 
+$Text['widthdraw_cashbox'] = 'Withdraw money from cashbox'; 
 $Text['current_balance'] = 'Current balance';
 $Text['deposit_type'] = 'Type of deposit';
 $Text['deposit_by_uf'] = 'Deposite by HU';
@@ -881,6 +881,11 @@ $Text['sel_matchcol'] = "Match column...";
 $Text['ti_import_products'] = "Import or update products for "; 
 $Text['ti_import_providers'] = "Import providers"; 
 $Text['head_ti_import'] = "Import wizard";
+
+$Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for provider payment.";
+$Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
+$Text['deposit_banc'] = "Deposit to consume account";
+$Text['withdraw_banc'] = "Withdraw from consume account";
 
 
 //$Text[''] = ""; 
