@@ -2,6 +2,63 @@ delimiter |
 
 
 
+
+drop  procedure if exists account_exists|
+create procedure account_exists(in the_account_id int)
+begin
+  select
+    count(*)
+  from 
+    aixada_account
+  where
+    account_id = the_account_id;
+end|
+
+
+/**
+ * Generic procedure to handle either deposit or withdrawal for the given account. 
+ */
+drop procedure if exists move_money|
+create procedure move_money(in the_quantity decimal(10,2), 
+                            in the_account_id int, 
+                            in type_id int, 
+                            in the_operator_id int, 
+                            in the_description varchar(255),
+                            in the_currency_id int)
+begin
+
+    declare current_balance decimal(10,2);
+    declare new_balance decimal(10,2);
+  
+  -- get the current balance -- 
+    select 
+      balance 
+    into 
+      current_balance
+    from 
+      aixada_account
+    where 
+      account_id = the_account_id
+    order by ts desc
+    limit 1; 
+  
+    set new_balance = current_balance + the_quantity; 
+    
+    insert into 
+      aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance, currency_id) 
+    values 
+      ( the_account_id, 
+        the_quantity, 
+        type_id, 
+        the_description, 
+        the_operator_id, 
+        new_balance, 
+        the_currency_id);
+
+end|
+
+
+
 /**
  * procedure allows to manually correct / reset account balance. Mainly 
  * should be used for the global accounts -3, -2, -1 not user accounts.
@@ -208,14 +265,14 @@ end|
  * 						4 - Withdraw member quota
  * 						5 - All other withdrawals
  * 
- */
+ */ 
 drop procedure if exists withdrawal|
 create procedure withdrawal (in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in the_operator_id int, in the_type int)
 begin
 		
 	declare current_balance decimal(10,2);
 	
-	--read the current balance--
+
 	select 
   		balance 
   	into 
@@ -262,9 +319,6 @@ begin
 	        current_balance -qty);
     
     end if; 
-  	 	
-  	 	
-	
 end |
 
 

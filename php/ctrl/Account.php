@@ -8,6 +8,7 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/account.php");
 require_once(__ROOT__ . "php/lib/report_manager.php");
+require_once(__ROOT__ . "php/lib/account_movement.php");
 
 
 $use_session_cache = true; 
@@ -64,6 +65,11 @@ try{
 	    case 'correctBalance':
 	    	echo do_stored_query('correct_account_balance', get_param('account_id'), get_param('balance'), get_session_user_id(), get_param('description','') );
 	    	exit;
+
+	    case 'depositCash':
+	    	$a = new account_movement(get_session_user_id()); 
+	    	$a->deposit_cash_for_uf(20, 82, 'testing the new stuff');
+	    	exit; 
   	
 	    	
   		
