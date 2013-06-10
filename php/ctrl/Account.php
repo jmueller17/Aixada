@@ -66,10 +66,24 @@ try{
 	    	echo do_stored_query('correct_account_balance', get_param('account_id'), get_param('balance'), get_session_user_id(), get_param('description','') );
 	    	exit;
 
-	    case 'depositCash':
+
+
+	    case 'depositCashForUf':
 	    	$a = new account_movement(get_session_user_id()); 
-	    	$a->deposit_cash_for_uf(20, 82, 'testing the new stuff');
+	    	$a->deposit_cash_for_uf(get_param('quantity'), get_param('account_id'), get_param('description',''));
 	    	exit; 
+
+	    case 'depositCash':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->deposit_cash(get_param('quantity'), get_param('description',''));
+	    	exit; 
+
+	    case 'depositSalesCash':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->deposit_cash(get_param('quantity'), get_param('description',''));
+	    	exit; 
+
+
   	
 	    	
   		

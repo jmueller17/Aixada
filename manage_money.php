@@ -222,10 +222,26 @@
   				var dataSerial = $('#deposit_form').serialize();
 				$('#deposit_submit').button('disable');
 
+				//decide which money movement
+				var sel_id  = parseInt($('#sel_deposite_type option:selected').val());
+				var oper = ""; 
+
+				switch (sel_id){
+					case 1:
+						oper = "depositCashForUf";
+						break;
+					case 2: 
+						oper = "depositCash";
+						break;
+					case 3: 
+						oper = "depositSalesCash";
+						break;
+				}
 				
+
 				$.ajax({
 					type: "POST",
-					url: "php/ctrl/Account.php?oper=deposit",
+					url: "php/ctrl/Account.php?oper="+oper,
 					data: dataSerial,	
 					beforeSend : function (){
 						$('#depositAnim').show();
@@ -234,9 +250,9 @@
 						$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
 						resetDeposit();
 								
-						$('#list_account tbody').xml2html('reload',{
+						/*$('#list_account tbody').xml2html('reload',{
 							params: 'oper=latestMovements'
-						});
+						});*/
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);

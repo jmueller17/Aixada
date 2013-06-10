@@ -68,8 +68,8 @@ class account {
 			exit; 
 		}
 
-		if ($this->account <= 0){
-			throw new Exception("Account number is not set. Can't retrieve current balance;");
+		if ($this->account == 0){
+			throw new Exception("Deposit error: account number is not set: {$this->account}");
 			exit;
 		}
 
@@ -86,8 +86,8 @@ class account {
 			exit; 
 		}
 
-		if ($this->account <= 0){
-			throw new Exception("Account number is not set. Can't retrieve current balance;");
+		if ($this->account == 0){
+			throw new Exception("Withdraw error: account number is not set: {$this->account}");
 			exit;
 		}
 
