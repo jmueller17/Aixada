@@ -87,9 +87,23 @@ class account_movement extends account{
 	/**
 	 *	Withdraw cash from cashbox in order to pay provider
 	 */
-	public function pay_provider_cash($quantity, $provider_id, $description){
+	public function pay_provider_cash($quantity, $provider_id=0, $description){
 		//register withdrawal from cashbox
 		$this->set_account(-3);
+		$description = ($description == '')? "Cash payment for provider ":$description;
+		$this->withdraw($quantity, $description, $this->operator_id);
+
+		//could register transfer here in order to keep track of what was paid
+		//when to each provider. 		
+	}
+	
+	
+	/**
+	 *	Transfer money from banc account to pay provider
+	 */
+	public function pay_provider_bank($quantity, $provider_id=0, $description){
+		//register withdrawal from cashbox
+		$this->set_account(-2);
 		$description = ($description == '')? "Payment for provider ":$description;
 		$this->withdraw($quantity, $description, $this->operator_id);
 
@@ -136,7 +150,7 @@ class account_movement extends account{
 	/**
 	 *	HU withdraws money from their account. Needs to be paid from cashbox. 
 	 */
-	public function withdraw_cash_from_uf_account($quantity, $description, $uf_or_account){
+	public function withdraw_cash_from_uf_account($quantity, $uf_or_account, $description=''){
 		$desc = ($description == '')? "Cash withdrawal":$description;
 		
 		//withdraw from HU account
@@ -154,16 +168,16 @@ class account_movement extends account{
 	 *	HU withdraws member quota. Needs to be registered as withdrawal from cashbox
 	 * 	but not from HU account (where the initial 50 euro deposit is not)
 	 */	
-	public function withdraw_member_quota($description, $uf_or_account){
+	public function withdraw_member_quota($quantity, $uf_or_account, $description=''){
 		$desc = ($description == '')? "Member quota withdrawal":$description;
 		
 		//$this->set_account($this->construct_account($uf_or_account));
 		//$this->withdraw(50, $desc, $this->operator_id);
 
 		$this->set_account(-3);
-		$desc = ($description == '')? ("Member quota withdrawal for HU ".$uf_or_account):$description;
+		$desc = ($description == '')? ("Member quota withdrawal for account " . $uf_or_account . "!"):$description;
 		
-		$this->withdraw(50, $desc, $this->operator_id);
+		$this->withdraw($quantity, $desc, $this->operator_id);
 	}
 
 

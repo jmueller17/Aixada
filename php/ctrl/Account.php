@@ -50,13 +50,6 @@ try{
 	    	printXML(stored_query_XML_fields('income_spending_balance', get_param('date',0)));
 	    	exit;
 	    	
-	    case 'deposit':
-	    	echo do_stored_query('deposit', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id());
-	    	exit; 
-	    	
-	    case 'withdraw':
-	    	echo do_stored_query('withdrawal', get_param('account_id'), get_param('quantity'), get_param('description',''), get_session_user_id(),get_param('sel_withdraw_type','-1'));
-	    	exit; 
 	    	
 	    case 'globalAccountsBalance':
 	    	printXML(stored_query_XML_fields('global_accounts_balance'));
@@ -65,7 +58,6 @@ try{
 	    case 'correctBalance':
 	    	echo do_stored_query('correct_account_balance', get_param('account_id'), get_param('balance'), get_session_user_id(), get_param('description','') );
 	    	exit;
-
 
 
 	    case 'depositCashForUf':
@@ -80,11 +72,38 @@ try{
 
 	    case 'depositSalesCash':
 			$a = new account_movement(get_session_user_id()); 
-	    	$a->deposit_cash(get_param('quantity'), get_param('description',''));
+	    	$a->deposit_sales_cash(get_param('quantity'), get_param('description',''));
+	    	exit; 
+	    	
+	    case 'payProviderCash':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->pay_provider_cash(get_param('quantity'), 0, get_param('description',''));
+	    	exit; 
+	    	
+	    case 'payProviderBank':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->pay_provider_bank(get_param('quantity'), 0,  get_param('description',''));
+	    	exit; 
+	    	
+	    case 'withdrawCash':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->withdraw_cash(get_param('quantity'), get_param('description',''));
+	    	exit; 
+	    	
+	   	case 'withdrawCashForBank':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->withdraw_cash_for_bank(get_param('quantity'), get_param('description',''));
 	    	exit; 
 
-
-  	
+	   	case 'withdrawCashFormUFAccount':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->withdraw_cash_from_uf_account(get_param('quantity'), get_param('account_id'), get_param('description',''));
+	    	exit;
+	    	
+	   	case 'withdrawMemberQuota':
+			$a = new account_movement(get_session_user_id()); 
+	    	$a->withdraw_member_quota(get_param('quantity'), get_param('account_id'), get_param('description',''));
+	    	exit;
 	    	
   		
 	  default:

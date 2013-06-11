@@ -141,6 +141,7 @@
   	  			var amount = $.checkNumber($('#deposit_amount'), '', 2);			
   				var uf_id = parseInt($("#deposit_form .uf_account_select option:selected").val()) - 1000;
 
+  				$('#deposit_amount').val(amount);
   				
   	  			allow = allow && (amount > 0) && (deposit_type==3 || (deposit_type==2 || ((uf_id > 0) && (deposit_type == 1))));
 
@@ -160,8 +161,10 @@
   	  			var withdraw_type = $('#sel_withdraw_type option:selected').val()
   	  			var amount = $.checkNumber($('#withdraw_amount'), '', 2);
   	  			var uf_id = parseInt($("#withdraw_form .uf_account_select option:selected").val()) - 1000;
+
+  	  			$('#withdraw_amount').val(amount);
 				
-  	  			allow = allow && (amount > 0) && (((withdraw_type == 2 || withdraw_type == 1 || withdraw_type == 5) || ((uf_id > 0) && (withdraw_type == 3 || withdraw_type == 4))));
+  	  			allow = allow && (amount > 0) && (((withdraw_type == 2 || withdraw_type == 1 || withdraw_type == 5 || withdraw_type == 6) || ((uf_id > 0) && (withdraw_type == 3 || withdraw_type == 4))));
 
   	  			if (allow) {
   	  				$('#withdrawal_submit').button('enable');
@@ -190,21 +193,13 @@
 			
 
   			$('#deposit_amount')
-  				.keyup(function(e){
-					allowDeposit();
-  	  			})
   	  			.blur(function(e){
-  	  				var amount = $.checkNumber($('#deposit_amount'), '', 2);
-  	  				$('#deposit_amount').val(amount);
+  	  				allowDeposit();
   	  	  		});
   	  		
   			$('#withdraw_amount')
-  				.keyup(function(e){
-  					allowWithdraw();
-  	  			})
   	  			.blur(function(e){
-  	  				var amount = $.checkNumber($('#withdraw_amount'), '', 2);
-  	  				$('#withdraw_amount').val(amount);
+  	  				allowWithdraw();
   	  	  		})
 
 
@@ -250,9 +245,9 @@
 						$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
 						resetDeposit();
 								
-						/*$('#list_account tbody').xml2html('reload',{
+						$('#list_account tbody').xml2html('reload',{
 							params: 'oper=latestMovements'
-						});*/
+						});
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);
@@ -278,12 +273,39 @@
 				})
 				.click(function(){
 	  				var dataSerial = $('#withdraw_form').serialize();
-	  				
 					$('#withdrawal_submit').button('disable');
+
+
+					//decide which money movement
+					var sel_id  = parseInt($('#sel_withdraw_type option:selected').val());
+					var oper = ""; 
+
+					switch (sel_id){
+						case 1:
+							oper = "payProviderCash";
+							break;
+						case 2: 
+							oper = "withdrawCashForBank";
+							break;
+						case 3: 
+							oper = "withdrawCashFormUFAccount";
+							break;
+
+						case 4: 
+							oper = "withdrawMemberQuota";
+							break;
+						case 5: 
+							oper = "withdrawCash";
+							break;
+						case 6: 
+							oper = "payProviderBank";
+							break;
+					}	
+					
 
 					$.ajax({
 						type: "POST",
-						url: "php/ctrl/Account.php?oper=withdraw",
+						url: "php/ctrl/Account.php?oper="+oper,
 						data: dataSerial,	
 						beforeSend : function (){
 							$('#withdrawAnim').show();
@@ -623,7 +645,7 @@
 								<select id="sel_deposite_type">
 									<option value="-1"><?=$Text['please_select'];?></option>
 									<option class="depositCashElements" value="1"><?=$Text['deposit_by_uf'];?></option>
-									<option class="depositBancElements" value="3">Deposit sales cash</option>
+									<option class="depositBancElements" value="3"><?=$Text['deposit_sales_cash']; ?></option>
 									<option value="2"><?=$Text['deposit_other'];?></option>
 
 									
@@ -682,11 +704,12 @@
 							<td>
 								<select id="sel_withdraw_type">
 									<option value="-1"><?php echo $Text['please_select'];?></option>
-									<option value="1"><?php echo $Text['withdraw_provider']; ?></option>
+									<option class="withdrawCashElements" value="1"><?php echo $Text['withdraw_provider']; ?></option>
 									<option class="withdrawCashElements" value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
 									<option class="withdrawCashElements" value="3"><?php echo $Text['withdraw_uf']; ?></option>
 									<option class="withdrawCashElements" value="4"><?php echo $Text['withdraw_cuota']; ?></option>
 									<option value="5"><?php echo $Text['withdraw_other'];?></option>
+									<option class="withdrawBancElements" value="6"><?php echo $Text['withdraw_provider']; ?></option>
 								</select>
 							</td>
 						</tr>						

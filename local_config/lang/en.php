@@ -886,6 +886,8 @@ $Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for 
 $Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
 $Text['deposit_banc'] = "Deposit to consume account";
 $Text['withdraw_banc'] = "Withdraw from consume account";
+$Text['deposit_sales_cash'] = "Deposit sales cash";
+
 
 
 //$Text[''] = ""; 

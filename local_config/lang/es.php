@@ -889,5 +889,11 @@ $Text['ti_import_products'] = "Importar o actualizar los productos de ";
 $Text['ti_import_providers'] = "Importar proveedores"; 
 $Text['head_ti_import'] = "Asistente de importación";
 
+$Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for provider payment.";
+$Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
+$Text['deposit_banc'] = "Deposit to consume account";
+$Text['withdraw_banc'] = "Withdraw from consume account";
+$Text['deposit_sales_cash'] = "Deposit sales cash";
+
 
 ?>
