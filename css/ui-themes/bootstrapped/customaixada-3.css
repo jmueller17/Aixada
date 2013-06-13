@@ -1,0 +1,89 @@
+/*!
+/* custom css for aixada by lecommandant
+ override jqueryui and bootstrap-jquery
+ */
+
+
+/*  basics
+----------------------------------*/
+
+
+body {
+    color: #333333;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+div#wrap {
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    width: 100%;
+    text-align: left;
+}
+
+div#headwrap {
+    background-color: #FFFFFF;
+    min-width: 200px;
+
+}
+
+div#logonStatus {
+    background-color: #444444;
+    color: #dedede;
+    font-size: 0.8em;
+    padding: 6px 5px;
+    text-align: right;
+}
+
+div#logonStatus a {
+    color: #dedede;
+
+}
+
+.ui-widget-header {
+    background: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") repeat-x scroll 50% 50% #CCCCCC;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+    border-radius: 0;
+    
+}
+
+div#menuBgBar {
+    margin-bottom: 30px;
+    padding: 0px;
+}
+
+div#topMenu {
+
+	padding-bottom: 0px;}
+
+/*  buttons
+----------------------------------*/
+
+	
+#navHome, 
+#navWizard,
+#navShop,
+#navOrder,
+#navManage ,
+#navReport,
+#navIncidents,
+#navMyAccount
+ {
+    background: none repeat scroll 0 0 transparent;
+    border-radius: 0 0 0 0;
+    border: none;
+    font-weight: bold;
+
+}
+
+a:hover#navHome, 
+a:hover#navWizard,
+a:hover#navShop,
+a:hover#navOrder,
+a:hover#navManage ,
+a:hover#navReport,
+a:hover#navIncidents,
+a:hover#navMyAccount{
+	background-color: #dedede;} 
