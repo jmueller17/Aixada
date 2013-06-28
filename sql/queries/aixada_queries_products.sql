@@ -802,20 +802,23 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_limit varchar(255))
+create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
 begin
   
-	declare wherec varchar(255) default ''; 
-	
-	if (the_product_id > 0) then
-		set wherec = concat('and sm.product_id = ', the_product_id);
+	declare wherec varchar(255) default ""; 
+
+	if (the_provider_id > 0) then
+		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+	elseif (the_product_id > 0) then
+		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
 	end if; 
 	
-	select 
+	set @q = concat("select
 		sm.*,
 		mem.id as member_id,
 		mem.name as member_name,
 		p.name as product_name,
+		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
 		um.unit
 	from
@@ -826,12 +829,15 @@ begin
 		aixada_unit_measure um
 	where
 		mem.id = sm.operator_id
-		and p.id = sm.product_id
+		",wherec," 
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
-		and sm.product_id = the_product_id
 	order by
-		sm.ts desc, sm.product_id desc;  
+		sm.product_id desc, sm.ts desc;");
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 		
 end|
 

@@ -43,12 +43,7 @@
 					$('.loadSpinner').hide();
 
 					//calculate totals
-					var tnetto = $.sumSimpleItems('.nettoCol');
-					var tbrutto = $.sumSimpleItems('.bruttoCol');
-					$('#nettoTotal').text(tnetto);
-					$('#bruttoTotal').text(tbrutto);
-					
-					
+					sumStockValue();					
 				}
 		});
 
@@ -70,25 +65,152 @@
 			offSet : 1,
 			loadOnInit:true,
 			complete : function(){
-				if (gStockProvider > 0){
+				/*if (gStockProvider > 0){
 					$("#providerSelect").val(gStockProvider);
 					$("#providerSelect").trigger("change");
-				}
+				}*/
 			}
 		}).change(function(){
-				var provider_id = $("option:selected", this).val();			
+				var provider_id = $("option:selected", this).val();
+				var provider_name = $("option:selected", this).text();			
 				$('#tbl_stock_value tbody').xml2html('removeAll');	
+				$('.setProvider').text("");
 						
 				if (provider_id < 0) { return true;}
+
+				$('.setProvider').text(provider_name);
+				
 	
 				$('.loadAnimShop').show();
 				$('#tbl_stock_value tbody').xml2html("reload",{
 					params	: 'oper=getStockValue&provider_id='+provider_id					
-				});							
+				});		
+
+				$("#tbl_stock_movements tbody").xml2html("reload", {
+					params : 'oper=stockMovements&provider_id='+provider_id
+				});
+									
 		}); //end select change
 
+
+		$("#tbl_stock_movements tbody").xml2html("init", {
+			url: 'php/ctrl/Shop.php',
+			params : 'oper=stockMovements',
+			loadOnInit:false,
+			rowComplete : function (rowIndex, row){
+				$.formatQuantity(row);
+			},
+			complete : function(rowCount){
+				$('tr:even', this).addClass('rowHighlight');
+				sumStockMovementsValue();
 				
-  			
+			}
+		});
+
+
+		/**
+		 *	if checkboxes are checked, then item is included in the overall 
+		 *	brutto / netto stock value sum
+		 */
+		$('#toggleSumStock')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="sumStock"]').each(function(){
+							$(this).attr('checked','checked');
+							var tds = $(this).parents('tr').children(); 
+							tds.eq(6).children(':first-child').addClass('nettoCol');
+							tds.eq(9).children(':first-child').addClass('bruttoCol'); 
+						})
+					
+				} else {
+					$('input:checkbox[name="sumStock"]')
+					.each(function(){
+							$(this).attr('checked',false)
+							var tds = $(this).parents('tr').children(); 
+							tds.eq(6).children(':first-child').removeClass('nettoCol');
+							tds.eq(9).children(':first-child').removeClass('bruttoCol'); 
+						})
+					
+				}
+				
+				sumStockValue();
+			});
+
+		$('input[name="sumStock"]')
+			.live('click',function(e){
+				if ($(this).is(':checked')){
+					$(this).parents('tr').children().eq(6).children(':first-child').addClass('nettoCol');
+					$(this).parents('tr').children().eq(9).children(':first-child').addClass('bruttoCol');
+				} else {
+					$(this).parents('tr').children().eq(6).children(':first-child').removeClass('nettoCol');
+					$(this).parents('tr').children().eq(9).children(':first-child').removeClass('bruttoCol');
+				}
+				
+				sumStockValue();
+			})
+
+
+		/**
+		 *	if stock movement is checked, then it is included in the overall
+		 *	accumulated loss sum. 
+		 */
+		$('#toggleSumStockMovements')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="sumStockMovements"]').each(function(){
+							$(this).attr('checked','checked');
+							var tds = $(this).parents('tr').children(); 
+							tds.eq(7).children(':first-child').addClass('stockDeltaPriceCell');
+						})
+					
+				} else {
+					$('input:checkbox[name="sumStockMovements"]')
+					.each(function(){
+							$(this).attr('checked',false)
+							var tds = $(this).parents('tr').children(); 
+							tds.eq(7).children(':first-child').removeClass('stockDeltaPriceCell');
+						})
+					
+				}
+				sumStockMovementsValue();
+			});
+
+
+		$('input[name="sumStockMovements"]')
+		.live('click',function(e){
+			if ($(this).is(':checked')){
+				$(this).parents('tr').children().eq(7).children(':first-child').addClass('stockDeltaPriceCell');
+			} else {
+				$(this).parents('tr').children().eq(7).children(':first-child').removeClass('stockDeltaPriceCell');
+			}
+			
+			sumStockMovementsValue();
+		})
+		
+				
+		$('#stock_tabs').tabs();	
+
+
+
+		function sumStockValue(){
+			var tnetto = $.sumSimpleItems('.nettoCol');
+			var tbrutto = $.sumSimpleItems('.bruttoCol');
+			$('#nettoTotal').text(tnetto +'€');
+			$('#bruttoTotal').text(tbrutto+'€');
+			$('#tbl_stock_value tbody tr:even').addClass('rowHighlight'); 
+		}
+
+
+		function sumStockMovementsValue(){
+			var acc_loss_ever = $.sumSimpleItems('.stockDeltaPriceCell');
+			/*var acc_loss_ever = 0; 
+			$('.stockDeltaPriceCell').each(function(){
+				acc_loss_ever += parseFloat($(this).text());
+			});*/
+			
+			$('.setAccLossEver').text(acc_loss_ever+'€');
+
+		}
 
 			
 	});  //close document ready
@@ -109,44 +231,56 @@
 		
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
-		    	<h1>Stock reports</h1>
+		    	<h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1>
 		    </div>
 		    <div id="titleRightCol">
-		    	<select id="providerSelect" class="overviewElements">
+		    	<select id="providerSelect" class="overviewElements floatRight">
                     	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
                     	<option value="{id}"> {name}</option>                     
 				</select>
+    			<p class="floatRight detailElements"><?php echo $Text['stock_acc_loss_ever']; ?>: <span class="setAccLossEver ui-state-highlight aix-style-padding3x3 ui-corner-all">?</span></p>
 		    </div>
 		</div>
 	
-		<div class="ui-widget">    
-        	<div class="ui-widget-content ui-corner-all">
-	        	<h3 class="ui-widget-header ui-corner-all">&nbsp;<span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>    
+	
+		
+		<div id="stock_tabs" class="ui-widget">  
+		
+			<ul>
+				<li><a href="#tabs-1"><h2><?=$Text['curStock'];?></h2></a></li>
+				<li><a href="#tabs-2"><h2><?=$Text['ti_mgn_stock_mov'];?></h2></a></li>
+			</ul>
+		
+		  
+        	<div id="tabs-1" class="ui-widget-content ui-corner-all">
+	        	<div class="ui-widget-content ui-corner-all">    
 				<table id="tbl_stock_value" class="tblListingDefault">
 					<thead>
 						<tr>
-							<th>id</th>
-							<th>product</th>
-							<th>Current stock</th>
-							<th>Shop unit</th>
-							<th>Netto unit price</th>
-							<th>Netto stock value</th>
-							<th>IVa</th>
-							<th>Rev</th>
-							<th>Brutto stock value</th>
+							<th>&nbsp;<input type="checkbox" id="toggleSumStock" name="toggleSumStock" checked="checked"/></th>
+							<th> <?php echo $Text['id'];?></th>
+							<th><?php echo $Text['name_item'];?></th>
+							<th><?php echo $Text['curStock'];?></th>
+							<th><?php echo $Text['unit']; ?></th>
+							<th><?php echo $Text['price_net']; ?></th>
+							<th><?php echo $Text['netto_stock']; ?></th>
+							<th><?php echo $Text['iva'] ?></th>
+							<th><?php echo $Text['revtax_abbrev']; ?></th>
+							<th><?php echo $Text['brutto_stock']; ?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
+							<td><input type="checkbox" name="sumStock" checked="checked"/></td>
 							<td>{product_id}</td>
 							<td>{name}</td>
-							<td>{stock_actual}</td>
+							<td><p class="textAlignRight">{stock_actual}</p> </td>
 							<td>{shop_unit}</td>
-							<td>{unit_price}</td>
-							<td class="nettoCol">{total_netto_stock_value}</td>
-							<td>{iva_percent}</td>
-							<td>{rev_tax_percent}</td>
-							<td class="bruttoCol">{total_brutto_stock_value}</td>
+							<td><p class="textAlignRight">{unit_price}</p></td>
+							<td><p class="nettoCol textAlignRight">{total_netto_stock_value}</p></td>
+							<td>{iva_percent}%</td>
+							<td>{rev_tax_percent}%</td>
+							<td><p class="bruttoCol textAlignRight">{total_brutto_stock_value}</p></td>
 						</tr>
 					</tbody>
 					<tfoot>
@@ -155,15 +289,76 @@
 							<td></td>
 							<td></td>
 							<td></td>
-							<td>Total netto:</td>
-							<td id="nettoTotal"></td>
 							<td></td>
-							<td>Total brutto:</td>
-							<td id="bruttoTotal"></td>
+							<td></td>
+							<td class="boldStuff"><?php echo $Text['total_netto_stock']?>: <span id="nettoTotal"></span></td>
+							<td></td>
+							<td></td>
+							<td class="boldStuff"><?php echo $Text['total_brutto_stock']?>: <span id="bruttoTotal"></span></td></td>
 						</tr>
 					</tfoot>
 				</table>
+				</div>
 			</div>
+			
+			<div id="tabs-2" class="ui-widget-content ui-corner-all">
+			
+				<div class="ui-widget-content ui-corner-all">
+					<table id="tbl_stock_movements" class="tblListingDefault">
+						<thead>
+							<tr>
+								<th>&nbsp;<input type="checkbox" checked="checked" id="toggleSumStockMovements" name="toggleSumStockMovements"/></th>
+								<th>id</th>
+								<th>Name</th>
+								<th><?php echo $Text['operator'] ; ?></th>
+								<th><?php echo $Text['description'] ; ?></th>
+								<th><?php echo $Text['date']; ?></th>
+								<th><p class="textAlignRight"><?php echo $Text['dff_qty']; ?></p></th>
+								<th><p class="textAlignRight"><?php echo $Text['dff_price']; ?></p></th>
+								<th><p class="textAlignRight"><?php echo $Text['balance']; ?></p></th>
+								<th>Unit</th>
+							</tr>
+							
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox" name="sumStockMovements" checked="checked"/></td>
+								<td>{product_id}</td>
+								<td>{product_name}</td>
+								<td>{member_name}</td>
+								<td>{description}</td>
+								<td class="stockDeltaTSCell">{ts}</td>
+								<td class="stockDeltaQtyCell"><p class="textAlignRight formatQty">{amount_difference}</p></td>
+								<td><p class="textAlignRight formatQty stockDeltaPriceCell">{delta_price}</p></td>
+								<td><p class="textAlignRight formatQty">{resulting_amount}</p></td>
+								<td>{unit}</td>
+								
+							</tr>
+						
+						</tbody>
+						<tfoot>
+							<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><p class="textAlignRight boldStuff"><?php echo $Text['total']; ?>:</p></td>
+							<td><span class="setAccLossEver boldStuff"></span></td>
+							<td></td>
+							<td></td>
+							</tr>
+						
+						</tfoot>
+					
+					</table>
+				
+				
+				</div>
+			
+			</div>
+			
 		</div>	
 			
 		

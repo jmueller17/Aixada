@@ -888,6 +888,11 @@ $Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
 $Text['deposit_banc'] = "Deposit to consume account";
 $Text['withdraw_banc'] = "Withdraw from consume account";
 $Text['deposit_sales_cash'] = "Deposit sales cash";
+$Text['ti_stock_report'] = "Stock report for "; 
+$Text['netto_stock'] = "Netto stock value"; 
+$Text['brutto_stock'] = "Brutto stock value"; 
+$Text['total_netto_stock'] = "Total netto stock value"; 
+$Text['total_brutto_stock'] = "Total brutto stock value"; 
 
 
 ?>

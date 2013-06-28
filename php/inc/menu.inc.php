@@ -92,7 +92,7 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li>
+				<!-- li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li-->
 				<li><a href="manage_table.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
 				
 			</ul>
@@ -126,6 +126,8 @@
 			</ul>
 		</li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
+		<li><a href="report_stock.php"><?php echo $Text['nav_mng_stock'];?></a></li>
+		
 		<li><a href="report_torn.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>
                 <ul>
