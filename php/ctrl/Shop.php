@@ -47,6 +47,10 @@ try{
 	    case 'getTotalSalesByProviders':
 	    	echo get_purchase_by_provider_in_range(get_param('filter'), get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0));
 			exit;
+			
+	    case 'getDetailSalesByProvider':
+	    	printXML(stored_query_XML_fields('get_purchase_details', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('validated',1), get_param('groupby','')));
+			exit; 	    	
 	    	
     		
     default:  

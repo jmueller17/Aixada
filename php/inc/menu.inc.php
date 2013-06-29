@@ -122,7 +122,7 @@
 		<li><a href="#"><?php echo $Text['nav_report_sales']; ?></a>
 			<ul>
 				<li><a href="report_shop_ufs.php"><?php echo $Text['nav_report_shop_hu']; ?></a></li>
-				<li><a href="report_shop_providers.php"><?php echo $Text['nav_report_shop_pv']; ?></a></li>
+				<li><a href="report_sales.php"><?php echo $Text['nav_report_shop_pv']; ?></a></li>
 			</ul>
 		</li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
