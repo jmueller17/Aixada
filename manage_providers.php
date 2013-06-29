@@ -908,11 +908,13 @@
 					$('.setProviderName').html("&nbsp;");
 					$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 					$('.pgProductOverview').show();
+					$('#groupButtons').hide();
 					break;
 
 				case 'cancelSearch':
 					$('.pgProductOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
 					$('.pgProviderOverview').show();
+					$('#groupButtons').show();
 					break;
 					
 				case 'editProvider':
@@ -1329,17 +1331,19 @@
 				    	<h1 class="pgProductNew">&nbsp;&nbsp;<span class="setProviderName"></span> - <?php echo $Text['ti_add_product']; ?></h1>
 		    		</div>
 		    		<div id="titleRightCol50">
+						<div class="floatRight pgProviderOverview pgProductOverview"><label for="search"><?php echo $Text['search_product'];?></label> <input id="search" value="" class="ui-widget-content ui-corner-all"/></div>
+						<br/><br/>
+						<div id="groupButtons">
 						<button class="floatRight pgProviderOverview" id="btn_new_provider"><?php echo $Text['btn_new_provider']; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_new_product"><?php echo $Text['btn_new_product']; ?></button>&nbsp;
 						<button class="floatRight pgProductOverview" id="btn_import_products"><?php echo $Text['btn_import'] ; ?></button>
 						<button class="floatRight pgProviderOverview" id="btn_import_provider"><?php echo $Text['btn_import'] ; ?></button>
 						<button class="floatRight pgProductOverview" id="btn_product_export"><?php echo $Text['btn_export']; ?></button>
 						<button class="floatRight pgProviderOverview" id="btn_provider_export"><?php echo $Text['btn_export']; ?></button>
-						<!-- p class="providerOverview"><?php echo $Text['search_provider'];?>: <input id="search" class="ui-corner-all"/></p-->
+						</div>
 						<div class="floatRight aix-style-padding8x8 pgProductEdit pgProdutNew">
 							<span id="setProductPagination">1/5</span> <button id="btn_prev_product"><?=$Text['previous'];?></button><button id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
 						</div>
-						<div class="floatLeft pgProviderOverview pgProductOverview"><label for="search"><?php echo $Text['search'];?></label> <input id="search" value="" class="ui-widget-content ui-corner-all"/></div>
 		    		</div>
 				</div><!-- end titlewrap -->
  
