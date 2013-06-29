@@ -47,6 +47,7 @@
 				}
 		});
 
+		//hover function
 		$('#tbl_stock_value tbody tr')
 			.live('mouseenter', function(){
 				$(this).addClass('ui-state-hover');
@@ -65,10 +66,6 @@
 			offSet : 1,
 			loadOnInit:true,
 			complete : function(){
-				/*if (gStockProvider > 0){
-					$("#providerSelect").val(gStockProvider);
-					$("#providerSelect").trigger("change");
-				}*/
 			}
 		}).change(function(){
 				var provider_id = $("option:selected", this).val();
@@ -107,6 +104,14 @@
 			}
 		});
 
+		$('#tbl_stock_movements tbody tr')
+		.live('mouseenter', function(){
+			$(this).addClass('ui-state-hover');
+		})
+		.live('mouseleave',function(){
+				$(this).removeClass('ui-state-hover');
+		})
+
 
 		/**
 		 *	if checkboxes are checked, then item is included in the overall 
@@ -115,37 +120,20 @@
 		$('#toggleSumStock')
 			.click(function(e){
 				if ($(this).is(':checked')){
-					$('input:checkbox[name="sumStock"]').each(function(){
-							$(this).attr('checked','checked');
-							var tds = $(this).parents('tr').children(); 
-							tds.eq(6).children(':first-child').addClass('nettoCol');
-							tds.eq(9).children(':first-child').addClass('bruttoCol'); 
-						})
-					
+					$('input[name="sumStock"]').attr('checked','checked');
 				} else {
-					$('input:checkbox[name="sumStock"]')
-					.each(function(){
-							$(this).attr('checked',false)
-							var tds = $(this).parents('tr').children(); 
-							tds.eq(6).children(':first-child').removeClass('nettoCol');
-							tds.eq(9).children(':first-child').removeClass('bruttoCol'); 
-						})
-					
+					$('input[name="sumStock"]').attr('checked',false);
 				}
-				
+
+				$('input[name=sumStock]').each(function(){
+					toggleSumStock($(this).parents('tr'), $(this).is(':checked'));
+				})
 				sumStockValue();
 			});
 
 		$('input[name="sumStock"]')
 			.live('click',function(e){
-				if ($(this).is(':checked')){
-					$(this).parents('tr').children().eq(6).children(':first-child').addClass('nettoCol');
-					$(this).parents('tr').children().eq(9).children(':first-child').addClass('bruttoCol');
-				} else {
-					$(this).parents('tr').children().eq(6).children(':first-child').removeClass('nettoCol');
-					$(this).parents('tr').children().eq(9).children(':first-child').removeClass('bruttoCol');
-				}
-				
+				toggleSumStock($(this).parents('tr'), $(this).is(':checked'));				
 				sumStockValue();
 			})
 
@@ -203,15 +191,19 @@
 
 		function sumStockMovementsValue(){
 			var acc_loss_ever = $.sumSimpleItems('.stockDeltaPriceCell');
-			/*var acc_loss_ever = 0; 
-			$('.stockDeltaPriceCell').each(function(){
-				acc_loss_ever += parseFloat($(this).text());
-			});*/
-			
 			$('.setAccLossEver').text(acc_loss_ever+'€');
-
 		}
 
+
+		function toggleSumStock(seltr, checked){
+			if (checked){
+				seltr.children().eq(6).children(':first-child').addClass('nettoCol');
+				seltr.children().eq(9).children(':first-child').addClass('bruttoCol');
+			} else {
+				seltr.children().eq(6).children(':first-child').removeClass('nettoCol');
+				seltr.children().eq(9).children(':first-child').removeClass('bruttoCol');
+			}
+		}
 			
 	});  //close document ready
 </script>
@@ -263,10 +255,10 @@
 							<th><?php echo $Text['curStock'];?></th>
 							<th><?php echo $Text['unit']; ?></th>
 							<th><?php echo $Text['price_net']; ?></th>
-							<th><?php echo $Text['netto_stock']; ?></th>
+							<th><p class="textAlignRight"><?php echo $Text['netto_stock']; ?></p></th>
 							<th><?php echo $Text['iva'] ?></th>
 							<th><?php echo $Text['revtax_abbrev']; ?></th>
-							<th><?php echo $Text['brutto_stock']; ?></th>
+							<th><p class="textAlignRight"><?php echo $Text['brutto_stock']; ?></p></th>
 						</tr>
 					</thead>
 					<tbody>

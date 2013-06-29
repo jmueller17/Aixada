@@ -105,10 +105,12 @@
 					$('tr:even', this).addClass('rowHighlight');
 					//$("#tbl_Providers").trigger("update"); 
 				
+				
 					$('.loadSpinner').hide();
 					if (rowCount == 0){
 						$.showMsg({
 							msg:"<?=$Text['msg_err_order_filter'];?>",
+							autoclose:2000,
 							type: 'warning'});
 					}
 				}
@@ -130,20 +132,11 @@
 			})
 			.live('click',function(e){
 				if (gSelProvider != null) gSelProvider.removeClass('ui-state-highlight');
-
 				gSelProvider = $(this);
-				
 				gProviderId = $(this).attr('providerId');
-				
 				$('.setProviderName').text($(this).attr('providerName'));
-
-
 				$(this).addClass('ui-state-highlight');
-
-				
 				reloadProducts();
-				
-				
 		});
 
 
@@ -211,26 +204,59 @@
 				rowComplete: function(rowIndex, row){
 					var tds = $(row).children();
 					//stock
-					if (tds.eq(3).text() == "1"){
-						tds.eq(3).text("<?=$Text['stock'];?>");
+					if (tds.eq(4).text() == "1"){
+						tds.eq(4).text("<?=$Text['stock'];?>");
 					//orderable
-					} else if (tds.eq(3).text() == "2"){
-						tds.eq(3).text("<?=$Text['orderable'];?>");
+					} else if (tds.eq(4).text() == "2"){
+						tds.eq(4).text("<?=$Text['orderable'];?>");
 					}
 					
 					if (gGroupBy == ""){
-						tds.eq(2).html("<span title='Select Filter &gt; List Dates to view details'>various..</span>");
+						tds.eq(3).html("<span title='Select Filter &gt; List Dates to view details'>various..</span>");
 					}
 					
 				},
 				complete: function(rowCount){
-					sumTotalSales();
+					filterProductType();
 					switchTo('detail');
 
 				}
 			})
+			
+				
+		$('#tbl_products tbody tr')
+			.live('mouseover', function(){
+				$(this).addClass('ui-state-hover');
+				
+			})
+			.live('mouseout',function(){
+				$(this).removeClass('ui-state-hover');
+			});
 
 
+		 $('#toggleProductBulkActions')
+			.click(function(e){
+				if ($(this).is(':checked')){
+					$('input:checkbox[name="sumProduct"]').attr('checked','checked');
+				} else {
+					$('input:checkbox[name="sumProduct"]').attr('checked',false);
+				}
+
+				$('input[name=sumProduct]').each(function(){
+					if ($(this).is(':visible')){
+						toggleSumProduct($(this).parents('tr'), $(this).is(':checked'));
+					}
+				})
+				sumTotalSales();
+				
+			});
+
+		//bulk actions
+		$('input[name=sumProduct]')
+			.live('click', function(e){
+				toggleSumProduct($(this).parents('tr'), $(this).is(':checked'));
+				sumTotalSales();
+			})
 		
 
 
@@ -284,13 +310,23 @@
 		 *	show hide stock or fresh products in listing
 		 */
 		function filterProductType(){
+			if (gGroupBy == ""){
+				$('.shopDateCol').hide(); 
+			} else {
+				$('.shopDateCol').show();
+			}
+			
 			$('#tbl_products tbody tr').each(function(){
 				var type = $(this).attr('orderableTypeId'); 
 
 				if (type == 1 && gShowStock || type == 2 && gShowOrderable){
 					$(this).show();
+					$(this).children('td:last-child').children('p:first-child').addClass('bruttoCol');
+					$(this).children('td:last-child').prev().children('p:first-child').addClass('nettoCol');
 				} else if (type == 1 && !gShowStock || type == 2 && !gShowOrderable){
 					$(this).hide();
+					$(this).children('td:last-child').children('p:first-child').removeClass('bruttoCol');
+					$(this).children('td:last-child').prev().children('p:first-child').removeClass('nettoCol');
 				}
 			})
 			sumTotalSales();
@@ -302,6 +338,21 @@
 			var tbrutto = $.sumSimpleItems('.bruttoCol');
 			$('#nettoTotal').text(tnetto +'€');
 			$('#bruttoTotal').text(tbrutto+'€'); 
+		}
+
+
+		/**
+		 *	switches individual product rows on/off for the overall sum calculation
+		 */
+		function toggleSumProduct(seltr, checked){
+			if (checked){
+				seltr.children('td:last-child').children('p:first-child').addClass('bruttoCol');
+				seltr.children('td:last-child').prev().children('p:first-child').addClass('nettoCol');
+			} else {
+				seltr.children('td:last-child').children('p:first-child').removeClass('bruttoCol');
+				seltr.children('td:last-child').prev().children('p:first-child').removeClass('nettoCol');
+			}
+
 		}
 
 
@@ -329,7 +380,7 @@
 			<div id="titleLeftCol50">
 				<button id="btn_overview" class="floatLeft salesDetailElements"><?php echo $Text['overview'];?></button>
 		    	<h1 class="overviewElements"><?php echo $Text['ti_report_shop_pv']; ?></h1>
-		    	<h1 class="salesDetailElements">Purchase total for <span class="setProviderName"></span></h1>
+		    	<h1 class="salesDetailElements"><?php echo $Text['sales_total_pv']; ?> <span class="setProviderName"></span></h1>
 		    	
 		    </div>
 		    <div id="titleRightCol50">
@@ -348,9 +399,9 @@
 		    <button	id="tblViewOptions" class="btn_right salesDetailElements"><?=$Text['btn_filter']; ?></button>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="listDates" ><span class="floatLeft"></span>&nbsp;&nbsp;List dates</a></a></li>
-						<li><a href="javascript:void(null)" id="stock" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;Stock</a></a></li>
-						<li><a href="javascript:void(null)" id="orderable" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;Orderable</a></a></li>
+						<li><a href="javascript:void(null)" id="listDates" ><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['dates_breakdown']; ?></a></li>
+						<li><a href="javascript:void(null)" id="stock" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;<?php echo $Text['stock'];?></a></li>
+						<li><a href="javascript:void(null)" id="orderable" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;<?php echo $Text['orderable'];?>; ?></a></li>
 					</ul>
 				</div>	
 		    	
@@ -370,7 +421,6 @@
 						<tr>
 							<th><?php echo $Text['id']; ?></th>
 							<th class="textAlignCenter"><?php echo $Text['provider']; ?></th>
-							
 							<th><p class="textAlignRight"><?php echo $Text['total_4provider']; ?></p></th>
 						</tr>
 					</thead>
@@ -393,33 +443,33 @@
 		 -->		
 		<div id="purchase_detail" class="ui-widget salesDetailElements">    
         	<div class="ui-widget-content ui-corner-all">
-	        	<h3 class="ui-widget-header ui-corner-all">Sales for Pv name <span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>		
+	        	<h3 class="ui-widget-header ui-corner-all">&nbsp; <span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>		
 			
 				<table id="tbl_products" class="tblListingDefault">
 					<thead>
-						<th><p class="textAlignCenter"><?php echo $Text['id'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>
-						<th><p class="floatLeft"><?php echo $Text['name_item'];?></p><span class="ui-icon ui-icon-triangle-2-n-s"></span></th>						
-						<th>Date</th>
-						<th><p class="floatLeft">Type</p></th>
-
-						<th><p class="textAlignRight">Price netto</p></th>
-						
+						<th>&nbsp;<input type="checkbox" id="toggleProductBulkActions" name="toggleProductBulk" checked="checked" title="Toggle sum items &Sigma;"/></th>
+						<th><p class="textAlignCenter"><?php echo $Text['id'];?></p></th>
+						<th><p class="floatLeft"><?php echo $Text['name_item'];?></p></th>						
+						<th class="shopDateCol textAlignCenter"><?php echo $Text['purchase_date']; ?></th>
+						<th><p class="floatLeft"><?php echo $Text['orderable_type']; ?></p></th>
+						<th><p class="textAlignRight"><?php $Text['price_net']; ?></p></th>
 						<th><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
 						<th><p class="textAlignCenter"><?php echo $Text['iva']; ?></p></th>
 						
-						<th><p class="textAlignRight">Price brutto</p></th>
+						<th><p class="textAlignRight"><?php echo $Text['price_brutto']; ?></p></th>
 						
-						<th><p class="textAlignRight">Sold Quantity</p></th>		
+						<th><p class="textAlignRight"><?php $Text['total_qty']; ?></p></th>		
 						<th><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>				
-						<th><p class="textAlignRight">Netto total </p></th>
-						<th><p class="textAlignRight">Brutto total </p></th>
+						<th><p class="textAlignRight"><?php echo $Text['total_netto']; ?></p></th>
+						<th><p class="textAlignRight"><?php echo $Text['total_netto']; ?></p></th>
 					</thead>
 					
 					<tbody>
 						<tr orderableTypeId="{orderable_type_id}">
+							<td><input type="checkbox" name="sumProduct" checked="checked" title="Include / exclude in &Sigma;"/></td>
 							<td><p class="textAlignCenter">{product_id}</p></td>
 							<td>{product_name}</td>
-							<td>{date_for_shop}</td>
+							<td class="shopDateCol">{date_for_shop}</td>
 							<td><p class="textAlignCenter">{orderable_type_id}</p></td>
 							
 							<td><p class="textAlignRight">{unit_price_stamp_netto}</p> </td>							
@@ -441,11 +491,11 @@
 					</tbody>
 					<tfoot>
 						<tr>
-						<tr>
-													
+						
+							<td></td>						
 							<td></td>
 							<td></td>
-							<td></td>
+							<td class="shopDateCol"></td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -457,7 +507,7 @@
 							<td class="boldStuff"><?php echo $Text['total']?>: <span id="bruttoTotal"></span></td></td>
 						</tr>
 						
-						</tr>
+						
 					
 					</tfoot>
 				

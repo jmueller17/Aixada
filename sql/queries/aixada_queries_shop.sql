@@ -44,12 +44,16 @@ begin
 end|
 
 
-drop procedure if exists get_purchase_details|
-create procedure get_purchase_details(	in from_date date, 
-										in to_date date, 
-										in the_provider_id int, 
-										in is_validated boolean, 
-										in the_group_by varchar(20))
+/**
+ * returns total of sold amount for given products of provider
+ * total netto, total brutto in given date range
+ */
+drop procedure if exists get_purchase_total_of_products|
+create procedure get_purchase_total_of_products(	in from_date date, 
+													in to_date date, 
+													in the_provider_id int, 
+													in is_validated boolean, 
+													in the_group_by varchar(20))
 begin
 	
 	declare wherec varchar(255) default "";
@@ -66,8 +70,9 @@ begin
 	end if; 
 	
 	if (the_group_by = "shop_date") then
-		set groupby = "c.date_for_shop,"; 
+		set groupby = "c.date_for_shop,";
 	end if; 
+	
 	
 	
 	set @q = concat("select 
@@ -79,8 +84,8 @@ begin
 		pv.id as provider_id, 
 		pv.name as provider_name,
 		u.unit as shop_unit,
-		round(si.unit_price_stamp / (1+si.rev_tax_percent/100 ) / (1+ si.iva_percent/100),2) as unit_price_stamp_netto,
 		round(sum(si.quantity * si.unit_price_stamp),2) as total_sales_brutto,
+		round(si.unit_price_stamp / (1+si.rev_tax_percent/100 ) / (1+ si.iva_percent/100),2) as unit_price_stamp_netto,
 		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+ si.iva_percent/100) )),2) as total_sales_netto,
 		sum(si.quantity) as total_sales_quantity
 	from
@@ -99,7 +104,7 @@ begin
 	group by
 		", groupby," p.id
 	order by
-		p.name desc;");
+		p.name asc;");
 	
 	prepare st from @q;
   	execute st;

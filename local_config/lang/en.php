@@ -892,6 +892,13 @@ $Text['netto_stock'] = "Netto stock value";
 $Text['brutto_stock'] = "Brutto stock value"; 
 $Text['total_netto_stock'] = "Total netto stock value"; 
 $Text['total_brutto_stock'] = "Total brutto stock value"; 
+$Text['sales_total_pv'] = "Sales total for provider ";
+$Text['dates_breakdown'] = "Dates break down"; 
+$Text['price_brutto'] = "Price brutto"; 
+$Text['total_brutto'] = "Brutto total";
+$Text['total_netto'] = "Netto total";
+
+
 //$Text[''] = ""; 
 
 
