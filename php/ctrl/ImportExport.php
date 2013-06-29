@@ -13,6 +13,7 @@ require_once(__ROOT__ . "php/lib/import_providers.php");
 require_once(__ROOT__ . "php/lib/export_providers.php");
 require_once(__ROOT__ . "php/lib/export_products.php");
 require_once(__ROOT__ . "php/lib/export_cart.php");
+require_once(__ROOT__ . "php/lib/export_order.php");
 require_once(__ROOT__ . "php/lib/export_dates4products.php");
 require_once(__ROOT__ . "php/lib/export_members.php");
 require_once(__ROOT__ . "php/utilities/general.php");
@@ -131,6 +132,12 @@ try{
 		case 'exportCart':
 			$publish = (get_param('makePublic','off')=='on')? 1:0;
 			$ep = new export_cart(get_param('exportName'), get_param('shopId'));
+			$ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
+			break;
+			
+		case 'exportOrder':
+			$publish = (get_param('makePublic','off')=='on')? 1:0;
+			$ep = new export_order(get_param('exportName'), get_param('order_id',0), get_param('provider_id',0), get_param('date_for_order',0));
 			$ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
 			break;
 

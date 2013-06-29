@@ -68,6 +68,7 @@ Next release
 * report_stock page displays total value of stock products and stock adds/corrections
 * provider/product page now is searchable for products
 * consum account now active and manageable 
+* rudimentary export order to csv 
 
 
 Bugfixes
