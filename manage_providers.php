@@ -543,10 +543,7 @@
 						switchTo('searchProducts');
 						
 					  	$('#tbl_products tbody').xml2html("reload",{
-							params: 'oper=getShopProducts&date=&like='+searchStr,
-							rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
-								
-							}
+							params: 'oper=getShopProducts&date=&like='+searchStr
 						});
 					} else {
 						$('#tbl_products tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;
