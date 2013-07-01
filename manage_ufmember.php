@@ -237,6 +237,7 @@
 			        success :  function(msg){
 			        	$.showMsg({
 							msg: '<?php echo $Text['active_changed_uf']; ?>'+uf_id,
+							autoclose: 1000, 
 							type: 'success'
 						});
 					}, 
@@ -364,6 +365,7 @@
 					        success :  function(msg){
 					        	$.showMsg({
 									msg: "<?php echo $Text['msg_edit_success'] ; ?>",
+									autoclose: 1000,
 									type: 'success'
 								});
 								$("#dialog-uf").dialog( "close" );
@@ -887,6 +889,7 @@
 				   	success: function(msg){
 				   	 	$.showMsg({
 							msg: "<?php echo $Text['msg_edit_success']; ?>",
+							autoclose: 1000,
 							type: 'success'});
 
 						//reload all members of this uf

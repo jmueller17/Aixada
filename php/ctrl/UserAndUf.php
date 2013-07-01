@@ -77,7 +77,7 @@ try{
 	    	exit;
 	    	
 	    case 'changePassword':
-	    	echo change_password();
+	    	echo change_password(get_param('old_password'), get_param('password'));
 	        exit; 
 
 	    case 'resetPassword':

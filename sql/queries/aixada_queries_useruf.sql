@@ -412,7 +412,7 @@ end|
 
 
 /**
- * check if old password is matched for given user. 
+ * check if old passwordt is matched for given user. 
  */
 drop procedure if exists check_password|
 create procedure check_password(in the_user_id int, in the_password varchar(255))
@@ -427,11 +427,33 @@ begin
 end|
 
 
-
+/**
+ * this procedures returns the credentials for given user
+ * the actual check if pwd matches with login / or user_id is performed
+ * on the php side of things. 
+ * NOTE: this procedure always returns values as long as the given user_id or login 
+ * exists!!!
+ */
 drop procedure if exists check_credentials|
-create procedure check_credentials(in the_login varchar(50), in the_password varchar(255))
+create procedure retrieve_credentials(in user_login varchar(50), in the_user_id int)
 begin	
 	
+	declare the_login varchar(50) default ''; 
+	
+	-- if we provide a user id, use the login nevertheless -- 
+	if (the_user_id > 0 and user_login = '') then
+		set the_login = (select 
+			login
+		from 
+			aixada_user
+		where
+			id = the_user_id);
+	else  
+	
+		set the_login = user_login;
+	end if; 
+	
+	-- update as last login attempt -- 
 	update 
    		aixada_user 
    	set 
@@ -439,13 +461,6 @@ begin
    	where 
    		login=the_login;
    	
-	update 
-   		aixada_user 
-   	set 
-   		last_successful_login = sysdate() 
-   	where 
-   		login=the_login 
-   		and password=the_password;
    
    	-- check credentials, see if user is active --
 	select 
@@ -459,8 +474,7 @@ begin
    	left join
    		aixada_provider pv on u.provider_id = pv.id
    	where 
-   		u.login=the_login 
-   		and u.password=the_password; 
+   		u.login=the_login; 
 end|
 
 

@@ -897,6 +897,8 @@ $Text['dates_breakdown'] = "Dates break down";
 $Text['price_brutto'] = "Price brutto"; 
 $Text['total_brutto'] = "Brutto total";
 $Text['total_netto'] = "Netto total";
+$Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
+$Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
 
 
 //$Text[''] = ""; 
