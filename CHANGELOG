@@ -74,6 +74,7 @@ Next release
 Bugfixes
 * product edit form, calculation and display of brutto price fixed
 * provider - responsible HU fix
+* #51 pwd create/logon now works with proper salt and is backward compatible 
 
 
 

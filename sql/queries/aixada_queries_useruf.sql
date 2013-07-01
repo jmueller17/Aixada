@@ -411,21 +411,6 @@ begin
 end|
 
 
-/**
- * check if old passwordt is matched for given user. 
- */
-drop procedure if exists check_password|
-create procedure check_password(in the_user_id int, in the_password varchar(255))
-begin
-   select 
-   	id
-   from 
-   	aixada_user
-   where 
-   	id = the_user_id 
-   	and password = the_password;
-end|
-
 
 /**
  * this procedures returns the credentials for given user
@@ -434,7 +419,7 @@ end|
  * NOTE: this procedure always returns values as long as the given user_id or login 
  * exists!!!
  */
-drop procedure if exists check_credentials|
+drop procedure if exists retrieve_credentials|
 create procedure retrieve_credentials(in user_login varchar(50), in the_user_id int)
 begin	
 	
