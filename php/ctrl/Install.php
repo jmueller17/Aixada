@@ -199,8 +199,10 @@ try {
     $pref_lang = configuration_vars::get_instance()->default_language;
     $first_uf = get_param('first_uf');
     $user_login = get_param('user_login');
-    $user_password = crypt(get_param('user_password'), 'ax');
-    $retype_password = crypt(get_param('retype_password'), 'ax');
+    //this has to be changed to the real encryption... see authentication.inc.php
+    //once we'll work again on the installer
+    //$user_password = crypt(get_param('user_password'), 'ax');
+    //$retype_password = crypt(get_param('retype_password'), 'ax');
     if ($user_password != $retype_password)
 	throw new Exception("The two instances of the password for the first user don't match");
     $oper = get_param('oper');

@@ -33,13 +33,11 @@ begin
 	-- if there have been revisions, calc the new order total -- 
 	set delivered_total = 		
 		(select
-			sum(si.unit_price_stamp * si.quantity)
+			sum(ots.unit_price_stamp * ots.quantity)
 		from
-			aixada_shop_item si,
-			aixada_order_item oi
+			aixada_order_to_shop ots
 		where 
-			oi.order_id = the_order_id
-			and oi.id = si.order_item_id);
+			ots.order_id = the_order_id);
 	
 	-- show how much of the order has been validated as uf carts. if people pay this is real income --
 	set validated_income = 
@@ -551,10 +549,10 @@ begin
 	
 	
 	/**remove tmp revison items**/
-	delete from 
+	/**delete from 
 		aixada_order_to_shop
 	where 
-		order_id=the_order_id; 
+		order_id=the_order_id;**/ 
 		
 		
 	commit;	

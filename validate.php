@@ -337,7 +337,7 @@
 
 					$.ajax({
 						type: "POST",
-						url: "php/ctrl/Account.php?oper=deposit&account_id="+uf_account_id+"&quantity="+quantity+"&description="+description,
+						url: "php/ctrl/Account.php?oper=depositCashForUf&account_id="+uf_account_id+"&quantity="+quantity+"&description="+description,
 						beforeSend : function (){
 							$('#deposit .loadSpinner').show();
 						},

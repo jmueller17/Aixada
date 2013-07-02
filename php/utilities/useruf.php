@@ -2,12 +2,16 @@
 
 
 require_once(__ROOT__ . 'php/inc/database.php');
+require_once(__ROOT__ . 'php/inc/authentication.inc.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once ('general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
-
-
+if (configuration_vars::get_instance()->development){
+	require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+	ob_start();
+	$firephp = FirePHP::getInstance(true);
+}
 
 /**
  * 
@@ -84,10 +88,14 @@ function create_user_member($uf_id){
 
 function extract_user_form_values(){
 	
+	//login and pwd is ignored by update member calls. the '' assumes empty password 
 	$fields["login"] = get_param('login','');
-	$fields["password"] = crypt(get_param('password',''), "ax");
 	
-	
+	//generate password hash. the password field is only used when new users are created. 
+	//during user info update, it is ignored. 
+	$auth = new Authentication();
+	$fields["password"] = $auth->generate_password_hash(get_param('password','')); 
+		
 	$fields["custom_member_ref"] = get_param('custom_member_ref','');
 	$fields["name"] = get_param('name');
 	$fields["nif"] = get_param('nif','');
@@ -145,22 +153,23 @@ function validate_field($table, $field, $value, $type='exists'){
  * change user password. Only logged users can change their own password. 
  * @throws Exception
  */
-function change_password(){
-
-		$user_id = get_session_user_id();
+function change_password($old_password, $new_password){
+		global $Text; 
+		
+		$user_id = get_session_user_id(); 
+		
+		//check if password for logged user is ok
+		$auth = new Authentication();
+		$pwdMatch = $auth->check_password('', $old_password, $user_id);
 	
-      	$rs = do_stored_query('check_password', $user_id, crypt(get_param('old_password'), 'ax'));
-      	$row = $rs->fetch_assoc();
-      	if (!$row) {
-          	throw new Exception("The old password did not match! Please try again.");
-      	} else if ($row['id'] != $user_id){
-      		throw new Exception("The user ID did not match the currently logged user. You cannot change the password of other others. ");
+		
+      	if ($pwdMatch) {
+      		do_stored_query('update_password', $user_id, $auth->generate_password_hash($new_password));
+      		return 1; 
+      	} else {
+          	throw new Exception($Text['msg_err_oldPwdWrong']);
       	}
       	      	
-      	DBWrap::get_instance()->free_next_results();      
-      	do_stored_query('update_password', $user_id, crypt(get_param('password'), 'ax'));
-      
-      	return 1; 	
 }
 
 
@@ -176,15 +185,18 @@ function reset_password($user_id)
 	
 	//only admin 
 	 if (get_current_role() != 'Hacker Commission')
-          throw new Exception("Only Admin can do that!");
+          throw new Exception($Text['msg_err_adminStuff']);
 	
           
     $sendAsEmail = configuration_vars::get_instance()->internet_connection;
     
-    $newPwd = createPassword();
     
+    $newPwd = createPassword();
+
+    
+    $auth = new Authentication();
     $db = DBWrap::get_instance(); 
-    do_stored_query('update_password', $user_id, crypt($newPwd, 'ax'));
+    do_stored_query('update_password', $user_id, $auth->generate_password_hash($newPwd));
     
     
     if ($sendAsEmail){

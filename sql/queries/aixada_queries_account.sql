@@ -2,6 +2,63 @@ delimiter |
 
 
 
+
+drop  procedure if exists account_exists|
+create procedure account_exists(in the_account_id int)
+begin
+  select
+    count(*)
+  from 
+    aixada_account
+  where
+    account_id = the_account_id;
+end|
+
+
+/**
+ * Generic procedure to handle either deposit or withdrawal for the given account. 
+ */
+drop procedure if exists move_money|
+create procedure move_money(in the_quantity decimal(10,2), 
+                            in the_account_id int, 
+                            in type_id int, 
+                            in the_operator_id int, 
+                            in the_description varchar(255),
+                            in the_currency_id int)
+begin
+
+    declare current_balance decimal(10,2);
+    declare new_balance decimal(10,2);
+  
+  -- get the current balance -- 
+    select 
+      balance 
+    into 
+      current_balance
+    from 
+      aixada_account
+    where 
+      account_id = the_account_id
+    order by ts desc
+    limit 1; 
+  
+    set new_balance = current_balance + the_quantity; 
+    
+    insert into 
+      aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance, currency_id) 
+    values 
+      ( the_account_id, 
+        the_quantity, 
+        type_id, 
+        the_description, 
+        the_operator_id, 
+        new_balance, 
+        the_currency_id);
+
+end|
+
+
+
 /**
  * procedure allows to manually correct / reset account balance. Mainly 
  * should be used for the global accounts -3, -2, -1 not user accounts.
@@ -196,128 +253,6 @@ begin
  order by a.ts desc limit 10;
 end|
 
-
-/**
- * cash withdrawls. this usually refers to withdraw some cash for paying bills. 
- * cash can only be withdrawn from cashbox -3. TODO: how this gets reflected on the other
- * accounts needs to be clarified. 
- */
-drop procedure if exists withdrawal|
-create procedure withdrawal (in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in the_operator_id int, in the_type int)
-begin
-		
-	declare current_balance decimal(10,2);
-	
-	select 
-  		balance 
-  	into 
-  		current_balance
-  	from 
-  		aixada_account
-  	where 
-  		account_id = the_account_id
-  	order by ts desc
-  	limit 1; 
-		
-	insert into 
-  		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-  	values 
-  		(the_account_id, 
-  	 	-qty, 
-  	 	the_type, 
-  	 	the_description, 
-  	 	the_operator_id, 
-  	 	current_balance - qty);
-	
-  	-- if money is withdrawn from any account it needs to be registered in the cashbox as well --
- 	if the_account_id != -3 then  
-	    select 
-	    	balance
-	    into 
-	    	current_balance
-	    from 
-	    	aixada_account
-	    where 
-	    	account_id = -3
-	    order by ts desc
-	    limit 1;
-	    
-	  	insert into 
-    		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-   	 	values 
-    		(-3, 
-    	 	 -qty, 
-    	 	 the_type, 
-    	 	concat('Cash withdrawal for account ',the_account_id), 
-    	 	the_operator_id, 
-	        current_balance -qty);
-    
-    end if; 
-  	 	
-  	 	
-	
-end |
-
-
-
-/**
- * make a deposit into aixada_account for a given uf or for other accounts. 
- */
-drop procedure if exists deposit|
-create procedure deposit(in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in op int)
-begin
-  declare current_balance decimal(10,2);
-
-  select 
-  	balance 
-  into 
-  	current_balance
-  from 
-  	aixada_account
-  where 
-  	account_id = the_account_id
-  order by ts desc
-  limit 1; 
-  
-        
-  insert into 
-  	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-  values 
-  	(the_account_id, 
-  	 qty, 
-  	 7, 
-  	 the_description, 
-  	 op, 
-  	 current_balance + qty);
-
-  /** Account -3 is Caixa. So we update Caixa whenever we haven't inserted directly into Caixa. */
-  if the_account_id != -3 then  
-    select 
-    	balance
-    into 
-    	current_balance
-    from 
-    	aixada_account
-    where 
-    	account_id = -3
-    order by ts desc
-    limit 1;
-
-  /* ufs make a positive deposit, movements to Consum(-2) make a negative deposit to caixa */
-    insert into 
-    	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-    values 
-    	(-3, 
-    	 if(the_account_id > 0, qty, -qty), 
-    	 7, 
-    	 concat('Cash deposit for account ',the_account_id), 
-    	 op, 
-         current_balance + if(the_account_id > 0, qty, -qty)
-    );
-
-  end if;
-
-end|
 
 
 

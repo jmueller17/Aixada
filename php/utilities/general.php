@@ -46,6 +46,19 @@ function get_session_member_id() {
 	}	
 }
 
+/**
+ * 
+ * Returns the login of the logged user. 
+ */
+function get_session_login() {
+	
+	if (isset($_SESSION['userdata']['login']) && $_SESSION['userdata']['login'] != "") {
+		return $_SESSION['userdata']['login'];
+	} else {
+		throw new Exception("$_Session data login is not set!! ");
+	}	
+}
+
 
 /**
  * 
@@ -137,10 +150,6 @@ function get_param($param_name, $default=null, $transform = '') {
 				$str .= $v.",";
 			}
 			$value = rtrim($str,",");
-			break;
-			
-		case 'crypt':
-			$value = crypt($value, "ax");
 			break;
 			
 		default: 

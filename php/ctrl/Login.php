@@ -16,7 +16,7 @@ if (!isset($_SESSION)) {
 }
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
+ob_start();
 $firephp = FirePHP::getInstance(true);
 
 DBWrap::get_instance()->debug = true;
@@ -36,8 +36,6 @@ try{
 	      catch (AuthException $e) {
 		  	global $firephp;
 		  	$firephp->log('caught auth exception');
-		  	//		  header('Location:' . __ROOT__ . 'login.php');
-	        //echo "Already logged out"; 
 	      }
 	      exit;
 	
@@ -57,8 +55,7 @@ try{
 	               $roles, 
 	               $current_role, 
 	               $current_language_key, 
-	               $theme) 
-	              = $auth->check_credentials(get_param('login'), crypt(get_param('password'), "ax"));
+	               $theme) = $auth->check_credentials(get_param('login'), get_param('password'));
 	      	  
 	          $langs = existing_languages();
 	          $cookie = new Cookie(true, 

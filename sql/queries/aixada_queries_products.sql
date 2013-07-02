@@ -611,6 +611,50 @@ begin
 end|
 
 
+/**
+ * retrieves the value of available stock for the given product or provider in given date range
+ */
+drop procedure if exists get_stock_value|
+create procedure get_stock_value(in the_provider_id int)
+begin
+	
+	declare wherec varchar(255) default "";
+	
+	if (the_provider_id > 0) then
+		set wherec = concat("and p.provider_id=",the_provider_id);
+	end if; 
+	
+	set @q = concat("select
+		p.id as product_id, 
+		p.stock_actual,
+		p.orderable_type_id,
+		p.name,	
+		p.unit_price,
+		round((p.stock_actual * p.unit_price),2) as total_netto_stock_value,
+		round((p.stock_actual * p.unit_price * (1 + iva.percent/100) * (1 + rev.rev_tax_percent/100)),2) as total_brutto_stock_value,
+		iva.percent as iva_percent,
+		rev.rev_tax_percent,
+		u.unit as shop_unit
+	from 
+		aixada_product p,
+		aixada_iva_type iva,
+		aixada_rev_tax_type rev,
+		aixada_unit_measure u
+	where 
+		p.active = 1	
+		and p.rev_tax_type_id = rev.id
+		and p.iva_percent_id = iva.id
+		and p.unit_measure_shop_id = u.id
+		",wherec,"
+		and p.orderable_type_id = 1;");
+		
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+	
+end|
+
 
 /**
  * correct stock. this should be the exception since stock is normally added
@@ -758,20 +802,23 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_limit varchar(255))
+create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
 begin
   
-	declare wherec varchar(255) default ''; 
-	
-	if (the_product_id > 0) then
-		set wherec = concat('and sm.product_id = ', the_product_id);
+	declare wherec varchar(255) default ""; 
+
+	if (the_provider_id > 0) then
+		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+	elseif (the_product_id > 0) then
+		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
 	end if; 
 	
-	select 
+	set @q = concat("select
 		sm.*,
 		mem.id as member_id,
 		mem.name as member_name,
 		p.name as product_name,
+		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
 		um.unit
 	from
@@ -782,12 +829,15 @@ begin
 		aixada_unit_measure um
 	where
 		mem.id = sm.operator_id
-		and p.id = sm.product_id
+		",wherec," 
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
-		and sm.product_id = the_product_id
 	order by
-		sm.ts desc, sm.product_id desc;  
+		sm.product_id desc, sm.ts desc;");
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 		
 end|
 

@@ -889,5 +889,23 @@ $Text['ti_import_products'] = "Importar o actualizar los productos de ";
 $Text['ti_import_providers'] = "Importar proveedores"; 
 $Text['head_ti_import'] = "Asistente de importación";
 
+$Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for provider payment.";
+$Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
+$Text['deposit_banc'] = "Deposit to consume account";
+$Text['withdraw_banc'] = "Withdraw from consume account";
+$Text['deposit_sales_cash'] = "Deposit sales cash";
+$Text['ti_stock_report'] = "Stock report for "; 
+$Text['netto_stock'] = "Netto stock value"; 
+$Text['brutto_stock'] = "Brutto stock value"; 
+$Text['total_netto_stock'] = "Total netto stock value"; 
+$Text['total_brutto_stock'] = "Total brutto stock value"; 
+$Text['sales_total_pv'] = "Sales total for provider ";
+$Text['dates_breakdown'] = "Dates break down"; 
+$Text['price_brutto'] = "Price brutto"; 
+$Text['total_brutto'] = "Brutto total";
+$Text['total_netto'] = "Netto total";
+$Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
+$Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
+
 
 ?>

@@ -41,12 +41,16 @@ try{
 	    	exit;
 	    
 	    case 'stockMovements':
-        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id'), get_param('limit', 0)));
+        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('limit', 0)));
         	exit;
         	
 	    case 'getTotalSalesByProviders':
-	    	echo get_purchase_by_provider_in_range(get_param('filter'), get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0));
+	    	printXML(stored_query_XML_fields('get_purchase_total_by_provider', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('groupby','')  ));
 			exit;
+			
+	    case 'getDetailSalesByProvider':
+	    	printXML(stored_query_XML_fields('get_purchase_total_of_products', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('validated',1), get_param('groupby','')));
+			exit; 	    	
 	    	
     		
     default:  
