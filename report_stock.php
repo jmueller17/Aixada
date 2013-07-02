@@ -282,11 +282,10 @@
 							<td></td>
 							<td></td>
 							<td></td>
+							<td class="boldStuff" colspan="2"><?php echo $Text['total_netto_stock']?>: <span id="nettoTotal"></span></td>
 							<td></td>
-							<td class="boldStuff"><?php echo $Text['total_netto_stock']?>: <span id="nettoTotal"></span></td>
-							<td></td>
-							<td></td>
-							<td class="boldStuff"><?php echo $Text['total_brutto_stock']?>: <span id="bruttoTotal"></span></td></td>
+							
+							<td class="boldStuff" colspan="2"><?php echo $Text['total_brutto_stock']?>: <span id="bruttoTotal"></span></td></td>
 						</tr>
 					</tfoot>
 				</table>
