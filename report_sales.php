@@ -39,6 +39,7 @@
 		//if product sales list breaks down purchase by dates or not
 		var gGroupBy = ""; // = "shop_date" shows each item x individual shop date. "" sums over all dates in range
 
+		
 		var gSection = "overview"; 	
 
 		//filter for orderable / stock product type in product listing
@@ -100,11 +101,20 @@
 					$('.loadSpinner').show();
 				},
 				rowComplete : function(rowIndex, row){
+
+					//update rev tax and iva amounts included for the given period 
+					var revTaxQt = $('.sumRevQt', row).text() - $('.sumTotalNetto', row).text();
+					$('.sumRevQt', row).text(revTaxQt.toFixed(2)+"€");
+
+					var ivaTaxQt = $('.sumIvaQt', row).text() - $('.sumTotalNetto', row).text();
+					$('.sumIvaQt', row).text(ivaTaxQt.toFixed(2)+"€");
+					
 				},
 				complete : function(rowCount){
 					$('tr:even', this).addClass('rowHighlight');
 					//$("#tbl_Providers").trigger("update"); 
 				
+					filterProviderList();
 				
 					$('.loadSpinner').hide();
 					if (rowCount == 0){
@@ -156,14 +166,19 @@
 				var filter = $(item).attr('id');
 
 				if (filter == 'listDates'){
-					if (gGroupBy == ""){
-						$(item).children('span').addClass('ui-icon ui-icon-check');
-						gGroupBy = "shop_date"; 
-					} else {
-						$(item).children('span').removeClass('ui-icon ui-icon-check');
-						gGroupBy = "";
-					}
-					reloadProducts();
+						if (gGroupBy == ""){
+							$(item).children('span').addClass('ui-icon ui-icon-check');
+							gGroupBy = "shop_date"; 
+						} else {
+							$(item).children('span').removeClass('ui-icon ui-icon-check');
+							gGroupBy = "";
+						}
+
+						if (gSection == 'detail'){
+							reloadProducts();
+						} else {
+							reloadProviders();
+						}
 					
 				}  else if (filter == 'stock'){
 					if (gShowStock){
@@ -295,7 +310,7 @@
 
 		function reloadProviders(){
 			$('#tbl_Providers tbody').xml2html('reload',{
-				params : 'oper=getTotalSalesByProviders&filter=exact&provider_id='+gProviderId+'&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'), 
+				params : 'oper=getTotalSalesByProviders&provider_id=0&groupby='+gGroupBy+'&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'), 
 			});
 		}
 
@@ -333,6 +348,16 @@
 		}
 
 
+		function filterProviderList(){
+			if (gGroupBy == ""){
+				$('.shopDateCol').hide(); 
+			} else {
+				$('.shopDateCol').show();
+			}
+
+		}
+
+
 		function sumTotalSales(){
 			var tnetto = $.sumSimpleItems('.nettoCol');
 			var tbrutto = $.sumSimpleItems('.bruttoCol');
@@ -343,6 +368,7 @@
 
 		/**
 		 *	switches individual product rows on/off for the overall sum calculation
+		 *  i.e calculates the sum over just stock, orderable or both depending on what is visible 
 		 */
 		function toggleSumProduct(seltr, checked){
 			if (checked){
@@ -385,25 +411,26 @@
 		    </div>
 		    <div id="titleRightCol50">
 		    
-		    <table class="floatLeft">
-				<tr>
-					<td><?php echo $Text['date_from']; ?>:</td>
-					<td><input type="text" id="datepicker_from" class="ui-corner-all"/></td>
-					<td>&nbsp;&nbsp;</td>
-					<td><?php echo $Text['date_to']; ?>:</p></td>
-					<td><input type="text" id="datepicker_to" class="ui-corner-all"/></td>
-				</tr>
-			</table>
 		    
 		    
-		    <button	id="tblViewOptions" class="btn_right salesDetailElements"><?=$Text['btn_filter']; ?></button>
+		    	<button	id="tblViewOptions" class="btn_right"><?=$Text['btn_filter']; ?></button>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
 						<li><a href="javascript:void(null)" id="listDates" ><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['dates_breakdown']; ?></a></li>
 						<li><a href="javascript:void(null)" id="stock" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;<?php echo $Text['stock'];?></a></li>
-						<li><a href="javascript:void(null)" id="orderable" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;<?php echo $Text['orderable'];?>; ?></a></li>
+						<li><a href="javascript:void(null)" id="orderable" ><span class="floatLeft ui-icon ui-icon-check"></span>&nbsp;&nbsp;<?php echo $Text['orderable'];?></a></li>
 					</ul>
 				</div>	
+				
+				<table class="floatRight">
+				<tr>
+					<td><?php echo $Text['date_from']; ?>: </td>
+					<td><input type="text" id="datepicker_from" class="ui-corner-all"/></td>
+					<td>&nbsp;&nbsp;</td>
+					<td><?php echo $Text['date_to']; ?>: </td>
+					<td><input type="text" id="datepicker_to" class="ui-corner-all"/></td>
+				</tr>
+				</table>
 		    	
 		    </div>
 		</div>
@@ -421,14 +448,23 @@
 						<tr>
 							<th><?php echo $Text['id']; ?></th>
 							<th class="textAlignCenter"><?php echo $Text['provider']; ?></th>
-							<th><p class="textAlignRight"><?php echo $Text['total_4provider']; ?></p></th>
+							<th class="shopDateCol textAlignCenter"><?php echo $Text['purchase_date']; ?></th>
+							<th><p class="textAlignRight"><?php echo $Text['total_netto']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['revtax_abbrev']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['iva']; ?></p></th>
+							<th><p class="textAlignRight"><?php echo $Text['total_brutto']; ?></p></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr providerId="{provider_id}" providerName="{provider_name}">
 							<td>{provider_id}</td>
 							<td class="clickable">{provider_name}</td>
-							<td class="total_{provider_id} floatRight">{total}</td>						
+							<td class="shopDateCol">{date_for_shop}</td>
+							<td><p class="sumTotalNetto textAlignRight">{total_sales_netto}</p></td>
+							<td><p class="sumRevQt textAlignRight">{total_sales_rev}</p></td>
+							<td><p class="sumIvaQt textAlignRight">{total_sales_iva}</p></td>
+							<td><p class="sumTotalBrutto textAlignRight">{total_sales_brutto}</p></td>
+																			
 						</tr>
 					</tbody>
 					<tfoot>
@@ -452,16 +488,16 @@
 						<th><p class="floatLeft"><?php echo $Text['name_item'];?></p></th>						
 						<th class="shopDateCol textAlignCenter"><?php echo $Text['purchase_date']; ?></th>
 						<th><p class="floatLeft"><?php echo $Text['orderable_type']; ?></p></th>
-						<th><p class="textAlignRight"><?php $Text['price_net']; ?></p></th>
+						<th><p class="textAlignRight"><?php echo $Text['price_net']; ?></p></th>
 						<th><p class="textAlignCenter"><?php echo $Text['revtax_abbrev']; ?></p></th>
 						<th><p class="textAlignCenter"><?php echo $Text['iva']; ?></p></th>
 						
 						<th><p class="textAlignRight"><?php echo $Text['price_brutto']; ?></p></th>
 						
-						<th><p class="textAlignRight"><?php $Text['total_qty']; ?></p></th>		
-						<th><p class="textAlignCenter"><?php echo $Text['unit'];?></p></th>				
+						<th><p class="textAlignRight"><?php echo $Text['total_qty']; ?></p></th>		
+						<th><p class="textAlignLeft"><?php echo $Text['unit'];?></p></th>				
 						<th><p class="textAlignRight"><?php echo $Text['total_netto']; ?></p></th>
-						<th><p class="textAlignRight"><?php echo $Text['total_netto']; ?></p></th>
+						<th><p class="textAlignRight"><?php echo $Text['total_brutto']; ?></p></th>
 					</thead>
 					
 					<tbody>

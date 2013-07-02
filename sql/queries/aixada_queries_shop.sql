@@ -6,18 +6,29 @@ delimiter |
  * returns the total of sold items for a given provider
  */
 drop procedure if exists get_purchase_total_by_provider|
-create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
+create procedure get_purchase_total_by_provider (	in from_date date, 
+													in to_date date, 
+													in the_provider_id int, 
+													in the_group_by varchar(20))
 begin
 	
 	declare wherec varchar(255) default "";
+	declare groupby varchar(20) default "";
 	
 	if (the_provider_id > 0) then
 		set wherec = concat("and pv.id=",the_provider_id);
+	end if;
+	
+	if (the_group_by = "shop_date") then
+		set groupby = ", c.date_for_shop";
 	end if; 
 	
 	
 	set @q = concat("select
-		round(sum(si.quantity * si.unit_price_stamp),2) as total,
+		round(sum(si.quantity * si.unit_price_stamp),2) as total_sales_brutto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+ si.iva_percent/100) )),2) as total_sales_netto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+ si.iva_percent/100) )),2) as total_sales_rev,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+ si.rev_tax_percent/100) )),2) as total_sales_iva,
 	 	pv.name as provider_name,
 	 	pv.id as provider_id,
 	 	c.date_for_shop
@@ -33,7 +44,7 @@ begin
 		and p.provider_id = pv.id
 		",wherec,"
 	group by
-		pv.id
+		pv.id ", groupby,"
 	order by
 		pv.name asc, c.date_for_shop desc;");
 		
@@ -42,6 +53,25 @@ begin
   	deallocate prepare st;	
   	
 end|
+
+drop function if exists sum_ordered_total|
+create function sum_ordered_total(the_date_for_shop date, the_provider_id int)
+returns decimal(10,2)
+reads sql data
+begin
+  declare total_price decimal(10,2);
+  
+  select 
+	sum(total) into total_price
+  from 
+	aixada_order
+  where
+  	date_for_shop = the_date_for_shop
+  	and provider_id = the_provider_id; 
+  
+  return total_price;
+end|
+
 
 
 /**

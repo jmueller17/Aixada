@@ -45,7 +45,7 @@ try{
         	exit;
         	
 	    case 'getTotalSalesByProviders':
-	    	printXML(stored_query_XML_fields('get_purchase_total_by_provider', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0)));
+	    	printXML(stored_query_XML_fields('get_purchase_total_by_provider', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('groupby','')  ));
 			exit;
 			
 	    case 'getDetailSalesByProvider':
