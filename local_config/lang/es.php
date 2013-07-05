@@ -5,8 +5,6 @@
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
 $Text['es'] = 'Castellano';
-
-
 $Text['charset'] = "utf-8";
 $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 
@@ -21,10 +19,6 @@ $Text['search'] = "Buscar";
 $Text['id'] = "id";
 $Text['uf_short'] = "UF";
 $Text['uf_long'] = "Unidad familiar";
-
-
-
-
 
 /** 
  *  		misc
@@ -119,8 +113,6 @@ $Text['ti_timeline'] = "Informe línea de tiempo";
 $Text['ti_report_torn'] = "Resumen del turno de hoy";
 $Text['ti_mng_cashbox'] = "Control de caja";
 
-
-
 /**
  * 				roles
  */
@@ -165,7 +157,7 @@ $Text['phone1'] = "Teléfono1";
 $Text['phone2'] = "Teléfono2";
 $Text['email'] = "Correo electrónico";
 $Text['web'] = "URL";
-$Text['last_logon'] = "Visto por ﾃｺltima vez";
+$Text['last_logon'] = "Visto por última vez";
 $Text['created'] = "Creado el día";
 $Text['active'] = "Activo";
 $Text['participant'] = "Participante";
@@ -210,10 +202,6 @@ $Text['correct_balance'] = 'Corregir balance';
 $Text['set_balance'] = 'Actualizar balance de la caja';
 $Text['current_balance'] = 'Balance actual';
 $Text['name_cash_account'] = 'Caja';
-
-
-
-
 
 /**
  *				validate
@@ -265,7 +253,7 @@ $Text['welcome_logon'] = "Bienvenid@s a " . configuration_vars::get_instance()->
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
-$Text['lang']	= "Lengua";
+$Text['lang']	= "Idioma";
 $Text['msg_err_incorrectLogon'] = "Acceso incorrecto";
 $Text['msg_err_noUfAssignedYet'] = "Todavía no has sido asignado a ninguna UF: Por favor, pide que te den de alta.";
 $Text['msg_reg_success'] = "Te has registrado correctamente, pero tu usuario aún no se ha aprobado. Registra el resto de miembros de tu UF y contacta con un responsable para finalizar el registro.";
@@ -434,13 +422,10 @@ $Text['msg_no_movements'] = "No hay movimientos para la cuenta y la fecha selecc
 $Text['msg_delete_incident'] = "¿Seguro que quieres eliminar este incidente?";
 //$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases. No hay ninguna UF seleccionada.  Elige una primero y luego sus compras."; //ADDED JAN 2012
 
-
-
 /**
  *  Product categories
  */
-$Text['SET_ME'] 			= 'SET_ME';
-
+$Text['SET_ME'] 			= 'Completar...';
 $Text['prdcat_vegies']		 	= "Verduras";
 $Text['prdcat_fruit'] 			= "Fruta";
 $Text['prdcat_mushrooms'] 		= "Setas";
@@ -523,8 +508,6 @@ $Text['purchase_validated'] = 'Fecha de la validación';
 $Text['ordered_for'] = 'Pedido hecho para el';
 $Text['not_validated'] = 'no validado';
 
-
-
 /* definitely new stuff */
 
 $Text['download_db_zipped'] = 'Descargar Base de Datos comprimida';
@@ -571,7 +554,7 @@ $Text['cart_id'] = "Id de la cesta";
 $Text['msg_several_carts'] = "La UF seleccionada tiene más de una cesta pendiente de validación.  Por favor, seleccione una:";
 $Text['transfer_type'] = "Tipo";
 $Text['todays_carts'] = "Cestas de hoy";
-$Text['head_ti_torn'] = "Working shift overview"; 
+$Text['head_ti_torn'] = "Mirada al tiempo de trabajo"; 
 $Text['btn_validate'] = "Validar";
 $Text['desc_validate'] = "Validar cestas anteriores y actuales para las UFs. Hacer depósitos de dinero.";
 $Text['nav_wiz_revise_order'] = "Revisar";
@@ -889,23 +872,23 @@ $Text['ti_import_products'] = "Importar o actualizar los productos de ";
 $Text['ti_import_providers'] = "Importar proveedores"; 
 $Text['head_ti_import'] = "Asistente de importación";
 
-$Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for provider payment.";
-$Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
-$Text['deposit_banc'] = "Deposit to consume account";
-$Text['withdraw_banc'] = "Withdraw from consume account";
-$Text['deposit_sales_cash'] = "Deposit sales cash";
-$Text['ti_stock_report'] = "Stock report for "; 
-$Text['netto_stock'] = "Netto stock value"; 
-$Text['brutto_stock'] = "Brutto stock value"; 
-$Text['total_netto_stock'] = "Total netto stock value"; 
-$Text['total_brutto_stock'] = "Total brutto stock value"; 
-$Text['sales_total_pv'] = "Sales total for provider ";
-$Text['dates_breakdown'] = "Dates break down"; 
-$Text['price_brutto'] = "Price brutto"; 
-$Text['total_brutto'] = "Brutto total";
-$Text['total_netto'] = "Netto total";
-$Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
-$Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
+$Text['withdraw_desc_banc'] = "Retirar dinero de la cuenta o transferir para pago a proveedores.";
+$Text['deposit_desc_banc'] = "Registrar todo el dinero entrante a la cuenta de consumo.";
+$Text['deposit_banc'] = "Depositar en la cuenta de consumo";
+$Text['withdraw_banc'] = "Retirar de la cuenta de consumo";
+$Text['deposit_sales_cash'] = "Depósito en efectivo de ventas";
+$Text['ti_stock_report'] = "Reporte de stock para "; 
+$Text['netto_stock'] = "Valor neto del stock"; 
+$Text['brutto_stock'] = "Valor bruto del stock"; 
+$Text['total_netto_stock'] = "Valor neto total del stock"; 
+$Text['total_brutto_stock'] = "Valor bruto total del stock"; 
+$Text['sales_total_pv'] = "Ventas totales del proveedor ";
+$Text['dates_breakdown'] = "Fechas de vencimiento"; //decía "break down"
+$Text['price_brutto'] = "Precio bruto"; 
+$Text['total_brutto'] = "Total bruto";
+$Text['total_netto'] = "Total neto";
+$Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por vafor, intente de nuevo. "; 
+$Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un administrador puede hacer eso!";
 
 
 ?>
