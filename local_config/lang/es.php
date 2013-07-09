@@ -556,7 +556,7 @@ $Text['cart_id'] = "Id de la cesta";
 $Text['msg_several_carts'] = "La UF seleccionada tiene más de una cesta pendiente de validación.  Por favor, seleccione una:";
 $Text['transfer_type'] = "Tipo";
 $Text['todays_carts'] = "Cestas de hoy";
-$Text['head_ti_torn'] = "Mirada al tiempo de trabajo"; 
+$Text['head_ti_torn'] = "Mirada turno"; 
 $Text['btn_validate'] = "Validar";
 $Text['desc_validate'] = "Validar cestas anteriores y actuales para las UFs. Hacer depósitos de dinero.";
 $Text['nav_wiz_revise_order'] = "Revisar";
@@ -891,6 +891,8 @@ $Text['total_brutto'] = "Total bruto";
 $Text['total_netto'] = "Total neto";
 $Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por vafor, intente de nuevo. "; 
 $Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un administrador puede hacer eso!";
+$Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
+$Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
 
 
 ?>

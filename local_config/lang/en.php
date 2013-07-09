@@ -700,7 +700,7 @@ $Text['ostat_closed'] = "Order is closed";
 $Text['ostat_desc_fin_send'] = "Order has been finalized. Ref. number is: #";
 $Text['msg_err_past'] = "This is the past! <br/> Too late to change anything here.";
 $Text['msg_err_is_deactive_p'] = "This product has been deactivated. In order to set an orderable date, you have to activate it first by clicking its 'active' checkbox.";
-$Text['msg_err_deactivate_p'] = "You are about to deactivate a product. This means that all associated 'orderable' dates will be erased as well.<br/><br/>Are you sure you want to deactivate the product as such? As an alternative you can deactivate selected dates by clicking the corresponding table cells.";
+$Text['msg_err_deactivate_p'] = "You are about to deactivate a product. This means that all associated 'orderable' dates will be erased as well.<br/><br/>As an alternative you can deactivate selected dates by clicking the corresponding table cells.";
 $Text['msg_err_closing_date'] = "The closing date cannot be later than the order date!";
 $Text['msg_err_sel_col'] = "The selected column/date has no orderable products! You have to make at least one product orderable in order to be able to generate a date pattern.";
 $Text['msg_err_closing'] = "In order to modify the closing date, you need to make at least one product orderable.";
@@ -902,6 +902,9 @@ $Text['total_brutto'] = "Brutto total";
 $Text['total_netto'] = "Netto total";
 $Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
 $Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
+
+$Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
+$Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
 
 
 //$Text[''] = ""; 

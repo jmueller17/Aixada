@@ -360,9 +360,19 @@
 		$('td.interactiveCell')
 			.live('click', function(e){
 
+				//check if clicked item has ordered products
 				var hasItems = $('.hasItemsIndicator',this).text().match(/\d/);
 
+				//check if rest of the dates has has ordered products
+				var rowHasOtherItems = false; 
+				$(this).siblings().each(function(){
+					if ($('.hasItemsIndicator',this).text().match(/\d/)) {
+						rowHasOtherItems = true;
+						return false; 
+					}
+				})
 				
+
 
 				//click on table cell for past dates
 				if ($(this).hasClass('dim40')){
@@ -385,8 +395,11 @@
 						type: 'warning'});
 				   	return false; 
 
-				//warning message when deactivating product with ordered items   	
-				} else if (new Number(hasItems) > 0){
+
+				//deactivate  
+				//but only if instantRepeat is not active  	
+				} else if (new Number(hasItems) > 0 && (!gInstantRepeat || (gInstantRepeat && !rowHasOtherItems))){
+					
 					var tdid = $(this).attr('id');		//table cell id
 					var dateID = tdid.split("_");	    //date and product_id
 					$.showMsg({
@@ -399,21 +412,26 @@
 											product_id : dateID[1],
 											date: dateID[0]
 										}, function (data){
-											
 											toggleCell('#'+tdid);
 										});
 							},
 							"<?=$Text['btn_cancel'];?>":function(){
 								$( this ).dialog( "close" );
 							}
-
 						},
 						type: 'warning'});
 					return false;
 
 
 				
-				} 
+				//if product row has ordered items and instantRepeat is on, 
+				//show warning that ordered cells have to be turned off individually first. 	
+				} else if (rowHasOtherItems && gInstantRepeat){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_deactivate_ir'];?>",
+						type: 'warning'});
+				   	return false; 
+				}
 
 				var tdid = $(this).attr('id');		//table cell id
 				var dateID = tdid.split("_");	    //date and product_id
@@ -683,6 +701,24 @@
 			if (!isActive){
 				changeProductStatus(productId, 'activateProduct');
 			} else {
+
+				//check if we have already ordered items
+				var rowHasItems = false; 
+				$('#'+productId).children().each(function(){
+					if ($('.hasItemsIndicator',this).text().match(/\d/)) {
+						rowHasItems = true;
+						return false; 
+					}
+				})
+				
+				if (rowHasItems){
+					$.showMsg({
+						msg:"<?=$Text['msg_err_deactivate_prdrow']; ?>",
+						type: 'warning'});
+				   	return false; 
+
+				}
+				
 				$.showMsg({
 					msg		: "<?=$Text['msg_err_deactivate_p'];?>",
 					buttons: {
