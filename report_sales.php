@@ -104,10 +104,13 @@
 
 					//update rev tax and iva amounts included for the given period 
 					var revTaxQt = $('.sumRevQt', row).text() - $('.sumTotalNetto', row).text();
-					$('.sumRevQt', row).text(revTaxQt.toFixed(2)+"€");
+					$('.sumRevQt', row).text(revTaxQt.toFixed(2)+"<?=$Text['currency_sign'];?>");
 
 					var ivaTaxQt = $('.sumIvaQt', row).text() - $('.sumTotalNetto', row).text();
-					$('.sumIvaQt', row).text(ivaTaxQt.toFixed(2)+"€");
+					$('.sumIvaQt', row).text(ivaTaxQt.toFixed(2)+"<?=$Text['currency_sign'];?>");
+
+					$('.sumTotalNetto', row).append("<?=$Text['currency_sign'];?>");
+					$('.sumTotalBrutto', row).append("<?=$Text['currency_sign'];?>");
 					
 				},
 				complete : function(rowCount){
@@ -361,8 +364,8 @@
 		function sumTotalSales(){
 			var tnetto = $.sumSimpleItems('.nettoCol');
 			var tbrutto = $.sumSimpleItems('.bruttoCol');
-			$('#nettoTotal').text(tnetto +'€');
-			$('#bruttoTotal').text(tbrutto+'€'); 
+			$('#nettoTotal').text(tnetto +"<?=$Text['currency_sign'];?>");
+			$('#bruttoTotal').text(tbrutto+"<?=$Text['currency_sign'];?>"); 
 		}
 
 

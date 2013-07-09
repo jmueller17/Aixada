@@ -12,7 +12,9 @@ $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 /** 
  *  		Global things
  */
-$Text['coop_name'] = configuration_vars::get_instance()->coop_name;;
+$Text['coop_name'] = configuration_vars::get_instance()->coop_name;
+$Text['currency_sign'] = configuration_vars::get_instance()->currency_sign;
+$Text['currency_desc'] = "Euros";
 $Text['please_select'] = "Seleccionar...";
 $Text['loading'] = "Por favor, espere mientras se cargan los datos...";
 $Text['search'] = "Buscar";

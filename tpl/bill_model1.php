@@ -95,10 +95,10 @@
 
 					var totals = $.sumItems('.itemPrice');
 
-					$('#total').text(totals['total']);
-					$('#total_iva').text(totals['totalIva']);
-					$('#total_revTax').text(totals['totalRevTax']);
-					$('#import_net').text(totals['total_net']);
+					$('#total').text(totals['total'] + "<?=$Text['currency_sign'];?>");
+					$('#total_iva').text(totals['totalIva']+ "<?=$Text['currency_sign'];?>");
+					$('#total_revTax').text(totals['totalRevTax']+ "<?=$Text['currency_sign'];?>");
+					$('#import_net').text(totals['total_net']+ "<?=$Text['currency_sign'];?>");
 
 					if (asPDF) {
 						var pathToImg = $('#coopLogo').attr('src');

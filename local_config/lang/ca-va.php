@@ -15,6 +15,8 @@ $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aes
  *  		Elements globals
  */
 $Text['coop_name'] = configuration_vars::get_instance()->coop_name;
+$Text['currency_sign'] = configuration_vars::get_instance()->currency_sign;
+$Text['currency_desc'] = "Euros";
 $Text['please_select'] = "Seleccioneu...";
 $Text['loading'] = "Si us plau, espere mentre es carreguen les dades...";
 $Text['search'] = "Cerca";

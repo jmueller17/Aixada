@@ -62,6 +62,15 @@ class configuration_vars {
   
   
   /**
+   * 
+   * Set the system wide currency symbol. The currency description can be set 
+   * in the specific language files $Text['currency_desc'] = "" 
+   * @var string
+   */
+  public $currency_sign = "€";
+  
+  
+  /**
    * Sets the global development variable for debugging etc. 
    * 
    */

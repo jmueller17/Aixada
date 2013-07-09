@@ -1448,7 +1448,7 @@
 						<td>{time_left}</td>
 						<td>{ts_sent_off}</td>
 						<td>{date_for_shop}</td>
-						<td><p  class="textAlignRight">{order_total} €&nbsp;&nbsp;</p></td>
+						<td><p  class="textAlignRight">{order_total}<?php echo $Text['currency_sign']; ?>&nbsp;&nbsp;</p></td>
 						<td>{revision_status}</td>
 						<td class="aix-layout-fixW100s">				
 							<a href="javascript:void(null)" class="reviseOrderBtn nobr"><?php echo $Text['btn_revise']; ?></a>
@@ -1536,7 +1536,7 @@
 							<p><?php echo $Text['total_orginal_order']; ?></p>
 						</td>
 						<td>
-							<p class="textAlignRight  boldStuff">{total} €</p>
+							<p class="textAlignRight  boldStuff">{total} <?php echo $Text['currency_sign'];?></p>
 						</td>
 					</tr>
 					<tr>
@@ -1556,7 +1556,7 @@
 							<p><?php echo $Text['total_after_revision']; ?></p>
 						</td>
 						<td>
-							<p class="textAlignRight  boldStuff">{delivered_total} €</p>
+							<p class="textAlignRight  boldStuff">{delivered_total} <?php echo $Text['currency_sign'];?></p>
 						</td>
 					</tr>
 					<tr>
@@ -1576,7 +1576,7 @@
 							<p><?php echo $Text['validated'];?></p>
 						</td>
 						<td>
-							<p class="textAlignRight boldStuff">{validated_income} €</p>
+							<p class="textAlignRight boldStuff">{validated_income} <?php echo $Text['currency_sign'];?></p>
 						</td>
 					</tr>
 					<tr>

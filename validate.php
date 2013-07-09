@@ -372,7 +372,7 @@
 					params	: 'oper=latestMovements',
 					loadOnInit: true,
 					rowComplete : function (rowIndex, row){
-						$.formatQuantity(row);
+						$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
 					},
 					complete : function (rowCount){
 						$('#list_account tbody tr:even').addClass('rowHighlight');
@@ -415,6 +415,9 @@
                     autoReload: 103020,
                     beforeLoad : function(){
 						$('#negative_ufs .loadSpinner').show();
+					},
+					rowComplete : function (rowIndex, row){
+						$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
 					},
 					complete : function(){
 						$('#negative_ufs .loadSpinner').hide();
@@ -854,7 +857,7 @@
 								<th><?=$Text['uf_short'];?></th>
 								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
 								<th class="textAlignCenter"><?=$Text['validated'];?></th>
-								<th class="textAlignRight"><?=$Text['total'];?></th>
+								<th><p class="textAlignRight"><?=$Text['total'];?>&nbsp;</p></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -863,7 +866,7 @@
 								<td>{uf_id}</td>
 								<td>{date_for_shop}</td>
 								<td>{ts_validated}</td>
-								<td><p class="textAlignRight">{purchase_total}€</p></td>
+								<td><p class="textAlignRight">{purchase_total} <?php echo $Text['currency_sign'];?></p></td>
 							</tr>
 						</tbody>
 					</table>
@@ -888,7 +891,7 @@
 								<tr>
 									<td><p class="textAlignRight">{uf}</p></td>
 									<td><p class="textAlignLeft">{name}</p></td>
-									<td><p class="textAlignRight"><span class="negativeBalance">{balance}</span></p></td>
+									<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
 									<td>{last_update}</td>
 								</tr>
 							</tbody>
@@ -969,7 +972,7 @@
 				<td>{id}</td>
 				<td class="textAlignCenter">{date_for_shop}</td>
 				<td class="textAlignCenter">{ts_validated}</td>
-				<td class="textAlignRight">{purchase_total}€</td>
+				<td class="textAlignRight">{purchase_total}<?php echo $Text['currency_sign'];?></td>
 			</tr>
 		</tbody>
 	</table>

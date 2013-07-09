@@ -420,7 +420,7 @@
 							<td><p>{uf_id} {uf_name}</p></td>
 							<td><p class="textAlignCenter">{date_for_shop}</p></td>
 							<td>{ts_validated}</td>
-							<td><p class="textAlignRight">{purchase_total}€</p></td>
+							<td><p class="textAlignRight">{purchase_total}<?=$Text['currency_sign'];?></p></td>
 						</tr>
 					</tbody>
 					<tfoot>

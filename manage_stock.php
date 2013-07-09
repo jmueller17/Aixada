@@ -170,7 +170,7 @@
 					acc_loss_ever += parseFloat($(this).text());
 				});
 				
-				$('.setAccLossEver').text(acc_loss_ever.toFixed(2)+'€');
+				$('.setAccLossEver').text(acc_loss_ever.toFixed(2)+"<?=$Text['currency_sign'];?>");
 
 
 				if (rowCount == 0){

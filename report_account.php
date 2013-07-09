@@ -57,7 +57,7 @@
 						$('.loadSpinner').show();
 					},
 					rowComplete : function (rowIndex, row){
-						$.formatQuantity(row);
+						$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
 					},
 					complete : function(rowCount){
 						$('.loadSpinner').hide();

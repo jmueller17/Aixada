@@ -551,7 +551,7 @@
 		<div class="aix-layout-center60 ui-widget"> 
 		<div id="account_overview" class="overviewElements aix-style-entry-widget">
 		
-			<h2 class="clickable"><?php echo $Text['name_cash_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> €</span></h2>
+			<h2 class="clickable"><?php echo $Text['name_cash_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> <?php echo $Text['currency_sign'];?></span></h2>
 			<table>
 				<tr>
 					<td>
@@ -576,7 +576,7 @@
 			</table>
 			<p>&nbsp;</p>
 	
-			<h2><?php echo $Text['consum_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> €</span></h2>
+			<h2><?php echo $Text['consum_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> <?php echo $Text['currency_sign'];?></span></h2>
 			<table>
 				<tr>
 					<td>
@@ -634,7 +634,7 @@
 					<table class="tblForms">
 						<tr>
 							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
-							<td><input type="text" name="quantity" id="deposit_amount" class="inputTxtMiddle ui-widget-content ui-corner-all " value="0.00"/></td>
+							<td><input type="text" name="quantity" id="deposit_amount" class="inputTxtMiddle ui-widget-content ui-corner-all " value="0.00"/>&nbsp;<?php echo $Text['currency_sign'];?></td>
 						</tr>
 						<tr>
 							<td colspan="2"><br/></td>
@@ -694,7 +694,7 @@
 					<table class="tblForms">
 						<tr>
 							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
-							<td>-<input type="text" name="quantity" id="withdraw_amount" class="inputTxtLarge  ui-widget-content ui-corner-all " value="0.00"/></td>
+							<td>-<input type="text" name="quantity" id="withdraw_amount" class="inputTxtLarge  ui-widget-content ui-corner-all " value="0.00"/>&nbsp;<?php echo $Text['currency_sign'];?></td>
 						</tr>
 						<tr>
 							<td colspan="2"><br/></td>
@@ -788,7 +788,7 @@
 		<table class="tblForms">
 			<tr>
 				<td><?php echo $Text['current_balance']; ?>:&nbsp;&nbsp;</td>
-				<td><input type="text" name="c_balance_quantity" id="c_balance_quantity" class="ui-widget-content ui-corner-all " value=""/></td>
+				<td><input type="text" name="c_balance_quantity" id="c_balance_quantity" class="ui-widget-content ui-corner-all " value=""/>&nbsp;<?php echo $Text['currency_sign'];?></td>
 			</tr>
 			<tr>
 				<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>

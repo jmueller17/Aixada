@@ -541,7 +541,7 @@
 								<td title="Order id: #{id}">{provider_name}</td>
 								<td>{time_left}</td>
 								<td><?=$Text['loading_status_info'];?></td>
-								<td><p class="textAlignRight">{order_total}€</p></td>
+								<td><p class="textAlignRight">{order_total}<?=$Text['currency_sign'];?></p></td>
 								
 							</tr>
 						</tbody>
@@ -578,7 +578,7 @@
 																				  <td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td class="textAlignLeft shopDate">{date_for_shop}</td>
 								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
-								<td class="textAlignRight">{purchase_total}€</td>
+								<td class="textAlignRight">{purchase_total}<?=$Text['currency_sign'];?></td>
 							</tr>
 						</tbody>
 						<tfoot>

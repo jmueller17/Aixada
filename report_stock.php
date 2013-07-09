@@ -183,15 +183,15 @@
 		function sumStockValue(){
 			var tnetto = $.sumSimpleItems('.nettoCol');
 			var tbrutto = $.sumSimpleItems('.bruttoCol');
-			$('#nettoTotal').text(tnetto +'€');
-			$('#bruttoTotal').text(tbrutto+'€');
+			$('#nettoTotal').text(tnetto +"<?=$Text['currency_sign'];?>");
+			$('#bruttoTotal').text(tbrutto+"<?=$Text['currency_sign'];?>");
 			$('#tbl_stock_value tbody tr:even').addClass('rowHighlight'); 
 		}
 
 
 		function sumStockMovementsValue(){
 			var acc_loss_ever = $.sumSimpleItems('.stockDeltaPriceCell');
-			$('.setAccLossEver').text(acc_loss_ever+'€');
+			$('.setAccLossEver').text(acc_loss_ever+"<?=$Text['currency_sign'];?>");
 		}
 
 
