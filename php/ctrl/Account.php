@@ -20,10 +20,7 @@ if (!isset($_SESSION)) {
 
 
 try{ 
-   
-	//$rm = new report_manager;
-	
-	
+   	
  	switch ($_REQUEST['oper']) {
 
  		case 'getAllAccounts':

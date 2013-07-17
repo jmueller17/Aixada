@@ -39,14 +39,16 @@ class account_movement extends account{
 	 */
 	public function deposit_cash_for_uf($quantity, $uf_or_account, $description=''){
 
-		$this->set_account($this->construct_account($uf_or_account));
+		$account_nr = $this->construct_account($uf_or_account);
+		
+		$this->set_account($account_nr);
 		$desc = ($description == '')? "Cash deposit":$description;
 
 		//register deposit in UF account
 		$this->deposit($quantity, $desc, $this->operator_id);
 
 		//register deposit in cashbox
-		$desc = ($description == '')? "Cash deposit by HU":$description;
+		$desc = ($description == '')? "Cash deposit for account ".$account_nr:$description;
 		$this->set_account(-3);
 		$this->deposit($quantity, $desc, $this->operator_id);
 	}

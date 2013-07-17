@@ -70,12 +70,14 @@ Next release
 * consum account now active and manageable 
 * rudimentary export order to csv 
 * order_to_shop revisions won't be deleted anymore from aixada_order_to_shop. Needed to keep track of total of revised order and validated income
+* currency symbol is not in config.php and currency description in lang files. 
 
 
 Bugfixes
 * product edit form, calculation and display of brutto price fixed
 * provider - responsible HU fix
 * #51 pwd create/logon now works with proper salt and is backward compatible 
+* #52 entire product row deactivation
 
 
 
