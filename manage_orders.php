@@ -186,7 +186,7 @@
 							if (gSection == 'view' && gSelRow.attr('orderId') > 0){
 								quShop = $(this).find('shop_quantity').text();
 								quShop = (quShop == '')? 0:quShop;  //items that did not arrived produce a null value. 
-								quShopHTML = (gSection == 'view')? '<span class="shopQuantity">(' +quShop +')</span>':'';
+								quShopHTML = (gSection == 'view')? ' <span class="shopQuantity">(' +quShop +')</span> ':'';
 							}
 							var product_id = $(this).find('product_id').text();
 							var uf_id = $(this).find('uf_id').text();
@@ -197,7 +197,7 @@
 							var tblRow = '.Row-'+product_id;
 							var pid	= product_id + '_' + uf_id; 
 							
-							$(tblCol+tblRow).append('<p id="'+pid+'" class="textAlignCenter">'+qu+''+quShopHTML+'</p>')
+							$(tblCol+tblRow).append(' <p id="'+pid+'" class="textAlignCenter">'+qu+''+quShopHTML+'</p>')
 							
 							if (revised == true) {
 								$(tblCol+tblRow).removeClass('toRevise').addClass('revised');
@@ -216,7 +216,7 @@
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
 								
-								var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span>";
+								var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 								
 								$('.total_'+lastId).html(total);
 								quTotal = 0; 
@@ -230,7 +230,7 @@
 						});
 
 						
-						var total = "<span>"+quTotal.toFixed(2)+"</span><span class='shopQuantity'>("+quShopTotal+")</span>";
+						var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 						$('.total_'+lastId).html(total);
 
 
