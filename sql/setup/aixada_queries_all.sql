@@ -2,6 +2,63 @@ delimiter |
 
 
 
+
+drop  procedure if exists account_exists|
+create procedure account_exists(in the_account_id int)
+begin
+  select
+    count(*)
+  from 
+    aixada_account
+  where
+    account_id = the_account_id;
+end|
+
+
+/**
+ * Generic procedure to handle either deposit or withdrawal for the given account. 
+ */
+drop procedure if exists move_money|
+create procedure move_money(in the_quantity decimal(10,2), 
+                            in the_account_id int, 
+                            in type_id int, 
+                            in the_operator_id int, 
+                            in the_description varchar(255),
+                            in the_currency_id int)
+begin
+
+    declare current_balance decimal(10,2);
+    declare new_balance decimal(10,2);
+  
+  -- get the current balance -- 
+    select 
+      balance 
+    into 
+      current_balance
+    from 
+      aixada_account
+    where 
+      account_id = the_account_id
+    order by ts desc
+    limit 1; 
+  
+    set new_balance = current_balance + the_quantity; 
+    
+    insert into 
+      aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance, currency_id) 
+    values 
+      ( the_account_id, 
+        the_quantity, 
+        type_id, 
+        the_description, 
+        the_operator_id, 
+        new_balance, 
+        the_currency_id);
+
+end|
+
+
+
 /**
  * procedure allows to manually correct / reset account balance. Mainly 
  * should be used for the global accounts -3, -2, -1 not user accounts.
@@ -196,128 +253,6 @@ begin
  order by a.ts desc limit 10;
 end|
 
-
-/**
- * cash withdrawls. this usually refers to withdraw some cash for paying bills. 
- * cash can only be withdrawn from cashbox -3. TODO: how this gets reflected on the other
- * accounts needs to be clarified. 
- */
-drop procedure if exists withdrawal|
-create procedure withdrawal (in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in the_operator_id int, in the_type int)
-begin
-		
-	declare current_balance decimal(10,2);
-	
-	select 
-  		balance 
-  	into 
-  		current_balance
-  	from 
-  		aixada_account
-  	where 
-  		account_id = the_account_id
-  	order by ts desc
-  	limit 1; 
-		
-	insert into 
-  		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-  	values 
-  		(the_account_id, 
-  	 	-qty, 
-  	 	the_type, 
-  	 	the_description, 
-  	 	the_operator_id, 
-  	 	current_balance - qty);
-	
-  	-- if money is withdrawn from any account it needs to be registered in the cashbox as well --
- 	if the_account_id != -3 then  
-	    select 
-	    	balance
-	    into 
-	    	current_balance
-	    from 
-	    	aixada_account
-	    where 
-	    	account_id = -3
-	    order by ts desc
-	    limit 1;
-	    
-	  	insert into 
-    		aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-   	 	values 
-    		(-3, 
-    	 	 -qty, 
-    	 	 the_type, 
-    	 	concat('Cash withdrawal for account ',the_account_id), 
-    	 	the_operator_id, 
-	        current_balance -qty);
-    
-    end if; 
-  	 	
-  	 	
-	
-end |
-
-
-
-/**
- * make a deposit into aixada_account for a given uf or for other accounts. 
- */
-drop procedure if exists deposit|
-create procedure deposit(in the_account_id int, in qty decimal(10,2), in the_description varchar(255), in op int)
-begin
-  declare current_balance decimal(10,2);
-
-  select 
-  	balance 
-  into 
-  	current_balance
-  from 
-  	aixada_account
-  where 
-  	account_id = the_account_id
-  order by ts desc
-  limit 1; 
-  
-        
-  insert into 
-  	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-  values 
-  	(the_account_id, 
-  	 qty, 
-  	 7, 
-  	 the_description, 
-  	 op, 
-  	 current_balance + qty);
-
-  /** Account -3 is Caixa. So we update Caixa whenever we haven't inserted directly into Caixa. */
-  if the_account_id != -3 then  
-    select 
-    	balance
-    into 
-    	current_balance
-    from 
-    	aixada_account
-    where 
-    	account_id = -3
-    order by ts desc
-    limit 1;
-
-  /* ufs make a positive deposit, movements to Consum(-2) make a negative deposit to caixa */
-    insert into 
-    	aixada_account (account_id, quantity, payment_method_id, description, operator_id, balance) 
-    values 
-    	(-3, 
-    	 if(the_account_id > 0, qty, -qty), 
-    	 7, 
-    	 concat('Cash deposit for account ',the_account_id), 
-    	 op, 
-         current_balance + if(the_account_id > 0, qty, -qty)
-    );
-
-  end if;
-
-end|
 
 
 
@@ -776,13 +711,11 @@ begin
 	-- if there have been revisions, calc the new order total -- 
 	set delivered_total = 		
 		(select
-			sum(si.unit_price_stamp * si.quantity)
+			sum(ots.unit_price_stamp * ots.quantity)
 		from
-			aixada_shop_item si,
-			aixada_order_item oi
+			aixada_order_to_shop ots
 		where 
-			oi.order_id = the_order_id
-			and oi.id = si.order_item_id);
+			ots.order_id = the_order_id);
 	
 	-- show how much of the order has been validated as uf carts. if people pay this is real income --
 	set validated_income = 
@@ -1294,10 +1227,10 @@ begin
 	
 	
 	/**remove tmp revison items**/
-	delete from 
+	/**delete from 
 		aixada_order_to_shop
 	where 
-		order_id=the_order_id; 
+		order_id=the_order_id;**/ 
 		
 		
 	commit;	
@@ -2380,6 +2313,50 @@ begin
 end|
 
 
+/**
+ * retrieves the value of available stock for the given product or provider in given date range
+ */
+drop procedure if exists get_stock_value|
+create procedure get_stock_value(in the_provider_id int)
+begin
+	
+	declare wherec varchar(255) default "";
+	
+	if (the_provider_id > 0) then
+		set wherec = concat("and p.provider_id=",the_provider_id);
+	end if; 
+	
+	set @q = concat("select
+		p.id as product_id, 
+		p.stock_actual,
+		p.orderable_type_id,
+		p.name,	
+		p.unit_price,
+		round((p.stock_actual * p.unit_price),2) as total_netto_stock_value,
+		round((p.stock_actual * p.unit_price * (1 + iva.percent/100) * (1 + rev.rev_tax_percent/100)),2) as total_brutto_stock_value,
+		iva.percent as iva_percent,
+		rev.rev_tax_percent,
+		u.unit as shop_unit
+	from 
+		aixada_product p,
+		aixada_iva_type iva,
+		aixada_rev_tax_type rev,
+		aixada_unit_measure u
+	where 
+		p.active = 1	
+		and p.rev_tax_type_id = rev.id
+		and p.iva_percent_id = iva.id
+		and p.unit_measure_shop_id = u.id
+		",wherec,"
+		and p.orderable_type_id = 1;");
+		
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+	
+end|
+
 
 /**
  * correct stock. this should be the exception since stock is normally added
@@ -2527,20 +2504,23 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_limit varchar(255))
+create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
 begin
   
-	declare wherec varchar(255) default ''; 
-	
-	if (the_product_id > 0) then
-		set wherec = concat('and sm.product_id = ', the_product_id);
+	declare wherec varchar(255) default ""; 
+
+	if (the_provider_id > 0) then
+		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+	elseif (the_product_id > 0) then
+		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
 	end if; 
 	
-	select 
+	set @q = concat("select
 		sm.*,
 		mem.id as member_id,
 		mem.name as member_name,
 		p.name as product_name,
+		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
 		um.unit
 	from
@@ -2551,12 +2531,15 @@ begin
 		aixada_unit_measure um
 	where
 		mem.id = sm.operator_id
-		and p.id = sm.product_id
+		",wherec," 
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
-		and sm.product_id = the_product_id
 	order by
-		sm.ts desc, sm.product_id desc;  
+		sm.product_id desc, sm.ts desc;");
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 		
 end|
 
@@ -3196,57 +3179,148 @@ delimiter ;
 delimiter |
 
 
+
+/**
+ * returns the total of sold items for a given provider
+ */
 drop procedure if exists get_purchase_total_by_provider|
-create procedure get_purchase_total_by_provider (in from_date date, in to_date date, in the_provider_id int)
+create procedure get_purchase_total_by_provider (	in from_date date, 
+													in to_date date, 
+													in the_provider_id int, 
+													in the_group_by varchar(20))
 begin
 	
+	declare wherec varchar(255) default "";
+	declare groupby varchar(20) default "";
+	
 	if (the_provider_id > 0) then
-	
-		select 
-			sum(si.quantity * si.unit_price_stamp) as total,
-		 	pv.name as provider_name,
-		 	the_provider_id as provider_id,
-		 	c.date_for_shop
-		from 
-			aixada_shop_item si, 
-			aixada_provider pv,
-			aixada_product p,
-			aixada_cart c
-		where
-			c.date_for_shop between from_date and to_date
-			and c.id = si.cart_id
-			and si.product_id = p.id
-			and p.provider_id = the_provider_id
-			and pv.id = the_provider_id
-		group by
-			the_provider_id, c.date_for_shop
-		order by
-			pv.name asc, c.date_for_shop desc; 
-	
-	else 
-	
-		select 
-			sum(si.quantity * si.unit_price_stamp) as total,
-		 	pv.name as provider_name,
-		 	pv.id as provider_id,
-		 	c.date_for_shop
-		from 
-			aixada_shop_item si, 
-			aixada_provider pv,
-			aixada_product p,
-			aixada_cart c
-		where
-			c.date_for_shop between from_date and to_date
-			and c.id = si.cart_id
-			and si.product_id = p.id
-			and p.provider_id = pv.id
-		group by
-			pv.id, c.date_for_shop
-		order by
-			pv.name asc, c.date_for_shop desc; 
+		set wherec = concat("and pv.id=",the_provider_id);
 	end if;
 	
+	if (the_group_by = "shop_date") then
+		set groupby = ", c.date_for_shop";
+	end if; 
+	
+	
+	set @q = concat("select
+		round(sum(si.quantity * si.unit_price_stamp),2) as total_sales_brutto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+ si.iva_percent/100) )),2) as total_sales_netto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+ si.iva_percent/100) )),2) as total_sales_rev,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+ si.rev_tax_percent/100) )),2) as total_sales_iva,
+	 	pv.name as provider_name,
+	 	pv.id as provider_id,
+	 	c.date_for_shop
+	from 
+		aixada_shop_item si, 
+		aixada_provider pv,
+		aixada_product p,
+		aixada_cart c
+	where
+		c.date_for_shop between '",from_date,"' and '",to_date,"'
+		and c.id = si.cart_id
+		and si.product_id = p.id
+		and p.provider_id = pv.id
+		",wherec,"
+	group by
+		pv.id ", groupby,"
+	order by
+		pv.name asc, c.date_for_shop desc;");
+		
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;	
+  	
 end|
+
+drop function if exists sum_ordered_total|
+create function sum_ordered_total(the_date_for_shop date, the_provider_id int)
+returns decimal(10,2)
+reads sql data
+begin
+  declare total_price decimal(10,2);
+  
+  select 
+	sum(total) into total_price
+  from 
+	aixada_order
+  where
+  	date_for_shop = the_date_for_shop
+  	and provider_id = the_provider_id; 
+  
+  return total_price;
+end|
+
+
+
+/**
+ * returns total of sold amount for given products of provider
+ * total netto, total brutto in given date range
+ */
+drop procedure if exists get_purchase_total_of_products|
+create procedure get_purchase_total_of_products(	in from_date date, 
+													in to_date date, 
+													in the_provider_id int, 
+													in is_validated boolean, 
+													in the_group_by varchar(20))
+begin
+	
+	declare wherec varchar(255) default "";
+	declare groupby varchar(20) default ""; 
+	
+	-- default, we use only validated carts
+	if (is_validated) then
+		set wherec = concat(" and c.ts_validated > 0 ");
+	end if; 
+	
+	-- filter for products of certain provider --
+	if (the_provider_id > 0) then
+		set wherec = concat(wherec, " and p.provider_id=", the_provider_id);
+	end if; 
+	
+	if (the_group_by = "shop_date") then
+		set groupby = "c.date_for_shop,";
+	end if; 
+	
+	
+	
+	set @q = concat("select 
+		p.name as product_name, 
+		p.active, 
+		p.orderable_type_id,
+		si.*,
+		c.date_for_shop,
+		pv.id as provider_id, 
+		pv.name as provider_name,
+		u.unit as shop_unit,
+		round(sum(si.quantity * si.unit_price_stamp),2) as total_sales_brutto,
+		round(si.unit_price_stamp / (1+si.rev_tax_percent/100 ) / (1+ si.iva_percent/100),2) as unit_price_stamp_netto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+ si.iva_percent/100) )),2) as total_sales_netto,
+		sum(si.quantity) as total_sales_quantity
+	from
+		aixada_shop_item si, 
+		aixada_product p, 
+		aixada_provider pv, 
+		aixada_cart c,
+		aixada_unit_measure u
+	where
+		c.date_for_shop between '",from_date,"' and '",to_date,"'
+		and si.cart_id = c.id
+		and si.product_id = p.id
+		and p.provider_id = pv.id
+		and p.unit_measure_shop_id = u.id
+		", wherec, "
+	group by
+		", groupby," p.id
+	order by
+		p.name asc;");
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+
+		
+end|
+
 
 
 /**
@@ -3361,7 +3435,7 @@ end |
 
 
 /**
- * returns the total of a given purchase (cart). 
+ * returns the total of a given purchase by uf - cart. 
  * Important: the unit_price_stamp of the shop item
  * already contains IVA and Rev-tax!
  */ 
@@ -3958,27 +4032,34 @@ begin
 end|
 
 
+
 /**
- * check if old password is matched for given user. 
+ * this procedures returns the credentials for given user
+ * the actual check if pwd matches with login / or user_id is performed
+ * on the php side of things. 
+ * NOTE: this procedure always returns values as long as the given user_id or login 
+ * exists!!!
  */
-drop procedure if exists check_password|
-create procedure check_password(in the_user_id int, in the_password varchar(255))
-begin
-   select 
-   	id
-   from 
-   	aixada_user
-   where 
-   	id = the_user_id 
-   	and password = the_password;
-end|
-
-
-
-drop procedure if exists check_credentials|
-create procedure check_credentials(in the_login varchar(50), in the_password varchar(255))
+drop procedure if exists retrieve_credentials|
+create procedure retrieve_credentials(in user_login varchar(50), in the_user_id int)
 begin	
 	
+	declare the_login varchar(50) default ''; 
+	
+	-- if we provide a user id, use the login nevertheless -- 
+	if (the_user_id > 0 and user_login = '') then
+		set the_login = (select 
+			login
+		from 
+			aixada_user
+		where
+			id = the_user_id);
+	else  
+	
+		set the_login = user_login;
+	end if; 
+	
+	-- update as last login attempt -- 
 	update 
    		aixada_user 
    	set 
@@ -3986,13 +4067,6 @@ begin
    	where 
    		login=the_login;
    	
-	update 
-   		aixada_user 
-   	set 
-   		last_successful_login = sysdate() 
-   	where 
-   		login=the_login 
-   		and password=the_password;
    
    	-- check credentials, see if user is active --
 	select 
@@ -4006,8 +4080,7 @@ begin
    	left join
    		aixada_provider pv on u.provider_id = pv.id
    	where 
-   		u.login=the_login 
-   		and u.password=the_password; 
+   		u.login=the_login; 
 end|
 
 

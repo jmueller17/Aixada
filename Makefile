@@ -28,7 +28,8 @@ js/all:
 	$(MAKE) -C js
 
 canned_responses%.php: sql/aixada.sql php/utilities/tables.php $(wildcard $(config_dir)/lang/*) \
-	php/lib/table_with_ref.php php/inc/name_mangling.php make_canned_responses.php
+	php/lib/table_with_ref.php php/inc/name_mangling.php make_canned_responses.php \
+	$(config_dir)/config.php
 	php make_canned_responses.php
 
 clean: clean_ship 
