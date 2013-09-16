@@ -139,6 +139,7 @@ begin
       aixada_member.uf_id,
       aixada_uf.name as uf_name,
       aixada_member.name,
+      aixada_user.email as email,
       aixada_member.address,
       aixada_member.nif,
       aixada_member.zip,
@@ -155,7 +156,8 @@ begin
       aixada_member.adult,
       aixada_member.ts 
     from aixada_member 
-    left join aixada_uf as aixada_uf on aixada_member.uf_id=aixada_uf.id";
+    left join aixada_uf as aixada_uf on aixada_member.uf_id=aixada_uf.id
+    left join aixada_user as aixada_user on aixada_user.member_id=aixada_member.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);

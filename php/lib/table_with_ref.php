@@ -362,9 +362,11 @@ class foreign_key_manager {
   /**
    * Traverse the @see _table_cols and build an SQL SELECT ALL query, in
    * which the fields with foreign key id's are replaced by the
-   * corresponding descriptive names, according to @see _keys. 
+   * corresponding descriptive names, according to @see _keys.
+   * The arguments correspond to af="additional fields" that should be 
+   * included in the query
    */
-  public function make_canned_list_all_query ()
+  public function make_canned_list_all_query ($af_tablenames, $af_names, $af_aliases, $af_join_clauses, $af_after_which_field)
   {
       global $Text;
     $select_clause = 'select';
@@ -401,6 +403,17 @@ class foreign_key_manager {
 	  . '=' . $table_alias[$field] . '.' . $ftable_id;
       } else {
 	$select_clause .= "\n      " . $this->_table_name . '.' . $field . ',';
+      }
+
+      $qualified_field_name = $this->_table_name . '.' . $field;
+      if (in_array($qualified_field_name, $af_after_which_field)) {
+	  $i=0;
+	  while ($af_after_which_field[$i] != $qualified_field_name) {
+	      $i++;
+	  }
+	  $select_clause .= "\n      " . $af_tablenames[$i] . '.' . $af_names[$i]
+	      . ' as ' . $af_aliases[$i] . ',';
+	  $join_clause .= "\n    " . $af_join_clauses[$i];
       }
     }
     $select_clause = rtrim($select_clause, ',');

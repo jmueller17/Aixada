@@ -152,11 +152,27 @@ function make_canned_queries()
 					       'aixada_account')) ? 
                         "' order by '" :
                         "' order by active desc, '");
+
+    $af_tablenames = array();
+    $af_names = array();
+    $af_aliases = array();
+    $af_join_clauses = array();
+    $af_after_which_field = array();
+
+    if ($table == 'aixada_member') {
+	// af = "additional field"
+	$af_tablenames[] = "aixada_user";
+	$af_names[] = "email";
+	$af_aliases[] = "email";
+	$af_join_clauses[] = "left join aixada_user as aixada_user on aixada_user.member_id=aixada_member.id";
+	$af_after_which_field[] = "aixada_member.name";
+    }
+
     $strSQL .= <<<EOD
 drop procedure if exists {$query_name}|
 create procedure {$query_name} (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
-  set @q = "{$fkm->make_canned_list_all_query()}";
+  set @q = "{$fkm->make_canned_list_all_query($af_tablenames, $af_names, $af_aliases, $af_join_clauses, $af_after_which_field)}";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, {$order_by_clause}, the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
