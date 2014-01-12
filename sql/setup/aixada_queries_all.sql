@@ -2138,19 +2138,31 @@ end|
 /**
  *  returns all products (with details). This query is needed for the shop/order pages and its
  *  different mechanisms for searching: by provider, by category, or direct search. 
- *  As such this query shows available products for ordering or for purchase but does not handle any real 
- *  ordered or bought products. The search functionality is also called from the validate page. 
+ *  As such this query shows available products for ordering or for purchase but does not handle 
+ *  any real ordered or bought products. 
+ *  The search functionality is also called from the validate page. 
+ *
  * 
- *  If a provider_id is set, it returns the associated products for the provider. If date is set, then these
- *  are orderable products, otherwise stock. 
+ *  If a provider_id is set, 
+ *     it returns the associated products for the provider. 
+ *     If, additionally, date is set, these products are orderable, otherwise stock. 
+ *
  * 
- * 	if category_id is set, it returns products by category. If date is set, these products by category are 
- *  orderable, otherwise stock.
+ *  If category_id is set, it returns products by category. 
+ *     If, additionally, date is set, these products are orderable, otherwise stock.
  * 
- * 	if provider_id and category_id = 0 and the_like is set, then searches for product 
+ *
+ *  If provider_id = 0 and category_id = 0 and the_like is set, then searches for product 
  * 
- *  Furthermore it is important to note that the price delivered includes IVA and Rev Tax!! There is no 
- *  need to calcuate this at a later point in time (upon validation for example). 
+ *
+ *  In all cases, the only stock products shown are the ones that satisfy
+ *     stock_actual >= stock_min,
+ *  equivalently,
+ *     delta_stock >= 0.
+ *
+ *
+ *  Furthermore it is important to note that the price delivered includes IVA and Rev Tax!! 
+ *  There is no need to calcuate this at a later point in time (upon validation for example). 
  */
 drop procedure if exists get_products_detail|
 create procedure get_products_detail(	in the_provider_id int, 
@@ -2161,27 +2173,27 @@ create procedure get_products_detail(	in the_provider_id int,
 										in the_product_id int)
 begin
 	
-	declare today date default date(sysdate());
+    declare today date default date(sysdate());
     declare wherec varchar(255);
     declare fromc varchar(255);
     declare fieldc varchar(255);
      
     
     /** show active products only or include inactive products as well **/
-    set wherec = if(include_inactive=1,"","and p.active=1 and pv.active = 1");	
+    set wherec = if(include_inactive=1,"","and p.active=1 and pv.active=1");	
    
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = 	concat(wherec, " and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id and (p.orderable_type_id = 1 or p.orderable_type_id = 4) ");
+    	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
     else 
@@ -2195,20 +2207,22 @@ begin
     /** get a specific product **/
     if the_product_id > 0 then 
     	set wherec = concat(wherec, " and p.id = '", the_product_id, "' ");
-    	
+    end if;
+	
     /** get products by provider_id **/
-    elseif the_provider_id > 0 then
-		set wherec = concat(wherec, " and pv.id = '", the_provider_id, "' ");
+    if the_provider_id > 0 then
+	set wherec = concat(wherec, " and pv.id = '", the_provider_id, "' ");
+    end if;
     	
     /** get products by category_id **/
-    elseif the_category_id > 0 then 
+    if the_category_id > 0 then 
     	set fromc = concat(fromc, "aixada_product_category pc,");
     	set wherec = concat(wherec, " and pc.id = '", the_category_id, "' and p.category_id = pc.id ");
+    end if;
 	
     /** search for product name **/
-    elseif the_like != "" then
+    if the_like != "" then
     	set wherec 	= concat(wherec, " and p.name LIKE '%", the_like,"%' ");
-    	
     end if;
     
   
@@ -2239,7 +2253,6 @@ begin
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
-  
 end|
 
 
@@ -2490,11 +2503,11 @@ begin
   	aixada_product p use index(delta_stock), 
   	aixada_provider pv
   where 
- 	p.provider_id = pv.id 	
-  	and p.active = 1
+        p.active = 1
     and p.orderable_type_id = 1
+    and p.stock_actual <= p.stock_min  /* to catch zero stock */
+    and p.provider_id = pv.id 	
     and pv.active = 1
-    and p.stock_actual < p.stock_min
   order by pv.name;
 end|
 
