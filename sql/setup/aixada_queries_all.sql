@@ -2174,25 +2174,23 @@ create procedure get_products_detail(	in the_provider_id int,
 begin
 	
     declare today date default date(sysdate());
-    declare wherec varchar(255);
-    declare fromc varchar(255);
-    declare fieldc varchar(255);
+    declare wherec varchar(255) default "";
+    declare fromc varchar(255) default "";
+    declare fieldc varchar(255) default "";
      
     
-    /** show active products only or include inactive products as well **/
-    set wherec = if(include_inactive=1,"","and p.active=1 and pv.active=1");	
+    /** show active products only or include inactive products as well? **/
+    if (include_inactive = 1) then 
+       set wherec = "and p.active=1 and pv.active=1";
+    end if;	
    
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
-    	set fieldc = "";
-    	set fromc = "";
     	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
-    	set fieldc = "";
-    	set fromc = "";
     	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
@@ -2317,26 +2315,26 @@ begin
   		and po.date_for_order = '1234-01-23'
   		and po.product_id = p.id
   		and p.active = 1	
-     	and pv.active = 1
+     		and pv.active = 1
   		and p.provider_id = pv.id
   		and p.rev_tax_type_id = r.id
-  		and	p.unit_measure_order_id = u.id
+  		and p.unit_measure_order_id = u.id
 		and p.iva_percent_id = iva.id 
   	order by p.id, p.name;
 end|
 
 
 /**
- * retrieves the value of available stock for the given product or provider in given date range
+ * retrieves the value of available stock for the given provider
  */
 drop procedure if exists get_stock_value|
 create procedure get_stock_value(in the_provider_id int)
 begin
 	
-	declare wherec varchar(255) default "";
+	declare wherec varchar(255) default "p.active = 1";
 	
 	if (the_provider_id > 0) then
-		set wherec = concat("and p.provider_id=",the_provider_id);
+		set wherec = concat("p.provider_id=", the_provider_id, "and p.active = 1");
 	end if; 
 	
 	set @q = concat("select
@@ -2345,8 +2343,8 @@ begin
 		p.orderable_type_id,
 		p.name,	
 		p.unit_price,
-		round((p.stock_actual * p.unit_price),2) as total_netto_stock_value,
-		round((p.stock_actual * p.unit_price * (1 + iva.percent/100) * (1 + rev.rev_tax_percent/100)),2) as total_brutto_stock_value,
+		round((p.stock_actual * p.unit_price), 2) as total_netto_stock_value,
+		round((p.stock_actual * p.unit_price * (1 + iva.percent/100) * (1 + rev.rev_tax_percent/100)), 2) as total_brutto_stock_value,
 		iva.percent as iva_percent,
 		rev.rev_tax_percent,
 		u.unit as shop_unit
@@ -2356,11 +2354,10 @@ begin
 		aixada_rev_tax_type rev,
 		aixada_unit_measure u
 	where 
-		p.active = 1	
+		",wherec,"
 		and p.rev_tax_type_id = rev.id
 		and p.iva_percent_id = iva.id
 		and p.unit_measure_shop_id = u.id
-		",wherec,"
 		and p.orderable_type_id = 1;");
 		
 		
@@ -2441,7 +2438,8 @@ begin
  	update
  		aixada_product
  	set
- 		stock_actual = the_current_stock
+ 		stock_actual = the_current_stock,
+		delta_stock = the_current_stock - stock_min
  	where
  		id = the_product_id;
     	
@@ -2456,10 +2454,10 @@ end|
  * add stock
  */
 drop procedure if exists add_stock|
-create procedure add_stock(	in the_product_id int, 
-							in delta_amount decimal(10,4), 
-							in the_operator_id int, 
-							in the_description varchar(255))
+create procedure add_stock(in the_product_id int, 
+			   in delta_amount decimal(10,4), 
+			   in the_operator_id int, 
+			   in the_description varchar(255))
 begin
    	start transaction;
 	   
@@ -2467,10 +2465,11 @@ begin
 		aixada_product
 	set 
 		stock_actual = stock_actual + delta_amount,
-	    delta_stock  = delta_stock + delta_amount /* delta_stock = stock_actual - stock_min */
+	        delta_stock  = delta_stock + delta_amount /* maintain the invariant delta_stock = stock_actual - stock_min */
 	where 
 		id = the_product_id;
 
+	/* register the movement */
    	insert into 
    		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
    	select
@@ -2505,7 +2504,7 @@ begin
   where 
         p.active = 1
     and p.orderable_type_id = 1
-    and p.stock_actual <= p.stock_min  /* to catch zero stock */
+    and p.stock_actual <= p.stock_min  /* "<=" to catch zero stock; often, stock_min=0 */
     and p.provider_id = pv.id 	
     and pv.active = 1
   order by pv.name;
@@ -4433,7 +4432,8 @@ begin
   	aixada_product p,
   	aixada_shop_item si
   set 
-  	p.stock_actual = p.stock_actual - si.quantity
+  	p.stock_actual = p.stock_actual - si.quantity,
+	p.delta_stock  = p.delta_stock  - si.quantity
   where
   	si.cart_id = the_cart_id
   	and si.product_id = p.id;
