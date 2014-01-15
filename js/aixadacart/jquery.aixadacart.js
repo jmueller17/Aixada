@@ -73,25 +73,27 @@
 				if ($this.data('aixadacart').cartType == 'standalone_preorder') $('#cart_tabs').tabs();
 				
 				//init the submit button; choose "validate" or "save" icon depending on where we are
-				if ($this.data('aixadacart').btnType == 'validate'){
+			    switch($this.data('aixadacart').btnType) {
+			    case 'validate':
 					$('#btn_submit').button({
 						disabled:true,
 						icons : {
 							secondary: "ui-icon-check"
 						},
 						label: $.aixadacart.validate
-					}); 
-				} else if ($this.data('aixadacart').btnType == 'save') {
+					}); break;
+			    case 'save':
 					$('#btn_submit').button({
 						disabled:true,
 						icons : {
 							secondary: "ui-icon-disk"
 						},
 						label: $.aixadacart.save
-					}); 
-				} else if ($this.data('aixadacart').btnType == 'hidden'){
+					}); break;
+			    case 'hidden':
 					$('#btn_submit').button().hide();
-				} else {
+				break;
+			    default:
 					$('#btn_submit').button({
 						disabled:true,
 						label: $.aixadacart.submit
@@ -181,12 +183,10 @@
 			
 			return this.each(function(){
 				
-				var $this = null;
-				if (itemObj.isPreorder == "true" || itemObj.isPreorder == 1 ){
-					$this = $('#aixada_cart_list_preorder');
-				} else {
-					$this = $('#aixada_cart_list');
-				}
+				var $this = 
+				(itemObj.isPreorder == "true" || itemObj.isPreorder == 1 ) 
+				    ? $('#aixada_cart_list_preorder')
+   				    : $('#aixada_cart_list');
 
 				//we have unsaved items	
 				$(this).data('aixadacart').unsavedItems = true; 
