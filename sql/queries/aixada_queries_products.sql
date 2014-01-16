@@ -273,6 +273,57 @@ end|
 
 
 /**
+ *	Checks if a product_id has ordered items (i.e entries in aixada_order_item). 
+ *	Counts can be made filtering order_status:
+ *			0 -> is still open
+ *			1 -> send off, order_id is set
+ *			2 -> doesn't matter closed and open. 
+ *	and counts can be restricted by date range. 
+ */
+drop procedure if exists order_item_count|
+create procedure order_item_count (	in the_product_id int, 
+									in order_status int,
+									in the_from_date date, 
+									in the_to_date date)
+begin
+
+	declare from_date date default date("1234-01-01"); 
+	declare to_date date default date("9999-01-01");
+
+	declare wherec varchar(255) default "";
+
+	if (order_status=0) then
+		set wherec = " and oi.order_id is NULL";
+	elseif (order_status = 1) then
+		set wherec = " and oi.order_id > 0";
+	elseif (order_status = 2) then
+		set wherec = ""; 
+	end if; 
+
+	if (the_from_date > 0) then
+		set wherec = concat(wherec, " and oi.date_for_order >= '",the_from_date,"'");
+	end if; 
+	
+	if (the_to_date > 0) then
+		set wherec = concat(wherec, " and oi.date_for_order <= '",the_to_date,"'");
+	end if; 
+
+	set @q = concat("select
+		count(*) as total_ordered_items
+	from
+		aixada_order_item oi
+	where
+		oi.product_id =", the_product_id, wherec,";");
+		
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+end|
+
+
+
+/**
  * By default only those dates in table aixada_product_orderable_for_date can be 
  * deactivated that have no ordered items associated. This procedure can delete
  * those dates where orders have been made, which implies to delete the associated items 
@@ -485,13 +536,13 @@ begin
     if the_date = 0 then
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.delta_stock>=0 and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
     	set fieldc = "";
     	set fromc = "";
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.delta_stock>=0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
     else 

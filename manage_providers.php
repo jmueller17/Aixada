@@ -689,8 +689,66 @@
 					e.stopPropagation();
 			});	*/
 
+		
+		//de-/activate product
+		$('input[name=active]').live("click", function(e){
+
+			//if false, means deactivate product
+			var status = $(this).is(":checked");
+			var productId = $(this).parents("tr").attr("productid");
+			
+			//activate product
+			if (status){
 
 
+			//decativate product
+			} else {
+
+				$('.loadSpinner').show();
+				$.ajax({
+					type: "POST",
+					url: "php/ctrl/ActivateProducts.php?oper=count_ordered_items&product_id="+productId+"&order_status=0",
+					success: function(xml){
+						xmlDoc = $.parseXML( xml );
+  						count = $(xmlDoc).find( "total_ordered_items" ).text();
+						if (count > 0){
+
+							$.showMsg({
+								msg:"<?=$Text['msg_confirm_delordereditems'];?>",
+								buttons: {
+									"<?=$Text['btn_confirm_del']; ?>": function(){
+										$( this ).dialog( "close" );
+										$.post("php/ctrl/ActivateProducts.php",{
+													oper : "unlockOrderableDate",
+													product_id : dateID[1],
+													date: dateID[0]
+												}, function (data){
+													toggleCell('#'+tdid);
+												});
+									},
+									"<?=$Text['btn_cancel'];?>":function(){
+										$( this ).dialog( "close" );
+									}
+								},
+								type: 'warning'});
+
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+					},
+					complete : function(){
+						$('.loadSpinner').hide();
+					}
+				});
+
+
+
+
+			}
+		})
 
 		
 			
