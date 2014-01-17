@@ -690,7 +690,7 @@
 			});	*/
 
 		
-		//de-/activate product
+		//de-/activate product trigger 
 		$('input[name=active]').live("click", function(e){
 
 			//if false, means deactivate product
@@ -705,26 +705,22 @@
 			} else {
 
 				$('.loadSpinner').show();
+
+				//check if product has ordered items
 				$.ajax({
 					type: "POST",
 					url: "php/ctrl/ActivateProducts.php?oper=count_ordered_items&product_id="+productId+"&order_status=0",
 					success: function(xml){
-						xmlDoc = $.parseXML( xml );
+						xmlDoc = $.parseXML(xml);
   						count = $(xmlDoc).find( "total_ordered_items" ).text();
+						
 						if (count > 0){
-
 							$.showMsg({
-								msg:"<?=$Text['msg_confirm_delordereditems'];?>",
+								msg:"<?=$Text['msg_err_deactivate_product'];?>",
 								buttons: {
 									"<?=$Text['btn_confirm_del']; ?>": function(){
 										$( this ).dialog( "close" );
-										$.post("php/ctrl/ActivateProducts.php",{
-													oper : "unlockOrderableDate",
-													product_id : dateID[1],
-													date: dateID[0]
-												}, function (data){
-													toggleCell('#'+tdid);
-												});
+										deactivateProduct(productId);
 									},
 									"<?=$Text['btn_cancel'];?>":function(){
 										$( this ).dialog( "close" );
@@ -732,7 +728,10 @@
 								},
 								type: 'warning'});
 
-						}
+						} else {
+							//deactivate straight away
+
+						}	
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
@@ -801,7 +800,35 @@
 				e.stopPropagation();
 			})
 
-		//product utility functions
+		/********************************************************
+		*  product util functions
+		*********************************************************/
+
+
+		//deactivate a product. 
+		function deactivateProduct(pid){
+
+			//removes all order items for this product from non-finalized orders. &date=0 means all open orders
+			$.ajax({
+			   	url: "php/ctrl/ActivateProducts.php?oper=unlockOrderableDate&product_id="+pid+"&date=0",
+			   	type: 'POST',
+			   	success: function(msg){
+			   		alert(msg)
+					$('input[name=active]').attr('checked', false);
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				}				   	
+			}); //end ajax
+
+		}
+
+
 		/**
 		 *	provider utility functions
 		 */

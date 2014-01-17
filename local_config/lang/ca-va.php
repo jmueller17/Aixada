@@ -903,6 +903,6 @@ $Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Plea
 $Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
-
+$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
 
 ?>

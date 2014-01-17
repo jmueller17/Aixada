@@ -328,25 +328,74 @@ end|
  * deactivated that have no ordered items associated. This procedure can delete
  * those dates where orders have been made, which implies to delete the associated items 
  * from order carts as well. 
+ *
+ * If a specific date is supplied, then the order items for this order date only will
+ * be deleted. If date is 0, then order_items of the given product for ALL open orders 
+ * will be deleted. This usually happens when an orderable product is deactivated. 
  */
 drop procedure if exists deactivate_locked_order_date|
 create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
 begin
+
+	declare done int default 0; 
+	declare the_order_date date; 
+	declare date_cursor cursor for 
+		select
+			oi.date_for_order
+		from
+			aixada_order_item oi
+		where 
+			oi.product_id = the_product_id
+			and oi.order_id is NULL;	
+	
+	declare continue handler for not found
+		set done = 1; 
+	declare exit handler for sqlexception rollback; 
+	declare exit handler for sqlwarning rollback; 
+
 	
 	start transaction; 
 	
-	delete from
-		aixada_order_item
-	where
-		product_id = the_product_id
-		and date_for_order = the_date; 
-		
-	delete from
-		aixada_product_orderable_for_date
-	where
-		product_id = the_product_id
-		and date_for_order = the_date; 
-		
+	if (the_date > 0) then
+		delete from
+			aixada_order_item
+		where
+			product_id = the_product_id
+			and date_for_order = the_date; 
+			
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = the_date; 
+
+	else 
+
+		delete from
+			aixada_order_item
+		where
+			product_id = the_product_id
+			and order_id is NULL; 
+	
+		open date_cursor;	
+		set done = 0; 
+
+		read_loop: loop
+			fetch date_cursor into the_order_date;
+			if done then 
+				leave read_loop; 
+			end if;
+
+			delete from
+				aixada_product_orderable_for_date
+			where
+				product_id = the_product_id
+				and date_for_order = the_order_date; 
+
+		end loop;
+		close date_cursor;
+
+	end if; 		
 	
 	commit; 
 	
