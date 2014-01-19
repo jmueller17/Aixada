@@ -485,11 +485,11 @@ begin
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.delta_stock>=0 and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.delta_stock>=0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
     else 
@@ -545,7 +545,7 @@ begin
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
 	order by p.name asc, p.id asc;");
-	
+
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
