@@ -339,14 +339,15 @@ begin
 
 	declare done int default 0; 
 	declare the_order_date date; 
+	-- get a list of all order-dates for the given product that are not sent off yet --
 	declare date_cursor cursor for 
 		select
-			oi.date_for_order
+			date_for_order
 		from
-			aixada_order_item oi
+			aixada_order_item
 		where 
-			oi.product_id = the_product_id
-			and oi.order_id is NULL;	
+			product_id = the_product_id
+			and order_id is NULL;	
 	
 	declare continue handler for not found
 		set done = 1; 
@@ -371,11 +372,6 @@ begin
 
 	else 
 
-		delete from
-			aixada_order_item
-		where
-			product_id = the_product_id
-			and order_id is NULL; 
 	
 		open date_cursor;	
 		set done = 0; 
@@ -387,6 +383,12 @@ begin
 			end if;
 
 			delete from
+				aixada_order_item
+			where
+				product_id = the_product_id
+				and date_for_order = the_order_date; 
+
+			delete from
 				aixada_product_orderable_for_date
 			where
 				product_id = the_product_id
@@ -395,8 +397,8 @@ begin
 		end loop;
 		close date_cursor;
 
-	end if; 		
-	
+	end if; 
+
 	commit; 
 	
 end|
