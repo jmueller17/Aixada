@@ -37,6 +37,9 @@
 	//decide what to do in which section
 	var what = $.getUrlVar('what');
 
+	//allow pruchase of stock_actual < 0 items? 
+	var preventOutofStock = <?php echo configuration_vars::get_instance()->prevent_out_of_stock_purchase;?>
+
 
 	//detect form submit and prevent page navigation; we use ajax.
 	$('form').submit(function() {
@@ -421,6 +424,19 @@
 			counterClosed++;
 		}
 
+		var stockActual = $(row).attr("stock");
+		var orderType	= $(row).attr("ordertype");
+
+		//this is a stock product without any stock left: can't be bought. 
+		if (preventOutofStock == true && orderType == 1 && stockActual <=0){
+			$(row).addClass('dim60');
+			$('td', row).addClass('ui-state-highlight');
+			$('input', row).attr('disabled','disabled');
+			$('td:eq(1)', row).empty().append("<?php echo $Text['no_stock']; ?>")
+		}
+
+
+
 	}
 
 
@@ -502,7 +518,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}" closingdate="{time_left}">
+							<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
 								<td class="item_it">{id}</td>
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
@@ -540,7 +556,7 @@
 						</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}" closingdate="{time_left}">
+							<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
 								<td class="item_it">{id}</td>
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
@@ -576,7 +592,7 @@
 						</tr>
 						</thead>
 						<tbody>
-							<tr id="{id}" closingdate="{time_left}">
+							<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
 								<td class="item_it">{id}</td>
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>

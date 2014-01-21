@@ -909,6 +909,7 @@ $Text['msg_err_deactivate_product'] = "There are open orders for this product. D
 
 $Text['msg_activate_success'] = "The product has been activated successfuly."; 
 $Text['msg_deactivate_success'] = "The product has been deactivated successfuly."; 
+$Text['no_stock'] = "Out of stock!!";
 
 //$Text[''] = ""; 
 

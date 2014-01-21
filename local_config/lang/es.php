@@ -897,4 +897,5 @@ $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this p
 $Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
 $Text['msg_activate_success'] = "The product has been activated successfuly."; 
 $Text['msg_deactivate_success'] = "The product has been deactivated successfuly."; 
+$Text['no_stock'] = "Out of stock!!";
 ?>
