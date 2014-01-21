@@ -690,8 +690,12 @@
 			});	*/
 
 		
-		//de-/activate product trigger 
-		$('input[name=active]').live("click", function(e){
+		/**
+		 * de-/activate product trigger 
+		 * the active_dummy field is NOT passed when the form is edited; the de-/activation works 
+		 * in parallel because it involves many dependencie
+		 */
+		$('input[name=active_dummy]').live("click", function(e){
 
 			//if false, means deactivate product
 			var status = $(this).is(":checked");
@@ -699,12 +703,10 @@
 			
 			//activate product
 			if (status){
-
+				setActiveFlagProduct(productId, true);
 
 			//decativate product
 			} else {
-
-				$('.loadSpinner').show();
 
 				//check if product has ordered items
 				$.ajax({
@@ -718,9 +720,9 @@
 							$.showMsg({
 								msg:"<?=$Text['msg_err_deactivate_product'];?>",
 								buttons: {
-									"<?=$Text['btn_confirm_del']; ?>": function(){
+									"<?=$Text['btn_ok_go']; ?>": function(){
 										$( this ).dialog( "close" );
-										deactivateProduct(productId);
+										releaseDatesAndProduct(productId);
 									},
 									"<?=$Text['btn_cancel'];?>":function(){
 										$( this ).dialog( "close" );
@@ -730,7 +732,7 @@
 
 						} else {
 							//deactivate straight away
-
+							setActiveFlagProduct(productId, false)
 						}	
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -739,7 +741,7 @@
 							type: 'error'});
 					},
 					complete : function(){
-						$('.loadSpinner').hide();
+						//$('.loadSpinner').hide();
 					}
 				});
 
@@ -805,19 +807,21 @@
 		*********************************************************/
 
 
-		//deactivate a product. 
-		function deactivateProduct(pid){
+		/**
+		 *  If item is orderable and has ordered_items, deactivating product requires to delete 
+		 *  ordered items from order_cart for each uf and delete corresponding orderable dates.
+		 */
+		function releaseDatesAndProduct(pid){
 
 			//removes all order items for this product from non-finalized orders. &date=0 means all open orders
 			$.ajax({
 			   	url: "php/ctrl/ActivateProducts.php?oper=unlockOrderableDate&product_id="+pid+"&date=0",
 			   	type: 'POST',
 			   	success: function(msg){
-			   		alert(msg)
-					$('input[name=active]').attr('checked', false);
+			   		//now set active flag
+					setActiveFlagProduct(pid, false);
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-					
 						$this.dialog("close");
 						$.showMsg({
 								msg: XMLHttpRequest.responseText,
@@ -826,6 +830,43 @@
 				}				   	
 			}); //end ajax
 
+		}
+
+		/**
+		 * 	Deactivates product. If stock simply sets active flag. If orderable also removes all associated
+		 * 	orderable dates. This presumes that no order items are active anymore, i.e. for order items
+		 * 	this needs to be called after releaseDatesAndProduct() has been called. 
+		 */
+		function setActiveFlagProduct(pid, status){
+			
+			$('.loadSpinner').show();
+			var oper = (status==1)? "activateProduct":"deactivateProduct";
+
+			var successMsg = (status==1)? "<?php echo $Text['msg_activate_success']; ?>":"<?php echo $Text['msg_deactivate_success']; ?>";
+
+			$.ajax({
+			   	url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+pid,
+			   	type: 'POST',
+			   	success: function(msg){
+					$('input[name=active_dummy]').attr('checked', status);
+					$.showMsg({
+						msg: successMsg,
+						type: 'success',
+						autoclose:1500});
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
+					$('#tbl_products tbody').xml2html("reload");
+				}				   	
+			}); //end ajax
 		}
 
 
@@ -1049,7 +1090,7 @@
 
 
 			//make sure an active=0 gets send if checkbox is unchecked
-			$(mi +' input:checkbox').each(function(){
+			/*$(mi +' input:checkbox').each(function(){
 				var isChecked = $(this).attr('checked'); 
 				
 				if(isChecked){
@@ -1058,7 +1099,7 @@
 					$(this).val(0);
 					$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
 				}	
-			});
+			});*/
 
 			var cus = null;
 			//custom_product_ref has unique index and needs null value
@@ -1563,7 +1604,7 @@
 									<td><label for="product_id"><?php echo $Text['id']; ?></label></td>
 									<td><p class="textAlignLeft ui-corner-all setProductId">{id}</p></td>
 									<td><label for="active"><?php echo $Text['active'];?></label></td>
-									<td><input type="checkbox" name="active" value="{active}" class="floatLeft" />
+									<td><input type="checkbox" name="active_dummy" value="{active}" class="floatLeft" />
 										<input type="hidden" name="id" value="{id}" />
 									</td>							
 							  </tr>
