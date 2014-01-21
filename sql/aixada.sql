@@ -347,6 +347,17 @@ create table aixada_order_to_shop (
 
 
 /**
+ * Types of stock movements such as stock corrected, loss, etc. 
+ */
+create table aixada_stock_movement_type(
+  id              int     not null auto_increment,
+  name            varchar(30) not null, 
+  description     varchar(255),
+  primary key (id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
+
+
+/**
  *	stock movements
  *	
  */
@@ -354,6 +365,7 @@ create table aixada_stock_movement (
   id          		int			not null auto_increment,
   product_id  		int 		not null,
   operator_id		int 		not null,
+  movement_type_id int not null,
   amount_difference	decimal(10,4),
   description  		varchar(255),
   resulting_amount	decimal(10,4),
@@ -361,9 +373,9 @@ create table aixada_stock_movement (
   primary key (id),
   foreign key (product_id) references aixada_product(id), 
   foreign key (operator_id) references aixada_user(id),
+  foreign key (movement_type_id) references aixada_stock_movement_type(id),
   key (ts)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
-
 
 
 /**
