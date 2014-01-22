@@ -36,6 +36,7 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
 
 class DBWrap {
   public $debug = true;
+  public $log = true;
 
   private $type;
   private $host;
@@ -45,6 +46,7 @@ class DBWrap {
   private $mysqli = false;
   private $key_info = array();
   private static $instance = false;
+  private $logfilehandle;
 
   /**
    * @var string stores the last query string sent to the SQL engine
@@ -70,6 +72,9 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
+    if (!$this->logfilehandle = fopen(__ROOT__ . $cv->logfilename, 'a')) {
+	throw new InternalException('Could not open logfile ' . $cv->logfilename . ' for appending');
+    }
   }
   /**
    * The DBWrap class is implemented as a Singleton. Call this
@@ -145,10 +150,24 @@ class DBWrap {
       global $firephp;
       $firephp->log($safe_sql_string, 'query');
     }
+    if ($this->log) {
+	$this->write_to_log($safe_sql_string);
+    }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;
     return $rs;
   }
+
+  /** 
+   * Write a string to the logfile
+   */
+  private function write_to_log($out_string)
+  {
+      if (fwrite($this->logfilehandle, $out_string . "\n") === FALSE) {
+	  throw new InternalException('Cannot write "' . $out_string . '" to logfile');
+      }
+  }
+  
 
   /**
    * This function provides a publicly accessible wrapper for the

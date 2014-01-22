@@ -15,3 +15,4 @@ js/js_for_report_stats.js
 js/js_for_shop_and_order.js
 js/js_for_validate.js
 sql/aixada_current_dump.sql
+aixada.log
