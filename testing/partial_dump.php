@@ -5,7 +5,7 @@ require_once 'php/inc/database.php';
 require_once 'php/utilities/general.php';
 require_once 'php/utilities/tables.php';
 
-function partial_dump($from_date, $to_date, $tables)
+function partial_dump($from_date, $to_date, $table_key_pairs)
 {
     $fill_queries = array();
 
@@ -15,23 +15,34 @@ function partial_dump($from_date, $to_date, $tables)
     $af_join_clauses = array();
     $af_after_which_field = array();
 
-    foreach ($tables as $table) {
+    foreach ($table_key_pairs as $tkpair) {
+	list ($table, $date_key) = $tkpair;
 	echo "processing table " . $table . "\n";
-	$fill_queries[$table] = array();
 	$fkm = new foreign_key_manager($table);
+	$keys = $fkm->get_keys();
+	echo "keys:\n";
+	var_dump($keys);
 	$tm = new table_manager($table);
 	foreach (get_active_field_names($tm) as $field) {
 	    echo "field: $field\n";
 	    list ($ftable_and_field, $ftable_id, $ftable_name) = get_substituted_names($table, array($field), $fkm->get_keys());
 	    foreach ($ftable_name as $t) {
-		$ffkm = new foreign_key_manager($t);
-		$fill_queries[$t][] = $ffkm->make_canned_list_all_query($af_tablenames, $af_names, $af_aliases, $af_join_clauses, $af_after_which_field) 
-		    . ' where ' . $table . '.ts between ' . $from_date . ' and ' . $to_date . ';';
+		$fill_queries[$t][] = <<<EOD
+select {$t}.* 
+from {$table}
+left join {$t}
+on {$table}.{$field}={$t}.{$keys[$field][1]}
+where {$table}.{$date_key} between {$from_date} and {$to_date};
+EOD;
 	    }
 	}
     }    
     var_dump($fill_queries);
 }
 
-partial_dump('2014-01-01', '2014-02-01', array('aixada_shop_item'));
+partial_dump('2014-01-01', '2014-02-01', 
+	     array(
+		   ['aixada_cart', 'date_for_shop'],
+		   )
+	     );
 ?>
