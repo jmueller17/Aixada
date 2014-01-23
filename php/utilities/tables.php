@@ -108,15 +108,13 @@ function get_model ($tm)
 
 function get_active_field_names ($tm)
 {
-  $active_fields = '[';
-  foreach ($tm->get_table_cols() as $field => $col_class) {
-    if ($tm->is_foreign_key($field)) {
-      $active_fields .= $field . ',';
+    $active_field_names = array();
+    foreach ($tm->get_table_cols() as $field => $col_class) {
+	if ($tm->is_foreign_key($field)) {
+	    $active_field_names[] = $field;
+	}
     }
-  }
-  $active_fields = rtrim($active_fields, ',');
-  $active_fields .= ']';
-  return $active_fields;
+    return $active_field_names;
 }
 
 function get_field_options ($tm, $field)

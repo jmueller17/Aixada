@@ -113,7 +113,7 @@ while ($row = $rs->fetch_array()) {
     $col_names     [$current_table] = get_names($tm);
     $col_names_raw [$current_table] = array_keys($tm->get_table_cols());
     $col_models    [$current_table] = get_model($tm);
-    $active_fields [$current_table] = get_active_field_names($tm);
+    $active_fields [$current_table] = '[' . join(',', get_active_field_names($tm)) . ']';
 }
 write_column_names($col_names_raw);
 $strPHP .= print_response('col_names', $col_names);

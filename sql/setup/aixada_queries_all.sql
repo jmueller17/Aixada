@@ -2147,30 +2147,22 @@ end|
  *     it returns the associated products for the provider. 
  *     If, additionally, date is set, these products are orderable, otherwise stock. 
  *
- * 
  *  If category_id is set, it returns products by category. 
  *     If, additionally, date is set, these products are orderable, otherwise stock.
  * 
- *
  *  If provider_id = 0 and category_id = 0 and the_like is set, then searches for product 
  * 
- *
- *  In all cases, the only stock products shown are the ones that satisfy
- *     stock_actual >= stock_min,
- *  equivalently,
- *     delta_stock >= 0.
- *
  *
  *  Furthermore it is important to note that the price delivered includes IVA and Rev Tax!! 
  *  There is no need to calcuate this at a later point in time (upon validation for example). 
  */
 drop procedure if exists get_products_detail|
-create procedure get_products_detail(	in the_provider_id int, 
-										in the_category_id int, 
-										in the_like varchar(255),
-										in the_date date,
-										in include_inactive boolean,
-										in the_product_id int)
+create procedure get_products_detail(in the_provider_id int, 
+       		 		     in the_category_id int, 
+				     in the_like varchar(255),
+				     in the_date date,
+				     in include_inactive boolean,
+				     in the_product_id int)
 begin
 	
     declare today date default date(sysdate());
@@ -2187,11 +2179,11 @@ begin
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
     else 
@@ -2247,7 +2239,7 @@ begin
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
 	order by p.name asc, p.id asc;");
-	
+
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
