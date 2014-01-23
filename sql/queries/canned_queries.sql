@@ -495,15 +495,35 @@ begin
       aixada_stock_movement.product_id,
       aixada_product.name as product,
       aixada_stock_movement.operator_id,
+      aixada_stock_movement.movement_type_id,
+      aixada_stock_movement_type.name as movement_type,
       aixada_stock_movement.amount_difference,
       aixada_stock_movement.description,
       aixada_stock_movement.resulting_amount,
       aixada_stock_movement.ts 
     from aixada_stock_movement 
-    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id";
+    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id
+    left join aixada_stock_movement_type as aixada_stock_movement_type on aixada_stock_movement.movement_type_id=aixada_stock_movement_type.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_stock_movement_type_list_all_query|
+create procedure aixada_stock_movement_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_stock_movement_type.id,
+      aixada_stock_movement_type.name,
+      aixada_stock_movement_type.description 
+    from aixada_stock_movement_type ";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = concat(@q, @lim);
   prepare st from @q;
   execute st;
@@ -585,6 +605,22 @@ begin
       aixada_user_role.user_id,
       aixada_user_role.role 
     from aixada_user_role ";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_version_list_all_query|
+create procedure aixada_version_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_version.id,
+      aixada_version.version 
+    from aixada_version ";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);

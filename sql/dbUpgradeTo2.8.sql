@@ -1,8 +1,8 @@
 /*******************************************
  * UPGRADE FILE 
- * to switch from Aixada v 2.6.2 to Aixada 2.6.3
+ * to switch from Aixada v 2.7. to Aixada 2.8
  * 
- * NOTE: source the dump of v2.6.2 Then source this file. 
+ * NOTE: source the dump of v2.7 Then source this file. 
  */
 
 
@@ -23,9 +23,9 @@ create table aixada_stock_movement_type(
 insert into 
 	aixada_stock_movement_type (name, description)
 values
+	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.'),
 	('Merma', 'Lo que se pierde por bichos, caidas, caducado, ... '),
-	('Descuadre', 'Lo que no debería pasar pero siempre pasa. '),
-	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.');
+	('Descuadre', 'Lo que no debería pasar pero siempre pasa. ');
 
 
 /**
@@ -33,10 +33,22 @@ values
  */
 alter table
 	aixada_stock_movement
-	add movement_type_id int default 3 after operator_id,
+	add movement_type_id int default 1 after operator_id,
 	add foreign key (movement_type_id) references aixada_stock_movement_type(id);
 
 
 
+/**
+ *	db version + upgrade history
+ */
+create table aixada_version (
+  id int not null auto_increment,
+  version varchar(42) not null,
+  primary key(id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
-      
+insert into 
+	aixada_version (version) 
+values 
+		('2.8'); 
+

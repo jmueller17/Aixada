@@ -3,16 +3,15 @@
  *
  **********************************************/
 
+
 /**
- *  If a table has two or more foreign keys that reference the same 
- *  external table, the field names should be of the form 
- *  {external table}_{external key name}_{internal name of the field}
- *  For example 
- *  aixada_product.unit_measure_order_id,
- *  aixada_product.unit_measure_shop_id,
- *  aixada_uf_account.aixada_member_member,
- *  aixada_uf_account.aixada_member_operator 
- **/
+ *  db version + upgrade history
+ */
+ create table aixada_version (
+  id int not null auto_increment,
+  version varchar(42) not null,
+  primary key(id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
 

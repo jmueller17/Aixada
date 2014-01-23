@@ -84,9 +84,12 @@ insert into aixada_incident_type
 insert into 
 	aixada_stock_movement_type (name, description)
 values
+	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.'),
 	('Merma', 'Lo que se pierde por bichos, caidas, caducado, ... '),
-	('Descuadre', 'Lo que no debería pasar pero siempre pasa. '),
-	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.');
-
-
+	('Descuadre', 'Lo que no debería pasar pero siempre pasa. ');
+	
+insert into 
+	aixada_version (version) 
+values 
+		('2.8'); 
       

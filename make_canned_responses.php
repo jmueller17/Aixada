@@ -149,7 +149,8 @@ function make_canned_queries()
     $fkm = new foreign_key_manager($table);
     $order_by_clause = (in_array($table, array('aixada_unit_measure', 
 					       'aixada_iva_type',
-					       'aixada_account')) ? 
+					       'aixada_account', 
+                 'aixada_stock_movement_type')) ? 
                         "' order by '" :
                         "' order by active desc, '");
 
