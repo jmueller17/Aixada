@@ -103,7 +103,8 @@ begin
   	aixada_product p,
   	aixada_shop_item si
   set 
-  	p.stock_actual = p.stock_actual - si.quantity
+  	p.stock_actual = p.stock_actual - si.quantity,
+	p.delta_stock  = p.delta_stock  - si.quantity
   where
   	si.cart_id = the_cart_id
   	and si.product_id = p.id;
