@@ -2147,30 +2147,22 @@ end|
  *     it returns the associated products for the provider. 
  *     If, additionally, date is set, these products are orderable, otherwise stock. 
  *
- * 
  *  If category_id is set, it returns products by category. 
  *     If, additionally, date is set, these products are orderable, otherwise stock.
  * 
- *
  *  If provider_id = 0 and category_id = 0 and the_like is set, then searches for product 
  * 
- *
- *  In all cases, the only stock products shown are the ones that satisfy
- *     stock_actual >= stock_min,
- *  equivalently,
- *     delta_stock >= 0.
- *
  *
  *  Furthermore it is important to note that the price delivered includes IVA and Rev Tax!! 
  *  There is no need to calcuate this at a later point in time (upon validation for example). 
  */
 drop procedure if exists get_products_detail|
-create procedure get_products_detail(	in the_provider_id int, 
-										in the_category_id int, 
-										in the_like varchar(255),
-										in the_date date,
-										in include_inactive boolean,
-										in the_product_id int)
+create procedure get_products_detail(in the_provider_id int, 
+       		 		     in the_category_id int, 
+				     in the_like varchar(255),
+				     in the_date date,
+				     in include_inactive boolean,
+				     in the_product_id int)
 begin
 	
     declare today date default date(sysdate());
@@ -2187,11 +2179,11 @@ begin
     
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id ");
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
-    	set wherec = concat(wherec, " and p.delta_stock=>0 and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
+    	set wherec = concat(wherec, " and (p.orderable_type_id = 1 or p.orderable_type_id = 4) and p.unit_measure_shop_id = u.id ");
     
     /** otherwise search for products with orderable dates **/
     else 
@@ -2247,7 +2239,7 @@ begin
 		and p.rev_tax_type_id = t.id
 		and p.iva_percent_id = iva.id 
 	order by p.name asc, p.id asc;");
-	
+
 	prepare st from @q;
   	execute st;
   	deallocate prepare st;
@@ -5058,12 +5050,32 @@ begin
       aixada_stock_movement.product_id,
       aixada_product.name as product,
       aixada_stock_movement.operator_id,
+      aixada_stock_movement.movement_type_id,
+      aixada_stock_movement_type.name as movement_type,
       aixada_stock_movement.amount_difference,
       aixada_stock_movement.description,
       aixada_stock_movement.resulting_amount,
       aixada_stock_movement.ts 
     from aixada_stock_movement 
-    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id";
+    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id
+    left join aixada_stock_movement_type as aixada_stock_movement_type on aixada_stock_movement.movement_type_id=aixada_stock_movement_type.id";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_stock_movement_type_list_all_query|
+create procedure aixada_stock_movement_type_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_stock_movement_type.id,
+      aixada_stock_movement_type.name,
+      aixada_stock_movement_type.description 
+    from aixada_stock_movement_type ";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
@@ -5148,6 +5160,22 @@ begin
       aixada_user_role.user_id,
       aixada_user_role.role 
     from aixada_user_role ";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_version_list_all_query|
+create procedure aixada_version_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_version.id,
+      aixada_version.version 
+    from aixada_version ";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
