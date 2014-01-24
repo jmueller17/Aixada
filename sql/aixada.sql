@@ -7,8 +7,9 @@
 /**
  *  db version + upgrade history
  */
- create table aixada_version (
+create table aixada_version (
   id int not null auto_increment,
+  module_name varchar(100) default 'main' not null,
   version varchar(42) not null,
   primary key(id)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
