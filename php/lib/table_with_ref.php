@@ -63,11 +63,11 @@ class foreign_key_manager {
   protected $_table_cols = array();
 
   /**
-   * @var array $_keys is a hash of foreign keys of the form 
+   * @var array $_foreign_key_info is a hash of foreign keys of the form 
    *   ['key'] => ''    for keys that are not foreign keys
    *   ['foreign key'] => array('referred table', 'name of foreign index field', 'name of explanatory field' or '')
    */
-  protected $_keys = array();
+  protected $_foreign_key_info = array();
    
   /**
    * @var array $_key_cache stores the descriptive names of all foreign keys encountered, in the form
@@ -123,9 +123,9 @@ class foreign_key_manager {
   /**
    * @return array the foreign keys
    */
-  public function get_keys()
+  public function foreign_key_info()
   {
-    return $this->_keys;
+    return $this->_foreign_key_info;
   }
 
   /**
@@ -202,18 +202,20 @@ class foreign_key_manager {
     if (!strcmp(substr($keystr_array[0], 0, 3),  'KEY') or
 	!strcmp(substr($keystr_array[0], 0, 10), 'UNIQUE KEY')) {  
       // it's a key
-      $this->_keys[$keystr_array[1]] = '';
+      $this->_foreign_key_info[$keystr_array[1]] = '';
     } else if (!strcmp(substr($keystr_array[0], 0, 10), 'CONSTRAINT')) { 
       // it's a foreign key.
       $key    = $keystr_array[3];
       $fTable = $keystr_array[5];
       $fIndex = $keystr_array[7];
-      $fDField = $this->_get_foreign_description_field($fTable); 
+      $fDescField = $this->_get_foreign_description_field($fTable); 
       // Answer is either a fieldname referencing a meaningful 
       // description from the other table, or ''.
-      if ($fDField) {
-	$this->_keys[$key] = array($fTable, $fIndex, $fDField);
-	$this->_read_foreign_keys($key, $fTable, $fIndex, $fDField);
+      if ($fDescField) {
+	$this->_foreign_key_info[$key] = array('fTable' => $fTable, 
+					       'fIndex' => $fIndex, 
+					       'fDescField' => $fDescField);
+	$this->_fill_key_caches($key, $fTable, $fIndex, $fDescField);
       }
     } else throw new InternalException("Something unexpected in the syntax of SHOW CREATE TABLE");
   }
@@ -298,7 +300,7 @@ class foreign_key_manager {
    * @see _key_cache
    * @see _reverse_key_cache 
    */
-  private function _read_foreign_keys($key, $fTable, $fIndex, $fDField)
+  private function _fill_key_caches($key, $fTable, $fIndex, $fDField)
   {
     $db = DBWrap::get_instance();
     $rs = $db->Select(array($fDField, $fIndex), $fTable, '', '');
@@ -307,13 +309,8 @@ class foreign_key_manager {
     $cache = array();
     $rcache = array();
     while ($row = mysqli_fetch_assoc($rs)) {
-		$tmp_field_val = $row[$fDField];
-// 		if (stristr(PHP_OS, 'WIN')) {
-// 			$tmp_field_val = utf8_decode($tmp_field_val);
-// 		} 
-	
-      $cache[$row[$fIndex]] = $tmp_field_val;
-      $rcache[$row[$fDField]] = $row[$fIndex];
+	$cache[$row[$fIndex]] = $row[$fDField];
+	$rcache[$row[$fDField]] = $row[$fIndex];
     }
     $rs->free();
     $this->_key_cache[$key] = $cache;
@@ -362,7 +359,7 @@ class foreign_key_manager {
   /**
    * Traverse the @see _table_cols and build an SQL SELECT ALL query, in
    * which the fields with foreign key id's are replaced by the
-   * corresponding descriptive names, according to @see _keys.
+   * corresponding descriptive names, according to @see _foreign_key_info.
    * The arguments correspond to af="additional fields" that should be 
    * included in the query
    */
@@ -372,11 +369,14 @@ class foreign_key_manager {
     $select_clause = 'select';
     $join_clause = "\n    from " . $this->_table_name . ' ';
     list ($substituted_name, $substituted_alias, $table_alias) = 
-      get_substituted_names($this->_table_name, array_keys($this->_table_cols), $this->_keys);
+      get_substituted_names($this->_table_name, array_keys($this->_table_cols), $this->_foreign_key_info);
 
     foreach(array_keys($this->_table_cols) as $field) {
-      if (isset($this->_keys[$field]) and $this->_keys[$field] != '') {
-	list ($ftable_name, $ftable_id, $ftable_desc) = $this->_keys[$field];
+      if (isset($this->_foreign_key_info[$field]) and $this->_foreign_key_info[$field] != '') {
+	  $ftable = $this->_foreign_key_info[$field]['fTable'];
+	  $findex = $this->_foreign_key_info[$field]['fIndex'];
+	  
+	  //	list ($ftable_name, $ftable_id, $ftable_desc) = $this->_foreign_key_info[$field];
         if ($substituted_alias[$field] == 'responsible_uf') {
             $select_clause
                 .= "\n      "  //"concat('" . $Text['uf_short'] 
@@ -396,11 +396,11 @@ class foreign_key_manager {
                 . ' as ' . $substituted_alias[$field] . ',';
         }
 	$join_clause 
-	  .= "\n    left join " . $ftable_name;
+	  .= "\n    left join " . $ftable;
 	$join_clause .= ' as ' . $table_alias[$field];
 	$join_clause
 	  .= ' on ' . $this->_table_name . '.' . $field 
-	  . '=' . $table_alias[$field] . '.' . $ftable_id;
+	  . '=' . $table_alias[$field] . '.' . $findex;
       } else {
 	$select_clause .= "\n      " . $this->_table_name . '.' . $field . ',';
       }

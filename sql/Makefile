@@ -2,7 +2,7 @@ QUERIES = $(wildcard queries/*sql)
 DB_NAME = aixada
 DB_USER = aixada
 DB_PASSWD = aixada
-DB_DUMP = aixada_current_dump.sql
+DB_DUMP = dump.sql
 
 
 all: aixada.png database-definition.up-to-date database-queries.up-to-date aixada_queries_all.sql

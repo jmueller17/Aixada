@@ -39,8 +39,7 @@ function get_names ($tm)
 {
     global $Text;
     list ($substituted_name, $substituted_alias, $table_alias) = 
-        get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $tm->get_keys());
-    $keys = $tm->get_keys();
+        get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $tm->foreign_key_info());
     $col_names = '[';
     foreach ($tm->get_table_cols() as $field => $col_class) {
         $the_name = isset($substituted_alias[$field]) ? $substituted_alias[$field] : $field;
@@ -66,9 +65,9 @@ function get_model ($tm)
                         'orderable_type_id', 'unit_measure_order_id', 
                         'unit_measure_shop_id', 'stock_actual', 'stock_min',
 			'percent');
-    $keys = $tm->get_keys();
+    $keys = $tm->foreign_key_info();
     list ($substituted_name, $substituted_alias, $table_alias) = 
-        get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $tm->get_keys());
+        get_substituted_names($tm->get_table_name(), array_keys($tm->get_table_cols()), $keys);
     $col_model = '[';
     foreach ($tm->get_table_cols() as $field => $col_class) {
         $max_length = $col_class->get_max_length();
@@ -92,9 +91,9 @@ function get_model ($tm)
       $col_model 
 	.= ",edittype:'select',editoptions:{"
 	. "dataUrl:'php/ctrl/SmallQ.php?oper=getFieldOptions&table="
-	. $keys[$field][0] 
-	. '&field1=' . $keys[$field][1] 
-	. '&field2=' . $keys[$field][2] 
+	. $keys[$field]['fTable'] 
+	. '&field1=' . $keys[$field]['fIndex'] 
+	. '&field2=' . $keys[$field]['fDescField'] 
 	. "'}";
     } else if (in_array($field, array('active', 'participant'))) {
 		$col_model .= ",edittype:'checkbox',editoptions:{value:'1:0'}";	

@@ -46,15 +46,15 @@ function get_doubled_foreign_keys($fields, $foreign_keys)
   $doubled_foreign_keys = array();
   $key_count = array();
   foreach($fields as $field) {
-    if (isset($foreign_keys[$field]) and $foreign_keys[$field] != '') {
-      list ($ftable_name, $ftable_id, $ftable_desc) = $foreign_keys[$field];
-      if (!isset($key_count[$ftable_name])) {
-	$key_count[$ftable_name] = 1;
-      } else {
-	$key_count[$ftable_name]++;
-	$doubled_foreign_keys[] = $ftable_name;
+      if (isset($foreign_keys[$field]) and $foreign_keys[$field] != '') {
+	  $ftable = $foreign_keys[$field]['fTable'];
+	  if (!isset($key_count[$ftable])) {
+	      $key_count[$ftable] = 1;
+	  } else {
+	      $key_count[$ftable]++;
+	      $doubled_foreign_keys[] = $ftable;
+	  }
       }
-    }
   }
   return $doubled_foreign_keys; 
 }
@@ -73,18 +73,14 @@ function get_substituted_names($table_name, $fields, $foreign_keys)
       if (!isset($foreign_keys[$field]) or $foreign_keys[$field] == '') {
 	  $substituted_name[$field] = $table_name . '.' . $field;
       } else {
-	  list ($ftable_name, $ftable_id, $ftable_desc) = $foreign_keys[$field];
+	  $ftable = $foreign_keys[$field]['fTable'];
+	  $fdesc  = $foreign_keys[$field]['fDescField'];
 	  $substituted_alias[$field] = get_fkey_alias($field);
-	  $table_alias[$field] = (in_array($ftable_name, $doubled_foreign_keys) ? 
-				  get_table_alias($ftable_name, $field) : $ftable_name);
-	  $substituted_name[$field] = $table_alias[$field] . '.' . $ftable_desc;
+	  $table_alias[$field] = (in_array($ftable, $doubled_foreign_keys) ? 
+				  get_table_alias($ftable, $field) : $ftable);
+	  $substituted_name[$field] = $table_alias[$field] . '.' . $fdesc;
       } 
   }
-//    if ($table_name == 'aixada_account') {
-//      var_dump($substituted_name);
-//      var_dump($substituted_alias);
-//      var_dump($table_alias);
-//    }
   return array($substituted_name, $substituted_alias, $table_alias);
 }
 ?>

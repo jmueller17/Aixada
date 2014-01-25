@@ -19,20 +19,20 @@ function partial_dump($from_date, $to_date, $table_key_pairs)
 	list ($table, $date_key) = $tkpair;
 	echo "processing table " . $table . "\n";
 	$fkm = new foreign_key_manager($table);
-	$keys = $fkm->get_keys();
-	echo "keys:\n";
-	var_dump($keys);
-	$tm = new table_manager($table);
-	foreach (get_active_field_names($tm) as $field) {
-	    echo "field: $field\n";
-	    list ($ftable_and_field, $ftable_id, $ftable_name) = get_substituted_names($table, array($field), $fkm->get_keys());
+	$foreign_key_info = $fkm->foreign_key_info();
+	echo "foreign_key_info:\n";
+	var_dump($foreign_key_info);
+	foreach ($foreign_key_info as $key) {
+	    echo "field: $foreign_key\n";
+	    list ($ftable_and_field, $ftable_id, $ftable_name) = get_substituted_names($table, array($key), $foreign_keys);
 	    foreach ($ftable_name as $t) {
 		$fill_queries[$t][] = <<<EOD
-select {$t}.* 
+select distinct {$t}.* 
 from {$table}
 left join {$t}
-on {$table}.{$field}={$t}.{$keys[$field][1]}
-where {$table}.{$date_key} between {$from_date} and {$to_date};
+on {$table}.{$key}={$t}.{$foreign_keys[$key][1]}
+where {$table}.{$date_key} between '{$from_date}' and '{$to_date}'
+order by {$t}.{$keys[$key][1]};
 EOD;
 	    }
 	}
