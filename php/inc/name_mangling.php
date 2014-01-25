@@ -46,7 +46,8 @@ function get_doubled_foreign_keys($fields, $foreign_keys)
   $doubled_foreign_keys = array();
   $key_count = array();
   foreach($fields as $field) {
-      if (isset($foreign_keys[$field]) and $foreign_keys[$field] != '') {
+      if (isset( $foreign_keys[$field]) and 
+	  sizeof($foreign_keys[$field])>0) {
 	  $ftable = $foreign_keys[$field]['fTable'];
 	  if (!isset($key_count[$ftable])) {
 	      $key_count[$ftable] = 1;
@@ -70,7 +71,7 @@ function get_substituted_names($table_name, $fields, $foreign_keys)
 
   // then assign names
   foreach($fields as $field) {
-      if (!isset($foreign_keys[$field]) or $foreign_keys[$field] == '') {
+      if (!isset($foreign_keys[$field]) or sizeof($foreign_keys[$field])==0) {
 	  $substituted_name[$field] = $table_name . '.' . $field;
       } else {
 	  $ftable = $foreign_keys[$field]['fTable'];

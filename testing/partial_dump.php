@@ -22,20 +22,19 @@ function partial_dump($from_date, $to_date, $table_key_pairs)
 	$foreign_key_info = $fkm->foreign_key_info();
 	echo "foreign_key_info:\n";
 	var_dump($foreign_key_info);
-	foreach ($foreign_key_info as $key) {
-	    echo "field: $foreign_key\n";
-	    list ($ftable_and_field, $ftable_id, $ftable_name) = get_substituted_names($table, array($key), $foreign_keys);
-	    foreach ($ftable_name as $t) {
-		$fill_queries[$t][] = <<<EOD
-select distinct {$t}.* 
+	foreach ($foreign_key_info as $key => $info) {
+	    if (sizeof($info)==0) { continue; }
+	    $ft = $foreign_key_info[$key]['fTable'];
+	    $fk = $foreign_key_info[$key]['fIndex']; 
+	    $fill_queries[$ft][] = <<<EOD
+select distinct {$ft}.* 
 from {$table}
-left join {$t}
-on {$table}.{$key}={$t}.{$foreign_keys[$key][1]}
+left join {$ft}
+on {$table}.{$key}={$ft}.{$fk}
 where {$table}.{$date_key} between '{$from_date}' and '{$to_date}'
-order by {$t}.{$keys[$key][1]};
+order by {$ft}.{$fk};
 EOD;
 	    }
-	}
     }    
     var_dump($fill_queries);
 }

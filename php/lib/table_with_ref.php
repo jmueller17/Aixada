@@ -202,7 +202,7 @@ class foreign_key_manager {
     if (!strcmp(substr($keystr_array[0], 0, 3),  'KEY') or
 	!strcmp(substr($keystr_array[0], 0, 10), 'UNIQUE KEY')) {  
       // it's a key
-      $this->_foreign_key_info[$keystr_array[1]] = '';
+	$this->_foreign_key_info[$keystr_array[1]] = array();
     } else if (!strcmp(substr($keystr_array[0], 0, 10), 'CONSTRAINT')) { 
       // it's a foreign key.
       $key    = $keystr_array[3];
@@ -372,9 +372,10 @@ class foreign_key_manager {
       get_substituted_names($this->_table_name, array_keys($this->_table_cols), $this->_foreign_key_info);
 
     foreach(array_keys($this->_table_cols) as $field) {
-      if (isset($this->_foreign_key_info[$field]) and $this->_foreign_key_info[$field] != '') {
-	  $ftable = $this->_foreign_key_info[$field]['fTable'];
-	  $findex = $this->_foreign_key_info[$field]['fIndex'];
+	if (isset( $this->_foreign_key_info[$field]) and   
+	    sizeof($this->_foreign_key_info[$field]) > 0) {
+	    $ftable = $this->_foreign_key_info[$field]['fTable'];
+	    $findex = $this->_foreign_key_info[$field]['fIndex'];
 	  
 	  //	list ($ftable_name, $ftable_id, $ftable_desc) = $this->_foreign_key_info[$field];
         if ($substituted_alias[$field] == 'responsible_uf') {
