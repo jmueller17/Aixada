@@ -5,41 +5,41 @@ require_once 'php/inc/database.php';
 require_once 'php/utilities/general.php';
 require_once 'php/utilities/tables.php';
 
-function partial_dump($from_date, $to_date, $table_key_pairs)
+function fill_queries($from_date, $to_date, $table_key_pairs, $old_db, $new_db)
 {
     $fill_queries = array();
-
-    $af_tablenames = array();
-    $af_names = array();
-    $af_aliases = array();
-    $af_join_clauses = array();
-    $af_after_which_field = array();
-
     foreach ($table_key_pairs as $tkpair) {
 	list ($table, $date_key) = $tkpair;
-	echo "processing table " . $table . "\n";
 	$fkm = new foreign_key_manager($table);
-	$foreign_key_info = $fkm->foreign_key_info();
-	foreach ($foreign_key_info as $key => $info) {
+	foreach ($fkm->foreign_key_info() as $key => $info) {
 	    if (sizeof($info)==0) { continue; }
 	    $ft = $info['fTable'];
 	    $fk = $info['fIndex']; 
 	    $fill_queries[$ft][] = <<<EOD
-select distinct {$ft}.* 
-from {$table}
-left join {$ft}
-on {$table}.{$key}={$ft}.{$fk}
-where {$table}.{$date_key} between '{$from_date}' and '{$to_date}'
-order by {$ft}.{$fk};
+insert into {$new_db}.{$ft}
+select distinct {$old_db}.{$ft}.* 
+from {$old_db}.{$table}
+left join {$old_db}.{$ft}
+on {$old_db}.{$table}.{$key}={$old_db}.{$ft}.{$fk}
+where {$old_db}.{$table}.{$date_key} between '{$from_date}' and '{$to_date}'
+order by {$old_db}.{$ft}.{$fk};
 EOD;
 	    }
     }    
-    var_dump($fill_queries);
+    return $fill_queries;
+}
+
+function partial_dump($from_date, $to_date, $table_key_pairs, $old_db, $new_db)
+{
+    $fq = fill_queries($from_date, $to_date, $table_key_pairs, $old_db, $new_db);
+    var_dump($fq);
 }
 
 partial_dump('2014-01-01', '2014-02-01', 
 	     array(
 		   ['aixada_cart', 'date_for_shop'],
-		   )
+		   ),
+	     "aixada",
+	     "aixada_test"
 	     );
 ?>
