@@ -201,8 +201,8 @@ class foreign_key_manager {
     $keystr_array = explode('`', $keystr);
     if (!strcmp(substr($keystr_array[0], 0, 3),  'KEY') or
 	!strcmp(substr($keystr_array[0], 0, 10), 'UNIQUE KEY')) {  
-      // it's a key
-	$this->_foreign_key_info[$keystr_array[1]] = array();
+	// it's a key. If you want to do something with it, use code similar to
+	// $this->_foreign_key_info[$keystr_array[1]] = array();
     } else if (!strcmp(substr($keystr_array[0], 0, 10), 'CONSTRAINT')) { 
       // it's a foreign key.
       $key    = $keystr_array[3];
@@ -245,8 +245,8 @@ class foreign_key_manager {
    */
   private function _get_key_descriptions($desc)
   {
-    $pos = strpos($desc, 'PRIMARY KEY');
     $keys = array();
+    $pos = strpos($desc, 'PRIMARY KEY');
     if ($pos!==false) {
 	/*
 	  Primary key found in table ' . $this->_table_name . '. with description=' . $desc);
@@ -276,7 +276,7 @@ class foreign_key_manager {
   {
     $strSQL = 'SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name=:1q AND column_name=:2q';
     $db = DBWrap::get_instance();
-    $test_col_names = array('name', 'description', 'unit');
+    $test_col_names = array('name', 'description', 'unit', 'login');
     foreach ($test_col_names as $col_name) {
       $rs = $db->Execute($strSQL, $fTable, $col_name);
       //      if (!$rs) throw new Exception("Could not execute column name query for table $fTable using $strSQL2");

@@ -20,12 +20,10 @@ function partial_dump($from_date, $to_date, $table_key_pairs)
 	echo "processing table " . $table . "\n";
 	$fkm = new foreign_key_manager($table);
 	$foreign_key_info = $fkm->foreign_key_info();
-	echo "foreign_key_info:\n";
-	var_dump($foreign_key_info);
 	foreach ($foreign_key_info as $key => $info) {
 	    if (sizeof($info)==0) { continue; }
-	    $ft = $foreign_key_info[$key]['fTable'];
-	    $fk = $foreign_key_info[$key]['fIndex']; 
+	    $ft = $info['fTable'];
+	    $fk = $info['fIndex']; 
 	    $fill_queries[$ft][] = <<<EOD
 select distinct {$ft}.* 
 from {$table}
