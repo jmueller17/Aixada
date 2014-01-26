@@ -266,7 +266,6 @@ class foreign_key_manager {
     foreach ($keys as $keystr) {
       $this->_parse_foreign_key($keystr);
     }
-
   }
 
 

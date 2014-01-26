@@ -51,12 +51,13 @@ EOD
 	$fill_queries = array();
 	foreach ($table_key_pairs as $tkpair) {
 	    list ($table, $date_key) = $tkpair;
+	    echo "generating queries for $table...\n"; ob_flush(); flush();
 	    $fkm = new foreign_key_manager($table);
 	    foreach ($fkm->foreign_key_info() as $key => $info) {
 		if (sizeof($info)==0) { continue; }
 		$ft = $info['fTable'];
 		$fk = $info['fIndex']; 
-		$fill_queries[$ft][] = <<<EOD
+		$query = <<<EOD
 insert into {$this->dump_db_name}.{$ft}
 select distinct {$this->db_name}.{$ft}.* 
 from {$this->db_name}.{$table}
@@ -64,23 +65,27 @@ left join {$this->db_name}.{$ft}
 on {$this->db_name}.{$table}.{$key}={$this->db_name}.{$ft}.{$fk}
 where {$this->db_name}.{$table}.{$date_key} between '{$from_date}' and '{$to_date}'
 order by {$this->db_name}.{$ft}.{$fk};
-EOD;
+EOD
+    ;
+		$fill_queries[$ft][] = str_replace("\n", " ", $query);
 	    }
 	}    
 	return $fill_queries;
     }
 
 
-    public function dump($from_date, $to_date, $table_key_pairs) {
+    public function create_initial_dump($from_date, $to_date, $table_key_pairs) {
 	$this->_init_dump();
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->_fill_queries($from_date, $to_date, $table_key_pairs) as $table => $queries) {
+	    echo "Executing queries for $table...\n"; ob_flush(); flush();
 	    foreach ($queries as $query) {
 		$this->dump_db->Execute($query);
 	    }
 	}
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
-	exec("mysqldump -udumper -pdumper --skip-opt aixada_dump > testing/initial_dump.sql");
+	echo "generating testing/dumps/initial_dump.sql ...\n"; ob_flush(); flush();
+	exec("mysqldump -udumper -pdumper --skip-opt aixada_dump > testing/dumps/initial_dump.sql");
     }
 }
 

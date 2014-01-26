@@ -48,16 +48,6 @@ class DBWrap {
   private static $instance = array();
   private $logfilehandle;
 
-  /**
-   * @var string stores the last query string sent to the SQL engine
-   */
-  public $last_query_SQL = '';
-
-  /**
-   * @var string stores the next-to-last query string sent to the SQL engine
-   */
-  public $next_to_last_query_SQL = '';
-  
   private function __construct($db_name = '',
 			       $type = '',
 			       $host = '',
@@ -162,6 +152,9 @@ class DBWrap {
    */
   private function do_Execute($safe_sql_string, $multi = false)
   {
+    if ($this->log) {
+	$this->write_to_log($safe_sql_string);
+    }
     $rs = ($multi ? 
 	   $this->mysqli->multi_query($safe_sql_string) :
 	   $this->mysqli->query($safe_sql_string));
@@ -171,11 +164,6 @@ class DBWrap {
       global $firephp;
       $firephp->log($safe_sql_string, 'query');
     }
-    if ($this->log) {
-	$this->write_to_log($safe_sql_string);
-    }
-    $this->next_to_last_query_SQL = $this->last_query_SQL;
-    $this->last_query_SQL = $safe_sql_string;
     return $rs;
   }
 
@@ -184,7 +172,7 @@ class DBWrap {
    */
   private function write_to_log($out_string)
   {
-      if (fwrite($this->logfilehandle, $out_string . "\n") === FALSE) {
+      if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . $out_string . "\n") === FALSE) {
 	  throw new InternalException('Cannot write "' . $out_string . '" to logfile');
       }
   }

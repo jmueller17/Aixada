@@ -1,32 +1,50 @@
 <?php
 
-class DBTester {
 
-    private $dump_db_name;
-    private $initial_dump_file;
-    private $log_file;
+$dump_db_name = 'aixada_dump';
+$db_name = 'aixada';
+$table_key_pairs = array(
+			 ['aixada_cart', 'date_for_shop'],
+			 );
 
-    public function __construct($dump_db_name, 
-				$initial_dump_file, 
-				$log_file) {
-	$this->dump_db_name = $dump_db_name;
-	$this->initial_dump_file = $initial_dump_file;
-	$this->log_file = $log_file;
 
-	$handle = @fopen('/tmp/init_test.sql', 'w');
-	fwrite ($handle, <<<EOD
-drop database {$this->dump_db_name};
-create database {$this->dump_db_name};
-use {$this->dump_db_name};
-source {$this->initial_dump_file};
+$usage_str = <<<EOD
+Usage:
+    php {$argv[0]} dump [from_date=-1month [to_date=now]]
+    php {$argv[0]} test ...
 
-EOD
-		);
-	fclose($handle);
-	exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_test.sql");
-    }
+EOD;
+
+if (sizeof($argv) < 2) {
+    echo $usage_str;
+    exit();
 }
 
-$tester = new DBTester('aixada_dump', 'initial_dump', 'test.log');
+switch ($argv[1]) {
+case 'dump':
+    require_once 'lib/dump_manager.php';
+    $from_date = (sizeof($argv) >= 3) 
+	? date("Y-m-d", strtotime($argv[2]))
+	: date("Y-m-d", strtotime('-1 months'));
+    $to_date = (sizeof($argv) >= 4)
+	? date("Y-m-d", strtotime($argv[3]))
+	: date("Y-m-d", strtotime('now'));
+
+    $dbdm = new DBDumpManager($dump_db_name, $db_name);
+    $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
+    break;
+
+case 'test':
+    require_once 'lib/db_tester.php';
+    $tester = new DBTester('aixada_dump', 'initial_dump.sql', 'test.log');
+    $tester->run_test();
+
+    break;
+
+default:
+    echo $usage_str;
+    exit();
+}
+
 
 ?>
