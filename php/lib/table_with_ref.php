@@ -57,6 +57,11 @@ class foreign_key_manager {
   protected $_table_name;
   
   /**
+   * @var string $_db_name stores the database name internally
+   */
+  protected $_db_name;
+
+  /**
    * @var array $_table_cols is an array $field => table_col 
    * @see table_cols
    */
@@ -97,9 +102,10 @@ class foreign_key_manager {
    * @param $table_name : The name of the table
    */
 
-  public function __construct ($table_name)
+  public function __construct ($table_name, $db_name='')
   {
     $this->_table_name = $table_name;
+    $this->_db_name = $db_name;
     $this->_get_col_and_key_descriptions();
   }
 
@@ -141,7 +147,7 @@ class foreign_key_manager {
    */
   private function _get_col_and_key_descriptions ()
   {
-      $db = DBWrap::get_instance();
+      $db = DBWrap::get_instance($this->_db_name);
       $rs = $db->Execute('SHOW CREATE TABLE :1', $this->_table_name);
       if (!$rs) throw new InternalException("Could not retrieve table description for " . $this->_table_name);
       $row = $rs->fetch_assoc();
@@ -181,7 +187,7 @@ class foreign_key_manager {
   {
     $tmp = explode('`', $key);
     $this->_primary_key = $tmp[1]; // the first element is the primary key
-    $db = DBWrap::get_instance();
+    $db = DBWrap::get_instance($this->_db_name);
     $result = $db->Execute('SELECT * FROM :1 LIMIT 1', $this->_table_name);
     if (!$result) throw new InternalException('Could not read table ' . $this->_table_name);
     $flags = $result->fetch_field_direct(0)->flags;
@@ -275,7 +281,7 @@ class foreign_key_manager {
   private function _get_foreign_description_field($fTable)
   {
     $strSQL = 'SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name=:1q AND column_name=:2q';
-    $db = DBWrap::get_instance();
+    $db = DBWrap::get_instance($this->_db_name);
     $test_col_names = array('name', 'description', 'unit', 'login');
     foreach ($test_col_names as $col_name) {
       $rs = $db->Execute($strSQL, $fTable, $col_name);
@@ -301,7 +307,7 @@ class foreign_key_manager {
    */
   private function _fill_key_caches($key, $fTable, $fIndex, $fDField)
   {
-    $db = DBWrap::get_instance();
+    $db = DBWrap::get_instance($this->_db_name);
     $rs = $db->Select(array($fDField, $fIndex), $fTable, '', '');
     if (!$rs) throw new Exception("Could not read foreign key descriptions from table $fTable using $strSQL . Error: " . mysqli_error());
     //    if (!mysqli_num_rows($rs)) throw new Exception('No foreign keys found in table ' . $fTable);
@@ -434,10 +440,10 @@ class table_with_ref extends foreign_key_manager {
    * Instead, use get_instance($table_name) of the descendant class.
    * @param $table_name : The name of the table
    */
-  public function __construct ($table_name)
-  {
-    parent::__construct($table_name);
-  }
+    public function __construct ($table_name, $db_name='')
+    {
+	parent::__construct($table_name, $db_name);
+    }
 
 
   
@@ -495,7 +501,7 @@ class table_with_ref extends foreign_key_manager {
    */
   public function get_max_key()
   {
-    $db = DBWrap::get_instance();
+    $db = DBWrap::get_instance($this->_db_name);
     $strSQL = 'SELECT MAX(:1) FROM :2';
     $rs = $db->Execute($strSQL, $this->_primary_key, $this->_table_name);
     $row = mysqli_fetch_assoc($rs);

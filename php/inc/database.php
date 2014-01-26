@@ -91,21 +91,21 @@ class DBWrap {
 				      $user = '',
 				      $password = '')
   {
+      if ( isset(self::$instance[$db_name])) 
+	  return self::$instance[$db_name];
+
+      // else we have to initialize the data
+      $key = $db_name;
       if ($db_name == '') {
-	  if (!isset(self::$instance["default"])) {
-	      $cv = configuration_vars::get_instance();
-	      $type = $cv->db_type;
-	      $host = $cv->db_host;
-	      $db_name = $cv->db_name;
-	      $user = $cv->db_user;
-	      $password = $cv->db_password;
-	      self::$instance["default"] = new DBWrap($db_name, $type, $host, $user, $password); 
-	  } 
-	  return self::$instance["default"];
+	  $cv = configuration_vars::get_instance();
+	  $type = $cv->db_type;
+	  $host = $cv->db_host;
+	  $db_name = $cv->db_name;
+	  $user = $cv->db_user;
+	  $password = $cv->db_password;
       }
-      if (!isset(self::$instance[$db_name])) 
-	  self::$instance[$db_name] = new DBWrap($db_name, $type, $host, $user, $password);
-      return self::$instance[$db_name];
+      self::$instance[$key] = new DBWrap($db_name, $type, $host, $user, $password);
+      return self::$instance[$key];
   }
 
 
