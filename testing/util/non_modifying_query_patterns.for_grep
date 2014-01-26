@@ -1,5 +1,5 @@
-^select
-^show
+select
+show
 *listing
 retrieve_credentials
 get_upcoming_orders

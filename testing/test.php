@@ -30,8 +30,18 @@ case 'dump':
 	? date("Y-m-d", strtotime($argv[3]))
 	: date("Y-m-d", strtotime('now'));
 
+    echo "dumping...\n"; ob_flush(); flush();
     $dbdm = new DBDumpManager($dump_db_name, $db_name);
     $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
+
+    require_once 'lib/log_manager.php';
+    echo "creating clean log...\n"; ob_flush(); flush();
+    $logm = new LogManager($dump_db_name);
+    $logm->create_initial_log_of_modifying_queries();
+
+    echo "creating annotated log...\n"; ob_flush(); flush();
+    $logm->create_annotated_log();
+
     break;
 
 case 'test':

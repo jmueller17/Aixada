@@ -86,6 +86,7 @@ EOD
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
 	echo "generating testing/dumps/initial_dump.sql ...\n"; ob_flush(); flush();
 	exec("mysqldump -udumper -pdumper --skip-opt aixada_dump > testing/dumps/initial_dump.sql");
+	exec("cp testing/dumps/initial_dump.sql testing/dumps/old_dump.sql");
     }
 }
 
