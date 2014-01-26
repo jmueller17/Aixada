@@ -51,7 +51,7 @@ EOD
 	$fill_queries = array();
 	foreach ($table_key_pairs as $tkpair) {
 	    list ($table, $date_key) = $tkpair;
-	    echo "generating queries for $table...\n"; ob_flush(); flush();
+	     echo "generating queries for $table...\n"; 
 	    $fkm = new foreign_key_manager($table);
 	    foreach ($fkm->foreign_key_info() as $key => $info) {
 		if (sizeof($info)==0) { continue; }
@@ -78,13 +78,13 @@ EOD
 	$this->_init_dump();
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->_fill_queries($from_date, $to_date, $table_key_pairs) as $table => $queries) {
-	    echo "Executing queries for $table...\n"; ob_flush(); flush();
+	     echo "Executing queries for $table...\n"; 
 	    foreach ($queries as $query) {
 		$this->dump_db->Execute($query);
 	    }
 	}
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
-	echo "generating testing/dumps/initial_dump.sql ...\n"; ob_flush(); flush();
+	 echo "generating testing/dumps/initial_dump.sql ...\n"; 
 	exec("mysqldump -udumper -pdumper --skip-opt aixada_dump > testing/dumps/initial_dump.sql");
 	return "initial_dump.sql";
     }

@@ -6,8 +6,6 @@ $db_name = 'aixada';
 $table_key_pairs = array(
 			 ['aixada_cart', 'date_for_shop'],
 			 );
-
-
 $usage_str = <<<EOD
 Usage:
     php {$argv[0]} dump [from_date=-1month [to_date=now]]
@@ -32,16 +30,16 @@ case 'dump':
 	: strtotime('now');
     $to_date = date("Y-m-d", $to_time);
 
-    echo "dumping...\n"; ob_flush(); flush();
+    echo "dumping...\n"; 
     $dbdm = new DBDumpManager($dump_db_name, $db_name);
     $dumpfile = $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
 
     require_once 'lib/log_manager.php';
-    echo "creating initial log of modifying queries...\n"; ob_flush(); flush();
+    echo "creating initial log of modifying queries...\n"; 
     $logm = new LogManager($dump_db_name, $dumpfile);
     $logm->create_bare_log_of_modifying_queries('aixada.log');
 
-    echo "creating annotated log...\n"; ob_flush(); flush();
+    echo "creating annotated log...\n"; 
     $logm->create_annotated_log($from_time, $to_time);
 
     break;
