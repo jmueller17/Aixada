@@ -23,24 +23,26 @@ if (sizeof($argv) < 2) {
 switch ($argv[1]) {
 case 'dump':
     require_once 'lib/dump_manager.php';
-    $from_date = (sizeof($argv) >= 3) 
-	? date("Y-m-d", strtotime($argv[2]))
-	: date("Y-m-d", strtotime('-1 months'));
-    $to_date = (sizeof($argv) >= 4)
-	? date("Y-m-d", strtotime($argv[3]))
-	: date("Y-m-d", strtotime('now'));
+    $from_time = (sizeof($argv) >= 3) 
+	? strtotime($argv[2])
+	: strtotime('-1 months');
+    $from_date = date("Y-m-d", $from_time);
+    $to_time = (sizeof($argv) >= 4)
+	? strtotime($argv[3])
+	: strtotime('now');
+    $to_date = date("Y-m-d", $to_time);
 
     echo "dumping...\n"; ob_flush(); flush();
     $dbdm = new DBDumpManager($dump_db_name, $db_name);
-    $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
+    $dumpfile = $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
 
     require_once 'lib/log_manager.php';
-    echo "creating clean log...\n"; ob_flush(); flush();
-    $logm = new LogManager($dump_db_name);
-    $logm->create_initial_log_of_modifying_queries();
+    echo "creating initial log of modifying queries...\n"; ob_flush(); flush();
+    $logm = new LogManager($dump_db_name, $dumpfile);
+    $logm->create_bare_log_of_modifying_queries('aixada.log');
 
     echo "creating annotated log...\n"; ob_flush(); flush();
-    $logm->create_annotated_log();
+    $logm->create_annotated_log($from_time, $to_time);
 
     break;
 
