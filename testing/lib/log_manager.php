@@ -47,8 +47,11 @@ class LogManager {
 	    exit();
 	}
 
+	// neutralize timestamps
+	$sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
+
 	// initial hash
-	fwrite($whandle, exec("head -n -2 {$this->dumpfile} | md5sum") . "\n");
+	fwrite($whandle, exec("head -n -2 {$this->dumpfile} | {$sed} | md5sum") . "\n");
 
 	while (($line = fgets($rhandle)) !== false) {
 	    $pos_second_blank = strpos($line, ' ', strpos($line, ' ')+1);
@@ -58,7 +61,7 @@ class LogManager {
 		$query = substr($line, $pos_second_blank+1);
 		$this->db->Execute($query);
 		$this->db->free_next_results();
-		$md5sum = exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | md5sum");
+		$md5sum = exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$sed} | md5sum");
 		fwrite($whandle, $query . $md5sum . "\n");
 	    }
 	}
