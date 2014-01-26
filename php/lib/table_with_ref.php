@@ -279,7 +279,6 @@ class foreign_key_manager {
     $test_col_names = array('name', 'description', 'unit', 'login');
     foreach ($test_col_names as $col_name) {
       $rs = $db->Execute($strSQL, $fTable, $col_name);
-      //      if (!$rs) throw new Exception("Could not execute column name query for table $fTable using $strSQL2");
       if ($rs && mysqli_num_rows($rs)) 
 	return $col_name;
     }

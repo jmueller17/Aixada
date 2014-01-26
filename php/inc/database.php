@@ -45,7 +45,7 @@ class DBWrap {
   private $password;
   private $mysqli = false;
   private $key_info = array();
-  private static $instance = false;
+  private static $instance = array();
   private $logfilehandle;
 
   /**
@@ -58,33 +58,51 @@ class DBWrap {
    */
   public $next_to_last_query_SQL = '';
   
-  private function __construct() 
+  private function __construct($type = '',
+			       $host = '',
+			       $db_name = '',
+			       $user = '',
+			       $password = '',
+			       $logfilename = '') 
   {
-    $cv = configuration_vars::get_instance();
-    $this->type = $cv->db_type;
-    $this->host = $cv->db_host;
-    $this->db_name = $cv->db_name;
-    $this->user = $cv->db_user;
-    $this->password = $cv->db_password;
-    $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->db_name);
+    $this->type = $type;
+    $this->host = $host;
+    $this->db_name = $db_name;
+    $this->user = $user;
+    $this->password = $password;
+    $this->mysqli = new mysqli($host, $user, $password, $db_name);
     if (mysqli_connect_errno())
       throw new InternalException('Unable to connect to database. ' . mysqli_connect_error());
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
-    if (!$this->logfilehandle = fopen(__ROOT__ . $cv->logfilename, 'a')) {
-	throw new InternalException('Could not open logfile ' . $cv->logfilename . ' for appending');
+    if (!$this->logfilehandle = fopen(__ROOT__ . $logfilename, 'a')) {
+	throw new InternalException('Could not open logfile ' . $logfilename . ' for appending');
     }
   }
+
   /**
    * The DBWrap class is implemented as a Singleton. Call this
    * function to instantiate it, and not the constructor.
    */
-  public static function get_instance()
+  public static function get_instance($type = '',
+				      $host = '',
+				      $name = '',
+				      $user = '',
+				      $password = '')
   {
-    if (self::$instance === false)
-      self::$instance = new DBWrap;
-    return self::$instance;
+      if ($type == '') {
+	  $cv = configuration_vars::get_instance();
+	  $type = $cv->db_type;
+	  $host = $cv->db_host;
+	  $db_name = $cv->db_name;
+	  $user = $cv->db_user;
+	  $password = $cv->db_password;
+      }
+      $logfilename = $db_name . ".log";
+      if (!isset(self::$instance[$db_name]))
+	  self::$instance[$db_name] = new DBWrap($type, $host, $db_name, $user, $password, $logfilename);
+      return self::$instance[$db_name];
   }
 
 

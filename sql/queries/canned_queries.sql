@@ -38,10 +38,12 @@ begin
       aixada_uf.name as uf_name,
       aixada_cart.date_for_shop,
       aixada_cart.operator_id,
+      aixada_user.login as operator,
       aixada_cart.ts_validated,
       aixada_cart.ts_last_saved 
     from aixada_cart 
-    left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id";
+    left join aixada_uf as aixada_uf on aixada_cart.uf_id=aixada_uf.id
+    left join aixada_user as aixada_user on aixada_cart.operator_id=aixada_user.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
@@ -77,6 +79,7 @@ begin
       aixada_incident.incident_type_id,
       aixada_incident_type.description as incident_type,
       aixada_incident.operator_id,
+      aixada_user.login as operator,
       aixada_incident.details,
       aixada_incident.priority,
       aixada_incident.ufs_concerned,
@@ -85,7 +88,8 @@ begin
       aixada_incident.ts,
       aixada_incident.status 
     from aixada_incident 
-    left join aixada_incident_type as aixada_incident_type on aixada_incident.incident_type_id=aixada_incident_type.id";
+    left join aixada_incident_type as aixada_incident_type on aixada_incident.incident_type_id=aixada_incident_type.id
+    left join aixada_user as aixada_user on aixada_incident.operator_id=aixada_user.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
@@ -293,9 +297,11 @@ begin
       aixada_product.name as product,
       aixada_price.ts,
       aixada_price.current_price,
-      aixada_price.operator_id 
+      aixada_price.operator_id,
+      aixada_user.login as operator 
     from aixada_price 
-    left join aixada_product as aixada_product on aixada_price.product_id=aixada_product.id";
+    left join aixada_product as aixada_product on aixada_price.product_id=aixada_product.id
+    left join aixada_user as aixada_user on aixada_price.operator_id=aixada_user.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
@@ -495,12 +501,14 @@ begin
       aixada_stock_movement.product_id,
       aixada_product.name as product,
       aixada_stock_movement.operator_id,
+      aixada_user.login as operator,
       aixada_stock_movement.amount_difference,
       aixada_stock_movement.description,
       aixada_stock_movement.resulting_amount,
       aixada_stock_movement.ts 
     from aixada_stock_movement 
-    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id";
+    left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id
+    left join aixada_user as aixada_user on aixada_stock_movement.operator_id=aixada_user.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
@@ -583,8 +591,10 @@ create procedure aixada_user_role_list_all_query (in the_index char(50), in the_
 begin
   set @q = "select
       aixada_user_role.user_id,
+      aixada_user.login as user,
       aixada_user_role.role 
-    from aixada_user_role ";
+    from aixada_user_role 
+    left join aixada_user as aixada_user on aixada_user_role.user_id=aixada_user.id";
   set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
