@@ -17,8 +17,11 @@ class DBDumpManager {
 					      'dumper',
 					      'dumper');
 	/*
+	  in mysql with sufficient privileges, execute:
+
 	  create user 'dumper'@'localhost' identified by 'dumper';
 	  grant all privileges on aixada_dump.* to 'dumper'@'localhost';
+	  grant select on aixada.* to 'dumper'@'localhost';
 	  flush privileges;
 	 */
 
@@ -69,14 +72,13 @@ EOD;
 
     public function dump($from_date, $to_date, $table_key_pairs) {
 	$this->_init_dump();
+	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->_fill_queries($from_date, $to_date, $table_key_pairs) as $table => $queries) {
-	    echo "table $table:\n";
 	    foreach ($queries as $query) {
-		echo "  query $query\n";
+		$this->dump_db->Execute($query);
 	    }
 	}
-
-	
+	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
     }
 }
 
