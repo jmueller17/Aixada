@@ -17,3 +17,4 @@ js/js_for_validate.js
 sql/dump.sql
 *.log
 testing/dumps/*dump.sql
+testing/test_runs/*
