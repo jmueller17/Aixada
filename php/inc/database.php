@@ -48,6 +48,8 @@ class DBWrap {
   private static $instance = array();
   private $logfilehandle;
 
+  private $dontlog = array('SELECT COLUMN_NAME FROM', 'SHOW CREATE TABLE');
+
   private function __construct($db_name = '',
 			       $type = '',
 			       $host = '',
@@ -65,12 +67,9 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
-    $logfilename = __ROOT__ . $db_name . ".log";
-    if (!file_exists($logfilename)) {
-	fclose(fopen($logfilename, 'a'));
-    }
+    $logfilename = __ROOT__ . 'local_config' . DS . $db_name . ".log";
     if (!$this->logfilehandle = fopen($logfilename, 'ab')) {
-	throw new InternalException('Could not open  ' . $logfilename . ' for appending. Please create it manually with a user of www-data or similar.');
+	throw new InternalException('Could not open  ' . $logfilename . ' for appending. Please make it world-writeable using "sudo chmod a+w ' . $logfilename . '"');
     }
   }
 
@@ -175,6 +174,11 @@ class DBWrap {
    */
   private function write_to_log($out_string)
   {
+      foreach($this->dontlog as $nono) {
+	  if (!strcmp(substr($out_string, 0, strlen($nono)), $nono))
+	      return;
+      }
+      
       if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . str_replace("\n", " ", $out_string) . "\n") === FALSE) {
 	  throw new InternalException('Cannot write "' . $out_string . '" to logfile');
       }

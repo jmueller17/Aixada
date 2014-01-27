@@ -23,7 +23,7 @@ Commands:
   init: create a mysql user for dumping and querying the data. 
         You need to enter a mysql username and password with sufficient privileges for doing this.
 
-  dump: create the database aixada_dump from entries in the database aixada, and execute the logfile aixada.log on it.
+  dump: create the database aixada_dump from entries in the database aixada, and execute the logfile local_config/aixada.log on it.
         To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in this file.
         The database aixada_dump is then dumped to testing/dumps/initial_dump.sql.
         This logfile aixada.log is actually created in the process of running this script, so there's no problem if 
@@ -105,7 +105,7 @@ case 'dump':
     require_once 'lib/log_manager.php';
     echo "creating initial log of modifying queries...\n"; 
     $logm = new LogManager($dump_db_name, $dumpfile);
-    $logm->create_bare_log_of_modifying_queries('aixada.log');
+    $logm->create_bare_log_of_modifying_queries('local_config/aixada.log');
 
     echo "creating annotated log...\n"; 
     $logm->create_annotated_log($from_time, $to_time);

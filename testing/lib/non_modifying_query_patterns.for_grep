@@ -1,3 +1,4 @@
+call get_
 show
 *listing
 retrieve_credentials

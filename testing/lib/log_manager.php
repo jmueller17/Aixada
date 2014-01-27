@@ -10,6 +10,8 @@ class LogManager {
     private $exclusion_patterns;
     private $db;
     private $whandle;
+    private $query = 'init';
+    private $prev_md5sum;
 
     // neutralize timestamps
     private $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
@@ -47,16 +49,28 @@ class LogManager {
 	$s = substr($s, 0, strpos($s, ' '));
     }
 
-    private function hash_and_store($file_to_hash, $dir_to_store) {
-	$md5sum = exec("md5sum {$file_to_hash}");
-	$this->clean($md5sum);
-	fwrite($this->whandle, $md5sum . "\n");
-	exec("mv {$file_to_hash} {$dir_to_store}{$md5sum}");
+    private function dump() {
+	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$this->sed} > {$this->tmpdump}");
     }
 
-    private function dump_and_hash() {
-	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$this->sed} > {$this->tmpdump}");
-	$this->hash_and_store($this->tmpdump, $this->reference_dump_dir);
+    private function hash() {
+	$md5sum = exec("md5sum {$this->tmpdump}");
+	$this->clean($md5sum);
+	return $md5sum;
+    }
+
+    private function store($md5sum, $dir_to_store) {
+	if (!strcmp($md5sum, $this->prev_md5sum)) return;
+	if ($this->query != 'init')
+	    fwrite($this->whandle, $this->query);
+	fwrite($this->whandle, $md5sum . "\n");
+	exec("mv {$this->tmpdump} {$dir_to_store}{$md5sum}");
+	$this->prev_md5sum = $md5sum;
+    }
+
+    private function dump_hash_and_store() {
+	$this->dump();
+	$this->store($this->hash(), $this->reference_dump_dir);
     }
 
     private function process_line($line, $start_time, $end_time) {
@@ -64,11 +78,10 @@ class LogManager {
 	$logtime = strtotime(substr($line, 0, $pos_second_blank));
 	if ($logtime >= $start_time && 
 	    $logtime <= $end_time) {
-	    $query = substr($line, $pos_second_blank+1);
-	    $this->db->Execute($query);
+	    $this->query = substr($line, $pos_second_blank+1);
+	    $this->db->Execute($this->query);
 	    $this->db->free_next_results();
-	    fwrite($this->whandle, $query);
-	    $this->dump_and_hash();
+	    $this->dump_hash_and_store();
 	}
     }
 
@@ -86,7 +99,7 @@ class LogManager {
 	    exit();
 	}
 
-	$this->dump_and_hash();
+	$this->dump_hash_and_store();
 	
 	while (($line = fgets($rhandle)) !== false) {
 	    $this->process_line($line, $start_time, $end_time);
