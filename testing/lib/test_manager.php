@@ -22,9 +22,9 @@ class TestManager {
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;
-	$this->initial_dump_file = $dumppath . $initial_dump_file;
+	$this->initial_dump_file = $initial_dump_file;
 	$interval_start_pos = strlen($logpath) + strlen($dump_db_name) + 1;
-	$interval = substr($initial_dump_file, $interval_start_pos, strpos($initial_dump_file, '.', $interval_start_pos));
+	$interval = substr($initial_dump_file, $interval_start_pos+1, strpos($initial_dump_file, '.', $interval_start_pos)-1);
 	$to_pos = strrpos($interval, '-to-');
 	$from_date = substr($interval, 0, $to_pos);
 	$to_date = substr($interval, $to_pos + 4);
@@ -89,7 +89,8 @@ EOD
 	}
 	$this->checkmd5 = trim($this->checkmd5);
 
-	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump}");
+	global $tmpdump, $sed;
+	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump");
 	$this->clean($this->realmd5);
 
 	// store the dump for future reference

@@ -119,7 +119,7 @@ case 'dump':
     break;
 
 case 'test':
-    if (sizeof($argv) <= 3) {
+    if (sizeof($argv) < 3) {
 	echo "Usage: {$argv[0]} test <dump-file>\n";
 	exit();
     }

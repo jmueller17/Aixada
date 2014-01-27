@@ -18,3 +18,4 @@ sql/dump.sql
 *.log
 testing/dumps/*.sql
 testing/runs/*
+testing/logs/*log
