@@ -45,9 +45,10 @@ case 'dump':
     break;
 
 case 'test':
-    require_once 'lib/db_tester.php';
-    $tester = new DBTester('aixada_dump', 'initial_dump.sql', 'test.log');
-    $tester->run_test();
+    require_once 'lib/dump_manager.php';
+    require_once 'lib/test_manager.php';
+    $testm = new TestManager('aixada_dump', 'initial_dump.sql', 'annotated_log_of_modifying_queries.aixada_dump.log');
+    $testm->test();
 
     break;
 
