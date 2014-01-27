@@ -6,7 +6,8 @@ class TestManager {
     private $initial_dump_file;
     private $log_file;
     private $test_dir;
-    private $tmpdump;
+    private $reference_dump_dir;
+
     private $db;
     private $rhandle;
 
@@ -31,7 +32,14 @@ class TestManager {
 	$this->dump_db_name = $dump_db_name;
 	$this->initial_dump_file = $dumppath . $initial_dump_file;
 	$this->log_file = $logpath . $log_file;
-	$this->testdir = $testrunpath . date("Y-m-d-H:i:m") . '/';
+
+	$day = date("Y-m-d");
+	$now = date("H:i:m");
+	$this->testdir = $testrunpath . '/' . $day . '/' . $now . '/';
+	exec("mkdir {$testrunpath}/$day");
+	exec("mkdir {$testrunpath}/$day/$now");
+
+	$this->reference_dump_dir = $testrunpath . 'reference_dumps/';
 
 	$handle = @fopen('/tmp/init_test.sql', 'w');
 	fwrite ($handle, <<<EOD
@@ -83,7 +91,12 @@ EOD
 	exec("mv {$this->tmpdump} {$this->testdir}{$this->realmd5}");
 
 	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
-	else return 0;
+
+	echo "The checksum\n{$this->checkmd5}\n";
+	echo "for the reference dump disagreed with the checksum\n{$this->realmd5}\n";
+	echo "for the current dump. The difference is\n";
+	echo exec("diff {$this->reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}");
+	return 0;
     }
 
     private function one_statement_ok() {
