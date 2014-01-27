@@ -1,0 +1,5 @@
+This directory contains a driver to test the results of a query log.
+
+From the main directory of the application, execute
+  php testing/test.php
+for more information.
