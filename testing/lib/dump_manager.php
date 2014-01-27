@@ -16,15 +16,6 @@ class DBDumpManager {
 					      'localhost',
 					      'dumper',
 					      'dumper');
-	/*
-	  in mysql with sufficient privileges, execute:
-
-	  create user 'dumper'@'localhost' identified by 'dumper';
-	  grant all privileges on aixada_dump.* to 'dumper'@'localhost';
-	  grant select on aixada.* to 'dumper'@'localhost';
-	  flush privileges;
-	 */
-
 	$this->db_name = configuration_vars::get_instance()->db_name;
 	$this->db = DBWrap::get_instance('');
     }

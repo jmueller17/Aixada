@@ -8,8 +8,29 @@ $table_key_pairs = array(
 			 );
 $usage_str = <<<EOD
 Usage:
-    php {$argv[0]} dump [from_date=-1month [to_date=now]]
-    php {$argv[0]} test ...
+    php {$argv[0]} <command> [<options>]
+
+Commands: 
+
+  init: create a mysql user for dumping and querying the data. 
+        You need to enter a mysql username and password with sufficient privileges
+        for doing this.
+
+  dump: create the database aixada_dump from entries in the database aixada, 
+        and execute the logfile aixada.log on it.
+        The logfile is preprocessed to strip all non-modifying commands from it,
+	and the result of this is stored in testing/logs/.
+        The results of executing all surviving queries in turn are stored in
+        testing/runs/reference_dumps.
+    options:
+        from_date: from which date on the database will be dumped. 
+                   default -1 month
+        to_date:   until which date the database will be dumped. 
+                   default now
+
+  test: rerun the logfile on the database, and check whether the database is modified
+        in the same way. The results of each run are stored in testing/runs/ 
+        under the current time.
 
 EOD;
 
@@ -18,7 +39,45 @@ if (sizeof($argv) < 2) {
     exit();
 }
 
+if ($argv[1] != 'init') {
+    require_once 'lib/dump_manager.php';
+    try {
+	$dump_db = DBWrap::get_instance($dump_db_name,
+					'mysql',
+					'localhost',
+					'dumper',
+					'dumper');
+    } catch (InternalException $e) {
+	echo "caught exception $e\n\n";
+	echo "It appears that you haven't yet created a mysql user for testing the database.\n";
+	echo "Please run \"{$argv[0]} init\" now to do this.\n\n";
+	exit();
+    }
+}
+
 switch ($argv[1]) {
+case 'init':
+    $user = readline('mysql username with sufficient privileges [default=root]:');
+    if ($user == '') $user = 'root';
+    echo "password for $user: ";
+    $pwd = preg_replace('/\r?\n$/', '', `stty -echo; head -n1 ; stty echo`);
+    echo "\n";
+
+    $handle = @fopen('/tmp/init_user.sql', 'w');
+    $script = <<<EOD
+create user 'dumper'@'localhost' identified by 'dumper';
+grant all privileges on {$dump_db_name}.* to 'dumper'@'localhost';
+grant select on aixada.* to 'dumper'@'localhost';
+flush privileges;
+
+EOD
+    ;
+    fwrite ($handle, $script);
+    fclose($handle);
+    echo $script;
+    $result = exec("mysql -u $user --password=$pwd $dump_db_name < /tmp/init_user.sql");
+    break;
+
 case 'dump':
     require_once 'lib/dump_manager.php';
     $from_time = (sizeof($argv) >= 3) 
