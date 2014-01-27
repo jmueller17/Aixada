@@ -11,7 +11,7 @@ class TestManager {
     private $db;
     private $rhandle;
 
-    private $statement;
+    private $statement = 'Initializing database';
     private $checkmd5;
     private $realmd5;
 
@@ -76,6 +76,15 @@ EOD
 	$s = substr($s, 0, strpos($s, ' '));
     }
 
+    private function output_error() {
+	echo "The checksum\n{$this->checkmd5}\n";
+	echo "for the reference dump disagreed with the checksum\n{$this->realmd5}\n";
+	echo "for the current dump.\n";
+	echo "The offending query was\n{$this->statement}\n";
+	echo "The difference is\n";
+	echo exec("diff {$this->reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}");
+    }
+
     private function one_hash_ok() {
 	if (($this->checkmd5 = fgets($this->rhandle)) === false) {
 	    echo "No more hashes.\n";
@@ -91,16 +100,12 @@ EOD
 
 	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
 
-	echo "The checksum\n{$this->checkmd5}\n";
-	echo "for the reference dump disagreed with the checksum\n{$this->realmd5}\n";
-	echo "for the current dump. The difference is\n";
-	echo exec("diff {$this->reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}");
+	$this->output_error();
 	return 0;
     }
 
     private function one_statement_ok() {
 	if (($this->statement = fgets($this->rhandle)) === false) {
-	    echo "All tests ran successfully.\n";
 	    return -1;
 	}	
 	$this->db->Execute($this->statement);
@@ -111,10 +116,11 @@ EOD
     public function test() {
 	while (($result = $this->one_statement_ok()) != -1);
 	if ($result == 0) {
-	    echo "test failed on statement\n$statement\n";
-	    echo "Hash of database should have been {$this->checkmd5}";
-	    echo "but was {$this->realmd5}\n";
-	    exit();
+	    echo "Aborting.\n";
+	} elseif ($result == -1) {
+	    echo "All tests ran successfully.\n";
+	} else {
+	    echo "Unexpected return value $result\n";
 	}
     }
 }
