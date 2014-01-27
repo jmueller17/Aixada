@@ -1,9 +1,9 @@
 <?php
 
 $tmpdump = '/tmp/testdump.sql';
-$logpath = 'testing/logs/';
+$logpath = 'testing/dumps+logs/';
 $utilpath = 'testing/lib/';
-$dumppath = 'testing/dumps/';
+$dumppath = 'testing/dumps+logs/';
 $testrunpath = 'testing/runs/';
 $db_log = 'local_config/aixada.log';
 $dump_db_name = 'aixada_dump';
