@@ -21,7 +21,7 @@ class LogManager {
 	$logpath = 'testing/logs/';
 	$utilpath = 'testing/util/';
 	$dumppath = 'testing/dumps/';
-	$testrunpath = 'testing/test_runs/';
+	$testrunpath = 'testing/runs/';
 
 	$this->dump_db_name = $dump_db_name;	
 	$this->original_dumpfile = $dumppath . $original_dumpfile;
