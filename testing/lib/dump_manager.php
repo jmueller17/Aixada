@@ -56,7 +56,7 @@ EOD
 		$ft = $info['fTable'];
 		$fk = $info['fIndex']; 
 		$query = <<<EOD
-insert into {$this->dump_db_name}.{$ft}
+insert ignore into {$this->dump_db_name}.{$ft}
 select distinct {$this->db_name}.{$ft}.* 
 from {$this->db_name}.{$table}
 left join {$this->db_name}.{$ft}
@@ -65,7 +65,7 @@ where {$this->db_name}.{$table}.{$date_key} between '{$this->from_date}' and '{$
 order by {$this->db_name}.{$ft}.{$fk};
 EOD
     ;
-		$fill_queries[$ft][] = str_replace("\n", " ", $query);
+		$fill_queries[$ft][] = $query;
 	    }
 	}    
 	return $fill_queries;

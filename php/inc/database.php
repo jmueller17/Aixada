@@ -179,7 +179,7 @@ class DBWrap {
 	      return;
       }
       
-      if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . str_replace("\n", " ", $out_string) . "\n") === FALSE) {
+      if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . str_replace("\n", "\\n", $out_string) . "\n") === FALSE) {
 	  throw new InternalException('Cannot write "' . $out_string . '" to logfile');
       }
   }

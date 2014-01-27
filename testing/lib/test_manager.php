@@ -77,7 +77,9 @@ EOD
 	echo "The checksum\n{$this->checkmd5}\n";
 	echo "for the reference dump disagreed with the checksum\n{$this->realmd5}\n";
 	echo "for the current dump.\n";
-	echo "The offending query was\n{$this->statement}\n";
+	echo "The offending query was\n";
+	echo str_replace("\\n", "\n", $this->statement);
+	echo "\n";
 	echo "The difference is\n";
 	echo exec("diff {$this->reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}");
     }

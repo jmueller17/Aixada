@@ -2,24 +2,6 @@
 
 require_once('testing/lib/config.php');
 
-/*
-================================================================================
-
-   This array controls which tables are dumped. 
-   For each table, you need to specify a datetime key, 
-   for example 'date_for_shop' for the table 'aixada_cart'.
-   Only the entries of the table within the time interval specified by the user
-   will be dumped, along with all the entries in other tables pointed to 
-   by foreign keys.
-*/
-
-$table_key_pairs = array(
-			 ['aixada_cart', 'date_for_shop'],
-			 );
-/*
-=================================================================================
-*/
-
 $usage_str = <<<EOD
 Usage:
     php {$argv[0]} <command> [<options>]
@@ -30,7 +12,7 @@ Commands:
         You need to enter a mysql username and password with sufficient privileges for doing this.
 
   dump: create the database aixada_dump from entries in the database aixada, and execute the logfile local_config/aixada.log on it.
-        To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in testing/test.php.
+        To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in testing/lib/config.php.
         The database aixada_dump is then dumped to testing/dumps/initial_dump.sql.
         This logfile aixada.log is actually created in the process of running this script, so there's no problem if 
         it doesn't exist initially.
