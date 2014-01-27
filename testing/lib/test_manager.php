@@ -1,5 +1,7 @@
 <?php
 
+require_once('testing/lib/config.php');
+
 class TestManager {
 
     private $dump_db_name;
@@ -15,23 +17,18 @@ class TestManager {
     private $checkmd5;
     private $realmd5;
 
-    // neutralize timestamps
-    private $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
+    public function __construct($dump_db_name, $initial_dump_file) {
 
-    private $tmpdump = '/tmp/testdump.sql';
-
-
-    public function __construct($dump_db_name, 
-				$initial_dump_file, 
-				$log_file) {
-
-	$logpath = 'testing/logs/';
-	$dumppath = 'testing/dumps/';
-	$testrunpath = 'testing/runs/';
+	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;
 	$this->initial_dump_file = $dumppath . $initial_dump_file;
-	$this->log_file = $logpath . $log_file;
+	$interval_start_pos = strlen($logpath) + strlen($dump_db_name) + 1;
+	$interval = substr($initial_dump_file, $interval_start_pos, strpos($initial_dump_file, '.', $interval_start_pos));
+	$to_pos = strrpos($interval, '-to-');
+	$from_date = substr($interval, 0, $to_pos);
+	$to_date = substr($interval, $to_pos + 4);
+	$this->log_file = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
 
 	$day = date("Y-m-d");
 	$now = date("H:i:m");
@@ -92,11 +89,11 @@ EOD
 	}
 	$this->checkmd5 = trim($this->checkmd5);
 
-	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$this->sed} > {$this->tmpdump}; md5sum {$this->tmpdump}");
+	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump}");
 	$this->clean($this->realmd5);
 
 	// store the dump for future reference
-	exec("mv -n {$this->tmpdump} {$this->testdir}{$this->realmd5}");
+	exec("mv -n $tmpdump {$this->testdir}{$this->realmd5}");
 
 	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
 

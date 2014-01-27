@@ -1,18 +1,24 @@
 <?php
 
+require_once('testing/lib/config.php');
 
-$dump_db_name = 'aixada_dump';
-$db_name = 'aixada';
+/*
+================================================================================
 
-// This array controls which tables are dumped. 
-// For each table, you need to specify a datetime key, 
-// for example 'date_for_shop' for the table 'aixada_cart'.
-// Only the entries of the table within the time interval specified by the user
-// will be dumped, along with all the entries in other tables pointed to 
-// by foreign keys.
+   This array controls which tables are dumped. 
+   For each table, you need to specify a datetime key, 
+   for example 'date_for_shop' for the table 'aixada_cart'.
+   Only the entries of the table within the time interval specified by the user
+   will be dumped, along with all the entries in other tables pointed to 
+   by foreign keys.
+*/
+
 $table_key_pairs = array(
 			 ['aixada_cart', 'date_for_shop'],
 			 );
+/*
+=================================================================================
+*/
 
 $usage_str = <<<EOD
 Usage:
@@ -24,7 +30,7 @@ Commands:
         You need to enter a mysql username and password with sufficient privileges for doing this.
 
   dump: create the database aixada_dump from entries in the database aixada, and execute the logfile local_config/aixada.log on it.
-        To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in this file.
+        To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in testing/test.php.
         The database aixada_dump is then dumped to testing/dumps/initial_dump.sql.
         This logfile aixada.log is actually created in the process of running this script, so there's no problem if 
         it doesn't exist initially.
@@ -37,7 +43,7 @@ Commands:
         to_date:   until which date the database will be dumped. 
                    default now
 
-  test: rerun the logfile on the dumped database, and check whether the database is modified
+  test <dump-file>: rerun the logfile on the dumped database <dump-file>, and check whether it is modified
         in the same way as when the dump was created. 
         The results of each run are stored in testing/runs/ under the current time.
 
@@ -99,23 +105,27 @@ case 'dump':
     $to_date = date("Y-m-d", $to_time);
 
     echo "dumping...\n"; 
-    $dbdm = new DBDumpManager($dump_db_name, $db_name);
-    $dumpfile = $dbdm->create_initial_dump($from_date, $to_date, $table_key_pairs);
+    $dbdm = new DBDumpManager($dump_db_name, $from_date, $to_date, $table_key_pairs);
+    $dumpfile = $dbdm->create_initial_dump();
 
     require_once 'lib/log_manager.php';
     echo "creating initial log of modifying queries...\n"; 
-    $logm = new LogManager($dump_db_name, $dumpfile);
-    $logm->create_bare_log_of_modifying_queries('local_config/aixada.log');
+    $logm = new LogManager($dump_db_name, $dumpfile, $from_date, $to_date);
+    $logm->create_bare_log_of_modifying_queries();
 
     echo "creating annotated log...\n"; 
-    $logm->create_annotated_log($from_time, $to_time);
+    $logm->create_annotated_log();
 
     break;
 
 case 'test':
+    if (sizeof($argv) <= 3) {
+	echo "Usage: {$argv[0]} test <dump-file>\n";
+	exit();
+    }
     require_once 'lib/dump_manager.php';
     require_once 'lib/test_manager.php';
-    $testm = new TestManager('aixada_dump', 'initial_dump.sql', 'annotated_log_of_modifying_queries.aixada_dump.log');
+    $testm = new TestManager($dump_db_name, $argv[2]);
     $testm->test();
 
     break;

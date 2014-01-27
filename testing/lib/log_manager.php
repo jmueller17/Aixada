@@ -1,9 +1,13 @@
 <?php
+
+require_once("testing/lib/config.php");
  
 class LogManager {
 
     private $dump_db_name;
     private $original_dumpfile;
+    private $from_date;
+    private $to_date;
     private $bare_log_name;
     private $annotated_log_name;
     private $reference_dump_dir;
@@ -13,24 +17,16 @@ class LogManager {
     private $query = 'init';
     private $prev_md5sum;
 
-    // neutralize timestamps
-    private $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
+    public function __construct($dump_db_name, $original_dumpfile, $from_date, $to_date) {
 
-    private $tmpdump = '/tmp/testdump.sql';
-
-    public function __construct($dump_db_name, $original_dumpfile) {
-
-	$logpath = 'testing/logs/';
-	$utilpath = 'testing/lib/';
-	$dumppath = 'testing/dumps/';
-	$testrunpath = 'testing/runs/';
+	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;	
 	$this->original_dumpfile = $dumppath . $original_dumpfile;
-	$this->bare_log_name = $logpath . 'bare_log_of_modifying_queries.' 
-	    . $dump_db_name . '.log';
-	$this->annotated_log_name = $logpath . 'annotated_log_of_modifying_queries.' 
-	    . $dump_db_name . '.log';
+	$this->from_date = $from_date;
+	$this->to_date = $to_date;
+	$this->bare_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.bare_log";
+	$this->annotated_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
 	$this->reference_dump_dir = $testrunpath . 'reference_dumps/';
 	$this->exclusion_patterns = $utilpath . 'non_modifying_query_patterns.for_grep';
 	$this->db = DBWrap::get_instance($dump_db_name, 
@@ -38,11 +34,12 @@ class LogManager {
 					 'localhost',
 					 'dumper',
 					 'dumper');
-	exec ("rm -f {$this->tmpdump}");
+	exec ("rm -f {$tmpdump}");
     }
 
-    public function create_bare_log_of_modifying_queries($original_log) {
-	exec("egrep -iv -f {$this->exclusion_patterns} $original_log > {$this->bare_log_name}");
+    public function create_bare_log_of_modifying_queries() {
+	global $db_log;
+	exec("egrep -iv -f {$this->exclusion_patterns} $db_log > {$this->bare_log_name}");
     }
 
     private function clean(&$s) {
@@ -50,21 +47,24 @@ class LogManager {
     }
 
     private function dump() {
-	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$this->sed} > {$this->tmpdump}");
+	global $tmpdump, $sed;
+	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$sed} > $tmpdump");
     }
 
     private function hash() {
-	$md5sum = exec("md5sum {$this->tmpdump}");
+	global $tmpdump;
+	$md5sum = exec("md5sum $tmpdump");
 	$this->clean($md5sum);
 	return $md5sum;
     }
 
     private function store($md5sum, $dir_to_store) {
 	if (!strcmp($md5sum, $this->prev_md5sum)) return;
-	if ($this->query != 'init')
+	if ($this->query != 'init') 
 	    fwrite($this->whandle, $this->query);
 	fwrite($this->whandle, $md5sum . "\n");
-	exec("mv {$this->tmpdump} {$dir_to_store}{$md5sum}");
+	global $tmpdump;
+	exec("mv $tmpdump {$dir_to_store}{$md5sum}");
 	$this->prev_md5sum = $md5sum;
     }
 
@@ -73,11 +73,12 @@ class LogManager {
 	$this->store($this->hash(), $this->reference_dump_dir);
     }
 
-    private function process_line($line, $start_time, $end_time) {
-	$pos_second_blank = strpos($line, ' ', strpos($line, ' ')+1);
-	$logtime = strtotime(substr($line, 0, $pos_second_blank));
-	if ($logtime >= $start_time && 
-	    $logtime <= $end_time) {
+    private function process_line($line) {
+	$pos_first_blank  = strpos($line, ' ');
+	$pos_second_blank = strpos($line, ' ', $pos_first_blank + 1);
+	$logdate = strtotime(substr($line, 0, $pos_first_blank));
+	if ($logdate >= $this->start_date && 
+	    $logtime <= $this->end_date) {
 	    $this->query = substr($line, $pos_second_blank+1);
 	    $this->db->Execute($this->query);
 	    $this->db->free_next_results();
@@ -85,7 +86,7 @@ class LogManager {
 	}
     }
 
-    public function create_annotated_log($start_time, $end_time) {
+    public function create_annotated_log() {
 	$rhandle = @fopen($this->bare_log_name, 'r');
 	if (!$rhandle) {
 	    echo "Could not open {$this->bare_log_name} for reading\n";
@@ -101,9 +102,8 @@ class LogManager {
 
 	$this->dump_hash_and_store();
 	
-	while (($line = fgets($rhandle)) !== false) {
-	    $this->process_line($line, $start_time, $end_time);
-	}
+	while (($line = fgets($rhandle)) !== false) 
+	    $this->process_line($line);
     }
 
 }

@@ -69,7 +69,7 @@ class DBWrap {
                                     . $mysqli->character_set_name());
     $logfilename = __ROOT__ . 'local_config' . DS . $db_name . ".log";
     if (!$this->logfilehandle = fopen($logfilename, 'ab')) {
-	throw new InternalException('Could not open  ' . $logfilename . ' for appending. Please make it world-writeable using "sudo chmod a+w ' . $logfilename . '"');
+	throw new InternalException("\n\n-------\nCould not open  " . $logfilename . " for appending.\nPlease make it world-writeable using\nsudo chmod a+w $logfilename\n-------\n\n");
     }
   }
 
