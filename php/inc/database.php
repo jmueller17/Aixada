@@ -65,9 +65,12 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
-    $logfilename = $db_name . ".log";
-    if (!$this->logfilehandle = fopen(__ROOT__ . $logfilename, 'a')) {
-	throw new InternalException('Could not open logfile ' . $logfilename . ' for appending');
+    $logfilename = __ROOT__ . $db_name . ".log";
+    if (!file_exists($logfilename)) {
+	fclose(fopen($logfilename, 'a'));
+    }
+    if (!$this->logfilehandle = fopen($logfilename, 'ab')) {
+	throw new InternalException('Could not open  ' . $logfilename . ' for appending. Please create it manually with a user of www-data or similar.');
     }
   }
 
@@ -172,7 +175,7 @@ class DBWrap {
    */
   private function write_to_log($out_string)
   {
-      if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . $out_string . "\n") === FALSE) {
+      if (fwrite($this->logfilehandle, date("Y-m-d H:i:s ") . str_replace("\n", " ", $out_string) . "\n") === FALSE) {
 	  throw new InternalException('Cannot write "' . $out_string . '" to logfile');
       }
   }

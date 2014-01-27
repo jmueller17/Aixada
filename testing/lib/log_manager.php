@@ -19,7 +19,7 @@ class LogManager {
     public function __construct($dump_db_name, $original_dumpfile) {
 
 	$logpath = 'testing/logs/';
-	$utilpath = 'testing/util/';
+	$utilpath = 'testing/lib/';
 	$dumppath = 'testing/dumps/';
 	$testrunpath = 'testing/runs/';
 
