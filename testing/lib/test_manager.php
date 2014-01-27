@@ -36,8 +36,7 @@ class TestManager {
 	$day = date("Y-m-d");
 	$now = date("H:i:m");
 	$this->testdir = $testrunpath . '/' . $day . '/' . $now . '/';
-	exec("mkdir {$testrunpath}/$day");
-	exec("mkdir {$testrunpath}/$day/$now");
+	exec("mkdir -p {$testrunpath}$day/$now");
 
 	$this->reference_dump_dir = $testrunpath . 'reference_dumps/';
 
@@ -82,13 +81,13 @@ EOD
 	    echo "No more hashes.\n";
 	    return -1;
 	}
-	$this->clean($this->checkmd5);
+	$this->checkmd5 = trim($this->checkmd5);
 
 	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$this->sed} > {$this->tmpdump}; md5sum {$this->tmpdump}");
 	$this->clean($this->realmd5);
 
 	// store the dump for future reference
-	exec("mv {$this->tmpdump} {$this->testdir}{$this->realmd5}");
+	exec("mv -n {$this->tmpdump} {$this->testdir}{$this->realmd5}");
 
 	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
 
