@@ -78,7 +78,7 @@ EOD
 	$this->_init_dump();
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->_fill_queries($from_date, $to_date, $table_key_pairs) as $table => $queries) {
-	     echo "Executing queries for $table...\n"; 
+	    echo "Executing queries for $table...\n"; 
 	    foreach ($queries as $query) {
 		$this->dump_db->Execute($query);
 	    }

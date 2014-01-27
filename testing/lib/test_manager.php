@@ -5,6 +5,8 @@ class TestManager {
     private $dump_db_name;
     private $initial_dump_file;
     private $log_file;
+    private $test_dir;
+    private $tmpdump;
     private $db;
     private $rhandle;
 
@@ -12,7 +14,11 @@ class TestManager {
     private $checkmd5;
     private $realmd5;
 
+    // neutralize timestamps
     private $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
+
+    private $tmpdump = '/tmp/testdump.sql';
+
 
     public function __construct($dump_db_name, 
 				$initial_dump_file, 
@@ -20,10 +26,12 @@ class TestManager {
 
 	$logpath = 'testing/logs/';
 	$dumppath = 'testing/dumps/';
+	$testrunpath = 'testing/test_runs/';
 
 	$this->dump_db_name = $dump_db_name;
 	$this->initial_dump_file = $dumppath . $initial_dump_file;
 	$this->log_file = $logpath . $log_file;
+	$this->testdir = $testrunpath . date("Y-m-d-H:i:m") . '/';
 
 	$handle = @fopen('/tmp/init_test.sql', 'w');
 	fwrite ($handle, <<<EOD
@@ -49,12 +57,16 @@ EOD
 	    exit();
 	}
 	
-	if (($result = $this->one_hash_ok()) != 1) {
-	    echo "The database dump is no good; result $result.\n";
-	    echo "Hash should have been\n{$this->checkmd5}";
+	if ($this->one_hash_ok() != 1) {
+	    echo "The database dump is not the one used to generate the log entries.\n";
+	    echo "The hash of the database should have been\n{$this->checkmd5}";
 	    echo "but was\n{$this->realmd5}\n";
 	    exit();
 	}
+    }
+
+    private function clean(&$s) {
+	$s = substr($s, 0, strpos($s, ' '));
     }
 
     private function one_hash_ok() {
@@ -62,15 +74,21 @@ EOD
 	    echo "No more hashes.\n";
 	    return -1;
 	}
-	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$this->sed} | md5sum");
-	if (strcmp(trim($this->checkmd5), $this->realmd5) == 0) // the first has a trailing newline
-	    return 1;
+	$this->clean($this->checkmd5);
+
+	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$this->sed} > {$this->tmpdump}; md5sum {$this->tmpdump}");
+	$this->clean($this->realmd5);
+
+	// store the dump for future reference
+	exec("mv {$this->tmpdump} {$this->testdir}{$this->realmd5}");
+
+	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
 	else return 0;
     }
 
     private function one_statement_ok() {
 	if (($this->statement = fgets($this->rhandle)) === false) {
-	    echo "No more statements.\n";
+	    echo "All tests ran successfully.\n";
 	    return -1;
 	}	
 	$this->db->Execute($this->statement);
@@ -80,9 +98,9 @@ EOD
 
     public function test() {
 	while (($result = $this->one_statement_ok()) != -1);
-	if ($result == false) {
+	if ($result == 0) {
 	    echo "test failed on statement\n$statement\n";
-	    echo "Hash should have been {$this->checkmd5},\n";
+	    echo "Hash of database should have been {$this->checkmd5}";
 	    echo "but was {$this->realmd5}\n";
 	    exit();
 	}
