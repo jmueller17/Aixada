@@ -55,7 +55,6 @@ class DBDumpManager {
     }
 
     private function _dfs($qentry, $table, &$locally_seen_tables) {
-	//	$this->depth++;
 	$fkm = new foreign_key_manager($table);
 	$local_qentry = $qentry;
 	foreach ($fkm->foreign_key_info() as $key => $info) {
@@ -64,14 +63,11 @@ class DBDumpManager {
 	    $fk = $info['fIndex']; 
 	    if (in_array($ft, $locally_seen_tables)) continue;
 	    $locally_seen_tables[] = $ft;
-	    //for ($i=0; $i < $this->depth; $i++) echo '.';
-	    //	    echo "[ $ft, $key, $fk ]\n";
-	    $save_qentry = $local_qentry;
+ 	    $save_qentry = $local_qentry;
 	    $local_qentry[] = [ $ft, $key, $fk ];
 	    $this->_dfs($local_qentry, $ft, $locally_seen_tables);
 	    $local_qentry = $save_qentry;
 	}
-	//	$this->depth--;
 	$this->process_queue[] = $local_qentry;
     }
 
