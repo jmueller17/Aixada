@@ -47,7 +47,9 @@ class LogManager {
 
     private function dump() {
 	global $tmpdump, $sed;
+	$ctime = time();
 	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$sed} > $tmpdump");
+	echo time()-$ctime . "s for dumping the database\n";
     }
 
     private function hash() {

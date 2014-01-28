@@ -90,6 +90,7 @@ class DBDumpManager {
     private function _init_dump() {
 	// the mysql interface doesn't permit sourcing files, so we have to brute-force it
 	// using the command line
+	$ctime = time();
 	$handle = @fopen('/tmp/init_dump.sql', 'w');
 	fwrite ($handle, <<<EOD
 drop database {$this->dump_db_name};
@@ -102,6 +103,7 @@ EOD
 		);
 	fclose($handle);
 	exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_dump.sql");
+	echo time()-$ctime . "s for setting up the test database\n";
     }
 
     private function _fill_queries() {
@@ -140,7 +142,9 @@ EOD
 	global $dumppath;
 	$dumpname = "$dumppath{$this->dump_db_name}.{$this->from_date}-to-{$this->to_date}.sql";
 	echo "generating $dumpname ...\n"; 
+	$ctime = time();
 	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} > $dumpname");
+	echo time()-$ctime . "s for generating the dump\n";
 	return $dumpname;
     }
 }
