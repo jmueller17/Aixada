@@ -15,6 +15,7 @@ class DBDumpManager {
     private $fill_queries = array();
     private $seen_tables = array();
     private $query_dump;
+    private $level = -1;
 
     public function __construct($dump_db_name, $from_date, $to_date, $table_key_pairs) {
 	global $query_dump_dir;
@@ -65,6 +66,10 @@ class DBDumpManager {
 
     // do a depth-first search on the dependency graph induced by the foreign key constraints
     private function _dfs($qentry, $table, &$locally_seen_tables) {
+	$this->level++;
+	for ($i=0; $i<$this->level; $i++)
+	    echo '.';
+	echo $table . "\n";
 	$fkm = new foreign_key_manager($table);
 	$local_qentry = $qentry;
 	foreach ($fkm->foreign_key_info() as $key => $info) {
@@ -78,6 +83,7 @@ class DBDumpManager {
 	    $local_qentry = $save_qentry;
 	}
 	$this->process_queue[] = $local_qentry;
+	$this->level--;
     }
 
     private function _init_dump() {
