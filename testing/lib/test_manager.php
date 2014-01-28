@@ -31,7 +31,7 @@ class TestManager {
 	}
 	echo "Using dump file {$this->initial_dump_file}\n";
 	$interval_start_pos = strlen($logpath) + strlen($dump_db_name) + 1;
-	$interval = substr($this->initial_dump_file, $interval_start_pos, strlen('0000-00-00-to-0000-00-00'));
+	$interval = substr($this->initial_dump_file, $interval_start_pos, strlen('0000-00-00@00:00-to-0000-00-00@00:00'));
 	$to_pos = strrpos($interval, '-to-');
 	$from_date = substr($interval, 0, $to_pos);
 	$to_date = substr($interval, $to_pos + 4);
@@ -68,7 +68,7 @@ class TestManager {
 
     private function _latest_dump() {
 	global $dumppath;
-	$listing = exec("ls -r {$dumppath}*.sql");
+	$listing = exec("ls -rt {$dumppath}*.sql");
 	return strtok($listing, " \n\t");
     }
 
@@ -90,7 +90,7 @@ source sql/setup/aixada_queries_all.sql;
 EOD
 		);
 	fclose($handle);
-	exec("mysql -u dumper -pdumper $this->dump_db_name < $init_db_script");
+	do_exec("mysql -u dumper -pdumper $this->dump_db_name < $init_db_script");
 	echo time()-$ctime . "s for smashing and restoring test database\n";
     }
 
@@ -120,12 +120,12 @@ EOD
 
 	global $tmpdump, $sed;
 	$ctime = time();
-	$this->realmd5 = exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump");
+	$this->realmd5 = do_exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump");
 	$this->clean($this->realmd5);
 	echo time() - $ctime . "s for dumping database\n";
 
 	// store the dump for future reference
-	exec("mv -n $tmpdump {$this->testdir}{$this->realmd5}");
+	do_exec("mv -n $tmpdump {$this->testdir}{$this->realmd5}");
 
 	if (strcmp($this->checkmd5, $this->realmd5) == 0) return 1;
 
@@ -137,8 +137,9 @@ EOD
 	if (($this->statement = fgets($this->rhandle)) === false) {
 	    return -1;
 	}	
-	$this->db->Execute($this->statement);
-	$this->db->free_next_results();
+	global $debug;
+	if (!$debug) $this->db->Execute($this->statement);
+	if (!$debug) $this->db->free_next_results();
 	return $this->one_hash_ok();
     }
 

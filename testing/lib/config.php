@@ -47,6 +47,7 @@ function do_exec($arg) {
     global $debug;
     if ($debug)
 	echo "simulating " . $arg . "\n";
-    else exec($arg);
+    else  
+	return exec($arg);
 }
 ?>

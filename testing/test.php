@@ -88,14 +88,14 @@ EOD
 case 'dump':
     require_once 'lib/dump_manager.php';
     $dump_from_time = (sizeof($argv) >= 3) 
-	? date('Y-m-d-H:i:s', strtotime($argv[2]))
-	: date('Y-m-d-H:i:s', strtotime('-1 months'));
+	? date('Y-m-d@H:i', strtotime($argv[2]))
+	: date('Y-m-d@H:i', strtotime('-1 months'));
     $dump_to_time = (sizeof($argv) >= 4)
-	? date('Y-m-d-H:i:s', strtotime($argv[3]))
-	: date('Y-m-d-H:i:s', strtotime('-1 day'));
+	? date('Y-m-d@H:i', strtotime($argv[3]))
+	: date('Y-m-d@H:i', strtotime('-1 day'));
     $log_to_time = (sizeof($argv) >= 5)
-	? date('Y-m-d-H:i:s', strtotime($argv[4]))
-	: date('Y-m-d-H:i:s', strtotime('now'));
+	? date('Y-m-d@H:i', strtotime($argv[4]))
+	: date('Y-m-d@H:i', strtotime('now'));
 
     echo "dumping from " . date($dump_from_time) . " to " . date($dump_to_time) . "...\n"; 
     $ctime = time();
