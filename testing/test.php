@@ -25,10 +25,12 @@ Commands:
         The results of executing all these queries in turn are stored in $reference_dump_dir.
 
     options:
-        from_date: from which date on the database will be dumped. 
-                   default -1 month
-        to_date:   until which date the database will be dumped. 
-                   default now
+        dump_from_time: from which time on the database will be dumped. 
+                        default -1 month
+        dump_to_time:   until which date the database will be dumped. 
+                        default -1 day
+        log_to_time:    the logfile will be processed from dump_to_time to log_to_time.
+                        default now
 
   test [<dump-file>]: rerun the logfile on the dumped database <dump-file>, and check whether it is modified
         in the same way as when the dump was created. 
@@ -85,25 +87,26 @@ EOD
 
 case 'dump':
     require_once 'lib/dump_manager.php';
-    $from_time = (sizeof($argv) >= 3) 
-	? strtotime($argv[2])
-	: strtotime('-1 months');
-    $from_date = date("Y-m-d", $from_time);
-    $to_time = (sizeof($argv) >= 4)
-	? strtotime($argv[3])
-	: strtotime('now');
-    $to_date = date("Y-m-d", $to_time);
+    $dump_from_time = (sizeof($argv) >= 3) 
+	? date('Y-m-d-H:i:s', strtotime($argv[2]))
+	: date('Y-m-d-H:i:s', strtotime('-1 months'));
+    $dump_to_time = (sizeof($argv) >= 4)
+	? date('Y-m-d-H:i:s', strtotime($argv[3]))
+	: date('Y-m-d-H:i:s', strtotime('-1 day'));
+    $log_to_time = (sizeof($argv) >= 5)
+	? date('Y-m-d-H:i:s', strtotime($argv[4]))
+	: date('Y-m-d-H:i:s', strtotime('now'));
 
-    echo "dumping...\n"; 
+    echo "dumping from " . date($dump_from_time) . " to " . date($dump_to_time) . "...\n"; 
     $ctime = time();
-    $dbdm = new DBDumpManager($dump_db_name, $from_date, $to_date, $table_key_pairs);
+    $dbdm = new DBDumpManager($dump_db_name, $dump_from_time, $dump_to_time, $table_key_pairs);
     $dumpfile = $dbdm->create_initial_dump();
     echo time()-$ctime . "s for creating initial dump\n";
 
     require_once 'lib/log_manager.php';
     echo "creating initial log of modifying queries...\n"; 
     $ctime = time();
-    $logm = new LogManager($dump_db_name, $dumpfile, $from_date, $to_date);
+    $logm = new LogManager($dump_db_name, $dumpfile, $dump_to_time, $log_to_time);
     $logm->create_bare_log_of_modifying_queries();
     echo time()-$ctime . "s for creating bare log\n";
 

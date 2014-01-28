@@ -40,4 +40,13 @@ $init_db_script = '/tmp/init_test.sql';
 // neutralize timestamps
 $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";
 
+
+$debug=false;
+
+function do_exec($arg) {
+    global $debug;
+    if ($debug)
+	echo "simulating " . $arg . "\n";
+    else exec($arg);
+}
 ?>

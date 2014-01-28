@@ -6,8 +6,8 @@ class LogManager {
 
     private $dump_db_name;
     private $original_dumpfile;
-    private $from_date;
-    private $to_date;
+    private $log_from_time;
+    private $log_to_time;
     private $bare_log_name;
     private $annotated_log_name;
     private $exclusion_patterns;
@@ -16,16 +16,16 @@ class LogManager {
     private $query = 'init';
     private $prev_md5sum;
 
-    public function __construct($dump_db_name, $original_dumpfile, $from_date, $to_date) {
+    public function __construct($dump_db_name, $original_dumpfile, $log_from_time, $log_to_time) {
 
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;	
 	$this->original_dumpfile = $dumppath . $original_dumpfile;
-	$this->from_date = $from_date;
-	$this->to_date = $to_date;
-	$this->bare_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.bare_log";
-	$this->annotated_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
+	$this->log_from_time = $log_from_time;
+	$this->log_to_time = $log_to_time;
+	$this->bare_log_name = "$logpath$dump_db_name.$log_from_time-to-$log_to_time.bare_log";
+	$this->annotated_log_name = "$logpath$dump_db_name.$log_from_time-to-$log_to_time.annotated_log";
 	$this->exclusion_patterns = $utilpath . 'non_modifying_query_patterns.for_grep';
 	$this->db = DBWrap::get_instance($dump_db_name, 
 					 false,
@@ -78,9 +78,9 @@ class LogManager {
     private function process_line($line) {
 	$pos_first_blank  = strpos($line, ' ');
 	$pos_second_blank = strpos($line, ' ', $pos_first_blank + 1);
-	$logdate = strtotime(substr($line, 0, $pos_first_blank));
-	if ($logdate >= $this->start_date && 
-	    $logtime <= $this->end_date) {
+	$logtime = strtotime(substr($line, 0, $pos_first_blank));
+	if ($logtime >= $this->log_from_time && 
+	    $logtime <= $this->log_to_time) {
 	    $this->query = substr($line, $pos_second_blank+1);
 	    $this->db->Execute($this->query);
 	    $this->db->free_next_results();

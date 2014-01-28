@@ -9,15 +9,15 @@ require_once 'testing/lib/config.php';
 class DBDumpManager {
     private $dump_db_name, $dump_db;
     private $db_name, $db;
-    private $from_date;
-    private $to_date;
+    private $dump_from_time;
+    private $dump_to_time;
     private $process_queue = array(); 
     private $fill_queries = array();
     private $seen_tables = array();
     private $query_dump;
     private $level = -1;
 
-    public function __construct($dump_db_name, $from_date, $to_date, $table_key_pairs) {
+    public function __construct($dump_db_name, $dump_from_time, $dump_to_time, $table_key_pairs) {
 	global $query_dump_dir;
 	
 	$this->dump_db_name = $dump_db_name;
@@ -29,9 +29,9 @@ class DBDumpManager {
 					      'dumper');
 	$this->db_name = configuration_vars::get_instance()->db_name;
 	$this->db = DBWrap::get_instance('', false);
-	$this->from_date = $from_date;
-	$this->to_date = $to_date;
-	$this->query_dump = "$query_dump_dir$dump_db_name.$from_date-to-$to_date.query_log";
+	$this->dump_from_time = $dump_from_time;
+	$this->dump_to_time = $dump_to_time;
+	$this->query_dump = "$query_dump_dir$dump_db_name.$dump_from_time-to-$dump_to_time.query_log";
 
 	/*
 	  to model the query
@@ -102,7 +102,7 @@ source sql/setup/aixada_queries_all.sql;
 EOD
 		);
 	fclose($handle);
-	exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_dump.sql");
+	do_exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_dump.sql");
 	echo time()-$ctime . "s for setting up the test database\n";
     }
 
@@ -119,7 +119,7 @@ EOD
 		    . "{$this->db_name}.{$q[$i][0]}.{$q[$i][2]}\n";
 	    }
 	    $query .= "where {$this->db_name}.{$q[0][0]}.{$q[0][1]} "
-		. "between '{$this->from_date}' and '{$this->to_date}'\n";
+		. "between '{$this->dump_from_time}' and '{$this->dump_to_time}'\n";
             $this->fill_queries[] = $query;
 	}
     }
@@ -131,19 +131,20 @@ EOD
 	    exit();
 	}
 
-	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
+	global $debug;
+	if (!$debug) $this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->fill_queries as $query) {
 	    fwrite($qdhandle, $query . "\n");
-	    $this->dump_db->Execute($query);
+	    if (!$debug) $this->dump_db->Execute($query);
 	}
-	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
+	if (!$debug) $this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
 	fclose($qdhandle);
 
 	global $dumppath;
-	$dumpname = "$dumppath{$this->dump_db_name}.{$this->from_date}-to-{$this->to_date}.sql";
+	$dumpname = "$dumppath{$this->dump_db_name}.{$this->dump_from_time}-to-{$this->dump_to_time}.sql";
 	echo "generating $dumpname ...\n"; 
 	$ctime = time();
-	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} > $dumpname");
+	do_exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} > $dumpname");
 	echo time()-$ctime . "s for generating the dump\n";
 	return $dumpname;
     }
