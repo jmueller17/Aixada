@@ -6,7 +6,7 @@ require_once 'php/inc/database.php';
 require_once 'php/utilities/general.php';
 require_once 'php/utilities/tables.php';
 
-$db = DBWrap::get_instance();
+$db = DBWrap::get_instance('', false);
 
 function print_response($name, $response) 
 {

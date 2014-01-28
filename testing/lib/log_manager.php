@@ -28,6 +28,7 @@ class LogManager {
 	$this->annotated_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
 	$this->exclusion_patterns = $utilpath . 'non_modifying_query_patterns.for_grep';
 	$this->db = DBWrap::get_instance($dump_db_name, 
+					 false,
 					 'mysql',
 					 'localhost',
 					 'dumper',

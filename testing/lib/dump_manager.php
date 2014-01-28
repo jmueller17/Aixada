@@ -22,12 +22,13 @@ class DBDumpManager {
 	
 	$this->dump_db_name = $dump_db_name;
 	$this->dump_db = DBWrap::get_instance($dump_db_name,
+					      false,
 					      'mysql',
 					      'localhost',
 					      'dumper',
 					      'dumper');
 	$this->db_name = configuration_vars::get_instance()->db_name;
-	$this->db = DBWrap::get_instance('');
+	$this->db = DBWrap::get_instance('', false);
 	$this->from_date = $from_date;
 	$this->to_date = $to_date;
 	$this->query_dump = "$query_dump_dir$dump_db_name.$from_date-to-$to_date.query_log";

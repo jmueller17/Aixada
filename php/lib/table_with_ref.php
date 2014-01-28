@@ -147,7 +147,7 @@ class foreign_key_manager {
    */
   private function _get_col_and_key_descriptions ()
   {
-      $db = DBWrap::get_instance($this->_db_name);
+      $db = DBWrap::get_instance($this->_db_name, false);
       $rs = $db->Execute('SHOW CREATE TABLE :1', $this->_table_name);
       if (!$rs) throw new InternalException("Could not retrieve table description for " . $this->_table_name);
       $row = $rs->fetch_assoc();
@@ -187,7 +187,7 @@ class foreign_key_manager {
   {
     $tmp = explode('`', $key);
     $this->_primary_key = $tmp[1]; // the first element is the primary key
-    $db = DBWrap::get_instance($this->_db_name);
+    $db = DBWrap::get_instance($this->_db_name, false);
     $result = $db->Execute('SELECT * FROM :1 LIMIT 1', $this->_table_name);
     if (!$result) throw new InternalException('Could not read table ' . $this->_table_name);
     $flags = $result->fetch_field_direct(0)->flags;
@@ -280,7 +280,7 @@ class foreign_key_manager {
   private function _get_foreign_description_field($fTable)
   {
     $strSQL = 'SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name=:1q AND column_name=:2q';
-    $db = DBWrap::get_instance($this->_db_name);
+    $db = DBWrap::get_instance($this->_db_name, false);
     $test_col_names = array('name', 'description', 'unit', 'login');
     foreach ($test_col_names as $col_name) {
       $rs = $db->Execute($strSQL, $fTable, $col_name);
@@ -306,7 +306,7 @@ class foreign_key_manager {
    */
   private function _fill_key_caches($key, $fTable, $fIndex, $fDField)
   {
-    $db = DBWrap::get_instance($this->_db_name);
+      $db = DBWrap::get_instance($this->_db_name, false);
     $rs = $db->Select(array($fDField, $fIndex), $fTable, '', '');
     if (!$rs) throw new Exception("Could not read foreign key descriptions from table $fTable using $strSQL . Error: " . mysqli_error());
     //    if (!mysqli_num_rows($rs)) throw new Exception('No foreign keys found in table ' . $fTable);

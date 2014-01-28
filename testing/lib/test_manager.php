@@ -46,6 +46,7 @@ class TestManager {
 	// prepare resources
 	if ($this->must_smash_database) $this->smash_and_restore_database();
 	$this->db = DBWrap::get_instance($this->dump_db_name, 
+					 false,
 					 'mysql',
 					 'localhost',
 					 'dumper',

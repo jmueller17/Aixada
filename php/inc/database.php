@@ -36,7 +36,7 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
 
 class DBWrap {
   public $debug = true;
-  public $log = true;
+  public $do_logging = true;
 
   private $type;
   private $host;
@@ -51,12 +51,14 @@ class DBWrap {
   private $dontlog = array('SELECT COLUMN_NAME FROM', 'SHOW CREATE TABLE');
 
   private function __construct($db_name = '',
+			       $do_logging = '',
 			       $type = '',
 			       $host = '',
 			       $user = '',
 			       $password = '') 
   {
     $this->db_name = $db_name;
+    $this->do_logging = $do_logging;
     $this->type = $type;
     $this->host = $host;
     $this->user = $user;
@@ -67,9 +69,11 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
-    $logfilename = __ROOT__ . 'local_config' . DS . $db_name . ".log";
-    if (!$this->logfilehandle = fopen($logfilename, 'ab')) {
-	throw new InternalException("\n\n-------\nCould not open  " . $logfilename . " for appending.\nPlease make it world-writeable using\nsudo chmod a+w $logfilename\n-------\n\n");
+    if ($this->do_logging) {
+	$logfilename = __ROOT__ . 'local_config' . DS . $db_name . ".log";
+	if (!$this->logfilehandle = fopen($logfilename, 'ab')) {
+	    throw new InternalException("\n\n-------\nCould not open  " . $logfilename . " for appending.\nPlease make it world-writeable using\nsudo chmod a+w $logfilename\n-------\n\n");
+	}
     }
   }
 
@@ -78,6 +82,7 @@ class DBWrap {
    * function to instantiate it, and not the constructor.
    */
   public static function get_instance($db_name = '',
+				      $do_logging = true,
 				      $type = '',
 				      $host = '',
 				      $user = '',
@@ -96,7 +101,7 @@ class DBWrap {
 	  $user = $cv->db_user;
 	  $password = $cv->db_password;
       }
-      self::$instance[$key] = new DBWrap($db_name, $type, $host, $user, $password);
+      self::$instance[$key] = new DBWrap($db_name, $do_logging, $type, $host, $user, $password);
       return self::$instance[$key];
   }
 
@@ -154,7 +159,7 @@ class DBWrap {
    */
   private function do_Execute($safe_sql_string, $multi = false)
   {
-    if ($this->log) {
+    if ($this->do_logging) {
 	$this->write_to_log($safe_sql_string);
     }
     $rs = ($multi ? 

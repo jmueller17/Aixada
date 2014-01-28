@@ -47,6 +47,7 @@ if ($argv[1] != 'init') {
     require_once 'lib/dump_manager.php';
     try {
 	$dump_db = DBWrap::get_instance($dump_db_name,
+					false,
 					'mysql',
 					'localhost',
 					'dumper',
