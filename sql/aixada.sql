@@ -201,7 +201,7 @@ create table aixada_iva_type (
   foreign key (iva_percent_id)			references aixada_iva_type(id),
   foreign key (unit_measure_order_id) 	references aixada_unit_measure(id),
   foreign key (unit_measure_shop_id) 	references aixada_unit_measure(id),
-  		  key (delta_stock),
+          key (delta_stock),
   unique  key (custom_product_ref, provider_id)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
@@ -217,7 +217,7 @@ create table aixada_product_orderable_for_date (
   date_for_order        date    	not null,
   closing_date 			datetime 	default null,
   primary 	key (id),
-  			key (date_for_order),
+                key (date_for_order),
   foreign 	key (product_id) references aixada_product(id),
   unique 	key (product_id, date_for_order)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;       

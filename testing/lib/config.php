@@ -15,8 +15,10 @@
 $table_key_pairs = array(
 			 ['aixada_cart', 'date_for_shop'],
 			 ['aixada_order_item', 'date_for_order'],
+			 ['aixada_shop_item', 'date_for_shop'],
 			 ['aixada_account', 'ts'],
 			 ['aixada_incident', 'ts'],
+			 ['aixada_stock_movement', 'ts'],
 			 );
 /*
 =================================================================================
