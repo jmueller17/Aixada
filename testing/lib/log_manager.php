@@ -10,7 +10,6 @@ class LogManager {
     private $to_date;
     private $bare_log_name;
     private $annotated_log_name;
-    private $reference_dump_dir;
     private $exclusion_patterns;
     private $db;
     private $whandle;
@@ -27,7 +26,6 @@ class LogManager {
 	$this->to_date = $to_date;
 	$this->bare_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.bare_log";
 	$this->annotated_log_name = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
-	$this->reference_dump_dir = $testrunpath . 'reference_dumps/';
 	$this->exclusion_patterns = $utilpath . 'non_modifying_query_patterns.for_grep';
 	$this->db = DBWrap::get_instance($dump_db_name, 
 					 'mysql',
@@ -69,8 +67,9 @@ class LogManager {
     }
 
     private function dump_hash_and_store() {
+	global $reference_dump_dir;
 	$this->dump();
-	$this->store($this->hash(), $this->reference_dump_dir);
+	$this->store($this->hash(), $reference_dump_dir);
     }
 
     private function process_line($line) {

@@ -34,6 +34,8 @@ $db_log = 'local_config/aixada.log';
 $dump_db_name = 'aixada_dump';
 $db_name = 'aixada';
 $query_dump_dir = 'testing/dumps+logs/';
+$reference_dump_dir = $query_dump_dir . 'reference_dumps/';
+$init_db_script = '/tmp/init_test.sql';
 
 // neutralize timestamps
 $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";

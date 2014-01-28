@@ -11,22 +11,29 @@ Commands:
   init: create a mysql user for dumping and querying the data. 
         You need to enter a mysql username and password with sufficient privileges for doing this.
 
-  dump: create the database aixada_dump from entries in the database aixada, and execute the logfile local_config/aixada.log on it.
-        To control which tables are written to aixada_dump, please edit the variable \$table_key_pairs in testing/lib/config.php.
-        The database aixada_dump is then dumped to testing/dumps/initial_dump.sql.
-        This logfile aixada.log is actually created in the process of running this script, so there's no problem if 
-        it doesn't exist initially.
-        The logfile is preprocessed to strip all non-modifying commands from it, and the result of this is stored 
-        in the directory testing/logs/.
-        The results of executing all surviving queries in turn are stored in testing/runs/reference_dumps.
+  dump: for a specified time interval, create a dump of the database and the operations on it 
+        that fall inside the interval. The default interval is one month into the past.
+
+        More precisely, the tables in the database '$db_name' specified in the variable \$table_key_pairs in 
+        the directory {$utilpath}config.php are written to the database '$dump_db_name', along with all 
+        entries from other tables that recursively depend on them via foreign key constraints. The database
+        '$dump_db_name' is then dumped to the directory $dumppath.
+
+        Next, those commands from the logfile $db_log that modify the database are written to 
+	$dumppath, along with the hash value of the database dump after each command. 
+        Timestamps are neutralized.
+        The results of executing all these queries in turn are stored in $reference_dump_dir.
+
     options:
         from_date: from which date on the database will be dumped. 
                    default -1 month
         to_date:   until which date the database will be dumped. 
                    default now
 
-  test <dump-file>: rerun the logfile on the dumped database <dump-file>, and check whether it is modified
+  test [<dump-file>]: rerun the logfile on the dumped database <dump-file>, and check whether it is modified
         in the same way as when the dump was created. 
+        The default dump is the latest one found in $dumppath. If a dump file is explicitly given, 
+        the database '$dump_db_name' is smashed and restored from that dump file.
         The results of each run are stored in testing/runs/ under the current time.
 
 EOD;
@@ -101,13 +108,18 @@ case 'dump':
     break;
 
 case 'test':
-    if (sizeof($argv) < 3) {
-	echo "Usage: {$argv[0]} test <dump-file>\n";
-	exit();
+    $dumpfile = '';
+    if (sizeof($argv) >= 3) {
+	global $dumppath;
+	if (!file_exists($argv[2])) {
+	    echo "Usage: {$argv[0]} test <{$dumppath}dump-file.sql>\n";
+	    exit();
+	}
+	$dumpfile = $argv[2];
     }
     require_once 'lib/dump_manager.php';
     require_once 'lib/test_manager.php';
-    $testm = new TestManager($dump_db_name, $argv[2]);
+    $testm = new TestManager($dump_db_name, $dumpfile);
     $testm->test();
 
     break;
