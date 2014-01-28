@@ -21,7 +21,7 @@ Commands:
 
         Next, those commands from the logfile $db_log that modify the database are written to 
 	$dumppath, along with the hash value of the database dump after each command. 
-        Timestamps are neutralized.
+        Timestamps are neutralized to make the hash value meaningful.
         The results of executing all these queries in turn are stored in $reference_dump_dir.
 
     options:
