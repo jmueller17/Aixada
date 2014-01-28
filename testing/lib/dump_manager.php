@@ -34,15 +34,22 @@ class DBDumpManager {
 	/*
 	  to model the query
 
-	  select table3.* from table1
-	  left join table2 on table1key1 = table2fkey1
-	  left join table3 on table2key2 = table3fkey1
+	  select table3.* 
+	  from table1
+	  left join table2 on table1.key1 = table2.fkey1
+	  left join table3 on table2.key2 = table3.fkey1
 	  where table1.date_key in range;
 
-	  initialize process_queue with entries of the form
+	  we initialize process_queue with entries of the form
 
-	  [ [table1, date_key], [table2, table1key1, table2fkey1], [table3, table2key2, table3fkey1] ], ... ]
+	  [ [ [table1, date_key], 
+	      [table2, table1key1, table2fkey1], 
+	      [table3, table2key2, table3fkey1] 
+	    ], 
+	    ... 
+	  ]
 	*/
+
 	foreach ($table_key_pairs as $tkpair) {
 	    list ($table, $date_key) = $tkpair;
 	    $this->seen_tables[] = $table;
@@ -50,21 +57,23 @@ class DBDumpManager {
 	    $locally_seen_tables = array($table);
 	    $this->_dfs($qentry, $table, $locally_seen_tables);
 	}
+
 	$this->_init_dump();
 	$this->_fill_queries();
+
     }
 
+    // do a depth-first search on the dependency graph induced by the foreign key constraints
     private function _dfs($qentry, $table, &$locally_seen_tables) {
 	$fkm = new foreign_key_manager($table);
 	$local_qentry = $qentry;
 	foreach ($fkm->foreign_key_info() as $key => $info) {
 	    if (sizeof($info)==0) continue; 
-	    $ft = $info['fTable'];
-	    $fk = $info['fIndex']; 
+	    $ft = $info['fTable']; $fk = $info['fIndex']; 
 	    if (in_array($ft, $locally_seen_tables)) continue;
 	    $locally_seen_tables[] = $ft;
  	    $save_qentry = $local_qentry;
-	    $local_qentry[] = [ $ft, $key, $fk ];
+	    $local_qentry[] = [ $ft, $key, $fk ]; // [table2, table1key1, table2fkey1]
 	    $this->_dfs($local_qentry, $ft, $locally_seen_tables);
 	    $local_qentry = $save_qentry;
 	}
@@ -100,7 +109,8 @@ EOD
 		    . "on {$this->db_name}.{$q[$i-1][0]}.{$q[$i][1]} = "
 		    . "{$this->db_name}.{$q[$i][0]}.{$q[$i][2]}\n";
 	    }
-	    $query .= "where {$this->db_name}.{$q[0][0]}.{$q[0][1]} between '{$this->from_date}' and '{$this->to_date}'\n";
+	    $query .= "where {$this->db_name}.{$q[0][0]}.{$q[0][1]} "
+		. "between '{$this->from_date}' and '{$this->to_date}'\n";
             $this->fill_queries[] = $query;
 	}
     }
