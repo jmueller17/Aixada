@@ -95,16 +95,22 @@ case 'dump':
     $to_date = date("Y-m-d", $to_time);
 
     echo "dumping...\n"; 
+    $ctime = time();
     $dbdm = new DBDumpManager($dump_db_name, $from_date, $to_date, $table_key_pairs);
     $dumpfile = $dbdm->create_initial_dump();
+    echo time()-$ctime . "s for creating initial dump\n";
 
     require_once 'lib/log_manager.php';
     echo "creating initial log of modifying queries...\n"; 
+    $ctime = time();
     $logm = new LogManager($dump_db_name, $dumpfile, $from_date, $to_date);
     $logm->create_bare_log_of_modifying_queries();
+    echo time()-$ctime . "s for creating bare log\n";
 
     echo "creating annotated log...\n"; 
+    $ctime = time();
     $logm->create_annotated_log();
+    echo time()-$ctime . "s for creating annotated log\n";
 
     break;
 
@@ -120,8 +126,10 @@ case 'test':
     }
     require_once 'lib/dump_manager.php';
     require_once 'lib/test_manager.php';
+    $ctime = time();
     $testm = new TestManager($dump_db_name, $dumpfile);
     $testm->test();
+    echo time()-$ctime . "s for testing.\n";
 
     break;
 
