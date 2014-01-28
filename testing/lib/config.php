@@ -15,6 +15,8 @@
 $table_key_pairs = array(
 			 ['aixada_cart', 'date_for_shop'],
 			 ['aixada_order_item', 'date_for_order'],
+			 ['aixada_account', 'ts'],
+			 ['aixada_incident', 'ts'],
 			 );
 /*
 =================================================================================
@@ -29,6 +31,7 @@ $testrunpath = 'testing/runs/';
 $db_log = 'local_config/aixada.log';
 $dump_db_name = 'aixada_dump';
 $db_name = 'aixada';
+$query_dump_dir = 'testing/dumps+logs/';
 
 // neutralize timestamps
 $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/timestamp/g' ";

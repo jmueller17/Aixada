@@ -11,9 +11,14 @@ class DBDumpManager {
     private $db_name, $db;
     private $from_date;
     private $to_date;
-    private $table_key_pairs;
+    private $process_queue = array(); 
+    private $fill_queries = array();
+    private $seen_tables = array();
+    private $query_dump;
 
     public function __construct($dump_db_name, $from_date, $to_date, $table_key_pairs) {
+	global $query_dump_dir;
+	
 	$this->dump_db_name = $dump_db_name;
 	$this->dump_db = DBWrap::get_instance($dump_db_name,
 					      'mysql',
@@ -24,7 +29,50 @@ class DBDumpManager {
 	$this->db = DBWrap::get_instance('');
 	$this->from_date = $from_date;
 	$this->to_date = $to_date;
-	$this->table_key_pairs = $table_key_pairs;
+	$this->query_dump = "$query_dump_dir$dump_db_name.$from_date-to-$to_date.query_log";
+
+	/*
+	  to model the query
+
+	  select table3.* from table1
+	  left join table2 on table1key1 = table2fkey1
+	  left join table3 on table2key2 = table3fkey1
+	  where table1.date_key in range;
+
+	  initialize process_queue with entries of the form
+
+	  [ [table1, date_key], [table2, table1key1, table2fkey1], [table3, table2key2, table3fkey1] ], ... ]
+	*/
+	foreach ($table_key_pairs as $tkpair) {
+	    list ($table, $date_key) = $tkpair;
+	    $this->seen_tables[] = $table;
+	    $qentry = [ [$table, $date_key] ];
+	    $locally_seen_tables = array($table);
+	    $this->_dfs($qentry, $table, $locally_seen_tables);
+	}
+	$this->_init_dump();
+	$this->_fill_queries();
+    }
+
+    private function _dfs($qentry, $table, &$locally_seen_tables) {
+	//	$this->depth++;
+	$fkm = new foreign_key_manager($table);
+	$local_qentry = $qentry;
+	foreach ($fkm->foreign_key_info() as $key => $info) {
+	    if (sizeof($info)==0) continue; 
+	    $ft = $info['fTable'];
+	    $fk = $info['fIndex']; 
+	    if (in_array($ft, $locally_seen_tables)) continue;
+	    $locally_seen_tables[] = $ft;
+	    //for ($i=0; $i < $this->depth; $i++) echo '.';
+	    //	    echo "[ $ft, $key, $fk ]\n";
+	    $save_qentry = $local_qentry;
+	    $local_qentry[] = [ $ft, $key, $fk ];
+	    $this->_dfs($local_qentry, $ft, $locally_seen_tables);
+	    $local_qentry = $save_qentry;
+	}
+	//	$this->depth--;
+	$this->process_queue[] = $local_qentry;
     }
 
     private function _init_dump() {
@@ -44,44 +92,37 @@ EOD
 	exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_dump.sql");
     }
 
-    private function _fill_queries()
-    {
-	$fill_queries = array();
-	foreach ($this->table_key_pairs as $tkpair) {
-	    list ($table, $date_key) = $tkpair;
-	     echo "generating queries for $table...\n"; 
-	    $fkm = new foreign_key_manager($table);
-	    foreach ($fkm->foreign_key_info() as $key => $info) {
-		if (sizeof($info)==0) { continue; }
-		$ft = $info['fTable'];
-		$fk = $info['fIndex']; 
-		$query = <<<EOD
-insert ignore into {$this->dump_db_name}.{$ft}
-select distinct {$this->db_name}.{$ft}.* 
-from {$this->db_name}.{$table}
-left join {$this->db_name}.{$ft}
-on {$this->db_name}.{$table}.{$key}={$this->db_name}.{$ft}.{$fk}
-where {$this->db_name}.{$table}.{$date_key} between '{$this->from_date}' and '{$this->to_date}'
-order by {$this->db_name}.{$ft}.{$fk};
-EOD
-    ;
-		$fill_queries[$ft][] = $query;
+    private function _fill_queries() {
+	foreach ($this->process_queue as $q) {
+	    $e = end($q); $t = $e[0];
+	    $query = "insert ignore into {$this->dump_db_name}.{$t}\n"
+		. "select distinct {$this->db_name}.{$t}.*\n";
+	    reset($q);
+	    $query .= "from {$this->db_name}.{$q[0][0]}\n";
+            for ($i=1; $i < sizeof($q); $i++) {
+		$query .= "left join {$this->db_name}.{$q[$i][0]} "
+		    . "on {$this->db_name}.{$q[$i-1][0]}.{$q[$i][1]} = "
+		    . "{$this->db_name}.{$q[$i][0]}.{$q[$i][2]}\n";
 	    }
-	}    
-	return $fill_queries;
+	    $query .= "where {$this->db_name}.{$q[0][0]}.{$q[0][1]} between '{$this->from_date}' and '{$this->to_date}'\n";
+            $this->fill_queries[] = $query;
+	}
     }
 
-
     public function create_initial_dump() {
-	$this->_init_dump();
+	$qdhandle = @fopen($this->query_dump, 'w');
+	if (!$qdhandle) {
+	    echo "Could not open {$this->query_dump} for writing\n";
+	    exit();
+	}
+
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
-	foreach($this->_fill_queries() as $table => $queries) {
-	    echo "Executing queries for $table...\n"; 
-	    foreach ($queries as $query) {
-		$this->dump_db->Execute($query);
-	    }
+	foreach($this->fill_queries as $query) {
+	    fwrite($qdhandle, $query . "\n");
+	    $this->dump_db->Execute($query);
 	}
 	$this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
+	fclose($qdhandle);
 
 	global $dumppath;
 	$dumpname = "$dumppath{$this->dump_db_name}.{$this->from_date}-to-{$this->to_date}.sql";
