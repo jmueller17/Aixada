@@ -572,7 +572,7 @@ begin
      
     
     /** show active products only or include inactive products as well? **/
-    if (include_inactive = 1) then 
+    if (include_inactive = 0) then 
        set wherec = "and p.active=1 and pv.active=1";
     end if;	
    

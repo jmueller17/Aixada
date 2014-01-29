@@ -895,7 +895,9 @@ $Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un ad
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
 $Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
-$Text['msg_activate_success'] = "The product has been activated successfuly."; 
-$Text['msg_deactivate_success'] = "The product has been deactivated successfuly."; 
+$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
+$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
+$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
+$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
 $Text['no_stock'] = "Out of stock!!";
 ?>

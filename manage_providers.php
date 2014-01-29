@@ -264,18 +264,13 @@
 						.data('export', 'provider')
 						.dialog("open");
 				}
-
-						
-
 			}); // end function
 				
 
 		//delete provider
 		$('.btn_del_provider')
 			.live('click', function(e){
-
 				var providerId = $(this).parents('tr').attr('providerId');
-					
 				$.showMsg({
 					msg: "<?php echo $Text['msg_confirm_del_provider']; ?>",
 					buttons: {
@@ -297,24 +292,39 @@
 										$.showMsg({
 												msg: "<?=$Text['msg_err_del_provider']; ?>" + XMLHttpRequest.responseText,
 												type: 'error'});
-
 									}
-								   	
-	
 							   	}
-							}); //end ajax
-													
-							
+							}); //end ajax	
 						},
 						"<?=$Text['btn_cancel'];?>" : function(){
 							$( this ).dialog( "close" );
 						}
 					},
 					type: 'confirm'});
-
 				e.stopPropagation();
-				
 			})
+
+
+
+		/**
+		 * de-/activate provider
+		 */
+		$('input[name=active_dummy_provider]').live("click", function(e){
+
+			//if false, means deactivate product
+			var status = $(this).is(":checked");
+			var providerId = $(this).parents("tr").attr("providerId");
+
+			//activate provider
+			if (status){
+				setActiveFlagProvider(providerId, status);
+
+			//decativate provider
+			} else {
+				setActiveFlagProvider(providerId, status);
+			}
+		})
+
 			
 			
 		$('#toggleProviderBulkActions')
@@ -412,7 +422,45 @@
 			
 		}
 
+
+		/**
+		 * 	Deactivate provider 
+		 */
+		function setActiveFlagProvider(providerId, status){
+			
+			$('.loadSpinner').show();
+			var oper = (status==1)? "activateProvider":"deactivateProvider";
+			var successMsg = (status==1)? "<?php echo $Text['msg_activate_prov_ok']; ?>":"<?php echo $Text['msg_deactivate_prov_ok'] ?>";
+
+			$.ajax({
+			   	url: "php/ctrl/Providers.php?oper="+oper+"&provider_id="+providerId,
+			   	type: 'POST',
+			   	success: function(msg){
+					$('input[name=active_dummy_provider]').attr('checked', status);
+					$.showMsg({
+						msg: successMsg,
+						type: 'success',
+						autoclose:1500});
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
+					$('#tbl_providers tbody').xml2html("reload"); 
+				}				   	
+			}); //end ajax
+		}
+
 		
+
+
+
 		
 		/*****************************************
 		 *
@@ -691,11 +739,11 @@
 
 		
 		/**
-		 * de-/activate product trigger 
-		 * the active_dummy field is NOT passed when the form is edited; the de-/activation works 
+		 * de-/activate product
+		 * the active_dummy_product field is NOT passed when the form is edited; the de-/activation works 
 		 * in parallel because it involves many dependencie
 		 */
-		$('input[name=active_dummy]').live("click", function(e){
+		$('input[name=active_dummy_product]').live("click", function(e){
 
 			//if false, means deactivate product
 			var status = $(this).is(":checked");
@@ -745,11 +793,8 @@
 					}
 				});
 
-
-
-
 			}
-		})
+		}); //deactivate product trigger
 
 		
 			
@@ -842,13 +887,13 @@
 			$('.loadSpinner').show();
 			var oper = (status==1)? "activateProduct":"deactivateProduct";
 
-			var successMsg = (status==1)? "<?php echo $Text['msg_activate_success']; ?>":"<?php echo $Text['msg_deactivate_success']; ?>";
+			var successMsg = (status==1)? "<?php echo $Text['msg_activate_prod_ok']; ?>":"<?php echo $Text['msg_deactivate_prod_ok']; ?>";
 
 			$.ajax({
 			   	url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+pid,
 			   	type: 'POST',
 			   	success: function(msg){
-					$('input[name=active_dummy]').attr('checked', status);
+					$('input[name=active_dummy_product]').attr('checked', status);
 					$.showMsg({
 						msg: successMsg,
 						type: 'success',
@@ -1604,7 +1649,7 @@
 									<td><label for="product_id"><?php echo $Text['id']; ?></label></td>
 									<td><p class="textAlignLeft ui-corner-all setProductId">{id}</p></td>
 									<td><label for="active"><?php echo $Text['active'];?></label></td>
-									<td><input type="checkbox" name="active_dummy" value="{active}" class="floatLeft" />
+									<td><input type="checkbox" name="active_dummy_product" value="{active}" class="floatLeft" />
 										<input type="hidden" name="id" value="{id}" />
 									</td>							
 							  </tr>
@@ -1800,7 +1845,7 @@
 							<td><label for="provider_id"><?php echo $Text['id']; ?></label></td>
 							<td><p class="textAlignLeft ui-corner-all setProviderId">{id}</p></td>
 							<td><label for="active"><?php echo $Text['active'];?></label></td>
-							<td><input type="checkbox" name="active" value="{active}" class="floatLeft" />
+							<td><input type="checkbox" name="active_dummy_provider" value="{active}" class="floatLeft" />
 								<input type="hidden" name="id" value="{id}" />
 							</td>							
 						</tr>
