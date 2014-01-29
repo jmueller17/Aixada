@@ -6,10 +6,10 @@ Usage:
 Commands: 
 
   init: create a mysql user for dumping and querying the data. 
-        You need to enter a mysql username and password with sufficient privileges for doing this.
+  ====  You need to enter a mysql username and password with sufficient privileges for doing this.
 
   dump: for a specified time interval, create a dump of the database and the operations on it 
-        that fall inside the interval. The default interval is one month into the past.
+  ====  that fall inside the interval. The default interval is one month into the past.
 
         More precisely, the tables in the database '$db_name' specified in the variable \$table_key_pairs in 
         the directory {$utilpath}config.php are written to the database '$dump_db_name', along with all 
@@ -22,8 +22,8 @@ Commands:
         dump_to_time:   until which date the database will be dumped. 
                         default -1 day
 
-  log [<log_to_time> [<dumpfile>] ]: apply each query in $db_log in turn and hash each result.
-
+  log [<dump-file> <log_to_time>]: apply each query in $db_log up to <log_to_time> in turn to hte data in
+  ===   <dump-file> and hash each result.
         Those commands from the logfile $db_log that modify the database are written to 
 	$dumppath, along with the hash value of the database dump after each command. 
         Timestamps are neutralized to make the hash value meaningful.
@@ -32,13 +32,11 @@ Commands:
     options:
         log_to_time:  the logfile will be processed from dump_to_time to log_to_time.
                       default now
-        dumpfile:     the database dump to be used; default the newest dump
-
 
   test [<dump-file>]: rerun the logfile on the dumped database <dump-file>, and check whether it is modified
-        in the same way as when the dump was created. 
+  ====  in the same way as when the dump was created. 
         The default dump is the latest one found in $dumppath. 
-        The database '$dump_db_name' is smashed and restored from that dump file.
+        The database '$dump_db_name' is dropped and restored from that dump file.
         The results of each run are stored in testing/runs/ under the current time.
 
 EOD;
