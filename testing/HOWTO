@@ -1,0 +1,68 @@
+=======================================================================
+   1. Database Initialization
+=======================================================================
+
+First, from the root directory of the application, run 
+
+  php testing/test init
+
+This will ask you for a root-privileged mysql user and the
+corresponding password, and set up a user to work with the test
+database.
+
+=======================================================================
+   2. Database Dump
+=======================================================================
+
+Then say
+
+  php testing/test dump [--from-time='...'] [--to-time='...']
+
+to create both a new mysql database aixada_dump and the corresponding
+dump in testing/dumps+logs/reference_dumps. Default values are
+--from-time='-1 months' and --to-time='-1 days'; any time format accepted
+by strtodate is fine.
+
+=======================================================================
+   3. Choose time interval and apply log file to database
+=======================================================================
+
+Next, say
+
+  php testing/test log [dump_file.sql | --from-time='...'] [--to-time='...']
+
+to process the entries in the logfile local_config/aixada.log in a
+certain time interval.  
+
+  - If no optional arguments are given, the interval is between the
+    --to-time for the latest dump file and 'now';
+
+  - if a dump file is given, the interval is between the its  --to-time and 'now';
+
+  - otherwise, the latest dump file whose --to-time is the given --from-time is used.
+
+The database aixada_dump is dropped and restored from the given dump
+file. Then, each entry in the logfile is applied in turn to the
+database, and the resulting dump and its hash are stored for future reference.
+
+All timestamps are neutered in these dumps to preserve replayability.
+
+
+=======================================================================
+   4. Test
+=======================================================================
+
+The command
+
+  php testing/test test [logfile] [dumpfile]
+
+re-runs the given logfile against the given dump file, and checks that
+the results are unchanged with respect to the run that generated the
+log file.
+
+The default logfile is the latest available, and the default dump file
+the latest one whose ending time matches the starting time of the
+given logfile.
+
+If any discrepancy is found in the results, the conflicting entries in
+the database are displayed.
