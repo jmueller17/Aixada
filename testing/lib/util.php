@@ -1,3 +1,5 @@
+<?php
+
 function init_dump() {
 	// the mysql interface doesn't permit sourcing files, so we have to brute-force it
 	// using the command line
@@ -16,3 +18,5 @@ EOD
 	do_exec("mysql -u dumper --password=dumper $this->dump_db_name < /tmp/init_dump.sql");
 	echo time()-$ctime . "s for setting up the test database\n";
     }
+
+?>

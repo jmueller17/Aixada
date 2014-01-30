@@ -16,11 +16,11 @@ database.
 
 Then say
 
-  php testing/test dump [--from-time='...'] [--to-time='...']
+  php testing/test dump [-f|-from-time='...'] [-t|-to-time='...']
 
 to create both a new mysql database aixada_dump and the corresponding
 dump in testing/dumps+logs/reference_dumps. Default values are
---from-time='-1 months' and --to-time='-1 days'; any time format accepted
+-from-time='-1 months' and -to-time='-1 days'; any time format accepted
 by strtodate is fine.
 
 =======================================================================
@@ -29,17 +29,17 @@ by strtodate is fine.
 
 Next, say
 
-  php testing/test log [dump_file.sql | --from-time='...'] [--to-time='...']
+  php testing/test log [dump_file.sql | -f|-from-time='...'] [-t|-to-time='...']
 
 to process the entries in the logfile local_config/aixada.log in a
 certain time interval.  
 
   - If no optional arguments are given, the interval is between the
-    --to-time for the latest dump file and 'now';
+    -to-time for the latest dump file and 'now';
 
-  - if a dump file is given, the interval is between the its  --to-time and 'now';
+  - if a dump file is given, the interval is between the its  -to-time and 'now';
 
-  - otherwise, the latest dump file whose --to-time is the given --from-time is used.
+  - otherwise, the latest dump file whose -to-time is the given -from-time is used.
 
 The database aixada_dump is dropped and restored from the given dump
 file. Then, each entry in the logfile is applied in turn to the
