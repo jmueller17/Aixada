@@ -19,4 +19,30 @@ EOD
 	echo time()-$ctime . "s for setting up the test database\n";
     }
 
+function process_options($opts) {
+    $lopts = $opts;
+    $shortopts = array();
+    $longopts = array();
+    $defaults = array();
+
+    while (sizeof($lopts)>0) {
+	$shortopts[] = array_shift($lopts) . '::';
+	$longopts[] = array_shift($lopts) . '::';
+	$defaults[] = array_shift($lopts);
+    }
+    
+    $options = getopt(join('', $shortopts), $longopts);
+
+    $result = array();
+    for ($i=0; $i < sizeof($shortopts); $i++) {
+	$result[] = isset($options[$shortopts[$i]]) 
+	    ? $options[$shortopts[$i]] 
+	    : (isset($options[$longopts[$i]]) 
+	       ? $options[$longopts[$i]]
+	       : $defaults[$i]);
+    }
+    
+    return $result;
+}
+
 ?>
