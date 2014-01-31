@@ -31,23 +31,11 @@ $log_to_time   = (strpos($to_str, '@') !== false)
     : date('Y-m-d@H:i', strtotime($to_str));
 
 echo "executing the entries in $db_log between {$from_str} ($log_from_time) and {$to_str} ($log_to_time) onto $dumpfile ...\n"; 
-exit();
-
-$log_to_time = 'now';
-
-if (sizeof($argv) >= 4) {
-    $dumpfile = $argv[2];
-    $log_to_time = $argv[3];
-}
-
-$log_to_time = date('Y-m-d@H:i', strtotime($log_to_time));
-
-echo "logging from $dumpfile until $log_to_time\n";
 
 require_once 'testing/lib/log_manager.php';
 echo "creating log of modifying queries...\n"; 
 $ctime = time();
-$logm = new LogManager($dump_db_name, $logfile, $dump_to_time, $log_to_time);
+$logm = new LogManager($dump_db_name, $logfile, $log_from_time, $log_to_time);
 $logm->create_bare_log_of_modifying_queries();
 echo time()-$ctime . "s for creating bare log\n";
 

@@ -27,6 +27,13 @@ dump in testing/dumps+logs/reference_dumps. Default values are
 -from-time='-1 months' and -to-time='-1 days'; any time format accepted
 by strtotime is fine.
 
+More precisely, the tables in the database specified in the variable
+$table_key_pairs in the testing/lib/config.php are written
+to the database aixada_dump, along with all entries from other
+tables that recursively depend on them via foreign key
+constraints. The database aixada_dump is then dumped to the
+directory dumps+logs/.
+
 =======================================================================
    3. Choose time interval and apply log file to database
 =======================================================================
@@ -38,12 +45,12 @@ Next, say
 to process the entries in the logfile local_config/aixada.log in a
 certain time interval.  
 
-  - If no optional arguments are given, the interval is between the
-    -to-time for the latest dump file and 'now';
+  - If no optional arguments are given, the start time for the log is the
+    -to-time for the latest dump file;
 
-  - if a dump file is given, the default interval is between its  -to-time and 'now';
+  - If a dump file is given, the start time for the log is the -to-time of that dump.
 
-  - otherwise, the latest dump file whose -to-time is the given -from-time is used.
+  - The -to-time defaults to 'now'.
 
 The database aixada_dump is dropped and restored from the given dump
 file. Then, each entry in the logfile is applied in turn to the

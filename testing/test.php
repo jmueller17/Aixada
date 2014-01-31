@@ -6,7 +6,16 @@ require_once('gnu/getopt/Getopt.php');
 require_once('gnu/getopt/Longopt.php');
 
 if (sizeof($argv) < 2) {
-    echo $usage_str;
+    echo <<<EOD
+Usage:
+
+    php {$argv[0]} init 
+    php {$argv[0]} dump [-f|-from-time='...'] [-t|-to-time='...']
+    php {$argv[0]} log [dump_file.sql | -f|-from-time='...'] [-t|-to-time='...']
+    php {$argv[0]} test [logfile] [dumpfile]
+
+See the README file for details.
+EOD;
     exit();
 }
 
