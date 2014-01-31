@@ -1,11 +1,17 @@
 <?php
 
-$result = process_options(array('f', 'from-time', '-1 months', 
-				't', 'to-time', '-1 days'));
-$dump_from_time = date('Y-m-d@H:i', strtotime($result['f']));
-$dump_to_time   = date('Y-m-d@H:i', strtotime($result['t']));
+$result = process_options(array('f', 'from-time', 
+				't', 'to-time'));
+$from_str = isset($result['f'])
+    ? $result['f']
+    : '-1 months';
+$to_str = isset($result['t'])
+    ? $result['t']
+    : '-1 days';
+$dump_from_time = date('Y-m-d@H:i', strtotime($from_str));
+$dump_to_time   = date('Y-m-d@H:i', strtotime($to_str));
 
-echo "dumping from {$result['f']} ($dump_from_time) to {$result['t']} ($dump_to_time) ...\n"; 
+echo "dumping from {$from_str} ($dump_from_time) to {$to_str} ($dump_to_time) ...\n"; 
 
 require_once 'testing/lib/dump_manager.php';
 $ctime = time();

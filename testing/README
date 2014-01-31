@@ -41,7 +41,7 @@ certain time interval.
   - If no optional arguments are given, the interval is between the
     -to-time for the latest dump file and 'now';
 
-  - if a dump file is given, the interval is between the its  -to-time and 'now';
+  - if a dump file is given, the default interval is between its  -to-time and 'now';
 
   - otherwise, the latest dump file whose -to-time is the given -from-time is used.
 

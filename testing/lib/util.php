@@ -26,26 +26,17 @@ function process_options($opts) {
     $lopts = $opts;
     $shortopts = array();
     $longopts = array();
-    $defaults = array();
 
     while (sizeof($lopts)>0) {
 	$s = array_shift($lopts);
 	$shortopts[] = $s;
 	$longopts[$s] = new LongOpt(array_shift($lopts), REQUIRED_ARGUMENT, null, $s);
-	$defaults[$s] = array_shift($lopts);
     }
-    $defaults['n'] = false;
-    $getopt = new Getopt($argv, join(':', $shortopts) . 'n', $longopts);
+    $getopt = new Getopt($argv, join(':', $shortopts) . ':n', $longopts);
     $result = array();
     while (($c = $getopt->getopts()) != -1) {
 	$result[$c] = $getopt->getOptarg();
     }
-    $n_set = 0;
-    foreach ($shortopts as $s) {
-	if (isset($result[$s])) $n_set++;
-	else $result[$s] = $defaults[$s];
-    }
-    $result['n_set'] = $n_set;
     return $result;
 }
 
@@ -103,5 +94,20 @@ function tables_used_in_calls($tables) {
     return $used_in;
 }
 
+function extract_from_date($dumpfile) {
+    global $dateformat;
+    // Expect a filename of the form 
+    // testing/dumps+logs/aixada_dump.2013-12-31@17:38-to-2014-01-30@17:38.sql
+    $to_pos = strpos($dumpfile, '-to-');
+    return substr($dumpfile, $to_pos-strlen($dateformat), strlen($dateformat));
+}
+
+function extract_to_date($dumpfile) {
+    global $dateformat;
+    // Expect a filename of the form 
+    // testing/dumps+logs/aixada_dump.2013-12-31@17:38-to-2014-01-30@17:38.sql
+    $to_pos = strpos($dumpfile, '-to-') + strlen('-to-');
+    return substr($dumpfile, $to_pos, strlen($dateformat));
+}
 
 ?>
