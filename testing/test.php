@@ -13,7 +13,7 @@ Usage:
     php {$argv[0]} log [dump_file.sql | -f|-from-time='...'] [-t|-to-time='...']
     php {$argv[0]} test [logfile] [dumpfile]
 
-An additional flag -n activates dry run mode. See the README file for details.
+See the README file for details. An additional flag -n activates dry run mode; -d activates debug mode. 
 EOD;
     exit();
 }
