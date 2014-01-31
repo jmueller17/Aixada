@@ -11,7 +11,7 @@ create database {$dump_db_name};
 use {$dump_db_name};
 source sql/aixada.sql;
 source sql/setup/aixada_queries_all.sql;
-
+set foreign_key_checks = 0;
 EOD
 		);
 	fclose($handle);

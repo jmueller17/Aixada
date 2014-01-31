@@ -35,6 +35,7 @@ class LogManager {
 					 'localhost',
 					 'dumper',
 					 'dumper');
+	$this->db->Execute('set foreign_key_checks=0;');
 	exec ("rm -f {$tmpdump}");
 	$this->tables_in_database = tables_in_database();
 	$this->tables_used_in_calls = tables_used_in_calls($this->tables_in_database);

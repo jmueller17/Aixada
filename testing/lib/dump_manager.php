@@ -114,12 +114,10 @@ class DBDumpManager {
 	}
 
 	global $debug;
-	if (!$debug) $this->dump_db->Execute("set FOREIGN_KEY_CHECKS=0;");
 	foreach($this->fill_queries as $query) {
 	    fwrite($qdhandle, $query . "\n");
 	    if (!$debug) $this->dump_db->Execute($query);
 	}
-	if (!$debug) $this->dump_db->Execute("set FOREIGN_KEY_CHECKS=1;");
 	fclose($qdhandle);
 
 	global $dumppath;
