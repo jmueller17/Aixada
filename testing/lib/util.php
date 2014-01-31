@@ -20,28 +20,31 @@ EOD
     }
 
 function process_options($opts) {
+
+    global $argv;
+
     $lopts = $opts;
     $shortopts = array();
     $longopts = array();
     $defaults = array();
 
     while (sizeof($lopts)>0) {
-	$shortopts[] = array_shift($lopts) . '::';
-	$longopts[] = array_shift($lopts) . '::';
-	$defaults[] = array_shift($lopts);
+	$s = array_shift($lopts);
+	$shortopts[] = $s;
+	$longopts[$s] = new LongOpt(array_shift($lopts), REQUIRED_ARGUMENT, null, $s);
+	$defaults[$s] = array_shift($lopts);
     }
-    
-    $options = getopt(join('', $shortopts), $longopts);
-
+    $getopt = new Getopt($argv, join(':', $shortopts) . ':', $longopts);
     $result = array();
-    for ($i=0; $i < sizeof($shortopts); $i++) {
-	$result[] = isset($options[$shortopts[$i]]) 
-	    ? $options[$shortopts[$i]] 
-	    : (isset($options[$longopts[$i]]) 
-	       ? $options[$longopts[$i]]
-	       : $defaults[$i]);
+    while (($c = $getopt->getopts()) != -1) {
+	$result[$c] = $getopt->getOptarg();
     }
-    
+    $n_set = 0;
+    foreach ($shortopts as $s) {
+	if (isset($result[$s])) $n_set++;
+	else $result[$s] = $defaults[$s];
+    }
+    $result['n_set'] = $n_set;
     return $result;
 }
 

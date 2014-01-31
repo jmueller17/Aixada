@@ -1,11 +1,9 @@
 <?php
 
-list ($from_str, $to_str) = process_options(array('f', 'from-time', '-1 months', 
-						  't', 'to-time', '-1 days'));		       
-
-$dump_from_time = date('Y-m-d@H:i', strtotime($from_str));
-$dump_to_time   = date('Y-m-d@H:i', strtotime($to_str));
-
+$result = process_options(array('f', 'from-time', '-1 months', 
+				't', 'to-time', '-1 days'));
+$dump_from_time = date('Y-m-d@H:i', strtotime($result['f']));
+$dump_to_time   = date('Y-m-d@H:i', strtotime($result['t']));
 
 $dumpfile = exec("ls -rt ${dumppath}{$dump_db_name}.*sql");
 $log_to_time = 'now';

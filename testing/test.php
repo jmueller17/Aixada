@@ -2,6 +2,8 @@
 
 require_once('testing/lib/config.php');
 require_once('testing/lib/usage.php');
+require_once('gnu/getopt/Getopt.php');
+require_once('gnu/getopt/Longopt.php');
 
 if (sizeof($argv) < 2) {
     echo $usage_str;
@@ -26,6 +28,8 @@ if ($argv[1] != 'init') {
 }
 
 $logfile = ''; // for later use
+
+require_once 'lib/util.php';
 
 switch ($argv[1]) {
 case 'init':
