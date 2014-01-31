@@ -50,6 +50,7 @@ function process_options($opts) {
 }
 
 function tables_in_database() {
+    global $db_definition;
     if (!file_exists($db_definition)) {
 	echo "Could not open database definition $db_definition for reading\n";
 	exit();
@@ -68,6 +69,7 @@ function tables_in_database() {
 }
 
 function tables_used_in_calls($tables) {
+    global $all_queries_file;
     if (!file_exists($all_queries_file)) {
 	echo "Could not open query definitions $all_queries_file for reading\n";
 	exit();

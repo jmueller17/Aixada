@@ -51,6 +51,7 @@ class LogManager {
 
     private function _tables_used_by_query($query) {
 	$use_tables = array();
+	if ($query == '') return $use_tables;
 	foreach ($this->tables_used_in_calls as $call => $tables) 
 	    if (strpos($query, $call) !== false)
 		foreach ($tables as $table) 
@@ -76,7 +77,7 @@ class LogManager {
 
     private function hash() {
 	global $tmpdump;
-	$md5sum = exec("md5sum $tmpdump");
+	$md5sum = do_exec("md5sum $tmpdump");
 	$this->clean($md5sum);
 	return $md5sum;
     }
@@ -87,7 +88,7 @@ class LogManager {
 	    fwrite($this->whandle, $this->query);
 	fwrite($this->whandle, $md5sum . "\n");
 	global $tmpdump;
-	exec("mv $tmpdump {$dir_to_store}{$md5sum}");
+	do_exec("mv $tmpdump {$dir_to_store}{$md5sum}");
 	$this->prev_md5sum = $md5sum;
     }
 
@@ -124,7 +125,7 @@ class LogManager {
 	    exit();
 	}
 
-	$this->dump_hash_and_store();
+	$this->dump_hash_and_store('');
 	
 	while (($line = fgets($rhandle)) !== false) 
 	    $this->process_line($line);
