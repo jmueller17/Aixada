@@ -127,8 +127,11 @@ class LogManager {
 
 	$this->dump_hash_and_store('');
 	
-	while (($line = fgets($rhandle)) !== false) 
+	global $debug;
+	while (($line = fgets($rhandle)) !== false) {
+	    if ($debug) echo "processing $line\n";
 	    $this->process_line($line);
+	}
     }
 
 }

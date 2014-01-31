@@ -44,13 +44,16 @@ $sed = "sed 's/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:
 
 $dateformat = '0000-00-00@00:00';
 
-$debug=false;
+$debug = false;
+$dry_run = false;
 
 function do_exec($arg) {
-    global $debug;
-    if ($debug)
-	echo "simulating " . $arg . "\n";
-    else  
+    global $debug, $dry_run;
+    if ($dry_run)
+	echo "simulating $arg\n";
+    else {
+	if ($debug) echo "executing $arg\n";
 	return exec($arg);
+    }
 }
 ?>

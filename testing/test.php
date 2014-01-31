@@ -39,10 +39,15 @@ $logfile = ''; // for later use
 
 require_once 'lib/util.php';
 
-$getopt = new Getopt($argv, 'n');
+$getopt = new Getopt($argv, 'nd');
 $getopt->setOpterr(false);
 while (($c = $getopt->getopts()) != -1) {
     if ($c == 'n') {
+	echo "Dry run mode activated.\n";
+	$debug = true;
+	$dry_run = true;
+    }
+    if ($c == 'd') {
 	echo "Debug mode activated.\n";
 	$debug = true;
     }

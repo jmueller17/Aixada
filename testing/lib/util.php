@@ -32,7 +32,7 @@ function process_options($opts) {
 	$shortopts[] = $s;
 	$longopts[$s] = new LongOpt(array_shift($lopts), REQUIRED_ARGUMENT, null, $s);
     }
-    $getopt = new Getopt($argv, join(':', $shortopts) . ':n', $longopts);
+    $getopt = new Getopt($argv, join(':', $shortopts) . ':nd', $longopts);
     $result = array();
     while (($c = $getopt->getopts()) != -1) {
 	$result[$c] = $getopt->getOptarg();
