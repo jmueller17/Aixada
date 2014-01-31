@@ -34,7 +34,8 @@ function process_options($opts) {
 	$longopts[$s] = new LongOpt(array_shift($lopts), REQUIRED_ARGUMENT, null, $s);
 	$defaults[$s] = array_shift($lopts);
     }
-    $getopt = new Getopt($argv, join(':', $shortopts) . ':', $longopts);
+    $defaults['n'] = false;
+    $getopt = new Getopt($argv, join(':', $shortopts) . 'n', $longopts);
     $result = array();
     while (($c = $getopt->getopts()) != -1) {
 	$result[$c] = $getopt->getOptarg();

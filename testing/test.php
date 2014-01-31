@@ -31,6 +31,16 @@ $logfile = ''; // for later use
 
 require_once 'lib/util.php';
 
+$getopt = new Getopt($argv, 'n');
+$getopt->setOpterr(false);
+while (($c = $getopt->getopts()) != -1) {
+    if ($c == 'n') {
+	echo "Debug mode activated.\n";
+	$debug = true;
+    }
+}
+
+
 switch ($argv[1]) {
 case 'init':
     require('testing/lib/init.php');
