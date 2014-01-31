@@ -48,7 +48,7 @@ function process_options($opts) {
     return $result;
 }
 
-function tables_used_in_calls() {
+function tables_in_database() {
     if (!file_exists($db_definition)) {
 	echo "Could not open database definition $db_definition for reading\n";
 	exit();
@@ -63,7 +63,10 @@ function tables_used_in_calls() {
 	$table = substr($line, $p, strpos($line, ' ', $p) - $p);
 	$tables[] = $table;
     }
+    return $tables;
+}
 
+function tables_used_in_calls($tables) {
     if (!file_exists($all_queries_file)) {
 	echo "Could not open query definitions $all_queries_file for reading\n";
 	exit();

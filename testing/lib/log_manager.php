@@ -15,6 +15,7 @@ class LogManager {
     private $whandle;
     private $query = 'init';
     private $prev_md5sum;
+    private $tables_in_database;
     private $tables_used_in_calls;
 
     public function __construct($dump_db_name, $original_dumpfile, $log_from_time, $log_to_time) {
@@ -35,7 +36,8 @@ class LogManager {
 					 'dumper',
 					 'dumper');
 	exec ("rm -f {$tmpdump}");
-	$this->tables_used_in_calls = tables_used_in_calls();
+	$this->tables_in_database = tables_in_database();
+	$this->tables_used_in_calls = tables_used_in_calls($this->tables_in_database);
     }
 
     public function create_bare_log_of_modifying_queries() {
@@ -47,15 +49,27 @@ class LogManager {
 	$s = substr($s, 0, strpos($s, ' '));
     }
 
+    private function _tables_used_by_query($query) {
+	$use_tables = array();
+	foreach ($this->tables_used_in_calls as $call => $tables) 
+	    if (strpos($query, $call) !== false)
+		foreach ($tables as $table) 
+		    if (!in_array($table, $use_tables))
+			$use_tables[] = $table;
+
+	foreach ($this->tables_in_database as $table) 
+	    if (strpos($query, $call) !== false)
+		foreach ($tables as $table) 
+		    if (!in_array($table, $use_tables))
+			$use_tables[] = $table;
+
+	return $use_tables;
+    }
+
     private function dump($query) {
 	global $tmpdump, $sed;
-	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} ";
-	foreach ($this->tables_used_in_calls as $call => $tables) {
-	    if (strpos($query, $call) !== false)
-		$exec_str .= join(' ', $tables);
-	}
+	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} " . join(' ', $this->_tables_used_by_query($query)) . " | head -n -2 | {$sed} > $tmpdump";
 	$ctime = time();
-	$exec_str .= " | head -n -2 | {$sed} > $tmpdump";
 	do_exec($exec_str);
 	echo time()-$ctime . "s for dumping the database\n";
     }
