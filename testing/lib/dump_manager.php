@@ -28,6 +28,7 @@ class DBDumpManager {
 					      'localhost',
 					      'dumper',
 					      'dumper');
+	$this->dump_db->Execute("set foreign_key_checks=0");
 	$this->db_name = configuration_vars::get_instance()->db_name;
 	$this->db = DBWrap::get_instance('', false);
 	$this->dump_from_time = $dump_from_time;
