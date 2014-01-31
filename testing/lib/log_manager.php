@@ -60,11 +60,11 @@ class LogManager {
 			$use_tables[] = $table;
 
 	foreach ($this->tables_in_database as $table) 
-	    if (strpos($query, $call) !== false)
-		foreach ($tables as $table) 
-		    if (!in_array($table, $use_tables))
-			$use_tables[] = $table;
+	    if (strpos($query, $table) !== false)
+		$use_tables[] = $table;
 
+	global $debug;
+	if ($debug) echo "tables used by query: " . join(',', $use_tables) . "\n";
 	return $use_tables;
     }
 
