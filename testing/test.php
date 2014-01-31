@@ -1,7 +1,6 @@
 <?php
 
 require_once('testing/lib/config.php');
-require_once('testing/lib/usage.php');
 require_once('gnu/getopt/Getopt.php');
 require_once('gnu/getopt/Longopt.php');
 
@@ -14,7 +13,7 @@ Usage:
     php {$argv[0]} log [dump_file.sql | -f|-from-time='...'] [-t|-to-time='...']
     php {$argv[0]} test [logfile] [dumpfile]
 
-See the README file for details.
+An additional flag -n activates dry run mode. See the README file for details.
 EOD;
     exit();
 }
