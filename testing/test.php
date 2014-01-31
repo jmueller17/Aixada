@@ -4,8 +4,7 @@ require_once('testing/lib/config.php');
 require_once('gnu/getopt/Getopt.php');
 require_once('gnu/getopt/Longopt.php');
 
-if (sizeof($argv) < 2) {
-    echo <<<EOD
+$usage_str = <<<EOD
 Usage:
 
     php {$argv[0]} init 
@@ -15,6 +14,9 @@ Usage:
 
 See the README file for details. An additional flag -n activates dry run mode; -d activates debug mode. 
 EOD;
+
+if (sizeof($argv) < 2) {
+    echo $usage_str;
     exit();
 }
 

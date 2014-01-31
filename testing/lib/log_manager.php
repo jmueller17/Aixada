@@ -18,16 +18,16 @@ class LogManager {
     private $tables_in_database;
     private $tables_used_in_calls;
 
-    public function __construct($dump_db_name, $original_dumpfile, $log_from_time, $log_to_time) {
+    public function __construct($dump_db_name, $original_dumpfile, $log_from_time_str, $log_to_time_str) {
 
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;	
 	$this->original_dumpfile = $dumppath . $original_dumpfile;
-	$this->log_from_time = $log_from_time;
-	$this->log_to_time = $log_to_time;
-	$this->bare_log_name = "$logpath$dump_db_name.$log_from_time-to-$log_to_time.bare_log";
-	$this->annotated_log_name = "$logpath$dump_db_name.$log_from_time-to-$log_to_time.annotated_log";
+	$this->log_from_time = strtotime(str_replace('@', ' ', $log_from_time_str)); 
+	$this->log_to_time =   strtotime(str_replace('@', ' ', $log_to_time_str));
+	$this->bare_log_name = "$logpath$dump_db_name.$log_from_time_str-to-$log_to_time_str.bare_log";
+	$this->annotated_log_name = "$logpath$dump_db_name.$log_from_time_str-to-$log_to_time_str.annotated_log";
 	$this->exclusion_patterns = $utilpath . 'non_modifying_query_patterns.for_grep';
 	$this->db = DBWrap::get_instance($dump_db_name, 
 					 false,
@@ -99,15 +99,18 @@ class LogManager {
     }
 
     private function process_line($line) {
+	global $debug;
 	$pos_first_blank  = strpos($line, ' ');
 	$pos_second_blank = strpos($line, ' ', $pos_first_blank + 1);
-	$logtime = strtotime(substr($line, 0, $pos_first_blank));
+	$time_str = substr($line, 0, $pos_second_blank);
+	$logtime = strtotime($time_str);
 	if ($logtime >= $this->log_from_time && 
 	    $logtime <= $this->log_to_time) {
-	    $this->query = substr($line, $pos_second_blank+1);
+	    $this->query = str_replace('\n', "\n", substr($line, $pos_second_blank+1));
+	    if ($debug) echo "will execute {$this->query}\n";
 	    $this->db->Execute($this->query);
 	    $this->db->free_next_results();
-	    $this->dump_hash_and_store($query);
+	    $this->dump_hash_and_store($this->query);
 	}
     }
 

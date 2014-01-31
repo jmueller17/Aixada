@@ -23,19 +23,19 @@ $to_str = (isset($result['t']))
       ? $result['t']
       : 'now';
 
-$log_from_time = (strpos($from_str, '@') !== false)
+$log_from_time_str = (strpos($from_str, '@') !== false)
     ? $from_str
     : date('Y-m-d@H:i', strtotime($from_str));
-$log_to_time   = (strpos($to_str, '@') !== false)
+$log_to_time_str   = (strpos($to_str, '@') !== false)
     ? $to_str
     : date('Y-m-d@H:i', strtotime($to_str));
 
-echo "executing the entries in $db_log between {$from_str} ($log_from_time) and {$to_str} ($log_to_time) onto $dumpfile ...\n"; 
+echo "executing the entries in $db_log between {$from_str} ($log_from_time_str) and {$to_str} ($log_to_time_str) onto $dumpfile ...\n"; 
 
 require_once 'testing/lib/log_manager.php';
 echo "creating log of modifying queries...\n"; 
 $ctime = time();
-$logm = new LogManager($dump_db_name, $logfile, $log_from_time, $log_to_time);
+$logm = new LogManager($dump_db_name, $logfile, $log_from_time_str, $log_to_time_str);
 $logm->create_bare_log_of_modifying_queries();
 echo time()-$ctime . "s for creating bare log\n";
 
