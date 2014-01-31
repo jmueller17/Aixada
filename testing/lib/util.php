@@ -48,4 +48,54 @@ function process_options($opts) {
     return $result;
 }
 
+function tables_used_in_calls() {
+    if (!file_exists($db_definition)) {
+	echo "Could not open database definition $db_definition for reading\n";
+	exit();
+    }
+
+    $db_def = file_get_contents($db_definition);
+    $token = 'create table ';
+    $tables = array();
+    foreach (explode("\n", $db_def) as $line) {
+	if (($p = strpos($line, $token)) === false) continue;
+	$p += strlen($token);
+	$table = substr($line, $p, strpos($line, ' ', $p) - $p);
+	$tables[] = $table;
+    }
+
+    if (!file_exists($all_queries_file)) {
+	echo "Could not open query definitions $all_queries_file for reading\n";
+	exit();
+    }
+    $queries = file_get_contents($all_queries_file);
+    $used_in = array();
+    $token = 'drop procedure if exists ';
+    $query = '';
+    foreach (explode("\n", $queries) as $line) {
+	if (($p = strpos($line, $token)) !== false) {
+	    $p += strlen($token);
+	    $query = substr($line, $p, strpos($line, '|', $p) - $p);
+	    if (strpos($query, 'list_') !== false
+		|| strpos($query, 'get_') !== false) 
+		continue;
+	    $used_in[$query] = array();
+	}
+	if ($query == '' 
+	    || strpos($query, 'list_') !== false
+	    || strpos($query, 'get_') !== false) 
+	    continue;
+	foreach ($tables as $table) {
+	    if (strpos($line, $table) !== false) {
+		if (in_array($table, $used_in[$query])) 
+		    continue;
+		$used_in[$query][] = $table;
+		break;
+	    }
+	}
+    }
+    return $used_in;
+}
+
+
 ?>

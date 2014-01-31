@@ -15,7 +15,7 @@ class LogManager {
     private $whandle;
     private $query = 'init';
     private $prev_md5sum;
-    private $used_in;
+    private $tables_used_in_calls;
 
     public function __construct($dump_db_name, $original_dumpfile, $log_from_time, $log_to_time) {
 
@@ -35,7 +35,7 @@ class LogManager {
 					 'dumper',
 					 'dumper');
 	exec ("rm -f {$tmpdump}");
-	$used_in = unserialize('testing/lib/tables_used_in_queries.php');
+	$this->tables_used_in_calls = tables_used_in_calls();
     }
 
     public function create_bare_log_of_modifying_queries() {
@@ -50,9 +50,13 @@ class LogManager {
     private function dump($query) {
 	global $tmpdump, $sed;
 	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} ";
-	foreach ($this->tables_used_in_queries[$qu]); // HERE
+	foreach ($this->tables_used_in_calls as $call => $tables) {
+	    if (strpos($query, $call) !== false)
+		$exec_str .= join(' ', $tables);
+	}
 	$ctime = time();
-	exec( | head -n -2 | {$sed} > $tmpdump");
+	$exec_str .= " | head -n -2 | {$sed} > $tmpdump";
+	do_exec($exec_str);
 	echo time()-$ctime . "s for dumping the database\n";
     }
 
