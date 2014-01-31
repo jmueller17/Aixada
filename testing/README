@@ -77,3 +77,14 @@ given logfile.
 
 If any discrepancy is found in the results, the conflicting entries in
 the database are displayed.
+
+
+=======================================================================
+   5. Cleaning
+=======================================================================
+
+Finally, with 
+
+  php testing/test clean
+
+all dump and log files can be removed.

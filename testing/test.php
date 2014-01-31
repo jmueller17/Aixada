@@ -11,6 +11,7 @@ Usage:
     php {$argv[0]} dump [-f|-from-time='...'] [-t|-to-time='...']
     php {$argv[0]} log [dump_file.sql | -f|-from-time='...'] [-t|-to-time='...']
     php {$argv[0]} test [logfile] [dumpfile]
+    php {$argv[0]} clean
 
 See the README file for details. An additional flag -n activates dry run mode; -d activates debug mode. 
 EOD;
@@ -71,6 +72,10 @@ case 'log':
 
 case 'test':
     require('testing/lib/test.php');
+    break;
+
+case 'clean':
+    require('testing/lib/clean.php');
     break;
 
 default:
