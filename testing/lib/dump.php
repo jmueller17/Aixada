@@ -5,7 +5,7 @@ $result = process_options(array('f', 'from-time', '-1 months',
 $dump_from_time = date('Y-m-d@H:i', strtotime($result['f']));
 $dump_to_time   = date('Y-m-d@H:i', strtotime($result['t']));
 
-echo "dumping from {$result['f']}($dump_from_time) to {$result['t']}($dump_to_time) ...\n"; 
+echo "dumping from {$result['f']} ($dump_from_time) to {$result['t']} ($dump_to_time) ...\n"; 
 
 require_once 'testing/lib/dump_manager.php';
 $ctime = time();

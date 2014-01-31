@@ -61,7 +61,7 @@ class DBDumpManager {
 	    $this->_dfs($qentry, $table, $locally_seen_tables);
 	}
 
-	$this->_init_dump();
+	init_dump($this->dump_db_name);
 	$this->_fill_queries();
 
     }
