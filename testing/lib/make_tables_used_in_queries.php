@@ -46,5 +46,5 @@ foreach (explode("\n", $queries) as $line) {
     }
 }
 
-file_put_contents('tables_used_in_queries.php', print_r($used_in, true));
+file_put_contents('tables_used_in_queries.php', serialize($used_in));
 ?>

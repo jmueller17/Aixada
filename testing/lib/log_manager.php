@@ -15,6 +15,7 @@ class LogManager {
     private $whandle;
     private $query = 'init';
     private $prev_md5sum;
+    private $used_in;
 
     public function __construct($dump_db_name, $original_dumpfile, $log_from_time, $log_to_time) {
 
@@ -34,6 +35,7 @@ class LogManager {
 					 'dumper',
 					 'dumper');
 	exec ("rm -f {$tmpdump}");
+	$used_in = unserialize('testing/lib/tables_used_in_queries.php');
     }
 
     public function create_bare_log_of_modifying_queries() {
@@ -45,10 +47,12 @@ class LogManager {
 	$s = substr($s, 0, strpos($s, ' '));
     }
 
-    private function dump() {
+    private function dump($query) {
 	global $tmpdump, $sed;
+	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} ";
+	foreach ($this->tables_used_in_queries[$qu]); // HERE
 	$ctime = time();
-	exec("mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} | head -n -2 | {$sed} > $tmpdump");
+	exec( | head -n -2 | {$sed} > $tmpdump");
 	echo time()-$ctime . "s for dumping the database\n";
     }
 
@@ -69,9 +73,9 @@ class LogManager {
 	$this->prev_md5sum = $md5sum;
     }
 
-    private function dump_hash_and_store() {
+    private function dump_hash_and_store($query) {
 	global $reference_dump_dir;
-	$this->dump();
+	$this->dump($query);
 	$this->store($this->hash(), $reference_dump_dir);
     }
 
@@ -84,7 +88,7 @@ class LogManager {
 	    $this->query = substr($line, $pos_second_blank+1);
 	    $this->db->Execute($this->query);
 	    $this->db->free_next_results();
-	    $this->dump_hash_and_store();
+	    $this->dump_hash_and_store($query);
 	}
     }
 
