@@ -1,23 +1,28 @@
 <?php
 
-function init_dump($dump_db_name) {
-	// the mysql interface doesn't permit sourcing files, so we have to brute-force it
-	// using the command line
-	$ctime = time();
-	$handle = @fopen('/tmp/init_dump.sql', 'w');
-	fwrite ($handle, <<<EOD
+function init_dump($dump_db_name, $initial_dump_file) {
+    // the mysql interface doesn't permit sourcing files, so we have to brute-force it
+    // using the command line
+    global $init_db_script;
+    $ctime = time();
+    if (($handle = fopen($init_db_script, 'w')) === false) {
+	echo "could not open $init_db_script for writing.\n";
+	exit();
+    }
+    fwrite ($handle, <<<EOD
 drop database {$dump_db_name};
 create database {$dump_db_name};
 use {$dump_db_name};
-source sql/aixada.sql;
+source {$initial_dump_file}; 
 source sql/setup/aixada_queries_all.sql;
 set foreign_key_checks = 0;
+
 EOD
-		);
-	fclose($handle);
-	do_exec("mysql -u dumper --password=dumper $dump_db_name < /tmp/init_dump.sql");
-	echo time()-$ctime . "s for setting up the test database\n";
-    }
+	    );
+    fclose($handle);
+    do_exec("mysql -u dumper --password=dumper $dump_db_name < $init_db_script");
+    echo time()-$ctime . "s for setting up the test database\n";
+}
 
 function process_options($opts) {
 

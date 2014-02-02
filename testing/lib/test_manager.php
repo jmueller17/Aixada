@@ -6,7 +6,6 @@ class TestManager {
 
     private $dump_db_name;
     private $initial_dump_file;
-    private $must_smash_database;
     private $log_file;
     private $test_dir;
     private $db;
@@ -22,37 +21,32 @@ class TestManager {
 
 	// initialize names
 	$this->dump_db_name = $dump_db_name;
-	if (strlen($initial_dump_file)==0) {
-	    $this->initial_dump_file = $this->_latest_dump();
-	    $this->must_smash_database = 0;
-	} else {
-	    $this->initial_dump_file = $initial_dump_file;
-	    $this->must_smash_database = 1;
-	}
+	$this->initial_dump_file =  (strlen($initial_dump_file)==0)
+	    ? $this->_latest_dump()
+	    : $initial_dump_file;
 	echo "Using dump file {$this->initial_dump_file}\n";
-	$interval_start_pos = strlen($logpath) + strlen($dump_db_name) + 1;
-	$interval = substr($this->initial_dump_file, $interval_start_pos, strlen('0000-00-00@00:00-to-0000-00-00@00:00'));
-	$to_pos = strrpos($interval, '-to-');
-	$from_date = substr($interval, 0, $to_pos);
-	$to_date = substr($interval, $to_pos + 4);
-	$this->log_file = "$logpath$dump_db_name.$from_date-to-$to_date.annotated_log";
+
+	$log_from_date = extract_to_date($this->initial_dump_file);
+	$this->log_file = exec("ls -rt $logpath$dump_db_name.$log_from_date*.annotated_log");
+	echo "Using log file {$this->log_file}\n";
 
 	// make directory for test runs
 	$day = date("Y-m-d");
 	$now = date("H:i:m");
-	$this->testdir = $testrunpath . '/' . $day . '/' . $now . '/';
+	$this->testdir = $testrunpath . $day . '/' . $now . '/';
 	exec("mkdir -p {$testrunpath}$day/$now");
+	echo "writing results into {$this->testdir}\n";
 
 	// prepare resources
-	if ($this->must_smash_database) $this->smash_and_restore_database();
+	init_dump($this->dump_db_name, $this->initial_dump_file);
 	$this->db = DBWrap::get_instance($this->dump_db_name, 
 					 false,
 					 'mysql',
 					 'localhost',
 					 'dumper',
 					 'dumper');
-	$this->rhandle = @fopen($this->log_file, 'r');
-	if (!$this->rhandle) {
+
+	if (($this->rhandle = fopen($this->log_file, 'r')) === false) {
 	    echo "Could not open log file {$this->log_file} for processing\n";
 	    exit();
 	}
@@ -70,28 +64,6 @@ class TestManager {
 	global $dumppath;
 	$listing = exec("ls -rt {$dumppath}*.sql");
 	return strtok($listing, " \n\t");
-    }
-
-    private function _must_smash_database() {
-
-    }
-
-    private function _smash_and_restore_database() {
-	global $init_db_script;
-	$ctime = time();
-	$handle = @fopen($init_db_script, 'w');
-	fwrite ($handle, <<<EOD
-drop database {$this->dump_db_name};
-create database {$this->dump_db_name};
-use {$this->dump_db_name};
-source {$this->initial_dump_file};
-source sql/setup/aixada_queries_all.sql;
-
-EOD
-		);
-	fclose($handle);
-	do_exec("mysql -u dumper -pdumper $this->dump_db_name < $init_db_script");
-	echo time()-$ctime . "s for smashing and restoring test database\n";
     }
 
     private function clean(&$s) {
@@ -112,16 +84,19 @@ EOD
     }
 
     private function one_hash_ok() {
+	global $debug;
 	if (($this->checkmd5 = fgets($this->rhandle)) === false) {
-	    echo "No more hashes.\n";
-	    return -1;
+	    echo "Error: expected a hash value in {$this->log_file}.\n";
+	    exit();
 	}
 	$this->checkmd5 = trim($this->checkmd5);
+	if ($debug) echo "Checking against hash\n{$this->checkmd5}\n";
 
 	global $tmpdump, $sed;
 	$ctime = time();
 	$this->realmd5 = do_exec("mysqldump -udumper -pdumper --skip-opt aixada_dump | head -n -2 | {$sed} > $tmpdump; md5sum $tmpdump");
 	$this->clean($this->realmd5);
+	if ($debug) echo "found following hash after executing statement\n{$this->realmd5}\n";
 	echo time() - $ctime . "s for dumping database\n";
 
 	// store the dump for future reference
@@ -138,8 +113,9 @@ EOD
 	    return -1;
 	}	
 	global $debug;
-	if (!$debug) $this->db->Execute($this->statement);
-	if (!$debug) $this->db->free_next_results();
+	if ($debug) echo ("will execute {$this->statement}\n");
+	$this->db->Execute(str_replace('\n', '', $this->statement));
+	$this->db->free_next_results();
 	return $this->one_hash_ok();
     }
 

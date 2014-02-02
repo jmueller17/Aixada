@@ -62,7 +62,7 @@ class DBDumpManager {
 	    $this->_dfs($qentry, $table, $locally_seen_tables);
 	}
 
-	init_dump($this->dump_db_name);
+	init_dump($this->dump_db_name, 'sql/aixada.sql');
 	$this->_fill_queries();
 
     }
