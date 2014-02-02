@@ -13,9 +13,9 @@ function init_dump($dump_db_name, $initial_dump_file) {
 drop database {$dump_db_name};
 create database {$dump_db_name};
 use {$dump_db_name};
+set foreign_key_checks = 0;
 source {$initial_dump_file}; 
 source sql/setup/aixada_queries_all.sql;
-set foreign_key_checks = 0;
 
 EOD
 	    );

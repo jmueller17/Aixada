@@ -15,7 +15,7 @@ class TestManager {
     private $checkmd5;
     private $realmd5;
     
-    public function __construct($dump_db_name, $initial_dump_file) {
+    public function __construct($dump_db_name, $initial_dump_file, $log_file) {
 
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
@@ -27,7 +27,9 @@ class TestManager {
 	echo "Using dump file {$this->initial_dump_file}\n";
 
 	$log_from_date = extract_to_date($this->initial_dump_file);
-	$this->log_file = exec("ls -rt $logpath$dump_db_name.$log_from_date*.annotated_log");
+	$this->log_file = ($log_file == '')
+	    ? exec("ls -rt $logpath$dump_db_name.$log_from_date*.annotated_log")
+	    : $log_file;
 	echo "Using log file {$this->log_file}\n";
 
 	// make directory for test runs
@@ -54,7 +56,7 @@ class TestManager {
 	// does the log really belong to the hash?
 	if ($this->one_hash_ok() != 1) {
 	    echo "The database dump is not the one used to generate the log entries.\n";
-	    echo "The hash of the database should have been\n{$this->checkmd5}";
+	    echo "The hash of the database should have been\n{$this->checkmd5}\n";
 	    echo "but was\n{$this->realmd5}\n";
 	    exit();
 	}
@@ -77,7 +79,7 @@ class TestManager {
 	echo "for the reference dump disagreed with the checksum\n{$this->realmd5}\n";
 	echo "for the current dump.\n";
 	echo "The offending query was\n";
-	echo str_replace("\\n", "\n", $this->statement);
+	echo str_replace('\n', "\n", $this->statement);
 	echo "\n";
 	echo "The difference is\n";
 	echo exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}");

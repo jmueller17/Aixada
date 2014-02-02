@@ -44,6 +44,7 @@ class LogManager {
     public function create_bare_log_of_modifying_queries() {
 	global $db_log;
 	exec("egrep -iv -f {$this->exclusion_patterns} $db_log > {$this->bare_log_name}");
+	echo "created bare log {$this->bare_log_name}\n";
     }
 
     private function clean(&$s) {
@@ -85,9 +86,11 @@ class LogManager {
 
     private function store($md5sum, $dir_to_store) {
 	if (!strcmp($md5sum, $this->prev_md5sum)) return;
-	if ($this->query != 'init') 
-	    fwrite($this->whandle, $this->query);
-	fwrite($this->whandle, $md5sum . "\n");
+	if ($this->query != 'init') {
+	    $clean_query = preg_replace('/\s+/', ' ', str_replace("\n", '\n', $this->query));
+	    fwrite($this->whandle, $clean_query . "\n");
+	}
+	fwrite($this->whandle, "$md5sum\n");
 	global $tmpdump;
 	do_exec("mv $tmpdump {$dir_to_store}{$md5sum}");
 	$this->prev_md5sum = $md5sum;
@@ -136,6 +139,7 @@ class LogManager {
 	    if ($debug) echo "processing $line\n";
 	    $this->process_line($line);
 	}
+	echo "created annotated log {$this->annotated_log_name}\n";
     }
 
 }
