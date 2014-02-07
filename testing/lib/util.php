@@ -115,4 +115,11 @@ function extract_to_date($dumpfile) {
     return substr($dumpfile, $to_pos, strlen($dateformat));
 }
 
+function do_log($str) {
+    echo $str;
+    global $testloghandle;
+    fwrite($testloghandle, $str);
+    flush();
+}
+
 ?>
