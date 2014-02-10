@@ -95,8 +95,12 @@ class TestManager extends ManagerBase {
 	       . "The offending query was\n");
 	log_error(str_replace('\n', "\n", $this->statement) . "\n");
 	do_log("The difference is\n");
-	log_error(exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}")
-	       . "\n");
+	$diffstr1 = "{$reference_dump_dir}{$this->checkmd5} ";
+	$diffstr2 = "{$this->testdir}{$this->realmd5}\n";
+	do_log('diff ', 'blue');
+	do_log($diffstr1, 'green');
+	log_error($diffstr2);
+	log_error(exec('diff ' . $diffstr1 . $diffstr2));
     }
 
     /**
