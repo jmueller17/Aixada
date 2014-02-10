@@ -110,7 +110,7 @@ class TestManager extends ManagerBase {
 	do_log('diff ', 'blue');
 	do_log($diffstr1, 'green');
 	log_error($diffstr2 . "\n");
-	log_error(exec('diff ' . $diffstr1 . $diffstr2) . "\n");
+	do_log(exec('diff ' . $diffstr1 . $diffstr2) . "\n", 'blue');
     }
 
     /**
