@@ -90,13 +90,14 @@ class TestManager {
 	global $reference_dump_dir;
 
 	do_log("The checksum\n{$this->checkmd5}\n"
-	    . "for the reference dump disagreed with the checksum\n{$this->realmd5}\n"
-	    . "for the current dump.\n"
-	    . "The offending query was\n"
-	    . str_replace('\n', "\n", $this->statement)
-	    . "\n"
-	    . "The difference is\n"
-	    . exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}"));
+	       . "for the reference dump disagreed with the checksum\n{$this->realmd5}\n"
+	       . "for the current dump.\n"
+	       . "The offending query was\n"
+	       . str_replace('\n', "\n", $this->statement)
+	       . "\n"
+	       . "The difference is\n"
+	       . exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}")
+	       . "\n");
     }
 
     /**

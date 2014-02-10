@@ -47,10 +47,6 @@ class LogManager {
 	echo "created bare log {$this->bare_log_name}\n";
     }
 
-    private function clean(&$s) {
-	$s = substr($s, 0, strpos($s, ' '));
-    }
-
     private function _tables_used_by_query($query) {
 	$use_tables = array();
 	if ($query == '') return $use_tables;
@@ -64,22 +60,25 @@ class LogManager {
 	    if (strpos($query, $table) !== false)
 		$use_tables[] = $table;
 
-	global $debug;
-	if ($debug) echo "tables used by query: " . join(',', $use_tables) . "\n";
+	do_log("tables used by query: " . join(',', $use_tables) . "\n");
 	return $use_tables;
     }
 
-    private function dump($query) {
-	global $tmpdump, $sed;
-	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} " . join(' ', $this->_tables_used_by_query($query)) . " | head -n -2 | {$sed} > $tmpdump";
+    // if $query=='', will dump entire database
+    private function dump($query, $dumpfile) {
+	global $sed;
+	$exec_str = "mysqldump -udumper -pdumper --skip-opt {$this->dump_db_name} " . join(' ', $this->_tables_used_by_query($query)) . " | head -n -2 | {$sed} > $dumpfile";
 	$ctime = time();
 	do_exec($exec_str);
-	echo time()-$ctime . "s for dumping the database\n";
+	do_log(time()-$ctime . "s for dumping the database\n");
     }
 
-    private function hash() {
-	global $tmpdump;
-	$md5sum = do_exec("md5sum $tmpdump");
+    private function clean(&$s) {
+	$s = substr($s, 0, strpos($s, ' '));
+    }
+
+    private function hash($dumpfile) {
+	$md5sum = do_exec("md5sum $dumpfile");
 	$this->clean($md5sum);
 	return $md5sum;
     }
@@ -93,32 +92,32 @@ class LogManager {
 	fwrite($this->whandle, "$md5sum\n");
 	global $tmpdump;
 	do_exec("mv $tmpdump {$dir_to_store}{$md5sum}");
-	$this->prev_md5sum = $md5sum;
     }
 
-    private function dump_hash_and_store($query) {
-	global $reference_dump_dir;
-	$this->dump($query);
-	$this->store($this->hash(), $reference_dump_dir);
-    }
-
-    private function process_line($line) {
-	global $debug;
+    private function split_line($line) {
 	$pos_first_blank  = strpos($line, ' ');
 	$pos_second_blank = strpos($line, ' ', $pos_first_blank + 1);
 	$time_str = substr($line, 0, $pos_second_blank);
-	$logtime = strtotime($time_str);
-	if ($logtime >= $this->log_from_time && 
-	    $logtime <= $this->log_to_time) {
-	    $this->query = str_replace('\n', "\n", substr($line, $pos_second_blank+1));
-	    if ($debug) echo "will execute {$this->query}\n";
-	    $this->db->Execute($this->query);
-	    $this->db->free_next_results();
-	    $this->dump_hash_and_store($this->query);
-	}
+	$query = substr($line, $pos_second_blank + 1);
+	return [$time_str, $query];
     }
 
-    public function create_annotated_log() {
+    private function is_time_in_scope($time_str) {
+	$logtime = strtotime($time_str);
+	return ($logtime >= $this->log_from_time && 
+		$logtime <= $this->log_to_time);
+    }
+    
+    private function execute_query($query){
+	$query = str_replace('\n', "\n", $query);
+	do_log("will execute query {$query}\n");
+	$ctime = time();
+	$this->db->Execute($query);
+	$this->db->free_next_results();
+	do_log(time()-$ctime . "s for executing the query\n");
+    }
+
+    private function prepare_output_files() {
 	$rhandle = @fopen($this->bare_log_name, 'r');
 	if (!$rhandle) {
 	    echo "Could not open {$this->bare_log_name} for reading\n";
@@ -131,13 +130,39 @@ class LogManager {
 	    echo "Could not open {$this->annotated_log_name} for writing\n";
 	    exit();
 	}
+    }
 
+    private function dump_hash_and_store($query) {
+	global $tmpdump;
+
+	if (strlen($query)>0) {
+	    $this->dump($query, $tmpdump);
+	    $old_hash = $this->hash($tmpdump);
+
+	    $this->execute_query($query);
+	}
+	$this->dump($query, $tmpdump);
+	$new_hash = $this->hash($tmpdump);
+
+	if (strlen($query)>0 &&
+	    !strcmp($old_hash, $new_hash)) {
+	    do_log("line does not modify the database.\n"); continue;
+	} else {
+	    $this->store($new_hash, $reference_dump_dir);
+	}
+    }
+
+    public function create_annotated_log() {
+	$this->prepare_output_files();
 	$this->dump_hash_and_store('');
 	
-	global $debug;
 	while (($line = fgets($rhandle)) !== false) {
-	    if ($debug) echo "processing $line\n";
-	    $this->process_line($line);
+	    do_log("processing $line\n");
+	    list ($time_str, $query) = $this->split_line($line);
+	    if (!$this->is_time_in_scope($time_str)) {
+		do_log("line is not in scope.\n"); continue;
+	    }
+	    dump_hash_and_store($query);
 	}
 	echo "created annotated log {$this->annotated_log_name}\n";
     }
