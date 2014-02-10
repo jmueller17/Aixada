@@ -1,8 +1,8 @@
 <?php
 
-require_once('testing/lib/config.php');
+require_once('testing/lib/manager_base.php');
 
-class TestManager {
+class TestManager extends ManagerBase {
 
     private $dump_db_name;
     private $initial_dump_file;
@@ -10,21 +10,14 @@ class TestManager {
     private $test_dir;
     private $db;
     private $rhandle;
-    private $testloghandle;
 
     private $statement = 'Initializing database';
     private $checkmd5;
     private $realmd5;
     
     public function __construct($dump_db_name, $initial_dump_file, $log_file) {
-
-	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath, 
-	    $testlogfilename, $testloghandle;
-	if (($testloghandle = fopen($testlogfilename, 'w')) === false) {
-	    echo "Could not open log file {$testlogfilename} for processing\n";
-	    exit();
-	}
-	
+	parent::__construct();
+	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	// initialize names
 	$this->dump_db_name = $dump_db_name;

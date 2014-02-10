@@ -1,8 +1,8 @@
 <?php
 
-require_once("testing/lib/config.php");
+require_once("testing/lib/manager_base.php");
  
-class LogManager {
+class LogManager extends ManagerBase {
 
     private $dump_db_name;
     private $original_dumpfile;
@@ -12,6 +12,7 @@ class LogManager {
     private $annotated_log_name;
     private $exclusion_patterns;
     private $db;
+    private $rhandle;
     private $whandle;
     private $query = 'init';
     private $prev_md5sum;
@@ -19,7 +20,7 @@ class LogManager {
     private $tables_used_in_calls;
 
     public function __construct($dump_db_name, $original_dumpfile, $log_from_time_str, $log_to_time_str) {
-
+	parent::__construct();
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
 	$this->dump_db_name = $dump_db_name;	
@@ -57,7 +58,7 @@ class LogManager {
 			$use_tables[] = $table;
 
 	foreach ($this->tables_in_database as $table) 
-	    if (strpos($query, $table) !== false)
+	    if (strpos($query, $table . ' ') !== false)
 		$use_tables[] = $table;
 
 	do_log("tables used by query: " . join(',', $use_tables) . "\n");
@@ -110,7 +111,7 @@ class LogManager {
     
     private function execute_query($query){
 	$query = str_replace('\n', "\n", $query);
-	do_log("will execute query {$query}\n");
+	do_log("will execute query $query");
 	$ctime = time();
 	$this->db->Execute($query);
 	$this->db->free_next_results();
@@ -118,9 +119,8 @@ class LogManager {
     }
 
     private function prepare_output_files() {
-	$rhandle = @fopen($this->bare_log_name, 'r');
-	if (!$rhandle) {
-	    echo "Could not open {$this->bare_log_name} for reading\n";
+	if (($this->rhandle = fopen($this->bare_log_name, 'r')) === false) {
+	    do_log("Could not open {$this->bare_log_name} for reading\n");
 	    exit();
 	}
 
@@ -146,8 +146,9 @@ class LogManager {
 
 	if (strlen($query)>0 &&
 	    !strcmp($old_hash, $new_hash)) {
-	    do_log("line does not modify the database.\n"); continue;
+	    do_log("line does not modify the database.\n"); 
 	} else {
+	    global $reference_dump_dir;
 	    $this->store($new_hash, $reference_dump_dir);
 	}
     }
@@ -156,13 +157,13 @@ class LogManager {
 	$this->prepare_output_files();
 	$this->dump_hash_and_store('');
 	
-	while (($line = fgets($rhandle)) !== false) {
-	    do_log("processing $line\n");
+	while (($line = fgets($this->rhandle)) !== false) {
+	    do_log("\nprocessing $line");
 	    list ($time_str, $query) = $this->split_line($line);
 	    if (!$this->is_time_in_scope($time_str)) {
-		do_log("line is not in scope.\n"); continue;
+		do_log("line is not in time scope.\n"); continue;
 	    }
-	    dump_hash_and_store($query);
+	    $this->dump_hash_and_store($query);
 	}
 	echo "created annotated log {$this->annotated_log_name}\n";
     }

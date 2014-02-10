@@ -88,7 +88,7 @@ function tables_used_in_calls($tables) {
 	    || strpos($query, 'get_') !== false) 
 	    continue;
 	foreach ($tables as $table) {
-	    if (strpos($line, $table) !== false) {
+	    if (strpos($line, $table . ' ') !== false) {
 		if (in_array($table, $used_in[$query])) 
 		    continue;
 		$used_in[$query][] = $table;
