@@ -14,7 +14,6 @@ class LogManager extends ManagerBase {
     private $db;
     private $rhandle;
     private $whandle;
-    private $query = 'init';
     private $prev_md5sum;
     private $tables_in_database;
     private $tables_used_in_calls;
@@ -84,10 +83,9 @@ class LogManager extends ManagerBase {
 	return $md5sum;
     }
 
-    private function store($md5sum, $dir_to_store) {
-	if (!strcmp($md5sum, $this->prev_md5sum)) return;
-	if ($this->query != 'init') {
-	    $clean_query = preg_replace('/\s+/', ' ', str_replace("\n", '\n', $this->query));
+    private function store($query, $md5sum, $dir_to_store) {
+	if (strlen($query)>0) {
+	    $clean_query = preg_replace('/\s+/', ' ', str_replace("\n", '\n', $query));
 	    fwrite($this->whandle, $clean_query . "\n");
 	}
 	fwrite($this->whandle, "$md5sum\n");
@@ -149,7 +147,7 @@ class LogManager extends ManagerBase {
 	    do_log("line does not modify the database.\n"); 
 	} else {
 	    global $reference_dump_dir;
-	    $this->store($new_hash, $reference_dump_dir);
+	    $this->store($query, $new_hash, $reference_dump_dir);
 	}
     }
 
