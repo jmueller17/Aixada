@@ -146,7 +146,7 @@ class LogManager extends ManagerBase {
 
 	if (strlen($query)>0 &&
 	    !strcmp($old_hash, $new_hash)) {
-	    do_log("line does not modify the database.\n"); 
+	    log_error("line does not modify the database.\n"); 
 	} else {
 	    global $reference_dump_dir;
 	    $this->store($query, $new_hash, $reference_dump_dir);

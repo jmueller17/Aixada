@@ -14,12 +14,18 @@ class TestManager extends ManagerBase {
     private $statement = 'Initializing database';
     private $checkmd5;
     private $realmd5;
-    
+
     public function __construct($dump_db_name, $initial_dump_file, $log_file) {
 	parent::__construct();
 	global $dumppath, $logpath, $testrunpath, $tmpdump, $utilpath;
 
-	// initialize names
+	$this->_initialize_names($dump_db_name, $initial_dump_file, $log_file);
+	$this->_make_dir_for_test_runs();
+	$this->_prepare_resources();
+	$this->_does_log_belong_to_hash();
+    }
+
+    private function _initialize_names($dump_db_name, $initial_dump_file, $log_file) {
 	$this->dump_db_name = $dump_db_name;
 	$this->initial_dump_file =  (strlen($initial_dump_file)==0)
 	    ? $this->_latest_dump()
@@ -38,16 +44,19 @@ class TestManager extends ManagerBase {
 	}
 	do_log("Using database log file\n");
 	do_log("{$this->log_file}\n", 'blue');
-
-	// make directory for test runs
+    }
+    
+    private function _make_dir_for_test_runs() {
+	global $testrunpath;
 	$day = date("Y-m-d");
 	$now = date("H:i:m");
 	$this->testdir = $testrunpath . $day . '/' . $now . '/';
 	exec("mkdir -p {$testrunpath}$day/$now");
 	do_log("writing results into\n");
 	do_log("{$this->testdir}\n", 'blue');
+    }
 
-	// prepare resources
+    private function _prepare_resources() {
 	init_dump($this->dump_db_name, $this->initial_dump_file);
 	do_log("Initialized database\n");
 	$this->db = DBWrap::get_instance($this->dump_db_name, 
@@ -62,8 +71,9 @@ class TestManager extends ManagerBase {
 	    log_error("Could not open log file {$this->log_file} for processing\n");
 	    exit();
 	}
+    }
 
-	// does the log really belong to the hash?
+    private function _does_log_belong_to_hash() {
 	if ($this->one_hash_ok() != 1) {
 	    log_error("The database dump is not the one used to generate the log entries.\n");
 	    do_log("The hash of the database should have been\n");
@@ -96,11 +106,11 @@ class TestManager extends ManagerBase {
 	log_error(str_replace('\n', "\n", $this->statement) . "\n");
 	do_log("The difference is\n");
 	$diffstr1 = "{$reference_dump_dir}{$this->checkmd5} ";
-	$diffstr2 = "{$this->testdir}{$this->realmd5}\n";
+	$diffstr2 = "{$this->testdir}{$this->realmd5}";
 	do_log('diff ', 'blue');
 	do_log($diffstr1, 'green');
-	log_error($diffstr2);
-	log_error(exec('diff ' . $diffstr1 . $diffstr2));
+	log_error($diffstr2 . "\n");
+	log_error(exec('diff ' . $diffstr1 . $diffstr2) . "\n");
     }
 
     /**
