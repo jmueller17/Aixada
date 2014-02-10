@@ -1,5 +1,7 @@
 <?php
 
+require_once("testing/lib/termcolor.php");
+
 $dumpfile = '';
 for ($i=2; $i < sizeof($argv); $i++) {
     if (strpos($argv[$i], '.sql') !== false) {
@@ -30,7 +32,12 @@ $log_to_time_str   = (strpos($to_str, '@') !== false)
     ? $to_str
     : date('Y-m-d@H:i', strtotime($to_str));
 
-echo "executing the entries in $db_log between {$from_str} ($log_from_time_str) and {$to_str} ($log_to_time_str) onto $dumpfile ...\n"; 
+echo "executing the entries in $db_log between\n";
+tcechon("$from_str ($log_from_time_str)", 'green');
+echo "and\n";
+tcechon("$to_str ($log_to_time_str)", 'green');
+echo "onto\n";
+tcechon($dumpfile, 'blue');
 
 require_once 'testing/lib/log_manager.php';
 echo "creating log of modifying queries...\n"; 

@@ -44,7 +44,8 @@ class LogManager extends ManagerBase {
     public function create_bare_log_of_modifying_queries() {
 	global $db_log;
 	exec("egrep -iv -f {$this->exclusion_patterns} $db_log > {$this->bare_log_name}");
-	echo "created bare log {$this->bare_log_name}\n";
+	do_log("created bare log\n");
+	do_log("{$this->bare_log_name}\n", 'blue');
     }
 
     private function _tables_used_by_query($query) {
@@ -109,7 +110,8 @@ class LogManager extends ManagerBase {
     
     private function execute_query($query){
 	$query = str_replace('\n', "\n", $query);
-	do_log("will execute query $query");
+	do_log("will execute query\n");
+	do_log($query, 'green');
 	$ctime = time();
 	$this->db->Execute($query);
 	$this->db->free_next_results();
@@ -118,14 +120,14 @@ class LogManager extends ManagerBase {
 
     private function prepare_output_files() {
 	if (($this->rhandle = fopen($this->bare_log_name, 'r')) === false) {
-	    do_log("Could not open {$this->bare_log_name} for reading\n");
+	    log_error("Could not open {$this->bare_log_name} for reading\n");
 	    exit();
 	}
 
 	// create empty file
 	$this->whandle = @fopen($this->annotated_log_name, 'w');
 	if (!$this->whandle) {
-	    echo "Could not open {$this->annotated_log_name} for writing\n";
+	    log_error("Could not open {$this->annotated_log_name} for writing\n");
 	    exit();
 	}
     }
@@ -159,11 +161,12 @@ class LogManager extends ManagerBase {
 	    do_log("\nprocessing $line");
 	    list ($time_str, $query) = $this->split_line($line);
 	    if (!$this->is_time_in_scope($time_str)) {
-		do_log("line is not in time scope.\n"); continue;
+		log_error("line is not in time scope.\n"); continue;
 	    }
 	    $this->dump_hash_and_store($query);
 	}
-	echo "created annotated log {$this->annotated_log_name}\n";
+	do_log("\ncreated annotated log\n");
+	do_log("{$this->annotated_log_name}\n", 'blue');
     }
 
 }

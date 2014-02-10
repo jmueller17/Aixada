@@ -24,7 +24,8 @@ class TestManager extends ManagerBase {
 	$this->initial_dump_file =  (strlen($initial_dump_file)==0)
 	    ? $this->_latest_dump()
 	    : $initial_dump_file;
-	do_log("Using dump file {$this->initial_dump_file}\n");
+	do_log("Using dump file\n");
+	do_log("{$this->initial_dump_file}\n", 'blue');
 
 	$log_from_date = extract_to_date($this->initial_dump_file);
 	if (strlen($log_file) > 0)
@@ -35,14 +36,16 @@ class TestManager extends ManagerBase {
 		exit();
 	    }
 	}
-	do_log("Using database log file {$this->log_file}\n");
+	do_log("Using database log file\n");
+	do_log("{$this->log_file}\n", 'blue');
 
 	// make directory for test runs
 	$day = date("Y-m-d");
 	$now = date("H:i:m");
 	$this->testdir = $testrunpath . $day . '/' . $now . '/';
 	exec("mkdir -p {$testrunpath}$day/$now");
-	do_log("writing results into {$this->testdir}\n");
+	do_log("writing results into\n");
+	do_log("{$this->testdir}\n", 'blue');
 
 	// prepare resources
 	init_dump($this->dump_db_name, $this->initial_dump_file);
@@ -56,15 +59,17 @@ class TestManager extends ManagerBase {
 	do_log("Acquired database handler\n");
 
 	if (($this->rhandle = fopen($this->log_file, 'r')) === false) {
-	    do_log("Could not open log file {$this->log_file} for processing\n");
+	    log_error("Could not open log file {$this->log_file} for processing\n");
 	    exit();
 	}
 
 	// does the log really belong to the hash?
 	if ($this->one_hash_ok() != 1) {
-	    do_log("The database dump is not the one used to generate the log entries.\n"
-		. "The hash of the database should have been\n{$this->checkmd5}\n"
-		. "but was\n{$this->realmd5}\n");
+	    log_error("The database dump is not the one used to generate the log entries.\n");
+	    do_log("The hash of the database should have been\n");
+	    do_log("{$this->checkmd5}\n", 'green');
+	    do_log("but was\n");
+	    log_error("{$this->realmd5}\n");
 	    exit();
 	}
     }
@@ -82,14 +87,15 @@ class TestManager extends ManagerBase {
     private function output_error() {
 	global $reference_dump_dir;
 
-	do_log("The checksum\n{$this->checkmd5}\n"
-	       . "for the reference dump disagreed with the checksum\n{$this->realmd5}\n"
-	       . "for the current dump.\n"
-	       . "The offending query was\n"
-	       . str_replace('\n', "\n", $this->statement)
-	       . "\n"
-	       . "The difference is\n"
-	       . exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}")
+	do_log("The checksum\n");
+	do_log("{$this->checkmd5}\n", 'green');
+	do_log("for the reference dump disagreed with the checksum\n");
+	log_error("{$this->realmd5}\n");
+	do_log("for the current dump.\n"
+	       . "The offending query was\n");
+	log_error(str_replace('\n', "\n", $this->statement) . "\n");
+	do_log("The difference is\n");
+	log_error(exec("diff {$reference_dump_dir}{$this->checkmd5} {$this->testdir}{$this->realmd5}")
 	       . "\n");
     }
 
@@ -103,7 +109,7 @@ class TestManager extends ManagerBase {
     private function one_hash_ok() {
 	global $debug;
 	if (($this->checkmd5 = fgets($this->rhandle)) === false) {
-	    do_log("Error: expected a hash value in {$this->log_file}.\n");
+	    log_error("Error: expected a hash value in {$this->log_file}.\n");
 	    exit();
 	}
 	$this->checkmd5 = trim($this->checkmd5);
@@ -148,11 +154,11 @@ class TestManager extends ManagerBase {
     public function test() {
 	while (($result = $this->one_statement_ok()) == 1);
 	if ($result == 0) {
-	    do_log("A test failed.\n");
+	    log_error("A test failed.\n");
 	} elseif ($result == -1) {
 	    do_log("All tests ran successfully.\n");
 	} else {
-	    do_log("Unexpected return value $result\n");
+	    log_error("Unexpected return value $result\n");
 	}
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+require_once("testing/lib/termcolor.php");
+
 function init_dump($dump_db_name, $initial_dump_file) {
     // the mysql interface doesn't permit sourcing files, so we have to brute-force it
     // using the command line
@@ -115,11 +117,15 @@ function extract_to_date($dumpfile) {
     return substr($dumpfile, $to_pos, strlen($dateformat));
 }
 
-function do_log($str) {
-    echo $str;
+function do_log($str, $color='white') {
+    tcecho ($str, $color);
     global $testloghandle;
     fwrite($testloghandle, $str);
     flush();
+}
+
+function log_error($str) {
+    do_log($str, 'red', 'dark');
 }
 
 ?>
