@@ -25,7 +25,8 @@ insert into
 values
 	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.'),
 	('Merma', 'Lo que se pierde por bichos, caidas, caducado, ... '),
-	('Descuadre', 'Lo que no debería pasar pero siempre pasa. ');
+	('Descuadre', 'Lo que no debería pasar pero siempre pasa. '),
+	('Added', 'Llega un pedido de stock y se añade.');
 
 
 /**

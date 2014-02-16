@@ -28,12 +28,12 @@ try{
 
     	//updates the stock for given product. The "quantity" is added to current_stock
     	case 'addStock':
-    		echo do_stored_query('add_stock', get_param('product_id'), get_param('quantity'), get_session_user_id(), get_param('description','stock added'));
+    		echo do_stored_query('add_stock', get_param('product_id'), get_param('quantity'),  get_session_user_id(), get_param('movement_type_id',4), get_param('description','stock added'));
 			exit;
 
 		//corrects stock for product. The "quantity" replaces current_stock. 
     	case 'correctStock':
-    		echo do_stored_query('correct_stock', get_param('product_id'), get_param('quantity'), get_session_user_id());
+    		echo do_stored_query('correct_stock', get_param('product_id'), get_param('quantity'), get_param('description',''), get_param('movement_type_id',1), get_session_user_id());
 			exit;
     		
 		case 'getProductsBelowMinStock':

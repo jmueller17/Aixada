@@ -20,6 +20,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
+   		<!-- also aixadautitlities/stock.js.php check end of jquer section--> 
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_providers.min.js"></script>
     <?php }?>
@@ -62,6 +63,7 @@
 
 		//data for constructing the select options for the provider form
 		var gProviderSelects = [['aixada_uf', 'sResponsibleUfId','id','name']];
+
 
 		//data for constructing the select options for the product form
 		//format is: [table, destinationClassSelector, field1, field2,...]
@@ -575,6 +577,9 @@
 				setCheckBoxes('#frm_product_edit');
 				populateSelect(gProductSelects,'#tbl_product_edit');
 
+			}, complete : function(){
+				//populate stock movement type select
+				populateSelect([['aixada_stock_movement_type','sMovementTypeId','id','name']],'#frm_stock');
 			}
 
 		});

@@ -84,7 +84,11 @@ function correctStock(productId){
  */
 function submitStock(oper, product_id, quantity){
 
-	var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
+	var mov_id = $('#stock_movement_type_id').val();
+	var comment = $('#stock_movement_description').val();	
+
+
+	var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity+'&movement_type_id='+mov_id+'&description='+comment; 
 	
 	
 	$.ajax({

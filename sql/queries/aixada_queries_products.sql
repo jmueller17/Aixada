@@ -766,7 +766,11 @@ end|
  * However, stock disappears.... somehow
  */
 drop procedure if exists correct_stock|
-create procedure correct_stock(in the_product_id int, in the_current_stock decimal(10,4), in the_operator_id int)
+create procedure correct_stock(in the_product_id int, 
+								in the_current_stock decimal(10,4), 
+								in the_description varchar(255),
+								in the_movement_type_id int,	
+								in the_operator_id int)
 begin
 	
 	declare err_amount decimal(10,4);
@@ -814,12 +818,13 @@ begin
  		
  	-- reg the stock movement -- 	
  	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	the_current_stock - p.stock_actual,
-     	concat('stock corrected.'),
+		the_description,
+		the_movement_type_id,
      	the_current_stock
     from 
     	aixada_product p
@@ -849,6 +854,7 @@ drop procedure if exists add_stock|
 create procedure add_stock(in the_product_id int, 
 			   in delta_amount decimal(10,4), 
 			   in the_operator_id int, 
+			   in the_movement_type_id int,
 			   in the_description varchar(255))
 begin
    	start transaction;
@@ -863,12 +869,13 @@ begin
 
 	/* register the movement */
    	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	delta_amount,
      	the_description,
+     	the_movement_type_id,
      	p.stock_actual
     from 
     	aixada_product p

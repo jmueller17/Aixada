@@ -900,4 +900,8 @@ $Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly.
 $Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
 $Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
 $Text['no_stock'] = "Out of stock!!";
+$Text['stock_mov_type'] = "Movement type";
+
+
+
 ?>
