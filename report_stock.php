@@ -27,8 +27,131 @@
 	<script type="text/javascript">
 	$(function(){
 
+		//how many stock movements do we want to see in one go
+		var gStockMoveLimit = 200; 
+
+		//stock movement filter flags
+		var filterByDate = false; 
+
+		var filterByProvider = false; 
+
+		var filterByProduct = false;  
+
+
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+
+
+		//filter options
+		$("#tblViewOptions")
+		.button({
+			icons: {
+	        	secondary: "ui-icon-triangle-1-s"
+			}
+	    })
+	    .menu({
+			content: $('#tblOptionsItems').html(),	
+			showSpeed: 50, 
+			width:280,
+			flyOut: true, 
+			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
+				//show hide deactivated products
+				var filter = $(item).attr('id');
+				gItem = item; 
+
+				if (filter == 'filterDateRange'){
+					if (!filterByDate){
+						$("#dialog_select_dates").dialog("open");
+					} else {
+						filterByDate = false; 
+						reloadStockMoves();
+
+					}
+					
+				}  else if (filter == 'filterProvider'){
+					if(!filterByProvider){
+						$("#dialog_select_provider").dialog("open");
+					} else {
+						filterByProvider = false; 
+						$('.setProvider').text("all products");
+						reloadStockMoves();
+
+					}
+					
+				} 
+
+
+				if ($(item).children('span').hasClass('ui-icon-check')){
+					$(item).children('span').removeClass('ui-icon ui-icon-check');
+				} else {
+					$(item).children('span').addClass('ui-icon ui-icon-check');
+				}
+
+				
+			}//end item selected 
+		});//end menu
+
+
+
+							
+
+
+		//select provider	 
+		$("#dialog_select_provider").dialog({
+			autoOpen: false,
+			height: 230,
+			width: 450,
+			modal: true,
+			buttons: {
+				"<?php echo $Text['btn_close'];?>": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+
+
+		//select dates	 
+		$("#dialog_select_dates").dialog({
+			autoOpen: false,
+			height: 320,
+			width: 400,
+			modal: true,
+			buttons: {
+				"<?=$Text['btn_filter'];?>": function() {
+					filterByDate = true; 
+					reloadStockMoves();
+				},
+				"<?php echo $Text['btn_close'];?>": function() {					
+					$( this ).dialog( "close" );
+
+				}
+			}
+		});
+
+		
+
+		$("#datepicker_from").datepicker({
+			dateFormat 	: 'D, d M, yy',
+			onSelect : function (dateText, instance){
+				$('#setFromDate').text(dateText);
+			}
+		});
+
+
+		$("#datepicker_to").datepicker({
+			dateFormat 	: 'D, d M, yy',
+			onSelect : function (dateText, instance){
+				$('#setToDate').text(dateText);
+			}
+		});
+
+
+
+		$.getAixadaDates('getToday', function (date){
+			$("#datepicker_to").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
+			$("#datepicker_to").datepicker("refresh");
+		});
+
 
 		
 		//load the stock value for given provider
@@ -77,23 +200,26 @@
 
 				$('.setProvider').text(provider_name);
 				
+				filterByProvider = true; 
 	
 				$('.loadAnimShop').show();
 				$('#tbl_stock_value tbody').xml2html("reload",{
 					params	: 'oper=getStockValue&provider_id='+provider_id					
 				});		
 
-				$("#tbl_stock_movements tbody").xml2html("reload", {
-					params : 'oper=stockMovements&provider_id='+provider_id
-				});
+
+				reloadStockMoves();
 									
 		}); //end select change
 
 
+		/**
+		 *	load latest stock movements
+		 */
 		$("#tbl_stock_movements tbody").xml2html("init", {
 			url: 'php/ctrl/Shop.php',
-			params : 'oper=stockMovements',
-			loadOnInit:false,
+			params : 'oper=stockMovements&limit=50',
+			loadOnInit:true,
 			rowComplete : function (rowIndex, row){
 				$.formatQuantity(row);
 			},
@@ -204,7 +330,28 @@
 				seltr.children().eq(9).children(':first-child').removeClass('bruttoCol');
 			}
 		}
-			
+
+
+		function reloadStockMoves(){
+
+			var params = 'oper=stockMovements&limit='+gStockMoveLimit; 
+
+			if (filterByDate){
+				params += '&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'); 
+			}
+
+			if (filterByProvider){
+				params += '&provider_id='+ $("#providerSelect").val();
+
+			}
+
+			$("#tbl_stock_movements tbody").xml2html("reload", {
+						params :  params
+			});
+		}
+
+
+
 	});  //close document ready
 </script>
 
@@ -226,10 +373,15 @@
 		    	<h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1>
 		    </div>
 		    <div id="titleRightCol">
-		    	<select id="providerSelect" class="overviewElements floatRight">
-                    	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    	<option value="{id}"> {name}</option>                     
-				</select>
+		    	<button	id="tblViewOptions" class="btn_right"><?=$Text['btn_filter']; ?></button>
+				<div id="tblOptionsItems" class="hidden">
+					<ul>
+						<li><a href="javascript:void(null)" id="filterDateRange"><span class="floatLeft"></span>&nbsp;&nbsp;Date range</a></li>
+						<li><a href="javascript:void(null)" id="filterProvider"><span class="floatLeft"></span>&nbsp;&nbsp;By provider</a></li>
+						<!--li><a href="javascript:void(null)" id="filterProduct"><span class="floatLeft"></span>&nbsp;&nbsp;By product</a></li-->
+					</ul>
+				</div>	
+	
     			<p class="floatRight detailElements"><?php echo $Text['stock_acc_loss_ever']; ?>: <span class="setAccLossEver ui-state-highlight aix-style-padding3x3 ui-corner-all">?</span></p>
 		    </div>
 		</div>
@@ -239,8 +391,8 @@
 		<div id="stock_tabs" class="ui-widget">  
 		
 			<ul>
-				<li><a href="#tabs-1"><h2><?=$Text['curStock'];?></h2></a></li>
 				<li><a href="#tabs-2"><h2><?=$Text['ti_mgn_stock_mov'];?></h2></a></li>
+				<li><a href="#tabs-1"><h2><?=$Text['curStock'];?></h2></a></li>
 			</ul>
 		
 		  
@@ -302,7 +454,8 @@
 								<th>id</th>
 								<th>Name</th>
 								<th><?php echo $Text['operator'] ; ?></th>
-								<th><?php echo $Text['description'] ; ?></th>
+								<th><?php echo $Text['stock_mov_type']; ?></th>
+								<th><?php echo $Text['comment'] ; ?></th>
 								<th><?php echo $Text['date']; ?></th>
 								<th><p class="textAlignRight"><?php echo $Text['dff_qty']; ?></p></th>
 								<th><p class="textAlignRight"><?php echo $Text['dff_price']; ?></p></th>
@@ -317,6 +470,7 @@
 								<td>{product_id}</td>
 								<td>{product_name}</td>
 								<td>{member_name}</td>
+								<td>{movement_type}</td>
 								<td>{description}</td>
 								<td class="stockDeltaTSCell">{ts}</td>
 								<td class="stockDeltaQtyCell"><p class="textAlignRight formatQty">{amount_difference}</p></td>
@@ -352,16 +506,36 @@
 			
 		</div>	
 			
-		
-			
-		
-			
-		
-		
 	</div>
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
 <!-- / END -->
+
+<div id="dialog_select_dates" title="Select date range">
+	<p>Filter stock movements by dates</p>
+	<p>&nbsp;</p>
+	<table>
+	<tr>
+		<td><?php echo $Text['date_from']; ?>: </td>
+		<td><input type="text" id="datepicker_from" class="ui-corner-all"/></td>
+	</tr>
+	<tr><td><p>&nbsp;</p></td><td></td></tr>
+	<tr>
+		<td><?php echo $Text['date_to']; ?>: </td>
+		<td><input type="text" id="datepicker_to" class="ui-corner-all"/></td>
+	</tr>
+	</table>
+</div>
+
+
+<div id="dialog_select_provider" title="Select provider">
+	<p>&nbsp;</p>	
+  	<select id="providerSelect" class="overviewElements">
+       	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+       	<option value="{id}"> {name}</option>                     
+	</select>
+</div>
+
 </body>
 </html>

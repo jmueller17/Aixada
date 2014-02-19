@@ -41,7 +41,7 @@ try{
 	    	exit;
 	    
 	    case 'stockMovements':
-        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('limit', 0)));
+        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('from_date',""), get_param('to_date',""), get_param('limit', 0)));
         	exit;
         	
 	    case 'getTotalSalesByProviders':

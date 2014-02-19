@@ -726,7 +726,7 @@ begin
 	declare wherec varchar(255) default "p.active = 1";
 	
 	if (the_provider_id > 0) then
-		set wherec = concat("p.provider_id=", the_provider_id, "and p.active = 1");
+		set wherec = concat("p.provider_id=", the_provider_id, " and p.active = 1");
 	end if; 
 	
 	set @q = concat("select
@@ -915,16 +915,32 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
+create procedure stock_movements(	in the_product_id int, 
+									in the_provider_id int, 
+									in from_date varchar(255), 
+									in to_date varchar(255), 
+									in the_limit varchar(255))
 begin
   
 	declare wherec varchar(255) default ""; 
+	declare limitc varchar(255) default "";
+	declare datec varchar(255) default " and sm.ts between '1234-01-02' and '9999-01-01' ";
+
 
 	if (the_provider_id > 0) then
-		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+		set wherec = concat(" and p.provider_id = ", the_provider_id);
 	elseif (the_product_id > 0) then
-		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
+		set wherec = concat(" and p.id = ", the_product_id);
 	end if; 
+
+	if (the_limit != "") then 
+		set limitc = concat(" limit ", the_limit);
+	end if; 
+
+	if (from_date != "" and to_date != "") then
+		set datec = concat(" and sm.ts between '",from_date,"' and '",to_date,"' ");
+	end if; 
+
 	
 	set @q = concat("select
 		sm.*,
@@ -933,20 +949,25 @@ begin
 		p.name as product_name,
 		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
-		um.unit
+		um.unit,
+		smt.name as movement_type
 	from
 		aixada_stock_movement sm,
 		aixada_member mem,
 		aixada_product p, 
 		aixada_iva_type iva,
-		aixada_unit_measure um
+		aixada_unit_measure um,
+		aixada_stock_movement_type smt
 	where
 		mem.id = sm.operator_id
 		",wherec," 
+		",datec,"
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
+		and sm.product_id = p.id
+		and smt.id = sm.movement_type_id
 	order by
-		sm.product_id desc, sm.ts desc;");
+		sm.ts desc, sm.product_id desc ",limitc,";");
 		
 	prepare st from @q;
   	execute st;
