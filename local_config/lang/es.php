@@ -843,7 +843,7 @@ $Text['add_stock_frase'] = "Stock total = stock actual de "; //complete frase is
 $Text['correct_stock_frase'] = "El stock actual no es ";
 $Text['stock_but'] = "sino"; //current stock is not x units but...
 $Text['stock_info'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas) con sólo hacer clic en el nombre del producto aquí abajo.";
-$Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Gestionar &gt; Productos &gt; Stock.";
+$Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Informes &gt; Stock.";
 
 
 $Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 

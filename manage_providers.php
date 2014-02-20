@@ -1235,7 +1235,7 @@
 		
 		function loadSelectHTML(urlStr, destination){
 			$.post(urlStr, function(html){
-				var selValue = $(destination).append(html).prev().val(); 
+				var selValue = $(destination).empty().append(html).prev().val(); 
 				//new provider/product have no value, so we take the first option
 				//this needs to be set manually, otherwise with a new form, no values get send
 				if (selValue == ''){

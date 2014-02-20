@@ -8,11 +8,17 @@ function prepareStockForm(section, stockActual, unit, productId){
 				$('.addStockElements').show();
 				$('.correctStockElements').hide();
 
+
 				$('.sumStock').text(" " + stockActual+" "+unit + " ");
 				$('#setStockUnit').text(unit)
 				$('#dialog_edit_stock')
 					.data('info', {edit:'add', id:productId})
 					.dialog('open');
+
+				$('#stock_movement_type_id').val(4);
+
+				//$('.sMovementTypeId').hide(); //children("select").val("4").attr("selected",true);
+
 
 			} else if (section == 'correct'){
 				$('.addStockElements').hide();

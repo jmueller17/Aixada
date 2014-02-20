@@ -854,7 +854,7 @@ $Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase i
 $Text['correct_stock_frase'] = "Current stock is not";
 $Text['stock_but'] = "but"; //current stock is not x units but...
 $Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
-$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Report &gt; Stock page.";
 
 
 $Text['msg_confirm_prov'] = "Are you sure you want to export all providers?"; 

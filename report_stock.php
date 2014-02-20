@@ -30,12 +30,6 @@
 		//how many stock movements do we want to see in one go
 		var gStockMoveLimit = 200; 
 
-		//stock movement filter flags
-		var filterByDate = false; 
-
-		var filterByProvider = false; 
-
-		var filterByProduct = false;  
 
 
 		//loading animation
@@ -43,90 +37,11 @@
 
 
 		//filter options
-		$("#tblViewOptions")
-		.button({
-			icons: {
-	        	secondary: "ui-icon-triangle-1-s"
-			}
-	    })
-	    .menu({
-			content: $('#tblOptionsItems').html(),	
-			showSpeed: 50, 
-			width:280,
-			flyOut: true, 
-			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
-				//show hide deactivated products
-				var filter = $(item).attr('id');
-				gItem = item; 
-
-				if (filter == 'filterDateRange'){
-					if (!filterByDate){
-						$("#dialog_select_dates").dialog("open");
-					} else {
-						filterByDate = false; 
-						reloadStockMoves();
-
-					}
-					
-				}  else if (filter == 'filterProvider'){
-					if(!filterByProvider){
-						$("#dialog_select_provider").dialog("open");
-					} else {
-						filterByProvider = false; 
-						$('.setProvider').text("all products");
-						reloadStockMoves();
-
-					}
-					
-				} 
-
-
-				if ($(item).children('span').hasClass('ui-icon-check')){
-					$(item).children('span').removeClass('ui-icon ui-icon-check');
-				} else {
-					$(item).children('span').addClass('ui-icon ui-icon-check');
-				}
-
-				
-			}//end item selected 
-		});//end menu
-
-
-
-							
-
-
-		//select provider	 
-		$("#dialog_select_provider").dialog({
-			autoOpen: false,
-			height: 230,
-			width: 450,
-			modal: true,
-			buttons: {
-				"<?php echo $Text['btn_close'];?>": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-
-
-		//select dates	 
-		$("#dialog_select_dates").dialog({
-			autoOpen: false,
-			height: 320,
-			width: 400,
-			modal: true,
-			buttons: {
-				"<?=$Text['btn_filter'];?>": function() {
-					filterByDate = true; 
-					reloadStockMoves();
-				},
-				"<?php echo $Text['btn_close'];?>": function() {					
-					$( this ).dialog( "close" );
-
-				}
-			}
-		});
+		$("#filterBtn")
+			.button()
+			.click(function(e){
+				reloadStockMoves();
+			})
 
 		
 
@@ -134,7 +49,10 @@
 			dateFormat 	: 'D, d M, yy',
 			onSelect : function (dateText, instance){
 				$('#setFromDate').text(dateText);
+				reloadStockMoves();
 			}
+		}).blur(function(){
+			reloadStockMoves();
 		});
 
 
@@ -142,9 +60,15 @@
 			dateFormat 	: 'D, d M, yy',
 			onSelect : function (dateText, instance){
 				$('#setToDate').text(dateText);
+				reloadStockMoves()
 			}
+		}).blur(function(){
+			reloadStockMoves();
 		});
 
+		$("#product_id").blur(function(){
+			reloadStockMoves();
+		});
 
 
 		$.getAixadaDates('getToday', function (date){
@@ -194,13 +118,12 @@
 				var provider_id = $("option:selected", this).val();
 				var provider_name = $("option:selected", this).text();			
 				$('#tbl_stock_value tbody').xml2html('removeAll');	
-				$('.setProvider').text("");
-						
-				if (provider_id < 0) { return true;}
 
-				$('.setProvider').text(provider_name);
-				
-				filterByProvider = true; 
+				reloadStockMoves();
+
+				if (provider_id < 0) {  
+					return true;
+				}
 	
 				$('.loadAnimShop').show();
 				$('#tbl_stock_value tbody').xml2html("reload",{
@@ -208,7 +131,7 @@
 				});		
 
 
-				reloadStockMoves();
+			
 									
 		}); //end select change
 
@@ -303,7 +226,9 @@
 		
 				
 		$('#stock_tabs').tabs();	
-
+		$("#accordion").accordion({
+      		collapsible: true
+   		 });
 
 
 		function sumStockValue(){
@@ -333,15 +258,19 @@
 
 
 		function reloadStockMoves(){
-
 			var params = 'oper=stockMovements&limit='+gStockMoveLimit; 
 
-			if (filterByDate){
+			if ($('#datepicker_from').val() != "" && $('#datepicker_to').val() != ""){
 				params += '&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'); 
 			}
 
-			if (filterByProvider){
+			if ($("#providerSelect").val() > 0 ){
 				params += '&provider_id='+ $("#providerSelect").val();
+
+			}
+
+			if ($("#product_id").val() > 0){
+				params += '&product_id='+$("#product_id").val(); 
 
 			}
 
@@ -350,6 +279,48 @@
 			});
 		}
 
+
+	 	
+
+		/**
+		 *	stock add/correct functionality
+		 */
+
+		$('.btn_add_stock')
+			.live('click',function(e){
+				prepareStockForm('add',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
+		
+		
+		$('.btn_correct_stock')
+			.live('click',function(e){
+				prepareStockForm('correct',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
+			
+			
+
+		$('#dialog_edit_stock').dialog({
+			autoOpen:false,
+			width:480,
+			height:400,
+			modal:true,
+			buttons: {  
+				"<?=$Text['btn_save'];?>" : function(){
+					
+						if ($(this).data('info').edit == "add"){
+							addStock($(this).data('info').id);
+						} else if ($(this).data('info').edit == "correct"){
+							correctStock($(this).data('info').id);
+						}
+					},
+			
+				"<?=$Text['btn_cancel'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+		<?php include('js/aixadautilities/stock.js.php'); ?> 
 
 
 	});  //close document ready
@@ -367,21 +338,37 @@
 	
 	<div id="stagewrap">
 	
-		
+
+
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
-		    	<h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1>
+				<div id="accordion">
+					<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter movements</h2>
+						<div>
+							<table class="tblforms">
+								<tr>
+									<td>By date range:&nbsp;&nbsp;</td><td> <?php echo $Text['date_from']; ?> <input type="text" id="datepicker_from" class="ui-widget-content ui-corner-all "/> - <?php echo $Text['date_to']; ?>: 
+									<input type="text" id="datepicker_to" class="ui-widget-content ui-corner-all "/><br/><br/></td>
+								</tr>
+								<tr>
+									<td class="textAlignRight">By provider:&nbsp;&nbsp;</td><td> <select id="providerSelect" class="overviewElements">
+       											<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+       											<option value="{id}"> {name}</option>                     
+											</select><br/><br/></td>
+								</tr>
+								<tr>
+									<td class="textAlignRight">By product id:&nbsp;&nbsp;</td><td> <input type="text" id="product_id" class="ui-widget-content ui-corner-all "/></td>
+								</tr>
+							</table>
+							<button	id="filterBtn" class="btn_right"><?=$Text['btn_filter']; ?></button>
+						</div>
+				
+				</div>
+
+		    	<!--h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1-->
 		    </div>
 		    <div id="titleRightCol">
-		    	<button	id="tblViewOptions" class="btn_right"><?=$Text['btn_filter']; ?></button>
-				<div id="tblOptionsItems" class="hidden">
-					<ul>
-						<li><a href="javascript:void(null)" id="filterDateRange"><span class="floatLeft"></span>&nbsp;&nbsp;Date range</a></li>
-						<li><a href="javascript:void(null)" id="filterProvider"><span class="floatLeft"></span>&nbsp;&nbsp;By provider</a></li>
-						<!--li><a href="javascript:void(null)" id="filterProduct"><span class="floatLeft"></span>&nbsp;&nbsp;By product</a></li-->
-					</ul>
-				</div>	
-	
+
     			<p class="floatRight detailElements"><?php echo $Text['stock_acc_loss_ever']; ?>: <span class="setAccLossEver ui-state-highlight aix-style-padding3x3 ui-corner-all">?</span></p>
 		    </div>
 		</div>
@@ -411,6 +398,7 @@
 							<th><?php echo $Text['iva'] ?></th>
 							<th><?php echo $Text['revtax_abbrev']; ?></th>
 							<th><p class="textAlignRight"><?php echo $Text['brutto_stock']; ?></p></th>
+							<!--th></th-->
 						</tr>
 					</thead>
 					<tbody>
@@ -425,6 +413,9 @@
 							<td>{iva_percent}%</td>
 							<td>{rev_tax_percent}%</td>
 							<td><p class="bruttoCol textAlignRight">{total_brutto_stock_value}</p></td>
+							<!--td>
+								<p class="textAlignCenter"><a class="btn_add_stock" unit="{unit}" productId="{id}" stockActual="{stock_actual}" href="javascript:void(null)"><?php echo $Text['add_stock']; ?></a>&nbsp;&nbsp; | &nbsp;&nbsp;<a class="btn_correct_stock" productId="{id}" stockActual="{stock_actual}" unit="{unit}" href="javascript:void(null)"><?php echo $Text['correct_stock']; ?></a> </p>
+							</td-->
 						</tr>
 					</tbody>
 					<tfoot>
@@ -511,31 +502,13 @@
 </div>
 <!-- end of wrap -->
 <!-- / END -->
-
-<div id="dialog_select_dates" title="Select date range">
-	<p>Filter stock movements by dates</p>
-	<p>&nbsp;</p>
-	<table>
-	<tr>
-		<td><?php echo $Text['date_from']; ?>: </td>
-		<td><input type="text" id="datepicker_from" class="ui-corner-all"/></td>
-	</tr>
-	<tr><td><p>&nbsp;</p></td><td></td></tr>
-	<tr>
-		<td><?php echo $Text['date_to']; ?>: </td>
-		<td><input type="text" id="datepicker_to" class="ui-corner-all"/></td>
-	</tr>
-	</table>
+<div id="dialog_edit_stock">
+<?php include('tpl/stock_dialog.php');?>
 </div>
-
-
-<div id="dialog_select_provider" title="Select provider">
-	<p>&nbsp;</p>	
-  	<select id="providerSelect" class="overviewElements">
-       	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+<div class="hidden" id="tmpMoveTypeSelect">	
+	<select id="stockMoveTypeId">
        	<option value="{id}"> {name}</option>                     
 	</select>
-</div>
-
+</div>	
 </body>
 </html>

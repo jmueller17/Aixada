@@ -12,7 +12,7 @@
 </p>
 <br/>
 <table class="tblForms">
-	<tr>
+	<tr class="correctStockElements">
 		<td><label for="stock_movement_type_id">&nbsp; <?php echo $Text['stock_mov_type'];?> </label></td>
 		<td>
 			<input type="hidden" name="stock_movement_type_id" id="stock_movement_type_id" value="1"/>
@@ -27,10 +27,7 @@
 	</tr>
 <tr></tr>
 </table>
-
-<br/><br/>
 <!--p class="correctStockElements ui-state-highlight aix-style-padding8x8 ui-corner-all"><?php echo $Text['msg_correct_stock']; ?></p-->
-<br/><br/>
 <p id="infoStockPage" class="aix-style-padding8x8"><?php echo $Text['stock_info']; ?></p>
 <p id="infoStockProductPage" class="aix-style-padding8x8"><?php echo $Text['stock_info_product']; ?></p>
 </form>

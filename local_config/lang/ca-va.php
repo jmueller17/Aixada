@@ -853,7 +853,7 @@ $Text['add_stock_frase'] = "Estoc total = estoc actual de "; //complete frase is
 $Text['correct_stock_frase'] = "L'estoc actual no és de";
 $Text['stock_but'] = "sinó"; //current stock is not x units but...
 $Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues) fent clic al nom del producte aquí baix.";
-$Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Gestiona&gt; Productes&gt; Estoc.";
+$Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Informes &gt; Estoc.";
 
 
 $Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
