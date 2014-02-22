@@ -2,61 +2,6 @@
 $(function(){
 	
 	
-	$("#navHome").button();
-	/*$("#navWizard").button({
-		icons: {
-        	secondary: "ui-icon-triangle-1-s"
-		}
-    }).menu({
-		content: $('#navWizardItems').html(),	
-		showSpeed: 50, 
-		flyOut: true
-	});*/
-	
-	$("#navWizard").button();
-	$("#navShop").button();
-	$("#navOrder").button();
-    
-	$("#navManage").button({
-		icons: {
-            secondary: "ui-icon-triangle-1-s"
-		}
-	}).menu({
-		content: $('#navManageItems').html(),	
-		showSpeed: 50, 
-		width:200,
-		flyOut: true
-	});
-
-	$("#navReport").button({
-		icons: {
-            secondary: "ui-icon-triangle-1-s"
-		}
-	}).menu({
-		content: $('#navReportItems').html(),	
-		showSpeed: 50, 
-		flyOut: true
-	});
-
-	$("#navIncidents").button({
-		icons: {
-            secondary: "ui-icon-triangle-1-s"
-		}
-	}).menu({
-		content: $('#navIncidentsItems').html(),	
-		showSpeed: 50, 
-		flyOut: true
-	});
-	
-	$("#navMyAccount").button({
-		icons: {
-            secondary: "ui-icon-gear"
-		}
-	}).menu({
-		content: $('#navMyAcountItems').html(),	
-		showSpeed: 50, 
-		flyOut: true
-	});
 	
 	
 	$('#role_select').change(function (){

@@ -5,18 +5,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_incidents'];?></title>
 
-	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
+		<!--script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script-->     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<!--script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script-->
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_incidents.min.js"></script>
     <?php }?>
@@ -112,7 +108,7 @@
 
 		
 		$('.btn_view_incident')
-			.live('click', function(){
+			.on('click', function(){
 				switchTo('detail');
 				//$('#tbl_incidents tbody tr').trigger("click");
 			});
@@ -124,7 +120,7 @@
 	        	secondary: "ui-icon-triangle-1-s"
 			}
 	    })
-	    .menu({
+	    /*.menu({
 			content: $('#tblIncidentsOptionsItems').html(),	
 			showSpeed: 50, 
 			width:180,
@@ -137,7 +133,7 @@
 				});
 				
 			}//end item selected 
-		});//end menu
+		});*///end menu
 
 
 		//print incidents accoring to current incidents template in new window or download as pdf
@@ -147,7 +143,7 @@
 				primary: "ui-icon-print",
 	        	secondary: "ui-icon-triangle-1-s"
 			}
-	    })
+	    })/*
 	    .menu({
 			content: $('#printOptionsItems').html(),	
 			showSpeed: 50, 
@@ -187,13 +183,13 @@
 				}
 								
 			}//end item selected 
-		});//end print menu
+		});*///end print menu
 		
 
 	
 		//bulk actions
 		$('input[name=bulkAction]')
-			.live('click', function(e){
+			.on('click', function(e){
 				e.stopPropagation();
 			})
 			
@@ -242,7 +238,7 @@
 		
 		//DELETE incidents
 		$('.btn_del_incident')
-			.live("click", function(e){
+			.on("click", function(e){
 					var incidentId = $(this).parents('tr').attr('incidentId'); 
 					$.showMsg({
 								msg: '<?php echo $Text['msg_delete_incident'];?>',
@@ -331,17 +327,9 @@
 
 
 		
-		$('#tbl_incidents tbody tr')
-			.live('mouseenter', function(){
-				$(this).addClass('ui-state-highlight');
-			})
-			.live('mouseleave',function(){
-				if (!$(this).hasClass('active_row')){
-					$(this).removeClass('ui-state-highlight');
-				}
-			})
+		$('#tbl_incidents tbody')
 			//click on table row
-			.live("click", function(e){
+			.on("click", "tr", function(e){
 
 				resetDetails();
 				
