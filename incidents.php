@@ -411,7 +411,6 @@
 	</script>
 </head>
 <body>
-<div id="wrap">
 
 	<div id="headwrap">
 		<?php include "php/inc/menu.inc.php" ?>
@@ -419,52 +418,43 @@
 	<!-- end of headwrap -->
 	
 	
-	<div id="stagewrap">
+	<div class="container">
 	
-		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol50">
-				<button id="btn_overview" class="floatLeft detailElements"><?php echo $Text['overview'];?></button>
+		<div class="row">
+			<div class="col-md-11">
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
 		    </div>
-		    <div id="titleRightCol50">
-		 		<button	id="tblIncidentsViewOptions" class="overviewElements btn_right hideInPrint"><?=$Text['filter_incidents'];?></button>
-		    		<div id="tblIncidentsOptionsItems" class="hidden hideInPrint">
-					<ul>
-					 <li><a href="javascript:void(null)" id="today"><?=$Text['filter_todays'];?></a></li>
-					 <li><a href="javascript:void(null)" id="past2Month"><?=$Text['filter_recent'];?></a></li>
-					 <li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
-					</ul>
-					</div>		
-		    	
-		    	<button id="btn_new_incident" class="overviewElements  hideInPrint"><?php echo $Text['btn_new_incident'];?></button>
-		    	
-		    	
-		    	<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
-		    		<div id="printOptionsItems" class="hidden hideInPrint">
-					<ul>
-					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
-					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
-					</ul>
-					</div>		
-		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
-		    	
-		    			
+		    <div class="col-md-1">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    				Actions <span class="caret"></span>
+  				</button>
+				<ul class="dropdown-menu" role="menu">
+				    <li><a href="#"><?php echo $Text['btn_new_incident'];?></a></li>
+				    <li class="divider"></li>
+				    <li><a href="#"><?=$Text['filter_incidents'];?></a></li>
+				    <li><a href="javascript:void(null)" id="today">&nbsp;&nbsp;<?=$Text['filter_todays'];?></a></li>
+					<li><a href="javascript:void(null)" id="past2Month">&nbsp;&nbsp;Date range</a></li>
+				    <li class="divider"></li>
+				    <li><a href="#"><?=$Text['printout'];?></a></li>
+				    <li class="divider"></li>
+				    <li><a href="#">Export</a></li>
+				    <li><a href="javascript:void(null)">&nbsp;&nbsp;pdf</a></li>
+					<li><a href="javascript:void(null)">&nbsp;&nbsp;xls</a></li>
+				</ul>			
 		    </div>
 		</div>
 		
-		<div id="incidents_listing" class="ui-widget overviewElements">
-			<div class="ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all hideInPrint"><?php echo $Text['overview'];?>&nbsp;&nbsp;<span style="float:right;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h2>
-					<div id="tbl_div">
-					<table id="tbl_incidents" class="tblListingDefault">
+		<div id="incidents_listing" class="overviewElements">
+			<div class="container">
+					<table id="tbl_incidents" class="table">
 					<thead>
 						<tr>
-							<th>&nbsp;<input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
-							<th class="mwidth-30"><p class="textAlignCenter"><?php echo $Text['id'];?></p></th>
+							<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
+							<th><?php echo $Text['id'];?></th>
 							<th hideInPrint"><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?>&nbsp;&nbsp;</th>
 							<th><?php echo $Text['created_by'];?></th>
-							<th><p class="textAlignLeft"><?php echo $Text['created'];?></p></th>
+							<th><?php echo $Text['created'];?></th>
 							<th><?php echo $Text['status'];?></th>
 							<th class="hidden"><?php echo $Text['incident_type'];?></th>
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>

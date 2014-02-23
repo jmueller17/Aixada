@@ -139,7 +139,7 @@ class abstract_import_manager {
     	}
 
   	
-        if (count($data_table) == 0){
+      if (count($data_table) == 0){
     		throw new Exception ("Import error: the data table is empty. Nothing to import!!");
     		exit; 
     	} else {

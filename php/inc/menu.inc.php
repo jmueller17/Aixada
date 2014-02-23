@@ -65,35 +65,19 @@
           </div>
 
           <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
             	<?php 
-					$nav = configuration_vars::get_instance()->main_nav; 
-					
-					foreach ($nav as $nav_item) {
-						
-						echo '<li><a href="'.$nav_item["path"].'">'.$Text[$nav_item["i18n"]].'</a></li>';
-					}           	
 
-
+            		try {
+            			$nav = new menu(configuration_vars::get_instance()->main_nav);
+            			echo $nav->get_menu(); 
+            		} catch(Exception $e) {
+   						header('HTTP/1.0 401 ' . $e->getMessage());
+    					die ($e->getMessage());
+					} 
 
             	?>	
-              <!--li class="active"><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li class="divider"></li>
-                  <li class="dropdown-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
-                </ul>
-              </li-->
-            </ul>
-           
+            
+            
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </div>
@@ -142,24 +126,24 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<!-- li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li-->
+				<li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li>
 				<li><a href="manage_table.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
 				
 			</ul>
 		</li>
 		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a></li>
-			<!--  ul>
+			<!ul>
 
 				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
 			</ul>
-		</li-->
+		</li>
 		<li><a href="manage_money.php"><?php echo $Text['nav_mng_money'];?></a>
 		</li>
 		<li><a href="#TODO"><?php echo $Text['nav_mng_admin'];?></a>
 			<ul>
 				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
-				<!-- li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
-				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li-->
+				<li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
+				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li>
 			</ul>
 		</li>
 
@@ -186,7 +170,7 @@
                  <li><a href="report_timelines.php?oper=product"><?php echo $Text['nav_report_timelines_product'];?></a></li>
                 </ul>
                 </li>
-		<!-- li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li-->
+		<li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li>
 	</ul>
 </div>
 
@@ -201,7 +185,7 @@
 		<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
 		<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
 		<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
-		<!-- li><a href="my_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li-->
+		<li><a href="my_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
 	</ul>
 </div>
 -->

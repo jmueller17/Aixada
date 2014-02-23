@@ -21,6 +21,8 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
 $language = get_session_language(); 
 
 
+require_once(__ROOT__ . 'php'.DS.'lib'.DS.'menu.php');
+
 //should be deleted in the end, and globally set. 
 $_SESSION['dev'] = configuration_vars::get_instance()->development;
 
