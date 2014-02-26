@@ -6,12 +6,16 @@
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_incidents'];?></title>
 
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/aixcss.css" rel="stylesheet">
+
+
 
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
 	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
-		<!--script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script-->     	 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
+	   	
 	   	<!--script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script-->
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_incidents.min.js"></script>
@@ -25,30 +29,25 @@
 
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
-		
 
-		$('.detailElements').hide();		
+
+		$('.section').hide();
+
+
+		$('.change-sec')
+			.switchSection("init");
+
+		$('.sec-1').show();
+
+
+
+			//.switchSection("changeTo",".sec-1");
+
+
 
 		
-		function switchTo(section){
-			switch (section){
-				case 'detail':
-					$('.overviewElements, .detailCreateElements').hide();
-					$('.detailElements, .detailEditElements').fadeIn(1000); 
-					break;
-					
-				case 'new':
-					resetDetails();
-					$('.overviewElements, .detailEditElements').hide();
-					$('.detailElements, .detailCreateElements').fadeIn(1000); 
-					break;
-					
-				case 'overview':
-					$('.detailElements, .detailEditElements, .detailCreateElements').hide(); 
-					$('.overviewElements').fadeIn(1000);
-			}
-		}
 		
+	
 
 		/** 
 		 *	resets the incidents form when creating a new one. 
@@ -66,52 +65,8 @@
 
 		}
 
-
-		//returns to incident overview. 
-		$("#btn_overview").button({
-			 icons: {
-	        		primary: "ui-icon-circle-arrow-w"
-	        	}
-			 })
-    		.click(function(e){
-				switchTo('overview'); 
-    		}).hide();
-
-		
-		$('#btn_new_incident')
-			.button({
-				icons: {
-	        		primary: "ui-icon-plus"
-	        	}
-
-			})
-			.click(function(){
-				switchTo('new');
-		});
-
-		
-		$('#btn_cancel')
-			.button({
-				icons: {
-				primary: "ui-icon-close"}
-			})
-			.click(function(){
-				switchTo('overview');
-		});
-
-
-		$('#btn_save')
-			.button({
-				icons: {
-				primary: "ui-icon-check"}
-			});
-
-		
-		$('.btn_view_incident')
-			.on('click', function(){
-				switchTo('detail');
-				//$('#tbl_incidents tbody tr').trigger("click");
-			});
+	
+	
 
 
 		$("#tblIncidentsViewOptions")
@@ -279,8 +234,10 @@
 
 			var dataSerial = $(this).serialize();
 			
-			$('button').button( "option", "disabled", true );
+			var btn = $(this)
+    		btn.button('loading')
 
+			
 			
 			$.ajax({
 				    type: "POST",
@@ -290,16 +247,17 @@
 				   		$('#editorWrap .loadSpinner').show();
 					},
 				    success: function(msg){
-						switchTo('overview');
+						//switchTo('overview');
 						resetDetails();
 				    },
 				    error : function(XMLHttpRequest, textStatus, errorThrown){
-				    	 $.updateTips('#incidentsMsg','error','Error: '+XMLHttpRequest.responseText);
+				    	 //$.updateTips('#incidentsMsg','error','Error: '+XMLHttpRequest.responseText);
 				    },
 				    complete : function(msg){
-				    	$('button').button( "option", "disabled", false );
+				    	btn.button('reset');
+
 				    	$('#tbl_incidents tbody').xml2html('reload');
-				    	$('#editorWrap .loadSpinner').hide();//
+				    	//$('#editorWrap .loadSpinner').hide();//
 				    	
 				    	
 				    }
@@ -320,7 +278,7 @@
 					$('.loadSpinner').show();
 				},
 				complete : function(rowCount){
-					$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 
+					//$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 
 					$('.loadSpinner').hide();	
 				}
 		});
@@ -353,7 +311,9 @@
 						$('#'+input_name).val(value);
 					}
 
-					switchTo('detail');
+					$('.change-sec').switchSection("changeTo",".sec-2");
+
+					
 					e.stopPropagation();
 					
 	
@@ -404,7 +364,7 @@
 
 		
 		
-		switchTo('overview');
+		//switchTo('overview');
 						
 			
 	});  //close document ready
@@ -420,16 +380,30 @@
 	
 	<div class="container">
 	
+		<div class="row section sec-1">
+ 			<div class="col-md-1 section sec-1">
+		    	<h2><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span></h2>
+		    </div>
+		    <div class="col-md-11 section sec-1">
+		    	<h1><?=$Text['incident_details'];?>	<span id="incident_id_info">#</span></h1>
+		    </div>
+		</div>
+
 		<div class="row">
-			<div class="col-md-11">
+			<div class="col-md-11 section sec-1">
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
 		    </div>
+
+		    <div class="col-md-11 section sec-3">
+		    	<h1><?=$Text['create_incident'];?></h1>
+		    </div>
+
 		    <div class="col-md-1">
 				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
     				Actions <span class="caret"></span>
   				</button>
 				<ul class="dropdown-menu" role="menu">
-				    <li><a href="#"><?php echo $Text['btn_new_incident'];?></a></li>
+				    <li><a href="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
 				    <li class="divider"></li>
 				    <li><a href="#"><?=$Text['filter_incidents'];?></a></li>
 				    <li><a href="javascript:void(null)" id="today">&nbsp;&nbsp;<?=$Text['filter_todays'];?></a></li>
@@ -444,9 +418,9 @@
 		    </div>
 		</div>
 		
-		<div id="incidents_listing" class="overviewElements">
+		<div id="incidents_listing" class="section sec-1">
 			<div class="container">
-					<table id="tbl_incidents" class="table">
+					<table id="tbl_incidents" class="table table-hover">
 					<thead>
 						<tr>
 							<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
@@ -506,15 +480,8 @@
 			</div>	
 		</div>
 
-		<div id="editorWrap" class="ui-widget hideInPrint detailElements">
-			<div class="ui-widget-content ui-corner-all">
-				<h3 class="ui-widget-header ui-corner-all">
-					&nbsp;
-					<span class="detailCreateElements"><?php echo $Text['create_incident'];?></span>
-					<span class="detailEditElements"><?=$Text['incident_details'];?></span> 
-					<span id="incident_id_info" class="detailEditElements">#</span>
-					<span style="float:right; margin-top:-5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
-				</h3>
+		<div id="editorWrap" class="section sec-2 sec-3">
+			<div class="container">
 				<p id="incidentsMsg" class="user_tips"></p>
 				<form>
 					<input type="hidden" id="incident_id" name="incident_id" value=""/>
@@ -585,9 +552,9 @@
 						<tr>
 							<td></td>
 							<td colspan="2" class="textAlignRight">
-								<button id="btn_save" type="submit"><?php echo $Text['btn_save'];?></button>
+								<button type="submit" href="#sec-1" data-loading-text="Loading..." class="btn btn-default change-sec"><?php echo $Text['btn_save'];?></button>
 								&nbsp;&nbsp;
-								<button id="btn_cancel" type="reset"><?php echo $Text['btn_cancel'];?></button>
+								<button type="reset" href="#sec-1" class="btn btn-default change-sec"><?php echo $Text['btn_cancel'];?></button>
 							</td>
 						</tr>
 					</table>

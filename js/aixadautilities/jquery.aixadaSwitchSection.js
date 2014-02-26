@@ -1,5 +1,12 @@
 
-
+/**
+ * library to faciliate switching between different interface sections in one 
+ * and the same HTML page (that are usually loaded with ajax)
+ * Usage: links or buttons that trigger a section change should have the class="change-to" attribute
+ * attached. The target is specified with the href="#sec-1" #sec-2 etc. 
+ * The different sections of the page are marked <div class="section sec-1"></div> or <div class="section sec-2"></div>
+ * All the rest happens automatically. 
+ */
 
 
 (function( $ ){
@@ -9,10 +16,10 @@
 
 		 		var settings = {
 					fadeInTime   		: 1000,
-					fadeOutTime			: 1000,
-					hist 				: false, 
-					gSectionSel			: '.section',
-					gListenerSel		: '.sectionSwitchListener',				
+					fadeOutTime			: 0,
+					hist 				: false,  			//TODO: php side save to session last page
+					gSectionSel			: '.section',	 	//selector to hide all sections. 
+					gListenerSel		: '.sectionSwitchListener',	//selector for all section change event listerens			
 					beforeSectionSwitch	: function(){},
 					afterSectionSwitch	: function(){}
 		  		};
@@ -24,21 +31,43 @@
 					}
 	   					
 					var $this = $(this);
-					data = $this.data('mem');	   	
-					
+					data = $this.data('mem');						
 					
 					// If the plugin hasn't been initialized yet
 					if ( ! data ) {		
 						$(this).data('mem', {
 							fadeInTime		: settings.fadeInTime,
 							fadeOutTime		: settings.fadeOutTime,
-							hist			: settings.hist,
+							hist			: settings.hist,		
 							gSectionSel 	: settings.gSectionSel,
 							gListenerSel 	: settings.gListenerSel,
 							beforeSectionSwitch 	: settings.beforeSectionSwitch,
 							afterSectionSwitch 		: settings.afterSectionSwitch
 							});
 					}
+
+					//detect clicks on "change-to" selectors. 
+					$this.bind("click", function () {
+							var target = null; //target = $(this).attr('href'); 
+
+							if (typeof $(this).attr('href') != 'undefined'){
+								target = $(this).attr('href');									
+
+							} 
+
+							if (typeof $(this).attr('target-section') != 'undefined' ){
+								target = $(this).attr('target-section')
+							}
+
+							if (target==null) return false; 
+
+							target = target.slice(1,target.length);
+         					
+							
+							$this.switchSection("changeTo", "."+target);
+       				});  	
+
+
 				}); //end for each
 				
 		  		
@@ -55,12 +84,13 @@
 	  			return this.each(function(){
 	  				var $this = $(this);	
 
+	  				//some vars to make sure the events are only triggered once. 
 	  				var gSelCounter = 0;
 	  				var gToCounter = 0;  
 	  				var gSelTotal = $($this.data('mem').gSectionSel).length;	
 	  				var gToTotal = $(toSectionSel).length;
 
-	  				$this.data('mem').beforeSectionSwitch.call(this);
+	  				//$this.data('mem').beforeSectionSwitch.call(this);
 				    $($this.data('mem').gListenerSel).trigger('beforeSectionSwitch', [toSectionSel]);
 
 
@@ -69,6 +99,7 @@
 				    	gSelCounter++; 
 
 				    	//trigger fade in animation once everthing is faded out. 
+				    	//depending on nr of matching selectors this is called many times!
 				    	if (gSelCounter == gSelTotal){ 
 				    	
 							$(toSectionSel).fadeIn($this.data('mem').fadeInTime, function(){
@@ -76,8 +107,8 @@
 
 								//trigger events only once, not for each matching element!
 								if (gToCounter == gToTotal){
-				  					$this.data('mem').afterSectionSwitch.call(this);
-									$($this.data('mem').gListenerSel).trigger('afterSectionSwitch', [toSectionSel]);
+				  					//$this.data('mem').afterSectionSwitch.call(this);
+									//$($this.data('mem').gListenerSel).trigger('afterSectionSwitch', [toSectionSel]);
 								}
 
 						   	 });
