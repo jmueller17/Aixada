@@ -185,7 +185,7 @@ $(function(){
 	
 	$.extend({
 			updateTips: function(where, type, msg, timing ) {
-					
+					/*
 					var style = 'ui-state-highlight';
 					var milsecs = (timing >= 0)? timing:10000;
 						
@@ -204,7 +204,7 @@ $(function(){
 						$(where)
 							.text('')
 							.removeClass(style);
-					}, milsecs );
+					}, milsecs );*/
 				}
 		
 	});
@@ -239,7 +239,7 @@ $(function(){
 	$.extend({
 		showMsg : function(options){
 			
-			
+			/*
 			var settings = {
 				msg : '',
 				title : '',
@@ -307,11 +307,11 @@ $(function(){
 					$("#aixada_msg").dialog('close');
 				}, settings.autoclose)
 			}
-			
+			*/
 
 		}, 
 		closeMsg : function(){
-			$('#aixada_msg').dialog( "close" );
+			//$('#aixada_msg').dialog( "close" );
 			
 		}
 	});
@@ -321,10 +321,10 @@ $(function(){
 	 * Prepare a jquery ui dialog 
 	 */
 	
-	$('body').append('<div id="aixada_msg" class="msg_dialog"></div>');
+	/*$('body').append('<div id="aixada_msg" class="msg_dialog"></div>');
 	$( "#aixada_msg" ).dialog({
 			autoOpen: false,
-	});
+	});*/
 	
 	
 });
