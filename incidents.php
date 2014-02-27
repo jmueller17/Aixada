@@ -35,38 +35,15 @@
 
 
 		$('.change-sec')
-			.switchSection("init");
+			.switchSection("init",{
+				beforeSectionSwitch : function(section){
+					if (section == ".sec-3") //new incident
+						resetDetails();
+				}
+
+			});
 
 		$('.sec-1').show();
-
-
-
-			//.switchSection("changeTo",".sec-1");
-
-
-
-		
-		
-	
-
-		/** 
-		 *	resets the incidents form when creating a new one. 
-		 */
-		function resetDetails(){
-			$('#subject, #incidents_text, #ufs_concerned').val('');
-			$('#statusSelect option:first').attr('selected',true);
-			$('#typeSelect option:first').attr('selected',true);
-			$('#prioritySelect option:first').attr('selected',true);
-			$('#providerSelect  option:first').attr('selected',true);
-			$('#commissionSelect  option:first').attr('selected',true);
-			$('#ufs_concerned option:first').attr('selected',true);
-			$('#incident_id').val('');
-			$('#incident_id_info').html('');
-
-		}
-
-	
-	
 
 
 		$("#tblIncidentsViewOptions")
@@ -145,6 +122,7 @@
 		//bulk actions
 		$('input[name=bulkAction]')
 			.on('click', function(e){
+				alert(1)
 				e.stopPropagation();
 			})
 			
@@ -192,10 +170,15 @@
 		
 		
 		//DELETE incidents
-		$('.btn_del_incident')
-			.on("click", function(e){
+		$('#tbl_incidents tbody')
+			.on("click", ".del-incident",  function(e){
+					
 					var incidentId = $(this).parents('tr').attr('incidentId'); 
-					$.showMsg({
+					
+
+					$("#delete-modal").modal('show');
+
+					/*$.showMsg({
 								msg: '<?php echo $Text['msg_delete_incident'];?>',
 								type: 'confirm',
 								buttons : {
@@ -223,7 +206,7 @@
 											
 									  	}
 									}
-					});
+					});*/
 
 					e.stopPropagation();
 			});
@@ -234,7 +217,7 @@
 
 			var dataSerial = $(this).serialize();
 			
-			var btn = $(this)
+			var btn = $("button[type=submit]")
     		btn.button('loading')
 
 			
@@ -244,7 +227,7 @@
 				    url: "php/ctrl/Incidents.php?oper=mngIncident",
 				    data: dataSerial,
 				    beforeSend: function(){
-				   		$('#editorWrap .loadSpinner').show();
+				   		//$('#editorWrap .loadSpinner').show();
 					},
 				    success: function(msg){
 						//switchTo('overview');
@@ -257,9 +240,8 @@
 				    	btn.button('reset');
 
 				    	$('#tbl_incidents tbody').xml2html('reload');
-				    	//$('#editorWrap .loadSpinner').hide();//
-				    	
-				    	
+    					$('.change-sec').switchSection("changeTo",".sec-1");
+
 				    }
 			}); //end ajax
 			
@@ -310,15 +292,14 @@
 					} else {
 						$('#'+input_name).val(value);
 					}
-
-					$('.change-sec').switchSection("changeTo",".sec-2");
-
 					
 					e.stopPropagation();
 					
 	
 				});
-				
+
+				$('.change-sec').switchSection("changeTo",".sec-2");
+		
 		});
 		
 		
@@ -362,10 +343,21 @@
 		});
 
 
-		
-		
-		//switchTo('overview');
-						
+		/** 
+		 *	resets the incidents form when creating a new one. 
+		 */
+		function resetDetails(){
+			$('#subject, #incidents_text, #ufs_concerned').val('');
+			$('#statusSelect option:first').attr('selected',true);
+			$('#typeSelect option:first').attr('selected',true);
+			$('#prioritySelect option:first').attr('selected',true);
+			$('#providerSelect  option:first').attr('selected',true);
+			$('#commissionSelect  option:first').attr('selected',true);
+			$('#ufs_concerned option:first').attr('selected',true);
+			$('#incident_id').val('');
+			$('#incident_id_info').html('');
+
+		}				
 			
 	});  //close document ready
 	</script>
@@ -380,25 +372,20 @@
 	
 	<div class="container">
 	
-		<div class="row section sec-1">
- 			<div class="col-md-1 section sec-1">
-		    	<h2><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span></h2>
-		    </div>
-		    <div class="col-md-11 section sec-1">
-		    	<h1><?=$Text['incident_details'];?>	<span id="incident_id_info">#</span></h1>
-		    </div>
-		</div>
-
 		<div class="row">
-			<div class="col-md-11 section sec-1">
+		    <div class="col-md-10 section sec-2">
+		    	<h1><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['incident_details'];?>	<span id="incident_id_info">#</span></h1>
+		    </div>
+			
+			<div class="col-md-10 section sec-1">
 		    	<h1><?=$Text['ti_incidents']; ?></h1>
 		    </div>
 
-		    <div class="col-md-11 section sec-3">
+		    <div class="col-md-10 section sec-3">
 		    	<h1><?=$Text['create_incident'];?></h1>
 		    </div>
 
-		    <div class="col-md-1">
+		    <div class="col-md-2 section sec-1">
 				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
     				Actions <span class="caret"></span>
   				</button>
@@ -425,7 +412,7 @@
 						<tr>
 							<th><input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
 							<th><?php echo $Text['id'];?></th>
-							<th hideInPrint"><?php echo $Text['subject'];?></th>
+							<th><?php echo $Text['subject'];?></th>
 							<th><?php echo $Text['priority'];?>&nbsp;&nbsp;</th>
 							<th><?php echo $Text['created_by'];?></th>
 							<th><?php echo $Text['created'];?></th>
@@ -434,33 +421,28 @@
 							<th class="hidden"><?php echo $Text['provider_name'];?></th>
 							<th class="hidden"><?php echo $Text['ufs_concerned'];?></th>
 							<th class="hidden"><?php echo $Text['comi_concerned'];?></th>
-							<th class="hidden hideInPrint"><?=$Text['details'];?></th>
-							<th class="maxwidth-100 hideInPrint textAlignRight"><?=$Text['actions'];?></th>
+							<th class="hidden"><?=$Text['details'];?></th>
+							<th class="maxwidth-100 visible-print textAlignRight"><?=$Text['actions'];?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr class="clickable" incidentId="{id}">
 							<td><input type="checkbox" name="bulkAction"/></td>
 							<td field_name="incident_id">{id}</td>
-							<td field_name="subject" class="hideInPrint"><p class="incidentsSubject">{subject}</p></td>
+							<td field_name="subject"><p class="incidentsSubject">{subject}</p></td>
 							<td field_name="priority"><p  class="textAlignCenter">{priority}</p></td>
 							<td field_name="operator">{uf_id} {user_name}</td>
 							<td field_name="date_posted"><p class="textAlignLeft">{ts}</p></td>
 							<td field_name="status" class="textAlignCenter">{status}</td>
-							<td field_name="type" class="hidden hideInPrint">{distribution_level}</td>
+							<td field_name="type" class="hidden">{distribution_level}</td>
 							<td field_name="type_description" class="hidden">{type_description}</td>
-							<td field_name="provider" class="hidden hideInPrint">{provider_concerned}</td>
+							<td field_name="provider" class="hidden">{provider_concerned}</td>
 							<td field_name="provider_name" class="hidden">{provider_name}</td>
 							<td field_name="ufs_concerned" class="hidden">{ufs_concerned}</td>
 							<td field_name="commission" class="hidden">{commission_concerned}</td>
-							<td field_name="incidents_text" class="hidden hideInPrint">{details}</td>
-							<td class="hideInPrint">
-								<p class="ui-corner-all iconContainer ui-state-default floatRight" title="Delete incident">
-									<span class="btn_del_incident ui-icon ui-icon-trash"></span>
-								</p>
-								<!--  p class="ui-corner-all iconContainer ui-state-default" title="View incident">
-									<span class="btn_view_incident ui-icon ui-icon-zoomin"></span>
-								</p-->
+							<td field_name="incidents_text" class="hidden">{details}</td>
+							<td>
+								<span class="glyphicon glyphicon-remove-circle del-incident"></span>
 							</td>
 						</tr>
 						<tr class="hidden">
@@ -480,84 +462,95 @@
 			</div>	
 		</div>
 
-		<div id="editorWrap" class="section sec-2 sec-3">
+		<!-- editor -->
+		<div class="section sec-2 sec-3">
 			<div class="container">
 				<p id="incidentsMsg" class="user_tips"></p>
-				<form>
+				
+				<form class="form-horizontal" role="form">
 					<input type="hidden" id="incident_id" name="incident_id" value=""/>
-					<table class="tblForms">
-						<tr>
-							<td><label for="subject"><?php echo $Text['subject'];?>:</label></td>
-							<td><input type="text" name="subject" id="subject" class="inputTxtLarge inputTxt ui-corner-all" value=""/></td>
-							
-							
-						</tr>
-						<tr>
-							<td><label for="incidents_text"><?php echo $Text['message'];?>:</label></td>
-							<td rowspan="5"><textarea id="incidents_text" name="incidents_text" class="textareaLarge inputTxt ui-corner-all"></textarea></td>
-							
-							<td><label for="prioritySelect"><?php echo $Text['priority'];?></label></td>
-							<td><select id="prioritySelect" name="prioritySelect" class="mediumSelect"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>
-						</tr>
-						<tr>
-						
-							<td></td>
-							<td><label for="statusSelect"><?php echo $Text['status'];?></label></td>
-							<td><select id="statusSelect" name="statusSelect" class="mediumSelect"><option value="open"> <?php echo $Text['status_open'];?></option><option value="closed"> <?php echo $Text['status_closed'];?></option></select></td>
-						</tr>
-						<tr>
-							
-							<td></td>
-							<td><label for="typeSelect"><?=$Text['distribution_level'];?></label></td>
-							<td>
-								<select id="typeSelect" name="typeSelect" class="mediumSelect">
+					<div class="form-group">
+						<label for="subject" class="col-sm-2 control-label"><?php echo $Text['subject'];?></label>
+    					<div class="col-sm-6">
+    						<input type="text" name="subject" id="subject" class="form-control" placeholder="<?php echo $Text['subject'];?>" value="">
+    					</div>
+  					</div>
+
+  					<div class="form-group">
+  						<label for="incidents_text" class="col-sm-2 control-label"><?php echo $Text['message'];?></label>
+    					<div class="col-sm-6">
+    						<textarea id="incidents_text" name="incidents_text" class="form-control" placeholder="Your message here"></textarea>
+    					</div>
+  					</div>
+
+  					<div class="form-group">
+  						<label for="prioritySelect" class="col-sm-2 control-label"><?php echo $Text['priority'];?></label>
+    					<div class="col-sm-2">
+    						<select id="prioritySelect" name="prioritySelect" class="form-control"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+    					</div>
+  					</div>
+		
+					<div class="form-group">
+  						<label for="statusSelect" class="col-sm-2 control-label"><?php echo $Text['status'];?></label>
+    					<div class="col-sm-2">
+    						<select id="statusSelect" name="statusSelect" class="form-control"><option value="open"> <?php echo $Text['status_open'];?></option><option value="closed"> <?php echo $Text['status_closed'];?></option></select>
+    					</div>
+  					</div>
+
+					<div class="form-group">
+  						<label for="typeSelect" class="col-sm-2 control-label"><?php echo $Text['distribution_level'];?></label>
+    					<div class="col-sm-4">
+    						<select id="typeSelect" name="typeSelect" class="form-control">
 									<option value="1"><?=$Text['internal_private'];?></option>
 									<option value="2"><?=$Text['internal_email_private'];?></option>
 									<option value="3"><?=$Text['internal_post'];?></option>
 									<option value="4"><?=$Text['internal_email_post'];?></option>
-								</select></td>
-						</tr>
-						<tr>
-							
-							<td></td>
-							<td><label for="ufs_concerned"><?php echo $Text['ufs_concerned']; ?></label></td>
-							<td>
-								<select id="ufs_concerned" name="ufs_concerned[]" multiple size="6">
+							</select>
+    					</div>
+  					</div>
+
+  					<div class="form-group">
+  						<label for="ufs_concerned" class="col-sm-2 control-label"><?php echo $Text['ufs_concerned'];?></label>
+    					<div class="col-sm-4">
+    						<select id="ufs_concerned" name="ufs_concerned[]" multiple class="form-control" size="6">
 								 	<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>  
 									<option value="{id}"> {id} {name}</option>	
-								</select>
-							</td>
-						</tr>
-						<tr>
-							
-							<td></td>
-							<td><label for="providerSelect"><?php echo $Text['provider_concerned'];?></label></td>
-							<td>
-								<select id="providerSelect" name="providerSelect" class="mediumSelect">
+							</select>
+    					</div>
+  					</div>
+
+					<div class="form-group">
+  						<label for="providerSelect" class="col-sm-2 control-label"><?php echo $Text['provider_concerned'];?></label>
+    					<div class="col-sm-4">
+    						<select id="providerSelect" name="providerSelect" class="form-control">
 	                    			<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>                     
 	                    			<option value="{id}"> {name}</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-						<td></td>
-							<td></td>
-							<td><label for="commissionSelect"><?php echo $Text['comi_concerned'];?></label></td>
-							<td><select id="commissionSelect" name="commissionSelect" class="mediumSelect">
+							</select>
+    					</div>
+  					</div>
+
+					<div class="form-group">
+  						<label for="commissionSelect" class="col-sm-2 control-label"><?php echo $Text['comi_concerned'];?></label>
+    					<div class="col-sm-4">
+    						<select id="commissionSelect" name="commissionSelect" class="form-control">
 									<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>
 									<option value="{description}"> {description}</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td colspan="2" class="textAlignRight">
-								<button type="submit" href="#sec-1" data-loading-text="Loading..." class="btn btn-default change-sec"><?php echo $Text['btn_save'];?></button>
+							</select>
+    					</div>
+  					</div>
+  					<div>&nbsp;</div>
+
+  					<div class="form-group">
+						<div class="col-sm-5"></div>
+  						<div class="cols-sm-1">
+						<button type="submit" class="btn btn-default" data-loading-text="Loading..." ><?php echo $Text['btn_save'];?></button>
 								&nbsp;&nbsp;
-								<button type="reset" href="#sec-1" class="btn btn-default change-sec"><?php echo $Text['btn_cancel'];?></button>
-							</td>
-						</tr>
-					</table>
+						<button type="reset" class="btn btn-default change-sec" target-section="#sec-1"><?php echo $Text['btn_cancel'];?></button>
+						</div>
+
+					</div>
+					<div>&nbsp;</div>
+					<div>&nbsp;</div>
 				</form>
 			</div>
 		</div>
@@ -571,6 +564,24 @@
 
 <!-- / END -->
 <iframe name="dataFrame" style="display:none"></iframe>
+
+
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      	<div class="alert alert-warning">
+		  <h3>Warning</h3>
+		  <p>Are you sure you want to delete this incident?</p> 
+		  <p>&nbsp;</p>	
+		  	<p>
+		        <button type="button" class="btn btn-danger">Delete</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		    </p>
+		</div>
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>

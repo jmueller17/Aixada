@@ -2,6 +2,7 @@
 /* CSS Document */
 
 .change-sec {cursor: pointer;}
+.clickable {cursor:pointer;}
 
 
-.floatL {float:left;}
+h1 span {font-size:0.8em;} /* back arrow in page headings */

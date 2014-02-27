@@ -20,8 +20,8 @@
 					hist 				: false,  			//TODO: php side save to session last page
 					gSectionSel			: '.section',	 	//selector to hide all sections. 
 					gListenerSel		: '.sectionSwitchListener',	//selector for all section change event listerens			
-					beforeSectionSwitch	: function(){},
-					afterSectionSwitch	: function(){}
+					beforeSectionSwitch	: function(targetsection){},
+					afterSectionSwitch	: function(targetsection){}
 		  		};
 		  		
 		  		return this.each(function(){
@@ -81,47 +81,46 @@
 	  					$.extend( $(this).data('mem'), options );
 	  			}
 
-	  			return this.each(function(){
-	  				var $this = $(this);	
+  				var $this = $(this);	
 
-	  				//some vars to make sure the events are only triggered once. 
-	  				var gSelCounter = 0;
-	  				var gToCounter = 0;  
-	  				var gSelTotal = $($this.data('mem').gSectionSel).length;	
-	  				var gToTotal = $(toSectionSel).length;
+  				//this is not contained in an each iterator because we just want to trigger 
+  				//the transition once and not once-for-every-matching-element
 
-	  				//$this.data('mem').beforeSectionSwitch.call(this);
-				    $($this.data('mem').gListenerSel).trigger('beforeSectionSwitch', [toSectionSel]);
+  				//some vars to make sure the events are only triggered once. 
+  				var gSelCounter = 0;
+  				var gToCounter = 0;  
+  				var gSelTotal = $($this.data('mem').gSectionSel).length;	
+  				var gToTotal = $(toSectionSel).length;
+  				var gSectionSel = $this.data('mem').gSectionSel;
+  				var gListenerSel = $this.data('mem').gListenerSel; 
 
-
-				    //hide all elements
-				    $($this.data('mem').gSectionSel).fadeOut($this.data('mem').fadeOutTime, function(){
-				    	gSelCounter++; 
-
-				    	//trigger fade in animation once everthing is faded out. 
-				    	//depending on nr of matching selectors this is called many times!
-				    	if (gSelCounter == gSelTotal){ 
-				    	
-							$(toSectionSel).fadeIn($this.data('mem').fadeInTime, function(){
-								gToCounter++;
-
-								//trigger events only once, not for each matching element!
-								if (gToCounter == gToTotal){
-				  					//$this.data('mem').afterSectionSwitch.call(this);
-									//$($this.data('mem').gListenerSel).trigger('afterSectionSwitch', [toSectionSel]);
-								}
-
-						   	 });
-						}
-
-				    });
-
-				    
+  				$this.data('mem').beforeSectionSwitch.call(this, toSectionSel);
+			    $(gListenerSel).trigger('beforeSectionSwitch', [toSectionSel]);
 
 
-				})
-	  			
-	  		}
+			    //hide all elements
+			    $(gSectionSel).fadeOut($this.data('mem').fadeOutTime, function(){
+			    	gSelCounter++; 
+
+			    	//trigger fade in animation once everthing is faded out. 
+			    	//depending on nr of matching selectors this is called many times!
+			    	if (gSelCounter == gSelTotal){ 
+			    	
+						$(toSectionSel).fadeIn($this.data('mem').fadeInTime, function(){
+							gToCounter++;
+
+							//trigger events only once, not for each matching element!
+							if (gToCounter == gToTotal){
+			  					$this.data('mem').afterSectionSwitch.call(this, toSectionSel);
+								$(gListenerSel).trigger('afterSectionSwitch', [toSectionSel]);
+							}
+
+					   	 });
+					}
+
+			    });
+
+	  		}//end changeTo
 	  	}
 	  		
 
