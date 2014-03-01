@@ -142,11 +142,11 @@ function get_incidents_in_range($filter, $from_date, $to_date, $filterType=1){
 	
 	switch ($filter) {
 		// all orders where date_for_order = today
-		case 'past2Month':
+		case 'month':
 			printXML(stored_query_XML_fields('get_incidents_listing', $prev_2month, $tomorrow, $filterType));
 			break;
 		
-		case 'pastWeek':
+		case 'week':
 			printXML(stored_query_XML_fields('get_incidents_listing', $prev_week, $tomorrow, $filterType));
 			break;
 			

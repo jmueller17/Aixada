@@ -33,7 +33,7 @@ try{
 	        exit;
 
 	    case 'getIncidentsListing':
-	        echo get_incidents_in_range(get_param('filter', 'prev2Month'), get_param('fromDate',0), get_param('toDate',0), get_param('type',1) );
+	        echo get_incidents_in_range(get_param('filter', 'month'), get_param('fromDate',0), get_param('toDate',0), get_param('type',1) );
 	    	exit; 
 	    	
 	    case 'getIncidentsById':

@@ -6,3 +6,14 @@
 
 
 h1 span {font-size:0.8em;} /* back arrow in page headings */
+
+.ax-navbar-top {padding:5px;}
+.ax-navbar-top a {color:white; font-weight: bold;}
+.ax-navbar-top select {color:black;}
+
+.level-1-indent {text-indent:1em;}
+.level-2-indent {text-indent:1em;}
+
+.progress-bar.animate {
+   width: 100%;
+}

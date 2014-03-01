@@ -7,6 +7,8 @@
 
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/aixcss.css" rel="stylesheet">
+    <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
+
 
 
 
@@ -16,6 +18,10 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
 	   	
+	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
+	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+
 	   	<!--script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script-->
    	<?php  } else { ?>
 	    <script type="text/javascript" src="js/js_for_incidents.min.js"></script>
@@ -26,10 +32,6 @@
 
 	
 	$(function(){
-
-		//loading animation
-		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
-
 
 		$('.section').hide();
 
@@ -45,84 +47,64 @@
 
 		$('.sec-1').show();
 
+		bootbox.setDefaults({
+			locale:"es"
+		})
 
-		$("#tblIncidentsViewOptions")
-		.button({
-			icons: {
-	        	secondary: "ui-icon-triangle-1-s"
-			}
-	    })
-	    /*.menu({
-			content: $('#tblIncidentsOptionsItems').html(),	
-			showSpeed: 50, 
-			width:180,
-			flyOut: true, 
-			itemSelected: function(item){					//TODO instead of using this callback function make your own menu; if jquerui is updated, this will  not work
-				//show hide deactivated products
-				var filter = $(item).attr('id');
-				$('#tbl_incidents tbody').xml2html('reload',{
+
+
+		$(".ctx-nav-filter").click(function(e){
+			var opt = $(this).attr("href");
+			var filter = opt.slice(1,opt.length);
+
+			$('#tbl_incidents tbody').xml2html('reload',{
 					params : 'oper=getIncidentsListing&filter='+filter
 				});
-				
-			}//end item selected 
-		});*///end menu
-
-
-		//print incidents accoring to current incidents template in new window or download as pdf
-		$("#btn_print")
-		.button({
-			icons: {
-				primary: "ui-icon-print",
-	        	secondary: "ui-icon-triangle-1-s"
-			}
-	    })/*
-	    .menu({
-			content: $('#printOptionsItems').html(),	
-			showSpeed: 50, 
-			width:180,
-			flyOut: true, 
-			itemSelected: function(item){	
-				if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_noselect'];?>",
-						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
-								$(this).dialog("close");
-							}
-						},
-						type: 'warning'});
-					return false; 
-				}
-
-				var link = $(item).attr('id');
-
-				var idList = "";
-				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
-						idList += $(this).parents('tr').attr('incidentId')+",";
-				});
-				idList = idList.substring(0,idList.length-1);
-				
-				switch (link){
-					case "printWindow": 
-						printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
-						printWin.focus();
-						printWin.print();
-						break;
-	
-					case "printPDF": 
-						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1&outputFormat=D"; 
-						break;
-				}
-								
-			}//end item selected 
-		});*///end print menu
+		})
 		
 
+				//print incidents accoring to current incidents template in new window or download as pdf
+		/*$(".ctx-nav-exp").click(function(e){
+
+			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
+				
+				bootbox.alert({
+						title : "Warning",
+						message : "<div class='alert alert-warning'><?php echo $Text['msg_err_noselect']; ?></div>"
+					});	
+			}
+			
+
+			var opt = $(this).attr("href");
+
+			var idList = ""; //make list of all checked incidents
+			$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+					idList += $(this).parents('tr').attr('incidentId')+",";
+			});
+			idList = idList.substring(0,idList.length-1);
+
+			switch ("export-win"){
+				case "printWindow": 
+					printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
+					printWin.focus();
+					printWin.print();
+					break;
+
+				case "export-pdf": 
+					window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1&outputFormat=D"; 
+					break;
+			}
+
+
+		})*/
+
 	
+	
+
 		//bulk actions
 		$('input[name=bulkAction]')
 			.on('click', function(e){
-				alert(1)
+				
 				e.stopPropagation();
 			})
 			
@@ -173,79 +155,51 @@
 		$('#tbl_incidents tbody')
 			.on("click", ".del-incident",  function(e){
 					
-					var incidentId = $(this).parents('tr').attr('incidentId'); 
-					
+				var id = $(this).parents('tr').attr('incidentId'); 
+				bootbox.confirm({
+						title : "Confirm",
+						message : "<div class='alert alert-warning'><?php echo $Text['msg_delete_incident'];?></div>",
+						callback : function(ok){
+							if (ok){
+								deleteIncident(id)
+							} else {
+								bootbox.hideAll();
+							}	
+						}
+					});
 
-					$("#delete-modal").modal('show');
-
-					/*$.showMsg({
-								msg: '<?php echo $Text['msg_delete_incident'];?>',
-								type: 'confirm',
-								buttons : {
-										"<?php echo $Text['btn_ok'];?>": function() {
-											
-											$.ajax({
-											    type: "POST",
-											    url: "php/ctrl/Incidents.php?oper=delIncident&incident_id="+incidentId,
-											    success: function(msg){
-													resetDetails();
-													$('#tbl_incidents tbody').xml2html('reload');
-											    	
-											    },
-											    error : function(XMLHttpRequest, textStatus, errorThrown){
-											    	$.showMsg({
-														msg:XMLHttpRequest.responseText,
-														type: 'error'});
-											    }
-											}); //end ajax
-											$(this).dialog( "close" );
-											
-									  	}, 
-									  	"<?php echo $Text['btn_cancel'];?>":function(){
-									  		$(this).dialog( "close" );
-											
-									  	}
-									}
-					});*/
-
-					e.stopPropagation();
+				e.stopPropagation();
 			});
 
 		
+		
 		//detect form submit and prevent page navigation
-		$('form').submit(function() { 
+		$('#save-btn').click(function(e) { 			
+			var dataSerial = $("#frm-incidents").serialize();
+			
+			e.preventDefault(e);
 
-			var dataSerial = $(this).serialize();
-			
-			var btn = $("button[type=submit]")
-    		btn.button('loading')
+    		var l = Ladda.create(this)
+    		l.start();
 
-			
-			
 			$.ajax({
 				    type: "POST",
 				    url: "php/ctrl/Incidents.php?oper=mngIncident",
 				    data: dataSerial,
-				    beforeSend: function(){
-				   		//$('#editorWrap .loadSpinner').show();
-					},
 				    success: function(msg){
-						//switchTo('overview');
 						resetDetails();
+				    	$('#tbl_incidents tbody').xml2html('reload');
+						$('.change-sec').switchSection("changeTo",".sec-1");
 				    },
 				    error : function(XMLHttpRequest, textStatus, errorThrown){
-				    	 //$.updateTips('#incidentsMsg','error','Error: '+XMLHttpRequest.responseText);
+				    	 bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 				    },
 				    complete : function(msg){
-				    	btn.button('reset');
-
-				    	$('#tbl_incidents tbody').xml2html('reload');
-    					$('.change-sec').switchSection("changeTo",".sec-1");
-
+				    	l.stop();
 				    }
 			}); //end ajax
 			
-			return false; 
+			
 		});
 
 			
@@ -254,16 +208,11 @@
 		 */
 		$('#tbl_incidents tbody').xml2html('init',{
 				url: 'php/ctrl/Incidents.php',
-				params : 'oper=getIncidentsListing&filter=past2Month',
-				loadOnInit: true, 
-				beforeLoad: function(){
-					$('.loadSpinner').show();
-				},
-				complete : function(rowCount){
-					//$('#tbl_incidents tbody tr:even').addClass('rowHighlight'); 
-					$('.loadSpinner').hide();	
-				}
+				params : 'oper=getIncidentsListing&filter=month',
+				loadOnInit: true 
 		});
+
+
 
 
 		
@@ -294,15 +243,28 @@
 					}
 					
 					e.stopPropagation();
-					
-	
 				});
 
 				$('.change-sec').switchSection("changeTo",".sec-2");
-		
 		});
 		
-		
+
+
+		function deleteIncident(id){
+			$.ajax({
+			    type: "POST",
+			    url: "php/ctrl/Incidents.php?oper=delIncident&incident_id="+id,
+			    success: function(msg){
+					resetDetails();
+					$('#tbl_incidents tbody').xml2html('reload');
+			    	
+			    },
+			    error : function(XMLHttpRequest, textStatus, errorThrown){
+			    	bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
+			    }
+			}); //end ajax
+
+		}
 
 		//build provider select
 		$("#providerSelect")
@@ -357,8 +319,9 @@
 			$('#incident_id').val('');
 			$('#incident_id_info').html('');
 
-		}				
-			
+		}			
+
+		
 	});  //close document ready
 	</script>
 </head>
@@ -386,22 +349,32 @@
 		    </div>
 
 		    <div class="col-md-2 section sec-1">
+		    	<div class="btn-group">
 				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
     				Actions <span class="caret"></span>
   				</button>
 				<ul class="dropdown-menu" role="menu">
 				    <li><a href="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
 				    <li class="divider"></li>
-				    <li><a href="#"><?=$Text['filter_incidents'];?></a></li>
-				    <li><a href="javascript:void(null)" id="today">&nbsp;&nbsp;<?=$Text['filter_todays'];?></a></li>
-					<li><a href="javascript:void(null)" id="past2Month">&nbsp;&nbsp;Date range</a></li>
+				    <li><a href="#export-win" class="ctx-nav-exp" ><?=$Text['printout'];?></a></li>
 				    <li class="divider"></li>
-				    <li><a href="#"><?=$Text['printout'];?></a></li>
-				    <li class="divider"></li>
-				    <li><a href="#">Export</a></li>
-				    <li><a href="javascript:void(null)">&nbsp;&nbsp;pdf</a></li>
-					<li><a href="javascript:void(null)">&nbsp;&nbsp;xls</a></li>
-				</ul>			
+				    <li><a href="#">Download</a></li>
+				    <li class="level-1-indent"><a href="#export-pdf" class="ctx-nav-exp">pdf</a></li>
+					<li class="level-1-indent"><a href="#export-csv" class="ctx-nav-exp">xls</a></li>
+				</ul>
+				</div>
+				<div class="btn-group pull-right">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<span class="glyphicon glyphicon-filter"></span> <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#"><?=$Text['filter_incidents'];?></a></li>
+				    <li class="level-1-indent"><a href="#today" class="ctx-nav-filter"><?=$Text['filter_todays'];?></a></li>
+					<li class="level-1-indent"><a href="#week" class="ctx-nav-filter">Last week</a></li>
+					<li class="level-1-indent"><a href="#month" class="ctx-nav-filter">Last month</a></li>
+					<li class="level-1-indent"><a href="#range" class="ctx-nav-filter">Date range</a></li>
+				</ul>
+			</div>
 		    </div>
 		</div>
 		
@@ -422,7 +395,7 @@
 							<th class="hidden"><?php echo $Text['ufs_concerned'];?></th>
 							<th class="hidden"><?php echo $Text['comi_concerned'];?></th>
 							<th class="hidden"><?=$Text['details'];?></th>
-							<th class="maxwidth-100 visible-print textAlignRight"><?=$Text['actions'];?></th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -467,7 +440,7 @@
 			<div class="container">
 				<p id="incidentsMsg" class="user_tips"></p>
 				
-				<form class="form-horizontal" role="form">
+				<form class="form-horizontal" role="form" id="frm-incidents">
 					<input type="hidden" id="incident_id" name="incident_id" value=""/>
 					<div class="form-group">
 						<label for="subject" class="col-sm-2 control-label"><?php echo $Text['subject'];?></label>
@@ -543,9 +516,10 @@
   					<div class="form-group">
 						<div class="col-sm-5"></div>
   						<div class="cols-sm-1">
-						<button type="submit" class="btn btn-default" data-loading-text="Loading..." ><?php echo $Text['btn_save'];?></button>
-								&nbsp;&nbsp;
-						<button type="reset" class="btn btn-default change-sec" target-section="#sec-1"><?php echo $Text['btn_cancel'];?></button>
+							<button type="reset" class="btn btn-default change-sec" target-section="#sec-1"><?php echo $Text['btn_cancel'];?></button>
+							&nbsp;&nbsp;
+							<button type="submit" id="save-btn" class="btn btn-primary ladda-button" data-style="slide-left" ><span class="ladda-label"><?php echo $Text['btn_save'];?></span></button>
+
 						</div>
 
 					</div>
@@ -566,20 +540,17 @@
 <iframe name="dataFrame" style="display:none"></iframe>
 
 
-<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      	<div class="alert alert-warning">
-		  <h3>Warning</h3>
-		  <p>Are you sure you want to delete this incident?</p> 
-		  <p>&nbsp;</p>	
-		  	<p>
-		        <button type="button" class="btn btn-danger">Delete</button>
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		    </p>
-		</div>
-    </div>
-  </div>
+<div class="modal js-loading-bar">
+ <div class="modal-dialog">
+   <div class="modal-content">
+     <div class="modal-body">
+      <p></p>
+       <div class="progress progress-striped active">
+        <div class="progress-bar"></div>
+       </div>
+     </div>
+   </div>
+ </div>
 </div>
 
 

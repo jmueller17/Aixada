@@ -22,6 +22,7 @@
 					loadOnInit		: false, 						//if the xml is loaded on "ini" call
 					rowCount		: 0,							//nr of total xml result rows (specified by rowName)
 					autoReload		: 0,							//milliseconds before this.reload is issued. 0 = never
+					progressbar 	: true,							//show modal progress bar during loading
 					beforeLoad	: function(){},
 					complete	: function(row_count){},			//called, once loop through xml has finished
 					rowComplete : function(current_row_index, row){}//called, after each row 
@@ -82,6 +83,7 @@
 							paginationNav	: (settings.paginationNav == '')? false:true,
 							loadOnInit		: settings.loadOnInit,
 							rowCount		: settings.rowCount,
+							progressbar 	: settings.progressbar,
 							
 							autoReload		: settings.autoReload,
 							beforeLoad		: settings.beforeLoad,
@@ -138,7 +140,10 @@
 									url: url + "?" + params,		
 									dataType: "xml", 
 									beforeSend : function(jqXHR, settings){
-				    					//$this.empty().append('Loading...');
+				    					if ( $this.data('xml2html').progressbar){
+											$('.js-loading-bar').modal('show');
+		  									$('.js-loading-bar').find('.progress-bar').addClass('animate');
+				    					}
 				    					$this.data('xml2html').beforeLoad.call(this,0);
 				    				},
 									success: function(xml){
@@ -164,10 +169,22 @@
 									},//end success
 									
 									error : function(XMLHttpRequest, textStatus, errorThrown){
-	  							    	alert('An error "' + errorThrown + '", status "' + textStatus + '" occurred during loading data: ' + XMLHttpRequest.responseText);
+										if (typeof bootbox != 'undefined'){
+											bootbox.alert({
+												title : "Error",
+												message : "<div class='alert alert-warning'>Ops! Something went wrong while loading data: <strong>" + XMLHttpRequest.responseText + "</strong></div>",												
+											});
+										} else {
+											alert('An error "' + errorThrown + '", status "' + textStatus + '" occurred during loading data: ' + XMLHttpRequest.responseText);
+										}
+
 
 	  							    },
 	  							   complete : function(msg){
+	  							   		if ( $this.data('xml2html').progressbar){
+											$('.js-loading-bar').modal('hide');
+		  									$('.js-loading-bar').find('.progress-bar').removeClass('animate');
+				    					}
 	  							 	
 	  							    }
 						});	//end ajax
