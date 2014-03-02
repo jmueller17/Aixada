@@ -5,26 +5,33 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " /*.  $Text['head_ti_'.strtolower($_REQUEST['what'])]*/; ?></title>
 
-	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+  	<!--link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" /-->
+
+
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/aixcss.css" rel="stylesheet">
+    <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
+
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
+   	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
+	   	
+	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
+	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+
+
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_shop_and_order.min.js"></script>
     <?php }?>
 
- 	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
+ 	<!--script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script-->
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
 
 
@@ -49,7 +56,6 @@
 		return false;
 	});
 
-	$("#tabs").tabs();
 
 	//layer inform that provider has passed closing date for order
 	var counterClosed = 0;
@@ -71,10 +77,11 @@
 			//the cart needs to be reloaded.
 			if (err_msg.indexOf("ERROR 20") != -1){
 
-				$.showMsg({
-					msg:"<?=$Text['msg_err_modified_order'];?>",
-					type: 'warning'});
-
+				bootbox.alert({
+						title : "Epp!!",
+						message : "<div class='alert alert-warning'><?php echo $Text['msg_err_modified_order']; ?></div>"
+				});	
+	
 				//remove items from cart
 				$('#cartLayer').aixadacart('resetCart');
 
@@ -84,19 +91,19 @@
 			//another serious error, now for real
 			} else {
 
-				$.showMsg({
-					msg:err_msg + " Your cart will be reloaded.",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){
+				bootbox.confirm({
+						title : "Epp!",
+						message : "<div class='alert alert-warning'>"+err_msg + " Your cart will be reloaded.</div>",
+						buttons : {
+							ok : {
+								callback : function(ok){
+									$('#cartLayer').aixadacart('resetCart');
+									refreshSelects($.getSelectedDate('#datepicker'));
+								}
+							}
 
-							$('#cartLayer').aixadacart('resetCart');
-
-							refreshSelects($.getSelectedDate('#datepicker'));
-
-							$(this).dialog("close");
 						}
-					},
-					type: 'error'});
+				});
 
 			}
 		}
@@ -211,7 +218,7 @@
 	//dates available to make orders; start with dummy date
 	var availableDates = ["2011-00-00"];
 
-
+	/*
 	$("#datepicker").datepicker({
 				dateFormat 	: 'DD d M, yy',
 				showAnim	: '',
@@ -231,13 +238,13 @@
 					refreshSelects($.getSelectedDate('#datepicker'));
 				}//end select
 
-	}).show();//end date pick
+	}).show();*///end date pick
 
 
    	/**
    	 *	init the datepicker
    	 */
-	if (what == "Shop") {
+	/*if (what == "Shop") {
 		$('#tabs ul').children('li:gt(2)').hide(); 			//preorder tab is only available for ordering
 		$("#datepicker").hide();							//hide date input field for shop
 
@@ -263,7 +270,7 @@
 			$("#datepicker").datepicker("refresh");
 			refreshSelects(dates[0]);
 		});
-	}
+	}*/
 
 
 	/**
@@ -272,7 +279,7 @@
 	var leftColWidth = $('#leftCol').innerWidth();
 	var rightColWidth = $('#rightCol').innerWidth();
 	$('#ViewChoice')
-		.buttonset()
+		//.buttonset()
 		.click(function(){
 			var which = $("input[@name=viewCol]:checked").attr('id');
 
@@ -293,7 +300,7 @@
 	/**
 	 *	product item info column. Constructs context menu for item
 	 */
-	$(".rowProductInfo")
+	/*$(".rowProductInfo")
 		.live("mouseenter", function(){
 			$(this).addClass('ui-state-hover');
 			if (!$(this).attr("hasMenu")){
@@ -322,14 +329,13 @@
 		})
 		.live("mouseleave", function(){
 			$(this).removeClass('ui-state-hover');
-	});
+	});*/
 
 
 	//attach event listeners for the product input fields; change of quantity will put the
 	//item into the cart.
 	$('.product_list tbody')
-		.find("input")
-		.live("change", function (e){
+		.on("change","input", function (e){
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
 			var isPreorder = $(this).parents("tr").attr('preorder')? true:false; 	//check if this is a preorder item
 
@@ -458,54 +464,54 @@
 </head>
 <?php flush(); ?>
 <body>
-<div id="wrap">
+
 	<div id="headwrap">
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 
 
-	<div id="stagewrap" class="ui-widget">
+	<div class="container">
+		<!-- page header -->
+		<div class="row">
+	    	<h1><?php if ($_REQUEST['what'] == 'Order') {
+	    					echo $Text['ti_order'];
+	    				} else if ($_REQUEST['what'] == 'Shop') {
+	    					echo $Text['ti_shop'];
+	    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
+	    				}?>
+	    	&nbsp; <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
+		
+			<!--div id="ViewChoice">
+				<input type="radio" id="view_list" name="viewCol" /><label for="view_list" title="<?php echo $Text['btn_view_list_lng'];?>"><?php echo $Text['btn_view_list'];?></label>
+				<input type="radio" id="view_cart" name="viewCol"  /><label for="view_cart" title="<?php echo $Text['btn_view_cart_lng'];?>"><?php echo $Text['btn_view_cart'];?> (0)</label>
+				<input type="radio" id="view_both" name="viewCol" checked="checked"/><label for="view_both" title="<?php echo $Text['btn_view_both_lng'];?>"><?php echo $Text['btn_view_both'];?></label>
+			</div-->
+		</div>
 
-		<div id="titlewrap">
-			<div id="titleLeftCol">
-		    	<h1><?php if ($_REQUEST['what'] == 'Order') {
-		    					echo $Text['ti_order'];
-		    				} else if ($_REQUEST['what'] == 'Shop') {
-		    					echo $Text['ti_shop'];
-		    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
-		    				}?>
-		    	&nbsp; <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
-    		</div>
-    		<div id="titleRightCol">
-    			<div id="ViewChoice">
-					<input type="radio" id="view_list" name="viewCol" /><label for="view_list" title="<?php echo $Text['btn_view_list_lng'];?>"><?php echo $Text['btn_view_list'];?></label>
-					<input type="radio" id="view_cart" name="viewCol"  /><label for="view_cart" title="<?php echo $Text['btn_view_cart_lng'];?>"><?php echo $Text['btn_view_cart'];?> (0)</label>
-					<input type="radio" id="view_both" name="viewCol" checked="checked"/><label for="view_both" title="<?php echo $Text['btn_view_both_lng'];?>"><?php echo $Text['btn_view_both'];?></label>
-				</div>
-    		</div>
-		</div><!-- end titlewrap -->
 
-		<div id="leftCol" class="aix-layout-splitW60 floatLeft">
-		<div id="tabs">
-			<ul>
-				<li><a href="#tabs-1"><?php echo $Text['by_provider']; ?></a></li>
-				<li><a href="#tabs-2"><?php echo $Text['by_category']; ?></a></li>
-				<li><a href="#tabs-3"><?php echo $Text['search']; ?></a></li>
-				<li><a href="#tabs-4"><?php echo $Text['special_offer']; ?></a></li>
-			</ul>
-			<span style="float:right; margin-top:-40px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
-			<div id="tabs-1">
-				<div class="wrapSelect">
-					<select id="providerSelect" class="longSelect">
+		<div class="row">
+			<div class="col-md-8">
+				<ul class="nav nav-tabs">
+				<li class="active"><a href="#tabs-1" data-toggle="tab"><?php echo $Text['by_provider']; ?></a></li>
+				<li><a href="#tabs-2" data-toggle="tab"><?php echo $Text['by_category']; ?></a></li>
+				<li><a href="#tabs-3" data-toggle="tab"><?php echo $Text['search']; ?></a></li>
+				<li><a href="#tabs-4" data-toggle="tab"><?php echo $Text['special_offer']; ?></a></li>
+				</ul>
+			
+				<div class="tab-content">
+					<div id="tabs-1" class="tab-pane active">
+				<div class="form-group col-md-6">
+					<label for="providerSelect"></label>
+					<select id="providerSelect" class="form-control">
                     	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
                     	<option value="{id}"> {name}</option>
 					</select>
-
 				</div>
-				<div class="orderStatus ui-widget" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div>
+
+				<div class="orderStatus" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div>
 				<div class="product_list_wrap">
-					<table id="product_list_provider" class="product_list" >
+					<table id="product_list_provider" class="table">
 						<thead>
 							<tr>
 								<th><?php echo $Text['id'];?></th>
@@ -532,17 +538,18 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
-			<div id="tabs-2">
-			 <div class="wrapSelect">
+					</div>
+
+					<div id="tabs-2" class="tab-pane">
+			 	<div class="form-group  col-md-6">
 					<label for="categorySelect"></label>
-					<select id="categorySelect" class="longSelect">
+					<select id="categorySelect" class="form-control">
 						<option value="-1" selected="selected"><?php echo $Text['sel_category']; ?></option>
                     	<option value="{id}">{description}</option>
 					</select>
 				</div>
 				<div class="product_list_wrap">
-					<table id="product_list_category" class="product_list" >
+					<table id="product_list_category" class="table" >
 						<thead>
 						<tr>
 							<th><?php echo $Text['id'];?></th>
@@ -570,15 +577,22 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
-			<div id="tabs-3">
-				<div class="ui-widget">
-                                 <label for="search"><?php echo $Text['search'];?></label>
-						<input id="search" value="" class="ui-widget-content ui-corner-all"/>
-				</div>
+					</div>
+
+					<div id="tabs-3" class="tab-pane">
+					<div class="col-lg-6">
+					    <div class="input-group">
+					      <input type="text" id="search" class="form-control" placeholder=" product name">
+					      <span class="input-group-btn">
+					        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search!</button>
+					      </span>
+					    </div><!-- /input-group -->
+					  </div><!-- /.col-lg-6 -->
+
+						
 				<p>&nbsp;</p>
 				<div class="product_list_wrap">
-					<table id="product_list_search" class="product_list" >
+					<table id="product_list_search" class="table table-condensed table-hover" >
 						<thead>
 						<tr>
 							<th><?php echo $Text['id'];?></th>
@@ -606,11 +620,11 @@
 						</tbody>
 					</table>
 				</div>
+					</div>
 
-			</div>
-			<div id="tabs-4">
+					<div id="tabs-4" class="tab-pane">
 
-				<table id="product_list_preorder" class="product_list" >
+				<table id="product_list_preorder" class="table" >
 						<thead>
 							<tr>
 								<th><?php echo $Text['id'];?></th>
@@ -629,7 +643,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input class="form-control" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
@@ -637,22 +651,17 @@
 							</tr>
 						</tbody>
 					</table>
-
-
-			</div>
-		</div><!-- end tabs -->
-		</div><!-- end left Col -->
-
-		<!-- Shopping cart starts -->
-		<div id="rightCol" class="aix-layout-splitW40 floatLeft aix-layout-widget-right-col">
-			<div id="cartLayer"></div>
-		</div>
-
+					</div>
+				</div><!-- end tab content -->
+			</div><!-- end left col -->
+			
+			<div class="col-md-4">
+				<!-- Shopping cart starts -->
+				<div id="cartLayer"></div>
+			</div><!-- end right col -->
+		</div><!-- end main row -->
 	</div>
-	<!-- end of stage wrap -->
-</div>
-<!-- end of wrap -->
+	<!-- end container -->
 
-<!-- / END -->
 </body>
 </html>

@@ -183,33 +183,6 @@ $(function(){
 	    return this.length !== 0;
 	};
 	
-	$.extend({
-			updateTips: function(where, type, msg, timing ) {
-					/*
-					var style = 'ui-state-highlight';
-					var milsecs = (timing >= 0)? timing:10000;
-						
-					if (type == 'success'){
-						style = 'success_tips';
-					} else if (type == 'error'){
-						style = "ui-state-error" ;
-					} else if (type == 'notice'){
-						style = 'ui-state-highlight';
-					}
-
-					$( where )
-						.text( msg )
-						.addClass(style);
-					setTimeout(function() {
-						$(where)
-							.text('')
-							.removeClass(style);
-					}, milsecs );*/
-				}
-		
-	});
-	
-	
 	
 	
 	/**
@@ -232,99 +205,6 @@ $(function(){
 	  		}
 	});
 	
-	
-	/**
-	 * shortcut handling for jquery ui dialog. 
-	 */
-	$.extend({
-		showMsg : function(options){
-			
-			/*
-			var settings = {
-				msg : '',
-				title : '',
-				width: 400,
-				type: "default", 
-				autoclose : 0,
-				buttons :  [
-						     {
-							    	icons : { primary : "ui-icon-check" }, //does not work!
-									text: "OK", 
-									click : function(){
-										$( this ).dialog( "close" );
-									}
-								}
-
-							]
-				
-			};
-			
-			if ( options ) { 
-				$.extend( settings, options );
-			}
-							
-			var str = '';
-
-			if (settings.type == 'error'){
-					settings.title = (settings.title == '')? '$#!@!Error!!!':settings.title;
-					str = '<div class="ui-state-error ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
-					
-			} else if (settings.type == 'info'){
-				settings.title = (settings.title == '')? 'Info':settings.title;
-					str = '<div>'+settings.msg+'</div>';
-					
-			} else if (settings.type == 'warning'){
-					settings.title = (settings.title == '')? 'Warning':settings.title;
-					str = '<div class="ui-state-highlight ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
-					
-			} else if (settings.type == 'help'){
-					settings.title = (settings.title == '')? 'Help':settings.title;
-					str = '<div class="ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-help" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
-			
-			} else if (settings.type == 'confirm')	{
-				settings.title = (settings.title == '')? 'Confirm':settings.title;
-					str = '<div class="ui-state-highlight ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';
-			
-			} else if (settings.type == 'success'){
-				settings.title = (settings.title == '')? 'Success':settings.title;
-				str = '<div class="ui-state-success ui-corner-all" style="padding:0.7em;"><span class="ui-icon ui-icon-check" style="float: left; margin-right: 0.3em;"></span>'+settings.msg+'</div>';				
-					
-			} else {
-				str = '<div class="ui-corner-all" style="padding:0.7em;">'+settings.msg+'</div>';
-				
-				
-			}
-	
-				
-			$("#aixada_msg").html(str).dialog('option',{	
-									title:settings.title,
-									width:settings.width,
-									buttons : settings.buttons
-							}).dialog("open");
-			
-			if (settings.autoclose > 0){
-				setTimeout(function(){
-					$("#aixada_msg").dialog('close');
-				}, settings.autoclose)
-			}
-			*/
-
-		}, 
-		closeMsg : function(){
-			//$('#aixada_msg').dialog( "close" );
-			
-		}
-	});
-	
-	
-	/**
-	 * Prepare a jquery ui dialog 
-	 */
-	
-	/*$('body').append('<div id="aixada_msg" class="msg_dialog"></div>');
-	$( "#aixada_msg" ).dialog({
-			autoOpen: false,
-	});*/
 	
 	
 });

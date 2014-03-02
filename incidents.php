@@ -48,7 +48,7 @@
 		$('.sec-1').show();
 
 		bootbox.setDefaults({
-			locale:"es"
+			locale:"<?=$language;?>"
 		})
 
 
@@ -63,7 +63,7 @@
 		})
 		
 
-				//print incidents accoring to current incidents template in new window or download as pdf
+		//print incidents accoring to current incidents template in new window or download as pdf
 		/*$(".ctx-nav-exp").click(function(e){
 
 			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
@@ -166,7 +166,7 @@
 								bootbox.hideAll();
 							}	
 						}
-					});
+				});
 
 				e.stopPropagation();
 			});
@@ -209,7 +209,8 @@
 		$('#tbl_incidents tbody').xml2html('init',{
 				url: 'php/ctrl/Incidents.php',
 				params : 'oper=getIncidentsListing&filter=month',
-				loadOnInit: true 
+				loadOnInit: true,
+				progressbar : true
 		});
 
 

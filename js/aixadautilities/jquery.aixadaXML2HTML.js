@@ -22,7 +22,7 @@
 					loadOnInit		: false, 						//if the xml is loaded on "ini" call
 					rowCount		: 0,							//nr of total xml result rows (specified by rowName)
 					autoReload		: 0,							//milliseconds before this.reload is issued. 0 = never
-					progressbar 	: true,							//show modal progress bar during loading
+					progressbar 	: false,							//show modal progress bar during loading
 					beforeLoad	: function(){},
 					complete	: function(row_count){},			//called, once loop through xml has finished
 					rowComplete : function(current_row_index, row){}//called, after each row 

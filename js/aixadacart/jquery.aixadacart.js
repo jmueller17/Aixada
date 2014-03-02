@@ -64,13 +64,13 @@
 				}//end if
   				
   				//init a dialog layer to display messages
-				constructDialog.call($this);
+				//constructDialog.call($this);
   				
 				//construct the cart: append the str to the DOM
   				constructCart.call($this,$this.data('aixadacart').cartType);  				
   				  				
   				//if we have a preorder, we use tabs	
-				if ($this.data('aixadacart').cartType == 'standalone_preorder') $('#cart_tabs').tabs();
+				//if ($this.data('aixadacart').cartType == 'standalone_preorder') $('#cart_tabs').tabs();
 				
 				//init the submit button; choose "validate" or "save" icon depending on where we are
 			    switch($this.data('aixadacart').btnType) {
@@ -201,7 +201,7 @@
 					
 					//deactivates items whose provider/order has been already closed
 					var deaTr = (itemObj.time_left < 0)? 'dim60':'';
-					var deaTd = (itemObj.time_left < 0)? 'ui-state-error':'';
+					var deaTd = (itemObj.time_left < 0)? 'bg-danger':'';
 					var deaIn = (itemObj.time_left < 0)? 'disabled':'';
 					
 					//add it as row
@@ -213,7 +213,7 @@
 					}
 					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
-					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
+					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" class="form-control" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" placeholder="0.00" />'; 
 					str +=								'<input type="hidden" name="order_item_id[]" value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
@@ -247,10 +247,9 @@
 					$("#cart_quantity_"+itemObj.id, $this)
 						.bind("focus", function(e){
 							if($(this).parent().hasClass('ui-state-error')){
-				    			$("#cart_dialog")
-				    				.html($.aixadacart.msg.orderClosed)
-				    				.dialog('option','title','Warning')
-				    				.dialog("open");
+								if (typeof bootbox != 'undefined')
+									bootbox.alert($.aixadacart.msg.orderClosed);
+
 								$(this).blur();
 								return false; 
 							}
@@ -348,7 +347,7 @@
     		 var $this = $(this);
     		 
     		 if (options.saveCartURL) {
-    			 $("#cart_dialog").html('Should not change the save cart URL while loading!').dialog('option','title','Warning').dialog("open");
+    		 	bootbox.alert("Don't change the URL while loading"); 
     		 }
     			 
     		 $this.aixadacart("options",options);
@@ -533,10 +532,9 @@
 		fmtInput = parseFloat(value.replace(",","."));
 				
 		if (isNaN(fmtInput)){
-			$("#cart_dialog")
-			.html($.aixadacart.msg.errInput)
-			.dialog('option','title','Warning')
-			.dialog("open");
+			if (typeof bootbox != 'undefined'){
+				bootbox.alert($.aixadacart.msg.errInput);
+			}
 			var nv = new Number(0);
 			return nv.toFixed(2);
 		} else {
@@ -601,15 +599,15 @@
 	
 	function updateCartTips (type, msg, timing ) {
 		
-		var style = 'ui-state-highlight';
+		var style = 'bg-primary';
 		var milsecs = (timing >= 0)? timing:10000;
 			
 		if (type == 'success'){
-			style = 'cart_success_msg';
+			style = 'bg-success';
 		} else if (type == 'error'){
-			style = 'ui-state-error';
+			style = 'ui-danger';
 		} else if (type == 'notice'){
-			style = 'ui-state-highlight';
+			style = 'bg-info';
 		}
 
 		msg = (!msg)? 'error during cart loading/saving':msg; 
@@ -625,23 +623,9 @@
 	function hideCartTips(){
 		$('#cartMsg')
 			.html('')
-			.removeClass('cart_success_msg, ui-state-error, ui-state-highlight');
+			.removeClass('bg-primary, bg-danger, bg-info, bg-success');
 	}
 	
-	function constructDialog(){
-		
-		//create the dialog for the messages
-			$(this).append('<div id="cart_dialog"></div>');
-			$( "#cart_dialog" ).dialog({
-				autoOpen: false,
-				buttons: {
-					Ok: function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		
-	}
 	
 	
 	function constructCart(which){
@@ -668,7 +652,7 @@
 		tbl_foot += '	</tfoot>';
 		
 		if(which == 'simple'){
-			str += '<form id="cart">';
+			str += '<form id="cart" role="form">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
@@ -685,44 +669,44 @@
 		//standalone widget with main and preorder tabs
 		} else if (which == 'standalone_preorder'){
 		
-			str += '<div id="aixada_cart_standalone_preorder" class="ui-widget">';
+			str += '<div id="aixada_cart_standalone_preorder">';
 			
-			str += '<form id="cart">';
+			str += '<form id="cart" role="form">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
-			str += '<div id="cart_tabs">';
-			str += '<ul>';
-			str += '<li><a href="#tabsx-1" style="font-size:1.6em;">'+$.aixadacart.title.order+'</a></li>';
-			str += '<li><a href="#tabsx-2" style="padding:1.20em;">'+$.aixadacart.title.preorder+'</a></li>';
+			str += '<div id="cart_tabs" class="container">';
+			str += '<ul class="nav nav-tabs">';
+			str += '<li><a href="#tabsx-1" data-toggle="tab">'+$.aixadacart.title.order+'</a></li>';
+			str += '<li><a href="#tabsx-2" data-toggle="tab">'+$.aixadacart.title.preorder+'</a></li>';
 			str += '</ul>';
-			str += '<div id="tabsx-1">';
-			str += '<span class="cartLoadAnim cart_floatRight cart_animOrder cart_hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>';
-			str += '	<table id="aixada_cart_list" class="cart_product_list">';
+			str += '<div class="tab-content">'
+			str += '<div id="tabsx-1" class="tab-pane">';
+			str += '<table id="aixada_cart_list" class="table">';
 			str += tbl_head;
 			str += '	<tbody></tbody>';
 			str += tbl_foot;
 			str += '</table>';
 			//str += '<p id="cartMsg"></p>';
 			str += '</div>';
-			str += '<div id="tabsx-2">';
+			str += '<div id="tabsx-2" class="tab-pane">';
 			str += '		<table id="aixada_cart_list_preorder" class="cart_product_list">';
 			str += tbl_head;
 			str += '		<tbody></tbody>';
 			str += '</table>';
 			//str += '<p id="cartMsg"></p>';
-			str += '</div></div></form></div><br/><br/><br/>';
+			str += '</div></div></div></form></div><br/><br/><br/>';
 			
 		//default is standalone
 		} else {
-			str += '<div id="aixada_cart_standalone" class="ui-widget">';
+			str += '<div id="aixada_cart_standalone"';
 			str += '<form id="cart">';
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
 			str += '<div class="cart_container ui-widget-content ui-corner-all">';
 			str += '<h2 class="ui-widget-header ui-corner-all"> '+$.aixadacart.title.shop+'<span class="cartLoadAnim cart_floatRight cart_hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h2>';
-			str += '<table id="aixada_cart_list" class="cart_product_list">';
+			str += '<table id="aixada_cart_list" class="table">';
 			str += tbl_head;
 			str += '	<tbody></tbody>';
 			str += tbl_foot;
