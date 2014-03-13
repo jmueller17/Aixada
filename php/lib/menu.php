@@ -118,11 +118,14 @@ class menu {
 		
 			//check access rights here for each item. 
 
+			//construct URL
+			$url = $nav_item['path'] . "?" . $nav_item['params'];
+
 			//this item has submenu
 			if (isset($nav_item['subnav']) && count($nav_item['subnav'])>1) {
 				
 				$tmp_html .= '<li '.$this->menu_attr[$type]['li_sub'].'>';
-				$tmp_html .= '<a '.$this->menu_attr[$type]['a_sub'].' href="'.$nav_item['path'].'">';
+				$tmp_html .= '<a '.$this->menu_attr[$type]['a_sub'].' href="'.$url.'">';
 				$tmp_html .= $Text[$nav_item['i18n']] .' '. $this->menu_attr[$type]['icon_sub'];
 				$tmp_html .= $this->construct_menu($nav_item['subnav'], 'dropdown');
 				$tmp_html .='</a></li>';
@@ -131,7 +134,7 @@ class menu {
 			} else {
 
 				$tmp_html .= '<li '.$this->menu_attr[$type]['li'].'>';
-				$tmp_html .= '<a '.$this->menu_attr[$type]['a'].' href="'.$nav_item['path'].'">'.$Text[$nav_item['i18n']].'</a></li>';
+				$tmp_html .= '<a '.$this->menu_attr[$type]['a'].' href="'.$url.'">'.$Text[$nav_item['i18n']].'</a></li>';
 
 			}
 

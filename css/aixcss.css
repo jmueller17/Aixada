@@ -5,7 +5,13 @@
 .clickable {cursor:pointer;}
 
 
-h1 span {font-size:0.8em;} /* back arrow in page headings */
+h1 span.change-sec {font-size:0.8em;} /* back/fwd arrow in page headings */
+h1 span.sp-sm {font-size:0.6em;}
+
+input.max-width {max-width:70px;}
+
+.ax-txt-right 	{text-align: right;}
+.ax-txt-strong	{font-weight: bold;}
 
 .ax-navbar-top {padding:5px;}
 .ax-navbar-top a {color:white; font-weight: bold;}
@@ -14,6 +20,19 @@ h1 span {font-size:0.8em;} /* back arrow in page headings */
 .level-1-indent {text-indent:1em;}
 .level-2-indent {text-indent:1em;}
 
+
 .progress-bar.animate {
    width: 100%;
+}
+
+.ax-container{
+	margin-left: 0;
+	margin-right: 0;
+	padding-top:8px;
+	background-color: #fff;
+	border-width: 1px;
+	border-style:solid;
+	border-color: #ddd;
+	border-radius: 4px 4px 0 0;
+	box-shadow: none;
 }

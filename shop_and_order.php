@@ -11,6 +11,7 @@
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/aixcss.css" rel="stylesheet">
     <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
+    <link href="js/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
 
 
@@ -23,6 +24,10 @@
 	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
 	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
 	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>
+	   	
+		<script type="text/javascript" src="js/datepicker/bootstrap-datetimepicker.min.js"></script>
+	
 
 
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
@@ -44,9 +49,15 @@
 	//decide what to do in which section
 	var what = $.getUrlVar('what');
 
+	//hide all sections
+	$('.section').hide();
+
+
 	//allow pruchase of stock_actual < 0 items? 
 	var preventOutofStock = <?php echo configuration_vars::get_instance()->prevent_out_of_stock_purchase;?>
 
+	//load today's date from server 
+	var gToday = null; 
 
 	//detect form submit and prevent page navigation; we use ajax.
 	$('form').submit(function() {
@@ -69,6 +80,7 @@
 		cartType	: (what=='Shop')? 'standalone':'standalone_preorder',
 		btnType		: 'save',
 		autoSave	: 5000,
+		cartType	: 'simple',
 		loadSuccess : updateCartLabel,
 		submitComplete : updateCartLabel,
 		submitError : function (err_msg){
@@ -134,18 +146,20 @@
 					if (id < 0) { return true;}
 
 					$('.loadSpinner').show();
-					//alert($.getSelectedDate('#datepicker','',what)); //for shop the date needs to be 0!!
+					//for Shop the date needs to be 0!!
 					$('#product_list_provider tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','','', what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
 						complete : function (rowCount){
 							$('.loadSpinner').hide();
 							if (rowCount == 0){
-								$.showMsg({
-									msg:"<?php echo $Text['msg_no_active_products'];?>",
-									type: 'info'});
+								bootbox.alert({
+										title : "Epp!!",
+										message : "<div class='alert alert-info'><?php echo $Text['msg_no_active_products'];?></div>"
+								});
+								
 							} else if (rowCount == counterClosed){
 
 								$('#providerClosedStatus').show();
@@ -172,16 +186,18 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','','', what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
 						complete : function (rowCount){
 							$('.loadSpinner').hide();
 							if (rowCount == 0){
-								$.showMsg({
-									msg:"<?php echo $Text['msg_no_active_products'];?>",
-									type: 'info'});
+								bootbox.alert({
+										title : "Epp!!",
+										message : "<div class='alert alert-info'><?php echo $Text['msg_no_active_products'];?></div>"
+								});
+								
 							}
 						}
 					});
@@ -198,7 +214,7 @@
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
+						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','','', what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -215,67 +231,63 @@
 
 
 
-	//dates available to make orders; start with dummy date
-	var availableDates = ["2011-00-00"];
-
-	/*
-	$("#datepicker").datepicker({
-				dateFormat 	: 'DD d M, yy',
-				showAnim	: '',
-				beforeShowDay: function(date){		//activate only those dates that are available for ordering.
-					if (what == 'Order'){
-						var ymd = $.datepicker.formatDate('yy-mm-dd', date);
-						if ($.inArray(ymd, availableDates) == -1) {
-						    return [false,"","Unavailable"];
-						} else {
-							  return [true, ""];
-						}
-					} else {
-						 return [true, ""];
-					}
-				},
-				onSelect 	: function (dateText, instance){
-					refreshSelects($.getSelectedDate('#datepicker'));
-				}//end select
-
-	}).show();*///end date pick
-
-
+	
+	
    	/**
    	 *	init the datepicker
    	 */
-	/*if (what == "Shop") {
-		$('#tabs ul').children('li:gt(2)').hide(); 			//preorder tab is only available for ordering
+	if (what == "Shop") {
+		//$('#tabs ul').children('li:gt(2)').hide(); 			//preorder tab is only available for ordering
 		$("#datepicker").hide();							//hide date input field for shop
 
 		$.getAixadaDates('getToday', function (date){
-			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
-			$("#datepicker").datepicker("refresh");
+			gToday = date[0];
+			$('#datepicker').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+				defaultDate : gToday
+			}).on("change.dp",function(e){
+				refreshSelects($.getSelectedDate('#datepicker'));
+			})
+
 			refreshSelects(date[0]);
 		});
 
 	} else {
 
+		// init date picker with orderable dates and set todays date
 		$.getAixadaDates('getAllOrderableDates', function (dates){
 			//if no dates are available, products have to be activated first!!
 			if (dates.length == 0){
-				$.showMsg({
-					msg:"<?php echo $Text['msg_no_active_products'];?>",
-					type: 'error'});
+				bootbox.alert({
+						title : "Epp!!",
+						message : "<div class='alert alert-warning'><?php echo $Text['msg_no_active_products'];?></div>"
+				});	
 				return false;
-			}
+			}		
 
-			availableDates = dates;
-			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', availableDates[0]));
-			$("#datepicker").datepicker("refresh");
-			refreshSelects(dates[0]);
+			$('#datepicker').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+				endDate : dates[dates.length-1], 
+				enabledDates: dates
+			}).on("change.dp",function(e){
+				refreshSelects($.getSelectedDate('#datepicker'));
+			})
+
+			$.getAixadaDates('getToday', function (date){
+				gToday = date[0];
+				$('#datepicker').data("DateTimePicker").setDate(date[0]);
+				refreshSelects(date[0]);
+			});
 		});
-	}*/
+	
+	}
 
 
 	/**
 	 *  show hide item list, cart or both
-	*/
+	
 	var leftColWidth = $('#leftCol').innerWidth();
 	var rightColWidth = $('#rightCol').innerWidth();
 	$('#ViewChoice')
@@ -293,7 +305,7 @@
 				$('#leftCol').css('width', leftColWidth).show();
 				$('#rightCol').css('width', rightColWidth).show();
 			}
-		});
+		});*/
 
 
 
@@ -334,8 +346,8 @@
 
 	//attach event listeners for the product input fields; change of quantity will put the
 	//item into the cart.
-	$('.product_list tbody')
-		.on("change","input", function (e){
+	$('#product_list_provider, #product_list_category, #product_list_search')
+		.on("change","input", function (e){			
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
 			var isPreorder = $(this).parents("tr").attr('preorder')? true:false; 	//check if this is a preorder item
 
@@ -375,9 +387,10 @@
 	//update the cart show/hide button
 	function updateCartLabel (){
     	var nItems = $('#cartLayer').aixadacart('countItems');
-        var strItems = (nItems == 1) ? "<?=$Text['product_singular']?>" : "<?= $Text['product_plural']?>";
+        //var strItems = (nItems == 1) ? "<?=$Text['product_singular']?>" : "<?= $Text['product_plural']?>";
     	var label = "<?=$Text['btn_view_cart'];?> ("+nItems+")";
-		$( "#view_cart" ).button( "option", "label",label);
+		//$( "#view_cart" ).button( "option", "label",label);
+		$('#itemCount').text(nItems)
 	}
 
 
@@ -400,6 +413,8 @@
 		$("#categorySelect").xml2html("reload", {
 			params : 'oper=get'+what+'Categories&date='+dateText,
 		})
+
+		if (what == "Order") $('.set-date').text(dateText)
 
 		$('#product_list_provider tbody').xml2html("removeAll");
 		$('#product_list_category tbody').xml2html("removeAll");
@@ -424,8 +439,8 @@
 
 
 		if (!days2Closing || days2Closing <0){
-			$(row).addClass('dim60');
-			$('td', row).addClass('ui-state-error');
+			//$(row).addClass('dim60');
+			$('td', row).addClass('bg-warning');
 			$('input', row).attr('disabled','disabled');
 			counterClosed++;
 		}
@@ -435,8 +450,8 @@
 
 		//this is a stock product without any stock left: can't be bought. 
 		if (preventOutofStock == true && orderType == 1 && stockActual <=0){
-			$(row).addClass('dim60');
-			$('td', row).addClass('ui-state-highlight');
+			//$(row).addClass('dim60');
+			$('td', row).addClass('bg-warning');
 			$('input', row).attr('disabled','disabled');
 			$('td:eq(1)', row).empty().append("<?php echo $Text['no_stock']; ?>")
 		}
@@ -454,9 +469,11 @@
 	});
 
 
-	//loading animation
-	$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif");
-	$('#leftCol .loadSpinner').hide();
+	$('.sec-1').show();
+
+	$('.change-sec')
+			.switchSection("init");
+
 
 	});  //close document ready
 </script>
@@ -474,81 +491,120 @@
 	<div class="container">
 		<!-- page header -->
 		<div class="row">
-	    	<h1><?php if ($_REQUEST['what'] == 'Order') {
-	    					echo $Text['ti_order'];
-	    				} else if ($_REQUEST['what'] == 'Shop') {
-	    					echo $Text['ti_shop'];
-	    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
-	    				}?>
-	    	&nbsp; <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
-		
-			<!--div id="ViewChoice">
-				<input type="radio" id="view_list" name="viewCol" /><label for="view_list" title="<?php echo $Text['btn_view_list_lng'];?>"><?php echo $Text['btn_view_list'];?></label>
-				<input type="radio" id="view_cart" name="viewCol"  /><label for="view_cart" title="<?php echo $Text['btn_view_cart_lng'];?>"><?php echo $Text['btn_view_cart'];?> (0)</label>
-				<input type="radio" id="view_both" name="viewCol" checked="checked"/><label for="view_both" title="<?php echo $Text['btn_view_both_lng'];?>"><?php echo $Text['btn_view_both'];?></label>
-			</div-->
+	    		<div class="col-md-4">
+	    			<h1 class="section sec-1">
+							<?php if ($_REQUEST['what'] == 'Order') {
+								echo $Text['ti_order'];
+							} else if ($_REQUEST['what'] == 'Shop') {
+								echo $Text['ti_shop'];
+							}?>
+					</h1>
+					<h1 class="section sec-2"> 
+						<a href="#sec-1" class="change-sec">
+							<?php if ($_REQUEST['what'] == 'Order') {
+								echo "Order";
+							} else if ($_REQUEST['what'] == 'Shop') {
+								echo $Text['ti_shop'];
+							}?>
+
+						</a> <span class="glyphicon glyphicon-chevron-right sp-sm"></span> cart <span class="set-date sp-sm"></span></h1>
+				</div>
+	    		<div class="col-md-4 pull-left">
+	    			<h1 class="section sec-1">
+					<div class="form-group">
+                        <div class='input-group date' id='datepicker' >
+                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" />
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    </h1>
+                </div>
+                <div class="col-md-4">
+                	<div class="btn-group pull-right">
+	                	<butto class="btn btn-primary change-sec" type="button" toggle-section="#sec-2,#sec-1">
+                			<span class="glyphicon glyphicon-shopping-cart pull-left"></span>
+                			&nbsp;&nbsp;&nbsp;
+                			<?php if ($_REQUEST['what'] == 'Order') {
+									echo 'Order cart';
+								} else if ($_REQUEST['what'] == 'Shop') {
+									echo 'Shop cart';
+								}?>
+
+                			&nbsp;&nbsp;&nbsp;&nbsp;
+                			<span class="badge" id="itemCount"></span>
+                		</button>
+					</div>
+                </div>
+
+
+					
 		</div>
 
 
-		<div class="row">
-			<div class="col-md-8">
-				<ul class="nav nav-tabs">
-				<li class="active"><a href="#tabs-1" data-toggle="tab"><?php echo $Text['by_provider']; ?></a></li>
-				<li><a href="#tabs-2" data-toggle="tab"><?php echo $Text['by_category']; ?></a></li>
-				<li><a href="#tabs-3" data-toggle="tab"><?php echo $Text['search']; ?></a></li>
-				<li><a href="#tabs-4" data-toggle="tab"><?php echo $Text['special_offer']; ?></a></li>
+		<div class="row ax-container section sec-1">
+			<div class="col-md-12">
+				<ul class="nav nav-pills">
+					<li class="active"><a href="#tabs-1" data-toggle="tab"><?php echo $Text['by_provider']; ?></a></li>
+					<li><a href="#tabs-2" data-toggle="tab"><?php echo $Text['by_category']; ?></a></li>
+					<li><a href="#tabs-3" data-toggle="tab"><?php echo $Text['search']; ?></a></li>
+					<li><a href="#tabs-4" data-toggle="tab"><?php echo $Text['special_offer']; ?></a></li>
 				</ul>
 			
 				<div class="tab-content">
-					<div id="tabs-1" class="tab-pane active">
-				<div class="form-group col-md-6">
-					<label for="providerSelect"></label>
-					<select id="providerSelect" class="form-control">
-                    	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    	<option value="{id}"> {name}</option>
-					</select>
-				</div>
 
-				<div class="orderStatus" id="providerClosedStatus"><p class="padding5x10 ui-corner-all ui-state-highlight"><?php echo $Text['order_closed']; ?> <span class="ui-icon ui-icon-locked floatRight"></span></p></div>
-				<div class="product_list_wrap">
-					<table id="product_list_provider" class="table">
-						<thead>
-							<tr>
-								<th><?php echo $Text['id'];?></th>
-								<th><?php echo $Text['info'];?></th>
-								<th><?php echo $Text['name_item'];?></th>
-								<th><?php echo $Text['quantity'];?></th>
-								<th><?php echo $Text['unit'];?></th>
-								<th><?php echo $Text['price'];?></th>
-
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
-								<td class="item_it">{id}</td>
-								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
-								<td class="item_name">{name}</td>
-								<td class="item_provider_name hidden">{provider_name}</td>
-								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
-								<td class="item_unit">{unit}</td>
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
-								<td class="item_price">{unit_price}</td>
-								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<!-- provider select tab-->
+				<div id="tabs-1" class="tab-pane active">
+					<div class="form-group col-md-4">
+						<label for="providerSelect">&nbsp;</label>
+						<select id="providerSelect" class="form-control">
+							<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+	                    	<option value="{id}"> {name}</option>
+						</select>
 					</div>
 
-					<div id="tabs-2" class="tab-pane">
-			 	<div class="form-group  col-md-6">
-					<label for="categorySelect"></label>
+					<div class="bg-warning" id="providerClosedStatus">
+						<p><?php echo $Text['order_closed']; ?> <span class="glyphicon glyphicon-lock"></span></p>
+					</div>
+				
+					<table id="product_list_provider" class="table">
+					<thead>
+						<tr>
+							<th><?php echo $Text['id'];?></th>
+							<th><?php echo $Text['info'];?></th>
+							<th><?php echo $Text['name_item'];?></th>
+							<th><?php echo $Text['quantity'];?></th>
+							<th><?php echo $Text['unit'];?></th>
+							<th><?php echo $Text['price'];?></th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
+							<td class="item_it">{id}</td>
+							<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
+							<td class="item_name">{name}</td>
+							<td class="item_provider_name hidden">{provider_name}</td>
+							<td class="item_quantity"><input  class="form-control max-width" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+							<td class="item_unit">{unit}</td>
+							<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
+							<td class="item_price">{unit_price}</td>
+							<td class="item_iva_percent hidden">{iva_percent}</td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+
+				<!-- category select tab-->
+				<div id="tabs-2" class="tab-pane">
+			 		<div class="form-group  col-md-4">
+					<label for="categorySelect">&nbsp;</label>
 					<select id="categorySelect" class="form-control">
 						<option value="-1" selected="selected"><?php echo $Text['sel_category']; ?></option>
                     	<option value="{id}">{description}</option>
 					</select>
 				</div>
-				<div class="product_list_wrap">
+
 					<table id="product_list_category" class="table" >
 						<thead>
 						<tr>
@@ -568,7 +624,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="ui-corner-all"  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input class="form-control max-width"  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
@@ -577,12 +633,14 @@
 						</tbody>
 					</table>
 				</div>
-					</div>
 
-					<div id="tabs-3" class="tab-pane">
-					<div class="col-lg-6">
+
+				<!-- search tab -->
+				<div id="tabs-3" class="tab-pane">
+					<div class="col-lg-4">
+						<label for="search">&nbsp;</label>
 					    <div class="input-group">
-					      <input type="text" id="search" class="form-control" placeholder=" product name">
+					      <input type="text" id="search" class="form-control" placeholder="Product name">
 					      <span class="input-group-btn">
 					        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search!</button>
 					      </span>
@@ -591,7 +649,6 @@
 
 						
 				<p>&nbsp;</p>
-				<div class="product_list_wrap">
 					<table id="product_list_search" class="table table-condensed table-hover" >
 						<thead>
 						<tr>
@@ -611,7 +668,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input  class="ui-corner-all" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input  class="form-control max-width" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
@@ -619,11 +676,12 @@
 							</tr>
 						</tbody>
 					</table>
+				
 				</div>
-					</div>
 
-					<div id="tabs-4" class="tab-pane">
 
+				<!-- preorder tab -->
+				<div id="tabs-4" class="tab-pane">
 				<table id="product_list_preorder" class="table" >
 						<thead>
 							<tr>
@@ -643,7 +701,7 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="form-control" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input class="form-control max-width" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
@@ -653,13 +711,23 @@
 					</table>
 					</div>
 				</div><!-- end tab content -->
-			</div><!-- end left col -->
-			
-			<div class="col-md-4">
-				<!-- Shopping cart starts -->
+			</div>
+		</div><!-- end main row -->
+
+		<div class="row ax-container section sec-2">
+			<div class="col-md-1">
+				<?php if ($_REQUEST['what'] == 'Order') {
+						echo '<h1><span class="glyphicon glyphicon-phone-alt"></span> </h1>';
+				} else if ($_REQUEST['what'] == 'Shop') {
+						echo '<h1><span class="glyphicon glyphicon-shopping-cart"></span></h1>';
+				}?>
+			</div>
+			<div class="col-md-10">
+			<!-- Shopping cart starts -->
 				<div id="cartLayer"></div>
 			</div><!-- end right col -->
-		</div><!-- end main row -->
+		</div>
+
 	</div>
 	<!-- end container -->
 

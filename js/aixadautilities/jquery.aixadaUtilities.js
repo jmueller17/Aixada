@@ -151,8 +151,9 @@ $(function(){
 			
 		},
 		//util function to retrieve formated date from datepicker
-		getSelectedDate: function(selector, format, defaultValues){
-			formatDate = (format != null && format != '')? format:'yy-mm-dd';
+		getSelectedDate: function(selector, toFormat, inFormat, defaultValues){
+			var toDateFormat = (toFormat != null && toFormat != '')? toFormat:'YYYY-MM-DD';
+			var inDateFormat = (inFormat != null && inFormat != '')? inFormat:'dddd, ll';
 			
 			var date = null; 
 
@@ -163,18 +164,17 @@ $(function(){
 					break;
 					
 				default: 
-					date = $.datepicker.formatDate(formatDate, $(selector).datepicker('getDate'));
+					date = moment($(selector).data("DateTimePicker").getDate(), inDateFormat).format(toDateFormat);
 					break;
 			
 			}
-			
 			return date;
 		}, 
 		//util function that receives a date string as 'yy-mm-dd' and returns extended french format
 		getCustomDate: function(dateString, format){
-			var date = $.datepicker.parseDate('yy-mm-dd', dateString);
-			var f = (format)? format:'DD, d MM, yy'; 
-			return $.datepicker.formatDate(f, date);
+			var date = moment(dateString, 'YYYY-MM-DD');
+			var f = (format)? format:'dddd, ll'; 
+			return moment(date).format(f);
 		}
 		
 	});
