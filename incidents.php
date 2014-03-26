@@ -351,18 +351,18 @@
 
 		    <div class="col-md-2 section sec-1">
 		    	<div class="btn-group">
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-    				Actions <span class="caret"></span>
-  				</button>
-				<ul class="dropdown-menu" role="menu">
-				    <li><a href="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
-				    <li class="divider"></li>
-				    <li><a href="#export-win" class="ctx-nav-exp" ><?=$Text['printout'];?></a></li>
-				    <li class="divider"></li>
-				    <li><a href="#">Download</a></li>
-				    <li class="level-1-indent"><a href="#export-pdf" class="ctx-nav-exp">pdf</a></li>
-					<li class="level-1-indent"><a href="#export-csv" class="ctx-nav-exp">xls</a></li>
-				</ul>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	    				Actions <span class="caret"></span>
+	  				</button>
+					<ul class="dropdown-menu" role="menu">
+					    <li><a href="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
+					    <li class="divider"></li>
+					    <li><a href="#export-win" class="ctx-nav-exp" ><?=$Text['printout'];?></a></li>
+					    <li class="divider"></li>
+					    <li><a href="#">Download</a></li>
+					    <li class="level-1-indent"><a href="#export-pdf" class="ctx-nav-exp">pdf</a></li>
+						<li class="level-1-indent"><a href="#export-csv" class="ctx-nav-exp">xls</a></li>
+					</ul>
 				</div>
 				<div class="btn-group pull-right">
 				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -375,7 +375,7 @@
 					<li class="level-1-indent"><a href="#month" class="ctx-nav-filter">Last month</a></li>
 					<li class="level-1-indent"><a href="#range" class="ctx-nav-filter">Date range</a></li>
 				</ul>
-			</div>
+				</div>
 		    </div>
 		</div>
 		
