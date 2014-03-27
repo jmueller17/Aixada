@@ -14,7 +14,7 @@
 	  	  			unsavedItems	: false,
 	  	  			isLoading		: false,
 	  	  			saveOnDelete	: true, 					//if items get deleted, the cart is automatically saved
-	  	  			cartType		: 'standalone',
+	  	  			cartType		: 'standalone',				// simple | standalone_preorder | standalone
 	  	  			ajaxType		: 'POST',
 	  	  			btnType			: 'submit',
 	  	  			decimalsQu		: 2,
@@ -213,7 +213,7 @@
 					}
 					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
 					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
-					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" class="form-control" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" placeholder="0.00" />'; 
+					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" class="form-control max-width" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" placeholder="0.00" />'; 
 					str +=								'<input type="hidden" name="order_item_id[]" value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
 					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
@@ -222,7 +222,7 @@
 					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
 					//str += 								'<input type="hidden" name="time_left"  value="'+itemObj.time_left+'" id="cart_time_left_'+itemObj.id+'" /> ';
 					str += '<td class="'+deaTd+'">' + itemObj.unit + '</td>';
-					str += '<td class="item_total '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
+					str += '<td class="item_total ax-txt-right '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
 					str += '</tr>';
 
 					
@@ -631,7 +631,7 @@
 	function constructCart(which){
 		
 		var str = '';
-		
+
 		var tbl_head = '<thead>';
 		tbl_head += '<tr>';
 		tbl_head += '	<th></th>';
@@ -644,11 +644,11 @@
 		tbl_head += '</thead>';
 		
 		var tbl_foot = 	'<tfoot>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_net_label">'+$.aixadacart.total_net+'</td><td class="total_net cart_dblBorderTop">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="5" class="rev_tax_label">'+$.aixadacart.revTaxInclAbbrev+'</td><td class="rev_tax_total">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="5" class="iva_tax_label">'+$.aixadacart.ivaTaxInclAbbrev+'</td><td class="iva_tax_total">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="total_label">'+$.aixadacart.total+'</td><td class="total">0.00</td></tr>';
-		tbl_foot += '		<tr><td colspan="3"><p id="cartMsg"></p></td><td colspan="3"><button type="submit" id="btn_submit">'+$.aixadacart.submit+'</button></td></tr>';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="ax-txt-right"><strong>'+$.aixadacart.total_net+'</strong></td><td class="total_net ax-txt-right ax-txt-strong">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="5" class="ax-txt-right">'+$.aixadacart.revTaxInclAbbrev+'</td><td class="rev_tax_total ax-txt-right">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="5" class="ax-txt-right">'+$.aixadacart.ivaTaxInclAbbrev+'</td><td class="iva_tax_total ax-txt-right">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="4">&nbsp;</td><td class="ax-txt-right"><strong>'+$.aixadacart.total+'</strong></td><td class="total ax-txt-right ax-txt-strong">0.00</td></tr>';
+		tbl_foot += '		<tr><td colspan="3"><p id="cartMsg"></p></td><td colspan="3"><button type="submit" id="btn_submit" class="btn btn-primary"><span class="glyphicon glyphicon-save"></span>&nbsp;&nbsp;'+$.aixadacart.submit+'</button></td></tr>';
 		tbl_foot += '	</tfoot>';
 		
 		if(which == 'simple'){
@@ -656,7 +656,7 @@
 			str += '<input type="hidden" name="date" id="cart_date" value="0" />';
 			str += '<input type="hidden" name="cart_id" id="global_cart_id" value="" />';	
 			str += '<input type="hidden" name="ts_last_saved" id="global_ts_last_saved" value="" />';	
-			str += '<table id="aixada_cart_list" class="cart_product_list">';
+			str += '<table id="aixada_cart_list" class="table">';
 			str += tbl_head;
 			str += '<tbody></tbody>';
 			str += tbl_foot;

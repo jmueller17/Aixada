@@ -51,18 +51,35 @@
 							var target = null; //target = $(this).attr('href'); 
 
 							if (typeof $(this).attr('href') != 'undefined'){
-								target = $(this).attr('href');									
+								target = $(this).attr('href');	
+								target = target.slice(1,target.length);
+         													
 
 							} 
 
 							if (typeof $(this).attr('target-section') != 'undefined' ){
 								target = $(this).attr('target-section')
+								target = target.slice(1,target.length);
+         					
 							}
 
-							if (target==null) return false; 
+							if (typeof $(this).attr('toggle-section') != 'undefined'){
+								toggle = $(this).attr('toggle-section')
+								targets = toggle.split(",")
 
-							target = target.slice(1,target.length);
-         					
+								for (var i=0; i<targets.length; i++){
+									targets[i] = targets[i].slice(1,targets[i].length);
+								}
+
+								target = ($("."+targets[0]).is(':visible'))? targets[1]:targets[0]
+							
+							}
+
+							if (target==null) {
+								alert("No target section defined on switch")
+								return false; 
+							}
+
 							
 							$this.switchSection("changeTo", "."+target);
        				});  	
