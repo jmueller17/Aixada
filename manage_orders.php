@@ -396,20 +396,17 @@
 							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('providerId')+'&date_for_order='+$.getSelectedDate('#datepicker2'),
 							success: function(txt){
 
+								
+							},
+							complete : function(){
 								$this.button('disable');
 								setTimeout(function(){
 									$this.dialog( "close" );
 									$('#tbl_orderOverview tbody').xml2html('reload',{
 										params : 'oper=getOrdersListing&filter=pastMonths2Future',
 									});
-									//switchTo('overview');
 								},500);
-							},
-							error : function(XMLHttpRequest, textStatus, errorThrown){
-								$.showMsg({
-									msg:XMLHttpRequest.responseText,
-									type: 'error'});
-								
+
 							}
 						});
 	

@@ -924,7 +924,9 @@ begin
 	where
 		p.provider_id = the_provider_id
 		and oi.product_id = p.id
-		and oi.date_for_order = '1234-01-23';
+		and oi.date_for_order = '1234-01-23'
+	group by
+		p.id;
 		
 		
 	-- set the new date_for_order on ordered items-- 
