@@ -53,7 +53,7 @@
 	$('.section').hide();
 
 
-	//allow pruchase of stock_actual < 0 items? 
+	//allow purchase of stock_actual < 0 items? 
 	var preventOutofStock = <?php echo configuration_vars::get_instance()->prevent_out_of_stock_purchase;?>
 
 	//load today's date from server 
