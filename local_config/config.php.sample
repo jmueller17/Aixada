@@ -199,6 +199,59 @@ class configuration_vars {
    * MENU AND RIGHTS
    * 
    */
+
+  public $main_nav = array(
+                'home' => array(
+                  'i18n' => 'nav_home',
+                  'path' => 'index.html',
+                  'params' => '',
+                  'title' => '',
+                  'subnav' => array(),
+                  ),
+                'shop' => array(
+                  'i18n' => 'nav_shop',
+                  'path' => 'shop_and_order.php',
+                  'params' => 'what=Shop',
+                  'title' => '',
+                  'subnav' => array()
+                  ),
+                'order' => array(
+                  'i18n' => 'nav_order',
+                  'path' => 'shop_and_order.php',
+                  'params' => 'what=Order',
+                  'title' => '',
+                  'subnav' => array()
+                  ),
+                'manage' => array(
+                  'i18n' => 'nav_mng',
+                  'path' => 'manage.php',
+                  'params' => '',
+                  'title' => '',
+                  'subnav' => array(
+                      'providers' => array(
+                        'i18n' => 'nav_mng_providers',
+                        'path' => 'manage_providers.php',
+                        'params' => '',
+                        'title' => ''
+                        ),
+                      'orders' => array(
+                        'i18n' => 'nav_mng_orders',
+                        'path' => 'manage_orders.php',
+                        'params' => '',
+                        'title' => ''
+
+                        ),
+                      'money' => array(
+                        'i18n' => 'nav_mng_money',
+                        'path' => 'manage_money.php',
+                        'params' => '',
+                        'title' => ''
+                        )
+
+                    )
+                  )
+    );
+  
   private $default_menus = array(
                       'navHome'      => 'enable',
                       'navWizard'    => 'disable',
