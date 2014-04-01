@@ -1,698 +1,126 @@
-<?php include "php/inc/header.inc.php" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title']; ?></title>
+@extends('generic/layout')
+<?php
+/*
+    (c) 2014 Castellers de la Vila de Gràcia
+    info@cvg.cat
+
+    This file is part of l'Admin Blau.
+
+    L'Admin Blau is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    L'Admin Blau is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+*/
+?>
+@section('content')
+
+<!-- we use the same code to display three panels. -->
+<!-- each second entry in the following array is a function that returns the relevant total -->
+@foreach (['Esdeveniment' => 'persones_actives', 
+	   'Actuacion' => 'pinya_necessaria', 
+	   'Missatge' => null 
+	   ] 
+	  as $CSN => $detail_total_method) 
+  <?php 
+    $csn = strtolower($CSN);
+    $instance = new $CSN; 
+  ?>
+  <div id="{{ $csn }}-panel" class="panel panel-default">
+    <div>
+      <!-- The panel headers -->
+      <h2>
+	@if ($CSN == 'Actuacion')
+          assajos i actuacions
+        @else
+          {{ $csn }}s
+        @endif
+      </h2>
+    </div>
+    <div class="panel-body">
+	<!-- Launch a query to find relevant esdeveniments, actuacions, missatges -->
+      @foreach ($instance
+		->where('data', '>=', date('Y-m-d', strtotime('now')))
+		->orderBy('data')
+		->get()
+		as $res) 
+	<!-- inside each panel, generate a row for each instance found -->
+      <div id="{{ $csn }}-{{ $res->id }}" class="row cvg-{{ $csn }}">
+
+        <div class="col-md-4">
+          <div class="row">
+            <!-- first, relevant data: titol, data, lloc -->
+            <div id="{{ $csn }}-{{ $res->id }}-titol" class="col-md-5 cvg-{{ $csn }}-titol">
+              {{ $res->titol }}
+            </div>
+            <div class="col-md-7">
+              <div id="{{ $csn }}-{{ $res->id }}-data" class="cvg-{{ $csn }}-data">
+                {{ $res->data }}
+              </div>
+              <div id="{{ $csn }}-{{ $res->id }}-llocs_fk" class="cvg-{{ $csn }}-llocs_fk">
+                {{ $res->llocs_fk }}
+              </div>
+            </div> <!-- col-md-7 -->
+          </div> <!-- row -->
+        </div> <!-- col-md-4 -->
+
+        <div id="{{ $csn }}-{{ $res->id }}-details" detail-id="{{ $res->id }}" class="col-md-8 {{ $csn }}-details">
+          <div class="row">
+          <!-- next, the details for each instance -->
+            @foreach($CSN::details($res->id) as $detail)
+              @if($detail_total_method == null) 
+	        <!-- this happens for missatge -->
+	        <div class="col-md-2">
+                  {{ $detail[1] }} 
+                </div>
+              @else
+	        <!-- this happens for esdeveniments and actuacions -->
+                <?php
+                  $total = $CSN::$detail_total_method($detail[1]);
+                ?>
+	        <div class="col-md-1">
+		<!-- display the hour, viz. the castell -->
+                  {{ $detail[1] }}
+                </div>
+	        <div class="col-md-1">
+		  <!-- how many people are currently assigned to the esdeveniment or castell? -->
+		  <!-- This will later be updated via ajax -->
+                  <span class="current-count-detail-id-{{ $res->id }}">0</span>/{{ $total }}
+                </div>
+                <div class="col-md-10">
+		  <!-- code for the progress bar -->
+                  <div class="progress progress-striped">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="{{ $total }}" style="width: 0%" detail-id="{{ $res->id }}">
+                    </div> <!-- progress-bar -->
+                  </div> <!-- progress -->
+                </div> <!-- detailId -->
+              @endif
+            @endforeach
+          </div> <!-- row -->
+        </div> <!-- col-md-8 -->
+
+      </div> <!-- csn-res-id -->
+      @endforeach
+    </div> <!-- /panel-body -->
+  </div> <!-- /panel -->
+@endforeach
+
+<script>
+$(function() {
+	$('.esdeveniment-details').each(function() {
+		updateStatusBars($(this), '/esdeveniments/apuntats/', [10, 25, 50]);
+	    });
+	$('.actuacion-details').each(function() {
+		updateStatusBars($(this), '/actuacions/apuntats/', [50, 70, 90]);
+	    });
+    });
 
- 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
-     
-    
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	    
-   	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_index.min.js"></script>
-    <?php }?>
-     
-   	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script> 
-    <script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
-	   
-	<script type="text/javascript">
-	$(function(){
-
-			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
-				
-			
-			//sql result set limit for order
-			var gOrderLimit = 10; 
-
-			//index
-			var gOrderLimitIndex = 0; 
-
-
-			//sql result set limti for purchase
-			var gShopLimit = 10; 
-
-
-			var gShopLimitIndex = 0; 
-
-			$('#loadingMsg').hide();
-
-			$( "#rightSummaryCol" ).tabs({
-				select : function (e, ui){
-					if ($(this).tabs( "option", "selected" ) == 0){
-						$('#tbl_Shop tbody').xml2html('reload'); //load purchase list when switching tabs
-					}
-				}
-	
-			});
-
-			$('#tmp').hide();
-
-
-
-			/********************************************************
-			 *      My ORDERS
-			 ********************************************************/
-
-			//show older orders dates			
-				$('#btn_prevOrders').button({
-					icons : {
-						primary:"ui-icon-seek-prev"
-						}
-				})
-				.click( function(e){
-						gOrderLimitIndex++;
-						$('#tbl_Orders tbody').xml2html('reload',{
-							url : 'php/ctrl/Orders.php',
-							params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
-						});
-
-				});
-
-				//show more recent order dates
-				$('#btn_nextOrders').button({
-					icons : {
-						secondary:"ui-icon-seek-next"
-						},
-					disabled: true
-				})
-				.click( function(e){
-					gOrderLimitIndex--;
-					$('#tbl_Orders tbody').xml2html('reload',{
-						url : 'php/ctrl/Orders.php',
-						params : 'oper=getOrdersListingForUf&uf_id=-1&filter=all&limit='+getOrderLimit(gOrderLimitIndex)
-					});
-
-				});
-			 
-			 
-			var lastDate = '';
-
-			//load the current orders by provider. introduces a date row when date changes
-			$('#tbl_Orders tbody').xml2html('init',{
-				url : 'php/ctrl/Orders.php',
-				params : 'oper=getOrdersListingForUf&uf_id=-1&filter=pastMonths2Future',
-				loadOnInit : true, 
-				beforeLoad : function(){
-					$('.loadSpinner').show();
-				},
-				rowComplete : function(rowIndex, row){
-					var orderId = $(row).attr('orderId');
-					var timeLeft = $(row).children().eq(2).text();
-					
-					var revisionStatus = $(row).attr('revisionStatus');
-					
-					if (orderId > 0){ //order has been sent
-						var st = formatOrderStatus(revisionStatus);
-						$(row).children().eq(3).addClass(st[1]).html('<p class="textAlignCenter">'+st[0]+'</p>');
-								
-					} else {
-						 $(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["not_yet_sent"];?></p>");		
-					} 
-
-					if (timeLeft <= 0){
-						$(row).children().eq(2).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
-					}
-
-					
-					//create date heading row
-					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow"><?=$Text['ordered_for'];?> <span class="boldStuff">'+$.getCustomDate(date, "D d M, yy")+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
-					lastDate=date; 	
-
-				},
-				complete : function(rowCount){
-					if (rowCount == 0){
-						$.showMsg({
-							msg:"<?php echo $Text['msg_err_noorder']; ?>",
-							type: 'warning'});	
-					}
-					$('.loadSpinner').hide();
-					
-				}
-			});
-
-
-
-			/**
-			 * load and show the order-shop comparison 
-			 */
-			function loadOrderDetails(orderId, dateForOrder, providerId){
-
-				$('#tbl_diffOrderShop').attr('currentOrderId','');
-				$('#tbl_diffOrderShop').attr('currentDateForOrder','');
-				$('#tbl_diffOrderShop').attr('currentProviderId','');
-								
-				if (orderId > 0) {
-					$('#tbl_diffOrderShop').attr('currentOrderId',orderId);
-					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getDiffOrderShop&order_id='+orderId, 
-					});	
-
-				} else if (providerId > 0){
-					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
-					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
-					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder, 
-					});	
-					
-				} 
-			} //end loadOrderDetails
-
-
-
-			
-			//tmp table to load the order - shop comparison
-			$('#tbl_diffOrderShop tbody').xml2html('init',{
-				url : 'php/ctrl/Orders.php',
-				params : 'oper=getDiffOrderShop', 
-				loadOnInit : false, 
-				beforeLoad : function (){
-					$('.loadSpinner').show();
-				},
-				rowComplete : function (rowIndex, row){
-					var qu = $(row).children().eq(3).text();
-					if (isNaN(qu)) $(row).children().eq(3).text("-");
-				},
-				complete : function(rowCount){
-					$('.loadSpinner').hide();
-					if (rowCount >0){
-						
-						var orderId = $('#tbl_diffOrderShop').attr('currentOrderId');
-						var dateForOrder = $('#tbl_diffOrderShop').attr('currentDateForOrder');
-						var providerId = $('#tbl_diffOrderShop').attr('currentProviderId');
-
-						var selector = (orderId > 0)? '.detail_'+orderId:'.detail_date_'+dateForOrder+'.detail_provider_'+providerId; 
-						//alert(selector);
-						var header = $('#tbl_diffOrderShop thead tr').clone();
-						var itemRows = $('#tbl_diffOrderShop tbody tr').clone();
-
-						if (orderId > 0){
-							//var revision = $('#order_'+orderId).attr('revisionStatus');
-							$('#order_'+orderId).after(itemRows).after(header);
-							$(selector).show().prev().show();
-					
-							//$('#order_'+orderId).children().eq(3).addClass(modClass).html('<p class="textAlignCenter">'+modTxt+'</p>');		
-
-						} else if (providerId > 0){  //not yet send / closed order
-							$('.Date_'+dateForOrder+'.Provider_'+providerId).after(itemRows).after(header);
-							$(selector).show().prev().show();
-						
-						}
-	
-					} 
-				}
-			});
-
-
-			/**
-			 *	converst the order status INT into CSS and text
-			 */
-			function formatOrderStatus(intStatus){
-				var modClass = '';
-				var modTxt = ''; 
-
-				switch (intStatus){
-					case "1":
-						modTxt = "<?=$Text['ostat_yet_received']; ?>";
-						break;
-					case "2": 
-						modClass = "asOrdered";
-						modTxt = "<?=$Text['ostat_is_complete']; ?>"; 
-						break;
-					case "3": 
-						modClass = 'postponed'
-						modTxt = "<?=$Text['ostat_postponed'];?>";
-						break;
-					case "4": 
-						modClass="orderCanceled";
-						modTxt = "<?=$Text['ostat_canceled'];?>";
-						break;
-					case "5": 
-						modClass = "withChanges";
-						modTxt = "<?=$Text['ostat_changes']; ?>";
-						break;	
-				}
-
-				//$(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["expected"];?></p>");
-				
-				return [modTxt, modClass];
-			}
-			
-
-			/**
-			 *	expand order details
-			 */
-			$('.expandOrderIcon').live('click', function(){
-
-				var curTr = $(this).parents('tr'); 
-				
-				var orderId = curTr.attr('orderId');
-				var dateForOrder =  curTr.attr('dateForOrder');
-				var providerId =  curTr.attr('providerId');
-
-				var selector = (orderId > 0)? '.detail_'+orderId:'.detail_date_'+dateForOrder+'.detail_provider_'+providerId; 
-				var isLoaded = ($(selector).length > 0)? true:false; 
-
-							
-					if ($('span',this).hasClass('ui-icon-plus')){
-						if (!isLoaded){
-							loadOrderDetails(orderId, dateForOrder, providerId);
-						} else {
-							$(selector).show().prev().show();							
-						}
-						$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
-						curTr.children().addClass('ui-state-highlight ui-corner-all');
-						
-					} else {
-						$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
-						$(selector).hide().prev().hide();
-						curTr.children().removeClass('ui-state-highlight');
-						
-					} 
-				
-			})
-			
-			
-			/**
-			 *	print stuff
-			 */
-			var printWin = null;
-			$('.printOrderIcon').live('click', function(){
-
-				var dateForOrder = $(this).attr('dateForOrder');
-				
-				printWin = window.open('tpl/<?=$tpl_print_myorders;?>?date='+dateForOrder);
-				printWin.focus();
-			});
-
-			
-			//calculates index for sql result set
-			function getOrderLimit(index)
-			{
-				
-				if (index == 0) {
-					$('#btn_nextOrders').button('disable');  
-				} else {
-					$('#btn_nextOrders').button('enable');  
-				}	
-				return index*gOrderLimit+","+(gOrderLimit);
-			}
-
-
-			
-			
-			/********************************************************
-			 *      My PURCHASE
-			 ********************************************************/
-			//var shopDateSteps = 3;
-			//var srange = 'month';
-
-			//show older purchase dates
-			$('#btn_prevPurchase').button({
-				icons : {
-					primary:"ui-icon-seek-prev"
-					}
-			})
-			.click( function(e){
-					gShopLimitIndex++;	
-					$('#tbl_Shop tbody').xml2html('reload',{
-						url : 'php/ctrl/Shop.php',
-						params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(gShopLimitIndex)
-						//params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
-					});
-
-			});
-
-			//show older purchase dates
-			$('#btn_nextPurchase').button({
-				icons : {
-					secondary:"ui-icon-seek-next"
-					}
-			})
-			.click( function(e){
-				gShopLimitIndex--;	
-				$('#tbl_Shop tbody').xml2html('reload',{
-					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(gShopLimitIndex)
-					//params : 'oper=getShopListing&uf_id=-1&filter=steps&steps='+shopDateSteps+'&range='+srange
-				});
-
-			});
-			
-			
-			
-			
-			//load purchase listing
-			$('#tbl_Shop tbody').xml2html('init',{
-					url : 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&uf_id=-1&filter=all&limit='+getShopLimit(0),
-					loadOnInit : false, 
-					beforeLoad : function(){
-						$('.loadSpinner').show();
-					},
-					rowComplete : function(rowIndex, row){
-						var validated = $(row).children().eq(2).text();
-
-						if (validated == '0000-00-00 00:00:00'){
-							$(row).children().eq(2).html("-");	
-						} else {
-							$(row).children().eq(2)
-								.addClass('okGreen')
-								.html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
-						}
-					},
-					complete : function(){
-						$('.loadSpinner').hide();
-						$('#tbl_Shop tbody td.shopDate').each(function(){
-							var date = $(this).text();
-
-							$(this).text($.getCustomDate(date, "D d M, yy")); 
-
-						})
-					}
-			});
-
-			//load purchase detail (products and quantities)
-			$('#tbl_purchaseDetail tbody').xml2html('init',{
-				url : 'php/ctrl/Shop.php',
-				params : 'oper=getShopCart', 
-				loadOnInit : false, 
-				beforeLoad : function(){
-					$('.loadSpinner').show();
-				},
-				rowComplete : function (rowIndex, row){
-					var price = new Number($(row).children().eq(5).text());
-					var qu = new Number($(row).children().eq(3).text());
-					var totalPrice = price * qu;
-					totalPrice = totalPrice.toFixed(2);
-					$(row).children().eq(5).text(totalPrice);
-					
-				},
-				complete : function(rowCount){
-
-					var shopId = $('#tbl_purchaseDetail').attr('currentShopId');
-					var header = $('#tbl_purchaseDetail thead tr').clone();
-					var itemRows = $('#tbl_purchaseDetail tbody tr').clone();
-
-					$('#shop_'+shopId).after(itemRows).after(header);
-					$('.loadSpinner').hide();
-
-				}
-			});
-			
-
-			$('.expandShopIcon').live('click', function(){
-
-				var shopId = $(this).parents('tr').attr('shopId');
-				var dateForShop = $(this).parents('tr').attr('dateForShop');
-
-				$('#tbl_purchaseDetail').attr('currentShopId', shopId);
-				$('#tbl_purchaseDetail').attr('currentDateForShop', dateForShop);
-				
-				
-							
-				if ($('span',this).hasClass('ui-icon-plus')){
-					$('span',this).removeClass('ui-icon-plus').addClass('ui-icon-minus');
-					$(this).parents('tr').children().addClass('ui-state-highlight ui-corner-all');
-
-					$('#tbl_purchaseDetail tbody').xml2html('reload',{
-						params : 'oper=getShopCart&shop_id='+shopId
-					});
-
-					
-				} else {
-					$('span',this).removeClass('ui-icon-minus').addClass('ui-icon-plus');
-					$(this).parents('tr').children().removeClass('ui-state-highlight');
-					$('#shop_'+shopId).next().hide();
-					$('.detail_shop_'+shopId).hide();
-				}
-			})
-			
-			//print purchase / order
-			$('.printShopIcon').live('click', function(){
-
-				var shopId = $(this).parents('tr').prev().attr('shopId');
-				var date = $(this).parents('tr').prev().attr('dateForShop');
-				var op_name = $(this).parents('tr').prev().attr('operatorName');
-				var op_uf = $(this).parents('tr').prev().attr('operatorUf');
-				
-
-				
-				printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
-				printWin.focus();
-			});
-
-			
-			$('.iconContainer')
-			.live('mouseover', function(e){
-				$(this).addClass('ui-state-hover');
-			})
-			.live('mouseout', function (e){
-				$(this).removeClass('ui-state-hover');
-			});
-
-
-			//calculates index for sql result set
-			function getShopLimit(index)
-			{
-				if (index == 0) {
-					$('#btn_nextPurchase').button('disable');  
-				} else {
-					$('#btn_nextPurchase').button('enable');  
-				}	
-				return index*gShopLimit+","+(gShopLimit);
-			}
-
-
-			/**
-			 *	UPCOMING ORDERS
-			 */
-			 $('#tbl_UpcomingOrders tbody').xml2html('init',{
-					url : 'php/ctrl/Dates.php',
-					params : 'oper=getUpcomingOrders&range=3',  //time range counts in weeks. Here three weeks ahead. 
-					loadOnInit : true, 
-					complete : function(count){
-						$('#tbl_UpcomingOrders tbody tr:even').addClass('rowHighlight');
-
-						$('#tbl_UpcomingOrders tbody td.dateForOrder').each(function(){
-							var date = $(this).text();
-
-							$(this).text($.getCustomDate(date, "D d M, yy")); 
-
-						})	
-					}
-			 });
-			
-	});  //close document ready
 </script>
 
 
-</head>
-<body>
-<div id="wrap">
-	<div id="headwrap">
-		<?php include "php/inc/menu.inc.php" ?>
-	</div>
-	<!-- end of headwrap -->
-	<div id="stagewrap" class="ui-widget">
-	
-		<div id="homeWrap">
-			<div class="aix-layout-fixW150 floatLeft">
-				<div class="homeIcon">
-					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
-					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
-				</div>
-				<div class="homeIcon">
-					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
-					<p><a href="shop_and_order.php?what=Order"><?php echo $Text['icon_order'];?></a></p>
-				</div>
-				<div class="homeIcon">
-					<a href="incidents.php"><img src="img/incidencias.png"/></a>
-					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
-				</div>
-			</div>
-			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-widget-center-col">
 
-				<ul>
-					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
-					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
-					<li><a href="#tabs-3"><h2><?=$Text['upcoming_orders'];?></h2></a></li>	
-					
-				</ul>
-				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
-				<div id="tabs-1">
-					<table id="tbl_Orders" class="tblListingDefault">
-						<tbody>
-							<tr id="order_{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="Date_{date_for_order} Provider_{provider_id}" revisionStatus="{revision_status}">
-								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td title="Order id: #{id}">{provider_name}</td>
-								<td>{time_left}</td>
-								<td><?=$Text['loading_status_info'];?></td>
-								<td><p class="textAlignRight">{order_total}<?=$Text['currency_sign'];?></p></td>
-								
-							</tr>
-						</tbody>
-						<tfoot>
-						<tr>
-								<td colspan="6">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="6">
-									<p class="textAlignCenter">
-										<button id="btn_prevOrders"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
-										<button id="btn_nextOrders"><?=$Text['next'];?></button></p>
-									</td>
-								
-								
-							</tr>
-						
-						</tfoot>
-					</table>
-				</div>
-				
-				<div id="tabs-2">
-					<table id="tbl_Shop" class="table_overviewShop">
-						<thead>
-							<tr >
-								<th></th>
-								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
-								<th class="textAlignCenter" colspan="3"><?=$Text['validated'];?></th>
-								<th class="textAlignRight"><?=$Text['total'];?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="shop_{id}" shopId="{id}" dateForShop="{date_for_shop}" operatorName="{operator_name}" operatorUf="{operator_uf}">
-																				  <td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
-								<td class="textAlignLeft shopDate">{date_for_shop}</td>
-								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
-								<td class="textAlignRight">{purchase_total}<?=$Text['currency_sign'];?></td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="6">&nbsp;</td>
-							</tr>
-							<tr>
-								<td colspan="6">
-									<p class="textAlignCenter">
-										<button id="btn_prevPurchase"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
-										<button id="btn_nextPurchase"><?=$Text['next'];?></button></p>
-									</td>
-								
-								
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-				
-				<div id="tabs-3">
-					<table id="tbl_UpcomingOrders" class="tblListingDefault">
-						<thead>
-							<tr>
-									<th class="textAlignLeft"><?=$Text['provider_name'];?></th>
-									<th class=""><?=$Text['ordered_for'];?></th>
-									<th><?=$Text['closes_days'];?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="minPadding"><p class="textAlignLeft">{provider_name}</p></td>
-								<td class="dateForOrder textAlignLeft">{date_for_order}</td>
-								<td>{time_left}</td>
-							</tr>
-						</tbody>
-						
-					</table>
-				</div>
-				
-				
-			</div>	
-					
-		</div>
-	</div>
-	
-	<!-- end of stage wrap -->
-</div>
-
-<div id="tmp">
-<table id="tbl_diffOrderShop" currentOrderId="" currentDateForOrder="" currentProviderId="">
-	<thead>
-		<tr>
-			<td class="tdMyOrder"><?=$Text['id'];?></td>
-			<td class="tdMyOrder" colspan="2"><?=$Text['product_name'];?></td>
-			<td class="tdMyOrder"><?=$Text['ordered'];?></td>
-			<td class="tdMyOrder"><?=$Text['delivered'];?></td>
-			<!-- td class="tdMyOrder"><?=$Text['price'];?></td-->		
-		</tr>
-	</thead>
-	<tbody>
-		<tr class="detail_{order_id} detail_date_{date_for_order} detail_provider_{provider_id}">
-			<td class="MyOrderItem">{product_id}</td>
-			<td class="MyOrderItem" colspan="2">{name}</td>
-			<td class="MyOrderItem">{quantity}</td>
-			<td class="MyOrderItem">{shop_quantity}</td>
-			<!-- td class="MyOrderItem">{unit_price}</td-->
-		</tr>
-	</tbody>
-</table>
-
-<table id="tbl_purchaseDetail" currentShopId="" currenShopDate="">
-	<thead>
-		<tr>
-			<td><p class="ui-corner-all iconContainer ui-state-default printShopIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
-			<th><?php echo $Text['name_item'];?></th>	
-			<th><?php echo $Text['provider_name'];?></th>					
-			<th class="textAlignCenter"><?=$Text['qu']?></th>
-			<th><?php echo $Text['unit'];?></th>
-			<th class="textAlignRight"><?=$Text['price'];?></th>
-			
-			
-			
-		</tr>
-	</thead>
-	<tbody>
-		<tr class="detail_shop_{cart_id}">
-			<td></td>
-			<td class="MyShopItem">{name}</td>
-			<td class="MyShopItem">{provider_name}</td>
-			<td class="MyShopItem textAlignCenter">{quantity}</td>
-			<td class="MyShopItem">{unit}</td>
-			<td class="MyShopItem textAlignRight">{unit_price}</td>	
-			
-		</tr>						
-	</tbody>
-	<tfoot>
-		<tr>
-			<td>&nbsp;</td>
-			<td colspan="5">			
-		</tr>
-	</tfoot>
-</table>
-
-				
-</div>
-
-
-
-<!-- end of wrap -->
-<div id="dialog-message" title="">
-		 <p id="loadingMsg" class="ui-state-highlight"><?php echo $Text['loading'];?></p>
-		 <div id="cartLayer"></div>
-</div>
-
-<!-- / END -->
-</body>
-</html>
+@stop
