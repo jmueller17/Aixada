@@ -32,7 +32,7 @@ require_once('validators.php');
 
 Route::get('/', function() 
 	   {
-	       return View::make('index');
+	       return View::make('aixada_index');
 	   });
 
 Route::get('/test.html', function() 
