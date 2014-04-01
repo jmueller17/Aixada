@@ -1,0 +1,4 @@
+[2014-04-01 07:41:18] production.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'main(): Failed opening required '/home/julian/Documents/aixada/github/app/filters.php' (include_path='/home/julian/Documents/aixada/github/vendor/phpseclib/phpseclib/phpseclib:.:/usr/share/php:/usr/share/pear')' in /home/julian/Documents/aixada/github/app/start/global.php:81
+Stack trace:
+#0 [internal function]: Illuminate\Exception\Handler->handleShutdown()
+#1 {main} [] []
