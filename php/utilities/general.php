@@ -1,7 +1,7 @@
 <?php
 
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
-require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'app'.DS.'storage'.DS.'config.php');
 
 
 /**

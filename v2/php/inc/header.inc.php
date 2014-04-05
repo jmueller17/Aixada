@@ -4,7 +4,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
-require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'app'.DS.'storage'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 
@@ -17,7 +17,7 @@ $tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
 $tpl_print_incidents = configuration_vars::get_instance()->print_incidents_template;
 
 
-require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
+require_once(__ROOT__ . 'app'.DS.'lang'.DS. get_session_language() . '.php');
 $language = get_session_language(); 
 
 

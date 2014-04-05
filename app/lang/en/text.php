@@ -1,6 +1,6 @@
 <?php
 
-require_once(__ROOT__. 'local_config/config.php');
+require_once(asset('app/storage/config.php'));
 
 // English translation file for aixada 
 

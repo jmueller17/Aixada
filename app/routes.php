@@ -35,6 +35,11 @@ Route::get('/', function()
 	       return View::make('aixada_index');
 	   });
 
+Route::get('/login', function() 
+	   {
+	       return View::make('login');
+	   });
+
 Route::get('/test.html', function() 
 	   {
 	       return View::make('test');

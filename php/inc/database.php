@@ -15,7 +15,7 @@ if (isset($slash[1])) {
     $app = '';
 }*/
 
-require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'app'.DS.'storage'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
 
@@ -24,7 +24,7 @@ if (!isset($_SESSION)) {
  }
 
 
-require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
+require_once(__ROOT__ . 'app'.DS.'lang'.DS. get_session_language() . '.php');
 
 
 

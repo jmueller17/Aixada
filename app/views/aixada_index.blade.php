@@ -1,4 +1,6 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php $language='en' ?>
+<?php require_once(__DIR__ . '/../../lang/en.php') ?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -13,19 +15,19 @@
      
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	    
+	    <script type="text/javascript" src="{{ asset('js/jquery/jquery.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/jqueryui/jqueryui.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/fgmenu/fg.menu.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaMenu.js') }}"></script>     	 
+	   	<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaXML2HTML.js') }}" ></script>
+	   	<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaUtilities.js') }}" ></script>
+	   	<script type="text/javascript" src="{{ asset('js/aixadacart/jquery.aixadacart.js') }}" ></script>   	    
    	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_index.min.js"></script>
+	   	<script type="text/javascript" src="{{ asset('js/js_for_index.min.js') }}"></script>
     <?php }?>
      
-   	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script> 
-    <script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
+   	<script type="text/javascript" src="{{ asset('js/jqueryui/i18n/jquery.ui.datepicker-' . $language. 'js') }}" ></script> 
+    <script type="text/javascript" src="{{ asset('js/aixadacart/i18n/cart.locale-' . $language . '.js') }}" ></script>
 	   
 	<script type="text/javascript">
 	$(function(){
