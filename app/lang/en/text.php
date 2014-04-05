@@ -5,6 +5,7 @@ require_once(asset('app/storage/config.php'));
 // English translation file for aixada 
 
 return array(
+  'lang' => 'en',
   'en' => "English",
   'charset' => "utf-8",
   'text_dir' => "ltr", // ('ltr' for left to right, 'rtl' for right to left)

@@ -6,6 +6,7 @@
 require_once(asset('app/storage/config.php'));
 
 return array(
+  'lang' => 'es',
   'es' => "Castellano",
   'charset' => "utf-8",
   'text_dir' => "ltr", // ('ltr' for left to right, 'rtl' for right to left)

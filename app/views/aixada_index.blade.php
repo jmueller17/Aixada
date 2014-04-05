@@ -1,11 +1,8 @@
-<?php $language='en' ?>
-<?php require_once(__DIR__ . '/../../lang/en.php') ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ Lang::get('text.lang') }}" lang="{{ Lang::get('text.lang') }}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php echo $Text['global_title']; ?></title>
+     <title>{{ Lang::get('text.global_title') }}</title>
 
  	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('css/aixada_main.css') }}" />
   	<link rel="stylesheet" type="text/css" media="print"  href="{{ asset('css/print.css') }}" />
@@ -121,7 +118,7 @@
 						$(row).children().eq(3).addClass(st[1]).html('<p class="textAlignCenter">'+st[0]+'</p>');
 								
 					} else {
-						 $(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["not_yet_sent"];?></p>");		
+						 $(row).children().eq(3).html("<p class='textAlignCenter'>{{ Lang::get('text.not_yet_sent') }}</p>");		
 					} 
 
 					if (timeLeft <= 0){
@@ -131,14 +128,14 @@
 					
 					//create date heading row
 					var date = $(row).attr('dateForOrder');
-					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow"><?=$Text['ordered_for'];?> <span class="boldStuff">'+$.getCustomDate(date, "D d M, yy")+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
+					if (date != lastDate) $(row).before('<tr><td colspan="6">&nbsp;</td></tr><tr><td colspan="5"><p class="overviewDateRow">{{ Lang::get('text.ordered_for') }} <span class="boldStuff">'+$.getCustomDate(date, "D d M, yy")+'</span></p></td><td><p class="ui-corner-all iconContainer ui-state-default printOrderIcon" dateForOrder="'+date+'"><span class="ui-icon ui-icon-print" title="Print order"></span></p></td></tr>');
 					lastDate=date; 	
 
 				},
 				complete : function(rowCount){
 					if (rowCount == 0){
 						$.showMsg({
-							msg:"<?php echo $Text['msg_err_noorder']; ?>",
+							msg:"{{ Lang::get('text.msg_err_noorder') }}",
 							type: 'warning'});	
 					}
 					$('.loadSpinner').hide();
@@ -228,27 +225,27 @@
 
 				switch (intStatus){
 					case "1":
-						modTxt = "<?=$Text['ostat_yet_received']; ?>";
+						modTxt = "{{ Lang::get('text.ostat_yet_received') }}";
 						break;
 					case "2": 
 						modClass = "asOrdered";
-						modTxt = "<?=$Text['ostat_is_complete']; ?>"; 
+						modTxt = "{{ Lang::get('text.ostat_is_complete') }}"; 
 						break;
 					case "3": 
 						modClass = 'postponed'
-						modTxt = "<?=$Text['ostat_postponed'];?>";
+						modTxt = "{{ Lang::get('text.ostat_postponed') }}";
 						break;
 					case "4": 
 						modClass="orderCanceled";
-						modTxt = "<?=$Text['ostat_canceled'];?>";
+						modTxt = "{{ Lang::get('text.ostat_canceled') }}";
 						break;
 					case "5": 
 						modClass = "withChanges";
-						modTxt = "<?=$Text['ostat_changes']; ?>";
+						modTxt = "{{ Lang::get('text.ostat_changes') }}";
 						break;	
 				}
 
-				//$(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["expected"];?></p>");
+				//$(row).children().eq(3).html("<p class='textAlignCenter'>{{ Lang::get('text.expected') }}</p>");
 				
 				return [modTxt, modClass];
 			}
@@ -373,7 +370,7 @@
 						} else {
 							$(row).children().eq(2)
 								.addClass('okGreen')
-								.html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?=$Text['validated_at'];?>: '+validated+'"></span>');
+								.html('<span class="ui-icon ui-icon-check tdIconCenter" title="{{ Lang::get('text.validated_at') }}: '+validated+'"></span>');
 						}
 					},
 					complete : function(){
@@ -515,23 +512,23 @@
 			<div class="aix-layout-fixW150 floatLeft">
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
-					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
+					<p><a href="shop_and_order.php?what=Shop">{{ Lang::get('text.icon_purchase') }}</a></p>
 				</div>
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
-					<p><a href="shop_and_order.php?what=Order"><?php echo $Text['icon_order'];?></a></p>
+					<p><a href="shop_and_order.php?what=Order">{{ Lang::get('text.icon_order') }}</a></p>
 				</div>
 				<div class="homeIcon">
 					<a href="incidents.php"><img src="img/incidencias.png"/></a>
-					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
+					<p><a href="incidents.php">{{ Lang::get('text.icon_incidents') }}</a></p>
 				</div>
 			</div>
 			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-widget-center-col">
 
 				<ul>
-					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
-					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
-					<li><a href="#tabs-3"><h2><?=$Text['upcoming_orders'];?></h2></a></li>	
+					<li><a href="#tabs-1"><h2>{{ Lang::get('text.my_orders') }}</h2></a></li>
+					<li><a href="#tabs-2"><h2>{{ Lang::get('text.my_purchases') }}</h2></a></li>	
+					<li><a href="#tabs-3"><h2>{{ Lang::get('text.upcoming_orders') }}</h2></a></li>	
 					
 				</ul>
 				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
@@ -542,8 +539,8 @@
 								<td><p class="iconContainer ui-corner-all ui-state-default expandOrderIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td title="Order id: #{id}">{provider_name}</td>
 								<td>{time_left}</td>
-								<td><?=$Text['loading_status_info'];?></td>
-								<td><p class="textAlignRight">{order_total}<?=$Text['currency_sign'];?></p></td>
+								<td>{{ Lang::get('text.loading_status_info') }}</td>
+								<td><p class="textAlignRight">{order_total}{{ Lang::get('text.currency_sign') }}</p></td>
 								
 							</tr>
 						</tbody>
@@ -554,8 +551,8 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevOrders"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
-										<button id="btn_nextOrders"><?=$Text['next'];?></button></p>
+										<button id="btn_prevOrders">{{ Lang::get('text.previous') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+										<button id="btn_nextOrders">{{ Lang::get('text.next') }}</button></p>
 									</td>
 								
 								
@@ -570,9 +567,9 @@
 						<thead>
 							<tr >
 								<th></th>
-								<th class="textAlignCenter"><?=$Text['date_of_purchase'];?></th>
-								<th class="textAlignCenter" colspan="3"><?=$Text['validated'];?></th>
-								<th class="textAlignRight"><?=$Text['total'];?></th>
+								<th class="textAlignCenter">{{ Lang::get('text.date_of_purchase') }}</th>
+								<th class="textAlignCenter" colspan="3">{{ Lang::get('text.validated') }}</th>
+								<th class="textAlignRight">{{ Lang::get('text.total') }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -580,7 +577,7 @@
 																				  <td><p class="iconContainer ui-corner-all ui-state-default expandShopIcon"><span class="ui-icon ui-icon-plus"></span></p></td>
 								<td class="textAlignLeft shopDate">{date_for_shop}</td>
 								<td class="textAlignCenter" colspan="3">{ts_validated}</td>
-								<td class="textAlignRight">{purchase_total}<?=$Text['currency_sign'];?></td>
+								<td class="textAlignRight">{purchase_total}{{ Lang::get('text.currency_sign') }}</td>
 							</tr>
 						</tbody>
 						<tfoot>
@@ -590,8 +587,8 @@
 							<tr>
 								<td colspan="6">
 									<p class="textAlignCenter">
-										<button id="btn_prevPurchase"><?=$Text['previous'];?></button>&nbsp;&nbsp;&nbsp;&nbsp;
-										<button id="btn_nextPurchase"><?=$Text['next'];?></button></p>
+										<button id="btn_prevPurchase">{{ Lang::get('text.previous') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+										<button id="btn_nextPurchase">{{ Lang::get('text.next') }}</button></p>
 									</td>
 								
 								
@@ -604,9 +601,9 @@
 					<table id="tbl_UpcomingOrders" class="tblListingDefault">
 						<thead>
 							<tr>
-									<th class="textAlignLeft"><?=$Text['provider_name'];?></th>
-									<th class=""><?=$Text['ordered_for'];?></th>
-									<th><?=$Text['closes_days'];?></th>
+									<th class="textAlignLeft">{{ Lang::get('text.provider_name') }}</th>
+									<th class="">{{ Lang::get('text.ordered_for') }}</th>
+									<th>{{ Lang::get('text.closes_days') }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -633,11 +630,11 @@
 <table id="tbl_diffOrderShop" currentOrderId="" currentDateForOrder="" currentProviderId="">
 	<thead>
 		<tr>
-			<td class="tdMyOrder"><?=$Text['id'];?></td>
-			<td class="tdMyOrder" colspan="2"><?=$Text['product_name'];?></td>
-			<td class="tdMyOrder"><?=$Text['ordered'];?></td>
-			<td class="tdMyOrder"><?=$Text['delivered'];?></td>
-			<!-- td class="tdMyOrder"><?=$Text['price'];?></td-->		
+			<td class="tdMyOrder">{{ Lang::get('text.id') }}</td>
+			<td class="tdMyOrder" colspan="2">{{ Lang::get('text.product_name') }}</td>
+			<td class="tdMyOrder">{{ Lang::get('text.ordered') }}</td>
+			<td class="tdMyOrder">{{ Lang::get('text.delivered') }}</td>
+			<!-- td class="tdMyOrder">{{ Lang::get('text.price') }}</td-->		
 		</tr>
 	</thead>
 	<tbody>
@@ -655,11 +652,11 @@
 	<thead>
 		<tr>
 			<td><p class="ui-corner-all iconContainer ui-state-default printShopIcon"><span class="ui-icon ui-icon-print" title="Print bill"></span></p></td>
-			<th><?php echo $Text['name_item'];?></th>	
-			<th><?php echo $Text['provider_name'];?></th>					
-			<th class="textAlignCenter"><?=$Text['qu']?></th>
-			<th><?php echo $Text['unit'];?></th>
-			<th class="textAlignRight"><?=$Text['price'];?></th>
+			<th>{{ Lang::get('text.name_item') }}</th>	
+			<th>{{ Lang::get('text.provider_name') }}</th>					
+			<th class="textAlignCenter">{{ Lang::get('text.qu') }}</th>
+			<th>{{ Lang::get('text.unit') }}</th>
+			<th class="textAlignRight">{{ Lang::get('text.price') }}</th>
 			
 			
 			
@@ -691,7 +688,7 @@
 
 <!-- end of wrap -->
 <div id="dialog-message" title="">
-		 <p id="loadingMsg" class="ui-state-highlight"><?php echo $Text['loading'];?></p>
+		 <p id="loadingMsg" class="ui-state-highlight">{{ Lang::get('text.loading') }}</p>
 		 <div id="cartLayer"></div>
 </div>
 

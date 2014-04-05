@@ -6,7 +6,7 @@
 require_once(asset('app/storage/config.php'));
 
 return array(
-
+  'lang' => 'ca-va',
   'ca-va' => "Català",
   'charset' => "utf-8",
   'text_dir' => "ltr", // ('ltr' significa d'esquerra a dreta, 'rtl' per aescriure de dreta a esquerra)
