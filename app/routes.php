@@ -45,3 +45,12 @@ Route::get('/test.html', function()
 	       return View::make('test');
 	   });
 
+foreach (array(
+	       'Order',
+	       'Uf'
+	       ) as $CSN) {
+    $csn = strtolower($CSN);
+    Route::model($csn, $CSN);
+}
+
+Route::get('OrdersListingForUf', 
