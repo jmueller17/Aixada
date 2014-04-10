@@ -1,7 +1,5 @@
 <?php
 
-require_once(asset('app/storage/config.php'));
-
 // English translation file for aixada 
 
 return array(
@@ -14,8 +12,6 @@ return array(
 /** 
  *  		Global things
  */
-  'coop_name' => configuration_vars::get_instance()->coop_name,
-  'currency_sign' => configuration_vars::get_instance()->currency_sign,
   'currency_desc' => "Euros", 
   'please_select' => "Please select ...",
   'loading' => "Please wait while loading...",
@@ -64,9 +60,7 @@ return array(
 /**
  *  			titles for header <title></title>
  */
-  'global_title' => configuration_vars::get_instance()->coop_name . " platform",
   'head_ti_validate' => "Validate",
-
   'head_ti_active_products' => "De/activate orderable products",
 //  'head_ti_arrived_products' => "Products that have arrived",
   'head_ti_active_roles' => "Active Roles",
@@ -250,7 +244,6 @@ return array(
 /**
  * 		Logon Screen
  */ 
-  'welcome_logon' => "Welcome to " . configuration_vars::get_instance()->coop_name . "!",
   'logon' => "User",
   'pwd' => "Password",
   'old_pwd' => "Old Password",

@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ Lang::get('text.lang') }}" lang="{{ Lang::get('text.lang') }}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-     <title>{{ Lang::get('text.global_title') }}</title>
+     <title>{{ Lang::get('config.global_title') }}</title>
 
  	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('css/aixada_main.css') }}" />
   	<link rel="stylesheet" type="text/css" media="print"  href="{{ asset('css/print.css') }}" />
   	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('js/aixadacart/aixadacart.css') }}" />
      <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('js/fgmenu/fg.menu.css')}}" />
-    <link rel="stylesheet" type="text/css"   media="screen" href="{{ asset('css/ui-themes/' . $default_theme . '/jqueryui.css') }}"/>
+    <link rel="stylesheet" type="text/css"   media="screen" href="{{ asset('css/ui-themes/' . Lang::get('config.default_theme') . '/jqueryui.css') }}"/>
      
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -23,14 +23,14 @@
 	   	<script type="text/javascript" src="{{ asset('js/js_for_index.min.js') }}"></script>
     <?php }?>
      
-   	<script type="text/javascript" src="{{ asset('js/jqueryui/i18n/jquery.ui.datepicker-' . $language. 'js') }}" ></script> 
-    <script type="text/javascript" src="{{ asset('js/aixadacart/i18n/cart.locale-' . $language . '.js') }}" ></script>
+   	<script type="text/javascript" src="{{ asset('js/jqueryui/i18n/jquery.ui.datepicker-' . Lang::get('text.lang') . 'js') }}" ></script> 
+    <script type="text/javascript" src="{{ asset('js/aixadacart/i18n/cart.locale-' . Lang::get('text.lang') . '.js') }}" ></script>
 	   
 	<script type="text/javascript">
 	$(function(){
 
 			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
+			$('.loadSpinner').attr('src', "img/ajax-loader-{{ Lang::get('config.default_theme') }}.gif").hide(); 
 				
 			
 			//sql result set limit for order
@@ -40,7 +40,7 @@
 			var gOrderLimitIndex = 0; 
 
 
-			//sql result set limti for purchase
+			//sql result set limit for purchase
 			var gShopLimit = 10; 
 
 
