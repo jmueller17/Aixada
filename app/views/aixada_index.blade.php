@@ -13,7 +13,6 @@
     
 	    <script type="text/javascript" src="{{ asset('assets/js/jquery/jquery.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('assets/js/jqueryui/jqueryui.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('assets/js/fgmenu/fg.menu.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaMenu.js') }}"></script>     	 
 	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaXML2HTML.js') }}" ></script>
 	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaUtilities.js') }}" ></script>
