@@ -8,11 +8,9 @@
  	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/css/aixada_main.css') }}" />
   	<link rel="stylesheet" type="text/css" media="print"  href="{{ asset('assets/css/print.css') }}" />
   	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/js/aixadacart/aixadacart.css') }}" />
-     <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/js/fgmenu/fg.menu.css')}}" />
     <link rel="stylesheet" type="text/css"   media="screen" href="{{ asset('assets/css/ui-themes/' . Lang::get('config.default_theme') . '/jqueryui.css') }}"/>
      
     
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="{{ asset('assets/js/jquery/jquery.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('assets/js/jqueryui/jqueryui.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('assets/js/fgmenu/fg.menu.js') }}"></script>
@@ -20,18 +18,15 @@
 	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaXML2HTML.js') }}" ></script>
 	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaUtilities.js') }}" ></script>
 	   	<script type="text/javascript" src="{{ asset('assets/js/aixadacart/jquery.aixadacart.js') }}" ></script>   	    
-   	<?php  } else { ?>
-	   	<script type="text/javascript" src="{{ asset('assets/js/js_for_index.min.js') }}"></script>
-    <?php }?>
      
-   	<script type="text/javascript" src="{{ asset('assets/js/jqueryui/i18n/jquery.ui.datepicker-' . Lang::get('text.lang') . 'js') }}" ></script> 
-    <script type="text/javascript" src="{{ asset('assets/js/aixadacart/i18n/cart.locale-' . Lang::get('text.lang') . '.js') }}" ></script>
+   	<script type="text/javascript" src="{{ asset('assets/js/jqueryui/i18n/jquery.ui.datepicker-' . Lang::get('text.current_language') . '.js') }}" ></script> 
+    <script type="text/javascript" src="{{ asset('assets/js/aixadacart/i18n/cart.locale-' . Lang::get('text.current_language') . '.js') }}" ></script>
 	   
 	<script type="text/javascript">
 	$(function(){
 
 			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-{{ Lang::get('config.default_theme') }}.gif").hide(); 
+			$('.loadSpinner').attr('src', "{{ asset('assets/img/ajax-loader-' . Lang::get('config.default_theme') . '.gif') }}").hide(); 
 				
 			
 			//sql result set limit for order
@@ -512,15 +507,15 @@
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">
 				<div class="homeIcon">
-					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
+					<a href="shop_and_order.php?what=Shop"><img src="{{ asset('assets/img/cesta.png') }}"/></a>
 					<p><a href="shop_and_order.php?what=Shop">{{ Lang::get('text.icon_purchase') }}</a></p>
 				</div>
 				<div class="homeIcon">
-					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
+					<a href="shop_and_order.php?what=Order"><img src="{{ asset('assets/img/pedido.png') }}"/></a>
 					<p><a href="shop_and_order.php?what=Order">{{ Lang::get('text.icon_order') }}</a></p>
 				</div>
 				<div class="homeIcon">
-					<a href="incidents.php"><img src="img/incidencias.png"/></a>
+					<a href="incidents.php"><img src="{{ asset('assets/img/incidencias.png') }}"/></a>
 					<p><a href="incidents.php">{{ Lang::get('text.icon_incidents') }}</a></p>
 				</div>
 			</div>
@@ -532,7 +527,7 @@
 					<li><a href="#tabs-3"><h2>{{ Lang::get('text.upcoming_orders') }}</h2></a></li>	
 					
 				</ul>
-				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+				<span style="float:right; margin-top:-45px; margin-right:12px;"><img class="loadSpinner" src="{{ asset('assets/img/ajax-loader.gif') }}"/></span>
 				<div id="tabs-1">
 					<table id="tbl_Orders" class="tblListingDefault">
 						<tbody>

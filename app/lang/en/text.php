@@ -3,7 +3,7 @@
 // English translation file for aixada 
 
 return array(
-  'lang' => 'en',
+  'current_language' => 'en',
   'en' => "English",
   'charset' => "utf-8",
   'text_dir' => "ltr", // ('ltr' for left to right, 'rtl' for right to left)
