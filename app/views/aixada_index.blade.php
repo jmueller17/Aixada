@@ -5,27 +5,27 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
      <title>{{ Lang::get('config.global_title') }}</title>
 
- 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('css/aixada_main.css') }}" />
-  	<link rel="stylesheet" type="text/css" media="print"  href="{{ asset('css/print.css') }}" />
-  	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('js/aixadacart/aixadacart.css') }}" />
-     <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('js/fgmenu/fg.menu.css')}}" />
-    <link rel="stylesheet" type="text/css"   media="screen" href="{{ asset('css/ui-themes/' . Lang::get('config.default_theme') . '/jqueryui.css') }}"/>
+ 	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/css/aixada_main.css') }}" />
+  	<link rel="stylesheet" type="text/css" media="print"  href="{{ asset('assets/css/print.css') }}" />
+  	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/js/aixadacart/aixadacart.css') }}" />
+     <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('assets/js/fgmenu/fg.menu.css')}}" />
+    <link rel="stylesheet" type="text/css"   media="screen" href="{{ asset('assets/css/ui-themes/' . Lang::get('config.default_theme') . '/jqueryui.css') }}"/>
      
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="{{ asset('js/jquery/jquery.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('js/jqueryui/jqueryui.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('js/fgmenu/fg.menu.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaMenu.js') }}"></script>     	 
-	   	<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaXML2HTML.js') }}" ></script>
-	   	<script type="text/javascript" src="{{ asset('js/aixadautilities/jquery.aixadaUtilities.js') }}" ></script>
-	   	<script type="text/javascript" src="{{ asset('js/aixadacart/jquery.aixadacart.js') }}" ></script>   	    
+	    <script type="text/javascript" src="{{ asset('assets/js/jquery/jquery.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('assets/js/jqueryui/jqueryui.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('assets/js/fgmenu/fg.menu.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaMenu.js') }}"></script>     	 
+	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaXML2HTML.js') }}" ></script>
+	   	<script type="text/javascript" src="{{ asset('assets/js/aixadautilities/jquery.aixadaUtilities.js') }}" ></script>
+	   	<script type="text/javascript" src="{{ asset('assets/js/aixadacart/jquery.aixadacart.js') }}" ></script>   	    
    	<?php  } else { ?>
-	   	<script type="text/javascript" src="{{ asset('js/js_for_index.min.js') }}"></script>
+	   	<script type="text/javascript" src="{{ asset('assets/js/js_for_index.min.js') }}"></script>
     <?php }?>
      
-   	<script type="text/javascript" src="{{ asset('js/jqueryui/i18n/jquery.ui.datepicker-' . Lang::get('text.lang') . 'js') }}" ></script> 
-    <script type="text/javascript" src="{{ asset('js/aixadacart/i18n/cart.locale-' . Lang::get('text.lang') . '.js') }}" ></script>
+   	<script type="text/javascript" src="{{ asset('assets/js/jqueryui/i18n/jquery.ui.datepicker-' . Lang::get('text.lang') . 'js') }}" ></script> 
+    <script type="text/javascript" src="{{ asset('assets/js/aixadacart/i18n/cart.locale-' . Lang::get('text.lang') . '.js') }}" ></script>
 	   
 	<script type="text/javascript">
 	$(function(){
@@ -451,7 +451,7 @@
 				
 
 				
-				printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
+				printWin = window.open("tpl/{{ $aixada_config['print_bill_template'] }}?shopId="+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
 				printWin.focus();
 			});
 
@@ -504,7 +504,7 @@
 <body>
 <div id="wrap">
 	<div id="headwrap">
-		<?php include "php/inc/menu.inc.php" ?>
+		 <?php //include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 	<div id="stagewrap" class="ui-widget">
