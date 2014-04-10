@@ -1,3 +1,4 @@
+<?php include_once(dirname(dirname(dirname(__FILE__))) . '/config/aixada.php') ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ Lang::get('text.lang') }}" lang="{{ Lang::get('text.lang') }}">
 <head>
@@ -293,7 +294,7 @@
 
 				var dateForOrder = $(this).attr('dateForOrder');
 				
-				printWin = window.open('tpl/<?=$tpl_print_myorders;?>?date='+dateForOrder);
+				printWin = window.open("tpl/{{ $aixada_config['print_my_orders_template'] }}?date="+dateForOrder);
 				printWin.focus();
 			});
 
