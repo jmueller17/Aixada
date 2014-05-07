@@ -22,7 +22,7 @@
 					loadOnInit		: false, 						//if the xml is loaded on "ini" call
 					rowCount		: 0,							//nr of total xml result rows (specified by rowName)
 					autoReload		: 0,							//milliseconds before this.reload is issued. 0 = never
-					progressbar 	: false,							//show modal progress bar during loading
+					progressbar 	: false,						//show modal progress bar during loading
 					beforeLoad	: function(){},
 					complete	: function(row_count){},			//called, once loop through xml has finished
 					rowComplete : function(current_row_index, row){}//called, after each row 
@@ -52,7 +52,7 @@
 
 					
 					//a template is either directly provided as string, if not, everything that 
-					//remains after a potential header has been detached is detached from the DOM and used as template. 
+					//remains after a potential header is detached from the DOM and used as template. 
 					//set the template string
 					settings.tpl = (settings.tpl != '')? settings.tpl:$this.html();
 					
@@ -141,6 +141,13 @@
 									dataType: "xml", 
 									beforeSend : function(jqXHR, settings){
 				    					if ( $this.data('xml2html').progressbar){
+				    						
+				    						//$this.append("<tr><td>hello</td></tr>")
+				    						//$this.append("<tr><td colspan='6'><p><img src='img/ajax-loader.gif'></p></td></tr>")
+											
+											//$this.parent().parent().append('<div style="position:relative; z-index:2; top:0px; left:0px; background-color:red; width:400px; height:400px;"><img src="img/ajax-loader.gif"></div>')
+
+
 											$('.js-loading-bar').modal('show');
 		  									$('.js-loading-bar').find('.progress-bar').addClass('animate');
 				    					}
