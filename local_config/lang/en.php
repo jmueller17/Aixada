@@ -913,6 +913,10 @@ $Text['msg_activate_prov_ok'] = "The provider has been activated successfuly.";
 $Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
 $Text['no_stock'] = "Out of stock!!";
 $Text['stock_mov_type'] = "Movement type";
+$Text['ti_search_results'] = "Search results - products";
+$Text['ti_confirm'] = "Think before clicking!";
+$Text['ti_error_form'] = "Form error";
+
 
 //$Text[''] = ""; 
 

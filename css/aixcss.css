@@ -21,9 +21,6 @@ input.max-width {max-width:70px;}
 .level-2-indent {text-indent:1em;}
 
 
-.progress-bar.animate {
-   width: 100%;
-}
 
 .ax-container{
 	margin-left: 0;
@@ -35,4 +32,9 @@ input.max-width {max-width:70px;}
 	border-color: #ddd;
 	border-radius: 4px 4px 0 0;
 	box-shadow: none;
+}
+
+.ax-modal-tmargin {margin-top: 20px;}
+.ax-modal-dialog-small {
+	width:280px;
 }

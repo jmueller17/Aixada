@@ -154,10 +154,9 @@
 		//DELETE incidents
 		$('#tbl_incidents tbody')
 			.on("click", ".del-incident",  function(e){
-					
 				var id = $(this).parents('tr').attr('incidentId'); 
 				bootbox.confirm({
-						title : "Confirm",
+						title : "<?=$Text['ti_confirm'];?>",
 						message : "<div class='alert alert-warning'><?php echo $Text['msg_delete_incident'];?></div>",
 						callback : function(ok){
 							if (ok){

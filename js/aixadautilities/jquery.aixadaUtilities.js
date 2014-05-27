@@ -92,6 +92,7 @@ $(function(){
 		//checks if the given select field has something other than the default value selected
 		checkSelect : function(input, defaultValues){
 			var selval = input.val();
+			alert(selval)
 			var ok = true; 
 			for (var i=0; i<defaultValues.length; i++){
 				if (selval == defaultValues[i]){

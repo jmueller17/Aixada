@@ -20,6 +20,7 @@
 					hist 				: false,  			//TODO: php side save to session last page
 					gSectionSel			: '.section',	 	//selector to hide all sections. 
 					gListenerSel		: '.sectionSwitchListener',	//selector for all section change event listerens			
+					gCurrentSel			: '', //currently active selection
 					beforeSectionSwitch	: function(targetsection){},
 					afterSectionSwitch	: function(targetsection){}
 		  		};
@@ -41,6 +42,7 @@
 							hist			: settings.hist,		
 							gSectionSel 	: settings.gSectionSel,
 							gListenerSel 	: settings.gListenerSel,
+							gCurrentSel		: settings.gCurrentSel,
 							beforeSectionSwitch 	: settings.beforeSectionSwitch,
 							afterSectionSwitch 		: settings.afterSectionSwitch
 							});
@@ -90,6 +92,11 @@
 		  		
 				
 	  		}, //end init
+
+	  		//returns the currently active selection (the last selection, faded to)
+	  		getCurrentSel : function(){
+	  			return $(this).data('mem').gCurrentSel;
+	  		},
 			
 	  		changeTo : function (toSectionSel,options){
 
@@ -128,6 +135,7 @@
 
 							//trigger events only once, not for each matching element!
 							if (gToCounter == gToTotal){
+								$this.data('mem').gCurrentSel = toSectionSel;
 			  					$this.data('mem').afterSectionSwitch.call(this, toSectionSel);
 								$(gListenerSel).trigger('afterSectionSwitch', [toSectionSel]);
 							}

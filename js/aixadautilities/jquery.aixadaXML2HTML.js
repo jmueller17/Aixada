@@ -22,7 +22,10 @@
 					loadOnInit		: false, 						//if the xml is loaded on "ini" call
 					rowCount		: 0,							//nr of total xml result rows (specified by rowName)
 					autoReload		: 0,							//milliseconds before this.reload is issued. 0 = never
-					progressbar 	: false,						//show modal progress bar during loading
+					loadAnim 		: true,							//show loading animation
+																	//a HTML string to be used as loading animation. automatically 
+																	//inserted before loading and removed after loading has finished
+					loadAnimHTMLStr	: '<p style="text-align:center"><img src="img/ajax-loader.gif"></p>',
 					beforeLoad	: function(){},
 					complete	: function(row_count){},			//called, once loop through xml has finished
 					rowComplete : function(current_row_index, row){}//called, after each row 
@@ -83,7 +86,8 @@
 							paginationNav	: (settings.paginationNav == '')? false:true,
 							loadOnInit		: settings.loadOnInit,
 							rowCount		: settings.rowCount,
-							progressbar 	: settings.progressbar,
+							loadAnim 		: settings.loadAnim,
+							loadAnimHTMLStr : settings.loadAnimHTMLStr,
 							
 							autoReload		: settings.autoReload,
 							beforeLoad		: settings.beforeLoad,
@@ -140,21 +144,25 @@
 									url: url + "?" + params,		
 									dataType: "xml", 
 									beforeSend : function(jqXHR, settings){
-				    					if ( $this.data('xml2html').progressbar){
+										lstr = $this.data('xml2html').loadAnimHTMLStr
+
+				    					if ( $this.data('xml2html').loadAnim){
 				    						
-				    						//$this.append("<tr><td>hello</td></tr>")
-				    						//$this.append("<tr><td colspan='6'><p><img src='img/ajax-loader.gif'></p></td></tr>")
-											
-											//$this.parent().parent().append('<div style="position:relative; z-index:2; top:0px; left:0px; background-color:red; width:400px; height:400px;"><img src="img/ajax-loader.gif"></div>')
-
-
-											$('.js-loading-bar').modal('show');
-		  									$('.js-loading-bar').find('.progress-bar').addClass('animate');
+				    						if ($this.parents('table').is('table')){
+					    						$this.parents('table')
+					    							 .after(lstr);
+					    						$this.parents('table')
+					    							 .next()
+					    							 .addClass("loadAnimRemoveMe")
+					    					} else {
+					    						$this.append(lstr);
+					    						$this.children(":last-child")
+					    							 .addClass("loadAnimRemoveMe")
+					    					}
 				    					}
 				    					$this.data('xml2html').beforeLoad.call(this,0);
 				    				},
 									success: function(xml){
-										
 				    					//save xml result set
 				    					$this.data('xml2html').xml = xml;
 				    					//determine its size
@@ -188,9 +196,8 @@
 
 	  							    },
 	  							   complete : function(msg){
-	  							   		if ( $this.data('xml2html').progressbar){
-											$('.js-loading-bar').modal('hide');
-		  									$('.js-loading-bar').find('.progress-bar').removeClass('animate');
+	  							   		if ( $this.data('xml2html').loadAnim){
+											$('.loadAnimRemoveMe').remove();
 				    					}
 	  							 	
 	  							    }

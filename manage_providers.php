@@ -1,4 +1,4 @@
-<?php include "php/inc/header.inc.php" ?>
+	<?php include "php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -21,8 +21,8 @@
 	   	
 	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
 	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
-	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script	
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>
 
     <?php }?>
    		
@@ -37,17 +37,12 @@
 	$(function(){
 
 		
-		//loading animation
-		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
-		
-
 		//marks the selected provider row
 		var gSelProvider = null;
 
 
 		//marks selected product row
 		var gSelProduct = null; 
-
 
 		//needed for setup of new provider form
 		var gFirstTimeNewProvider = true; 
@@ -78,13 +73,25 @@
 								['aixada_unit_measure','sUnitMeasureShopId','id','name']
 						];
 
+		//init animated save buttons
+		Ladda.bind('.btn-save')
 
+		//hide all sections
 		$('.section').hide();
 
-
+		//init switch sectino plugin
 		$('.change-sec').switchSection("init");
 
+		//show home section
 		$('.sec-1').show();
+
+
+		//init boostrap modal 
+		bootbox.setDefaults({
+			locale:"<?=$language;?>"
+		})
+
+
 		
 
 		/***********************************************************
@@ -98,14 +105,7 @@
 			url: 'php/ctrl/Providers.php',
 			params : 'oper=getProviders&all=1',
 			loadOnInit:true,
-			beforeLoad: function(){
-				$('.loadSpinner').show();
-			},
-			rowComplete : function (rowIndex, row){
-
-			},
 			complete : function(rowCount){
-				$('.loadSpinner').hide();
 				$('p.providerActiveStatus').each(function(){
 					if ($(this).text() == "1"){
 						$(this).html('<span class="glyphicon glyphicon-ok"></span>').parent().addClass('bg-success')
@@ -160,9 +160,28 @@
 				$('.change-sec').switchSection("changeTo",".sec-2");
 			});
 
-		
+
+		//click pencil of provider for editing
+		$('#tbl_providers tbody')
+			.on('click', '.btn-edit-provider', function(e){
+				$('#tbl_providers tbody tr').removeClass('ui-state-highlight');
+				gSelProvider = $(this).parents('tr');
+				gSelProvider.addClass('ui-state-highlight');
+				
+				$('#tbl_provider_edit').xml2html('reload',{
+					params: 'oper=getProviders&all=1&provider_id='+gSelProvider.attr('providerId')
+				});
+				
+				$('.set-provider').html(gSelProvider.children().eq(2).text());
+
+				$('.change-sec').switchSection("changeTo",".sec-5");
+
+				e.stopPropagation();
+			});
+
+
 		//load provider for editing
-		$('#tbl_provider_edit tbody').xml2html('init',{
+		$('#tbl_provider_edit').xml2html('init',{
 			url : 'php/ctrl/Providers.php',
 			loadOnInit:false,
 			rowComplete : function (rowIndex, row){
@@ -174,8 +193,46 @@
 			
 
 
+
 		//PROVIDER BUTTONS
 		
+		//save edited provider
+		$('#frm_provider_edit')
+			.on("click", ".btn-save", function(e){	
+				if (checkProviderForm('#pgProviderEdit')){
+					submitForm('#pgProviderEdit', 'edit', 'provider');
+				}		 
+				
+				e.stopPropagation();
+				return false; 
+			});
+
+		//save edited provider
+		$('#frm_provider_new')
+			.on("click", ".btn-save", function(e){	
+				if (checkProviderForm('#pgProviderNew')){
+					submitForm('#pgProviderNew', 'add', 'provider', '.sec-1');
+				}
+				
+				e.stopPropagation();
+				return false; 
+			});
+
+
+
+		//cancel edits/forms
+		$('.btn_cancel_provider')
+		.button({
+				icons: {
+	        		primary: "ui-icon-disk"
+	        	}
+			})
+			.click(function(e){			
+				switchTo('overviewProvider');
+				return false; 
+		});
+
+
 		
 		//import providers
 		$('#btn_import_provider')
@@ -191,65 +248,14 @@
 			});
 		
 		//new provider
-		$('#btn_new_provider')
-			.button({
-				icons: {
-	        		primary: "ui-icon-plus"
-	        	}
-			})
-			.click(function(){
-				prepareProviderForm();			
-				switchTo('newProvider');
-			});
+		$('.ctx-nav-new-provider').click(function(){	
+			prepareProviderForm();
+		})
+		
+		
+		
 
 		
-		//edit provider
-		$('.edit-provider')
-			.on('click', function(e){
-				$('#tbl_providers tbody tr').removeClass('ui-state-highlight');
-				gSelProvider = $(this).parents('tr');
-				gSelProvider.addClass('ui-state-highlight');
-				
-				$('#tbl_provider_edit tbody').xml2html('reload',{
-					params: 'oper=getProviders&all=1&provider_id='+gSelProvider.attr('providerId')
-				});
-				
-				switchTo('editProvider');
-				e.stopPropagation();
-			});
-
-		//save edited provider new provider
-		$('.btn_save_provider')
-			.button({
-				icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			})
-			.click(function(e){	
-				if ($(this).hasClass('edit')){
-					if (checkProviderForm('#pgProviderEdit')){
-						submitForm('#pgProviderEdit', 'edit', 'provider');
-					}		 
-				} else if ($(this).hasClass('add')){
-					if (checkProviderForm('#pgProviderNew')){
-						submitForm('#pgProviderNew', 'add', 'provider', 'overviewProvider');
-					}
-				}
-				e.stopPropagation();
-				return false; 
-			});
-
-		//cancel edits/forms
-		$('.btn_cancel_provider')
-		.button({
-				icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			})
-			.click(function(e){			
-				switchTo('overviewProvider');
-				return false; 
-		});
 
 	    // export products
 		$('#btn_provider_export')
@@ -368,7 +374,7 @@
 			var isValid = true; 
 			var isValidItem = true; 
 			var err_msg = ''; 
-			
+
 			isValidItem = $.checkFormLength($(mi +' input[name=name]'),2,150);
 			if (!isValidItem){
 				isValid = false; 
@@ -394,9 +400,11 @@
 			if (isValid) {
 				return true; 
 			} else {
-				$.showMsg({
-					msg:err_msg,
-					type: 'error'});
+				bootbox.alert({
+						title : "<?=$Text['ti_error_form'];?>",
+						message : "<div class='alert alert-danger'>"+err_msg+"</div>",
+				});	
+				Ladda.stopAll();
 				return false; 
 			}
 
@@ -411,8 +419,8 @@
 			if (gFirstTimeNewProvider){
 				
 				//copy the provider form 
-				var tblStr = $('#tbl_provider_edit tbody').xml2html("getTemplate");
-				$('#tbl_provider_new tbody').append(tblStr);
+				var tblStr = $('#tbl_provider_edit').xml2html("getTemplate");
+				$('#tbl_provider_new').append(tblStr);
 
 				//construct the responsible uf select
 				populateSelect(gProviderSelects,'#tbl_provider_new');
@@ -487,9 +495,6 @@
 		$('#tbl_products tbody').xml2html("init",{
 			url : 'php/ctrl/ShopAndOrder.php',
 			loadOnInit:false,
-			beforeLoad: function(){
-				$('.loadSpinner').show();
-			},
 			rowComplete : function(rowIndex, row){	
 				var tds = $(row).children();
 
@@ -514,14 +519,10 @@
 
 			},
 			complete : function (rowCount){
-				$('.loadSpinner').hide();
-				
 				if (gSelProduct != null && gSelProduct.attr('productId') > 0){
 					gSelProduct.addClass('active');
 				}
 				$("#tbl_products").trigger("update"); 
-		
-				
 			}						
 		});			
 
@@ -605,16 +606,21 @@
 		$("#search").keyup(function(e){
 					var minLength = 3; 						//search with min of X characters
 					var searchStr = $("#search").val();
-					
+					var curSel = $('.change-sec').switchSection("getCurrentSel");
+
 					if (searchStr.length >= minLength){
-						switchTo('searchProducts');
+						if(curSel != ".sec-2-search-product"){
+							$('.change-sec').switchSection("changeTo",".sec-2-search-product");
+						}
 						
 					  	$('#tbl_products tbody').xml2html("reload",{
 							params: 'oper=getShopProducts&date=&like='+searchStr
 						});
 					} else {
 						$('#tbl_products tbody').xml2html("removeAll");				//delete all product entries in the table if we are below minLength;
-						switchTo('cancelSearch');
+						if(curSel != ".sec-1"){
+							$('.change-sec').switchSection("changeTo",".sec-1");
+						}
 					}
 			e.preventDefault();						//prevent default event propagation. once the list is build, just stop here.
 		}); //end autocomplete
@@ -682,7 +688,7 @@
 					}		 
 				} else if ($(this).hasClass('add')){
 					if (checkProductForm('#pgProductNew')){
-						submitForm('#pgProductNew', 'add', 'product', 'overviewProducts');
+						submitForm('#pgProductNew', 'add', 'product', '.sec-2');
 					}
 				}
 				e.stopPropagation();
@@ -986,9 +992,11 @@
 			if (isValid) {
 				return true; 
 			} else {
-				$.showMsg({
-					msg:err_msg,
-					type: 'error'});
+				bootbox.alert({
+						title : "<?=$Text['ti_error_form'];?>",
+						message : "<div class='alert alert-danger'>"+err_msg+"</div>",
+				});	
+				Ladda.stopAll();
 				return false; 
 			}
 
@@ -1061,8 +1069,7 @@
 		 *
 		 ****************************/
 		function switchTo(section){
-
-
+			
 			switch(section){
 
 				case 'overviewProvider':
@@ -1142,7 +1149,6 @@
 
 		}
 
-		switchTo('overviewProvider');
 
 
 		/**
@@ -1152,18 +1158,6 @@
 		 */
 		function submitForm(mi, action, table, returnTo){
 
-
-			//make sure an active=0 gets send if checkbox is unchecked
-			/*$(mi +' input:checkbox').each(function(){
-				var isChecked = $(this).attr('checked'); 
-				
-				if(isChecked){
-					$(this).val(1);
-				} else {
-					$(this).val(0);
-					$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
-				}	
-			});*/
 
 			var cus = null;
 			//custom_product_ref has unique index and needs null value
@@ -1176,39 +1170,47 @@
 
 			//append again the custom_product_id input
 			$(cus).appendTo('.customProdutRefHook');
+
+			$('.btn_edit_stocks').button('disable');
 			
+
 			$.ajax({
 			   	url: 'php/ctrl/TableManager.php?oper='+action+'&table=aixada_'+table,
 			   	method: 'POST',
 				data: sdata, 
-			   	beforeSend: function(){
-			   		$('.loadSpinner').show();
-			   		$('.btn_save_provider, .btn_save_product').button('disable');
-				},
 			   	success: function(msg){
-			   	 	$.showMsg({
-						msg: "<?php echo $Text['msg_edit_success']; ?>",
-						type: 'success',
-						autoclose:800});
-			   		
+					bootbox.alert({
+						message : "<div class='alert alert-success ax-modal-tmargin'><?=$Text['msg_edit_success']; ?></div>",
+					});	
+					$('.modal-dialog').addClass('ax-modal-dialog-small')
+
+					setTimeout(function(){
+						bootbox.hideAll()
+					},1000)
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-				   $.showMsg({
-						msg: XMLHttpRequest.responseText,
-						type: 'error'});
+			   		bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
+
 			   	},
 			   	complete : function(msg){
-			   		$('.loadSpinner').hide();
-			   		$('.btn_save_provider, .btn_save_product').button('enable');
+			   		Ladda.stopAll();
+
 			   		if (table == 'provider'){
-				   		gProviderListReload = true; 
+				   		$('#tbl_providers tbody').xml2html("reload"); 
+
 			   		} else if (table == 'product'){
 			   			$('.btn_edit_stocks').button('enable');
-						gProductListReload = true; 
+						
+						$('#tbl_products tbody').xml2html("reload",{
+							params: 'oper=getShopProducts&provider_id='+gSelProvider.attr('providerId')+"&all=1",
+						});
+						
+						$('.set-provider').html(gSelProvider.children().eq(2).text());
 				   	}
 
 				   	if (undefined != returnTo){
-						switchTo(returnTo);
+				   		alert(returnTo)
+						$('.change-sec').switchSection("changeTo",returnTo);
 					}
 
 			   	}
@@ -1511,7 +1513,7 @@
 	<div class="container">	
 		<div class="row">
 			<div class="col-md-6"></div>
-			<div class="col-md-4 section sec-1 sec-2">
+			<div class="col-md-4 section sec-1 sec-2 sec-2-search-product">
 				<div class="input-group">
 			      <input type="text" id="search" class="form-control" placeholder="<?=$Text['search_product'];?>">
 			      <span class="input-group-btn">
@@ -1519,14 +1521,14 @@
 			      </span>
 				</div>
 			</div>
-			<div class="col-md-2 section sec-1 sec-2">
+			<div class="col-md-2 section sec-1 sec-2 sec-2-search-product">
 				<div class="btn-group pull-right">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    				Actions <span class="caret"></span>
 	  				</button>
 					<ul class="dropdown-menu" role="menu">
-					    <li class="section sec-1"><a href="#sec-3" class="change-sec"><?=$Text['btn_new_provider'];?></a></li>
-					    <li class="section sec-2"><a href="#sec-4" class="change-sec"><?=$Text['btn_new_product'];?></a></li>
+					    <li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><?=$Text['btn_new_provider'];?></a></li>
+					    <li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><?=$Text['btn_new_product'];?></a></li>
 					    
 					    <li><a href="" class=""><?=$Text['btn_import'] ; ?></a></li>
 					</ul>
@@ -1538,7 +1540,12 @@
 			<div class="col-md-10">
 		    	<h1 class="section sec-1"> <?php echo $Text['head_ti_provider']; ?></h1>
 				<h1 class="section sec-2"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span></h1>
+				<h1 class="section sec-2-search-product"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_search_results'];?></h1>
+
    				<h1 class="section sec-3"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-2"></span> <span class="set-product"></span></h1>
+
+				<h1 class="section sec-5"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['edit'] ; ?> <span class="set-provider"></span></h1>
+				<h1 class="section sec-6"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_create_provider']  ; ?> <span class="set-provider"></span></h1>
 
 		    	<!--h1 class="pgProviderEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="set-provider"></span></h1>
 		    	<h1 class="pgProviderNew">&nbsp;&nbsp;<?php echo $Text['ti_create_provider'] ; ?></h1>
@@ -1584,11 +1591,9 @@
 							<td><p class="providerActiveStatus text-center">{active}</p></td>
 							<td><?php echo $Text['uf_short'];?>{responsible_uf_id} {responsible_uf_name}</td>
 							<td>
-								<span class="glyphicon glyphicon-pencil edit-provider pull-left" title="<?=$Text['edit'];?>"></span>&nbsp;&nbsp;
-								<span class="glyphicon glyphicon-remove-circle del-provider" title="<?=$Text['btn_del'];?>"></span>
+								<span class="glyphicon glyphicon-pencil btn-edit-provider pull-left" title="<?=$Text['edit'];?>"></span>&nbsp;&nbsp;
+								<span id="btn-del-provider" class="glyphicon glyphicon-remove-circle btn-del-provider" title="<?=$Text['btn_del'];?>"></span>
 								
-								<!--a href="javascript:void(null)" class="btn_edit_provider"></a> | 
-								<a href="javascript:void(null)" class="btn_del_provider"></a-->
 							</td>
 						</tr>						
 					</tbody>
@@ -1604,7 +1609,7 @@
 		<!-- 
 					PRODUCT LISTING		sec-2
 		 -->
-		<div class="section sec-2">
+		<div class="section sec-2 sec-2-search-product">
 				<table id="tbl_products" class="table table-hover table-condensed">
 					<thead>
 						<tr>
@@ -1653,196 +1658,188 @@
 					PRODUCT EDIT 		sec-3
 					
 		 --> 
-		<p>&nbsp;</p>
+	
 		<div class="section sec-3" id="pgProductEdit">
 			<form id="frm_product_edit" class="form-horizontal" role="form">
 		
-			<div id="tbl_product_edit">
-			
-				<div class="form-group">
-						<label for="name" class="col-sm-2 control-label"><?=$Text['name_item'];?></label>
-					<div class="col-sm-6">
-						<input type="text" name="name" value="{name}" tabindex="1" class="form-control" placeholder="Name">
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="description" class="col-sm-2 control-label"><?=$Text['description'];?></label>
-					<div class="col-sm-6">
-				      <textarea class="form-control" name="description">{description}</textarea>					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="description_url" class="col-sm-2 control-label"><?=$Text['web'];?></label>
-					<div class="col-sm-6">
-						<input type="text" name="description_url" value="{description_url}" class="form-control" placeholder="">
-					</div>
-				</div>
+				<div id="tbl_product_edit"><!-- start form template -->
 				
-				<div class="form-group">
-						<label for="custom_product_ref" class="col-sm-2 control-label"><?=$Text['custom_product_ref'];?></label>
-					<div class="col-sm-4">
-						<input type="text" name="custom_product_ref" value="{custom_product_ref}" class="form-control" placeholder="">
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="barcode" class="col-sm-2 control-label"><?=$Text['barcode'];?></label>
-					<div class="col-sm-4">
-						<input type="text" name="barcode" value="{barcode}" class="form-control" placeholder="">
-					</div>
-				</div>
-				<div class="form-group">
-						<label for="responsible_uf_id" class="col-sm-2 control-label"><?=$Text['responsible_uf'];?></label>
-					<div class="col-sm-4">
-				    	<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
-				    	<span class="sResponsibleUfId"></span>
-					</div>
-				</div>
-				<div class="form-group">
-						<label for="orderable_type_id" class="col-sm-2 control-label"><?=$Text['orderable_type'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="orderable_type_id" value="{orderable_type_id}"/>
-				    	<span class="sOrderableTypeId"></span>
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="category_id" class="col-sm-2 control-label"><?=$Text['category'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="category_id" value="{category_id}"/>
-				    	<span class="sCategoryId"></span></td>
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="unit_measure_order_id" class="col-sm-2 control-label"><?=$Text['unit_measure_order'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="unit_measure_order_id" value="{unit_measure_order_id}"/>
-				    	<span class="sUnitMeasureOrderId"></span></td>
-					</div>
-				</div>
-				<div class="form-group">
-						<label for="unit_measure_shop_id" class="col-sm-2 control-label"><?=$Text['unit_measure_shop'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="unit_measure_shop_id" value="{unit_measure_shop_id}"/>
-				    	<span class="sUnitMeasureShopId"></span></td>
-					</div>
-				</div>
-				<div class="form-group">
-						<label for="order_min_quantity" class="col-sm-2 control-label"><?=$Text['order_min'];?></label>
-					<div class="col-sm-1">
-				    	<input type="text" name="order_min_quantity" value="{order_min_quantity}" class="form-control"/>
-					</div>
-				</div>
-
-				<p>&nbsp;</p>
-
-				<div class="form-group">
-						<label for="unit_price" class="col-sm-2 control-label"><?=$Text['price_net'];?></label>
-					<div class="col-sm-1">
-				    	<input type="text" name="unit_price" value="{unit_price_netto}" class="form-control"/>
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="iva_percent_id" class="col-sm-2 control-label"><?=$Text['iva_percent'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
-				    	<span class="sIvaPercentId"></span></td>
-					</div>
-				</div>
-
-
-				<div class="form-group">
-						<label for="rev_tax_type_id" class="col-sm-2 control-label">+ <?=$Text['rev_tax_type'];?></label>
-					<div class="col-sm-2">
-				    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
-				    	<span class="sRevTaxTypeId"></span></td>
-					</div>
-				</div>
-
-				<div class="form-group">
-						<label for="unit_price_brutto" class="col-sm-2 control-label"><?=$Text['unit_price'];?></label>
-					<div class="col-sm-1">
-				    	<input type="text" name="unit_price_brutto" value="{unit_price}" class="form-control" disabled/>
-					</div>
-				</div>
-
-				<p>&nbsp;</p>
-
-				<div class="form-group sec-2-stock">
-						<label for="stock_actual" class="col-sm-2 control-label"><?=$Text['stock'];?></label>
-					<div class="col-sm-1">
-				    	<input type="text" name="stock_actual" value="{stock_actual}" class="form-control" disabled/>
-					</div>
-					<div class="col-sm-2">
-						<div class="btn-group">
-							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							    <?=$Text['btn_edit_stock'];?> <span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="javascript:void(null)" id="add"><?php echo $Text['add_stock'];?></a></li>
-								<li><a href="javascript:void(null)" id="correct"><?php echo $Text['correct_stock'];?></a></li>
-								<li><a href="javascript:void(null)" id="consult"><?php echo $Text['consult_mov_stock'];?></a></li>
-							</ul>
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label"><?=$Text['name_item'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="name" value="{name}" tabindex="1" class="form-control" placeholder="Name">
 						</div>
 					</div>
-				</div>
 
-				<div class="form-group sec-2-stock">
-					<label for="stock_min" class="col-sm-2 control-label"><?=$Text['stock_min'];?></label>
-					<div class="col-sm-1">
-				    	<input type="text" name="stock_min" value="{stock_min}" class="form-control"/>
+					<div class="form-group">
+						<label for="description" class="col-sm-2 control-label"><?=$Text['description'];?></label>
+						<div class="col-sm-6">
+					      <textarea class="form-control" name="description">{description}</textarea>
+					     </div>
 					</div>
-				</div>
 
-				
+					<div class="form-group">
+						<label for="description_url" class="col-sm-2 control-label"><?=$Text['web'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="description_url" value="{description_url}" class="form-control" placeholder="">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="custom_product_ref" class="col-sm-2 control-label"><?=$Text['custom_product_ref'];?></label>
+						<div class="col-sm-4">
+							<input type="text" name="custom_product_ref" value="{custom_product_ref}" class="form-control" placeholder="">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="barcode" class="col-sm-2 control-label"><?=$Text['barcode'];?></label>
+						<div class="col-sm-4">
+							<input type="text" name="barcode" value="{barcode}" class="form-control" placeholder="">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="responsible_uf_id" class="col-sm-2 control-label"><?=$Text['responsible_uf'];?></label>
+						<div class="col-sm-4">
+					    	<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
+					    	<span class="sResponsibleUfId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">	
+						<label for="orderable_type_id" class="col-sm-2 control-label"><?=$Text['orderable_type'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="orderable_type_id" value="{orderable_type_id}"/>
+					    	<span class="sOrderableTypeId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="category_id" class="col-sm-2 control-label"><?=$Text['category'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="category_id" value="{category_id}"/>
+					    	<span class="sCategoryId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="unit_measure_order_id" class="col-sm-2 control-label"><?=$Text['unit_measure_order'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="unit_measure_order_id" value="{unit_measure_order_id}"/>
+					    	<span class="sUnitMeasureOrderId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="unit_measure_shop_id" class="col-sm-2 control-label"><?=$Text['unit_measure_shop'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="unit_measure_shop_id" value="{unit_measure_shop_id}"/>
+					    	<span class="sUnitMeasureShopId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="order_min_quantity" class="col-sm-2 control-label"><?=$Text['order_min'];?></label>
+						<div class="col-sm-1">
+					    	<input type="text" name="order_min_quantity" value="{order_min_quantity}" class="form-control"/>
+						</div>
+					</div>
+
+					<p>&nbsp;</p>
+
+					<div class="form-group">
+						<label for="unit_price" class="col-sm-2 control-label"><?=$Text['price_net'];?></label>
+						<div class="col-sm-1">
+					    	<input type="text" name="unit_price" value="{unit_price_netto}" class="form-control"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="iva_percent_id" class="col-sm-2 control-label"><?=$Text['iva_percent'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
+					    	<span class="sIvaPercentId"></span>
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						<label for="rev_tax_type_id" class="col-sm-2 control-label">+ <?=$Text['rev_tax_type'];?></label>
+						<div class="col-sm-2">
+					    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
+					    	<span class="sRevTaxTypeId"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="unit_price_brutto" class="col-sm-2 control-label"><?=$Text['unit_price'];?></label>
+						<div class="col-sm-1">
+					    	<input type="text" name="unit_price_brutto" value="{unit_price}" class="form-control" disabled/>
+						</div>
+					</div>
+
+					<p>&nbsp;</p>
+
+					<div class="form-group sec-2-stock">
+						<label for="stock_actual" class="col-sm-2 control-label"><?=$Text['stock'];?></label>
+						<div class="col-sm-1">
+					    	<input type="text" name="stock_actual" value="{stock_actual}" class="form-control" disabled/>
+						</div>
+						<div class="col-sm-2">
+							<div class="btn-group">
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								    <?=$Text['btn_edit_stock'];?> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="javascript:void(null)" id="add"><?php echo $Text['add_stock'];?></a></li>
+									<li><a href="javascript:void(null)" id="correct"><?php echo $Text['correct_stock'];?></a></li>
+									<li><a href="javascript:void(null)" id="consult"><?php echo $Text['consult_mov_stock'];?></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group sec-2-stock">
+						<label for="stock_min" class="col-sm-2 control-label"><?=$Text['stock_min'];?></label>
+						<div class="col-sm-1">
+					    	<input type="text" name="stock_min" value="{stock_min}" class="form-control"/>
+						</div>
+					</div>
+				</div><!-- end template form string -->
 				<div class="form-group">
 					<div class="col-sm-5"></div>
-						<div class="cols-sm-1">
-							<button type="reset" class="btn btn-default change-sec" target-section="#sec-2"><?php echo $Text['btn_cancel'];?></button>
-							&nbsp;&nbsp;
-							<button type="submit" id="save-btn" class="btn btn-primary ladda-button" data-style="slide-left" ><span class="ladda-label"><?php echo $Text['btn_save'];?></span></button>
-						</div>
+					<div class="cols-sm-3">
+						<button type="reset" class="btn btn-default change-sec" target-section="#sec-2"><?php echo $Text['btn_cancel'];?></button>
+						&nbsp;&nbsp;
+						<button class="btn btn-primary btn-save ladda-button" data-style="expand-right" ><span class="glyphicon glyphicon-save"></span> <span class="ladda-label"> <?php echo $Text['btn_save'];?></span></button>
 					</div>
-				</div>	
-
+				</div>
 			</form>
 		</div>	
 				 
-		<p>&nbsp;</p> 
-
+		
 		<!-- 
-					PRODUCT NEW 	sec-4
-					
+					PRODUCT NEW 	sec-4	
 		 -->
-		 <div class="secton sec-4" id="pgProductNew">
-			<h3><span class="set-provider"></span> - <span class="set-product"></span></h3>
+		 <div class="section sec-4" id="pgProductNew">
 			<form id="frm_product_new">
 			<input type="hidden" name="provider_id" value=""/>
-			<table id="tbl_product_new" class="tblForms">
-				<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
-				  <tbody>
-				  </tbody>
-				  <tfoot>
-					<tr>
-						<td colspan="2"></td>
-						
-						<td colspan="2">
-							<p class="floatRight">
-								<button class="btn_cancel_product"><?php echo $Text['btn_cancel']; ?></button>
-								&nbsp;&nbsp;
-								<button class="btn_save_product add"><?php echo $Text['btn_save'];?></button>
-							</p>
-						</td>
-					</tr>
-				</tfoot>
-			</table>
+				<div id="tbl_product_new">
+		
+				</div>
+				<div class="form-group">
+					<div class="col-sm-5"></div>
+					<div class="cols-sm-3">
+						<button type="reset" class="btn btn-default change-sec" target-section="#sec-2"><?php echo $Text['btn_cancel'];?></button>
+						&nbsp;&nbsp;
+						<button class="btn btn-primary btn-save ladda-button" data-style="expand-right" ><span class="glyphicon glyphicon-save"></span> <span class="ladda-label"> <?php echo $Text['btn_save'];?></span></button>
+					</div>
+				</div>
 			</form>	
 		</div>
 				 
-		<p>&nbsp;</p> 
+		
 				
 				
 				
@@ -1851,119 +1848,147 @@
 					
 		 -->
 		<div class="section sec-5" id="pgProviderEdit">
-				<h3><span class="set-provider"></span>
-				</h3>
-				<form id="frm_provider_edit">
-				<table id="tbl_provider_edit">
-					<thead>
-						<tr><td colspan="4">&nbsp;</td></tr>
-					</thead>
-				<tbody>
-				<tr providerId="{id}" responsibleUfId="{responsible_uf_id}">
-					<td><label for="provider_id"><?php echo $Text['id']; ?></label></td>
-					<td><p class="textAlignLeft ui-corner-all setProviderId">{id}</p></td>
-					<td><label for="active"><?php echo $Text['active'];?></label></td>
-					<td><input type="checkbox" name="active_dummy_provider" value="{active}" class="floatLeft" />
-						<input type="hidden" name="id" value="{id}" />
-					</td>							
-				</tr>
 				
-				<tr>
-					<td><label for="name"><?php echo $Text['name'];?></label></td>
-					<td><input type="text" name="name"  value="{name}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
-					<td><label for="nif"><?php echo $Text['nif'];?></label></td>
-					<td><input type="text" name="nif" value="{nif}" class="ui-widget-content ui-corner-all" /></td>
-				</tr>
-				<tr>
-					<td><label for="contact"><?php echo $Text['contact'];?></label></td>
-					<td><input type="text" name="contact"  value="{contact}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td><label for="address"><?php echo $Text['address'];?></label></td>
-					<td colspan="5"><input type="text" name="address" value="{address}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-				</tr>
-				<tr>
-					<td><label for="city"><?php echo $Text['city'];?></label></td>
-					<td><input type="text" name="city" value="{city}" class="ui-widget-content ui-corner-all" /></td>
-					<td><label for="zip"><?php echo $Text['zip'];?></label></td>
-					<td><input type="text" name="zip"  value="{zip}" class=" ui-widget-content ui-corner-all" /></td>
-					
-				</tr>
-				<tr>
-					<td><label for="phone1"><?php echo $Text['phone1'];?></label></td>
-					<td><input type="text" name="phone1" value="{phone1}" class="ui-widget-content ui-corner-all" /></td>
+			<form id="frm_provider_edit" class="form-horizontal" role="form">
 				
-					<td><label for="phone2"><?php echo $Text['phone2'];?></label></td>
-					<td><input type="text" name="phone2" value="{phone2}" class="ui-widget-content ui-corner-all" /></td>
-				</tr>
-				<tr>
-					<td><label for="email"><?php echo $Text['email'];?></label></td>
-					<td colspan="5"><input type="text" name="email" value="{email}" class=" inputTxtLarge ui-widget-content ui-corner-all" /></td>
-				</tr>
-				<tr>
-					<td><label for="web"><?php echo $Text['web'];?></label></td>
-					<td colspan="5"><input type="text" name="web" value="{web}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
-				</tr>
-				<tr>
-					<td><label for="notes"><?php echo $Text['notes'];?></label></td>
-					<td colspan="5"><textarea class="ui-widget-content ui-corner-all textareaMax" id="notes" name="notes">{notes}</textarea></td>
-				</tr>
-				<tr>
-					<td colspan="5">&nbsp;</td>
-				</tr>
-				
-				<tr>
-					<td><label for="responsible_uf_id">&nbsp; <?php echo $Text['responsible_uf']; ?></label></td>
-					<td>
-						<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}" />
-						<span class="textAlignLeft sResponsibleUfId"></span>
-					</td>
-					<td></td>
-					<td></td>						
-				</tr>
-				<tr>
-					<td colspan="5">&nbsp;</td>
-				</tr>
-				<tr>
-					<td><label for="bank_name"><?php echo $Text['bank_name'];?></label></td>
-					<td colspan="5"><input type="text" name="bank_name"  value="{bank_name}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
+				<div id="tbl_provider_edit">
+
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label"><?=$Text['id'];?></label>
+						<div class="col-sm-1">
+							<input type="text" name="id" value="{id}" class="form-control" disabled>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="active_dummy_provider" class="col-sm-2 control-label"><?=$Text['active'];?></label>
+						<div class="col-sm-1">
+							<input type="checkbox" class="pull-left" name="active_dummy_provider" value="{active}" tabindex="1" class="form-control">
+							<input type="hidden" name="id" value="{id}" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label"><?=$Text['name'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="name" value="{name}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="nif" class="col-sm-2 control-label"><?=$Text['nif'];?></label>
+						<div class="col-sm-2">
+							<input type="text" name="nif" value="{nif}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="contact" class="col-sm-2 control-label"><?=$Text['contact'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="contact" value="{contact}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="address" class="col-sm-2 control-label"><?=$Text['address'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="address" value="{address}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="city" class="col-sm-2 control-label"><?=$Text['city'];?></label>
+						<div class="col-sm-2">
+							<input type="text" name="city" value="{city}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="zip" class="col-sm-2 control-label"><?=$Text['zip'];?></label>
+						<div class="col-sm-2">
+							<input type="text" name="zip" value="{zip}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="phone1" class="col-sm-2 control-label"><?=$Text['phone1'];?></label>
+						<div class="col-sm-2">
+							<input type="text" name="phone1" value="{phone1}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="phone2" class="col-sm-2 control-label"><?=$Text['phone2'];?></label>
+						<div class="col-sm-2">
+							<input type="text" name="phone2" value="{phone2}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="email" class="col-sm-2 control-label"><?=$Text['email'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="email" value="{email}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="web" class="col-sm-2 control-label"><?=$Text['web'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="web" value="{web}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="notes" class="col-sm-2 control-label"><?=$Text['notes'];?></label>
+						<div class="col-sm-6">
+							<textarea name="notes" tabindex="2" class="form-control">{notes}</textarea>
+						</div>
+					</div>
+
+
+					<div class="form-group">
+						<label for="responsible_uf_id" class="col-sm-2 control-label"><?=$Text['responsible_uf'];?></label>
+						<div class="col-sm-2">
+				    		<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
+				    		<span class="sResponsibleUfId"></span></td>
+						</div>
+					</div>
 					
-				</tr>
-				<tr>
-					<td><label for="bank_account"><?php echo $Text['bank_account'];?></label></td>
-					<td colspan="5"><input type="text" name="bank_account"  value="{bank_account}" class="inputTxtLarge ui-widget-content ui-corner-all" /></td>
+					<div class="form-group">
+						<label for="bank_name" class="col-sm-2 control-label"><?=$Text['bank_name'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="bank_name" value="{bank_name}" tabindex="2" class="form-control">
+						</div>
+					</div>
 					
-				</tr>
-				<tr>
-					<td colspan="5">&nbsp;</td>
-				</tr>
-				<tr>
-					<td><label for="offset_order_close"><?php echo $Text['offset_order_close']; ?></label></td>
-					<td><input type="text" name="offset_order_close"  value="{offset_order_close}" class="ui-widget-content ui-corner-all" /></td>
-					<td></td>
-					<td></td>
-				</tr>
-				</tbody>
-				<tfoot>
-				<tr>
-					<td colspan="2"></td>
+
+					<div class="form-group">
+						<label for="bank_account" class="col-sm-2 control-label"><?=$Text['bank_account'];?></label>
+						<div class="col-sm-6">
+							<input type="text" name="bank_account" value="{bank_account}" tabindex="2" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="offset_order_close" class="col-sm-2 control-label"><?=$Text['offset_order_close'];?></label>
+						<div class="col-sm-1">
+							<input type="text" name="offset_order_close" value="{offset_order_close}" tabindex="2" class="form-control">
+						</div>
+					</div>
 					
-					<td colspan="2">
-						<p class="floatRight">
-							<button class="btn_cancel_provider"><?php echo $Text['btn_cancel']; ?></button>
-							&nbsp;&nbsp;
-							<button class="btn_save_provider edit"><?php echo $Text['btn_save'];?></button>
-						</p>
-					</td>
-				</tr>
-				</tfoot>
-				</table>
+				</div>	
+
+				<p>&nbsp;</p>
+				<div class="form-group">
+					<div class="col-sm-6"></div>
+					<div class="col-sm-3">
+						<button type="reset" class="btn btn-default change-sec" target-section="#sec-1"><?=$Text['btn_cancel'];?></button>
+						&nbsp;&nbsp;
+						<button class="btn btn-primary btn-save ladda-button" data-style="expand-right" ><span class="glyphicon glyphicon-save"></span> <span class="ladda-label"> <?php echo $Text['btn_save'];?></span></button>
+					</div>
+				</div>
 			</form>
 		</div>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
 			
 			
 		<!-- 
@@ -1971,26 +1996,21 @@
 						
 		-->
 		<div class="section sec-6" id="pgProviderNew">
-			<h3><span class="set-provider"></span></h3>
-			<form id="frm_provider_new">
-				<table id="tbl_provider_new" class="tblForms">
-				<thead><tr><td colspan="4">&nbsp;</td></tr></thead>
-					<tbody>
-					
-					</tbody>
-					<tfoot>
-					<tr>
-						<td colspan="2"></td>
-						<td colspan="2"><p class="floatRight">
-								<button class="btn_cancel_provider" ><?php echo $Text['btn_cancel']; ?></button>
-								&nbsp;&nbsp;
-								<button class="btn_save_provider add"><?php echo $Text['btn_save'];?></button>
-							</p>
-						</td>
-					</tr>
-					</tfoot>
-				</table>
-		</form>
+
+			<form id="frm_provider_new" class="form-horizontal" role="form">
+				
+				<div id="tbl_provider_new">
+
+				</div>
+				<div class="form-group">
+					<div class="col-sm-6"></div>
+					<div class="col-sm-3">
+						<button type="reset" class="btn btn-default change-sec" target-section="#sec-1"><?=$Text['btn_cancel'];?></button>
+						&nbsp;&nbsp;
+						<button class="btn btn-primary btn-save ladda-button" data-style="slide-right" ><span class="glyphicon glyphicon-save"></span> <span class="ladda-label"> <?php echo $Text['btn_save'];?></span></button>
+					</div>
+				</div>
+			</form>
 		</div>
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
