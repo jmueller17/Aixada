@@ -324,12 +324,13 @@
 			
 		   	var mentorUf = $('#mentor_uf option:selected').val(); 
 			mentorUf = (mentorUf == -1)? gMentorUf:mentorUf; 
-			
+
+			//edit
 			if (ufId > 0){
 		   		var isActive = $('#uf_info').find('input:checkbox').attr('checked')? 1:0;
-			   	var ufName = $('#uf_info').find('input:text').val();   							   	
+			   	var ufName = encodeURIComponent($('#uf_info').find('input:text').val());  
 				var urlStr =  'php/ctrl/UserAndUf.php?oper=editUF&uf_id='+ufId+'&is_active='+isActive+'&name='+ufName+'&mentor_uf='+mentorUf; 
-				stupidHack = 's9328820398023948'; 
+				stupidHack = 's9328820398023948'; //this is for the editing of uf name - prevents check if uf name already exists!
 				if (ufId == mentorUf){
 					$.showMsg({
 						msg: "<?php echo $Text['msg_err_mentoruf']; ?>",
@@ -340,7 +341,7 @@
 
 			//create 
 			} else {
-				var ufName = $('#create_uf_name').val(); 
+				var ufName = encodeURIComponent($('#create_uf_name').val()); 
 				var urlStr = 'php/ctrl/UserAndUf.php?oper=createUF&name='+ufName+'&mentor_uf='+mentorUf;
 				stupidHack = ''; 
 			}

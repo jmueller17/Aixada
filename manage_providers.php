@@ -23,6 +23,7 @@
 	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
 	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 
     <?php }?>
    		
@@ -55,6 +56,9 @@
 
 		//when to reload the product list
 		var gProductListReload = false; 
+
+		//result limit for stock movements
+		var gStockMoveLimit = 100;
 		
 
 		//data for constructing the select options for the provider form
@@ -92,7 +96,58 @@
 		})
 
 
+		//init export section switch
+		$('.section-modal').hide();
+
+		$('.change-sec-modal').switchSection("init", {gSectionSel : '.section-modal'});
 		
+
+
+		/***********************************************************
+		 *
+		 *  CONSULT STOCK MOVEMENTS
+		 *
+		 ***********************************************************/
+
+
+		$("#tbl_stock_movements tbody").xml2html("init", {
+			url: 'php/ctrl/Shop.php',
+			params : 'oper=stockMovements&limit=50',
+			loadOnInit:true,
+			rowComplete : function (rowIndex, row){
+				$.formatQuantity(row);
+			},
+			complete : function(rowCount){
+				
+				//sumStockMovementsValue();
+				
+			}
+		});
+
+		$('#tbl_stock_movements  tbody')
+			.on("click", "tr", function(e){
+				gSelProduct = $(this)
+				$(".ctx-nav-stock-movements").trigger("click")
+			})
+
+
+ 		$(".ctx-nav-stock-movements")
+ 			.click(function(){
+				var params = 'oper=stockMovements&limit='+gStockMoveLimit; 
+
+				if (gSelProvider != null && gSelProvider.attr('providerId') > 0 ){
+					params += '&provider_id='+ gSelProvider.attr('providerId');
+				}
+
+				if (gSelProduct != null &&  gSelProduct.attr('productId') > 0){
+					params += '&product_id='+ gSelProduct.attr('productId'); 
+				}
+
+				$("#tbl_stock_movements tbody").xml2html("reload", {
+							params :  params
+				});
+ 			})
+
 
 		/***********************************************************
 		 *
@@ -111,31 +166,18 @@
 						$(this).html('<span class="glyphicon glyphicon-ok"></span>').parent().addClass('bg-success')
 					} else {
 						$(this).html('<span class="glyphicon glyphicon-remove-sign"></span>').parent().addClass("bg-danger");
+						//hide inactive if option is checked
+						if ($('.ctx-nav-filter-active-provider').children(":first-child").hasClass("glyphicon")){
+							$(this).parents("tr").hide();
+						}
 					}
 				});
-				$("#tbl_providers").trigger("update"); 
+
+
+				//$("#tbl_providers").trigger("update"); 
 			}
 		});
 
-		/*$("#tbl_providers").tablesorter({
-			textExtraction: function(node){
-				  //should be made faster??	
-		          if ($(node).find('.aix-style-ok-green').length == 1) {
-		            return 1;
-		          } else if ($(node).find('.noRed').length == 1){
-					return 0; 
-			      } else {
-		            return $(node).text();
-		          }
-			}
-		}); */
-		
-		/*$("#tbl_providers").bind('sortEnd', function(){
-			$('tr',this).removeClass('rowHighlight')
-			$('tr:even',this).addClass('rowHighlight');
-		});*/
-
-		
 
 		//interactivity of provider listing table
 		$('#tbl_providers tbody')
@@ -155,7 +197,6 @@
 						$('.set-provider').html(gSelProvider.children().eq(2).text());
 						gProductListReload = false; 
 					}
-
 
 				$('.change-sec').switchSection("changeTo",".sec-2");
 			});
@@ -180,6 +221,32 @@
 			});
 
 
+		//de-/activate provider from provider listing
+		$('#tbl_providers tbody')
+			.on('click', '.bg-success, .bg-danger', function(e){
+				var status = !$(this).hasClass("bg-success")
+				var providerId = $(this).parents("tr").attr("providerId")
+				//deactivate warning message
+				if (!status){
+					bootbox.confirm({
+						title  : "<?=$Text['ti_confirm'];?>",
+						message: "<div class='alert alert-warning'><?=$Text['deactivate_provider'] ; ?></div>",
+						callback : function(ok){
+							if (ok){
+								setActiveFlagProvider(providerId, status);
+							} else {
+								bootbox.hideAll();
+							}	
+						}
+					});
+				} else {
+					setActiveFlagProvider(providerId, status);
+
+				}
+				e.stopPropagation();
+			});
+
+
 
 		//delete provider
 		$('#tbl_providers tbody')
@@ -189,30 +256,30 @@
 					title  : "<?=$Text['ti_confirm'];?>",
 					message: "<div class='alert alert-danger'><?=$Text['msg_confirm_del_provider']; ?></div>",
 					callback : function(ok){
-							if (ok){
-								$this = $(this);
-								var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
-								$.ajax({
-								   	url: urlStr,
-								   	type: 'POST',
-								   	success: function(msg){
-										//reload all members listing on overiew. 
-								   		$('#tbl_providers tbody').xml2html('reload');
-								   		bootbox.hideAll();
-								   	},
-								   	error : function(XMLHttpRequest, textStatus, errorThrown){
-								   		bootbox.hideAll();
-										if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-											bootbox.alert({
-													title : "<?=$Text['ti_error_exec'];?>",
-													message : "<div class='alert alert-danger'><?=$Text['msg_err_del_provider']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
-											});	
-										}
-								   	}
-								}); //end ajax	
-							} else {
-								bootbox.hideAll();
-							}	
+						if (ok){
+							$this = $(this);
+							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
+							$.ajax({
+							   	url: urlStr,
+							   	type: 'POST',
+							   	success: function(msg){
+									//reload all members listing on overiew. 
+							   		$('#tbl_providers tbody').xml2html('reload');
+							   		bootbox.hideAll();
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+							   		bootbox.hideAll();
+									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+										bootbox.alert({
+												title : "<?=$Text['ti_error_exec'];?>",
+												message : "<div class='alert alert-danger'><?=$Text['msg_err_del_provider']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
+										});	
+									}
+							   	}
+							}); //end ajax	
+						} else {
+							bootbox.hideAll();
+						}	
 					}
 				});
 
@@ -234,7 +301,7 @@
 
 
 
-		//PROVIDER BUTTONS
+		//BUTTON AND CONTEXT MENU STUFF FOR PROVIDER
 		
 		//save edited provider
 		$('#frm_provider_edit')
@@ -257,34 +324,28 @@
 			});
 
 
-		
-		//context menu provider listing page
-
-		//import provider
-		$('#btn_import_provider')
-			.button({
-				icons: {
-					primary: "ui-icon-transferthick-e-w"
-	        	}
-			})
-			.click(function(e){
-				var myWin = window.open("manage_import.php?import2Table=aixada_provider", "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
-				myWin.focus();
-				
-			});
-		
-
-		//new provider
+		//create new provider
 		$('.ctx-nav-new-provider').click(function(){	
 			prepareProviderForm();
 		})
 		
-		
 	
+		//import provider
+		$('.ctx-nav-import-provider').click(function(){	
+			var myWin = window.open("manage_import.php?import2Table=aixada_provider", "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
+				myWin.focus();
+		})
+
+		//filter all/active providers only
+		$('.ctx-nav-filter-active-provider').click(function(){
+			$(this).children(":first-child").hasClass("glyphicon")? $(this).children(":first-child").removeClass("glyphicon glyphicon-check"):$(this).children(":first-child").addClass("glyphicon glyphicon-check");
+			$('#tbl_providers td.bg-danger').parent().toggle();
+		})
+		
 	    //export providers
 		$('.ctx-nav-export-provider').click(function(){	
 				//anything selected? 
-				if ($('input:checkbox[name="providerBulkAction"][checked="checked"]').length  == 0){
+				if ($('#tbl_providers input:checked').length  == 0){
 					bootbox.alert({
 						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['sel_prov_export'] ;?></div>",
 					});	
@@ -298,38 +359,31 @@
 							} else {
 								bootbox.hideAll();
 							}
-
 						}
 					});
 
-					$("#exportDialog").clone().removeClass("hidden").appendTo( "#modalExportDialog" );
+					$("#exportDialog")	//copy the export dialog from the template into the modal
+						.clone(true)
+						.removeClass("hidden")
+						.appendTo( "#modalExportDialog" );
+					$('.change-sec-modal').switchSection("changeTo",".sec-provider");
 				}
 			}); // end function
 			
 
 
-
-		/**
-		 * de-/activate provider
-		 */
-		$('input[name=active_dummy_provider]').on("click", function(e){
+		//de-/activate provider
+		$('#pgProviderEdit').on("click", "input[name=active_dummy_provider]", function(e){
 
 			//if false, means deactivate product
 			var status = $(this).is(":checked");
-			var providerId = $(this).parents("tr").attr("providerId");
+			var providerId = $(this).next().val();
 
-			//activate provider
-			if (status){
-				setActiveFlagProvider(providerId, status);
-
-			//decativate provider
-			} else {
-				setActiveFlagProvider(providerId, status);
-			}
+			setActiveFlagProvider(providerId, status);
 		})
 
 			
-			
+		//de/select all providers
 		$('#toggleProviderBulkActions')
 			.click(function(e){
 				if ($(this).is(':checked')){
@@ -340,12 +394,15 @@
 				e.stopPropagation();
 			});
 
-		//bulk actions
-		$('input[name=providerBulkAction]')
-			.on('click', function(e){
+
+		//prevent page change when checkbox provider
+		$('#tbl_providers tbody')
+			.on('click','td:first-child, input[name=providerBulkAction]',  function(e){
 				e.stopPropagation();
 			})
 			
+
+
 
 		/**
 		 *	provider utility functions
@@ -432,8 +489,6 @@
 		 * 	Deactivate provider 
 		 */
 		function setActiveFlagProvider(providerId, status){
-			
-			$('.loadSpinner').show();
 			var oper = (status==1)? "activateProvider":"deactivateProvider";
 			var successMsg = (status==1)? "<?php echo $Text['msg_activate_prov_ok']; ?>":"<?php echo $Text['msg_deactivate_prov_ok'] ?>";
 
@@ -442,28 +497,26 @@
 			   	type: 'POST',
 			   	success: function(msg){
 					$('input[name=active_dummy_provider]').attr('checked', status);
-					$.showMsg({
-						msg: successMsg,
-						type: 'success',
-						autoclose:1500});
+					bootbox.alert({
+						message : "<div class='alert alert-success ax-modal-tmargin'>"+successMsg+"</div>",
+					});	
+					$('.modal-dialog').addClass('ax-modal-dialog-small');
+					setTimeout(function(){
+						bootbox.hideAll();
+					},2000)
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 					
-						$this.dialog("close");
-						$.showMsg({
-								msg: XMLHttpRequest.responseText,
-								type: 'error'});
-
+						bootbox.hideAll();
+						bootbox.alert({
+						title : "<?=$Text['ti_error_exec'];?>",
+						message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 				},
 				complete : function(){
-					$('.loadSpinner').hide();
 					$('#tbl_providers tbody').xml2html("reload"); 
 				}				   	
 			}); //end ajax
 		}
-
-		
-
 
 
 		
@@ -503,22 +556,10 @@
 				if (gSelProduct != null && gSelProduct.attr('productId') > 0){
 					gSelProduct.addClass('active');
 				}
-				$("#tbl_products").trigger("update"); 
+				//$("#tbl_products").trigger("update"); 
 			}						
 		});			
 
-		/*$("#tbl_products").tablesorter({
-			textExtraction: function(node){
-				  //should be made faster??	
-		          if ($(node).find('.aix-style-ok-green').length == 1) {
-		            return 1;
-		          } else if ($(node).find('.noRed').length == 1){
-					return 0; 
-			      } else {
-		            return $(node).text();
-		          }
-			}
-		}); */
 
 		//products listing behavior
 		$('#tbl_products tbody')
@@ -541,18 +582,16 @@
 				});
 
 				if (gSelProduct.index() == 0) {
-					$('#btn_prev_product').button('disable');
+					$('#btn_prev_product').attr("disabled","disabled");
 				}
 
 				if (gSelProduct.index() == gSelProduct.parent().children().length -1) {
-					$('#btn_next_product').button('disable');
+					$('#btn_next_product').attr("disabled","disabled");
 				}
 
 				$('#setProductPagination').html((gSelProduct.index()+1) + "/" + gSelProduct.parent().children().length+"&nbsp;&nbsp;")
 				
-				
-				//switchTo('editProduct');
-
+	
 				$('.set-provider').html(gSelProvider.children().eq(2).text());
 				$('.set-product').html(gSelProduct.children().eq(2).text());
 
@@ -607,13 +646,8 @@
 		}); //end autocomplete
 
 
-		//import produts
-		$('#btn_import_products')
-			.button({
-				icons: {
-					primary: "ui-icon-transferthick-e-w"
-	        	}
-			})
+		//import products
+		$('.ctx-nav-import-product')
 			.click(function(e){
 				var myWin = window.open("manage_import.php?import2Table=aixada_product&providerName="+gSelProvider.children().eq(2).text()+"&providerId="+gSelProvider.attr('providerId'), "aname", "height=600, width=950, toolbar=0, status=0, scrollbars=1, menubar=0, location=0");
 				myWin.focus();
@@ -621,72 +655,40 @@
 			});
 
 	    // export products
-		$('#btn_product_export')
-			.button({
-				icons: {
-					primary: "ui-icon-transferthick-e-w"
-	        	}
-			})
+		$('.ctx-nav-export-product')
 			.click(function(e){
-				/**$('#dialog_export_options')
-					.data("export", "product")
-					.dialog("open");**/
+				
 			 }); 
 			    
 
 		//product buttons
-		$('#btn_new_product')
-			.button({
-				icons: {
-	        		primary: "ui-icon-plus"
-	        	}
-			})
+		$('.ctx-nav-new-product')
 			.click(function(){
 				prepareProductForm();			
-				switchTo('newProduct');
 			});
 
-		
-		//edit provider
-		$('.btn_edit_product')
-			.on('click', function(e){
 
-
-			});
-
-		//save edited provider new provider
-		$('.btn_save_product')
-			.button({
-				icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			})
-			.click(function(e){	
-				
-				if ($(this).hasClass('edit')){
-					if (checkProductForm('#pgProductEdit')){
-						submitForm('#pgProductEdit', 'edit', 'product');
-					}		 
-				} else if ($(this).hasClass('add')){
-					if (checkProductForm('#pgProductNew')){
-						submitForm('#pgProductNew', 'add', 'product', '.sec-2');
-					}
-				}
+		//save edited product
+		$('#frm_product_edit')
+			.on("click", ".btn-save", function(e){	
+				if (checkProductForm('#pgProductEdit')){
+					submitForm('#pgProductEdit', 'edit', 'product');
+				}		 	 
 				e.stopPropagation();
 				return false; 
 			});
 
-		//cancel edits/forms
-		$('.btn_cancel_product')
-		.button({
-				icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			})
-			.click(function(e){			
-				switchTo('overviewProducts');
-				return false;
-		});
+		//save new product
+		$('#frm_product_new')
+			.on("click", ".btn-save", function(e){	
+				if (checkProductForm('#pgProductNew')){
+					submitForm('#pgProductNew', 'add', 'product', '.sec-2');
+				}		 	 
+				e.stopPropagation();
+				return false; 
+			});
+
+
 
 		//delete prodcut
 		$('.btn_del_product')
@@ -806,33 +808,23 @@
 			
 		//next product when on editing form
 		$('#btn_next_product')
-		.button({
-				icons: {
-	        		secondary: "ui-icon-triangle-1-e"
-	        	},text:false
-			})
 			.click(function(e){			
 				gSelProduct.next().trigger("click");
-				$('#btn_prev_product').button('enable');	
+				$('#btn_prev_product').removeAttr("disabled");	
 				return false; 
 		});
 
 		$('#btn_prev_product')
-		.button({
-				icons: {
-	        		primary: "ui-icon-triangle-1-w"
-	        	},text:false
-			})
 			.click(function(e){			
 				gSelProduct.prev().trigger("click");
-				$('#btn_next_product').button('enable');	
+				$('#btn_next_product').removeAttr("disabled");
 				return false; 
 		});
 
 		
 		//edit price, updates brutto field
-		$('input[name=unit_price]')	
-			.on("blur", function(e){
+		$('#pgProductEdit, #pgProductNew')
+			.on("blur", "input[name=unit_price]", function(){
 				var frm = $(this).parents('form');
 				calcBruttoPrice(frm);
 		})
@@ -900,18 +892,23 @@
 			   	type: 'POST',
 			   	success: function(msg){
 					$('input[name=active_dummy_product]').attr('checked', status);
-					$.showMsg({
-						msg: successMsg,
-						type: 'success',
-						autoclose:1500});
+					bootbox.alert({
+						message : "<div class='alert alert-success ax-modal-tmargin'>"+successMsg+"</div>",
+					});	
+					$('.modal-dialog').addClass('ax-modal-dialog-small');
+					setTimeout(function(){
+						bootbox.hideAll();
+					},1000)
+					
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 					
-						$this.dialog("close");
-						$.showMsg({
-								msg: XMLHttpRequest.responseText,
-								type: 'error'});
+						bootbox.hideAll();
+						bootbox.alert({
+						title : "<?=$Text['ti_error_exec'];?>",
+						message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 
+	
 				},
 				complete : function(){
 					$('.loadSpinner').hide();
@@ -992,8 +989,7 @@
 				
 				//copy the provider form 
 				var tblStr = $('#tbl_product_edit').xml2html("getTemplate");
-				
-				$('#tbl_product_new tbody').append(tblStr);
+				$('#tbl_product_new').append(tblStr);
 
 				//construct the responsible uf select
 				populateSelect(gProductSelects,'#tbl_product_new');
@@ -1076,7 +1072,7 @@
 			//append again the custom_product_id input
 			$(cus).appendTo('.customProdutRefHook');
 
-			$('.btn_edit_stocks').button('disable');
+			$('.btn_edit_stocks').attr("disabled","disabled");
 			
 
 			$.ajax({
@@ -1104,7 +1100,9 @@
 				   		$('#tbl_providers tbody').xml2html("reload"); 
 
 			   		} else if (table == 'product'){
-			   			$('.btn_edit_stocks').button('enable');
+			   			
+						$('.btn_edit_stocks').removeAttr("disabled");
+			
 						
 						$('#tbl_products tbody').xml2html("reload",{
 							params: 'oper=getShopProducts&provider_id='+gSelProvider.attr('providerId')+"&all=1",
@@ -1257,6 +1255,7 @@
 		function calcBruttoPrice(frm){
 
 			var price = $.checkNumber($('input[name="unit_price"]', frm),0.00, 2);
+
 			$('input[name=unit_price]', frm).val(price);
 			
 			var revp = $('span.sIvaPercentId', frm).children('select').children('option:selected').attr('addInfo');
@@ -1267,7 +1266,7 @@
 			
 			var price = price * (1 + iva/100) * (1 + rev/100); 
 
-			$('.unit_price_brutto', frm).text(price.toFixed(2));
+			$('input[name=unit_price_brutto]', frm).val(price.toFixed(2));
 		}
 
 
@@ -1276,10 +1275,9 @@
 			var frmData = checkExportForm();
 			if (frmData){			
 				var urlStr = "php/ctrl/ImportExport.php?oper=exportProviderInfo&"+frmData;
-				$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
+				$('#tbl_providers input:checked').each(function(){
 					urlStr += "&providerId[]=" + $(this).parents('tr').attr('providerId');
 				})
-			alert(urlStr)
 				//load the stuff through the export channel
 				$('#exportChannel').attr('src',urlStr);
 			}
@@ -1318,7 +1316,7 @@
 		
 		
 		//trick for setting the chosen option of the selects since generated selects don't have name!
-		$('#pgProviderEdit, #pgProviderNew')
+		$('#pgProviderEdit, #pgProviderNew, #pgProductEdit, #pgProductNew')
 			.on('change', 'select', function(e){
 				var selOption = $('option:selected',this).val(); 
 				$(this).parent().prev().val(selOption);
@@ -1339,9 +1337,9 @@
 			})
 			
 		//remove all eventual error styles on input fields. 
-		$('input')
-			.on('focus', function(e){
-				$(this).removeClass('has-error');
+		$('body')
+			.on('focus', 'input', function(e){
+				$(this).removeClass('ax-has-error');
 			});
 		
 		$('input[name=bulkAction]')
@@ -1349,25 +1347,6 @@
 				e.stopPropagation();
 			})		
 
-		
-		//overview buttons
-		$("#btn_overview_provider").button({
-			icons: {
-	        		primary: "ui-icon-circle-arrow-w"
-	        	}
-			 })
-    		.click(function(e){
-				switchTo('overviewProvider'); 
-    		});
-
-		$("#btn_overview_product").button({
-			icons: {
-	        		primary: "ui-icon-circle-arrow-w"
-	        	}
-			 })
-    		.click(function(e){
-				switchTo('overviewProducts'); 
-    		});
 
 
 		<?php include('js/aixadautilities/stock.js.php'); ?> 
@@ -1390,49 +1369,67 @@
 			<div class="col-md-6"></div>
 			<div class="col-md-4 section sec-1 sec-2 sec-2-search-product">
 				<div class="input-group">
-			      <input type="text" id="search" class="form-control" placeholder="<?=$Text['search_product'];?>">
-			      <span class="input-group-btn">
-			        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search!</button>
-			      </span>
+			    	<input type="text" id="search" class="form-control" placeholder="<?=$Text['search_product'];?>">
+			      	<span class="input-group-btn">
+			        	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span>&nbsp;</button>
+			      	</span>
 				</div>
 			</div>
-			<div class="col-md-2 section sec-1 sec-2 sec-2-search-product">
-				<div class="btn-group pull-right">
+			<div class="col-md-1 section sec-1 sec-2 sec-2-search-product">
+				<div class="btn-group">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    				Actions <span class="caret"></span>
 	  				</button>
 					<ul class="dropdown-menu" role="menu">
-					    <li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_provider'];?></a></li>
-					    <li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_product'];?></a></li>
-					    <li class="section sec-1"><a href="#" class="ctx-nav ctx-nav-import-provider"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
-					    <li class="section sec-1"><a href="#" class="ctx-nav ctx-nav-export-provider"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
-					    
+						<li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_provider'];?></a></li>
+						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-provider"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-provider"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+
+						<li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_product'];?></a></li>
+					   	<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-product"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+						<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-product"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+ 						
+ 						<li class="divider"></li>
+						<li class=""><a href="#"><?=$Text['stock'];?></a></li>
+						<li class="level-1-indent"><a href="#sec-7" class="change-sec ctx-nav ctx-nav-stock-movements"> <?=$Text['consult_mov_stock'];?></a></li>
+ 						<li class="level-1-indent section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-add" ><?php echo $Text['add_stock'];?></a></li>
+						<li class="level-1-indent section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-correct" ><?php echo $Text['correct_stock'];?></a></li>
+
 					</ul>
 				</div>
 			</div>
+			<div class="col-md-1 section sec-1 sec-2 sec-2-search-product">
+				<div class="btn-group pull-right">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="<?=$Text['btn_filter'];?>">
+						<span class="glyphicon glyphicon-filter"></span> <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+					    <li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-provider"><span class=""></span> <?=$Text['active_providers'];?></a></li>
+					    <li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-product"><span class=""></span> <?=$Text['active_products'];?></a></li>
+					</ul>
+				</div>
+			</div>
+
+
 		</div>
 
 		<div class="row">
-			<div class="col-md-10">
+			<div class="col-md-9">
 		    	<h1 class="section sec-1"> <?php echo $Text['head_ti_provider']; ?></h1>
 				<h1 class="section sec-2"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span></h1>
 				<h1 class="section sec-2-search-product"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_search_results'];?></h1>
-
    				<h1 class="section sec-3"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-2"></span> <span class="set-product"></span></h1>
-
+				<h1 class="section sec-4"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-2"></span> <?=$Text['ti_create_product']; ?> </h1>
 				<h1 class="section sec-5"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['edit'] ; ?> <span class="set-provider"></span></h1>
 				<h1 class="section sec-6"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_create_provider']  ; ?> <span class="set-provider"></span></h1>
+				<h1 class="section sec-7"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_mgn_stock_mov'];?> :: <span class="set-provider"></span> :: <span class="set-product"></span> </h1>
 
-		    	<!--h1 class="pgProviderEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="set-provider"></span></h1>
-		    	<h1 class="pgProviderNew">&nbsp;&nbsp;<?php echo $Text['ti_create_provider'] ; ?></h1>
-		    	<h1 class="pgProductEdit">&nbsp;&nbsp;<?php echo $Text['edit']; ?> - <span class="set-provider"></span> - <span class="set-product"></span></h1>
-		    	<h1 class="pgProductNew">&nbsp;&nbsp;<span class="set-provider"></span> - <?php echo $Text['ti_add_product']; ?></h1-->
 			</div>
-			<div class="col-md-2 section sec-3">
+			<div class="col-md-3 section sec-3">
 				<p>&nbsp;</p>
-				<button type="button" class="btn btn-default btn-sm" id="btn_prev_product"><?=$Text['previous'];?></button>
-				<span id="setProductPagination">1/5</span> 
-				<button type="button" class="btn btn-default btn-sm pull-right" id="btn_next_product"><?=$Text['next'];?></button>&nbsp;
+				<button type="button" class="btn btn-default btn-sm pull-right" id="btn_next_product"><?=$Text['next'];?> <span class="glyphicon glyphicon-chevron-right"></span></button>&nbsp;				
+				<span id="setProductPagination" class="pull-right" style="margin-left:10px;">1/5</span>
+				<button type="button" class="btn btn-default btn-sm pull-right" id="btn_prev_product"><span class="glyphicon glyphicon-chevron-left"></span> <?=$Text['previous'];?></button>
 			</div>
 		</div>
 	</div>
@@ -1517,18 +1514,59 @@
 							<td><p class="text-right">{unit_price} </p></td>
 							<td><p class="text-right">{unit}</p></td>	
 							<td>
-								<p class="formatQty text-right">{stock_actual}</p>
+								<p class="formatQty badge pull-right">{stock_actual}</p>
+								
 							</td>
 							<td>
 							</td>
-							<td><span class="glyphicon glyphicon-remove-sign" title="<?=$Text['btn_del'];?>"></td>
+							<td>
+								<span class="glyphicon glyphicon-pencil btn-edit-product pull-left" title="<?=$Text['edit'];?>"></span>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-remove-sign" title="<?=$Text['btn_del'];?>"></td>
 						</tr>						
 					</tbody>
 				</table>
 		</div>
+
+
+		<!-- 
+					PROVIDER STOCK MOVEMENT LISTING		sec-7
+		 -->
+		<div class="section sec-7">
+			<table id="tbl_stock_movements" class="table table-hover table-condensed">
+				<thead>
+					<tr>
+						<th>id</th>
+						<th>Name</th>
+						<th><?php echo $Text['operator'] ; ?></th>
+						<th><?php echo $Text['stock_mov_type']; ?></th>
+						<th><?php echo $Text['comment'] ; ?></th>
+						<th><?php echo $Text['date']; ?></th>
+						<th><?php echo $Text['dff_qty']; ?></th>
+						<th><?php echo $Text['dff_price']; ?></th>
+						<th><?php echo $Text['balance']; ?></th>
+						<th>Unit</th>
+					</tr>
+					
+				</thead>
+				<tbody>
+					<tr productId="{product_id}">
+						<td>{product_id}</td>
+						<td>{product_name}</td>
+						<td>{member_name}</td>
+						<td>{movement_type}</td>
+						<td>{description}</td>
+						<td class="stockDeltaTSCell">{ts}</td>
+						<td class="stockDeltaQtyCell"><p class="textAlignRight formatQty">{amount_difference}</p></td>
+						<td><p class="text-right formatQty stockDeltaPriceCell">{delta_price}</p></td>
+						<td><p class="text-right formatQty">{resulting_amount}</p></td>
+						<td>{unit}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 				
-				
-				
+
+
 				
 		<!-- 
 					PRODUCT EDIT 		sec-3
@@ -1540,6 +1578,21 @@
 		
 				<div id="tbl_product_edit"><!-- start form template -->
 				
+
+
+					<div class="form-group">
+						<label for="id" class="col-sm-2 control-label"><?=$Text['id'];?></label>
+						<div class="col-sm-1">
+							<input type="text" name="id" value="{id}" class="form-control" disabled>
+						</div>
+						<label for="active_dummy_product" class="col-sm-2 control-label"><?=$Text['active'];?></label>
+						<div class="col-sm-1">
+							<input type="checkbox" name="active_dummy_product" value="{active}" tabindex="1" class="form-control">
+							<input type="hidden" name="id" value="{id}" />
+						</div>
+					</div>
+
+					
 					<div class="form-group">
 						<label for="name" class="col-sm-2 control-label"><?=$Text['name_item'];?></label>
 						<div class="col-sm-6">
@@ -1698,9 +1751,9 @@
 		<!-- 
 					PRODUCT NEW 	sec-4	
 		 -->
-		 <div class="section sec-4" id="pgProductNew">
-			<form id="frm_product_new">
-			<input type="hidden" name="provider_id" value=""/>
+		<div class="section sec-4" id="pgProductNew">
+			<form id="frm_product_new"  class="form-horizontal" role="form">
+				<input type="hidden" name="provider_id" value=""/>
 				<div id="tbl_product_new">
 		
 				</div>
@@ -1826,7 +1879,7 @@
 						<label for="responsible_uf_id" class="col-sm-2 control-label"><?=$Text['responsible_uf'];?></label>
 						<div class="col-sm-2">
 				    		<input type="hidden" name="responsible_uf_id" value="{responsible_uf_id}"/>
-				    		<span class="sResponsibleUfId"></span></td>
+				    		<span class="sResponsibleUfId"></span>
 						</div>
 					</div>
 					
@@ -1906,7 +1959,7 @@
 	<?php include('tpl/export_dialog.php');?>
 </div>
 
-
+<div class="change-sec-modal"></div>
 <!-- / END -->
 </body>
 </html>

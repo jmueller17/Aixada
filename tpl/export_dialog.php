@@ -10,12 +10,25 @@
 			</div>
 
 
-			<div class="form-group">
+			<div class="form-group section-modal sec-uf">
 			    <label for="onlyActiveUfs" class="col-sm-2 control-label"><?=$Text['active_ufs'];?></label>
 			    <div class="col-sm-1">
 			          <input type="checkbox" name="onlyActiveUfs" id="export_active_ufs" checked="checked" class="checkbox-inline form-control"/> 
 			    </div>
 			 </div>
+
+
+			<div id="export_provider_and_products" class="form-group section-modal sec-provider">
+				<label for="includeProducts" class="col-sm-2 control-label"><?=$Text['include_products'];?></label>
+				<label class="radio-inline">
+				  <input name="includeProducts" type="radio" id="include_products_yes" value="1" > <?=$Text['affirm'];?>
+				</label>
+			
+				<label class="radio-inline">
+				  <input name="includeProducts" type="radio" id="include_products_no" value="0" checked="checked"> <?=$Text['negate'];?>
+				</label>
+			</div>
+
 
 
 			<div class="form-group">
@@ -40,11 +53,12 @@
 			<br/><br/>
 			</div-->
 
-<br><br>
+			<br><br>
+
 			<h4><?=$Text['other_options']; ?></h4>
 			<div class="checkbox">
 			  <label>
-			    <input type="checkbox" name="makePublic" id="makePublic" checked="checked"/> <?=$Text['export_publish']; ?>
+			    <input type="checkbox" name="makePublic" id="makePublic"/> <?=$Text['export_publish']; ?>
 			  </label>
 			</div>
 			<br/>

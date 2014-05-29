@@ -27,7 +27,7 @@ class export_products extends abstract_export_manager {
 	
 	
 	public function __construct($filename="", $provider_id = 0, $product_ids = 0){
-
+		global $firephp; 
 		
 		$this->export_table = "product";
 		
@@ -57,7 +57,8 @@ class export_products extends abstract_export_manager {
 				throw new Exception("Export products exeption: no product ids and no provider id specified! Do either of both!");	
 				exit; 
 		}
-		
+	
+		$firephp->log($provider_id, "the product provider_id ");
 		
 		parent::__construct($filename);
 	
@@ -89,7 +90,13 @@ class export_products extends abstract_export_manager {
 		
 			
 		}
-		$this->xml_result = $xml_tmp; 
+		
+		//global $firephp; 
+		//$firephp->log($this->xml_result, "the product result");
+		
+		$this->xml_result[$this->filename] = $xml_tmp; 
+		
+		DBWrap::get_instance()->free_next_results(); 
 		
 		
 		//$this->xml_add_metadata();

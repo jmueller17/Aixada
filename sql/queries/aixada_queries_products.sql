@@ -926,11 +926,10 @@ begin
 	declare limitc varchar(255) default "";
 	declare datec varchar(255) default " and sm.ts between '1234-01-02' and '9999-01-01' ";
 
-
-	if (the_provider_id > 0) then
-		set wherec = concat(" and p.provider_id = ", the_provider_id);
-	elseif (the_product_id > 0) then
+	if (the_product_id > 0) then
 		set wherec = concat(" and p.id = ", the_product_id);
+	elseif (the_provider_id > 0) then
+		set wherec = concat(" and p.provider_id = ", the_provider_id);
 	end if; 
 
 	if (the_limit != "") then 

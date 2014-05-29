@@ -61,9 +61,8 @@ $(function(){
 	$.extend({
 		
 		checkFormLength : function (input, min, max, callbackfn) {
-			alert(input.val().length)
 			if ( input.val().length > max || input.val().length < min ) {
-				input.addClass( "has-error" );
+				input.addClass( "ax-has-error" );
 				return false; 
 			} else {
 				return true; 
@@ -72,7 +71,7 @@ $(function(){
 		
 		checkRegexp : function ( o, regexp, n ) {
 			if ( !( regexp.test( o.val() ) ) ) {
-				o.addClass( "has-error" );
+				o.addClass( "ax-has-error" );
 				return false;
 			} else {
 				return true;
@@ -82,7 +81,7 @@ $(function(){
 		checkPassword: function (pwd, retyped){
 			
 			if (pwd.val() != retyped.val()){
-				pwd.addClass( "has-error" );
+				pwd.addClass( "ax-has-error" );
 				//$.updateTips('#registerMsg','error', "<?php echo $Text['msg_err_pwdctrl']; ?>");
 				return false; 
 			} else {
@@ -112,11 +111,11 @@ $(function(){
 			
 			if (isNaN(num)) {
 
-				input.addClass("has-error");
-				input.effect('pulsate',{},100, function callback(){
-						input.val(resetValue);
-						input.removeClass("has-error");
-					});
+				input.addClass("ax-has-error");
+				
+				input.val(resetValue);
+				
+					
 				return false;
 			} else {
 				

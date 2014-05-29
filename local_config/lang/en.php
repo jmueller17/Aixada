@@ -918,8 +918,14 @@ $Text['ti_confirm'] = "Think before clicking!";
 $Text['ti_error_form'] = "Form error";
 $Text['ti_error_exec'] = "Execution Error!!";
 $Text['sel_prov_export'] = "Please select the providers you want to export!";
-$Text['msg_err_file'] = "The filename cannot be empty";
-
+$Text['msg_err_file'] = "Please provide a file name";
+$Text['include_products'] = "Include products for each provider?";
+$Text['affirm'] = "Yes";
+$Text['negate'] = "No";
+$Text['deactivate_provider'] = "Are you sure you want to deactivate this provider? This will hide all its products from ordering and buying";
+$Text['active_providers'] ="Active providers only";
+$Text['active_products'] ="Active products only";
+$Text['ti_create_product'] = "Add new product"
 
 
 //$Text[''] = ""; 

@@ -522,7 +522,7 @@
                 </div>
                 <div class="col-md-4">
                 	<div class="btn-group pull-right">
-	                	<butto class="btn btn-primary change-sec" type="button" toggle-section="#sec-2,#sec-1">
+	                	<button class="btn btn-primary change-sec" type="button" toggle-section="#sec-2,#sec-1">
                 			<span class="glyphicon glyphicon-shopping-cart pull-left"></span>
                 			&nbsp;&nbsp;&nbsp;
                 			<?php if ($_REQUEST['what'] == 'Order') {

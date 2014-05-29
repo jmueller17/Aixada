@@ -38,3 +38,5 @@ input.max-width {max-width:70px;}
 .ax-modal-dialog-small {
 	width:280px;
 }
+
+.ax-has-error {background-color:#F2DEDE;}

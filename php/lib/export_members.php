@@ -35,13 +35,11 @@ class export_members extends abstract_export_manager {
 						   $wherec);
 		
 		
-		$this->xml_result = $xml_tmp; 
+		$this->xml_result[$this->filename] = $xml_tmp; 
 		
-		/*
-		$metadata = array( 'name' => 'provider_and_range', 
-				   'data' => array( 'provider_id' => $provider_id,
-						    'from_date' => $from_date,
-						    'to_date' => $to_date ));*/
+		DBWrap::get_instance()->free_next_results(); 
+		
+	
 		
 	
 	}

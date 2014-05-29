@@ -105,7 +105,7 @@ try{
  		//exports provider info only. Should have option for including provider products?!!	
 		case 'exportProviderInfo':
 			$publish = (get_param('makePublic','off')=='on')? 1:0; 	
-		    $ep = new export_providers(get_param('exportName'), get_param('providerId',0));
+		    $ep = new export_providers(get_param('exportName'), get_param('providerId',0), get_param('includeProducts',0));
 		    $ep->export($publish, get_param('exportFormat', 'csv'), get_param('email',''), get_param('password',''));
 	    	break;
 

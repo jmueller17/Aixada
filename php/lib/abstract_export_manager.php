@@ -11,6 +11,8 @@ require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'php/lib/gdrive.php');
+require_once(__ROOT__ . 'php/utilities/general.php');
+
 
 /**
  * @see Zend_Loader
@@ -27,8 +29,24 @@ class abstract_export_manager {
 	 * Publish data to the public export directory of this site? 
 	 * @var boolean
 	 */
-	protected $publish = true;  
+	protected $public = true;  
 	
+	
+	/**
+	 * 
+	 * Should the file be offered for download? Default is yes but can be turned off. 
+	 * @var boolean
+	 */
+	public $download = true; 
+	
+	
+	/**
+	 * 
+	 * If several export files have been created, if set to true, 
+	 * a zip file will be created containing all of them and offered for download/published instead.  
+	 * @var boolean
+	 */
+	public $zipall	= false; 
 	
 	
 	/**
@@ -40,27 +58,42 @@ class abstract_export_manager {
 	
 	/**
 	 * 
-	 * The xml string of the exported database table
+	 * Directory where temporary files are created. 
 	 * @var string
 	 */
-	protected $xml_result = null; 
+	private $tmp_dir = null; 
+	
 	
 	
 	/**
 	 * 
-	 * Array holding the rows of the CSV
+	 * Hashtable holding the filenames and the corresponding xml result strings to be exported. 
+	 * The hash key is the filename; the entry the xml data to be exported. 
+	 * In case of exporting the products for a given list or providers, several files will be created: the provider list
+	 * and one file for each product list. 
 	 * @var array
 	 */
-	protected $csv_result = null;
+	protected $xml_result = null; 
 	
 
 	
 	/**
 	 * 
-	 * The file name the export data will be saved to
+	 * The filename provided by the user; This is name of the file returned to the user
 	 * @var string
 	 */
 	protected $filename = "";
+	
+	
+	
+	/**
+	 * 
+	 * List of all files that have been created during the export process.
+	 * Usually these are all the files that will be bundled.  The array contains
+	 * the absolute file paths of the created files. Usually added in function write_file()
+	 * @var array automatically created
+	 */
+	private $created_files = null; 
 	
 	
 
@@ -94,7 +127,8 @@ class abstract_export_manager {
 	
 	
     public function __construct($filename="")
-    {
+    {    	
+
     	//if no filename is given, construct one
     	if ($filename == ""){
 			$this->filename = "Export_" . $export_table . date('Y-m-d_h:i');    		
@@ -104,6 +138,10 @@ class abstract_export_manager {
     	
     	$this->export_dir = __ROOT__ . 'local_config/export/';
 
+    	$this->tmp_dir = __ROOT__ . 'local_config/tmp/';
+    	
+    	$this->created_files = array();
+    	
     	//get the data from the database
     	$this->read_db_table();
     } 
@@ -119,10 +157,28 @@ class abstract_export_manager {
     }
     
     
-    
-    public function export($publish=false, $format='csv', $email='', $pwd=''){
 
-    	$this->publish = $publish;
+    
+    /**
+     * 
+     * Returns the xml result strings of the tables to be exported. Available after read_db_table() has been 
+     * executed, i.e. after constructer has been called.  
+     */
+    public function get_xml_results(){    	
+    	return $this->xml_result; 
+
+    }
+    
+    
+    /**
+     * 
+     * Calls the sub routines for writing the actual files according to the given format. 
+     * @param boolean $publish
+     * @param string $format  CSV | XML
+     * @param unknown_type $email
+     * @param unknown_type $pwd
+     */
+    public function export($public=false, $format='csv', $email='', $pwd=''){
     	
     	switch($format){
     		
@@ -141,11 +197,118 @@ class abstract_export_manager {
     			break;
     		default:
     			throw new Exception("Export format {$format} not supported.");
-    			exit;
-    			
+    			exit;		
+    	}  
+
+    	//if several files have been created, bundle them. 
+    	if ($this->zipall || count($this->created_files)>1){
+    		$this->zipall = true; 
+    		$this->write_zip();
     	}
     	
+    	if ($this->download) $this->force_download();
+    	
+    	if ($public) $this->publish();
+    	
+    	$this->clean_up();
     }
+    	
+    
+    /**
+     * 
+     * Remove all files from the temporary directory 
+     * and reset the create_files array. 
+     */
+    private function clean_up(){
+    	foreach($this->created_files as $filepath) {
+				@unlink($filepath);
+		}
+    }
+    
+
+    /**
+     * 
+     * Copies the written files into the export directory. 
+     */
+    private function publish(){
+    	
+    	//several files
+    	if ($this->zipall){
+    		//the zip archive should always be the last file created
+    		$path_to_file = end($this->created_files); 
+    		
+    	//we have just one file
+    	} else {
+    		$path_to_file = $this->created_files[0];     		
+    	}
+
+    	//move the file to the export directory
+    	if(!rename($path_to_file, $this->export_dir . basename($path_to_file) ) ) {
+      		throw new Exception ("Export error: files could not be published in export directory!");
+    	}	
+    }
+
+    
+    
+    /**
+     * 
+     * Offers the exported files for download to the user. 
+     * @throws Exception
+     */
+    private function force_download(){
+    	
+    	$path_to_file = null; 
+    	
+    	//several files
+    	if ($this->zipall){
+    		header('Content-Type: application/zip');
+    		
+    		//the zip archive should always be the last file created
+    		$path_to_file = end($this->created_files); 
+    		
+    		
+    	//we have just one file
+    	} else {
+    		$path_to_file = $this->created_files[0]; 
+    		//set the filename and the content type, now based on export format. 
+    		$this->filename = basename($path_to_file); 
+			header('Content-Type: text/'.$this->format); //sofar csv | xml
+			    			    		
+    	}
+    	
+    	//rest of the headers
+    	header('Content-Disposition: attachment;filename='.$this->filename);
+    	header('Last-Modified: '.date(DATE_RFC822));
+		header('Pragma: no-cache');
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Expires: '. date(DATE_RFC822, time() - 3600));
+		header("Content-Length: " . filesize($path_to_file));
+
+	    readfile($path_to_file);
+        	
+    }
+    
+    
+	/**
+	 * Bundle all created files into zip archive. Either can be done by setting @zipall to true
+	 * or happens automatically if more than one file has been created during export. 
+	 */    
+    private function write_zip(){
+
+    		if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'zip') {
+	   	 		$this->filename = $this->filename . '.zip';
+    		}
+    		
+    		$destination = $this->tmp_dir . "/" . $this->filename; 
+    		
+    		if (create_zip($this->created_files, $destination,true)){ 
+	    		array_push($this->created_files, $destination);
+
+    		} else {	
+    			throw new Exception("Export exception: could not create {$destination} zip archive!");
+    		}
+    }
+    
     
     
     
@@ -154,39 +317,37 @@ class abstract_export_manager {
      * Returns the CSV file for the export data and creates local public copy in 
      * export directory. 
      */
-    private function write_csv($download=true){
+    private function write_csv(){
+
+    	global $firephp; 
     	
+    	    		
     	$this->format = 'csv';
-		if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'csv') {
-	   	 	$this->filename = $this->filename . '.csv';
-    	}
-
-    	//convert the xml result to csv
-    	if ($this->xml_result == null || strlen($this->xml_result)==0){
-    		throw new Exception("Export exception: Empty dataset. Nothing to be exported!");
-    	}
+    	    	
+    	foreach ($this->xml_result as $filename => $xml_result_str) {
     	
-    	//convert to csv
-    	$this->csv_result = $this->xml2csv(); 
-    	
-    	//publish to this web
-    	$this->publish_copy();
+			$firephp->log($filename, "the file name");
+    		
+			if (pathinfo($filename, PATHINFO_EXTENSION) != 'csv') {
+	   	 		$filename = $filename . '.csv';
+    		}
 
-    	if($download){
-		 	//offer file for download
-			header('Content-Type: text/csv');
-			header('Content-Disposition: attachment;filename='.$this->filename);
-			header('Last-Modified: '.date(DATE_RFC822));
-			header('Pragma: no-cache');
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Expires: '. date(DATE_RFC822, time() - 3600));
-			$fp = fopen('php://output', 'w');
-			foreach ($this->csv_result as $row) 
-			    fputcsv($fp, $row);
-			fclose($fp);
+	    	//convert the xml result to csv
+    		if ($xml_result_str == null || strlen($xml_result_str)==0){
+    			throw new Exception("Export exception: Empty dataset. Nothing to be exported!");
+    		}
+    	
+	    	//convert to csv
+    		$csv_result = $this->xml2csv($xml_result_str); 
+    	
+    		//create the file 
+    		$this->write_file($csv_result, $filename);
+	    	
     	}
     	
     }
+    
+    
     
     
     /**
@@ -195,36 +356,33 @@ class abstract_export_manager {
      * @param boolean $download download file to client can be turned off
      * @throws Exception
      */
-    private function write_xml($download=true){
+    private function write_xml(){
     	
     	$this->format = 'xml';
-	if (pathinfo($this->filename, PATHINFO_EXTENSION) != 'xml') {
-	    $this->filename = $this->filename . '.xml';
-    	}
+		
     	
-		//any results?
-    	if ($this->xml_result == null || strlen($this->xml_result)==0){
-    		throw new Exception("Export exception: Empty dataset. Nothing to be exported!");
-    		exit; 
-    	}
+    	foreach ($this->xml_result as $filename => $xml_result_str) {
     	
-    	//publish to public folder
-    	$this->publish_copy();
-    
-		if($download){
-		  	$newstr = '<?xml version="1.0" encoding="utf-8"?>';  
-		  	$newstr .= $this->xml_result; 
-		  	header('Content-Type: text/xml');
-		  	header("Content-disposition: attachment; filename=\"".$this->filename."\""); 
-		  	header('Content-Type: application/octet-stream');
-		  	header('Last-Modified: '.date(DATE_RFC822));
-		  	header('Pragma: no-cache');
-		  	header('Cache-Control: no-cache, must-revalidate');
-		  	header('Expires: '. date(DATE_RFC822, time() - 3600));
-		  	header('Content-Length: ' . strlen($newstr));
-		  	echo $newstr;
-		}	    	
+    	
+	    	if (pathinfo($filename, PATHINFO_EXTENSION) != 'xml') {
+		    	$filename = $filename . '.xml';
+	    	}
+	    	
+			//any results?
+	    	if ($xml_result_str == null || strlen($xml_result_str)==0){
+	    		throw new Exception("Export exception: Empty dataset. Nothing to be exported!");
+	    		exit; 
+	    	}
+	    	
+	    	//create the file 
+    		$this->write_file($xml_result_str, $filename);
+	    	
+
+    	}    	
     }
+    
+    
+    
     
     
     /**
@@ -277,51 +435,64 @@ class abstract_export_manager {
     
     
    
-    
-    /**
-     * 
-     * Creates a local public available copy of the export file for easy
-     * sharing, importing by other platform.  
-     */
-    private function publish_copy(){
+   /**
+    * Writes the export data to the corresponding file into the temporary directory. 
+    * @param string $data the export data, either csv rows or xml string.
+    * @param string $filename the filename the data will be written to. 
+    */
+   private function write_file($data, $filename){ 	
     	
-    	if (!$this->publish) return false; 
-    	
-		$publish_filename = $this->export_dir . $this->filename; 
+   		global $firephp; 
+   	
+		$publish_filename = $this->tmp_dir . $filename; 
 	  	$outhandle = @fopen($publish_filename, 'w');
 
 	  	if (!$outhandle)
-	        	throw new Exception("Export exception. Could not open {$publish_filename} for publishing to the web. Make sure that local_config/export is a writable directory");
+	        	throw new Exception("Export exception. Could not open {$publish_filename} for writng. Make sure that local_config/tmp_dir is a writable directory");
 	  
+	        	
 	    switch($this->format){
-	    	
 	    	case "csv":
-	    		foreach ($this->csv_result as $row) {
+	    		foreach ($data as $row) {
 	      			fputcsv($outhandle, $row);
 		  		}
 		  		break;
+		  		
 	    	case "xml":
-	    		fwrite($outhandle, $this->xml_result);	
-	    		break;	
-	    	
+	    		fwrite($outhandle, $data);	
+	    		break;
 	    }
 		  		
 		fclose($outhandle);
+		
+		//$firephp->log($this->created_files, "created files array");
+		//$firephp->log($publish_filename, "the published file name");
+		
+		
+		//add the current file to the records for eventual zipping. 
+		if (file_exists($publish_filename)) {
+			array_push($this->created_files, $publish_filename);
+		} else {
+			throw Exception("Export exception: could not write file {$publish_filename}!");
+		}
     }
     
+    
+    
+       
     
     /**
      * 
      * Converst the xml result set into array of csv
      */
-	protected function xml2csv(){
+	protected function xml2csv($xml){
 		
 	    $fieldnames = array();
 	    $csv_rows = array();
-	    $tok = strtok($this->xml_result, '<>');
+	    $tok = strtok($xml, '<>');
 	    $expected = 'rowset';
 	    if ($tok != $expected)
-			throw new XMLParseException($expected, $tok, $this->xml_result);
+			throw new XMLParseException($expected, $tok, $xml);
 	    $tok = strtok('<>');
 	    $first_row = true;
 	    while ($tok != '/rowset') {
@@ -329,7 +500,7 @@ class abstract_export_manager {
 			$fieldname = $ex[0];
 			$expected = 'row';
 			if ($fieldname != $expected)
-			    throw new XMLParseException($expected, $fieldname, $this->xml_result);
+			    throw new XMLParseException($expected, $fieldname, $xml);
 			$tok = strtok('<>');
 			$csv_row = array();
 			while ($tok != '/row') {
@@ -341,13 +512,13 @@ class abstract_export_manager {
 			    $expected = '![CDATA[';
 			    $l_expected = strlen($expected);
 			    if (substr($tok, 0, $l_expected) != $expected) 
-					throw new XMLParseException($expected, $tok, $this->xml_result);
+					throw new XMLParseException($expected, $tok, $xml);
 			    $value = substr($tok, $l_expected, strpos($tok, ']]', $l_expected)-$l_expected);
 			    $csv_row[] = $value;
 			    $tok = strtok('<>');
 			    $expected = '/' . $fieldname;
 			    if ($tok != $expected)
-					throw new XMLParseException($expected, $tok, $this->xml_result);
+					throw new XMLParseException($expected, $tok, $xml);
 			    $tok = strtok('<>');
 			}
 			$tok = strtok('<>');
