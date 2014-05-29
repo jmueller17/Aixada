@@ -566,7 +566,7 @@
 					<div class="bg-warning" id="providerClosedStatus">
 						<p><?php echo $Text['order_closed']; ?> <span class="glyphicon glyphicon-lock"></span></p>
 					</div>
-				
+					<p>&nbsp;</p>
 					<table id="product_list_provider" class="table">
 					<thead>
 						<tr>
@@ -604,7 +604,7 @@
                     	<option value="{id}">{description}</option>
 					</select>
 				</div>
-
+				<p>&nbsp;</p>
 					<table id="product_list_category" class="table" >
 						<thead>
 						<tr>
@@ -645,9 +645,9 @@
 					        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search!</button>
 					      </span>
 					    </div><!-- /input-group -->
-					  </div><!-- /.col-lg-6 -->
-
-						
+					  </div><!-- /.col-lg-6 -->						
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
 				<p>&nbsp;</p>
 					<table id="product_list_search" class="table table-condensed table-hover" >
 						<thead>

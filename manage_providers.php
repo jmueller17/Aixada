@@ -164,9 +164,9 @@
 		//click pencil of provider for editing
 		$('#tbl_providers tbody')
 			.on('click', '.btn-edit-provider', function(e){
-				$('#tbl_providers tbody tr').removeClass('ui-state-highlight');
+				$('#tbl_providers tbody tr').removeClass('active');
 				gSelProvider = $(this).parents('tr');
-				gSelProvider.addClass('ui-state-highlight');
+				gSelProvider.addClass('active');
 				
 				$('#tbl_provider_edit').xml2html('reload',{
 					params: 'oper=getProviders&all=1&provider_id='+gSelProvider.attr('providerId')
@@ -178,6 +178,46 @@
 
 				e.stopPropagation();
 			});
+
+
+
+		//delete provider
+		$('#tbl_providers tbody')
+			.on('click', '.btn-del-provider', function(e){
+				var providerId = $(this).parents('tr').attr('providerId');
+				bootbox.confirm({
+					title  : "<?=$Text['ti_confirm'];?>",
+					message: "<div class='alert alert-danger'><?=$Text['msg_confirm_del_provider']; ?></div>",
+					callback : function(ok){
+							if (ok){
+								$this = $(this);
+								var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
+								$.ajax({
+								   	url: urlStr,
+								   	type: 'POST',
+								   	success: function(msg){
+										//reload all members listing on overiew. 
+								   		$('#tbl_providers tbody').xml2html('reload');
+								   		bootbox.hideAll();
+								   	},
+								   	error : function(XMLHttpRequest, textStatus, errorThrown){
+								   		bootbox.hideAll();
+										if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+											bootbox.alert({
+													title : "<?=$Text['ti_error_exec'];?>",
+													message : "<div class='alert alert-danger'><?=$Text['msg_err_del_provider']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
+											});	
+										}
+								   	}
+								}); //end ajax	
+							} else {
+								bootbox.hideAll();
+							}	
+					}
+				});
+
+				e.stopPropagation();
+			})
 
 
 		//load provider for editing
@@ -202,39 +242,25 @@
 				if (checkProviderForm('#pgProviderEdit')){
 					submitForm('#pgProviderEdit', 'edit', 'provider');
 				}		 
-				
 				e.stopPropagation();
 				return false; 
 			});
 
-		//save edited provider
+		//save new provider
 		$('#frm_provider_new')
 			.on("click", ".btn-save", function(e){	
 				if (checkProviderForm('#pgProviderNew')){
 					submitForm('#pgProviderNew', 'add', 'provider', '.sec-1');
 				}
-				
 				e.stopPropagation();
 				return false; 
 			});
 
 
-
-		//cancel edits/forms
-		$('.btn_cancel_provider')
-		.button({
-				icons: {
-	        		primary: "ui-icon-disk"
-	        	}
-			})
-			.click(function(e){			
-				switchTo('overviewProvider');
-				return false; 
-		});
-
-
 		
-		//import providers
+		//context menu provider listing page
+
+		//import provider
 		$('#btn_import_provider')
 			.button({
 				icons: {
@@ -247,84 +273,39 @@
 				
 			});
 		
+
 		//new provider
 		$('.ctx-nav-new-provider').click(function(){	
 			prepareProviderForm();
 		})
 		
 		
-		
-
-		
-
-	    // export products
-		$('#btn_provider_export')
-			.button({
-				icons: {
-					primary: "ui-icon-transferthick-e-w"
-	        	}
-			})
-			.click(function(e){
+	
+	    //export providers
+		$('.ctx-nav-export-provider').click(function(){	
 				//anything selected? 
 				if ($('input:checkbox[name="providerBulkAction"][checked="checked"]').length  == 0){
-					$.showMsg({
-						msg:"<?=$Text['msg_confirm_prov'];?>",
-						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
-								$('#dialog_export_options')
-								.data('export', 'provider')
-								.dialog("open");
-								$(this).dialog("close");
-							},
-							"<?=$Text['btn_cancel'];?>":function(){						
-								$(this).dialog("close");
-							}
-						},
-						type: 'warning'});
+					bootbox.alert({
+						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['sel_prov_export'] ;?></div>",
+					});	
 				} else {
-					$('#dialog_export_options')
-						.data('export', 'provider')
-						.dialog("open");
+					bootbox.confirm({
+						title : '<?=$Text['export_options']; ?>',
+						message : '<div id="modalExportDialog"></div>',
+						callback : function(ok){
+							if (ok){
+								exportProviders();
+							} else {
+								bootbox.hideAll();
+							}
+
+						}
+					});
+
+					$("#exportDialog").clone().removeClass("hidden").appendTo( "#modalExportDialog" );
 				}
 			}); // end function
-				
-
-		//delete provider
-		$('.del-provider')
-			.on('click', function(e){
-				var providerId = $(this).parents('tr').attr('providerId');
-				$.showMsg({
-					msg: "<?php echo $Text['msg_confirm_del_provider']; ?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){
-							$this = $(this);
-							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
-
-							$.ajax({
-							   	url: urlStr,
-							   	type: 'POST',
-							   	success: function(msg){
-									//reload all members listing on overiew. 
-							   		$('#tbl_providers tbody').xml2html('reload');
-							   		$this.dialog( "close" ); 
-							   	},
-							   	error : function(XMLHttpRequest, textStatus, errorThrown){
-									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-										$this.dialog("close");
-										$.showMsg({
-												msg: "<?=$Text['msg_err_del_provider']; ?>" + XMLHttpRequest.responseText,
-												type: 'error'});
-									}
-							   	}
-							}); //end ajax	
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
-						}
-					},
-					type: 'confirm'});
-				e.stopPropagation();
-			})
+			
 
 
 
@@ -1070,82 +1051,6 @@
 		 ****************************/
 		function switchTo(section){
 			
-			switch(section){
-
-				case 'overviewProvider':
-					$('.pgProductOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
-					if (gProviderListReload) { //if provider has been edited/new reload listing
-						$('#tbl_providers tbody').xml2html("reload"); 
-					}
-					
-
-					$('.pgProviderOverview').fadeIn(1000);
-					gProviderListReload = false; 
-					
-					break;
-	
-				case 'overviewProducts':
-					if (gSelProvider.attr('providerId') > 0) { 
-						if (gProductListReload){
-							$('#tbl_products tbody').xml2html("reload",{
-								params: 'oper=getShopProducts&provider_id='+gSelProvider.attr('providerId')+"&all=1",
-							});
-						}
-
-						$('.set-provider').html(gSelProvider.children().eq(2).text());
-					
-						$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
-						$('.pgProductOverview').fadeIn(1000);
-							
-						gProductListReload = false; 
-					}
-					break;
-
-				case 'searchProducts':
-					$('.setProviderName').html("&nbsp;");
-					$('.pgProviderOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
-					$('.pgProductOverview').show();
-					$('#groupButtons').hide();
-					break;
-
-				case 'cancelSearch':
-					$('.pgProductOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
-					$('.pgProviderOverview').show();
-					$('#groupButtons').show();
-					break;
-					
-				case 'editProvider':
-					$('.set-provider').html(gSelProvider.children().eq(2).text());
-					$('.pgProviderOverview, .pgProductOverview, .pgProviderNew, .pgProductEdit, .pgProductNew').hide();
-					$('.pgProviderEdit').fadeIn(1000);
-					
-					break;
-
-				case 'newProvider':
-					$('.pgProviderOverview, .pgProductOverview, .pgProviderEdit, .pgProductEdit, .pgProductNew').hide();
-					$('.pgProviderNew').fadeIn(1000);
-					
-					break;
-
-
-				case 'editProduct':
-					$('.set-provider').html(gSelProvider.children().eq(2).text());
-					$('.set-product').html(gSelProduct.children().eq(2).text());
-					
-					$('.pgProviderOverview, .pgProductOverview, .pgProviderEdit, .pgProviderNew, .pgProductNew').hide();
-					$('.pgProductEdit').fadeIn(1000);
-					break;
-
-
-				case 'newProduct':
-					$('.pgProviderOverview, .pgProductOverview, .pgProviderEdit, .pgProviderNew, .pgProductEdit').hide();
-					$('.pgProductNew').fadeIn(1000);
-					break;
-					
-					
-					
-					
-			}
 
 		}
 
@@ -1209,7 +1114,7 @@
 				   	}
 
 				   	if (undefined != returnTo){
-				   		alert(returnTo)
+				   		//alert(returnTo)
 						$('.change-sec').switchSection("changeTo",returnTo);
 					}
 
@@ -1366,42 +1271,7 @@
 		}
 
 
-		
-		/**
-		 * EXPORT selected providers
-		 */
-		//export options dialog
-		/*$('#dialog_export_options').dialog({
-			autoOpen:false,
-			width:580,
-			height:550,
-			buttons: {  
-				"<?=$Text['btn_ok'];?>" : function(){
-						if ($(this).data('export') == "provider"){
-							exportProviders();
-						} else if ($(this).data('export') == "product") {
-							exportProducts();
-						}
-					},
-			
-				"<?=$Text['btn_close'];?>"	: function(){
-					$( this ).dialog( "close" );
-					} 
-			}
-		});*/
 
-		function checkExportForm(){
-			var frmData = $('#frm_export_options').serialize();
-			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
-				$.showMsg({
-					msg:"File name cannot be empty!",
-					type: 'error'});
-				return false;
-			}
-			return frmData; 
-		}
-
-		 
 		function exportProviders(){
 			var frmData = checkExportForm();
 			if (frmData){			
@@ -1409,11 +1279,21 @@
 				$('input:checkbox[name="providerBulkAction"][checked="checked"]').each(function(){
 					urlStr += "&providerId[]=" + $(this).parents('tr').attr('providerId');
 				})
-			
+			alert(urlStr)
 				//load the stuff through the export channel
 				$('#exportChannel').attr('src',urlStr);
 			}
 		}
+
+		function checkExportForm(){
+			var frmData = $('#modalExportDialog #frm_export_options').serialize();
+			if (!$.checkFormLength($('#modalExportDialog input[name=exportName]'),1,150)){
+				alert("<?=$Text['msg_err_file']; ?>");
+				return false;
+			}
+			return frmData; 
+		}
+
 
 
 		/**
@@ -1435,16 +1315,11 @@
 		}
 
 
-
-
-
-
 		
 		
 		//trick for setting the chosen option of the selects since generated selects don't have name!
-		$('select')
-			.on('change', function(){
-
+		$('#pgProviderEdit, #pgProviderNew')
+			.on('change', 'select', function(e){
 				var selOption = $('option:selected',this).val(); 
 				$(this).parent().prev().val(selOption);
 								
@@ -1466,7 +1341,7 @@
 		//remove all eventual error styles on input fields. 
 		$('input')
 			.on('focus', function(e){
-				$(this).removeClass('ui-state-error');
+				$(this).removeClass('has-error');
 			});
 		
 		$('input[name=bulkAction]')
@@ -1527,10 +1402,11 @@
 	    				Actions <span class="caret"></span>
 	  				</button>
 					<ul class="dropdown-menu" role="menu">
-					    <li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><?=$Text['btn_new_provider'];?></a></li>
-					    <li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><?=$Text['btn_new_product'];?></a></li>
+					    <li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_provider'];?></a></li>
+					    <li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_product'];?></a></li>
+					    <li class="section sec-1"><a href="#" class="ctx-nav ctx-nav-import-provider"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+					    <li class="section sec-1"><a href="#" class="ctx-nav ctx-nav-export-provider"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
 					    
-					    <li><a href="" class=""><?=$Text['btn_import'] ; ?></a></li>
 					</ul>
 				</div>
 			</div>
@@ -2021,12 +1897,16 @@
 	<!-- end of container wrap -->
 
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
-<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
-<?php include("tpl/export_dialog.php");?>
+
+<div id="dialog_edit_stock" class="hidden">
+	<?php include('tpl/stock_dialog.php');?>
 </div>
-<div id="dialog_edit_stock">
-<?php include('tpl/stock_dialog.php');?>
+
+<div id="exportDialog" class="hidden">
+	<?php include('tpl/export_dialog.php');?>
 </div>
+
+
 <!-- / END -->
 </body>
 </html>

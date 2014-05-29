@@ -61,8 +61,9 @@ $(function(){
 	$.extend({
 		
 		checkFormLength : function (input, min, max, callbackfn) {
+			alert(input.val().length)
 			if ( input.val().length > max || input.val().length < min ) {
-				input.addClass( "ui-state-error" );
+				input.addClass( "has-error" );
 				return false; 
 			} else {
 				return true; 
@@ -71,7 +72,7 @@ $(function(){
 		
 		checkRegexp : function ( o, regexp, n ) {
 			if ( !( regexp.test( o.val() ) ) ) {
-				o.addClass( "ui-state-error" );
+				o.addClass( "has-error" );
 				return false;
 			} else {
 				return true;
@@ -81,7 +82,7 @@ $(function(){
 		checkPassword: function (pwd, retyped){
 			
 			if (pwd.val() != retyped.val()){
-				pwd.addClass( "ui-state-error" );
+				pwd.addClass( "has-error" );
 				//$.updateTips('#registerMsg','error', "<?php echo $Text['msg_err_pwdctrl']; ?>");
 				return false; 
 			} else {
@@ -91,8 +92,8 @@ $(function(){
 		
 		//checks if the given select field has something other than the default value selected
 		checkSelect : function(input, defaultValues){
-			var selval = input.val();
-			alert(selval)
+			var selval = input.val();  //this comes often from the dummy input field, not the actual select!
+
 			var ok = true; 
 			for (var i=0; i<defaultValues.length; i++){
 				if (selval == defaultValues[i]){
@@ -111,10 +112,10 @@ $(function(){
 			
 			if (isNaN(num)) {
 
-				input.addClass("ui-state-error");
+				input.addClass("has-error");
 				input.effect('pulsate',{},100, function callback(){
 						input.val(resetValue);
-						input.removeClass("ui-state-error");
+						input.removeClass("has-error");
 					});
 				return false;
 			} else {

@@ -916,6 +916,10 @@ $Text['stock_mov_type'] = "Movement type";
 $Text['ti_search_results'] = "Search results - products";
 $Text['ti_confirm'] = "Think before clicking!";
 $Text['ti_error_form'] = "Form error";
+$Text['ti_error_exec'] = "Execution Error!!";
+$Text['sel_prov_export'] = "Please select the providers you want to export!";
+$Text['msg_err_file'] = "The filename cannot be empty";
+
 
 
 //$Text[''] = ""; 
