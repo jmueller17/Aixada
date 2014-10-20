@@ -910,6 +910,51 @@ begin
 end|
 
 
+drop procedure if exists all_mov|
+create procedure all_mov(in the_product_id int)
+begin
+
+	declare tt int(11) default 40;
+
+	(select
+		p.name as product_name,
+		smt.name as type,
+		sm.description as comment,
+		sm.amount_difference, 
+		sm.resulting_amount,
+		sm.ts,
+		sm.operator_id as uf
+	from
+		aixada_product p,
+		aixada_stock_movement sm,
+		aixada_stock_movement_type smt
+	where
+		p.id = the_product_id
+		and sm.product_id = the_product_id
+		and sm.movement_type_id = smt.id)
+	union
+	(select
+		p.name as product_name,
+		"sale" as type,
+		"" as comment,
+		-si.quantity as amount_difference,
+		0 as resulting_amount,
+		c.ts_validated as ts,
+		c.uf_id as uf
+	from
+		aixada_product p, 
+		aixada_shop_item si,
+		aixada_cart c
+	where
+		p.id = the_product_id
+		and si.product_id = the_product_id
+		and si.cart_id  = c.id)
+	order by
+		ts desc;
+
+end|
+
+
 /**
  * retrieves info about all stock movements of a given product
  * or all products. 

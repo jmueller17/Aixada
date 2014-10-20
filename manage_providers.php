@@ -124,20 +124,18 @@
 			}
 		});
 
-		$('#tbl_stock_movements  tbody')
-			.on("click", "tr", function(e){
-				gSelProduct = $(this)
-				$(".ctx-nav-stock-movements").trigger("click")
-			})
 
 
- 		$(".ctx-nav-stock-movements")
- 			.click(function(){
+ 		$("#tbl_products tbody")
+ 			.on("click", ".ctx-nav-stock-movements",function(){
+
 				var params = 'oper=stockMovements&limit='+gStockMoveLimit; 
 
-				if (gSelProvider != null && gSelProvider.attr('providerId') > 0 ){
+				/*if (gSelProvider != null && gSelProvider.attr('providerId') > 0 ){
 					params += '&provider_id='+ gSelProvider.attr('providerId');
-				}
+				}*/
+
+				gSelProduct = $(this).parents("tr");
 
 				if (gSelProduct != null &&  gSelProduct.attr('productId') > 0){
 					params += '&product_id='+ gSelProduct.attr('productId'); 
@@ -146,6 +144,8 @@
 				$("#tbl_stock_movements tbody").xml2html("reload", {
 							params :  params
 				});
+
+				$('.change-sec').switchSection("changeTo",".sec-7");
  			})
 
 
@@ -561,20 +561,19 @@
 		});			
 
 
-		//products listing behavior
+		//edit/view product
 		$('#tbl_products tbody')
-			//click on table row
-			.on("click", "tr", function(e){
+			.on("click", ".btn-edit-product", function(e){
 
 				//if we come from product search
 				if (gSelProvider == null) {
-					var pvid = $(this).attr('providerId');
+					var pvid = $(this).parents('tr').attr('providerId');
 					gSelProvider = $('#tbl_providers tbody tr[providerId='+pvid+']');
 
 				}
 				
 				$('#tbl_products tbody tr').removeClass('active');
-				gSelProduct = $(this);
+				gSelProduct = $(this).parents('tr');
 				gSelProduct.addClass('active');				
 
 				$('#tbl_product_edit').xml2html('reload',{
@@ -691,46 +690,43 @@
 
 
 		//delete prodcut
-		$('.btn_del_product')
-			.on('click', function(e){
+		$('#tbl_products tbody')
+			.on('click', '.btn-del-product',  function(e){
 
 				var productId = $(this).parents('tr').attr('productId');
-					
-				$.showMsg({
-					msg: "<?php echo $Text['msg_confirm_del_product']; ?>",
-					buttons: {
-						"<?=$Text['btn_ok'];?>":function(){
-							$this = $(this);
-							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_product&id='+productId; 
 
-							$.ajax({
-							   	url: urlStr,
-							   	type: 'POST',
-							   	success: function(msg){
-									//reload all members listing on overiew. 
-							   		$('#tbl_products tbody').xml2html('reload');
-							   		//$this.dialog( "close" ); 
-							   	},
-							   	error : function(XMLHttpRequest, textStatus, errorThrown){
-									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
-										//$this.dialog("close");
-										$.showMsg({
-												msg: "<?=$Text['msg_err_del_product']; ?>" + XMLHttpRequest.responseText,
-												type: 'error'});
+				bootbox.confirm({
+				title  : "<?=$Text['ti_confirm'];?>",
+				message: "<div class='alert alert-danger'><?=$Text['msg_confirm_del_product']; ?></div>",
+				callback : function(ok){
+					if (ok){
+						$this = $(this);
+						var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_product&id='+productId; 
 
-									}
-								   	
-	
-							   	}
-							}); //end ajax
-													
-							
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							//$( this ).dialog( "close" );
-						}
-					},
-					type: 'confirm'});
+						$.ajax({
+						   	url: urlStr,
+						   	type: 'POST',
+						   	success: function(msg){
+								//reload all members listing on overiew. 
+						   		$('#tbl_products tbody').xml2html('reload');
+						   		bootbox.hideAll();
+						   	},
+						   	error : function(XMLHttpRequest, textStatus, errorThrown){
+						   		bootbox.hideAll();
+
+								if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+									bootbox.alert({
+											title : "<?=$Text['ti_error_exec'];?>",
+											message : "<div class='alert alert-danger'><?=$Text['msg_err_del_product']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
+									});	
+								}
+						   	}
+						}); //end ajax	
+					} else {
+						bootbox.hideAll();
+					}	
+				}
+			});
 
 				e.stopPropagation();
 				
@@ -1389,12 +1385,6 @@
 					   	<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-product"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
 						<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-product"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
  						
- 						<li class="divider"></li>
-						<li class=""><a href="#"><?=$Text['stock'];?></a></li>
-						<li class="level-1-indent"><a href="#sec-7" class="change-sec ctx-nav ctx-nav-stock-movements"> <?=$Text['consult_mov_stock'];?></a></li>
- 						<li class="level-1-indent section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-add" ><?php echo $Text['add_stock'];?></a></li>
-						<li class="level-1-indent section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-correct" ><?php echo $Text['correct_stock'];?></a></li>
-
 					</ul>
 				</div>
 			</div>
@@ -1502,7 +1492,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr id="{id}" class="clickable" productId="{id}" providerId="{provider_id}">
+						<tr id="{id}" productId="{id}" providerId="{provider_id}">
 							<td><input type="checkbox" name="productBulkAction"/></td>
 							<td>{id}</td>
 							<td title="<?php echo $Text['click_row_edit']; ?>">{name}</td>
@@ -1514,14 +1504,25 @@
 							<td><p class="text-right">{unit_price} </p></td>
 							<td><p class="text-right">{unit}</p></td>	
 							<td>
-								<p class="formatQty badge pull-right">{stock_actual}</p>
-								
+								<div class="pull-right">
+									<p class="formatQty badge">{stock_actual}</p>
+									<div class="btn-group">
+										<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="<?=$Text['btn_stock'];?>">
+											<span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-movements"> <?=$Text['consult_mov_stock'];?></a></li>
+	 										<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-add" ><?php echo $Text['add_stock'];?></a></li>
+											<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-stock-correct" ><?php echo $Text['correct_stock'];?></a></li>
+										</ul>
+									</div>
+								</div>
 							</td>
 							<td>
 							</td>
 							<td>
-								<span class="glyphicon glyphicon-pencil btn-edit-product pull-left" title="<?=$Text['edit'];?>"></span>&nbsp;&nbsp;
-								<span class="glyphicon glyphicon-remove-sign" title="<?=$Text['btn_del'];?>"></td>
+								<span class="glyphicon glyphicon-pencil btn-edit-product pull-left clickable" title="<?=$Text['edit'];?>"></span>&nbsp;&nbsp;
+								<span class="glyphicon glyphicon-remove-sign btn-del-product clickable" title="<?=$Text['btn_del'];?>"></td>
 						</tr>						
 					</tbody>
 				</table>
