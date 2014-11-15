@@ -898,13 +898,10 @@
 					
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-					
 						bootbox.hideAll();
 						bootbox.alert({
 						title : "<?=$Text['ti_error_exec'];?>",
 						message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
-
-	
 				},
 				complete : function(){
 					$('.loadSpinner').hide();

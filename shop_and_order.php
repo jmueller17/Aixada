@@ -275,6 +275,7 @@
 				refreshSelects($.getSelectedDate('#datepicker'));
 			})
 
+
 			$.getAixadaDates('getToday', function (date){
 				gToday = date[0];
 				$('#datepicker').data("DateTimePicker").setDate(date[0]);

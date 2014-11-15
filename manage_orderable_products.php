@@ -5,25 +5,32 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_active_products']; ?></title>
 	
-	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
-    
-    <script type="text/javascript" src="js/jquery/jquery.js"></script>	    
-	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-	<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
- 	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>   
-    
+
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/aixcss.css" rel="stylesheet">
+    <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
+
+
+	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+   	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
+	   	
+	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
+	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>    
+
+	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>
+	   	
+		<script type="text/javascript" src="js/datepicker/bootstrap-datetimepicker.min.js"></script>
+
    
 	<script type="text/javascript">
+
 	$(function(){
 
-		//loading animation
-		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 
-		
+				
 		
 		//dates to be displayed in header
 		var gdates = [];
@@ -43,6 +50,28 @@
 		//clipboard for copying columns
 		var gColClipboard = [];
 
+		//init animated save buttons
+		Ladda.bind('.btn-save')
+
+		//hide all sections
+		$('.section').hide();
+
+		//init switch sectino plugin
+		$('.change-sec').switchSection("init");
+
+		//show home section
+		$('.sec-1').show();
+
+
+		//init boostrap modal 
+		bootbox.setDefaults({
+			locale:"<?=$language;?>"
+		})
+
+		moment().lang("<?=$language;?>");
+
+
+
 		
 		/**
 		 * retrieve dates for a given time period and constructs the table header
@@ -51,7 +80,6 @@
 		function makeDateHeader(fromDate, toDate){
 
 			//the format in which the date is shown in the header
-			var outDateFormat = 'D d, M';
 			var provider_id = getProviderId();
 			 
 			$.ajax({
@@ -68,11 +96,12 @@
 					var tfoot = '';
 					var today = new Date();
 					var visMonthYear = new Array(new Date(gdates[0]));
-				
 					
 					for (var i=0; i<gdates.length; i++){
 						var dd = new Date(gdates[i]); 
-						var date = $.datepicker.formatDate(outDateFormat, dd);
+
+						var date = moment(gdates[i], "YYYY-MM-DD").format("ddd DD")
+
 						var dateclass = "Date-"+gdates[i];
 						var pastclass = (dd < today)? 'dim40':'';
 					
@@ -85,7 +114,7 @@
 
 					//construct month year str for title bar of widget
 					for (var i=0; i<visMonthYear.length; i++){
-						visMonthYear[i] = $.datepicker.formatDate('MM yy',visMonthYear[i]);
+						visMonthYear[i] = moment(visMonthYear[i]).format("MMM YYYY");
 					}
 					var monthYearStr = visMonthYear.join("/ "); 
 					$('.dateTableMonthYear').html(monthYearStr);
@@ -105,9 +134,10 @@
 					}	
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
+					bootbox.hideAll();
+					bootbox.alert({
+						title : "<?=$Text['ti_error_exec'];?>",
+						message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 				},
 				complete : function(){
 					$('.loadSpinner').hide();
@@ -137,7 +167,7 @@
 					
 					for (var i=0; i<gdates.length; i++){
 						if (ispreorder){
-							apstr = "<td class=\"preorder\" colspan=\""+gdates.length+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
+							apstr = "<td class=\"preorder\" colspan=\""+gdates.length+"\"><p class=\"text-center\"><?=$Text["preorder_item"];?></p></td>";
 							break;
 						}
 						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)
@@ -175,7 +205,7 @@
 								var hasItems = $(this).find('has_ordered_items').text();
 
 								var closingIcon  = (days2Closing > 0)? "ui-icon-unlocked": "ui-icon-locked"; 
-								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
+								closingIcon		 = (orderId > 0)? "glyphicon glyphicon-envelope" : closingIcon;
 								var closingTitle = (days2Closing > 0)? "<?=$Text['order_closes'];?> " + closingDate + ". \n " +days2Closing + " <?=$Text['left_ordering'];?>": "<?=$Text['ostat_closed'];?>";
 								closingTitle = (orderId > 0)? "<?=$Text['ostat_desc_fin_send'];?>" + orderId: closingTitle;
 								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
@@ -195,10 +225,11 @@
 							
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
-						}, 
+							bootbox.hideAll();
+							bootbox.alert({
+								title : "<?=$Text['ti_error_exec'];?>",
+								message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
+							}, 
 						complete : function(msg){
 							$('.loadSpinner').hide();
 						}
@@ -236,7 +267,7 @@
 
 
 		//make the product name interactive for row actions menu
-		$('.rowActions')
+		/*$('.rowActions')
 			.live('mouseenter', function(e){
 				$(this).addClass('ui-state-hover');
 
@@ -265,22 +296,23 @@
 						$( "#rowActionItems" ).hide();
 					});
 
-			});
+			});*/
 
 		/**
 		 *	row actions menu
 		 */
-		$('.tfIconRow')
-			.bind('mouseenter', function(e){
+		$('#rowActionItems')
+			.on('mouseenter', '.tfIconRow', function(e){
 				$(this).addClass('ui-state-hover');
-				e.stopPropagation();
+				e.stopPropapation();
 
 			})
-			.bind('mouseleave', function(e){
+			.on('mouseleave', '.tfIconRow', function(e){
 				$(this).removeClass('ui-state-hover');
 				e.stopPropagation();
 			})
-			.bind('click', function(e){
+			.on('click', '.tfIconRow',function(e){
+				alert(2)
 				var productId =  $('#rowActionItems').attr('currentRowId');
 				var action = $('a',this).attr('id');
 
@@ -300,7 +332,7 @@
 		/**
 		 *	interactivity for the column actions button
 		 */
-		 $('.dateth')
+		/* $('.dateth')
 			.live('mouseenter', function(e){
 				$( "#colActionIcons" ).hide();
 				var colDate = $(this).attr('colDate');
@@ -351,14 +383,14 @@
 			
 				
 				
-			});
+			});*/
 				
 	
 		/**
 		 *	event handler for each table cell
 		 */
-		$('td.interactiveCell')
-			.live('click', function(e){
+		$('#dot tbody')
+			.on('click','.interactiveCell', function(e){
 
 				//check if clicked item has ordered products
 				var hasItems = $('.hasItemsIndicator',this).text().match(/\d/);
@@ -376,25 +408,21 @@
 
 				//click on table cell for past dates
 				if ($(this).hasClass('dim40')){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_past']; ?>",
-						type: 'warning'});
+					bootbox.alert({
+						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['msg_err_past'] ;?></div>"});
 					return false;
 
 				//product has to be activated first
 				} else if ($(this).hasClass('deactivated')){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_is_deactive_p'];?>",
-						type: 'warning'});
+					bootbox.alert({
+						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['msg_err_is_deactive_p'] ;?></div>"});
 					return false;
 
 				//check if product is part of a finalized order. If not, this triggers deactivation of product					
 				} else if ($(this).hasClass('dim60')) {  
-					$.showMsg({
-						msg:"<?=$Text['msg_err_deactivate_sent'];?>",
-						type: 'warning'});
-				   	return false; 
-
+					bootbox.alert({
+						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['msg_err_deactivate_sent'] ;?></div>"});
+					return false;
 
 				//deactivate  
 				//but only if instantRepeat is not active  	
@@ -402,24 +430,28 @@
 					
 					var tdid = $(this).attr('id');		//table cell id
 					var dateID = tdid.split("_");	    //date and product_id
-					$.showMsg({
-						msg:"<?=$Text['msg_confirm_delordereditems'];?>",
-						buttons: {
-							"<?=$Text['btn_confirm_del']; ?>": function(){
-								$( this ).dialog( "close" );
-								$.post("php/ctrl/ActivateProducts.php",{
+					
+					bootbox.confirm({
+						title : '<?=$Text['export_options']; ?>',
+						message : '<?=$Text['msg_confirm_delordereditems'];?>',
+						callback : function(ok){
+							if (ok){
+										$.post("php/ctrl/ActivateProducts.php",{
 											oper : "unlockOrderableDate",
 											product_id : dateID[1],
 											date: dateID[0]
 										}, function (data){
 											toggleCell('#'+tdid);
 										});
-							},
-							"<?=$Text['btn_cancel'];?>":function(){
-								$( this ).dialog( "close" );
+
+										bootbox.hideAll();
+							} else {
+										bootbox.hideAll();
 							}
-						},
-						type: 'warning'});
+						}
+					});
+
+
 					return false;
 
 
@@ -427,10 +459,10 @@
 				//if product row has ordered items and instantRepeat is on, 
 				//show warning that ordered cells have to be turned off individually first. 	
 				} else if (rowHasOtherItems && gInstantRepeat){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_deactivate_ir'];?>",
-						type: 'warning'});
-				   	return false; 
+					bootbox.alert({
+						message : "<div class='alert alert-warning ax-modal-tmargin'><?=$Text['msg_err_deactivate_ir'] ;?></div>"});
+					return false;
+
 				}
 
 				var tdid = $(this).attr('id');		//table cell id
@@ -460,11 +492,7 @@
 
 				} else {
 					toggleOrderableProduct(tdid, dateID[1], dateID[0]);
-				}
-
-				
-
-				
+				}		
 	
 			});
 			
@@ -480,9 +508,10 @@
 			
 		})		
 		.click(function(e){
-        	var a = new Date(gdates[0]);
-   			a.setDate(a.getDate() - seekDateSteps);
-   			var date = $.datepicker.formatDate('yy-mm-dd',a);
+			var date = moment(gdates[0]).subtract(seekDateSteps, "days")
+        	//var a = new Date(gdates[0]);
+   			//a.setDate(a.getDate() - seekDateSteps);
+   			//var date = moment(d,'yy-mm-dd');
          	makeDateHeader(date,gdates[0]);
 			
         })
@@ -493,11 +522,11 @@
         	}
         })
         .click(function(e){
-            var a = new Date(gdates[gdates.length-1]);
-  			a.setDate(a.getDate() + seekDateSteps);
+            //var a = new Date(gdates[gdates.length-1]);
+  			//a.setDate(a.getDate() + seekDateSteps);
   			
-  			var date = $.datepicker.formatDate('yy-mm-dd',a);
-        	makeDateHeader(gdates[gdates.length-1], date);
+  			//var date = $.datepicker.formatDate('yy-mm-dd',a);
+        	//makeDateHeader(gdates[gdates.length-1], date);
         });
 
 
@@ -538,7 +567,7 @@
 		/**
 		 *	dialog generate date pattern
 		 */
-		$( "#dialog-generateDates").dialog({
+		/*$( "#dialog-generateDates").dialog({
 				autoOpen: false,
 				height: 340,
 				width: 480,
@@ -553,14 +582,14 @@
 							$( this ).dialog( "close" );
 							} 
 					}
-		});
+		});*/
 
 
 
 		/**
 		 *	dialog for modifying closing date for order
 		 */
-		$('#blip').dialog({
+		/*$('#blip').dialog({
 			autoOpen:false,
 			width:500,
 			height:540,
@@ -575,14 +604,14 @@
 					$( this ).dialog( "close" );
 					} 
 			}
-		});
+		});*/
 
 
 	    
 	    /**
 	     *	export stuff
 	     */
-		$('#dialog_export_options').dialog({
+		/*$('#dialog_export_options').dialog({
 			autoOpen:false,
 			width:520,
 			height:500,
@@ -595,7 +624,7 @@
 					$( this ).dialog( "close" );
 					} 
 			}
-		});
+		});*/
 	    
 		$('#btn_export')
 			.button({
@@ -650,9 +679,9 @@
 			var frmData = $('#frm_export_options').serialize();
 			
 			if (!$.checkFormLength($('input[name=exportName]'),1,150)){
-				$.showMsg({
+				/*$.showMsg({
 					msg:"File name cannot be empty!",
-					type: 'error'});
+					type: 'error'});*/
 				return false;
 			}
 			
@@ -673,22 +702,18 @@
 			if (ispreorder == "1"){
 				toggleOrderableProduct('reloadTable', productId, '1234-01-23');
 			} else {
-				$.showMsg({
-					msg		: "<?=$Text['msg_make_preorder_p'];?>",
-					buttons: {
-						"<?=$Text['btn_ok_go'];?>":function(){						
+				bootbox.confirm({
+					title : '<?=$Text['msg_make_preorder_p']; ?>',
+					message : '<div id="modalExportDialog"></div>',
+					callback : function(ok){
+						if (ok){
 							toggleOrderableProduct('reloadTable', productId, '1234-01-23');
-							$(this).dialog("close");
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
+						} else {
+							bootbox.hideAll();
 						}
-					},
-					type: 'confirm'});
+					}
+				});
 			}
-			 
-			
-			
 		}
 
 
@@ -712,25 +737,25 @@
 				})
 				
 				if (rowHasItems){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_deactivate_prdrow']; ?>",
-						type: 'warning'});
+					bootbox.alert({
+						title : "<?=$Text['ti_error_exec'];?>",
+						message : "<div class='alert alert-danger'><?=$Text['msg_err_deactivate_prdrow']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
+					});	
 				   	return false; 
-
 				}
-				
-				$.showMsg({
-					msg		: "<?=$Text['msg_err_deactivate_p'];?>",
-					buttons: {
-						"<?=$Text['btn_deactivate'];?>":function(){						
+
+
+				bootbox.confirm({
+					title : "<?=$Text['msg_err_deactivate_p']; ?>",
+					message : '<div id="modalExportDialog"></div>',
+					callback : function(ok){
+						if (ok){
 							changeProductStatus(productId,'deactivateProduct');
-							$(this).dialog("close");
-						},
-						"<?=$Text['btn_cancel'];?>" : function(){
-							$( this ).dialog( "close" );
+						} else {
+							bootbox.hideAll();
 						}
-					},
-					type: 'confirm'});
+					}
+				});
 			}
 		}
 		
@@ -759,9 +784,10 @@
 					}
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
+					bootbox.hideAll();
+					bootbox.alert({
+					title : "<?=$Text['ti_error_exec'];?>",
+					message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 				},
 				complete : function(){
 					$('.loadSpinner').hide();
@@ -795,14 +821,12 @@
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						
+						bootbox.hideAll();
+						bootbox.alert({
+						title : "<?=$Text['ti_error_exec'];?>",
+						message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 					}, 
 					complete : function(){
-						$('.loadSpinner').hide();
 					}
 				}); 
 			
@@ -835,9 +859,10 @@
 					$('#dot tbody').xml2html('reload');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});
+					bootbox.hideAll();
+					bootbox.alert({
+					title : "<?=$Text['ti_error_exec'];?>",
+					message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 				},
 				complete : function(msg){
 					$('#blip').dialog("close");
@@ -868,9 +893,10 @@
 					$('#dot tbody').xml2html('reload');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
-						msg:XMLHttpRequest.responseText,
-						type: 'error'});	
+					bootbox.hideAll();
+					bootbox.alert({
+					title : "<?=$Text['ti_error_exec'];?>",
+					message : "<div class='alert alert-danger'>"+XMLHttpRequest.responseText+"</div>"})
 				},
 				complete : function(msg){
 					$('.loadSpinner').hide();
@@ -945,9 +971,9 @@
 				$("#blip").dialog("open");				
 				$(".Date-"+selDate).addClass('ui-state-hover');
 			} else {
-				$.showMsg({
+				/*$.showMsg({
 					msg:"<?=$Text['msg_err_closing'];?>",
-					type: 'warning'});
+					type: 'warning'});*/
 			
 			}
 		}
@@ -1034,7 +1060,7 @@
 		        	secondary: "ui-icon-triangle-1-s"
 				}
 		    })
-		    .menu({
+		    /*.menu({
 				content: $('#tblOptionsItems').html(),	
 				showSpeed: 50, 
 				width:280,
@@ -1085,7 +1111,7 @@
 							
 					}; //end switch
 				}//end item selected 
-			});//end menu
+			});*/ //end menu
 
 
 				
@@ -1155,7 +1181,7 @@
 		});
 
 		$('#colActionIcons').hide();
-		$('#closingDatePicker').datepicker();
+		//$('#closingDatePicker').datepicker();
 			
 		makeDateHeader("Yesterday", seekDateSteps+" days");
 
@@ -1164,79 +1190,98 @@
 </script>
 </head>
 <body>
-<div id="wrap">
+
 	<div id="headwrap">
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	
-	
-	<div id="stagewrap" class="ui-widget">
-	
-		<div id="titlewrap">
-			<div id="titleLeftCol">
-		    	<h1><?php echo $Text['ti_mng_activate_products'];  ?></h1>
-		    </div>
-		   <div id="titleRightCol">
-		   		<div class="wrapSelect textAlignRight">
-					<select id="providerSelect" class="longSelect">
+
+
+	<div class="container">	
+		<div class="row">
+			<div class="col-md-6"></div>
+			<div class="col-md-4 section sec-1 sec-2">
+				<div class="input-group">
+					<select id="providerSelect" class="form-control">
 					        <option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>                    
 	                    	<option value="{id}">{id} {name}</option>
 					</select>
 				</div>
-				<button class="floatLeft" id="btn_export"><?php echo $Text['btn_export']; ?></button>
-		   		<div class="textAlignRight"><button	id="tblOptions"><?php echo $Text['view_opt']; ?></button></div>
-				<div id="tblOptionsItems" class="hidden">
-					<ul>
-						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['show_deactivated']; ?></a></li>
-						<li><a href="javascript:void(null)">&nbsp;&nbsp;<?php echo $Text['days_display'];?></a>
-							<ul>
-								<li><a href="javascript:void(null)" id="plus7"><?php echo $Text['plus_seven']; ?></a></li>
-								<li><a href="javascript:void(null)" id="minus7"><?php echo $Text['minus_seven']; ?></a></li></ul>
-						</li>
-						<li><a href="javascript:void(null)" id="instantRepeat"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['instant_repeat']; ?></a></li>
-						
+			</div>
+			<div class="col-md-1 section sec-1 sec-2">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	    				Actions <span class="caret"></span>
+	  				</button>
+					<ul class="dropdown-menu" role="menu">
+						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-dates"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-dates"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
 					</ul>
 				</div>
-				
-		   </div> 
-		    	
-		</div>
-		
-		
-		
-		<div id="productDateOverview" class="ui-widget">
-			<div class="ui-widget-header ui-corner-all">
-				<h3 id="providerName" class="minPadding floatLeft">&nbsp;</h3>
-				<p class="textAlignCenter">
-					<button id="prevDates"><?php echo $Text['btn_earlier']; ?></button>
-					<span class="dateTableMonthYear"></span>							
-					<button id="nextDates"><?php echo $Text['btn_later']; ?></button>
-				</p>
-				<span style="float:right; margin-top:-38px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			</div>
-			
-			<table id="dot" class="table_datesOrderableProducts ui-widget-content">
-				<thead>
-				
-				<tr>
-					<th><?php echo $Text['id'];?></th>
-					<th><?php echo $Text['name_item'];?></th>
-				</tr>
-				</thead>
-				<tbody>
-					<tr id="{id}" productId="{id}" isactive="{is_active}" ispreorder="{preorder}">
-						<td class="prodActive">{id}</td>
-						<td class="clickable rowActions">{name} <span class="ui-icon ui-icon-triangle-1-s floatRight"></span></td>			
-					</tr>						
-				</tbody>
+			<div class="col-md-1 section sec-1 sec-2">
+				<div class="btn-group pull-right">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="<?=$Text['view_opt'];?>">
+						<span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+					    <li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-opt-active-product"><span class=""></span> <?=$Text['show_deactivated']; ?></a></li>
+					    <li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-opt-repeat"><span class=""></span> <?=$Text['instant_repeat'];?></a></li>
+					   	<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-opt-plus-seven"><span class=""></span> <?=$Text['plus_seven']; ?></a></li>
+					    <li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-opt-minus-seven"><span class=""></span> <?=$Text['minus_seven'];?></a></li>
 
-			</table>
+					</ul>
+				</div>
+			</div>
+
+
 		</div>
-		<br/>
-		<br/>
-	</div><!-- end of stage wrap -->
-</div><!-- end of wrap -->
+		<div class="row">
+			<div class="col-md-9">
+		    	<h1 class="section sec-1"> <?php echo $Text['ti_mng_activate_products']; ?></h1>
+				<h1 class="section sec-2"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <span class="set-provider"></span></h1>
+			</div>
+		</div>
+	</div>
+	
+
+	<div class="container">
+
+		<div class="col-md-12 section sec-1">
+			<h3 id="providerName" class="minPadding floatLeft">&nbsp;</h3>
+			<p class="textAlignCenter">
+				<button type="button" class="btn btn-default" id="prevDates">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+					<?php echo $Text['btn_earlier']; ?>
+				</button>
+				<span class="dateTableMonthYear"></span>							
+				<button type="button" class="btn btn-default" id="nextDates">
+					<?php echo $Text['btn_later']; ?>
+					<span class="glyphicon glyphicon-chevron-right"></span>				
+				</button>
+			</p>
+			<span style="float:right; margin-top:-38px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
+		</div>
+	
+
+		<table id="dot" class="table table-condensed">
+			<thead>
+			
+			<tr>
+				<th><?php echo $Text['id'];?></th>
+				<th><?php echo $Text['name_item'];?></th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr id="{id}" productId="{id}" isactive="{is_active}" ispreorder="{preorder}">
+					<td class="prodActive">{id}</td>
+					<td class="clickable rowActions">{name} <span class="ui-icon ui-icon-triangle-1-s floatRight"></span></td>			
+				</tr>						
+			</tbody>
+
+		</table>
+	</div>
+
 
 <div id="mylog"></div>
 
@@ -1283,7 +1328,7 @@
 
 </div>
 
-<div id="rowActionItems" class="ui-widget ui-widget-content ui-corner-all hidden aix-layout-fixW250 aix-style-padding3x3" currentRowId="">
+<div id="rowActionItems" class="" currentRowId="">
 	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-deactivate"><?php echo $Text['do_deactivate_prod']; ?></a></p>
 	<p class="tfIconRow ui-corner-all"><a href="javascript:void(null)" id="tfIconRow-preorder"><?php echo $Text['do_preorder']; ?></a></p>
 </div>
@@ -1291,9 +1336,6 @@
 
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;"></iframe>
 
-<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
-<?php include("tpl/export_dialog.php");?>
-</div>
 
 <!-- / END -->
 </body>
