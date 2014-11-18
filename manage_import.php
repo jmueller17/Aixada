@@ -305,20 +305,7 @@
 			   	
 				},
 			   	success: function(msg){
-			   	 	$.showMsg({
-						msg: "<?=$Text['msg_import_success'];?>",
-						buttons: {
-							"<?=$Text['btn_import_another'];?>":function(){						
-								resetUpload();
-								$(this).dialog("close");
-							},
-							"<?=$Text['btn_nothx']; ?>":function(){						
-								window.opener.reloadWhat();
-								window.close();
-							}
-						},
-						type: 'success'});
-			   		
+                    showResponse(msg);
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 				   $.showMsg({
@@ -342,6 +329,25 @@
 		}
 
 		 
+        function showResponse(importedRows){
+            $.showMsg({
+                title: "<?=$Text['msg_success'];?>",
+                msg: "<?=$Text['msg_import_done'];?>".replace("{$rows}",importedRows) + 
+                     "<br><?=$Text['msg_import_another'];?>",
+                buttons: {
+                    "<?=$Text['btn_import_another'];?>":function(){						
+                        resetUpload();
+                        $(this).dialog("close");
+                    },
+                    "<?=$Text['btn_nothx']; ?>":function(){						
+                        window.opener.reloadWhat();
+                        window.close();
+                    }
+                },
+                type: 'success'
+            });
+        }
+
 							
 	});  //close document ready
 </script>

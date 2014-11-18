@@ -80,22 +80,23 @@ try{
  				case 'aixada_product':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_product');
  					$pi = new import_products($dt, $map, get_param('provider_id'));
-					$pi->import(get_param('append_new', false));
+					echo $pi->import(get_param('append_new', false));
  					exit; 
  				
  				case 'aixada_product_orderable_for_date':
+                    echo 0;
  					exit;  
  					
  				case 'aixada_provider':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_provider');
  					$pi = new import_providers($dt, $map);
- 					$pi->import(get_param('append_new', false));
+ 					echo $pi->import(get_param('append_new', false));
  					exit; 
  				
  			}
 			
 
-			echo 1; 
+			echo 0; 
  			exit; 
  	
  		case 'getAllowedFields':
