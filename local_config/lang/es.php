@@ -866,6 +866,7 @@ $Text['import_step2'] = "Vista previa de los datos y asignacíón de columnas";
 $Text['import_reqcol'] = "Columna necesaria";
 $Text['import_auto'] = "Tengo buenas noticias: casi todos los datos (columnas) se han podido reconocer y puedes intentar la importación automática. No obstante, la opción más segura es previsualizar primero el contenido y luego realizar la asignación de columnas de la tabla manualmente.";
 $Text['import_qnew'] = "¿Qué quieres hacer con los datos que no existen en la base de datos actual?";
+$Text['import_create_update'] = "Crear entradas nuevas y actualizar las existentes";
 $Text['import_createnew'] = "Crear entradas nuevas";
 $Text['import_update'] = "Sólo actualizar las filas existentes";
 $Text['btn_imp_direct'] = "Importar directamente";

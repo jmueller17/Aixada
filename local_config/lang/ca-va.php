@@ -876,6 +876,7 @@ $Text['import_step2'] = "Vista prèvia de les dades i assignació de columnes";
 $Text['import_reqcol'] = "Columna necessària";
 $Text['import_auto'] = "Tinc bones notícies: gairebé totes les dades (columnes) s'han pogut reconèixer i pots intentar la importació automàtica. De tota manera, l'opció més segura és previsualitzar primer el contingut i després realitzar l'assignació de columnes de la taula manualment.";
 $Text['import_qnew'] = "Què vols fer amb les dades que no existeixen a la base de dades actual?";
+$Text['import_create_update'] = "Crear entrades noves i actualitzar les existents";
 $Text['import_createnew'] = "Crear entrades noves";
 $Text['import_update'] = "Actualitzar només les files existents";
 $Text['btn_imp_direct'] = "Importar directament";

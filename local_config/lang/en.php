@@ -877,6 +877,7 @@ $Text['import_step2'] = "Preview data and match columns";
 $Text['import_reqcol'] = "Required column";
 $Text['import_auto'] = "Good news: most data (columns) could be recognized and you could try to automatically import the file. As a more secure alternative, preview the content first and match the table columns by hand.";
 $Text['import_qnew'] = "What should happen with data that does not exist in the database?";
+$Text['import_create_update'] = "Create new entries and update existing rows";
 $Text['import_createnew'] = "Create new entries";
 $Text['import_update'] = "Just update existing rows";
 $Text['btn_imp_direct'] = "Import directly";
