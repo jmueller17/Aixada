@@ -48,20 +48,11 @@ class import_providers extends abstract_import_manager {
 	 */
 	protected function match_db_entries(){
 		$db = DBWrap::get_instance();
-		$checkIds = $this->_import_data_table->get_col_as_array($this->_match_col_index);
-		
-		$got_ids = 0; 
 		$sql = "select id, nif from aixada_provider where nif in (";
-		foreach($checkIds as $id){
-			if ($id != ''){
-				$sql .="'".$db->escape_string($id)."',";
-				$got_ids++;
-			}
-		}		
-		$sql = rtrim($sql, ",") .")";
-		
+		$match_col_list = $this->get_match_col_values();
 		$_existing_rows = array();    	
-    	if ($got_ids > 0) {
+		if ($match_col_list != ''){
+			$sql .= $match_col_list .")";
     		$rs =  $db->Execute($sql);
 	    	//which of the given entries do already exist in the db
 	    	

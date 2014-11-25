@@ -472,6 +472,22 @@ class abstract_import_manager {
     
     
     /**
+     *
+     * utility to make a list of match_col values.
+     * @return string
+     */
+    protected function get_match_col_values() {
+        $db = DBWrap::get_instance();
+        $sql = '';
+        foreach($this->_match_col as $val){
+            if ($val != ''){
+                $sql .= "'".$db->escape_string($val)."',";
+            }
+        }
+        return rtrim($sql, ",");
+    }
+
+    /**
      * 
      * utility wrapper for parsing different uploaded files and returning a 2d array (data_table) with the values
      * @param string $path2File the full path to the file 
