@@ -54,7 +54,7 @@ class import_providers extends abstract_import_manager {
 		$sql = "select id, nif from aixada_provider where nif in (";
 		foreach($checkIds as $id){
 			if ($id != ''){
-				$sql .="'". $id . "',";
+				$sql .="'".$db->escape_string($id)."',";
 				$got_ids++;
 			}
 		}		
