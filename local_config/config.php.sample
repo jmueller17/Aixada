@@ -495,6 +495,40 @@ class configuration_vars {
 								'closing_date' => 'allow')
 								);
  
+	/**
+	 *	Set templates correspondences to directly import by establishing
+     *  correspondences from columns with database fields.
+	 */
+    public $import_templates = array(
+        // Table any db_field_name must be allowed by $allow_import_for.
+        'aixada_product' => array(
+            // Template name
+            'begues' => array(
+                'options' => array(
+                    'import_mode' => '2', // '0' update only
+                                          // '1' insert all
+                                          // '2' insert new and update existing
+                    'deactivate_products' => true // option only for products
+                ),
+                'required_fields' => array(
+                    // Rows without a required fields are ignored.
+                    'custom_product_ref', 'name', 'unit_price'
+                ),                    
+                'match_columns' => array(
+                // db_field_name => col_name or regex to match col_name.
+                    'custom_product_ref' => '/.*_product_ref/',
+                    'name' => '/.*name/',
+                    'unit_price' => '/.*unit_price/',
+                    'unit_measure_order_id' => '/.*unit_measure_order_id/',
+                    'unit_measure_shop_id' => '/.*unit_measure_order_id/'
+                ),
+                'forced_values' => array(
+                    'active' => '1',
+                    'category_id' => '1000'
+                )
+            )
+        )
+    );
  
              
 

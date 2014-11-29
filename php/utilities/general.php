@@ -414,7 +414,39 @@ function get_import_rights($db_table_name)
 	return $xml . "</rows>";
 }
 
+/**
+ * Returns a XML body with a list of template names defined in 'config.php'
+ * for a database table name.
+ * @param string $db_table_name The database table name.
+ * @return string The XML list of teplate names.
+ */
+function get_import_templates_list($db_table_name) {
+    $templates = get_import_templates($db_table_name);
+    $xml = '<rows>';
+    foreach ($templates as $field => $value) {
+        $xml .= '<row><db_field>'.$field.'</db_field></row>';
+    }
+    return $xml.'</rows>';
+}
 
+/**
+ * Returns a array of templates defined in 'config.php' for a database
+ * table name.
+ * @param string $db_table_name The database table name.
+ * @return array The array of teplates, returns an empty array if no defined
+ *      templates for this table.
+ */
+function get_import_templates($db_table_name) {
+    $cfg = configuration_vars::get_instance();
+    if (isset($cfg->import_templates)) {
+        $import_templates = $cfg->import_templates;
+        if (isset($import_templates[$db_table_name])) {
+            return $import_templates[$db_table_name];
+        }
+    }
+    // If not exists any template for this table returns a empty array.
+    return array();
+}
 
 function get_field_options_live($table, $field1, $field2, $field3='')
 {
