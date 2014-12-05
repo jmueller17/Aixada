@@ -8,6 +8,8 @@
 h1 span.change-sec {font-size:0.8em;} /* back/fwd arrow in page headings */
 h1 span.sp-sm {font-size:0.6em;}
 
+
+
 input.max-width {max-width:70px;}
 
 .ax-txt-strong	{font-weight: bold;}
@@ -16,6 +18,7 @@ input.max-width {max-width:70px;}
 .ax-navbar-top {padding:5px;}
 .ax-navbar-top a {color:white; font-weight: bold;}
 .ax-navbar-top select {color:black;}
+.ax-reduce-margin {margin-left:-10px; margin-right:-5px;}
 
 .level-1-indent {text-indent:1em;}
 .level-2-indent {text-indent:1em;}
@@ -40,3 +43,12 @@ input.max-width {max-width:70px;}
 }
 
 .ax-has-error {background-color:#F2DEDE;}
+
+.navbar {
+	margin-bottom:0px;
+}
+
+#ax-submenu {
+    background-color: #fff;
+    border-width: 1;
+}

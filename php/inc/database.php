@@ -110,12 +110,12 @@ class DBWrap {
           */
           $msg_array = explode('`', $error);
           $bad_field = $msg_array[7]; // responsible_uf_id in the example
-          global $Text;
-          if (isset($Text[$bad_field]))
-              $bad_field = $Text[$bad_field];
-          $tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
-          if (isset($Text[$tmp]))
-              $bad_field = $Text[$tmp];
+          //global $Text;
+          //if (isset($Text[$bad_field]))
+              //$bad_field = $Text[$bad_field];
+          //$tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
+          //if (isset($Text[$tmp]))
+              //$bad_field = $Text[$tmp];
           throw new ForeignKeyException('ERROR 20: Foreign Key exception. Please check the field "' . 
                                         $bad_field . 
                                         '". It either does not exist in the db or does not fullfil a foreign key constraint?');
@@ -159,6 +159,44 @@ class DBWrap {
   {
     return $this->do_Execute($strSQL);
   } 
+
+
+  /**
+   * Build the sql string and execute a stored query 
+   * @param array $args the arguments to be passed to the stored query; possibly empty
+   * @return the result set
+   */
+  public function squery()
+  {
+    $args = func_get_args();
+    if (is_array($args[0])) {
+      $args = $args[0];
+    }
+    for ($i=1; $i<count($args); ++$i) {
+      if (is_array($args[$i])) {
+        $args[$i] = $args[$i][0];
+      }
+    }
+
+    $sql_func = array_shift($args);
+
+    $strSQL = 'CALL ' . $sql_func . '(';
+    foreach ($args as $arg) {
+        if (strpos($arg, "'") !== false) {
+            if (strpos($arg, '"') !== false)
+                throw new DataException('Cannot use both symbols \' and " in text');
+            $strSQL .= '"' . $arg . '",';
+        } else 
+            $strSQL .= "'" . $arg . "',";
+    }
+    if (count($args))
+      $strSQL = rtrim($strSQL, ',');
+    $strSQL .= ')';
+
+    return $this->do_Execute($strSQL);
+  }
+
+
   
   /**
    * If the last sql command executed was an insert, returns

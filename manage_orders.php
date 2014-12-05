@@ -992,9 +992,6 @@
 								},
 								type: 'warning'});
 	        			} else {
-
-
-		        		
 		        			var orderRow = ''; 								
 							$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
 								orderRow += '<input type="hidden" name="order_id[]" value="'+$(this).parents('tr').attr('orderId')+'"/>';

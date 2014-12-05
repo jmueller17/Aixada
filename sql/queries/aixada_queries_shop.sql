@@ -266,7 +266,7 @@ create function get_purchase_total(the_cart_id int)
 returns float(10,2)
 reads sql data
 begin
-  declare total_price decimal(10,2);
+  declare total_price float(10,2);
   
   select 
 	sum(si.quantity * si.unit_price_stamp) into total_price
