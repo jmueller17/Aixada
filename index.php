@@ -511,10 +511,12 @@
 	
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">
+                <?php if ($cfg_use_shop) {  // USE SHOP: start  ?>
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
 					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
 				</div>
+                <?php } // - - - - - - - - - - USE SHOP: end ?>
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
 					<p><a href="shop_and_order.php?what=Order"><?php echo $Text['icon_order'];?></a></p>
@@ -528,7 +530,9 @@
 
 				<ul>
 					<li><a href="#tabs-1"><h2><?=$Text['my_orders'];?></h2></a></li>
+                    <?php if ($cfg_use_shop) {  // USE SHOP: start ?>
 					<li><a href="#tabs-2"><h2><?=$Text['my_purchases'];?></h2></a></li>	
+                    <?php } // - - - - - - - - - - USE SHOP: end ?>
 					<li><a href="#tabs-3"><h2><?=$Text['upcoming_orders'];?></h2></a></li>	
 					
 				</ul>
@@ -563,6 +567,7 @@
 					</table>
 				</div>
 				
+				<?php if ($cfg_use_shop) {  // USE SHOP: start ?>
 				<div id="tabs-2">
 					<table id="tbl_Shop" class="table_overviewShop">
 						<thead>
@@ -597,6 +602,7 @@
 						</tfoot>
 					</table>
 				</div>
+				<?php } // - - - - - - - - - - USE SHOP: end ?>
 				
 				<div id="tabs-3">
 					<table id="tbl_UpcomingOrders" class="tblListingDefault">

@@ -44,6 +44,13 @@ class configuration_vars {
      You should not need to change anything past this point when installing.
   ****************************************************************************/
 
+  /**
+   *
+   * Indicates whether the store is used. If true (or missing), direct purchase
+   * options are shown, otherwise can only make orders.
+   * @var boolean
+   */  
+  public $use_shop = true;
  
   /**
    * 
