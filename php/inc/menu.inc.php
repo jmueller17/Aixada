@@ -22,7 +22,8 @@
      } 
      echo '</select> ';
      
-     if (configuration_vars::get_instance()->show_menu_language_select){
+     $cfg_use_shop = get_config('use_shop', true);
+     if (get_config('show_menu_language_select', false)) {
 	     echo '<select size="0" name="lang_select" id="lang_select">';
 	       $keys = $_SESSION['userdata']['language_keys'];
 	       $names = $_SESSION['userdata']['language_names'];
@@ -53,7 +54,9 @@
 <div  id="topMenu">
 <a tabindex="0" href="index.php" 	id="navHome" class="menuTop"><?php echo $Text['nav_home'];?></a>
 <a tabindex="1" href="torn.php" 	id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
+<?php if ($cfg_use_shop) {  // USE SHOP: start ?>
 <a tabindex="2" href="shop_and_order.php?what=Shop" 	id="navShop" class="menuTop"><?php echo $Text['nav_shop'];?></a>
+<?php } // - - - - - - - - - - USE SHOP: end ?>
 <a tabindex="3" href="shop_and_order.php?what=Order" 		id="navOrder" class="menuTop"><?php echo $Text['nav_order'];?></a>
 <a tabindex="4" href="#" 			id="navManage" class="menuTop"><?php echo $Text['nav_mng'];?></a>
 <a tabindex="5" href="#" id="navReport" class="menuTop"><?php echo $Text['nav_report'];?></a>
