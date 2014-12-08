@@ -4458,7 +4458,7 @@ delimiter |
  * The validated parameter specifies if we are interested in validated carts or only those
  * that have not a ts_validated timestamp.
  */
-drop procedure if exists get_shop_cart| 
+drop procedure if exists get_shop_cart|
 create procedure get_shop_cart(in the_date_for_shop date, in the_uf_id int, in the_cart_id int, in validated boolean)
 begin
 
@@ -4522,7 +4522,7 @@ end|
  * a specific date and an uf
  * 
  */
-drop procedure if exists get_order_cart| 
+drop procedure if exists get_order_cart|
 create procedure get_order_cart(in the_date date, in the_uf_id int)
 begin
   declare today date default date(sysdate());	
