@@ -6,23 +6,26 @@
 
 
 	insert into 
-		aixada_member (id, name, uf_id) 
+		aixada_member (id, name, uf_id, address, city) 
 	values (
      	1, 
      	'admin', 
-     	1);
+     	1,
+     	'', '');
 		
 
 	-- insert admin user manuall --
 	insert into 
-		aixada_user (id, login, password, uf_id, member_id, language, created_on) 
+		aixada_user (id, login, password, uf_id, member_id, language, created_on,
+				email) 
 	values (1, 
       'admin', 
       'axgSb.Vaqch9E', 
       1,
       1,
       'es', 
-      sysdate());
+      sysdate(),
+      '');
       
      /*on duplicate key update login='admin', password='axgSb.Vaqch9E', language='en', created_on=sysdate();*/
 
