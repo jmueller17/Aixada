@@ -56,14 +56,26 @@ end|
 
 
 /**
- *	retrieves bills either by ID, by uf_id and/or combination with date
+ *	retrieves bills in given date range and/or with uf by uf_id
  */
 drop procedure if exists get_bills| 
-create procedure get_bills(in the_uf_id int, in the_bill_id int, in from_date date, to_date date)
+create procedure get_bills(in the_uf_id int, in from_date date, to_date date, in the_limit varchar(255))
 begin
 
-
-	select 
+	declare wherec varchar(255) default "";
+	declare set_limit varchar(255) default ""; 
+	
+	-- filter by uf_id --
+	if (the_uf_id > 0) then
+		set wherec = concat(" and b.uf_id = ",the_uf_id);
+	end if; 
+	
+	-- set a limit?
+    if (the_limit <> "") then
+    	set set_limit = concat("limit ", the_limit);
+    end if;
+	
+	set @q =  concat("select 
 		b.*,
 		ifnull(mem.name, 'default') as operator,
 		uf.name as uf_name,
@@ -83,10 +95,18 @@ begin
 		aixada_user u,
 		aixada_uf uf 
 	where
-		b.uf_id = the_uf_id
+		b.date_for_bill  between '",from_date,"' and '",to_date,"'
 		and b.uf_id = uf.id
 		and b.operator_id = u.id
- 		and u.member_id = mem.id; 
+ 		and u.member_id = mem.id
+ 		",wherec,"
+ 	order by 
+		b.id desc
+		",set_limit,";"); 
+			
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
 end|
 
 

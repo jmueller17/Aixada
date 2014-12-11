@@ -2,30 +2,31 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
+	<base href="http://localhost/aixada/">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_sales'] ;?></title>
 
-    <link href="../../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../../css/aixcss.css" rel="stylesheet">
-    <link href="../../../js/ladda/ladda-themeless.min.css" rel="stylesheet">
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/aixcss.css" rel="stylesheet">
+    <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
 
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
-	    <script type="text/javascript" src="../../../js/jquery/jquery.js"></script>
-   	    <script type="text/javascript" src="../../../js/bootstrap/js/bootstrap.min.js"></script>
-	   	<script type="text/javascript" src="../../../js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="../../../js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
+	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+   	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
 	   	
-	   	<script type="text/javascript" src="../../../js/bootbox/bootbox.js"></script>
-	   	<script type="text/javascript" src="../../../js/ladda/spin.min.js"></script>
-	   	<script type="text/javascript" src="../../../js/ladda/ladda.min.js"></script>
-	   	<script type="text/javascript" src="../../../js/datepicker/moment-with-langs.min.js"></script>
+	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
+	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>
 	   	
-		<script type="text/javascript" src="../../../js/datepicker/bootstrap-datetimepicker.min.js"></script>
+		<script type="text/javascript" src="js/datepicker/bootstrap-datetimepicker.min.js"></script>
 
-	   	<script type="text/javascript" src="../../../js/aixadautilities/jquery.aixadaUtilities.js"></script>
-	   	<script type="text/javascript" src="../../../js/aixadautilities/jquery.aixadaExport.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 
     <?php }?>
    		
@@ -48,7 +49,11 @@
 		//order overview filter option
 		var gBackTo = (typeof $.getUrlVar('lastPage') == "string")? $.getUrlVar('lastPage'):false;
 		
+		//todays date
+		var gToday = null; 
 
+		//custom date: Today  - 3 month
+		var gPrev3Month = null;
 
 		$('.section').hide();
 
@@ -62,19 +67,33 @@
 			locale:"<?=$language;?>"
 		})
 
-
+		
 
 		$('#datepicker-from').datetimepicker({
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
+				reloadListings();
 			})
 
 		$('#datepicker-to').datetimepicker({
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
+				reloadListings();
 			})
+
+		$.getAixadaDates('getToday', function (date){
+			gToday = date[0];
+			
+	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
+
+			gPrev3Month = moment(gToday, "YYYY-MM-DD").subtract(3, 'months').format('YYYY-MM-DD');
+
+			$('#datepicker-from').data("DateTimePicker").setDate(gPrev3Month);
+
+
+		});
 		
 
 
@@ -83,8 +102,8 @@
 		 *    BILL LISTING
 		 ********************************************************/
 		$('#tbl_bill tbody').xml2html('init',{
-				url : 'billing_ctrl.php',
-				params : 'oper=getBillListing&uf_id=102', 
+				url : 'modules/billing/php/billing_ctrl.php',
+				params : 'oper=getBillListing', 
 				loadOnInit : true, 
 				beforeLoad : function(){
 				},
@@ -98,7 +117,7 @@
 
 
 		$('#tbl_billDetail tbody').xml2html('init',{
-				url : 'billing_ctrl.php',
+				url : 'modules/billing/php/billing_ctrl.php',
 				params : 'oper=getBillDetail', 
 				loadOnInit : false, 
 				beforeLoad : function(){
@@ -141,7 +160,7 @@
 
 		//load purchase listing
 		$('#tbl_Shop tbody').xml2html('init',{
-				url : '../../../php/ctrl/Shop.php',
+				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopListing&filter=prev3Month', 
 				loadOnInit : true, 
 				beforeLoad : function(){
@@ -215,7 +234,7 @@
 
 
 
-		//download selected as zip
+		//create bill
 		$("#btn-create-bill")
     		.click(function(e){
 
@@ -239,10 +258,10 @@
 
 					$.ajax({
 						type: "POST",
-						url: 'billing_ctrl.php?oper=createBill',
+						url: 'modules/billing/php/billing_ctrl.php?oper=createBill',
 						data : $('#flexform').serialize(),
 						success: function(txt){
-							
+							$('.change-sec').switchSection("changeTo",".sec-3");
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
 							bootbox.hideAll();
@@ -260,6 +279,8 @@
     			}
     		});
 
+
+
 		
 		/********************************************************
 		 *    DETAIL PURCHASE VIEW
@@ -267,7 +288,7 @@
 		
 		//load purchase detail (products and quantities)
 			$('#tbl_purchaseDetail tbody').xml2html('init',{
-				url : '../../../php/ctrl/Shop.php',
+				url : 'php/ctrl/Shop.php',
 				params : 'oper=getShopCart', 
 				loadOnInit : false, 
 				beforeLoad : function(){
@@ -345,15 +366,52 @@
 						$('#tbl_Shop tbody').xml2html('reload',{
 							params : 'oper=getShopListing&filter=prev3Month'
 						})
+
+
 					} else {
 					
 						$('#tbl_Shop tbody').xml2html('reload',{
 							params : 'oper=getShopListing&uf_id='+uf_id+'&filter=all'
 						})
+
+						$('#tbl_bill tbody').xml2html('reload',{	
+							params : 'oper=getBillListing&uf_id='+uf_id, 
+						});
+
+
 					}
 
 				})
 
+
+
+
+		$(".sectionSwitchListener")
+			.bind("beforeSectionSwitch", function(e, toSection	){
+				//alert("before " + toSection)
+				reloadListings(toSection)
+
+			})
+			.bind("afterSectionSwitch", function(e, toSection){
+				//alert("after " + toSection)
+				
+			})
+
+		function reloadListings(sec){
+
+			if (sec == ".sec-3") { //reload bill listing
+					var uf_id = $("input-filter-uf").val();
+					var from_date = $('#datepicker-from').data("DateTimePicker").getDate();
+					var to_date = $('#datepicker-to').data("DateTimePicker").getDate();
+					from_date = moment(from_date).format("YYYY-MM-DD");
+					to_date = moment(to_date).format("YYYY-MM-DD");
+					
+					$('#tbl_bill tbody').xml2html('reload',{
+						params : 'oper=getBillListing&uf_id='+uf_id+"&from_date="+from_date+"&to_date="+to_date, 
+					});
+
+			}
+		}
 
 			
 			
@@ -367,7 +425,7 @@
 		<?php include "../../../php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-
+	<div class="sectionSwitchListener"></div>
 	<div class="container sec-1 sec-3">
 		<div class="row">
 			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
@@ -391,8 +449,8 @@
 							View <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#sec-1" class="change-sec">Carts</a></li>
-							<li><a href="#sec-3" class="change-sec">Bills</a></li>
+							<li><a href="javascript:void(null)" target-section="#sec-1" class="change-sec">Carts</a></li>
+							<li><a href="javascript:void(null)" target-section="#sec-3" class="change-sec">Bills</a></li>
 						</ul>
 					</div>
 

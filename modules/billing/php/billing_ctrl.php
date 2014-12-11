@@ -26,7 +26,7 @@ try{
     		exit; 
 
         case 'getBillListing':
-            printXML(stored_query_XML_fields('get_bills', get_param('uf_id',0), get_param('bill_id',0), get_param('from_date',''), get_param('to_date','')));  
+            printXML(stored_query_XML_fields('get_bills', get_param('uf_id',0), get_param('from_date',''), get_param('to_date',''), get_param('limit','') ));  
             exit;
 
 

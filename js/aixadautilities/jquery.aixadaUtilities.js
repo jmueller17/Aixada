@@ -143,9 +143,9 @@ $(function(){
 					}
 				}, 
 				error : function(XMLHttpRequest, textStatus, errorThrown){
-					$.showMsg({
+					/*$.showMsg({
 						msg:XMLHttpRequest.responseText,
-						type: 'error'});
+						type: 'error'});*/
 					
 				}		
 			}); //end ajax retrieve date
