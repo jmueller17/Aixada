@@ -846,11 +846,13 @@ $Text['stock_info'] = "Nota: se pueden consultar todos los cambios de stock (adi
 $Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Informes &gt; Stock.";
 
 
+$Text['msg_success'] = "Fin correcto";
 $Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 
 $Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo "; 
 $Text['msg_import_matchcol'] = "Hay que hacer coincidir las entradas de la base de datos con las filas de la tabla. Debes asignar la columna que corresponde a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "¿Qué otras columnas de la tabla quieres importar además de la columna necesaria?"; 
-$Text['msg_import_success'] = "La importación ha funcionado correctamente. ¿Quieres importar otro archivo?"; 
+$Text['msg_import_done'] = 'Se han importado {$rows} líneas.'; 
+$Text['msg_import_another'] = "¿Quieres importar otro archivo?"; 
 $Text['btn_import_another'] = "Importar otro"; 
 $Text['btn_nothx'] = "No, gracias"; 
 $Text['import_allowed'] = "Formatos compatibles"; //as in allowed file formats

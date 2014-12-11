@@ -206,6 +206,7 @@ class abstract_import_manager {
 	 * 		2: get new rows for insert, 
 	 * 		3: construct rows and execute sql in each case
 	 * @param boolean $append_new control insert behavior of new data rows
+     * @return integer Number of rows imported.
 	 */
     public function import($append_new=false){
     	
@@ -221,6 +222,7 @@ class abstract_import_manager {
     	$firephp->log($update_ids, "update_ids");
     	$firephp->log($insert_rows, "insert_rows");*/
     	
+    	$imported_rows_count = 0;
     	if (count($update_ids) > 0){
 	    	//should be unique values
 			$dup = $this->_check_duplicates($update_ids);
@@ -229,12 +231,13 @@ class abstract_import_manager {
 				exit; 
 			}
 	    		
-    		$this->update_rows($update_ids);
+    		$imported_rows_count += $this->update_rows($update_ids);
     	}
     	
     	if ($append_new && count($insert_rows)){
-    		$this->insert_rows($insert_rows);	
+    		$imported_rows_count += $this->insert_rows($insert_rows);
     	}
+        return $imported_rows_count;
     }
     
    
@@ -243,6 +246,7 @@ class abstract_import_manager {
      * 
      * Constructs update rows for already existing entries in the corresponding database table. 
      * @param array $update_ids of the format array('id'=>'custom ref value',...)
+     * @return integer Number of rows updated.
      */
     protected function update_rows($update_ids){
 
@@ -251,6 +255,7 @@ class abstract_import_manager {
     	global $firephp; 
     	
     	
+    	$imported_rows_count = 0;
     	foreach($update_ids as $id => $match_id){
     		
     		//retrieve row from import data table
@@ -283,7 +288,9 @@ class abstract_import_manager {
 			
 			//do sqlupdate row
 			try {
-				$db->Update($db_update_row);
+                if ($db->Update($db_update_row)) {
+                    $imported_rows_count++;
+                }
 			}  catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());
     			die ($e->getMessage());
@@ -291,6 +298,7 @@ class abstract_import_manager {
     		
     		
     	} 
+        return $imported_rows_count;
     }
     
     
@@ -299,12 +307,14 @@ class abstract_import_manager {
      * 
      * Constructs array of db field => value pairs that can is passed to the dbWrapper-Insert function
      * @param array $insert_ids array of custom ref values that identify the rows to be inserted in the data table
+     * @return integer Number of rows inserted.
      */
 	protected function insert_rows($insert_ids){
     	$db = DBWrap::get_instance();
     	global $firephp; 
     	
     	
+    	$imported_rows_count = 0;
     	foreach($insert_ids as $id => $index){	
     		//retrieve row from import data table could have an external id or not!!
     		$row = $this->_import_data_table->get_row($index);
@@ -343,7 +353,9 @@ class abstract_import_manager {
 			
 			//do sql
 			try {
-				$db->Insert($db_insert_row);
+				if ($db->Insert($db_insert_row)) {
+                    $imported_rows_count++;
+                }
 			}  catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());
     			die ($e->getMessage());
@@ -351,6 +363,7 @@ class abstract_import_manager {
     		
     		
     	}  
+  		return $imported_rows_count;
     }
     
     

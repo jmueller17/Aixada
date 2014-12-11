@@ -857,11 +857,13 @@ $Text['stock_info'] = "Note: you can consult all previous stock movements (adds,
 $Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Report &gt; Stock page.";
 
 
+$Text['msg_success'] = "Completed successfully";
 $Text['msg_confirm_prov'] = "Are you sure you want to export all providers?"; 
 $Text['msg_err_upload'] = "An error occured during uploading the file "; 
 $Text['msg_import_matchcol'] = "Need to match up database entries with table rows! Please assign the required matching column "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "Apart from the required column which table columns do you want to import?"; 
-$Text['msg_import_success'] = "Import has been successful. Do you want to import another file?"; 
+$Text['msg_import_done'] = '{$rows} rows have been imported.'; 
+$Text['msg_import_another'] = "Do you want to import another file?"; 
 $Text['btn_import_another'] = "Import another"; 
 $Text['btn_nothx'] = "No, thanks!"; 
 $Text['import_allowed'] = "Allowed formats"; //as in allowed file formats

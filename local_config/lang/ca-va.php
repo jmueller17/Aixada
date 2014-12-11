@@ -856,11 +856,13 @@ $Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicio
 $Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Informes &gt; Estoc.";
 
 
+$Text['msg_success'] = "Fi correcte.";
 $Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
 $Text['msg_err_upload'] = "S'ha produït un error en la càrrega de l'arxiu "; 
 $Text['msg_import_matchcol'] = "Cal fer coincidir les entrades de la base de dades amb les files de la taula. Has d'assignar la columna que correspon a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "Quines altres columnes de la taula vols importar a més de la columna necessària?"; 
-$Text['msg_import_success'] = "L'importació ha funcionat correctament. Vols importar un altre arxiu?"; 
+$Text['msg_import_done'] = 'S\'han importat {$rows} línies.'; 
+$Text['msg_import_another'] = "Vols importar un altre arxiu?"; 
 $Text['btn_import_another'] = "Importar un altre"; 
 $Text['btn_nothx'] = "No, gràcies"; 
 $Text['import_allowed'] = "Formats compatibles"; //as in allowed file formats
