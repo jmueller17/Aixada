@@ -1,4 +1,4 @@
-<?php include "../../../php/inc/header.inc.php" ?>
+<?php include "../../php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -422,10 +422,10 @@
 <body>
 
 	<div id="headwrap">
-		<?php include "../../../php/inc/menu.inc.php" ?>
+		<?php include "../../php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	<div class="sectionSwitchListener"></div>
+
 	<div class="container sec-1 sec-3">
 		<div class="row">
 			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
@@ -440,68 +440,75 @@
 
 	    		<div class="navbar-collapse collapse" id="sub-navbar-collapse">
 		    	
-					<button type="button" class="btn btn-success btn-sm navbar-btn section sec-1" id="btn-create-bill">
-	    				<span class="glyphicon glyphicon glyphicon-ok-sign"></span> Create bill
-	  				</button>
+					<div class="col-md-1">
+						<button type="button" class="change-sec btn btn-default btn-sm navbar-btn section sec-3" target-section="#sec-1">
+		    				<span class="glyphicon glyphicon glyphicon-shopping-cart"></span> View carts
+		  				</button>
+		  				<button type="button" class="change-sec btn btn-default btn-sm navbar-btn section sec-1" target-section="#sec-3">
+		    				<span class="glyphicon glyphicon glyphicon-list"></span> View bills
+		  				</button>
+					</div>
 
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-							View <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="javascript:void(null)" target-section="#sec-1" class="change-sec">Carts</a></li>
-							<li><a href="javascript:void(null)" target-section="#sec-3" class="change-sec">Bills</a></li>
-						</ul>
+					<div class="col-md-2">
+						<button type="button" class="btn btn-success btn-sm navbar-btn section sec-1" id="btn-create-bill">
+		    				<span class="glyphicon glyphicon glyphicon-ok-sign"></span> Create bill
+		  				</button>
+	  				</div>
+
+
+					<div class="col-md-2">
+						<form class="navbar-form" role="search">
+				      		<div class="input-group input-group-sm">
+						    	<input type="text" class="form-control" id="input-filter-uf" placeholder="Filter UF">
+						      	<span class="input-group-btn">
+						        	<button class="btn btn-default btn-sm" id="btn-filter-uf"><span class="glyphicon glyphicon-search"></span></button>
+						      	</span>
+							</div>
+						</form>
 					</div>
 
 
+					
+					<div class="col-md-3">
+						<form class="navbar-form" role="date">
+							<div class="form-group navbar-right">
+		                        <div class='input-group date input-group-sm' id='datepicker-to' >
+		                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" placeholder="To" />
+		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </form>
+	            	</div>
+					
+					<div class="col-md-3">
+						<form class="navbar-form" role="date">
+							<div class="form-group pull-left">
+		                        <div class='input-group date input-group-sm' id='datepicker-from' >
+		                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" placeholder="From" />
+		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
 
-	  				<div class="btn-group pull-right">
+	  				<div class="btn-group col-md-1 pull-right">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-							<span class="glyphicon glyphicon-filter"></span> <span class="caret"></span>
+							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#"><?=$Text['filter_incidents'];?></a></li>
-						    <li class="level-1-indent"><a href="#today" class="ctx-nav-filter"><?=$Text['filter_todays'];?></a></li>
+							<li><a href="#">Filter listing</a></li>
+						    <li class="level-1-indent"><a href="#today" class="ctx-nav-filter">Today</a></li>
 							<li class="level-1-indent"><a href="#week" class="ctx-nav-filter">Last week</a></li>
 							<li class="level-1-indent"><a href="#month" class="ctx-nav-filter">Last month</a></li>
-							<li class="level-1-indent"><a href="#range" class="ctx-nav-filter">Date range</a></li>
 						</ul>
 					</div>
 
-					<p class="navbar-text navbar-right">&nbsp;</p>
-
-					<form class="navbar-form navbar-right" role="date">
-						<div class="form-group">
-	                        <div class='input-group date input-group-sm' id='datepicker-to' >
-	                            <input type='text' class="form-control max-width" id="inputField" data-format="dddd, ll" placeholder="To" />
-	                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-	                            </span>
-	                        </div>
-	                    </div>
-	                </form>
-					<p class="navbar-text navbar-right ax-reduce-margin">-</p>
-					<form class="navbar-form navbar-right" role="date">
-						<div class="form-group">
-	                        <div class='input-group date input-group-sm' id='datepicker-from' >
-	                            <input type='text' class="form-control max-width" id="inputField" data-format="dddd, ll" placeholder="From" />
-	                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-	                            </span>
-	                        </div>
-	                    </div>
-	                </form>
 					
-	                
+					
 
-		    		<form class="navbar-form navbar-right" role="search">
-			      		<div class="input-group input-group-sm">
-					    	<input type="text" class="form-control max-width" id="input-filter-uf" placeholder="Filter UF">
-					      	<span class="input-group-btn">
-					        	<button class="btn btn-default" id="btn-filter-uf" type="button"><span class="glyphicon glyphicon-search"></span>&nbsp;</button>
-					      	</span>
-						</div>
-					</form>
-
+		    		
 		  			
 					
 					
@@ -514,8 +521,8 @@
 	<div class="container" id="ax-title">
 		<div class="row">
  			<div class="col-md-10 section sec-1 sec-2 sec-3 sec-4">
-		    	<h1 class="section sec-1">Billing - Overview carts </h1>
-		    	<h1 class="section sec-3">Billing - Overview</h1>
+		    	<h1 class="section sec-1">Overview carts </h1>
+		    	<h1 class="section sec-3">Overview bills</h1>
 		    	<h1 class="section sec-4"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-3"></span> Bill - #<span class="setBillID"></span> <span class="setUFID"></span> </h1>
 		    </div>
 		</div>
@@ -704,6 +711,7 @@
 
 </div>
 
+<div class="sectionSwitchListener"></div>
 
 </body>
 </html>
