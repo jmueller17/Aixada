@@ -38,11 +38,11 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 			break;
 			
 		case 'prevMonth':
-			printXML(stored_query_XML_fields('get_cart_listing', $prevMonth, $today, $uf_id, $limit));
+			printXML(stored_query_XML_fields('get_purchase_listing', $prevMonth, $today, $uf_id, $limit));
 			break;
 			
 		case 'prev3Month':
-			printXML(stored_query_XML_fields('get_cart_listing', $prev3Month, $today, $uf_id, $limit));
+			printXML(stored_query_XML_fields('get_purchase_listing', $prev3Month, $today, $uf_id, $limit));
 			break;
 			
 			
@@ -51,7 +51,7 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 			break;
 			
 		case 'all':
-			printXML(stored_query_XML_fields('get_cart_listing', $very_distant_past, $very_distant_future, $uf_id, $limit));
+			printXML(stored_query_XML_fields('get_purchase_listing', $very_distant_past, $very_distant_future, $uf_id, $limit));
 			break;
 			
 		case 'exact':

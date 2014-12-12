@@ -41,6 +41,9 @@
 		//saves the selected purchase row
 		var gSelShopRow = null; 
 
+		//saves the selected bill row
+		var gBillRow = null
+
 
 		//coming from other page
 		var gDetail = (typeof $.getUrlVar('detailForCart') == "string")? $.getUrlVar('detailForCart'):false;
@@ -67,32 +70,35 @@
 			locale:"<?=$language;?>"
 		})
 
+		//navbar search form. prevents submitting / reload of page
+		$('form')
+			.submit(function() {
+				return false;
+			});
 		
 
 		$('#datepicker-from').datetimepicker({
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
-				reloadListings();
+				reloadListings("all");
 			})
 
 		$('#datepicker-to').datetimepicker({
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
-				reloadListings();
+				reloadListings("all");
 			})
 
 		$.getAixadaDates('getToday', function (date){
 			gToday = date[0];
+			gPrev3Month = moment(gToday, "YYYY-MM-DD").subtract(3, 'months').format('YYYY-MM-DD');
 			
 	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
-
-			gPrev3Month = moment(gToday, "YYYY-MM-DD").subtract(3, 'months').format('YYYY-MM-DD');
-
 			$('#datepicker-from').data("DateTimePicker").setDate(gPrev3Month);
 
-
+			reloadListings(".sec-3");
 		});
 		
 
@@ -120,22 +126,33 @@
 				url : 'modules/billing/php/billing_ctrl.php',
 				params : 'oper=getBillDetail', 
 				loadOnInit : false, 
-				beforeLoad : function(){
-				},
+				complete : function(){
+					$('#tbl_billDetail tfoot').xml2html('reload',{
+						params: 'oper=getBillTaxGroups&bill_id='+gBillRow.attr("billId")
+					}); 
+				}
+		});
+
+		$('#tbl_billDetail tfoot').xml2html('init',{
+				url : 'modules/billing/php/billing_ctrl.php',
+				params : 'oper=getBillTaxGroups', 
+				loadOnInit : false, 
 				rowComplete : function(rowIndex, row){
 					
-				},
-				complete : function(){
-
 				}
 		});
 
 
 
+
+
+
+		//switch to bill detail
 		$('#tbl_bill tbody')
 			.on('click', 'tr', function(e){
-	
-					
+
+				gBillRow = $(this);
+		
 				$('#tbl_billDetail tbody').xml2html('reload',{
 					params : 'oper=getBillDetail&bill_id='+$(this).attr('billId')
 				});
@@ -150,88 +167,74 @@
 
 
 		/********************************************************
-		 *    PURCHASE LISTING
+		 *    PURCHASE (CART) LISTING
 		 ********************************************************/
-		var shopDateSteps = 1;
-		var srange = 'year';
 
-		
-
-
-		//load purchase listing
+		//load cart listing
 		$('#tbl_Shop tbody').xml2html('init',{
-				url : 'php/ctrl/Shop.php',
-				params : 'oper=getShopListing&filter=prev3Month', 
-				loadOnInit : true, 
+				url : 'modules/billing/php/billing_ctrl.php',
+				params : 'oper=getCartListing', 
+				loadOnInit : false, 
 				beforeLoad : function(){
 				},
 				rowComplete : function(rowIndex, row){
-					var validated = $(row).children().eq(4).text();
+					var validated = $(row).children().eq(5).text();
+					var billId = $(row).children().eq(1).text();
+					
+					if (billId >0 ){
+						$(row).children().eq(0).children(":first-child").prop("disabled", true)
+					}
 
+					
 					if (validated == '0000-00-00 00:00:00'){
-						$(row).children().eq(4).html("<p class='text-center'>-</p>");	
+						$(row).children().eq(5).html("<p class='text-center'>-</p>");	
 					} else {
-						$(row).children().eq(4).html('<span class="ui-icon ui-icon-check tdIconCenter" title="<?php echo $Text['validated_at'];?>: '+validated+'"></span>');
+						$(row).children().eq(5).html('<span class="glyphicon glyphicon-ok-sign" title="<?php echo $Text['validated_at'];?>: '+validated+'"></span>');
 					}	
 
 					if (gDetail > 0 && $(row).attr('shopId') == gDetail){
 						gSelShopRow = $(row); 
-					}	
+					}
 				},
 				complete : function(){
-
-					if (gSelShopRow != null) {
-						//gSelShopRow.trigger('click');
-					}
 
 				}
 		});
 
 		
 
-
+		//switch to cart detail 
 		$('#tbl_Shop tbody')
 			.on('click', 'tr', function(e){
-	
-				//if (gSelShopRow != null) gSelShopRow.removeClass('ui-state-highlight');
 			
-				//$(this).addClass('ui-state-highlight');
-		
 				gSelShopRow = $(this); 
 					
 				$('#tbl_purchaseDetail tbody').xml2html('reload',{
 					params : 'oper=getShopCart&shop_id='+$(this).attr('shopId')
 				});
 
-				//$('.setUfId').text($(this).attr('ufId'));
-				//$('.setCartId').text($(this).attr('shopId'));
-				//var cd = $.getCustomDate($(this).attr('dateForShop'));
-				//$('.setShopDate').text(cd);
-				/*
-				var dateValidated = $(this).attr('validated');
-				$('.setValidateStatus').removeClass('noRed okGreen');
-
-				if (dateValidated == "0000-00-00 00:00:00"){
-					$('.setValidateStatus').addClass('noRed').text('<?php echo $Text['not_yet_val']; ?>');
-				} else {
-					var opUf = $(this).attr('operatorUf'); 
-					var opName = $(this).attr('operatorName'); 
-					var dv = $.getCustomDate(dateValidated.substring(0,10),'DD M m, yy');
-					$('.setValidateStatus')
-						.addClass('okGreen')
-						.html('<span title="<?php echo $Text['val_by'];?> '+opUf+' '+opName+'">'+dv+'</span>');
-				}*/
+				$('.setUfId').text($(this).attr('ufId'));
+				$('.setCartId').text($(this).attr('shopId'));
+				var cd = $(this).attr('dateForShop');
+				$('.setShopDate').text(cd);
 	
 				$('.change-sec').switchSection("changeTo",".sec-2");
 		});
 		
 
-		//prevent page change when checkbox provider
+		//cart checkboxes. 
 		$('#tbl_Shop tbody')
 			.on('click','td:first-child, input',  function(e){
+
+				//activate or deactivate create bill button only if carts are selected
+				if ( $('input[name="bulk_cart"]:checked').length  == 0 ){
+					$("#btn-create-bill").prop('disabled', true);
+				} else {
+					$("#btn-create-bill").prop('disabled', false);
+				}
+				
 				e.stopPropagation();
 			})
-
 
 
 		//create bill
@@ -246,15 +249,11 @@
 					return false;
     			} else {
 
-
-        		
         			var billRow = ''; 								
 					$('input[name="bulk_cart"]:checked').each(function(){
 						billRow += '<input type="hidden" name="cart_ids[]" value="'+$(this).parents('tr').attr('shopId')+'"/>';
 					});
 					$('#flexform').empty().append(billRow);
-
-
 
 					$.ajax({
 						type: "POST",
@@ -273,11 +272,10 @@
 							
 						}
 					});
-				
-
-					
     			}
     		});
+
+
 
 
 
@@ -287,105 +285,68 @@
 		 ********************************************************/	
 		
 		//load purchase detail (products and quantities)
-			$('#tbl_purchaseDetail tbody').xml2html('init',{
-				url : 'php/ctrl/Shop.php',
-				params : 'oper=getShopCart', 
-				loadOnInit : false, 
-				beforeLoad : function(){
-					
-				},
-				rowComplete : function (rowIndex, row){
-					var price = new Number($('.up',row).text());
-					$('.up',row).text(price.toFixed(2));
-					var qu = new Number($('.qu',row).text());
-					var totalPrice = price * qu;
-					totalPrice = totalPrice.toFixed(2);
-					$('.itemPrice',row).text(totalPrice);
-					
-				},
-				complete : function(rowCount){
+		$('#tbl_purchaseDetail tbody').xml2html('init',{
+			url : 'php/ctrl/Shop.php',
+			params : 'oper=getShopCart', 
+			loadOnInit : false, 
+			beforeLoad : function(){
+				
+			},
+			rowComplete : function (rowIndex, row){
+				var price = new Number($('.up',row).text());
+				$('.up',row).text(price.toFixed(2));
+				var qu = new Number($('.qu',row).text());
+				var totalPrice = price * qu;
+				totalPrice = totalPrice.toFixed(2);
+				$('.itemPrice',row).text(totalPrice);
+				
+			},
+			complete : function(rowCount){
 
-					var totals = $.sumItems('.itemPrice');
+				var totals = $.sumItems('.itemPrice');
 
-					$('#total').text(totals['total']);
-					$('#total_iva').text(totals['totalIva']);
-					$('#total_revTax').text(totals['totalRevTax']);
-					
-					
-				}
-			});
+				$('#total').text(totals['total']);
+				$('#total_iva').text(totals['totalIva']);
+				$('#total_revTax').text(totals['totalRevTax']);
+				
+				
+			}
+		});
 
 
-
-			//print incidents accoring to current incidents template in new window or download as pdf
-			/*$("#btn_print")
-			.button({
-				icons: {
-					primary: "ui-icon-print",
-		        	secondary: "ui-icon-triangle-1-s"
-				}
-		    })
-		    .menu({
-				content: $('#printOptionsItems').html(),	
-				showSpeed: 50, 
-				width:180,
-				flyOut: true, 
-				itemSelected: function(item){	
-					
-					var link = $(item).attr('id');
-
-					var shopId = gSelShopRow.attr('shopId');
-    				var date = gSelShopRow.attr('dateForShop');
-    				var op_name = gSelShopRow.attr('operatorName');
-    				var op_uf = gSelShopRow.attr('operatorUf');
-    			
-    				
-					
-					switch (link){
-						case "printWindow": 
-							printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
-			    			
-							printWin.focus();
-							printWin.print();
-							break;
-		
-						case "printPDF": 
-							window.frames['dataFrame'].window.location = 'tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf+'&asPDF=1&outputFormat=D' 
-							break;
-					}
-									
-				}//end item selected 
-			});//end print menu
-	    	*/
-		
 			
-			$('#btn-filter-uf')
-				.click(function(){
-					var uf_id = $("#input-filter-uf").val();
-					if (isNaN(uf_id) || uf_id < 1){
-						$('#tbl_Shop tbody').xml2html('reload',{
-							params : 'oper=getShopListing&filter=prev3Month'
-						})
+		$('#btn-filter-uf')
+			.click(function(){
+				reloadListings("all");
+			})
+
+		$("#input-filter-uf")
+			.keyup(function(e){
+			if(e.keyCode == 13){ //hit enter
+    			reloadListings("all");
+			}
+		}); 
+
+		//shortcuts for filtering date range. 
+		$(".ctx-nav-filter")
+			.click(function(){
+				var range = $(this).attr("data")
+				range = range.split(",");
+
+				fromDate = moment(gToday, "YYYY-MM-DD").subtract(parseInt(range[1]), range[0]).format('YYYY-MM-DD');
+		 		
+		 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
+				$('#datepicker-from').data("DateTimePicker").setDate(fromDate);
+
+				reloadListings("all");
+
+			})
 
 
-					} else {
-					
-						$('#tbl_Shop tbody').xml2html('reload',{
-							params : 'oper=getShopListing&uf_id='+uf_id+'&filter=all'
-						})
 
-						$('#tbl_bill tbody').xml2html('reload',{	
-							params : 'oper=getBillListing&uf_id='+uf_id, 
-						});
-
-
-					}
-
-				})
-
-
-
-
+		/** 
+		 *  switching sections can trigger reloading of listings. 
+		 */
 		$(".sectionSwitchListener")
 			.bind("beforeSectionSwitch", function(e, toSection	){
 				//alert("before " + toSection)
@@ -397,19 +358,28 @@
 				
 			})
 
+
+		/**
+		 *	reloads cart and bill listings
+		 */
 		function reloadListings(sec){
 
-			if (sec == ".sec-3") { //reload bill listing
-					var uf_id = $("input-filter-uf").val();
-					var from_date = $('#datepicker-from').data("DateTimePicker").getDate();
-					var to_date = $('#datepicker-to').data("DateTimePicker").getDate();
-					from_date = moment(from_date).format("YYYY-MM-DD");
-					to_date = moment(to_date).format("YYYY-MM-DD");
-					
+			var uf_id = $("#input-filter-uf").val();
+			var from_date = $('#datepicker-from').data("DateTimePicker").getDate();
+			var to_date = $('#datepicker-to').data("DateTimePicker").getDate();
+			from_date = moment(from_date).format("YYYY-MM-DD");
+			to_date = moment(to_date).format("YYYY-MM-DD");
+
+			if (sec == ".sec-3" || sec == "all") { //reload bill listing
 					$('#tbl_bill tbody').xml2html('reload',{
 						params : 'oper=getBillListing&uf_id='+uf_id+"&from_date="+from_date+"&to_date="+to_date, 
 					});
+			}
 
+			if (sec == ".sec-1" || sec=="all" ){ //reload cart listing
+				$('#tbl_Shop tbody').xml2html('reload',{
+					params : "oper=getCartListing&uf_id="+uf_id+"&from_date="+from_date+"&to_date="+to_date, 
+				});
 			}
 		}
 
@@ -450,7 +420,7 @@
 					</div>
 
 					<div class="col-md-2">
-						<button type="button" class="btn btn-success btn-sm navbar-btn section sec-1" id="btn-create-bill">
+						<button type="button" class="btn btn-success btn-sm navbar-btn section sec-1" disabled="disabled" id="btn-create-bill">
 		    				<span class="glyphicon glyphicon glyphicon-ok-sign"></span> Create bill
 		  				</button>
 	  				</div>
@@ -466,26 +436,12 @@
 							</div>
 						</form>
 					</div>
-
-
 					
 					<div class="col-md-3">
-						<form class="navbar-form" role="date">
-							<div class="form-group navbar-right">
-		                        <div class='input-group date input-group-sm' id='datepicker-to' >
-		                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" placeholder="To" />
-		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-		                            </span>
-		                        </div>
-		                    </div>
-		                </form>
-	            	</div>
-					
-					<div class="col-md-3">
-						<form class="navbar-form" role="date">
-							<div class="form-group pull-left">
+						<form class="navbar-form pull-right" role="date">
+							<div class="form-group">
 		                        <div class='input-group date input-group-sm' id='datepicker-from' >
-		                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" placeholder="From" />
+		                            <input type='text' class="form-control" id="date-from" data-format="dddd, ll" placeholder="From" />
 		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
 		                            </span>
 		                        </div>
@@ -493,37 +449,44 @@
 		                </form>
 		            </div>
 
+		            <div class="col-md-3">
+						<form class="navbar-form" role="date">
+							<div class="form-group">
+		                        <div class='input-group date input-group-sm' id='datepicker-to' >
+		                            <input type='text' class="form-control" name="date-to" data-format="dddd, ll" placeholder="To" />
+		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </form>
+	            	</div>
+
 	  				<div class="btn-group col-md-1 pull-right">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
 							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">Filter listing</a></li>
-						    <li class="level-1-indent"><a href="#today" class="ctx-nav-filter">Today</a></li>
-							<li class="level-1-indent"><a href="#week" class="ctx-nav-filter">Last week</a></li>
-							<li class="level-1-indent"><a href="#month" class="ctx-nav-filter">Last month</a></li>
+							<li><a href="javascript:void(null)">Filter date shortcuts</a></li>
+						    <li class="level-1-indent"><a href="javascript:void(null)" data="days,0" class="ctx-nav-filter">Today</a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="weeks,1" class="ctx-nav-filter">Last week</a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="months,1" class="ctx-nav-filter">Last month</a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="months,3" class="ctx-nav-filter">Last 3 month</a></li>
 						</ul>
 					</div>
-
-					
-					
-
-		    		
-		  			
-					
-					
 
 		      	</div>
 			</nav>
 		</div>
 	</div><!-- end sub nav -->
 
+
 	<div class="container" id="ax-title">
 		<div class="row">
- 			<div class="col-md-10 section sec-1 sec-2 sec-3 sec-4">
+ 			<div class="col-md-12 section sec-1 sec-2 sec-3 sec-4">
 		    	<h1 class="section sec-1">Overview carts </h1>
+				<h3 class="section sec-2"><a href="javascript:void(null)" class="change-sec" target-section="#sec-1">Overview carts</a> <span class="glyphicon glyphicon-chevron-left sp-sm" target-section="#sec-1"></span> Purchase for UF<span class="setUfId"></span>, cart #<span class="setCartId"></span> on <span class="setShopDate"></span></h3>
 		    	<h1 class="section sec-3">Overview bills</h1>
-		    	<h1 class="section sec-4"><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-3"></span> Bill - #<span class="setBillID"></span> <span class="setUFID"></span> </h1>
+		    	<h1 class="section sec-4"><a href="javascript:void(null)" class="change-sec" target-section="#sec-3">Overview bills</a> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-3"></span> Bill - #<span class="setBillID"></span> UF<span class="setUFID"></span> </h1>
 		    </div>
 		</div>
 	</div>
@@ -548,13 +511,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="clickable" id="shop_{id}" shopId="{id}" ufId={uf_id} dateForShop="{date_for_shop}" validated="{ts_validated}" operatorName="{operator_name}" operatorUf="{operator_uf}">
+						<tr class="clickable" id="shop_{id}" shopId="{id}" ufId={uf_id} dateForShop="{date_for_shop}" validated="{ts_validated}">
 							<td><input type="checkbox" name="bulk_cart"></td>
 							<td>{bill_id}</td>
 							<td>{id}</td>
 							<td>{uf_id} {uf_name}</td>
-							<td>{date_for_shop}</td>
-							<td>{ts_validated}</td>
+							<td class="text-center">{date_for_shop}</td>
+							<td class="text-center">{ts_validated}</td>
 							<td><p class="text-right">{purchase_total}<?=$Text['currency_sign'];?></p></td>
 						</tr>
 					</tbody>
@@ -565,13 +528,9 @@
 		
 		
 			<div id="shop_detail" class="section sec-2">
-
-				<h3><?php echo $Text['purchase_uf']; ?><span class="setUfId"></span>, <span class="setShopDate"></span></h3>
 				<table id="tbl_purchaseDetail" class="table" currentShopId="" currenShopDate="">
 					<thead>
 						<tr>
-							<th><p>Validated</p></th>
-							<th><p>Cart</p></th>
 							<th><p><?php echo $Text['name_item'];?></p></th>	
 							<th><p><?php echo $Text['provider_name'];?></p></th>					
 							<th><p class="text-right"><?php echo $Text['quantity_short']; ?></p></th>
@@ -584,8 +543,6 @@
 					</thead>
 					<tbody>
 						<tr class="detail_shop_{cart_id}">
-							<td>{ts_validated}</td>
-							<td>{cart_id}</td>
 							<td>{name}</td>
 							<td>{provider_name}</td>
 							<td><p class="text-right qu">{quantity}</p></td>
@@ -599,24 +556,22 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							
-							<td colspan="9" class="boldStuff"><?php echo $Text['total'];?></td>
-							<td id="total" class="boldStuff dblBorderBottom dblBorderTop"></td>
+							<td colspan="6">&nbsp;</td>
+							<td><p class="text-right ax-txt-strong"><?php echo $Text['total'];?></p></td>
+							<td><p id="total" class="text-right ax-txt-strong"></p></td>
 						</tr>
 						
 						<tr>
-							<td colspan="9"><?php echo $Text['incl_iva']; ?></td>
-							<td id="total_iva" class="dblBorderTop"></td>
+							<td colspan="6">&nbsp;</td>
+							<td><p class="text-right"><?php echo $Text['incl_iva']; ?></p></td>
+							<td><p id="total_iva" class="text-right"></p></td>
 						</tr>
 						<tr>
-						
-							<td colspan="9"><?php echo $Text['incl_revtax']; ?></td>
-							<td id="total_revTax"></td>
+							<td colspan="6">&nbsp;</td>
+							<td><p class="text-right"><?php echo $Text['incl_revtax']; ?></p></td>
+							<td><p id="total_revTax" class="text-right"></p></td>
 						</tr>
 
-						<tr>
-							<td colspan="8"><p>&nbsp;</p></td>
-						</tr>
 					</tfoot>
 				</table>
 			</div>	
@@ -659,7 +614,7 @@
 
 
 			<div id="bill_detail" class="section sec-4">		
-				<table id="tbl_billDetail" class="table table-hover">
+				<table id="tbl_billDetail" class="table table-hover table-bordered">
 					<thead>
 						<tr>
 							<th>Cart</th>
@@ -686,6 +641,15 @@
 							<td><p class="text-right">{total}<?=$Text['currency_sign'];?></p></td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="6">&nbsp;</td>
+							<td><p class="text-right">Total of IVA group</p></td>
+							<td><p class="text-right">{iva_percent}%</p></td>
+							<td><p class="text-right">{iva_sale}<?=$Text['currency_sign'];?></p></td>
+						</tr>
+					</tfoot>
+
 				</table>
 			</div>
 		</div>

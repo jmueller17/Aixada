@@ -116,8 +116,8 @@ begin
 
 	select
 		si.iva_percent,
-		sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+si.iva_percent/100) )) as total_sale_netto,
-		sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+si.iva_percent/100) ) * (si.iva_percent/100)) as iva_sale
+		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+si.iva_percent/100) )),2) as total_sale_netto,
+		round(sum(si.quantity * (si.unit_price_stamp / (1+si.rev_tax_percent/100) / (1+si.iva_percent/100) ) * (si.iva_percent/100)),2) as iva_sale
 	from 
 		aixada_cart c, 
 		aixada_shop_item si,
@@ -182,9 +182,11 @@ end|
  * returns listing of aixada_cart's for given uf and date range. 
  * including the name and uf of the validation operator. 
  * if uf_id is not set (0), then returns for all ufs 
+ * This is an almost identical procedure as "get_purchase_listing" in aixada_queries_shop, the difference being
+ * that this delivers also the bill_id if available. 
  */
 drop procedure if exists get_cart_listing|
-create procedure get_cart_listing(in from_date date, in to_date date, in the_uf_id int, in the_limit varchar(255))
+create procedure get_cart_listing(in the_uf_id int, in from_date date, in to_date date, in the_limit varchar(255))
 begin
 	
 	declare wherec varchar(255) default "";
@@ -206,29 +208,22 @@ begin
 	
 	set @q =  concat("select 
 		c.*, 
+		uf.name as uf_name, 
 		(select 
 			bc.bill_id
 		from 
 			aixada_bill_rel_cart bc
 		where
 			bc.cart_id = c.id limit 1) as bill_id,
-		uf.id as uf_id,
-		uf.name as uf_name,
-		m.name as operator_name,
-		m.uf_id as operator_uf,
 		get_purchase_total(c.id) as purchase_total
 	from 
-		aixada_uf uf,
-		aixada_cart c,
-		aixada_user u,
-		aixada_member m
+		aixada_cart c, 
+		aixada_uf uf
 	where
-		c.operator_id = u.id
-		and u.member_id = m.id
-		and c.date_for_shop between '",from_date,"' and '",to_date,"'
+		c.date_for_shop between '",from_date,"' and '",to_date,"'
 		",wherec,"
 	order by 
-		c.date_for_shop desc, uf.id desc
+		c.date_for_shop desc
 		",set_limit,";"); 
 			
 	prepare st from @q;

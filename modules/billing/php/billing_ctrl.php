@@ -34,6 +34,14 @@ try{
             printXML(stored_query_XML_fields('get_bill_detail', get_param('bill_id',0)));
             exit;
 
+        case 'getBillTaxGroups':
+            printXML(stored_query_XML_fields('get_tax_groups', get_param('bill_id',0)));
+            exit; 
+
+        case 'getCartListing':
+            printXML(stored_query_XML_fields('get_cart_listing', get_param('uf_id',0), get_param('from_date', ''), get_param('to_date',''), get_param('limit','')  ));
+            exit; 
+
     		
     default:  
     	 throw new Exception("ctrl billing: oper={$_REQUEST['oper']} not supported");  

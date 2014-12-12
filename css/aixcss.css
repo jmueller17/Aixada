@@ -8,12 +8,12 @@
 h1 span.change-sec {font-size:0.8em;} /* back/fwd arrow in page headings */
 h1 span.sp-sm {font-size:0.6em;}
 
+h3 span.sp-sm {font-size:0.6em;}
 
-
-input.max-width {max-width:70px;}
 
 .ax-txt-strong	{font-weight: bold;}
 .ax-min-width 	{min-width:80px;}
+.ax-dbl-border-top {border-top:1px solid #000;}
 
 .ax-navbar-top {padding:5px;}
 .ax-navbar-top a {color:white; font-weight: bold;}
