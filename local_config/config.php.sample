@@ -504,17 +504,17 @@ class configuration_vars {
         'aixada_product' => array(
             // Template name
             'begues' => array(
-                'options' => array(
-                    'import_mode' => '2', // '0' update only
+                'options' => array( //optional
+                    'import_mode' => '2', // '0' update only (default mode)
                                           // '1' insert all
                                           // '2' insert new and update existing
                     'deactivate_products' => true // option only for products
                 ),
-                'required_fields' => array(
+                'required_fields' => array( //optional
                     // Rows without a required fields are ignored.
                     'custom_product_ref', 'name', 'unit_price'
                 ),                    
-                'match_columns' => array(
+                'match_columns' => array( //Required
                 // db_field_name => col_name or regex to match col_name.
                     'custom_product_ref' => '/.*_product_ref/',
                     'name' => '/.*name/',
@@ -522,9 +522,15 @@ class configuration_vars {
                     'unit_measure_order_id' => '/.*unit_measure_order_id/',
                     'unit_measure_shop_id' => '/.*unit_measure_order_id/'
                 ),
-                'forced_values' => array(
+                'forced_values' => array( //optional
                     'active' => '1',
-                    'category_id' => '1000'
+                    'category_id' => '1000',
+                    'rev_tax_type_id' => 2
+                ),
+                'updatable_columns' => array( //optional: default is all columns
+                    'name', 'unit_price', 
+                    // updateable columns of forced_values should be included.
+                    'active', 'rev_tax_type_id'
                 )
             )
         )

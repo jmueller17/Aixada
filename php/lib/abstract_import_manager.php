@@ -53,15 +53,31 @@ class abstract_import_manager {
 	 * contains those fields that can be imported and that have been mapped in the original data file.
 	 * @var array 
 	 */
-	protected $_import_fields = array(); 
+	protected $_import_fields = array(); 	
+	
+	/**
+	 * The list of fields that are available for uptade as speciied in
+     * config.php for each table. import_fields4update contains those fields
+	 * that can be imported and that have been mapped in the original data file.
+	 * @var array 
+	 */
+	protected $_import_fields4update = array();
 	
 	
 	/**
-	 * Mapping of data columns to db-fields
+	 * Mapping of data columns to db-fields used for insert and retrieve all
+     * rows of the data_table column against which the db entries are matched.
 	 * @var hash
 	 */
 	protected $_col_map = null;
 	
+	
+	/**
+	 * Mapping of data columns to db-fields used for update
+	 * @var hash
+	 */
+	protected $_col_map_update = null;
+
 	
 	/**
 	 * 
@@ -146,12 +162,25 @@ class abstract_import_manager {
     		$this->_import_data_table = $data_table; 
     	}
     	
+    	// Set maps
+        if ($map != null && count($map) == 2 && 
+                    isset($map['map_insert']) && 
+                    isset($map['map_update'])) { // use dual map
+            $this->_col_map = $map['map_insert'];
+            $this->_col_map_update = $map['map_update'];
+        } else { // use single map
+            $this->_col_map = $map;
+            $this->_col_map_update = $map;
+        }
     	
     	//check which db table fields are available for importing and which ones are specified in the map. 
     	foreach ($import_rights[$this->_db_table] as $field => $value) {
     		if ($value == 'allow'){
-    			if (isset($map[$field])){
+    			if (isset($this->_col_map[$field])){
 	    			array_push($this->_import_fields, $field);
+    			}
+    			if (isset($this->_col_map_update[$field])){
+	    			array_push($this->_import_fields4update, $field);
     			}
     		} else {
     			global $firephp;
@@ -160,14 +189,12 @@ class abstract_import_manager {
     	}
     	
     	//check if db_match_field is in map
-    	if (!isset($map[$this->_db_match_field])){
+    	if (!isset($this->_col_map[$this->_db_match_field])){
     		throw new Exception("Import error: required match field '{$this->_db_match_field}' not found. You are either trying to import the wrong data for this table or have not associated the right column in the table preview!");
     		exit; 
     		
     	}
     
-    	$this->_col_map = $map;
-		    	
 		if (count($this->_import_fields) == 0){
 			throw new Exception("Import error: can't find any allowed fields for importing into table '{$destination_table}'. Check your config.php!  ");	
 			exit; 
@@ -258,6 +285,9 @@ class abstract_import_manager {
 
     	global $firephp; 
     	
+    	if (count($this->_import_fields4update) == 0) {
+    		return; 
+    	}
     	
     	$imported_rows_count = 0;
     	foreach($update_ids as $id => $match_id){
@@ -272,9 +302,9 @@ class abstract_import_manager {
     		array_merge($db_update_row, $this->_db_update_row_prefix);
     		
     		//take fields to be imported
-    		foreach($this->_import_fields as $db_field){
+    		foreach($this->_import_fields4update as $db_field){
     			//lookup its corresponding column in the import data table 	
-    			$col_index = $this->_col_map[$db_field];
+    			$col_index = $this->_col_map_update[$db_field];
     			
     			//value to be imported
     			$import_value = $row[$col_index]; 

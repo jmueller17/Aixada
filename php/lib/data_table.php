@@ -375,6 +375,18 @@ class data_table {
                 for ($c = 0; $c < count($data[0]); $c++){
                     $data_map[$data[0][$c]] = $c;
                 }
+                if (isset($import_template['updatable_columns'])) {
+                    $updatable_columns = $import_template['updatable_columns'];
+                    $data_map_update = array();
+                    for ($c=0; $c<count($updatable_columns); $c++) {
+                        $col_name = $updatable_columns[$c];
+                        $data_map_update[$col_name] = $data_map[$col_name];
+                    }
+                    $data_map = array(
+                        'map_insert' => $data_map,
+                        'map_update' => $data_map_update,
+                    );
+                }
                 return array(
                     'data' => new data_table($data, true, $this->_db_table),
                     'map' => $data_map,
