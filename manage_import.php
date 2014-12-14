@@ -8,6 +8,9 @@
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <style>
+        .darkGrayed {color:#777;}
+    </style>
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -422,9 +425,23 @@
 				<p><?=$Text['import_qnew'];?></p> 
 				<p>
 					<form id="frmImpOptions">
-					<input type="radio" name="import_mode" value="2" /> <?=$Text['import_create_update'];?> <br/>
-					<input type="radio" name="import_mode" value="1" /> <?=$Text['import_createnew'];?> <br/>
-					<input type="radio" name="import_mode" value="0" checked="checked"/> <?=$Text['import_update'];?>
+                    <?php
+                    $importIgnoreRowsTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_rows']);
+                    $importIgnoreValueTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_value']);
+                    ?>
+					<input type="radio" name="import_mode" value="2" />
+						<?=$Text['import_create_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="1" />
+						<?=$Text['import_createnew'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="0" checked="checked" />
+						<?=$Text['import_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span>
 					</form>
 				</p>
 				<br/>
