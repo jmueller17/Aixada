@@ -467,13 +467,13 @@
                         '<span class="setRequiredColumn"></span>',
                         $Text['import_ignore_value']);
                     ?>
-					<input type="radio" name="import_mode" value="2" />
+					<input type="radio" name="import_mode" value="2" checked="checked" />
 						<?=$Text['import_create_update'];?>
 						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
 					<input type="radio" name="import_mode" value="1" />
 						<?=$Text['import_createnew'];?>
 						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
-					<input type="radio" name="import_mode" value="0" checked="checked" />
+					<input type="radio" name="import_mode" value="0" />
 						<?=$Text['import_update'];?>
 						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span>
 					</form>
