@@ -350,7 +350,8 @@ class abstract_import_manager {
     			if ($db_field == $this->_db_match_field){
                     if ($keep_match_field) { // otherwise db_match_field (set by subclasses) are ignored.
                         if ($row[$col_index] == '') { // So row are ignored.
-                            continue;
+                            $db_insert_row = null;
+                            break;
                         }
                         $db_insert_row[$db_field] = $row[$col_index];
                     } 
@@ -360,16 +361,18 @@ class abstract_import_manager {
     			}
 			}
 
-			$firephp->log($db_insert_row, "insert row");
-			
-			//do sql
-			try {
-				if ($db->Insert($db_insert_row)) {
-                    $imported_rows_count++;
-                }
-			}  catch(Exception $e) {
-    			header('HTTP/1.0 401 ' . $e->getMessage());
-    			die ($e->getMessage());
+            if ($db_insert_row != null) {
+                $firephp->log($db_insert_row, "insert row");
+                
+                //do sql
+                try {
+                    if ($db->Insert($db_insert_row)) {
+                        $imported_rows_count++;
+                    }
+                }  catch(Exception $e) {
+                    header('HTTP/1.0 401 ' . $e->getMessage());
+                    die ($e->getMessage());
+				}
 			} 
     		
     		
