@@ -14,12 +14,6 @@ require_once(__ROOT__ . 'php/lib/gdrive.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
 
 
-/**
- * @see Zend_Loader
- */
-//$dirs = array(__ROOT__.'php/external/ZendGdata-1.12.2/library'); 
-
-
 
 class abstract_export_manager {
   

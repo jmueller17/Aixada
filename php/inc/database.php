@@ -8,12 +8,8 @@ $firephp = FirePHP::getInstance(true);
  * @package Aixada
  */ 
 
-/*$slash = explode('/', getenv('SCRIPT_NAME'));
-if (isset($slash[1])) {
-	$app = getenv('DOCUMENT_ROOT') . '/' . $slash[1] . '/';
-} else { // this happens when called by make
-    $app = '';
-}*/
+
+
 
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
@@ -110,12 +106,7 @@ class DBWrap {
           */
           $msg_array = explode('`', $error);
           $bad_field = $msg_array[7]; // responsible_uf_id in the example
-          //global $Text;
-          //if (isset($Text[$bad_field]))
-              //$bad_field = $Text[$bad_field];
-          //$tmp = substr($bad_field, 0, strrpos($bad_field, '_'));
-          //if (isset($Text[$tmp]))
-              //$bad_field = $Text[$tmp];
+  
           throw new ForeignKeyException('ERROR 20: Foreign Key exception. Please check the field "' . 
                                         $bad_field . 
                                         '". It either does not exist in the db or does not fullfil a foreign key constraint?');
@@ -159,6 +150,7 @@ class DBWrap {
   {
     return $this->do_Execute($strSQL);
   } 
+
 
 
   /**
@@ -422,16 +414,7 @@ commit;";
    */
   public function make_select_string ($fields, $table_name, $filter, $order_by, $order_sense='asc', $page=-1, $limit=-1)
   {
-//     global $firephp;
-//     if ($this->debug) {
-//       $firephp->log($table_name, 'entering Select');
-//       $firephp->log($fields, '..fields');
-//       $firephp->log($filter, '..filter');
-//       $firephp->log($order_by, '..order_by');
-//       $firephp->log($order_sense, '..order_sense');
-//       $firephp->log($page, '..page');
-//       $firephp->log($limit, '..limit');
-//     }
+
     $the_table = $this->mysqli->real_escape_string($table_name);
     $the_filter = $this->mysqli->real_escape_string($filter);
     

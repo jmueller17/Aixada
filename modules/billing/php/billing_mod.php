@@ -9,6 +9,10 @@ require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once('export_bill.php');
 
+require_once(__ROOT__ . 'php/lib/output_format_csv.php');
+require_once(__ROOT__ . 'php/lib/output_format_xml.php');
+require_once(__ROOT__ . 'php/lib/output_format_json.php');
+
 
 
 class Bill {
@@ -22,18 +26,11 @@ class Bill {
 
 
     /**
-     *  Contains the database xml result set of the given bill.
-     *  This refers to the products boughts.  
+     *  Contains the result set of the latest db query executed 
+     *  for this instance
      */
-    private $bill_xml_detail = null;
+    private $bill_db_result = null;
 
-
-
-    /**
-     *  Contains the accounting infor for this bill, including IVA groups, bill number, accountable number of member
-     *  date, number, name and NIF of member. 
-     */
-    private $bill_xml_accounting = null; 
 
 
 
@@ -46,13 +43,42 @@ class Bill {
 
         if (is_numeric($bill_id) && $bill_id > 0 ){          
             $this->bill_id = $bill_id; 
-            $this->load_data();
+            //$this->load_data();
         } 
 
     } 
 
 
+    /**
+     *  Creates the accounting infor for this bill, including IVA groups, bill number, accountable number of member
+     *  date, number, name and NIF of member. 
+     */
+    public function loadAccountingDetails(){
+
+        db = DBWrap::get_instance(); 
+
+        $rs1 = $db->squery("get_bill_accounting_detail", $this->bill_id);
+        $db->free_next_results();
+
+        $rs2 = $db->squery("get_tax_groups", $this->bill_id);
+        $db->free_next_results();
+
+
+    }
+
+
     private function load_data(){
+
+
+
+        $of = new output_format_json($rs); 
+        $json = $of->format(); 
+
+        global $firephp;
+        $firephp->log($json, "out formatted array");
+        
+
+        /*
         $this->bill_xml_detail =  stored_query_XML_fields("get_bill_detail", $this->bill_id);
         DBWrap::get_instance()->free_next_results();
 
@@ -74,7 +100,7 @@ class Bill {
 
         global $firephp;
         $firephp->log($this->bill_xml_accounting, "bill accounting detail");
-
+        */
 
     }
 
@@ -175,7 +201,7 @@ class Bill {
 
         }
 
-        $ep->export(false, "csv");
+        //$ep->export(false, "csv");
 
     }
     
