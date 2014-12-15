@@ -288,6 +288,9 @@ class output_formatter {
   }
 }
 
+
+
+
 function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
 {
   $params = func_get_args();
@@ -297,9 +300,6 @@ function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
   array_unshift($params, $strSQL);
 
   $strXML = "<$group_tag>";
-//   $rs = ((count($params)>0) ? 
-// 	 do_stored_query($strSQL, $params)
-// 	 : do_stored_query($strSQL));
   $rs = do_stored_query($params);
   global $Text;
   while ($row = $rs->fetch_array()) {

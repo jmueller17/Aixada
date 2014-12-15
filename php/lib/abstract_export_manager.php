@@ -126,7 +126,7 @@ class abstract_export_manager {
 	
 	
 	
-    public function __construct($filename="")
+    public function __construct($filename="", $xml_result="")
     {    	
 
     	//if no filename is given, construct one
@@ -142,8 +142,12 @@ class abstract_export_manager {
     	
     	$this->created_files = array();
     	
-    	//get the data from the database
-    	$this->read_db_table();
+    	//if no result set is provided, get the data from the database
+    	if ($xml_result == ""){
+    		$this->read_db_table();
+    	} else {
+	    	$this->xml_result[$this->filename] = $xml_result; 
+    	}
     } 
     
     
@@ -155,8 +159,16 @@ class abstract_export_manager {
      */
     protected function read_db_table(){
     }
+    	
+    	
     
-    
+    /**
+     *  Set the xml result set to be exported. The xml result set is either directly retrieved 
+     *	through overwriting read_db_table() by a subclass or directly assigned here. 
+     */
+    public function set_xml_results($xml_result){
+    	$this->xml_result[$this->filename] = $xml_result; 
+    }
 
     
     /**
@@ -166,7 +178,6 @@ class abstract_export_manager {
      */
     public function get_xml_results(){    	
     	return $this->xml_result; 
-
     }
     
     

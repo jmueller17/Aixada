@@ -42,6 +42,11 @@ try{
             printXML(stored_query_XML_fields('get_cart_listing', get_param('uf_id',0), get_param('from_date', ''), get_param('to_date',''), get_param('limit','')  ));
             exit; 
 
+        case 'exportBill':
+            $bill = new Bill(get_param("bill_id"));
+            $bill->export(get_param('filename', ''), get_param('format', ''), get_param('publish',0) );
+            exit; 
+
     		
     default:  
     	 throw new Exception("ctrl billing: oper={$_REQUEST['oper']} not supported");  

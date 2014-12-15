@@ -55,8 +55,8 @@
 		//todays date
 		var gToday = null; 
 
-		//custom date: Today  - 3 month
-		var gPrev3Month = null;
+		//custom date: Today  - 1 month
+		var gPrevMonth = null;
 
 		$('.section').hide();
 
@@ -93,10 +93,10 @@
 
 		$.getAixadaDates('getToday', function (date){
 			gToday = date[0];
-			gPrev3Month = moment(gToday, "YYYY-MM-DD").subtract(3, 'months').format('YYYY-MM-DD');
+			gPrevMonth = moment(gToday, "YYYY-MM-DD").subtract(1, 'months').format('YYYY-MM-DD');
 			
 	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
-			$('#datepicker-from').data("DateTimePicker").setDate(gPrev3Month);
+			$('#datepicker-from').data("DateTimePicker").setDate(gPrevMonth);
 
 			reloadListings(".sec-3");
 		});
@@ -396,7 +396,7 @@
 	</div>
 	<!-- end of headwrap -->
 
-	<div class="container sec-1 sec-3">
+	<div class="container">
 		<div class="row">
 			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
 			  	<div class="navbar-header">
@@ -419,14 +419,14 @@
 		  				</button>
 					</div>
 
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<button type="button" class="btn btn-success btn-sm navbar-btn section sec-1" disabled="disabled" id="btn-create-bill">
 		    				<span class="glyphicon glyphicon glyphicon-ok-sign"></span> Create bill
 		  				</button>
 	  				</div>
 
 
-					<div class="col-md-2">
+					<div class="col-md-2 section sec-3 sec-1">
 						<form class="navbar-form" role="search">
 				      		<div class="input-group input-group-sm">
 						    	<input type="text" class="form-control" id="input-filter-uf" placeholder="Filter UF">
@@ -437,7 +437,7 @@
 						</form>
 					</div>
 					
-					<div class="col-md-3">
+					<div class="col-md-3 section sec-3 sec-1">
 						<form class="navbar-form pull-right" role="date">
 							<div class="form-group">
 		                        <div class='input-group date input-group-sm' id='datepicker-from' >
@@ -449,7 +449,7 @@
 		                </form>
 		            </div>
 
-		            <div class="col-md-3">
+		            <div class="col-md-3 section sec-3 sec-1">
 						<form class="navbar-form" role="date">
 							<div class="form-group">
 		                        <div class='input-group date input-group-sm' id='datepicker-to' >
@@ -461,7 +461,21 @@
 		                </form>
 	            	</div>
 
-	  				<div class="btn-group col-md-1 pull-right">
+
+					<div class="btn-group col-md-1 section sec-1 sec-3">
+						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+		    				Actions <span class="caret"></span>
+		  				</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-bill"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+	 						
+						</ul>
+						
+					</div>
+
+
+
+	  				<div class="btn-group col-md-1 pull-right section sec-3 sec-1">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
 							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
 						</button>
@@ -486,7 +500,7 @@
 		    	<h1 class="section sec-1">Overview carts </h1>
 				<h3 class="section sec-2"><a href="javascript:void(null)" class="change-sec" target-section="#sec-1">Overview carts</a> <span class="glyphicon glyphicon-chevron-left sp-sm" target-section="#sec-1"></span> Purchase for UF<span class="setUfId"></span>, cart #<span class="setCartId"></span> on <span class="setShopDate"></span></h3>
 		    	<h1 class="section sec-3">Overview bills</h1>
-		    	<h1 class="section sec-4"><a href="javascript:void(null)" class="change-sec" target-section="#sec-3">Overview bills</a> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-3"></span> Bill - #<span class="setBillID"></span> UF<span class="setUFID"></span> </h1>
+		    	<h3 class="section sec-4"><a href="javascript:void(null)" class="change-sec" target-section="#sec-3">Overview bills</a> <span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-3"></span> Bill - #<span class="setBillID"></span> UF<span class="setUFID"></span> </h3>
 		    </div>
 		</div>
 	</div>

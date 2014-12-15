@@ -129,10 +129,37 @@ begin
   	group by
   		si.iva_percent;
 
-
-
 end|
 
+
+
+drop procedure if exists get_bill_accounting_detail|
+create procedure get_bill_accounting_detail(in the_bill_id int)
+begin
+	
+	select
+		b.id as bill_id,
+		b.ref_bill,
+		b.uf_id, 
+		b.description, 
+		b.date_for_bill, 
+		m.custom_member_ref, 
+		m.name as member_name, 
+		m.nif, 
+		m.bank_name, 
+		m.bank_account, 
+		u.login
+	from 
+		aixada_bill b,
+		aixada_member m,
+		aixada_user u
+	where
+		b.id = the_bill_id
+		and b.uf_id = m.uf_id
+		and u.uf_id = m.uf_id
+	limit 1;
+
+end|
 
 
 /**
