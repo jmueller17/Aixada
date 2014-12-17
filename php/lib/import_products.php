@@ -75,7 +75,7 @@ class import_products extends abstract_import_manager {
 		$sql = "select id, custom_product_ref from aixada_product where provider_id=$this->provider_id and custom_product_ref in (";
 		foreach($checkIds as $id){
 			if ($id != ''){
-				$sql .= "'".$id . "',";
+				$sql .= "'".$db->escape_string($id)."',";
 				$got_ids++;
 			}
 		}		

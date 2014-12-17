@@ -185,6 +185,17 @@ class DBWrap {
 
   
   /**
+   * This function scapes special characters in a string for use in an SQL
+   * statement.
+   *
+   * @param string $text
+   * @return string The string to use in a sql stament.
+   */
+   public function escape_string($text) {
+        return $this->mysqli->real_escape_string($text);
+   }
+  
+  /**
    * This function accepts an SQL query string with placeholders of
    * the form :1, :2, ..., :999, and substitutes the placeholders by
    * the entries in the input array, after those have been passed to
