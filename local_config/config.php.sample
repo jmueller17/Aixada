@@ -413,8 +413,27 @@ class configuration_vars {
              
     /**
      *  IMPORT CONTROLS
+     */
+    
+    /**
+     * Character encoding used by sources of importations. The data from a
+     * source are transformed to 'UTF-8' used used internally by Aixada.
      *
+     * If character set from the sources is not known put to 'auto', then could
+     * be lose some chars but is safer than ''. 
+     * Remove or sets to '' to don't make transformation, but in this case if
+     * files don't use UTF-8 some importations could be fail.
      *
+     * See valid codes in: 
+     *          http://php.net/manual/en/mbstring.supported-encodings.php
+     *
+     * NOTE: 'Windows-1252' Is the character encoding of the Latin alphabet
+     *       used by Windows systems.
+	 */
+    public $import_from_char_encoding = 'auto';
+
+    
+    /**
      * if set to true and the import columns/fields match db fields, user will be presented
      * with an option to try to import all allowed columns without explicit column matching. 
      * This makes sense for transfers between aixada platforms where we can assume that columns match

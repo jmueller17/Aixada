@@ -461,9 +461,19 @@ class abstract_import_manager {
      * 
      * utility wrapper for parsing different uploaded files and returning a 2d array (data_table) with the values
      * @param string $path2File the full path to the file 
+     * @param string $from_char_encoding Character encoding used by the file 
+     *      (data are transformed to UTF-8), default is use the value 
+     *      from config.php. Set to '' to ignore transformation.
      */
-    public static function parse_file($path2File, $db_table=''){
-    	
+    public static function parse_file($path2File, $db_table='',
+                                                    $from_char_encoding='$cfg'){
+        $cfg = configuration_vars::get_instance();
+        if ($from_char_encoding == '$cfg') {
+            if (isset($cfg->import_from_char_encoding)) {
+                $from_char_encoding = $cfg->import_from_char_encoding;
+            }
+        }
+        
     	$rowc = 0;
   		$_data_table = null; 
   		$_header = false; 		
@@ -481,6 +491,7 @@ class abstract_import_manager {
 					$values[] = (string)$elem;
 					$fieldnames[] = $elem->getName(); 
 				}
+				abstract_import_manager::encode_utf8($values, $from_char_encoding);
 				$_data_table[$rowc++] = $values; 
 			}
 			array_unshift($_data_table, $fieldnames);
@@ -489,6 +500,7 @@ class abstract_import_manager {
   		} else if (in_array($extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
 	 		$Reader = new SpreadsheetReader($path2File);
 			foreach ($Reader as $Row){    
+			  	abstract_import_manager::encode_utf8($Row, $from_char_encoding);
 			  	$_data_table[$rowc++] = $Row; 
 	
 			}	
@@ -509,7 +521,25 @@ class abstract_import_manager {
 		return new data_table($_data_table, $_header, $db_table);
     }
     
-    
+    /**
+     * Transforms character encoding used by the array elements to UTF-8
+     *
+     * @param array $array Array to transform (argument by reference)
+     * @param string $from_char_encoding Character encoding used by $array 
+     *      elements, varue '' is ignored.
+     */
+    public static function encode_utf8(&$array, $from_char_encoding) {
+        if ($from_char_encoding != '') {
+            array_walk(
+                $array, 
+                function(&$string, $index, $char_encoding) {
+                    $string = mb_convert_encoding(
+                                      $string, 'UTF-8', $char_encoding);
+                },
+                $from_char_encoding
+            );
+        }
+    }
 
 } //end class abstract_import_manager
 
