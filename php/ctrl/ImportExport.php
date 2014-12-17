@@ -75,12 +75,24 @@ try{
 				$map[$value] = $key;
 			}
  			
- 			 
+            switch(get_param('import_mode')){
+                case '2':
+                    $append_new = true;
+                    $keep_match_field = true;
+                    break;
+                case '1':
+                    $append_new = true;
+                    $keep_match_field = false;
+                    break;
+                default:
+                    $append_new = false;
+                    $keep_match_field = false;
+            }
  			switch(get_param('import2Table')){
  				case 'aixada_product':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_product');
  					$pi = new import_products($dt, $map, get_param('provider_id'));
-					echo $pi->import(get_param('append_new', false));
+					echo $pi->import($append_new, $keep_match_field);
  					exit; 
  				
  				case 'aixada_product_orderable_for_date':
@@ -90,7 +102,7 @@ try{
  				case 'aixada_provider':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_provider');
  					$pi = new import_providers($dt, $map);
- 					echo $pi->import(get_param('append_new', false));
+ 					echo $pi->import($append_new, $keep_match_field);
  					exit; 
  				
  			}

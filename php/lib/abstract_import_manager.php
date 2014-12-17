@@ -206,9 +206,12 @@ class abstract_import_manager {
 	 * 		2: get new rows for insert, 
 	 * 		3: construct rows and execute sql in each case
 	 * @param boolean $append_new control insert behavior of new data rows
+     * @param boolean $keep_match_field Set to true to keep db_match_field into
+     *        insert staments (and rows without it are ignored) If $append_new
+     *        is false $keep_match_field is ignored.
      * @return integer Number of rows imported.
 	 */
-    public function import($append_new=false){
+    public function import($append_new=false, $keep_match_field = false){
     	
     	//format array('db_id'=>'custom_ref', ...)
     	$update_ids = $this->match_db_entries();
@@ -235,7 +238,8 @@ class abstract_import_manager {
     	}
     	
     	if ($append_new && count($insert_rows)){
-    		$imported_rows_count += $this->insert_rows($insert_rows);
+    		$imported_rows_count +=
+                            $this->insert_rows($insert_rows, $keep_match_field);
     	}
         return $imported_rows_count;
     }
@@ -307,9 +311,11 @@ class abstract_import_manager {
      * 
      * Constructs array of db field => value pairs that can is passed to the dbWrapper-Insert function
      * @param array $insert_ids array of custom ref values that identify the rows to be inserted in the data table
+     * @param boolean $keep_match_field Set to true to keep db_match_field into
+     *        insert staments (and rows without it are ignored)
      * @return integer Number of rows inserted.
      */
-	protected function insert_rows($insert_ids){
+	protected function insert_rows($insert_ids, $keep_match_field = false){
     	$db = DBWrap::get_instance();
     	global $firephp; 
     	
@@ -342,23 +348,31 @@ class abstract_import_manager {
     			//because this field is empty when importing new products, we need to set the custom_product_ref to null
     			//i.e. leave it out of the sql insert string. Same would happen for nif of providers, although this has not a unique constraint
     			if ($db_field == $this->_db_match_field){
-    				//$db_insert_row[$db_field] = null;  don't  uncomment this.. leave it to sql to insert null
+                    if ($keep_match_field) { // otherwise db_match_field (set by subclasses) are ignored.
+                        if ($row[$col_index] == '') { // So row are ignored.
+                            $db_insert_row = null;
+                            break;
+                        }
+                        $db_insert_row[$db_field] = $row[$col_index];
+                    } 
     			} else {
     				//add it to the import_row	
 					$db_insert_row[$db_field] = $row[$col_index];	
     			}
 			}
 
-			$firephp->log($db_insert_row, "insert row");
-			
-			//do sql
-			try {
-				if ($db->Insert($db_insert_row)) {
-                    $imported_rows_count++;
-                }
-			}  catch(Exception $e) {
-    			header('HTTP/1.0 401 ' . $e->getMessage());
-    			die ($e->getMessage());
+            if ($db_insert_row != null) {
+                $firephp->log($db_insert_row, "insert row");
+                
+                //do sql
+                try {
+                    if ($db->Insert($db_insert_row)) {
+                        $imported_rows_count++;
+                    }
+                }  catch(Exception $e) {
+                    header('HTTP/1.0 401 ' . $e->getMessage());
+                    die ($e->getMessage());
+				}
 			} 
     		
     		

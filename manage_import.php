@@ -8,6 +8,9 @@
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <style>
+        .darkGrayed {color:#777;}
+    </style>
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -381,7 +384,8 @@
 					<br/>
 					<p>&nbsp;<?=$Text['import_allowed']; ?>: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
-					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8"><?=$Text['import_file']; ?>: <span class="setFileName"></span></p>
+					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW450 aix-style-padding8x8"><?=$Text['import_file']; ?>:<br>
+						&nbsp;&nbsp;<b class="setFileName"></b></p>
 				</div>
 				<div class="floatLeft">
 					<p class="boldStuff"><?=$Text['public_url'];?></p><br/>
@@ -421,8 +425,23 @@
 				<p><?=$Text['import_qnew'];?></p> 
 				<p>
 					<form id="frmImpOptions">
-					<input type="radio" name="append_new" value="1" /> <?=$Text['import_createnew'];?> <br/>
-					<input type="radio" name="append_new" value="0" checked="checked"/> <?=$Text['import_update'];?>
+                    <?php
+                    $importIgnoreRowsTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_rows']);
+                    $importIgnoreValueTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_value']);
+                    ?>
+					<input type="radio" name="import_mode" value="2" />
+						<?=$Text['import_create_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="1" />
+						<?=$Text['import_createnew'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="0" checked="checked" />
+						<?=$Text['import_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span>
 					</form>
 				</p>
 				<br/>
