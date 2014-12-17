@@ -114,12 +114,16 @@ class data_table {
 			$dbfieldstr = ""; 
 			
 			//get the exact matches
-			foreach ($row as $key => $value){	
-				$dbfieldstr .= $key; 
-				if($exists = in_array($key, $this->_data_table[0])){
-					$exact_matches++;
-				}
-    		}
+            if ($row != null) { // Prevent if the db_table is empty, otherwise
+                                // the first import (no data in the table) may 
+                                // fail here.
+                foreach ($row as $key => $value){	
+                    $dbfieldstr .= $key; 
+                    if($exists = in_array($key, $this->_data_table[0])){
+                        $exact_matches++;
+                    }
+                }
+            }
     		$db->free_next_results();
     		
     		//and the more or less matches
@@ -279,7 +283,11 @@ class data_table {
 	  	for ($r=0; $r<$this->_nr_rows; $r++){
 	  		$table .= '<tr>';
 	  		for ($c=0; $c<$this->_nr_cols; $c++){
-	  			$table .= '<td>'.$this->_data_table[$r][$c] .'</td>';
+                if (isset($this->_data_table[$r][$c])) {
+                    $table .= '<td>'.$this->_data_table[$r][$c] .'</td>';
+                } else {
+                    $table .= '<td></td>';
+                }
 	  			
 	  		}
 	  		$table .= '</tr>';
