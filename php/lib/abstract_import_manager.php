@@ -420,6 +420,7 @@ class abstract_import_manager {
     private function _build_foreign_key_cache($key_array){
     	$db = DBWrap::get_instance();
     	
+    	$this->_foreign_keys = array();
     	foreach ($key_array as $db_field=>$refs){
     		if (isset($refs) && count($refs) > 1){
 	    		$sql = "select ". $refs[1]." from " . $refs[0];
