@@ -865,6 +865,7 @@ $Text['msg_import_done'] = 'S\'han importat {$rows} línies.';
 $Text['msg_import_another'] = "Vols importar un altre arxiu?"; 
 $Text['btn_import_another'] = "Importar un altre"; 
 $Text['btn_nothx'] = "No, gràcies"; 
+$Text['direct_import_template'] = "Plantilla d\'importació directa";
 $Text['import_allowed'] = "Formats compatibles"; //as in allowed file formats
 $Text['import_file'] = "Arxiu d'importació"; 
 $Text['public_url'] = "URL pública";

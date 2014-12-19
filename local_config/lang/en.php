@@ -866,6 +866,7 @@ $Text['msg_import_done'] = '{$rows} rows have been imported.';
 $Text['msg_import_another'] = "Do you want to import another file?"; 
 $Text['btn_import_another'] = "Import another"; 
 $Text['btn_nothx'] = "No, thanks!"; 
+$Text['direct_import_template'] = "Direct import template";
 $Text['import_allowed'] = "Allowed formats"; //as in allowed file formats
 $Text['import_file'] = "Import file"; 
 $Text['public_url'] = "Public URL";

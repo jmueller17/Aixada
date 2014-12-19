@@ -95,6 +95,7 @@
 		        $('.showFileInfo').fadeIn(1000);
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
+		        resetUpload();
 		        $('.loadSpinner').show();
 		   
 				data.submit();
@@ -128,6 +129,20 @@
 			params : 'oper=getAllowedFields&table='+gImportTo,
 			loadOnInit:true,
 			offSet : 1
+		});
+        $('#import_template').xml2html('init',{
+			url: 'php/ctrl/ImportExport.php',
+			params : 'oper=getImportTemplates&table='+gImportTo,
+			loadOnInit:true,
+			offSet : 1,
+			complete : function(rowCount){
+                var div = $('#import_template').parent().parent();
+                if (rowCount == 0){
+					div.hide();
+                } else {
+                	div.show();
+				}
+			}
 		});
 
 
@@ -194,7 +209,12 @@
 		
 		function parseFile(fileName, fullPath){
 			$.ajax({
-				url: 'php/ctrl/ImportExport.php?oper=parseFile&import2Table='+gImportTo+'&file='+fileName+'&fullpath='+fullPath,
+				url: 'php/ctrl/ImportExport.php?oper=parseFile'+
+                    '&import2Table='+gImportTo+
+                    '&file='+fileName+
+                    '&fullpath='+fullPath+
+                    '&import_template='+$('select[name=import_template]').val()+
+                    '&provider_id='+$('input[name=provider_id]').val(),
 			   	method: 'POST',
 			   	//data : fdata, //parse options 
 			   	dataType:'html',
@@ -204,7 +224,11 @@
 			   	success: function(tbl){
 			   		$('.loadSpinner').hide();
 			   		$('.uploadMsgElements').hide();
-			   		constructPreviewTable(tbl);			   		
+                    if (!isNaN(parseInt(tbl,10))) {
+                        showResponse(tbl);
+                    } else {
+                        constructPreviewTable(tbl);
+                    }
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 				   $.showMsg({
@@ -377,6 +401,16 @@
 		 <div class="ui-widget"> 
 			<h4>1. <?=$Text['import_step1']; ?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8 adaptHeight">
+                <div class="wrapSelect hidden">
+                    <form id="frmImportTemplate">
+                        <label for="import_template"><?=$Text['direct_import_template']; ?>: </label>
+                        <select id="import_template" name="import_template">
+                            <option value="-1"><?='( ... )';?></option>
+                            <option value="{db_field}">{db_field}</option>
+                        </select>
+                    </form>
+                    <br>
+                </div>
 				<div class="floatLeft aix-layout-fixW450">
 					<form id="frmFileUpload">
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>

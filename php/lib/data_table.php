@@ -288,6 +288,118 @@ class data_table {
 	
 	  	return $table; 
  	}	
+
+    /**
+     *
+     * Parses a datatable with a template. If template is not applicable returns
+     * null.
+     * @param string $template_name A teplate name defined in $import_templates
+     * key of 'config.php' for table of this data_table instance (if table is ''
+     * templates are not applicabes)
+     * @return null|array Returns an array with three keys:
+     *      'data' => data_table: New datatable after parse data.
+     *      'map' => array: New map to apply to 'data' after parse 'data'.
+     *      'template_options' => array: Options of this template.
+     */
+    public function parse_data($template_name) {
+        $templates = get_import_templates($this->_db_table);
+        if (isset($templates[$template_name])) {
+            $import_template = $templates[$template_name];
+            $map = array();
+            if (isset($import_template['match_columns'])) {
+                $match_columns = $import_template['match_columns'];
+                $r0 = $this->_data_table[0];
+                foreach ($match_columns as $key => $value) {
+                    $value = strtolower($value);
+                    for ($c=0; $c<$this->_nr_cols; $c++){
+                        if (isset($r0[$c])) {
+                            if (substr($value,0,1) == '/') {
+                                if (preg_match($value, $r0[$c])) {
+                                    $map[$key] = $c;
+                                    break;
+                                }
+                            } else {
+                                if($value == strtolower($r0[$c])) {
+                                    $map[$key] = $c;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (count($map) != count($match_columns)) {
+                // There are some colums not matched.
+                    return null;
+                }
+            }
+            if (isset($import_template['forced_values'])) {
+                $forced_values = $import_template['forced_values'];
+                foreach ($forced_values as $key => $value) {
+                    $map[$key] = -1;
+                }
+            }
+            if (count($map)) {
+                if (isset($import_template['required_fields'])) {
+                    $required_fields = $import_template['required_fields'];
+                } else {
+                    $required_fields = array();
+                }
+                //Build a new data
+                $data = array();
+                $rowc = 0;
+                $map_cols = count($map);
+                //headers
+                $data[$rowc++] = array_keys($map);
+                //data
+                for ($r = 1; $r < $this->_nr_rows; $r++) {
+                    $row = array();
+                    for ($c=0; $c<$map_cols; $c++){
+                        $key = $data[0][$c];
+                        $index = $map[$key];
+                        if ($index >= 0) {
+                            $row[$c] = $this->_data_table[$r][$index];
+                        } else {
+                            $row[$c] = $forced_values[$key];
+                        }
+                        if (in_array($key, $required_fields) && $row[$c] == '') {
+                            $row = null;
+                            break;
+                        }
+                    }
+                    if ($row) {
+                        $data[$rowc++] = $row;
+                    }
+                }
+                //Build a new map
+                $data_map = array();
+                for ($c = 0; $c < count($data[0]); $c++){
+                    $data_map[$data[0][$c]] = $c;
+                }
+                if (isset($import_template['updatable_columns'])) {
+                    $updatable_columns = $import_template['updatable_columns'];
+                    $data_map_update = array();
+                    for ($c=0; $c<count($updatable_columns); $c++) {
+                        $col_name = $updatable_columns[$c];
+                        $data_map_update[$col_name] = $data_map[$col_name];
+                    }
+                    $data_map = array(
+                        'map_insert' => $data_map,
+                        'map_update' => $data_map_update,
+                    );
+                }
+                return array(
+                    'data' => new data_table($data, true, $this->_db_table),
+                    'map' => $data_map,
+                    'template_options' => (
+                        isset($import_template['options']) ?
+                        $import_template['options'] :
+                        array()
+                    )
+                );
+            }
+        }
+        return null;
+ 	}
 } //end class abstract_data_table
 
 
