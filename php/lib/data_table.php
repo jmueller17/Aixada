@@ -365,7 +365,11 @@ class data_table {
                         $key = $data[0][$c];
                         $index = $map[$key];
                         if ($index >= 0) {
-                            $row[$c] = $this->_data_table[$r][$index];
+                            if (isset($this->_data_table[$r][$index])) {
+                                $row[$c] = $this->_data_table[$r][$index];
+                            } else {
+                                $row[$c] = '';
+                            }
                         } else {
                             $row[$c] = $forced_values[$key];
                         }
