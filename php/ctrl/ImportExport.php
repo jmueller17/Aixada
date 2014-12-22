@@ -59,6 +59,50 @@ try{
  			}
  			
  			$dt = abstract_import_manager::parse_file($path, get_param('import2Table',''));
+            $import_template = get_param('import_template');
+            if ($import_template != '') {
+                $new_dt = $dt->parse_data($import_template);
+                // If the data have been parsed by the template then can import directly.
+                if ($new_dt) {
+                    $template_options = $new_dt['template_options'];
+                    switch(get_param('import2Table')){
+                        case 'aixada_product':
+                            $pi = new import_products(
+                                    $new_dt['data'], $new_dt['map'],
+                                    get_param('provider_id')
+                            );
+                            if (isset($template_options['deactivate_products']) &&
+                                      $template_options['deactivate_products']) {
+                                $pi->deactivate_products();
+                            }
+                            break;
+                        case 'aixada_product_orderable_for_date':
+                            echo 0;
+                            exit;
+                        case 'aixada_provider':
+                            $pi = new import_providers($new_dt['data'], $new_dt['map']);
+                            break;
+                        default:
+                            echo 0;
+                            exit;
+                    }
+                    $append_new = false;
+                    $keep_match_field = false;
+                    if (isset($template_options['import_mode'])) {
+                        switch($template_options['import_mode']) {
+                            case '2':
+                                $append_new = true;
+                                $keep_match_field = true;
+                                break;
+                            case '1':
+                                $append_new = true;
+                                break;
+                        }
+                    }
+                    echo $pi->import($append_new, $keep_match_field);
+                    exit;
+                }
+            }
 			echo $dt->get_html_table();
 			$_SESSION['import_file'] = $path; 
  			exit;
@@ -75,28 +119,44 @@ try{
 				$map[$value] = $key;
 			}
  			
- 			 
+            switch(get_param('import_mode')){
+                case '2':
+                    $append_new = true;
+                    $keep_match_field = true;
+                    break;
+                case '1':
+                    $append_new = true;
+                    $keep_match_field = false;
+                    break;
+                default:
+                    $append_new = false;
+                    $keep_match_field = false;
+            }
  			switch(get_param('import2Table')){
  				case 'aixada_product':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_product');
  					$pi = new import_products($dt, $map, get_param('provider_id'));
-					$pi->import(get_param('append_new', false));
+					echo $pi->import($append_new, $keep_match_field);
  					exit; 
  				
  				case 'aixada_product_orderable_for_date':
+                    echo 0;
  					exit;  
  					
  				case 'aixada_provider':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_provider');
  					$pi = new import_providers($dt, $map);
- 					$pi->import(get_param('append_new', false));
+ 					echo $pi->import($append_new, $keep_match_field);
  					exit; 
  				
  			}
 			
 
-			echo 1; 
+			echo 0; 
  			exit; 
+ 	 	case 'getImportTemplates':
+    		printXML(get_import_templates_list(get_param('table'))); 
+    		exit;
  	
  		case 'getAllowedFields':
     		printXML(get_import_rights(get_param('table'))); 

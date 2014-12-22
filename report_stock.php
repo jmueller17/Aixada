@@ -27,8 +27,55 @@
 	<script type="text/javascript">
 	$(function(){
 
+		//how many stock movements do we want to see in one go
+		var gStockMoveLimit = 200; 
+
+
+
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+
+
+		//filter options
+		$("#filterBtn")
+			.button()
+			.click(function(e){
+				reloadStockMoves();
+			})
+
+		
+
+		$("#datepicker_from").datepicker({
+			dateFormat 	: 'D, d M, yy',
+			onSelect : function (dateText, instance){
+				$('#setFromDate').text(dateText);
+				reloadStockMoves();
+			}
+		}).blur(function(){
+			reloadStockMoves();
+		});
+
+
+		$("#datepicker_to").datepicker({
+			dateFormat 	: 'D, d M, yy',
+			onSelect : function (dateText, instance){
+				$('#setToDate').text(dateText);
+				reloadStockMoves()
+			}
+		}).blur(function(){
+			reloadStockMoves();
+		});
+
+		$("#product_id").blur(function(){
+			reloadStockMoves();
+		});
+
+
+		$.getAixadaDates('getToday', function (date){
+			$("#datepicker_to").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
+			$("#datepicker_to").datepicker("refresh");
+		});
+
 
 		
 		//load the stock value for given provider
@@ -71,29 +118,31 @@
 				var provider_id = $("option:selected", this).val();
 				var provider_name = $("option:selected", this).text();			
 				$('#tbl_stock_value tbody').xml2html('removeAll');	
-				$('.setProvider').text("");
-						
-				if (provider_id < 0) { return true;}
 
-				$('.setProvider').text(provider_name);
-				
+				reloadStockMoves();
+
+				if (provider_id < 0) {  
+					return true;
+				}
 	
 				$('.loadAnimShop').show();
 				$('#tbl_stock_value tbody').xml2html("reload",{
 					params	: 'oper=getStockValue&provider_id='+provider_id					
 				});		
 
-				$("#tbl_stock_movements tbody").xml2html("reload", {
-					params : 'oper=stockMovements&provider_id='+provider_id
-				});
+
+			
 									
 		}); //end select change
 
 
+		/**
+		 *	load latest stock movements
+		 */
 		$("#tbl_stock_movements tbody").xml2html("init", {
 			url: 'php/ctrl/Shop.php',
-			params : 'oper=stockMovements',
-			loadOnInit:false,
+			params : 'oper=stockMovements&limit=50',
+			loadOnInit:true,
 			rowComplete : function (rowIndex, row){
 				$.formatQuantity(row);
 			},
@@ -177,7 +226,9 @@
 		
 				
 		$('#stock_tabs').tabs();	
-
+		$("#accordion").accordion({
+      		collapsible: true
+   		 });
 
 
 		function sumStockValue(){
@@ -204,7 +255,74 @@
 				seltr.children().eq(9).children(':first-child').removeClass('bruttoCol');
 			}
 		}
+
+
+		function reloadStockMoves(){
+			var params = 'oper=stockMovements&limit='+gStockMoveLimit; 
+
+			if ($('#datepicker_from').val() != "" && $('#datepicker_to').val() != ""){
+				params += '&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'); 
+			}
+
+			if ($("#providerSelect").val() > 0 ){
+				params += '&provider_id='+ $("#providerSelect").val();
+
+			}
+
+			if ($("#product_id").val() > 0){
+				params += '&product_id='+$("#product_id").val(); 
+
+			}
+
+			$("#tbl_stock_movements tbody").xml2html("reload", {
+						params :  params
+			});
+		}
+
+
+	 	
+
+		/**
+		 *	stock add/correct functionality
+		 */
+
+		$('.btn_add_stock')
+			.live('click',function(e){
+				prepareStockForm('add',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
+		
+		
+		$('.btn_correct_stock')
+			.live('click',function(e){
+				prepareStockForm('correct',$(this).attr('stockActual'),$(this).attr('unit'), $(this).attr('productId'));  
+			})
 			
+			
+
+		$('#dialog_edit_stock').dialog({
+			autoOpen:false,
+			width:480,
+			height:400,
+			modal:true,
+			buttons: {  
+				"<?=$Text['btn_save'];?>" : function(){
+					
+						if ($(this).data('info').edit == "add"){
+							addStock($(this).data('info').id);
+						} else if ($(this).data('info').edit == "correct"){
+							correctStock($(this).data('info').id);
+						}
+					},
+			
+				"<?=$Text['btn_cancel'];?>"	: function(){
+					$( this ).dialog( "close" );
+					} 
+			}
+		});
+
+		<?php include('js/aixadautilities/stock.js.php'); ?> 
+
+
 	});  //close document ready
 </script>
 
@@ -220,16 +338,37 @@
 	
 	<div id="stagewrap">
 	
-		
+
+
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol">
-		    	<h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1>
+				<div id="accordion">
+					<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter movements</h2>
+						<div>
+							<table class="tblforms">
+								<tr>
+									<td>By date range:&nbsp;&nbsp;</td><td> <?php echo $Text['date_from']; ?> <input type="text" id="datepicker_from" class="ui-widget-content ui-corner-all "/> - <?php echo $Text['date_to']; ?>: 
+									<input type="text" id="datepicker_to" class="ui-widget-content ui-corner-all "/><br/><br/></td>
+								</tr>
+								<tr>
+									<td class="textAlignRight">By provider:&nbsp;&nbsp;</td><td> <select id="providerSelect" class="overviewElements">
+       											<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
+       											<option value="{id}"> {name}</option>                     
+											</select><br/><br/></td>
+								</tr>
+								<tr>
+									<td class="textAlignRight">By product id:&nbsp;&nbsp;</td><td> <input type="text" id="product_id" class="ui-widget-content ui-corner-all "/></td>
+								</tr>
+							</table>
+							<button	id="filterBtn" class="btn_right"><?=$Text['btn_filter']; ?></button>
+						</div>
+				
+				</div>
+
+		    	<!--h1><?=$Text['ti_stock_report']; ?> <span class="setProvider"></span></h1-->
 		    </div>
 		    <div id="titleRightCol">
-		    	<select id="providerSelect" class="overviewElements floatRight">
-                    	<option value="-1" selected="selected"><?php echo $Text['sel_provider']; ?></option>
-                    	<option value="{id}"> {name}</option>                     
-				</select>
+
     			<p class="floatRight detailElements"><?php echo $Text['stock_acc_loss_ever']; ?>: <span class="setAccLossEver ui-state-highlight aix-style-padding3x3 ui-corner-all">?</span></p>
 		    </div>
 		</div>
@@ -239,8 +378,8 @@
 		<div id="stock_tabs" class="ui-widget">  
 		
 			<ul>
-				<li><a href="#tabs-1"><h2><?=$Text['curStock'];?></h2></a></li>
 				<li><a href="#tabs-2"><h2><?=$Text['ti_mgn_stock_mov'];?></h2></a></li>
+				<li><a href="#tabs-1"><h2><?=$Text['curStock'];?></h2></a></li>
 			</ul>
 		
 		  
@@ -259,6 +398,7 @@
 							<th><?php echo $Text['iva'] ?></th>
 							<th><?php echo $Text['revtax_abbrev']; ?></th>
 							<th><p class="textAlignRight"><?php echo $Text['brutto_stock']; ?></p></th>
+							<!--th></th-->
 						</tr>
 					</thead>
 					<tbody>
@@ -273,6 +413,9 @@
 							<td>{iva_percent}%</td>
 							<td>{rev_tax_percent}%</td>
 							<td><p class="bruttoCol textAlignRight">{total_brutto_stock_value}</p></td>
+							<!--td>
+								<p class="textAlignCenter"><a class="btn_add_stock" unit="{unit}" productId="{id}" stockActual="{stock_actual}" href="javascript:void(null)"><?php echo $Text['add_stock']; ?></a>&nbsp;&nbsp; | &nbsp;&nbsp;<a class="btn_correct_stock" productId="{id}" stockActual="{stock_actual}" unit="{unit}" href="javascript:void(null)"><?php echo $Text['correct_stock']; ?></a> </p>
+							</td-->
 						</tr>
 					</tbody>
 					<tfoot>
@@ -302,7 +445,8 @@
 								<th>id</th>
 								<th>Name</th>
 								<th><?php echo $Text['operator'] ; ?></th>
-								<th><?php echo $Text['description'] ; ?></th>
+								<th><?php echo $Text['stock_mov_type']; ?></th>
+								<th><?php echo $Text['comment'] ; ?></th>
 								<th><?php echo $Text['date']; ?></th>
 								<th><p class="textAlignRight"><?php echo $Text['dff_qty']; ?></p></th>
 								<th><p class="textAlignRight"><?php echo $Text['dff_price']; ?></p></th>
@@ -317,6 +461,7 @@
 								<td>{product_id}</td>
 								<td>{product_name}</td>
 								<td>{member_name}</td>
+								<td>{movement_type}</td>
 								<td>{description}</td>
 								<td class="stockDeltaTSCell">{ts}</td>
 								<td class="stockDeltaQtyCell"><p class="textAlignRight formatQty">{amount_difference}</p></td>
@@ -352,16 +497,18 @@
 			
 		</div>	
 			
-		
-			
-		
-			
-		
-		
 	</div>
 	<!-- end of stage wrap -->
 </div>
 <!-- end of wrap -->
 <!-- / END -->
+<div id="dialog_edit_stock">
+<?php include('tpl/stock_dialog.php');?>
+</div>
+<div class="hidden" id="tmpMoveTypeSelect">	
+	<select id="stockMoveTypeId">
+       	<option value="{id}"> {name}</option>                     
+	</select>
+</div>	
 </body>
 </html>

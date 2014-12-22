@@ -20,6 +20,7 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
+   		<!-- also aixadautitlities/stock.js.php check end of jquer section--> 
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_providers.min.js"></script>
     <?php }?>
@@ -62,6 +63,7 @@
 
 		//data for constructing the select options for the provider form
 		var gProviderSelects = [['aixada_uf', 'sResponsibleUfId','id','name']];
+
 
 		//data for constructing the select options for the product form
 		//format is: [table, destinationClassSelector, field1, field2,...]
@@ -264,18 +266,13 @@
 						.data('export', 'provider')
 						.dialog("open");
 				}
-
-						
-
 			}); // end function
 				
 
 		//delete provider
 		$('.btn_del_provider')
 			.live('click', function(e){
-
 				var providerId = $(this).parents('tr').attr('providerId');
-					
 				$.showMsg({
 					msg: "<?php echo $Text['msg_confirm_del_provider']; ?>",
 					buttons: {
@@ -297,24 +294,39 @@
 										$.showMsg({
 												msg: "<?=$Text['msg_err_del_provider']; ?>" + XMLHttpRequest.responseText,
 												type: 'error'});
-
 									}
-								   	
-	
 							   	}
-							}); //end ajax
-													
-							
+							}); //end ajax	
 						},
 						"<?=$Text['btn_cancel'];?>" : function(){
 							$( this ).dialog( "close" );
 						}
 					},
 					type: 'confirm'});
-
 				e.stopPropagation();
-				
 			})
+
+
+
+		/**
+		 * de-/activate provider
+		 */
+		$('input[name=active_dummy_provider]').live("click", function(e){
+
+			//if false, means deactivate product
+			var status = $(this).is(":checked");
+			var providerId = $(this).parents("tr").attr("providerId");
+
+			//activate provider
+			if (status){
+				setActiveFlagProvider(providerId, status);
+
+			//decativate provider
+			} else {
+				setActiveFlagProvider(providerId, status);
+			}
+		})
+
 			
 			
 		$('#toggleProviderBulkActions')
@@ -412,7 +424,45 @@
 			
 		}
 
+
+		/**
+		 * 	Deactivate provider 
+		 */
+		function setActiveFlagProvider(providerId, status){
+			
+			$('.loadSpinner').show();
+			var oper = (status==1)? "activateProvider":"deactivateProvider";
+			var successMsg = (status==1)? "<?php echo $Text['msg_activate_prov_ok']; ?>":"<?php echo $Text['msg_deactivate_prov_ok'] ?>";
+
+			$.ajax({
+			   	url: "php/ctrl/Providers.php?oper="+oper+"&provider_id="+providerId,
+			   	type: 'POST',
+			   	success: function(msg){
+					$('input[name=active_dummy_provider]').attr('checked', status);
+					$.showMsg({
+						msg: successMsg,
+						type: 'success',
+						autoclose:1500});
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
+					$('#tbl_providers tbody').xml2html("reload"); 
+				}				   	
+			}); //end ajax
+		}
+
 		
+
+
+
 		
 		/*****************************************
 		 *
@@ -527,6 +577,9 @@
 				setCheckBoxes('#frm_product_edit');
 				populateSelect(gProductSelects,'#tbl_product_edit');
 
+			}, complete : function(){
+				//populate stock movement type select
+				populateSelect([['aixada_stock_movement_type','sMovementTypeId','id','name']],'#frm_stock');
 			}
 
 		});
@@ -689,8 +742,64 @@
 					e.stopPropagation();
 			});	*/
 
+		
+		/**
+		 * de-/activate product
+		 * the active_dummy_product field is NOT passed when the form is edited; the de-/activation works 
+		 * in parallel because it involves many dependencie
+		 */
+		$('input[name=active_dummy_product]').live("click", function(e){
 
+			//if false, means deactivate product
+			var status = $(this).is(":checked");
+			var productId = $(this).parents("tr").attr("productid");
+			
+			//activate product
+			if (status){
+				setActiveFlagProduct(productId, true);
 
+			//decativate product
+			} else {
+
+				//check if product has ordered items
+				$.ajax({
+					type: "POST",
+					url: "php/ctrl/ActivateProducts.php?oper=count_ordered_items&product_id="+productId+"&order_status=0",
+					success: function(xml){
+						xmlDoc = $.parseXML(xml);
+  						count = $(xmlDoc).find( "total_ordered_items" ).text();
+						
+						if (count > 0){
+							$.showMsg({
+								msg:"<?=$Text['msg_err_deactivate_product'];?>",
+								buttons: {
+									"<?=$Text['btn_ok_go']; ?>": function(){
+										$( this ).dialog( "close" );
+										releaseDatesAndProduct(productId);
+									},
+									"<?=$Text['btn_cancel'];?>":function(){
+										$( this ).dialog( "close" );
+									}
+								},
+								type: 'warning'});
+
+						} else {
+							//deactivate straight away
+							setActiveFlagProduct(productId, false)
+						}	
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$.showMsg({
+							msg:XMLHttpRequest.responseText,
+							type: 'error'});
+					},
+					complete : function(){
+						//$('.loadSpinner').hide();
+					}
+				});
+
+			}
+		}); //deactivate product trigger
 
 		
 			
@@ -743,7 +852,74 @@
 				e.stopPropagation();
 			})
 
-		//product utility functions
+		/********************************************************
+		*  product util functions
+		*********************************************************/
+
+
+		/**
+		 *  If item is orderable and has ordered_items, deactivating product requires to delete 
+		 *  ordered items from order_cart for each uf and delete corresponding orderable dates.
+		 */
+		function releaseDatesAndProduct(pid){
+
+			//removes all order items for this product from non-finalized orders. &date=0 means all open orders
+			$.ajax({
+			   	url: "php/ctrl/ActivateProducts.php?oper=unlockOrderableDate&product_id="+pid+"&date=0",
+			   	type: 'POST',
+			   	success: function(msg){
+			   		//now set active flag
+					setActiveFlagProduct(pid, false);
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				}				   	
+			}); //end ajax
+
+		}
+
+		/**
+		 * 	Deactivates product. If stock simply sets active flag. If orderable also removes all associated
+		 * 	orderable dates. This presumes that no order items are active anymore, i.e. for order items
+		 * 	this needs to be called after releaseDatesAndProduct() has been called. 
+		 */
+		function setActiveFlagProduct(pid, status){
+			
+			$('.loadSpinner').show();
+			var oper = (status==1)? "activateProduct":"deactivateProduct";
+
+			var successMsg = (status==1)? "<?php echo $Text['msg_activate_prod_ok']; ?>":"<?php echo $Text['msg_deactivate_prod_ok']; ?>";
+
+			$.ajax({
+			   	url: "php/ctrl/ActivateProducts.php?oper="+oper+"&product_id="+pid,
+			   	type: 'POST',
+			   	success: function(msg){
+					$('input[name=active_dummy_product]').attr('checked', status);
+					$.showMsg({
+						msg: successMsg,
+						type: 'success',
+						autoclose:1500});
+			   	},
+			   	error : function(XMLHttpRequest, textStatus, errorThrown){
+					
+						$this.dialog("close");
+						$.showMsg({
+								msg: XMLHttpRequest.responseText,
+								type: 'error'});
+
+				},
+				complete : function(){
+					$('.loadSpinner').hide();
+					$('#tbl_products tbody').xml2html("reload");
+				}				   	
+			}); //end ajax
+		}
+
+
 		/**
 		 *	provider utility functions
 		 */
@@ -964,7 +1140,7 @@
 
 
 			//make sure an active=0 gets send if checkbox is unchecked
-			$(mi +' input:checkbox').each(function(){
+			/*$(mi +' input:checkbox').each(function(){
 				var isChecked = $(this).attr('checked'); 
 				
 				if(isChecked){
@@ -973,7 +1149,7 @@
 					$(this).val(0);
 					$(mi + ' form').append('<input type="hidden" name="active" value="0"/>')
 				}	
-			});
+			});*/
 
 			var cus = null;
 			//custom_product_ref has unique index and needs null value
@@ -1059,7 +1235,7 @@
 		
 		function loadSelectHTML(urlStr, destination){
 			$.post(urlStr, function(html){
-				var selValue = $(destination).append(html).prev().val(); 
+				var selValue = $(destination).empty().append(html).prev().val(); 
 				//new provider/product have no value, so we take the first option
 				//this needs to be set manually, otherwise with a new form, no values get send
 				if (selValue == ''){
@@ -1478,7 +1654,7 @@
 									<td><label for="product_id"><?php echo $Text['id']; ?></label></td>
 									<td><p class="textAlignLeft ui-corner-all setProductId">{id}</p></td>
 									<td><label for="active"><?php echo $Text['active'];?></label></td>
-									<td><input type="checkbox" name="active" value="{active}" class="floatLeft" />
+									<td><input type="checkbox" name="active_dummy_product" value="{active}" class="floatLeft" />
 										<input type="hidden" name="id" value="{id}" />
 									</td>							
 							  </tr>
@@ -1674,7 +1850,7 @@
 							<td><label for="provider_id"><?php echo $Text['id']; ?></label></td>
 							<td><p class="textAlignLeft ui-corner-all setProviderId">{id}</p></td>
 							<td><label for="active"><?php echo $Text['active'];?></label></td>
-							<td><input type="checkbox" name="active" value="{active}" class="floatLeft" />
+							<td><input type="checkbox" name="active_dummy_provider" value="{active}" class="floatLeft" />
 								<input type="hidden" name="id" value="{id}" />
 							</td>							
 						</tr>

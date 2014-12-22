@@ -81,5 +81,16 @@ insert into aixada_incident_type
       (3, 'internal + portal', 'like 1 + incidents are posted on the portal'),
       (4, 'internal + email + portal', 'Incidents are posted internally, send out as email and posted on the portal');
             
-      
+insert into 
+	aixada_stock_movement_type (name, description)
+values
+	('SET_ME', 'Temp solution for old movements before stock_movement_type existed.'),
+	('Merma', 'Lo que se pierde por bichos, caidas, caducado, ... '),
+	('Descuadre', 'Lo que no debería pasar pero siempre pasa. '),
+	('Added', 'Llega un pedido de stock y se añade.');
+	
+insert into 
+	aixada_version (version) 
+values 
+		('2.8'); 
       

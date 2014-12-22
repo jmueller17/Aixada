@@ -1,6 +1,26 @@
 delimiter |
 
 
+
+/**
+ *	deactivates or actives a provider. basically means that deactivated providers
+ *  does not appear anymore in the listings. This does NOT deactivate its products. 
+ */
+drop procedure if exists change_active_status_provider|
+create procedure change_active_status_provider (in the_active_state boolean, in the_provider_id int)
+begin
+
+	update 
+		aixada_provider
+	set 
+		active = the_active_state
+	where 
+		id = the_provider_id;
+
+end|
+
+
+
 /**
  * returns the responsible users for a provider. 
  */

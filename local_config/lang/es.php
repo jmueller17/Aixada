@@ -843,16 +843,19 @@ $Text['add_stock_frase'] = "Stock total = stock actual de "; //complete frase is
 $Text['correct_stock_frase'] = "El stock actual no es ";
 $Text['stock_but'] = "sino"; //current stock is not x units but...
 $Text['stock_info'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas) con sólo hacer clic en el nombre del producto aquí abajo.";
-$Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Gestionar &gt; Productos &gt; Stock.";
+$Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Informes &gt; Stock.";
 
 
+$Text['msg_success'] = "Fin correcto";
 $Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 
 $Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo "; 
 $Text['msg_import_matchcol'] = "Hay que hacer coincidir las entradas de la base de datos con las filas de la tabla. Debes asignar la columna que corresponde a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "¿Qué otras columnas de la tabla quieres importar además de la columna necesaria?"; 
-$Text['msg_import_success'] = "La importación ha funcionado correctamente. ¿Quieres importar otro archivo?"; 
+$Text['msg_import_done'] = 'Se han importado {$rows} líneas.'; 
+$Text['msg_import_another'] = "¿Quieres importar otro archivo?"; 
 $Text['btn_import_another'] = "Importar otro"; 
 $Text['btn_nothx'] = "No, gracias"; 
+$Text['direct_import_template'] = "Plantilla de importación directa";
 $Text['import_allowed'] = "Formatos compatibles"; //as in allowed file formats
 $Text['import_file'] = "Archivo de importación"; 
 $Text['public_url'] = "URL pública";
@@ -862,8 +865,11 @@ $Text['msg_parsing'] = "Se está leyendo el archivo del servidor y se está anal
 $Text['import_step1'] = "Selección de archivo";
 $Text['import_step2'] = "Vista previa de los datos y asignacíón de columnas";
 $Text['import_reqcol'] = "Columna necesaria";
+$Text['import_ignore_rows'] = '(las líneas sin "{$match_field}" se ignorarán)';
+$Text['import_ignore_value'] = '(el valor de la columna "{$match_field}" se ignorará)';
 $Text['import_auto'] = "Tengo buenas noticias: casi todos los datos (columnas) se han podido reconocer y puedes intentar la importación automática. No obstante, la opción más segura es previsualizar primero el contenido y luego realizar la asignación de columnas de la tabla manualmente.";
 $Text['import_qnew'] = "¿Qué quieres hacer con los datos que no existen en la base de datos actual?";
+$Text['import_create_update'] = "Crear entradas nuevas y actualizar las existentes";
 $Text['import_createnew'] = "Crear entradas nuevas";
 $Text['import_update'] = "Sólo actualizar las filas existentes";
 $Text['btn_imp_direct'] = "Importar directamente";
@@ -891,8 +897,17 @@ $Text['total_brutto'] = "Total bruto";
 $Text['total_netto'] = "Total neto";
 $Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por vafor, intente de nuevo. "; 
 $Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un administrador puede hacer eso!";
+
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
+$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
+$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
+$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
+$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
+$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
+$Text['no_stock'] = "Out of stock!!";
+$Text['stock_mov_type'] = "Movement type";
+
 
 
 ?>

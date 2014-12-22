@@ -8,11 +8,17 @@ function prepareStockForm(section, stockActual, unit, productId){
 				$('.addStockElements').show();
 				$('.correctStockElements').hide();
 
+
 				$('.sumStock').text(" " + stockActual+" "+unit + " ");
 				$('#setStockUnit').text(unit)
 				$('#dialog_edit_stock')
 					.data('info', {edit:'add', id:productId})
 					.dialog('open');
+
+				$('#stock_movement_type_id').val(4);
+
+				//$('.sMovementTypeId').hide(); //children("select").val("4").attr("selected",true);
+
 
 			} else if (section == 'correct'){
 				$('.addStockElements').hide();
@@ -84,7 +90,11 @@ function correctStock(productId){
  */
 function submitStock(oper, product_id, quantity){
 
-	var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity; 
+	var mov_id = $('#stock_movement_type_id').val();
+	var comment = $('#stock_movement_description').val();	
+
+
+	var urlStr = 'php/ctrl/Shop.php?oper='+oper+'&product_id='+product_id+'&quantity='+quantity+'&movement_type_id='+mov_id+'&description='+comment; 
 	
 	
 	$.ajax({

@@ -70,6 +70,7 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
+    $this->mysqli->query("SET SESSION SQL_MODE = '';");
   }
   /**
    * The DBWrap class is implemented as a Singleton. Call this
@@ -183,6 +184,17 @@ class DBWrap {
       }
   }
 
+  
+  /**
+   * This function scapes special characters in a string for use in an SQL
+   * statement.
+   *
+   * @param string $text
+   * @return string The string to use in a sql stament.
+   */
+   public function escape_string($text) {
+        return $this->mysqli->real_escape_string($text);
+   }
   
   /**
    * This function accepts an SQL query string with placeholders of

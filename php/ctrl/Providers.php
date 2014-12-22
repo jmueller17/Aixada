@@ -23,6 +23,14 @@ try{
 		case 'getProviders':
 			printXML(stored_query_XML_fields('get_provider_listing', get_param('provider_id',0), get_param('all',0)));
 			exit;
+
+        case 'deactivateProvider':
+            echo do_stored_query('change_active_status_provider', 0, get_param('provider_id'));
+            exit;
+
+        case 'activateProvider':
+            echo do_stored_query('change_active_status_provider', 1, get_param('provider_id'));
+            exit;
 			
 
     default: 

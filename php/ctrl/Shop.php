@@ -28,12 +28,12 @@ try{
 
     	//updates the stock for given product. The "quantity" is added to current_stock
     	case 'addStock':
-    		echo do_stored_query('add_stock', get_param('product_id'), get_param('quantity'), get_session_user_id(), get_param('description','stock added'));
+    		echo do_stored_query('add_stock', get_param('product_id'), get_param('quantity'),  get_session_user_id(), get_param('movement_type_id',4), get_param('description','stock added'));
 			exit;
 
 		//corrects stock for product. The "quantity" replaces current_stock. 
     	case 'correctStock':
-    		echo do_stored_query('correct_stock', get_param('product_id'), get_param('quantity'), get_session_user_id());
+    		echo do_stored_query('correct_stock', get_param('product_id'), get_param('quantity'), get_param('description',''), get_param('movement_type_id',1), get_session_user_id());
 			exit;
     		
 		case 'getProductsBelowMinStock':
@@ -41,7 +41,7 @@ try{
 	    	exit;
 	    
 	    case 'stockMovements':
-        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('limit', 0)));
+        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('from_date',""), get_param('to_date',""), get_param('limit', 0)));
         	exit;
         	
 	    case 'getTotalSalesByProviders':

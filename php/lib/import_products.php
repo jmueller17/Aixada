@@ -10,6 +10,7 @@ class import_products extends abstract_import_manager {
 	
 	/**
 	 * internal provider id to which products belong
+	 * @var integer
 	 */
 	protected $provider_id = 0; 
 	
@@ -32,7 +33,7 @@ class import_products extends abstract_import_manager {
 		$db->free_next_results();
 		
 		//the provider
-		$this->provider_id = $provider_id;
+		$this->provider_id = intval($provider_id);
 		
 		//every product needs the provider id
 		$this->_db_insert_row_prefix = array("provider_id"=>$this->provider_id);
@@ -60,6 +61,25 @@ class import_products extends abstract_import_manager {
 		parent::__construct('aixada_product', $data_table, $map);
 	}
 	
+    /**
+     * Deactivates all products from the provider, this method makes
+     * it easier the deactivation prior to import.
+     */
+    public function deactivate_products() {
+        $match_col_list = $this->get_match_col_values();
+        if ($match_col_list != ''){
+            $db = DBWrap::get_instance();
+            $rs = $db->Execute(
+                'SELECT id from aixada_product where active = 1'.
+                ' and provider_id = '.$this->provider_id.
+                ' and '.$this->_db_match_field.' not in ('.$match_col_list.')'
+            );
+            while ($row = $rs->fetch_array()){
+                do_stored_query('change_active_status_product', 0, $row['id']);
+            }
+            $db->free_next_results();
+        }
+    }
 	
 	
 	/**
@@ -69,20 +89,12 @@ class import_products extends abstract_import_manager {
 	protected function match_db_entries(){
 		
 		$db = DBWrap::get_instance();
-		$checkIds = $this->_import_data_table->get_col_as_array($this->_match_col_index);
+		$match_col_list = $this->get_match_col_values();
 		
-		$got_ids = 0; 
+		$_existing_rows = array();
 		$sql = "select id, custom_product_ref from aixada_product where provider_id=$this->provider_id and custom_product_ref in (";
-		foreach($checkIds as $id){
-			if ($id != ''){
-				$sql .= "'".$id . "',";
-				$got_ids++;
-			}
-		}		
-		$sql = rtrim($sql, ",") .")";
-		$_existing_rows = array();  
-		
-		if ($got_ids > 0){
+		if ($match_col_list != ''){
+			$sql .= $match_col_list.")" ;
 	    	$rs =  $db->Execute($sql);
 	    	//which of the given entries do already exist in the db
 	    	while ($row = $rs->fetch_array()){

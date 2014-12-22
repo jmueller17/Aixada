@@ -853,16 +853,19 @@ $Text['add_stock_frase'] = "Estoc total = estoc actual de "; //complete frase is
 $Text['correct_stock_frase'] = "L'estoc actual no és de";
 $Text['stock_but'] = "sinó"; //current stock is not x units but...
 $Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues) fent clic al nom del producte aquí baix.";
-$Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Gestiona&gt; Productes&gt; Estoc.";
+$Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Informes &gt; Estoc.";
 
 
+$Text['msg_success'] = "Fi correcte.";
 $Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
 $Text['msg_err_upload'] = "S'ha produït un error en la càrrega de l'arxiu "; 
 $Text['msg_import_matchcol'] = "Cal fer coincidir les entrades de la base de dades amb les files de la taula. Has d'assignar la columna que correspon a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "Quines altres columnes de la taula vols importar a més de la columna necessària?"; 
-$Text['msg_import_success'] = "L'importació ha funcionat correctament. Vols importar un altre arxiu?"; 
+$Text['msg_import_done'] = 'S\'han importat {$rows} línies.'; 
+$Text['msg_import_another'] = "Vols importar un altre arxiu?"; 
 $Text['btn_import_another'] = "Importar un altre"; 
 $Text['btn_nothx'] = "No, gràcies"; 
+$Text['direct_import_template'] = "Plantilla d\'importació directa";
 $Text['import_allowed'] = "Formats compatibles"; //as in allowed file formats
 $Text['import_file'] = "Arxiu d'importació"; 
 $Text['public_url'] = "URL pública";
@@ -872,8 +875,11 @@ $Text['msg_parsing'] = "S'està llegint l'arxiu del servidor i s'està analitzan
 $Text['import_step1'] = "Afegir arxiu";
 $Text['import_step2'] = "Vista prèvia de les dades i assignació de columnes";
 $Text['import_reqcol'] = "Columna necessària";
+$Text['import_ignore_rows'] = '(les línies sense "{$match_field}" s\'ignoraran)';
+$Text['import_ignore_value'] = '(el valor de la columna "{$match_field}" s\'ignorarà)';
 $Text['import_auto'] = "Tinc bones notícies: gairebé totes les dades (columnes) s'han pogut reconèixer i pots intentar la importació automàtica. De tota manera, l'opció més segura és previsualitzar primer el contingut i després realitzar l'assignació de columnes de la taula manualment.";
 $Text['import_qnew'] = "Què vols fer amb les dades que no existeixen a la base de dades actual?";
+$Text['import_create_update'] = "Crear entrades noves i actualitzar les existents";
 $Text['import_createnew'] = "Crear entrades noves";
 $Text['import_update'] = "Actualitzar només les files existents";
 $Text['btn_imp_direct'] = "Importar directament";
@@ -903,6 +909,12 @@ $Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Plea
 $Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
-
+$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
+$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
+$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
+$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
+$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
+$Text['no_stock'] = "Out of stock!!";
+$Text['stock_mov_type'] = "Movement type";
 
 ?>

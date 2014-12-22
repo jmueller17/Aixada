@@ -6,7 +6,7 @@
  */
 
 @require_once (__ROOT__.'php/external/ZendGdata-1.12.2/library/Zend/Loader.php');
-set_include_path(__ROOT__."php/external/ZendGdata-1.12.2/library:.");
+set_include_path(__ROOT__.DIRNAME('php/external/ZendGdata-1.12.2/library/.').PATH_SEPARATOR.".");
 @Zend_Loader::loadClass('Zend_Gdata');
 @Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
 @Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');

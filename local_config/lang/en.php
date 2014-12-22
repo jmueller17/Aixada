@@ -854,16 +854,19 @@ $Text['add_stock_frase'] = "Total stock = current stock of "; //complete frase i
 $Text['correct_stock_frase'] = "Current stock is not";
 $Text['stock_but'] = "but"; //current stock is not x units but...
 $Text['stock_info'] = "Note: you can consult all previous stock movements (adds, corrections, losses) by clicking on the product name below!";
-$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Manage &gt; Products &gt; Stock page.";
+$Text['stock_info_product'] = "Note: consult all previous stock movements (adds, corrections and overall loss) from the Report &gt; Stock page.";
 
 
+$Text['msg_success'] = "Completed successfully";
 $Text['msg_confirm_prov'] = "Are you sure you want to export all providers?"; 
 $Text['msg_err_upload'] = "An error occured during uploading the file "; 
 $Text['msg_import_matchcol'] = "Need to match up database entries with table rows! Please assign the required matching column "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "Apart from the required column which table columns do you want to import?"; 
-$Text['msg_import_success'] = "Import has been successful. Do you want to import another file?"; 
+$Text['msg_import_done'] = '{$rows} rows have been imported.'; 
+$Text['msg_import_another'] = "Do you want to import another file?"; 
 $Text['btn_import_another'] = "Import another"; 
 $Text['btn_nothx'] = "No, thanks!"; 
+$Text['direct_import_template'] = "Direct import template";
 $Text['import_allowed'] = "Allowed formats"; //as in allowed file formats
 $Text['import_file'] = "Import file"; 
 $Text['public_url'] = "Public URL";
@@ -873,8 +876,11 @@ $Text['msg_parsing'] = "Reading file from server and parsing, please wait...!";
 $Text['import_step1'] = "Choose a file";
 $Text['import_step2'] = "Preview data and match columns";
 $Text['import_reqcol'] = "Required column";
+$Text['import_ignore_rows'] = '(rows without "{$match_field}" are ignored)';
+$Text['import_ignore_value'] = '(value of column "{$match_field}" is ignored)';
 $Text['import_auto'] = "Good news: most data (columns) could be recognized and you could try to automatically import the file. As a more secure alternative, preview the content first and match the table columns by hand.";
 $Text['import_qnew'] = "What should happen with data that does not exist in the database?";
+$Text['import_create_update'] = "Create new entries and update existing rows";
 $Text['import_createnew'] = "Create new entries";
 $Text['import_update'] = "Just update existing rows";
 $Text['btn_imp_direct'] = "Import directly";
@@ -905,7 +911,14 @@ $Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can d
 
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
+$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
 
+$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
+$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
+$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
+$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
+$Text['no_stock'] = "Out of stock!!";
+$Text['stock_mov_type'] = "Movement type";
 
 //$Text[''] = ""; 
 

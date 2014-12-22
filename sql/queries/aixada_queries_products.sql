@@ -273,30 +273,132 @@ end|
 
 
 /**
+ *	Checks if a product_id has ordered items (i.e entries in aixada_order_item). 
+ *	Counts can be made filtering order_status:
+ *			0 -> is still open
+ *			1 -> send off, order_id is set
+ *			2 -> doesn't matter closed and open. 
+ *	and counts can be restricted by date range. 
+ */
+drop procedure if exists order_item_count|
+create procedure order_item_count (	in the_product_id int, 
+									in order_status int,
+									in the_from_date date, 
+									in the_to_date date)
+begin
+
+	declare from_date date default date("1234-01-01"); 
+	declare to_date date default date("9999-01-01");
+
+	declare wherec varchar(255) default "";
+
+	if (order_status=0) then
+		set wherec = " and oi.order_id is NULL";
+	elseif (order_status = 1) then
+		set wherec = " and oi.order_id > 0";
+	elseif (order_status = 2) then
+		set wherec = ""; 
+	end if; 
+
+	if (the_from_date > 0) then
+		set wherec = concat(wherec, " and oi.date_for_order >= '",the_from_date,"'");
+	end if; 
+	
+	if (the_to_date > 0) then
+		set wherec = concat(wherec, " and oi.date_for_order <= '",the_to_date,"'");
+	end if; 
+
+	set @q = concat("select
+		count(*) as total_ordered_items
+	from
+		aixada_order_item oi
+	where
+		oi.product_id =", the_product_id, wherec,";");
+		
+	
+	prepare st from @q;
+  	execute st;
+  	deallocate prepare st;
+end|
+
+
+
+/**
  * By default only those dates in table aixada_product_orderable_for_date can be 
  * deactivated that have no ordered items associated. This procedure can delete
  * those dates where orders have been made, which implies to delete the associated items 
  * from order carts as well. 
+ *
+ * If a specific date is supplied, then the order items for this order date only will
+ * be deleted. If date is 0, then order_items of the given product for ALL open orders 
+ * will be deleted. This usually happens when an orderable product is deactivated. 
  */
 drop procedure if exists deactivate_locked_order_date|
 create procedure deactivate_locked_order_date (in the_product_id int, in the_date date)
 begin
+
+	declare done int default 0; 
+	declare the_order_date date; 
+	-- get a list of all order-dates for the given product that are not sent off yet --
+	declare date_cursor cursor for 
+		select
+			date_for_order
+		from
+			aixada_order_item
+		where 
+			product_id = the_product_id
+			and order_id is NULL;	
+	
+	declare continue handler for not found
+		set done = 1; 
+	declare exit handler for sqlexception rollback; 
+	declare exit handler for sqlwarning rollback; 
+
 	
 	start transaction; 
 	
-	delete from
-		aixada_order_item
-	where
-		product_id = the_product_id
-		and date_for_order = the_date; 
-		
-	delete from
-		aixada_product_orderable_for_date
-	where
-		product_id = the_product_id
-		and date_for_order = the_date; 
-		
+	if (the_date > 0) then
+		delete from
+			aixada_order_item
+		where
+			product_id = the_product_id
+			and date_for_order = the_date; 
+			
+		delete from
+			aixada_product_orderable_for_date
+		where
+			product_id = the_product_id
+			and date_for_order = the_date; 
+
+	else 
+
 	
+		open date_cursor;	
+		set done = 0; 
+
+		read_loop: loop
+			fetch date_cursor into the_order_date;
+			if done then 
+				leave read_loop; 
+			end if;
+
+			delete from
+				aixada_order_item
+			where
+				product_id = the_product_id
+				and date_for_order = the_order_date; 
+
+			delete from
+				aixada_product_orderable_for_date
+			where
+				product_id = the_product_id
+				and date_for_order = the_order_date; 
+
+		end loop;
+		close date_cursor;
+
+	end if; 
+
 	commit; 
 	
 end|
@@ -470,7 +572,7 @@ begin
      
     
     /** show active products only or include inactive products as well? **/
-    if (include_inactive = 1) then 
+    if (include_inactive = 0) then 
        set wherec = "and p.active=1 and pv.active=1";
     end if;	
    
@@ -624,7 +726,7 @@ begin
 	declare wherec varchar(255) default "p.active = 1";
 	
 	if (the_provider_id > 0) then
-		set wherec = concat("p.provider_id=", the_provider_id, "and p.active = 1");
+		set wherec = concat("p.provider_id=", the_provider_id, " and p.active = 1");
 	end if; 
 	
 	set @q = concat("select
@@ -664,7 +766,11 @@ end|
  * However, stock disappears.... somehow
  */
 drop procedure if exists correct_stock|
-create procedure correct_stock(in the_product_id int, in the_current_stock decimal(10,4), in the_operator_id int)
+create procedure correct_stock(in the_product_id int, 
+								in the_current_stock decimal(10,4), 
+								in the_description varchar(255),
+								in the_movement_type_id int,	
+								in the_operator_id int)
 begin
 	
 	declare err_amount decimal(10,4);
@@ -712,12 +818,13 @@ begin
  		
  	-- reg the stock movement -- 	
  	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	the_current_stock - p.stock_actual,
-     	concat('stock corrected.'),
+		the_description,
+		the_movement_type_id,
      	the_current_stock
     from 
     	aixada_product p
@@ -747,6 +854,7 @@ drop procedure if exists add_stock|
 create procedure add_stock(in the_product_id int, 
 			   in delta_amount decimal(10,4), 
 			   in the_operator_id int, 
+			   in the_movement_type_id int,
 			   in the_description varchar(255))
 begin
    	start transaction;
@@ -761,12 +869,13 @@ begin
 
 	/* register the movement */
    	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	delta_amount,
      	the_description,
+     	the_movement_type_id,
      	p.stock_actual
     from 
     	aixada_product p
@@ -806,16 +915,32 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
+create procedure stock_movements(	in the_product_id int, 
+									in the_provider_id int, 
+									in from_date varchar(255), 
+									in to_date varchar(255), 
+									in the_limit varchar(255))
 begin
   
 	declare wherec varchar(255) default ""; 
+	declare limitc varchar(255) default "";
+	declare datec varchar(255) default " and sm.ts between '1234-01-02' and '9999-01-01' ";
+
 
 	if (the_provider_id > 0) then
-		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+		set wherec = concat(" and p.provider_id = ", the_provider_id);
 	elseif (the_product_id > 0) then
-		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
+		set wherec = concat(" and p.id = ", the_product_id);
 	end if; 
+
+	if (the_limit != "") then 
+		set limitc = concat(" limit ", the_limit);
+	end if; 
+
+	if (from_date != "" and to_date != "") then
+		set datec = concat(" and sm.ts between '",from_date,"' and '",to_date,"' ");
+	end if; 
+
 	
 	set @q = concat("select
 		sm.*,
@@ -824,20 +949,25 @@ begin
 		p.name as product_name,
 		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
-		um.unit
+		um.unit,
+		smt.name as movement_type
 	from
 		aixada_stock_movement sm,
 		aixada_member mem,
 		aixada_product p, 
 		aixada_iva_type iva,
-		aixada_unit_measure um
+		aixada_unit_measure um,
+		aixada_stock_movement_type smt
 	where
 		mem.id = sm.operator_id
 		",wherec," 
+		",datec,"
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
+		and sm.product_id = p.id
+		and smt.id = sm.movement_type_id
 	order by
-		sm.product_id desc, sm.ts desc;");
+		sm.ts desc, sm.product_id desc ",limitc,";");
 		
 	prepare st from @q;
   	execute st;

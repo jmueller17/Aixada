@@ -47,7 +47,12 @@ try{
 		  	echo do_stored_query('toggle_orderable_product', get_param('product_id'), get_param('date'), get_param('instantRepeat',0));
 	  	}
 	    exit;
-	    
+
+	  //check if product has ordered items. 
+	  case 'count_ordered_items':
+	  	echo stored_query_XML_fields('order_item_count', get_param('product_id'), get_param('order_status',0), get_param('from_date',0), get_param('to_date',0));
+		exit; 
+
 	  //dates with active products which have ordered items need to delete the corresponding order cart items first
 	  case 'unlockOrderableDate':
 	  	echo do_stored_query('deactivate_locked_order_date', get_param('product_id'), get_param('date'));
