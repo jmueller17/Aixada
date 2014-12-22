@@ -9,8 +9,8 @@
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/aixcss.css" rel="stylesheet">
     <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
-
-
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="js/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>

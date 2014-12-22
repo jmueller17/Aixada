@@ -2,20 +2,16 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))).DS); 
 
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
 
 require_once(__ROOT__ . "php/utilities/general.php");
-
-
-
 require_once("billing_mod.php");
+
+
 
 if (!isset($_SESSION)) {
     session_start();
 }
+
 
 try{
 
@@ -57,32 +53,45 @@ try{
         case 'exportAccounting':
 
             $bills = get_param("bill_ids");
-            $ofname = "output_format_" . get_param("format", "csv");
+            $format = get_param("format", "csv");
+            $ofname = "output_format_" . $format;
+            $files = array();
             
             foreach($bills as $id){
-
                 $b = new Bill($id);
-                $dt = $b->get_accounting_info();
-
-                
+                $dt = $b->get_accounting_info();                
                 $out_formatter = new $ofname($dt);
-
-                Deliver::serve_outf_file($out_formatter);
-               
+                $files[] = $out_formatter->write_file();
             }
+
+            
+            //more than one file to export, zipit
+            if (count($files)==1){
+                Deliver::serve_file($files[0], $format);
+            } else if (count($files)>1){
+                Deliver::serve_zip($files);
+            }
+
             exit; 
 
         case 'exportSEPA':
 
             $bills = get_param("bill_ids");
+            $files = array();
 
             foreach($bills as $id){
                 $b = new Bill($id);
                 $dt = $b->get_accounting_info();
 
                 $of = new output_format_sepa($dt);
+                $files[] = $of->write_file();
+            }
 
-                Deliver::serve_file($of->write_file(), 'xml');
+             //more than one file to export, zipit
+            if (count($files)==1){
+                Deliver::serve_file($files[0], 'xml');
+            } else if (count($files)>1){
+                Deliver::serve_zip($files);
             }
 
             exit;

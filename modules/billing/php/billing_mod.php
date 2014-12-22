@@ -35,7 +35,7 @@ class Bill {
             $db = DBWrap::get_instance(); 
 
             //check if bill with give id exists
-            $rs = $db->squery("get_bill_accounting_detail", $bill_id);
+            $rs = $db->squery("get_bill", $bill_id);
             $db->free_next_results();
 
             if ($rs->num_rows != 1){
@@ -82,10 +82,6 @@ class Bill {
             $dt1[1][] = $row[2];
         }
 
-
-        global $firephp;
-        $firephp->log($dt1, " data table for bill accounting info");
-
         return $dt1; 
     }
 
@@ -99,7 +95,7 @@ class Bill {
     public function create($arr_cart_ids, $description="", $ref_bill="", $date_for_bill="",  $operator_id)
     {
 
-    	global $firephp; 
+    	//global $firephp; 
 
         if (!is_numeric($operator_id) || $operator_id <=0 ){
             throw new Exception("Billing exception: no operator (user) ID provided!");
@@ -151,14 +147,14 @@ class Bill {
 
         }
 
-        $firephp->log($uf_ids[0], "carts belong to uf");
+        //$firephp->log($uf_ids[0], "carts belong to uf");
 
 
     	//create bill
         $last_insert = $db->squery('create_bill', $ref_bill, $uf_ids[0], $operator_id, $description);
         $this->bill_id = $last_insert->fetch_row()[0];  
 
-        $firephp->log($this->bill_id, "bill id");
+        //$firephp->log($this->bill_id, "bill id");
 
         $db->free_next_results();
     

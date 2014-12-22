@@ -23,6 +23,23 @@ end|
 
 
 
+/**
+ *	
+ *	Retrieve all fields of aixada_bill table for given bill id
+ */
+drop procedure if exists get_bill|
+create procedure get_bill (in the_bill_id int)
+begin
+	select
+		*
+	from 
+		aixada_bill
+	where
+		id = the_bill_id; 
+end|
+
+
+
 drop procedure if exists delete_bill|
 create procedure delete_bill (in the_bill_id int)
 begin
@@ -129,6 +146,10 @@ begin
 end|
 
 
+/**
+ *
+ *	Calculates the total amount of tax per tax group for given bill 
+ */
 drop procedure if exists get_tax_groups| 
 create procedure get_tax_groups(in the_bill_id int)
 begin
@@ -151,7 +172,10 @@ begin
 end|
 
 
-
+/** 
+ *
+ *	Returns bill + accounting details (such as member, banc, nif, etc. ) for given bill. 
+ */
 drop procedure if exists get_bill_accounting_detail|
 create procedure get_bill_accounting_detail(in the_bill_id int)
 begin

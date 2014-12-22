@@ -95,7 +95,14 @@ class configuration_vars {
   
   
   
+  /**
+   *
+   *  Directory where temporary files can be written to. Ideally this is a private 
+   *  folder which is not accessible over the web. 
+   */
+  public $private_dir = 'local_config/tmp/';
   
+
   
   /**
    * HTML TEMPLATES

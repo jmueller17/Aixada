@@ -99,21 +99,54 @@ class Deliver {
 	}
 
 
-
+	/**
+	 *
+	 *	Shortcut function to create and serve zip file via Deliver::create_zip() + Deliver::serve_file()
+	 */
+	public static function serve_zip($files, $filename="", $destination_folder ="", $overwrite=true){
+		$zip = Deliver::create_zip($files, $filename, $destination_folder, $overwrite);
+		Deliver::serve_file($zip, "zip");
+	}
 
 
 	/**
 	 *
 	 *	Utility function to zip several files. Code from http://davidwalsh.name/create-zip-php
-	 *	@var array $files Array containing the full path to the file to be zipped. 
+	 *	@param array $files Array containing the full paths to the files to be zipped. 
+	 *	@param string $filename The name of the zip archive. If empty, tmp file name will be constructed. 
+	 *	@param string $destination_folder The full path to the folder where the zip folder should be written. If empty, zip will be written to tmp dir set in config.  
+	 *	@param bool $overwrite If true, overwrites any existing zip archive. 
 	 *
 	 */
-	public static function create_zip($files = array(),$destination = '', $overwrite = false) {
+	public static function create_zip($files, $filename="", $destination_folder ="", $overwrite=true) {
 		
-		//if the zip file already exists and overwrite is false, return false
+
+		if (count($files)==0) {
+			throw new Exception("Deliver create zip exception: no file names given in $files");
+		}
+
 		if(file_exists($destination) && !$overwrite) { 
 			return false; 
 		}
+
+		//if no filename is given, construct one
+    	if ($filename == ""){
+			$filename = "AixTmpZip" . mt_rand(100,100000) . "_" .date('Y-m-d_h:i').".zip";    		
+
+    	} else if (pathinfo($filename, PATHINFO_EXTENSION) != 'zip') {
+	   	 		$filename = $filename . '.zip';
+    	}
+    		
+    	if ($destination_folder == ""){
+    		$destination_folder = __ROOT__ . configuration_vars::get_instance()->private_dir; 
+    	}	
+    	
+    	//get the trailing slash right
+    	$destination_folder = rtrim($destination_folder, '/') . '/';
+
+    	//path + filename
+    	$path = $destination_folder . $filename; 
+
 		
 		$valid_files = array();
 	
@@ -134,7 +167,7 @@ class Deliver {
 		
 			//create the archive
 			$zip = new ZipArchive();
-			if($zip->open($destination, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+			if($zip->open($path, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
 				return false;
 			}
 		
@@ -144,12 +177,15 @@ class Deliver {
 				$zip->addFile($filepath,$file_name);
 			}
 		
-
 			//close the zip -- done!
 			$zip->close();
 		
-			//check to make sure the file exists
-			return file_exists($destination);
+			//check to make sure the file exists and send its path
+			if (file_exists($path)){
+				return $path; 
+			} else {
+				return false; 
+			}
 		} else {
 			return false;
 		}
@@ -165,6 +201,15 @@ class Deliver {
 
 	}
 
+
+	/**
+	 *	@param array $files Array of files containing full file path. 
+	 */
+	public static function clean_up($files){
+		foreach($files as $filepath) {
+				@unlink($filepath);
+		}
+	}
 
 
 }
