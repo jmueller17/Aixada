@@ -13,31 +13,6 @@
 class Deliver {
 
 
- 	private static $instance = false;
-
-
-	/** 
-	 *	Constructor. Not public. 
-	 *
-	 */
-	private function __construct(){
-	}
-
-
-
-
-	/**
-   	* The Deliver class is implemented as a Singleton. Call this
-   	* function to instantiate it, and not the constructor.
-   	*/
-  	public static function get_instance(){
-    	if (self::$instance === false)
-      		self::$instance = new deliver;
-    	
-    	return self::$instance;
-  	}
-
-
 
 	/**
 	 *	
@@ -45,7 +20,7 @@ class Deliver {
 	 *	@var string $out_str The output string to be send to the client
 	 *	@var string $format The format of the string, i.e. csv, xml, json, etc. 
 	 */
-	public function serve_str($out_str, $format){
+	public static function serve_str($out_str, $format){
 
 		header('Content-Type: text/'.$format);
 		header('Last-Modified: '.date(DATE_RFC822));
@@ -63,11 +38,11 @@ class Deliver {
 	 *	the formatted string to be send back to the client and its format. 
 	 *  @param output_format $output_format Instance of class output_format
 	 */
-	public function serve_outf_str($output_format){
+	public static function serve_outf_str($output_format){
 
 		//an instance of class output_format
 		if (strpos(get_class($output_format), "tput_forma") == 2 ){
-			$this->serve_str($output_format->format(), $output_format->get_format());
+			Deliver::serve_str($output_format->format(), $output_format->get_format());
 		} else {
 			throw new Exception("Deliver exception: server_outf_str $output_format needs to be an instance of class output_format");
 		}
@@ -81,9 +56,13 @@ class Deliver {
 	 *	@var string $path_to_file The full path to the file, including file name
 	 *	@var string $format The format of the generate file as file ending. 
 	 */
-	public function serve_file($path_to_file, $format){
+	public static function serve_file($path_to_file, $format){
 
 		$filename = basename($path_to_file);
+
+		if (!isset($filename) || $filename == "" || is_null($filename)){
+			throw new Exception("Deliver file exception: no filename set!!");
+		}
 
 		if ($format == "zip"){
 			header('Content-Type: application/zip');
@@ -108,11 +87,11 @@ class Deliver {
 	 *	retrieving the file from the formatter and the file extension. 
 	 *	@param output_format $output_format. 
 	 */
-	public function serve_outf_file($output_format){
+	public static function serve_outf_file($output_format){
 
 		//check if we really have an instance of class output_format
 		if (strpos(get_class($output_format), "tput_forma") == 2 ){
-			$this->serve_file($output_format->write_file(), $output_format->get_format());
+			Deliver::serve_file($output_format->write_file(), $output_format->get_format());
 		} else {
 			throw new Exception("Deliver exception: server_outf_file $output_format needs to be an instance of class output_format");
 		}

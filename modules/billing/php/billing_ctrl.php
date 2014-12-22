@@ -67,13 +67,25 @@ try{
                 
                 $out_formatter = new $ofname($dt);
 
-                Deliver::get_instance()->serve_outf_file($out_formatter);
+                Deliver::serve_outf_file($out_formatter);
                
             }
-
-            
-
             exit; 
+
+        case 'exportSEPA':
+
+            $bills = get_param("bill_ids");
+
+            foreach($bills as $id){
+                $b = new Bill($id);
+                $dt = $b->get_accounting_info();
+
+                $of = new output_format_sepa($dt);
+
+                Deliver::serve_file($of->write_file(), 'xml');
+            }
+
+            exit;
 
     		
     default:  

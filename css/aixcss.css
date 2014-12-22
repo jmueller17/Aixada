@@ -23,7 +23,7 @@ h3 span.sp-sm {font-size:0.6em;}
 .level-1-indent {text-indent:1em;}
 .level-2-indent {text-indent:1em;}
 
-
+th p {margin-bottom:0px;}
 
 .ax-container{
 	margin-left: 0;
@@ -51,4 +51,5 @@ h3 span.sp-sm {font-size:0.6em;}
 #ax-submenu {
     background-color: #fff;
     border-width: 1;
+    margin-top:-1px;
 }

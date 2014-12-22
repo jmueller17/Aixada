@@ -29,6 +29,7 @@ class Bill {
 	public function __construct($bill_id=0)
     {    	
 
+        //for given id, check if it exists. 
         if (is_numeric($bill_id) && $bill_id > 0 ){          
 
             $db = DBWrap::get_instance(); 
@@ -41,10 +42,7 @@ class Bill {
                 throw new Exception("Bill execption: provided bill_id {$bill_id} does not exist!");
             }
 
-        } else {
-            throw new Exception("Bill exception: bill_id needs to be numeric and > 0");
-
-        }
+        } 
 
         $this->bill_id = $bill_id; 
 

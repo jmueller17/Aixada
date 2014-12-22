@@ -8,6 +8,7 @@ require_once(__ROOT__ . "php/lib/deliver.php");
 require_once(__ROOT__ . "php/lib/output_format.php");
 require_once(__ROOT__ . "php/lib/output_format_csv.php");
 require_once(__ROOT__ . "php/lib/output_format_xml.php");
+require_once(__ROOT__ . "php/lib/output_format_sepa.php");
 
 
 
@@ -192,7 +193,7 @@ function print_stored_query(){
   
   $formatter = new $output_class($rs);
 
-  Deliver::get_instance()->serve_outf_str($formatter);
+  Deliver::serve_outf_str($formatter);
 
 }
 
@@ -216,7 +217,7 @@ function export_stored_query(){
 
   $formatter = new $output_class($rs);
 
-  Deliver::get_instance()->serve_outf_file($formatter);
+  Deliver::serve_outf_file($formatter);
 
 }
 

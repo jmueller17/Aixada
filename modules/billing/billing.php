@@ -162,9 +162,7 @@
 
 		//bill checkboxes.
 		$('#tbl_bill tbody')
-			.on('click','td:first-child, input',  function(e){
-
-				
+			.on('click','td:first-child, input',  function(e){				
 				e.stopPropagation();
 			})
 
@@ -202,6 +200,45 @@
 
     			}
     		});
+
+
+		//delete bill
+		$('#tbl_bill tbody')
+			.on('click', '.btn-del-bill', function(e){
+				var billId = $(this).parents('tr').attr('billId');
+				bootbox.confirm({
+					title  : "<?=$Text['ti_confirm'];?>",
+					message: "<div class='alert alert-danger'>Are you sure you want to delete this bill?</div>",
+					callback : function(ok){
+						if (ok){
+							$this = $(this);
+							var urlStr = 'modules/billing/php/billing_ctrl.php?oper=deleteBill&bill_id='+billId; 
+							$.ajax({
+							   	url: urlStr,
+							   	type: 'POST',
+							   	success: function(msg){
+									//reload all members listing on overiew. 
+							   		$('#tbl_bill tbody').xml2html('reload');
+							   		bootbox.hideAll();
+							   	},
+							   	error : function(XMLHttpRequest, textStatus, errorThrown){
+							   		bootbox.hideAll();
+									if (XMLHttpRequest.responseText.indexOf("ERROR 10") != -1){
+										bootbox.alert({
+												title : "<?=$Text['ti_error_exec'];?>",
+												message : "<div class='alert alert-danger'><?=$Text['msg_err_del_provider']; ?> <br><br> "+XMLHttpRequest.responseText+"</div>",
+										});	
+									}
+							   	}
+							}); //end ajax	
+						} else {
+							bootbox.hideAll();
+						}	
+					}
+				});
+
+				e.stopPropagation();
+			})
 
 
 
@@ -465,17 +502,6 @@
 		  				</button>
 	  				</div>
 
-
-					<div class="col-md-2 section sec-3 sec-1">
-						<form class="navbar-form" role="search">
-				      		<div class="input-group input-group-sm">
-						    	<input type="text" class="form-control" id="input-filter-uf" placeholder="Filter UF">
-						      	<span class="input-group-btn">
-						        	<button class="btn btn-default btn-sm" id="btn-filter-uf"><span class="glyphicon glyphicon-search"></span></button>
-						      	</span>
-							</div>
-						</form>
-					</div>
 					
 					<div class="col-md-3 section sec-3 sec-1">
 						<form class="navbar-form pull-right" role="date">
@@ -501,6 +527,18 @@
 		                </form>
 	            	</div>
 
+					
+					<div class="col-md-2 section sec-3 sec-1">
+						<form class="navbar-form" role="search">
+				      		<div class="input-group input-group-sm">
+						    	<input type="text" class="form-control" id="input-filter-uf" placeholder="Filter UF">
+						      	<span class="input-group-btn">
+						        	<button class="btn btn-default btn-sm" id="btn-filter-uf"><span class="glyphicon glyphicon-search"></span></button>
+						      	</span>
+							</div>
+						</form>
+					</div>
+
 
 					<div class="btn-group col-md-1 section sec-1 sec-3">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
@@ -509,8 +547,9 @@
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-bill"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
 	 						<li class="level-1-indent"><a href="javascript:void(null)" data="Accounting,csv" class="ctx-nav ctx-nav-export-bill"> Accounting (csv)</a></li>
-	 						<li class="level-1-indent"><a href="javascript:void(null)" data="Billitems,csv" class="ctx-nav ctx-nav-export-bill"> Shop items (csv)</a></li>
-	 						<li class="level-1-indent"><a href="javascript:void(null)" data="advanced" class="ctx-nav ctx-nav-export-bill"> Advanced</a></li>
+	 						<li class="level-1-indent"><a href="javascript:void(null)" data="SEPA,xml" class="ctx-nav ctx-nav-export-bill"> SEPA</a></li>
+	 						<!--li class="level-1-indent"><a href="javascript:void(null)" data="Billitems,csv" class="ctx-nav ctx-nav-export-bill"> Shop items (csv)</a></li>
+	 						<li class="level-1-indent"><a href="javascript:void(null)" data="advanced" class="ctx-nav ctx-nav-export-bill"> Advanced</a></li-->
 						</ul>
 						
 					</div>
@@ -522,11 +561,12 @@
 							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="javascript:void(null)">Filter date shortcuts</a></li>
+							<li><a href="javascript:void(null)">Filter</a></li>
 						    <li class="level-1-indent"><a href="javascript:void(null)" data="days,0" class="ctx-nav-filter">Today</a></li>
 							<li class="level-1-indent"><a href="javascript:void(null)" data="weeks,1" class="ctx-nav-filter">Last week</a></li>
 							<li class="level-1-indent"><a href="javascript:void(null)" data="months,1" class="ctx-nav-filter">Last month</a></li>
 							<li class="level-1-indent"><a href="javascript:void(null)" data="months,3" class="ctx-nav-filter">Last 3 month</a></li>
+
 						</ul>
 					</div>
 
@@ -650,11 +690,12 @@
 							<th>Reference</th>
 							<th>Notes</th>
 							<th>Operator</th>
-							<th>Total</th>
+							<th><p class="text-right">Total</p></th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr validated="{ts_validated}" billId="{id}" ufId="{uf_id}">
+						<tr class="clickable" validated="{ts_validated}" billId="{id}" ufId="{uf_id}">
 							<td><input type="checkbox" name="bulk_bill"></td>
 							<td>{id}</td>
 							<td>{date_for_bill}</td>
@@ -663,6 +704,9 @@
 							<td>{description}</td>
 							<td>{operator}</td>
 							<td><p class="text-right">{total}<?=$Text['currency_sign'];?></p></td>
+							<td>
+								<span class="glyphicon glyphicon-remove-circle btn-del-bill pull-right" title="<?=$Text['btn_del'];?>"></span>
+							</td>
 						</tr>
 					</tbody>
 				</table>
