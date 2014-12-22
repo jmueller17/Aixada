@@ -5,7 +5,7 @@ ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
 
-require_once(__ROOT__ . 'php/lib/abstract_output_format.php');
+require_once(__ROOT__ . 'php/lib/output_format.php');
 
 
 
@@ -14,20 +14,13 @@ require_once(__ROOT__ . 'php/lib/abstract_output_format.php');
  *	Custom class that accepts a mysqli_result and returns a json encoded string. 
  *	
  */
-class output_format_json extends abstract_output_format{
-
-
-	/**
-	 *	the resulting array of json string
-	 * 	@var array 
-	 */
-	public $json_str = null; 
+class output_format_json extends output_format{
 
 
 
-	public function __construct($rs){
+	public function __construct($data){
 
-		parent::__construct($rs);
+		parent::__construct($data, "json");
 	}
 
 
@@ -38,7 +31,7 @@ class output_format_json extends abstract_output_format{
 	 *	Both params put through the params for json_encode. 
 	 *
 	 */
-	public function format($options=0, $depth=512){
+	public function format_rs($options=0, $depth=512){
 
 		$tmp_rows = array();
 
@@ -49,6 +42,17 @@ class output_format_json extends abstract_output_format{
 	    $this->json_str = json_encode($tmp_rows, $options, $depth);
 
 		return $this->json_str;
+	}
+
+
+	/**
+	 *	To do.... 
+	 *
+	 */
+	public function format_data_table($options=0, $depth=512){
+
+		//$this->get_data_table();
+
 	}
 
 

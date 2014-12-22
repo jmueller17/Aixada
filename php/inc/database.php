@@ -134,7 +134,7 @@ class DBWrap {
       $this->handle_execute_error($this->mysqli->errno, $this->mysqli->error, $safe_sql_string);
     if ($this->debug) {
       global $firephp;
-      $firephp->log($safe_sql_string, 'query');
+      $firephp->log($safe_sql_string, 'query');       
     }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;

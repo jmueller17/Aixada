@@ -5,7 +5,7 @@ ob_start(); // Starts FirePHP output buffering
 $firephp = FirePHP::getInstance(true);
 
 
-require_once(__ROOT__ . 'php/lib/abstract_output_format.php');
+require_once(__ROOT__ . 'php/lib/output_format.php');
 
 
 
@@ -13,14 +13,7 @@ require_once(__ROOT__ . 'php/lib/abstract_output_format.php');
  *	Custom class that accepts a mysqli_result and returns a CSV array, string, or file
  *	
  */
-class output_format_csv extends abstract_output_format{
-
-
-	/**
-	 *	the resulting array of csv values that can be passed to a fputcsv function
-	 * 	@var array 
-	 */
-	public $csv_array = null; 
+class output_format_csv extends output_format{
 
 
 
@@ -31,91 +24,91 @@ class output_format_csv extends abstract_output_format{
 	public $header = true; 
 
 
+	/**
+	 *	The field delimiter of the CSV 
+	 *	@var string
+	 */
+	public $delimiter = "\t";
 
 
-	public function __construct($rs, $header=true){
+	/**
+	 * 	The enclosing character
+	 *	@var string 
+	 */
+	public $enclose = "\"";
+
+
+
+
+	public function __construct($data, $header=true, $delimiter="\t", $enclose="\""){
 
 		$this->header = $header; 
+		$this->delimiter = $delimiter; 
+		$this->enclose = $enclose;
 
-		parent::__construct($rs);
+		parent::__construct($data, "csv");
 	}
 
 
 
 
 	/** 
-	 *	Converts the mysqli result set into CSV. The delimiter and enclose params are only affective for
-	 *	return format "string" or "file". 
-	 *	@var return_format string. "array", "string", "file". 
-	 *	@var delimiter string. specifies the field separator in the CSV
-	 *	@var enclose string. specified the enclosing quote character. Only one char allowd. 
-	 * 	@var outhandle handle  In case return_format == "file", a valid file handle needs to be specified. 
+	 *
+	 *	Converts the mysqli result set into CSV string. Since we need the column names from the result set, 
+	 *	we need to work always from the data_table representation and not the db result set directly. 
 	 */
-	public function format($return_format="array", $delimiter="\t", $enclose="\"", $outhandle=""){
+	public function format_rs(){
 
-		//tmp array of mysql result as array rows
-		$this->csv_array = array();
-
-		//result to be returned, 
-		$output = null; 
-
-
-		//construct header as first row of array
-		if ($this->header){			
-			$header = array(); 
-			for ( $i = 0; $i < $this->db_result_set->field_count; $i++ )
-			{
-				$finfo = $this->db_result_set->fetch_field_direct($i);
-			    array_push($header,  $finfo->name);
-			}
-
-			array_push($this->csv_array, $header);
+		if (!$this->rs_exists()){
+			throw new Exception("CSV format mysqli_result exception: result set is null");
 		}
 
-		//construct rows from db result set
-		while( $data_row = $this->db_result_set->fetch_array(MYSQLI_NUM) )
-		{
-			array_push($this->csv_array, $data_row);
+		//for the csv function, we need the data as matrix. 
+		$this->get_data_table($this->header);
+
+		$memhandle = fopen('php://temp/maxmemory:'. (5*1024*1024), 'r+');
+
+		foreach ($this->db_data_table as $row) {
+      			fputcsv($memhandle, $row, $this->delimiter, $this->enclose);
+	  	}
+		
+		rewind($memhandle);
+
+		// put it all in a variable
+		$this->out_str = stream_get_contents($memhandle);
+
+		return $this->out_str; 
+
+	} //end 
+
+
+
+
+	/**
+	 *
+	 *	Converts the data_table representation to CSV.  Assumes that a valid 
+	 *	data table exists. 
+	 */
+	public function format_data_table(){
+
+		if (!$this->data_table_exists()){
+			throw new Exception("CSV format data table exception: data table is null");
 		}
 
+		$memhandle = fopen('php://temp/maxmemory:'. (5*1024*1024), 'r+');
 
-		if ($return_format == "array"){
-			$output = $this->csv_array; 
-		}
+		foreach ($this->db_data_table as $row) {
+      			fputcsv($memhandle, $row, $this->delimiter, $this->enclose);
+	  	}
+		
+		rewind($memhandle);
 
+		// put it all in a variable
+		$this->out_str = stream_get_contents($memhandle);
 
-		//want the csv as string? 
-		if ($return_format == "string"){
-			$memhandle = fopen('php://temp/maxmemory:'. (5*1024*1024), 'r+');
+		return $this->out_str; 
 
-			foreach ($array_data as $row) {
-	      			fputcsv($memhandle, $row, $delimiter, $enclose);
-		  	}
-			
-			rewind($memhandle);
-			// put it all in a variable
-			$output = stream_get_contents($memhandle);
-		}
-
-
-		//of write directly to file. The return value is boolean "true"
-		//since the filehandle exists outside of this instance. 
-		if ($return_format == "file"){
-			if (!$outhandle || $outhandle=="")
-	        	throw new Exception("Output format exception: CSV should be written to file but not file handled specified!");
-			
-			foreach ($data as $row) {
-	      			fputcsv($outhandle, $row, $delimiter, $enclose);
-		  	}
-
-		  	$output = true; 
-		}
-
-
-
-		return $output;
-
-	} //end write_format
+	}
 
 
 }

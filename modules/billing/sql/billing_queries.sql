@@ -23,6 +23,25 @@ end|
 
 
 
+drop procedure if exists delete_bill|
+create procedure delete_bill (in the_bill_id int)
+begin
+
+	delete from 
+		aixada_bill_rel_cart
+	where
+		bill_id = the_bill_id;
+
+
+	delete from 
+		aixada_bill
+	where
+		id = the_bill_id; 
+
+end|
+
+
+
 /**
  *	creates the relations between the bill and corresponding carts. 
  */
@@ -140,15 +159,24 @@ begin
 	select
 		b.id as bill_id,
 		b.ref_bill,
-		b.uf_id, 
 		b.description, 
 		b.date_for_bill, 
 		m.custom_member_ref, 
-		m.name as member_name, 
+		m.name as member_name,
+		b.uf_id, 
+		u.login,
 		m.nif, 
 		m.bank_name, 
 		m.bank_account, 
-		u.login
+		(select
+				sum(get_purchase_total(c.id))
+			from 
+				aixada_cart c,
+				aixada_bill_rel_cart bc
+			where
+				bc.cart_id = c.id
+				and bc.bill_id = b.id
+			) as total
 	from 
 		aixada_bill b,
 		aixada_member m,

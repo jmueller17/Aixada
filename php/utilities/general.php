@@ -1,8 +1,19 @@
 <?php
 
-require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
+require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 
+require_once(__ROOT__ . "php/lib/deliver.php");
+
+require_once(__ROOT__ . "php/lib/output_format.php");
+require_once(__ROOT__ . "php/lib/output_format_csv.php");
+require_once(__ROOT__ . "php/lib/output_format_xml.php");
+
+
+
+require_once(__ROOT__ .'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
+ob_start(); // Starts FirePHP output buffering
+$firephp = FirePHP::getInstance(true);
 
 /**
  * 
@@ -160,55 +171,55 @@ function get_param($param_name, $default=null, $transform = '') {
 }
 
 
+
 /**
- * Creates zip archive. Code from http://davidwalsh.name/create-zip-php
+ *  Utility function to call a stored query and return a string of the result 
+ *  in different formats. The first parameter passed to the function needs to be 
+ *  the desired output format. Available output formats are determined by the output_format_XXX classes.
+ *  The second parameter is the stored procedure name, and the rest the parameters for the stored procedure. 
  */
-	function create_zip($files = array(),$destination = '',$overwrite = false) {
-		//if the zip file already exists and overwrite is false, return false
-		if(file_exists($destination) && !$overwrite) { return false; }
-		
-		//vars
-		$valid_files = array();
-	
-		//if files were passed in...
-		if(is_array($files)) {
-			//cycle through each file
-			foreach($files as $file) {
-				//make sure the file exists
-				if(file_exists($file)) {
-					$valid_files[] = $file;
-				}
-			}
-		}
-		
-		
-		//if we have good files...
-		if(count($valid_files)) {
-		
-			//create the archive
-			$zip = new ZipArchive();
-			if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
-				return false;
-			}
-		
-			//add the files
-			foreach($valid_files as $filepath) {
-				$file_name = basename($filepath);
-				$zip->addFile($filepath,$file_name);
-			}
-		
-			//debug
-			//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
-		
-			//close the zip -- done!
-			$zip->close();
-		
-			//check to make sure the file exists
-			return file_exists($destination);
-		} else {
-			return false;
-		}
-	}
+function print_stored_query(){
+
+  $args = func_get_args();
+
+  //desired output format
+  $output_class = "output_format_" . array_shift($args); 
+
+  //do query
+  $db = DBWrap::get_instance();
+  $rs = $db->squery($args);
+  $db->free_next_results();
+  
+  $formatter = new $output_class($rs);
+
+  Deliver::get_instance()->serve_outf_str($formatter);
+
+}
+
+
+function export_stored_query(){
+
+  $args = func_get_args();
+
+  $format = array_shift($args);
+  $filename = array_shift($args);
+  $publish = array_shift($args);
+  
+  //desired output format
+  $output_class = "output_format_" . $format; 
+
+
+  //do query
+  $db = DBWrap::get_instance();
+  $rs = $db->squery($args);
+  $db->free_next_results();
+
+  $formatter = new $output_class($rs);
+
+  Deliver::get_instance()->serve_outf_file($formatter);
+
+}
+
 
 
 
@@ -248,48 +259,6 @@ function do_stored_query()
   return DBWrap::get_instance()->do_stored_query($strSQL);
 }
 
-class output_formatter {
-  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)
-  {
-    $strXML = '';
-    if ($rs) {
-      $strXML .= '<rowset>';
-      if ($page) 
-	$strXML .= '<page>' . $page . '</page>'; 
-      if ($total_pages)
-	$strXML .= '<total>' . $total_pages . '</total>';
-      $strXML .= '<records>' . $total_entries . '</records>';
-      $strXML .= "<rows>";
-      while ($row = $rs->fetch_assoc()) 
-	$strXML .= $this->row_to_XML($row);
-      $rs->free();
-      $strXML .= "</rows>";
-      $strXML .= "</rowset>";
-    }
-    return $strXML;
-  }
-
-  public function row_to_XML($row)
-  {
-
-      global $Text;
-      $strXML = '<row id="' . $row['id'] . '">';
-      $rowXML = '';
-      foreach ($row as $field => $value) {
-          if (isset($Text[$value]))
-              $value = $Text[$value];
-          $rowXML 
-              .= '<' . $field . ' f="' . $field 
-              . '"><![CDATA[' . clean_zeros($value) . "]]></$field>";
-      }
-
-      $strXML .= $rowXML . '</row>';
-      return $strXML;
-  }
-}
-
-
-
 
 function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
 {
@@ -322,6 +291,7 @@ function stored_query_XML_fields()
     $strXML = '<rowset>';
     global $Text;
     $rs = do_stored_query(func_get_args());
+
     while ($row = $rs->fetch_assoc()) {
         $strXML .= '<row';
         if (isset($row['id'])) 
@@ -337,6 +307,7 @@ function stored_query_XML_fields()
         $strXML .= '</row>';
     }
     $strXML .= '</rowset>';
+
     return $strXML;
 }
 
@@ -601,6 +572,48 @@ function clean_zeros($value)
   return ((strpos($value, '.') !== false) ?
 	  rtrim(rtrim($value, '0'), '.') 
 	  : $value);
+}
+
+
+
+class output_formatter {
+  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)
+  {
+    $strXML = '';
+    if ($rs) {
+      $strXML .= '<rowset>';
+      if ($page) 
+  $strXML .= '<page>' . $page . '</page>'; 
+      if ($total_pages)
+  $strXML .= '<total>' . $total_pages . '</total>';
+      $strXML .= '<records>' . $total_entries . '</records>';
+      $strXML .= "<rows>";
+      while ($row = $rs->fetch_assoc()) 
+  $strXML .= $this->row_to_XML($row);
+      $rs->free();
+      $strXML .= "</rows>";
+      $strXML .= "</rowset>";
+    }
+    return $strXML;
+  }
+
+  public function row_to_XML($row)
+  {
+
+      global $Text;
+      $strXML = '<row id="' . $row['id'] . '">';
+      $rowXML = '';
+      foreach ($row as $field => $value) {
+          if (isset($Text[$value]))
+              $value = $Text[$value];
+          $rowXML 
+              .= '<' . $field . ' f="' . $field 
+              . '"><![CDATA[' . clean_zeros($value) . "]]></$field>";
+      }
+
+      $strXML .= $rowXML . '</row>';
+      return $strXML;
+  }
 }
 
 ?>

@@ -143,10 +143,6 @@
 		});
 
 
-
-
-
-
 		//switch to bill detail
 		$('#tbl_bill tbody')
 			.on('click', 'tr', function(e){
@@ -162,6 +158,50 @@
 
 				$('.change-sec').switchSection("changeTo",".sec-4");
 		});
+
+
+		//bill checkboxes.
+		$('#tbl_bill tbody')
+			.on('click','td:first-child, input',  function(e){
+
+				
+				e.stopPropagation();
+			})
+
+		//bill export
+		$('.ctx-nav-export-bill')
+			.click(function(){
+
+				if ($('input[name="bulk_bill"]:checked').length  == 0){
+    				bootbox.alert({
+						title : "Epp!!",
+						message : "<div class='alert alert-warning'><?=$Text['msg_err_noselect'];?></div>"
+					});	
+					return false;
+    			} else {
+
+        			var billRow = ''; 
+        			var opt = $(this).attr("data");
+					opt = opt.split(",");
+
+					$('input[name="bulk_bill"]:checked').each(function(){
+						billRow += '<input type="hidden" name="bill_ids[]" value="'+$(this).parents('tr').attr('billId')+'"/>';
+					});
+					billRow += '<input type="hidden" name="oper" value="export'+opt[0]+'" >';
+					billRow += '<input type="hidden" name="format" value="'+opt[1]+'">';
+					
+					$('#flexform').empty().append(billRow);
+
+					var frmData =  $('#flexform').serialize();
+
+					var urlStr = "modules/billing/php/billing_ctrl.php?" + frmData; 
+					
+					//load the stuff through the export channel
+					$('#dataFrame').attr('src',urlStr);
+
+
+    			}
+    		});
 
 
 
@@ -468,7 +508,9 @@
 		  				</button>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-bill"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
-	 						
+	 						<li class="level-1-indent"><a href="javascript:void(null)" data="Accounting,csv" class="ctx-nav ctx-nav-export-bill"> Accounting (csv)</a></li>
+	 						<li class="level-1-indent"><a href="javascript:void(null)" data="Billitems,csv" class="ctx-nav ctx-nav-export-bill"> Shop items (csv)</a></li>
+	 						<li class="level-1-indent"><a href="javascript:void(null)" data="advanced" class="ctx-nav ctx-nav-export-bill"> Advanced</a></li>
 						</ul>
 						
 					</div>
@@ -684,7 +726,7 @@
 	<form id="flexform"></form>
 
 
-<iframe name="dataFrame" style="display:none"></iframe>
+<iframe name="dataFrame" id="dataFrame" style="display:none"></iframe>
 
 
 </div>

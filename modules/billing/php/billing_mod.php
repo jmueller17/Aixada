@@ -7,12 +7,7 @@ $firephp = FirePHP::getInstance(true);
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
-require_once('export_bill.php');
-
-require_once(__ROOT__ . 'php/lib/output_format_csv.php');
-require_once(__ROOT__ . 'php/lib/output_format_xml.php');
-require_once(__ROOT__ . 'php/lib/output_format_json.php');
-
+require_once(__ROOT__ . 'php/lib/output_format.php');
 
 
 class Bill {
@@ -25,37 +20,49 @@ class Bill {
     private $bill_id = null;
 
 
-    /**
-     *  Contains the result set of the latest db query executed 
-     *  for this instance
-     */
-    private $bill_db_result = null;
-
-
-
 
     /**
      *  Constructs a bill. If bill_id is provided, the xml result set for this bill is retrieved. 
+     *  @param int $bill_id The id of an existing bill. 
      *
      */
 	public function __construct($bill_id=0)
     {    	
 
         if (is_numeric($bill_id) && $bill_id > 0 ){          
-            $this->bill_id = $bill_id; 
-            //$this->load_data();
-        } 
+
+            $db = DBWrap::get_instance(); 
+
+            //check if bill with give id exists
+            $rs = $db->squery("get_bill_accounting_detail", $bill_id);
+            $db->free_next_results();
+
+            if ($rs->num_rows != 1){
+                throw new Exception("Bill execption: provided bill_id {$bill_id} does not exist!");
+            }
+
+        } else {
+            throw new Exception("Bill exception: bill_id needs to be numeric and > 0");
+
+        }
+
+        $this->bill_id = $bill_id; 
 
     } 
 
 
-    /**
-     *  Creates the accounting infor for this bill, including IVA groups, bill number, accountable number of member
-     *  date, number, name and NIF of member. 
-     */
-    public function loadAccountingDetails(){
 
-        db = DBWrap::get_instance(); 
+
+    /**
+     *  Returns the billing info (not shop details of bill) including tax groups of the current bill. 
+     *  @return array
+     *
+     */
+    public function get_accounting_info(){
+        
+        $db = DBWrap::get_instance(); 
+
+        global $Text; 
 
         $rs1 = $db->squery("get_bill_accounting_detail", $this->bill_id);
         $db->free_next_results();
@@ -64,49 +71,31 @@ class Bill {
         $db->free_next_results();
 
 
-    }
+        $of1 = new output_format($rs1);
+        $dt1 = $of1->get_data_table();
+
+        $of2 = new output_format($rs2);
+        $dt2 = $of2->get_data_table(false); 
 
 
-    private function load_data(){
-
-
-
-        $of = new output_format_json($rs); 
-        $json = $of->format(); 
-
-        global $firephp;
-        $firephp->log($json, "out formatted array");
-        
-
-        /*
-        $this->bill_xml_detail =  stored_query_XML_fields("get_bill_detail", $this->bill_id);
-        DBWrap::get_instance()->free_next_results();
-
-        $tmp1 = stored_query_XML_fields("get_bill_accounting_detail", $this->bill_id);
-        DBWrap::get_instance()->free_next_results();
-
-        $tmp2 = stored_query_XML_fields("get_tax_groups", $this->bill_id);
-        DBWrap::get_instance()->free_next_results();
-
-        //get rid of </rowset><rowset> when joining two results sets
-        $tmp1 = substr($tmp1, 0, strlen($tmp1)-15);
-        $tmp2 = substr($tmp2, 13);
-
-
-        //needs some specific formatting!!
-        $this->bill_xml_accounting = $tmp1.$tmp2; 
-
+        foreach ($dt2 as $row){
+            $colname = $Text["iva"] ."_" . $row[0];
+            $dt1[0][] = $colname;
+            $dt1[1][] = $row[2];
+        }
 
 
         global $firephp;
-        $firephp->log($this->bill_xml_accounting, "bill accounting detail");
-        */
+        $firephp->log($dt1, " data table for bill accounting info");
 
+        return $dt1; 
     }
+
+
 
 
     /**
-     *  Receives a list of cart_ids and creates a new bill. 
+     *  Receives a list of cart_ids and creates a new bill. Non-validated carts will be validated. 
      *
      */
     public function create($arr_cart_ids, $description="", $ref_bill="", $date_for_bill="",  $operator_id)
@@ -164,7 +153,7 @@ class Bill {
 
         }
 
-         $firephp->log($uf_ids[0], "uf id");
+        $firephp->log($uf_ids[0], "carts belong to uf");
 
 
     	//create bill
@@ -181,47 +170,24 @@ class Bill {
            $db->free_next_results();
         }
 
-        $this->load_data();
+        return $this->bill_id; 
     }
-
-
-
-    /**
-     *  Exports a given bill to specified format. 
-     *  @var details boolean    if set to true, exports the products of the bill. if set to false, exports the 
-     *                          rather the accounting information. 
-     *
-     */
-    public function export($filename="", $format="csv", $publish=0, $details=false){
-
-        if ($details){
-            $ep = new export_bill(0, $this->bill_xml_detail,  $filename);
-        } else {
-            $ep = new export_bill(0, $this->bill_xml_accounting, $filenmae);
-
-        }
-
-        //$ep->export(false, "csv");
-
-    }
-    
-
-
 
 
 
 
     /**
-     * Deletes an existing bill; implies to delete all entries from bill_rel_cart table and 
-     * unvalidate carts. 
+     * Deletes an existing bill; implies to delete all entries from bill_rel_cart table. 
+     *  @return int $bill_id Returns the id of the deleted bill. 
      */
-    public function delete($id)
+    public function delete()
     {
+        $db = DBWrap::get_instance();
+        $db->squery('delete_bill', $this->bill_id);
+        $db->free_next_results();
 
-
-
+        return $this->bill_id; 
     }
-
 
 }
 
