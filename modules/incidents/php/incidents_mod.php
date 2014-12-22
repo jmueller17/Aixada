@@ -7,6 +7,25 @@ require_once ('general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 
+class Incident {
+
+
+
+	public function __construct($id=0){
+
+
+	}
+
+
+
+	
+
+
+}
+
+
+
+
 /**
  * 
  * Creates new incident or edits existing one if incident_id is given. 

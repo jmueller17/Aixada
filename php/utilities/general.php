@@ -172,6 +172,174 @@ function get_param($param_name, $default=null, $transform = '') {
 }
 
 
+function get_config_menu($user_role)
+{
+    $XML = "<navigation>\n";
+    $mconf = configuration_vars::get_instance()->menu_config;
+    if (!isset($mconf[$user_role])) {
+        throw new Exception("Role '" . $user_role . "' not defined in local_config/config.php");
+    }
+    foreach ($mconf[$user_role] as $navItem => $status) {
+        $XML .= '<' . $navItem . '>' . $status . '</' . $navItem . ">\n";
+    } 
+    return $XML . '</navigation>';
+}
+
+
+function get_import_rights($db_table_name)
+{
+  //get the import rights for the db table and fields
+  $import_rights = configuration_vars::get_instance()->allow_import_for; 
+  
+  if (!isset($import_rights[$db_table_name])) {
+        throw new Exception("Import error: no imports allowed for '" . $db_table_name . ".' Check local_config/config.php");
+    }
+    $xml = '<rows>';
+    
+  foreach ($import_rights[$db_table_name] as $field => $value) {
+          if ($value == 'allow') {
+            $xml .= '<row><db_field>'.$field.'</db_field></row>';
+          } 
+        }
+  return $xml . "</rows>";
+}
+
+
+
+function get_field_options_live($table, $field1, $field2, $field3='')
+{
+    global $Text;
+    $strXML = '<select>';
+    if ($field3 != ''){
+      $strSQL = 'select :1, :2, :3 from :4';
+    } else {
+      $strSQL = 'select :1, :2 from :3';
+    }
+    
+    if (in_array($table, array('aixada_unit_measure'))) {
+  $strSQL .= ' order by name';
+    } else if (in_array($table, array('aixada_orderable_type'))) {
+  $strSQL .= ' order by description';
+    }
+
+   
+  if ($field3 != ''){
+         $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $field3, $table);             
+        } else {
+        $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $table);
+    }
+    
+    if ($table == 'aixada_uf') {
+        $strXML .= "<option value='-1'>".$Text['sel_uf']."</option>";
+    }
+    while ($row = $rs->fetch_array()) {
+        $ot = (isset($Text[$row[1]]) ? $Text[$row[1]] : $row[1]);
+        if ($table == 'aixada_uf'){
+            $ot = //$Text['uf_short'] . ' ' . 
+                $row[0] . ' ' . $ot;
+        }
+        
+        if ($field3 != ''){
+         $strXML .= "<option value='{$row[0]}' addInfo='{$row[2]}'";                  
+        } else {
+          $strXML .= "<option value='{$row[0]}'";
+        }
+                
+
+  if ($row[0] == 1) {
+      $strXML .= ' selected';
+  }
+  $strXML .= ">{$ot}</option>";
+    }
+    return $strXML . '</select>';
+}
+
+
+function get_existing_themes_XML()
+{
+    $exclude_list = array(".", "..", "example.txt");
+    $folders = array_diff( scandir(__ROOT__ . 'css/ui-themes'), $exclude_list);
+     
+    $XML = '<themes>';
+    foreach ($folders as $theme) {
+        $XML .= "<theme><name>{$theme}</name></theme>";
+    }
+    return $XML . '</themes>';
+}
+
+
+function existing_languages()
+{
+    // We require that a line of the form 
+    // $Text['es_es'] = 'Español'
+    // exists in each language file
+    $languages = array();
+    foreach (glob(__ROOT__ . "local_config/lang/*.php") as $lang_file) {
+        $a = strpos($lang_file, 'lang/');
+        $lang = substr($lang_file, $a+5, strpos($lang_file, '.', $a)-$a-5);
+        $handle = @fopen($lang_file, "r");
+        $line = fgets($handle);
+        while (strpos($line, "Text['{$lang}']") === false and !feof($handle)) {
+            $line = fgets($handle);            
+        }
+        if (feof($handle))
+            $lang_desc = '';
+        else {
+            $tmp = trim(substr($line, strpos($line, '=')));
+            $lang_desc = trim($tmp, " =;'\"");
+        }
+        $languages[$lang] = $lang_desc;
+    }
+    return $languages;
+}
+
+function existing_languages_XML()
+{
+  $static = false; 
+    // We require that a line of the form 
+    // $Text['es_es'] = 'Español'
+    // exists in each language file
+    $XML = '<languages>';
+    if ($static){
+      $XML .= "<language><id>ca-va</id><description>Català (ca-va)</description></language><language><id>en</id><description>English (en)</description></language><language><id>es</id><description>Castellano (es)</description></language>";
+    } else {
+      foreach (existing_languages() as $lang => $lang_desc) {
+          $XML .= "<language><id>{$lang}</id><description>{$lang_desc} ({$lang})</description></language>";
+      }
+    }
+    return $XML . '</languages>';
+}
+
+function get_roles()
+{
+    $XML = '<roles>';
+    foreach (array_keys(configuration_vars::get_instance()->forbidden_pages) as $role) {
+        $XML .= "<role><description>{$role}</description></role>";
+    }
+    return $XML . '</roles>';
+}
+
+function get_commissions()
+{
+
+    $XML = '<rows>';
+    foreach (array_keys(configuration_vars::get_instance()->forbidden_pages) as $role) {
+        if (!in_array($role, array('Consumer', 'Checkout', 'Producer'))) {
+
+            $XML .= "<row><description>{$role}</description></row>";
+        }
+    }
+    return $XML . '</rows>';
+}
+
+
+function clean_zeros($value)
+{
+  return ((strpos($value, '.') !== false) ?
+    rtrim(rtrim($value, '0'), '.') 
+    : $value);
+}
+
 
 /**
  *  Utility function to call a stored query and return a string of the result 
@@ -222,6 +390,15 @@ function export_stored_query(){
 }
 
 
+
+
+
+
+
+/*******
+ *   everything below this line is deprecated
+ *
+ */
 
 
 
@@ -407,173 +584,6 @@ function HTMLwrite($strHTML, $filename)
   }
 }
 
-function get_config_menu($user_role)
-{
-    $XML = "<navigation>\n";
-    $mconf = configuration_vars::get_instance()->menu_config;
-    if (!isset($mconf[$user_role])) {
-        throw new Exception("Role '" . $user_role . "' not defined in local_config/config.php");
-    }
-    foreach ($mconf[$user_role] as $navItem => $status) {
-        $XML .= '<' . $navItem . '>' . $status . '</' . $navItem . ">\n";
-    } 
-    return $XML . '</navigation>';
-}
-
-
-function get_import_rights($db_table_name)
-{
-	//get the import rights for the db table and fields
-	$import_rights = configuration_vars::get_instance()->allow_import_for; 
-	
-	if (!isset($import_rights[$db_table_name])) {
-        throw new Exception("Import error: no imports allowed for '" . $db_table_name . ".' Check local_config/config.php");
-    }
-    $xml = '<rows>';
-    
-	foreach ($import_rights[$db_table_name] as $field => $value) {
-	    		if ($value == 'allow') {
-		    		$xml .= '<row><db_field>'.$field.'</db_field></row>';
-	    		} 
-    		}
-	return $xml . "</rows>";
-}
-
-
-
-function get_field_options_live($table, $field1, $field2, $field3='')
-{
-    global $Text;
-    $strXML = '<select>';
-    if ($field3 != ''){
-    	$strSQL = 'select :1, :2, :3 from :4';
-    } else {
-    	$strSQL = 'select :1, :2 from :3';
-    }
-    
-    if (in_array($table, array('aixada_unit_measure'))) {
-	$strSQL .= ' order by name';
-    } else if (in_array($table, array('aixada_orderable_type'))) {
-	$strSQL .= ' order by description';
-    }
-
-   
-	if ($field3 != ''){
-         $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $field3, $table);    	       	
-        } else {
-        $rs = DBWrap::get_instance()->Execute($strSQL, $field1, $field2, $table);
-    }
-    
-    if ($table == 'aixada_uf') {
-        $strXML .= "<option value='-1'>".$Text['sel_uf']."</option>";
-    }
-    while ($row = $rs->fetch_array()) {
-        $ot = (isset($Text[$row[1]]) ? $Text[$row[1]] : $row[1]);
-        if ($table == 'aixada_uf'){
-            $ot = //$Text['uf_short'] . ' ' . 
-                $row[0] . ' ' . $ot;
-        }
-        
-        if ($field3 != ''){
-         $strXML .= "<option value='{$row[0]}' addInfo='{$row[2]}'";        	       	
-        } else {
-        	$strXML .= "<option value='{$row[0]}'";
-        }
-                
-
-	if ($row[0] == 1) {
-	    $strXML .= ' selected';
-	}
-	$strXML .= ">{$ot}</option>";
-    }
-    return $strXML . '</select>';
-}
-
-
-function get_existing_themes_XML()
-{
-    $exclude_list = array(".", "..", "example.txt");
-    $folders = array_diff( scandir(__ROOT__ . 'css/ui-themes'), $exclude_list);
-     
-    $XML = '<themes>';
-    foreach ($folders as $theme) {
-        $XML .= "<theme><name>{$theme}</name></theme>";
-    }
-    return $XML . '</themes>';
-}
-
-
-function existing_languages()
-{
-    // We require that a line of the form 
-    // $Text['es_es'] = 'Español'
-    // exists in each language file
-    $languages = array();
-    foreach (glob(__ROOT__ . "local_config/lang/*.php") as $lang_file) {
-        $a = strpos($lang_file, 'lang/');
-        $lang = substr($lang_file, $a+5, strpos($lang_file, '.', $a)-$a-5);
-        $handle = @fopen($lang_file, "r");
-        $line = fgets($handle);
-        while (strpos($line, "Text['{$lang}']") === false and !feof($handle)) {
-            $line = fgets($handle);            
-        }
-        if (feof($handle))
-            $lang_desc = '';
-        else {
-            $tmp = trim(substr($line, strpos($line, '=')));
-            $lang_desc = trim($tmp, " =;'\"");
-        }
-        $languages[$lang] = $lang_desc;
-    }
-    return $languages;
-}
-
-function existing_languages_XML()
-{
-	$static = false; 
-    // We require that a line of the form 
-    // $Text['es_es'] = 'Español'
-    // exists in each language file
-    $XML = '<languages>';
-    if ($static){
-    	$XML .= "<language><id>ca-va</id><description>Català (ca-va)</description></language><language><id>en</id><description>English (en)</description></language><language><id>es</id><description>Castellano (es)</description></language>";
-    } else {
-	    foreach (existing_languages() as $lang => $lang_desc) {
-	        $XML .= "<language><id>{$lang}</id><description>{$lang_desc} ({$lang})</description></language>";
-	    }
-    }
-    return $XML . '</languages>';
-}
-
-function get_roles()
-{
-    $XML = '<roles>';
-    foreach (array_keys(configuration_vars::get_instance()->forbidden_pages) as $role) {
-        $XML .= "<role><description>{$role}</description></role>";
-    }
-    return $XML . '</roles>';
-}
-
-function get_commissions()
-{
-
-    $XML = '<rows>';
-    foreach (array_keys(configuration_vars::get_instance()->forbidden_pages) as $role) {
-        if (!in_array($role, array('Consumer', 'Checkout', 'Producer'))) {
-
-            $XML .= "<row><description>{$role}</description></row>";
-        }
-    }
-    return $XML . '</rows>';
-}
-
-
-function clean_zeros($value)
-{
-  return ((strpos($value, '.') !== false) ?
-	  rtrim(rtrim($value, '0'), '.') 
-	  : $value);
-}
 
 
 
