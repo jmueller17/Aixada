@@ -37,6 +37,10 @@ class aixmodel {
 	public function read_form_submit(){}
 
 
+
+	
+
+
 }
 
 
