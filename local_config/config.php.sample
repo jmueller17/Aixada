@@ -28,6 +28,13 @@ class configuration_vars {
    */
   public $coop_name = 'L\'Aixada';
 
+
+  /** 
+   *  What is the base directory for this install?
+   */
+  public $basedir = "http://localhost/aixada/";
+
+
   
   /**
    * Configure the database connection

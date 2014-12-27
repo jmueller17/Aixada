@@ -1,15 +1,14 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php include "../../php/inc/header.inc.php" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
+	<base href="<?php echo $cv->basedir; ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_incidents'];?></title>
 
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/aixcss.css" rel="stylesheet">
     <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
-
-
 
 
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -183,7 +182,7 @@
 
 			$.ajax({
 				    type: "POST",
-				    url: "php/ctrl/Incidents.php?oper=mngIncident",
+				    url: "modules/incidents/php/incidents_ctrl.php?oper=mngIncident",
 				    data: dataSerial,
 				    success: function(msg){
 						resetDetails();
@@ -206,7 +205,7 @@
 		 *	incidents
 		 */
 		$('#tbl_incidents tbody').xml2html('init',{
-				url: 'php/ctrl/Incidents.php',
+				url: 'modules/incidents/php/incidents_ctrl.php',
 				params : 'oper=getIncidentsListing&filter=month',
 				loadOnInit: true,
 				progressbar : true
@@ -328,7 +327,7 @@
 <body>
 
 	<div id="headwrap">
-		<?php include "php/inc/menu.inc.php" ?>
+		<?php include "../../php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
 	
@@ -354,7 +353,7 @@
 	    				Actions <span class="caret"></span>
 	  				</button>
 					<ul class="dropdown-menu" role="menu">
-					    <li><a href="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
+					    <li><a href="javascript:void(null)" target-section="#sec-3" class="change-sec"><?php echo $Text['btn_new_incident'];?></a></li>
 					    <li class="divider"></li>
 					    <li><a href="#export-win" class="ctx-nav-exp" ><?=$Text['printout'];?></a></li>
 					    <li class="divider"></li>
@@ -441,7 +440,7 @@
 				<p id="incidentsMsg" class="user_tips"></p>
 				
 				<form class="form-horizontal" role="form" id="frm-incidents">
-					<input type="hidden" id="incident_id" name="incident_id" value=""/>
+					<input type="hidden" id="incident_id" name="id" value=""/>
 					<div class="form-group">
 						<label for="subject" class="col-sm-2 control-label"><?php echo $Text['subject'];?></label>
     					<div class="col-sm-6">
@@ -450,30 +449,30 @@
   					</div>
 
   					<div class="form-group">
-  						<label for="incidents_text" class="col-sm-2 control-label"><?php echo $Text['message'];?></label>
+  						<label for="details" class="col-sm-2 control-label"><?php echo $Text['message'];?></label>
     					<div class="col-sm-6">
-    						<textarea id="incidents_text" name="incidents_text" class="form-control" placeholder="Your message here"></textarea>
+    						<textarea id="details" name="details" class="form-control" placeholder="Your message here"></textarea>
     					</div>
   					</div>
 
   					<div class="form-group">
-  						<label for="prioritySelect" class="col-sm-2 control-label"><?php echo $Text['priority'];?></label>
+  						<label for="priority" class="col-sm-2 control-label"><?php echo $Text['priority'];?></label>
     					<div class="col-sm-2">
-    						<select id="prioritySelect" name="prioritySelect" class="form-control"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+    						<select id="prioritySelect" name="priority" class="form-control"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
     					</div>
   					</div>
 		
 					<div class="form-group">
-  						<label for="statusSelect" class="col-sm-2 control-label"><?php echo $Text['status'];?></label>
+  						<label for="status" class="col-sm-2 control-label"><?php echo $Text['status'];?></label>
     					<div class="col-sm-2">
-    						<select id="statusSelect" name="statusSelect" class="form-control"><option value="open"> <?php echo $Text['status_open'];?></option><option value="closed"> <?php echo $Text['status_closed'];?></option></select>
+    						<select id="statusSelect" name="status" class="form-control"><option value="open"> <?php echo $Text['status_open'];?></option><option value="closed"> <?php echo $Text['status_closed'];?></option></select>
     					</div>
   					</div>
 
 					<div class="form-group">
-  						<label for="typeSelect" class="col-sm-2 control-label"><?php echo $Text['distribution_level'];?></label>
+  						<label for="priority" class="col-sm-2 control-label"><?php echo $Text['distribution_level'];?></label>
     					<div class="col-sm-4">
-    						<select id="typeSelect" name="typeSelect" class="form-control">
+    						<select id="typeSelect" name="priority" class="form-control">
 									<option value="1"><?=$Text['internal_private'];?></option>
 									<option value="2"><?=$Text['internal_email_private'];?></option>
 									<option value="3"><?=$Text['internal_post'];?></option>
@@ -493,9 +492,9 @@
   					</div>
 
 					<div class="form-group">
-  						<label for="providerSelect" class="col-sm-2 control-label"><?php echo $Text['provider_concerned'];?></label>
+  						<label for="provider_concerned" class="col-sm-2 control-label"><?php echo $Text['provider_concerned'];?></label>
     					<div class="col-sm-4">
-    						<select id="providerSelect" name="providerSelect" class="form-control">
+    						<select id="providerSelect" name="provider_concerned" class="form-control">
 	                    			<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>                     
 	                    			<option value="{id}"> {name}</option>
 							</select>
@@ -503,9 +502,9 @@
   					</div>
 
 					<div class="form-group">
-  						<label for="commissionSelect" class="col-sm-2 control-label"><?php echo $Text['comi_concerned'];?></label>
+  						<label for="commission_concerned" class="col-sm-2 control-label"><?php echo $Text['comi_concerned'];?></label>
     					<div class="col-sm-4">
-    						<select id="commissionSelect" name="commissionSelect" class="form-control">
+    						<select id="commissionSelect" name="commission_concerned" class="form-control">
 									<option value="-1" selected="selected"><?php echo $Text['sel_none'];?></option>
 									<option value="{description}"> {description}</option>
 							</select>

@@ -31,8 +31,8 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
  */ 
 
 class DBWrap {
-  public $debug = true;
 
+  public $debug = true;
   private $type;
   private $host;
   private $name;
@@ -55,6 +55,7 @@ class DBWrap {
   private function __construct() 
   {
     $cv = configuration_vars::get_instance();
+    $this->debug = $cv->development; 
     $this->type = $cv->db_type;
     $this->host = $cv->db_host;
     $this->db_name = $cv->db_name;
@@ -234,10 +235,10 @@ class DBWrap {
       if ($i>9) $qpos++;
       if ($i>99) $qpos++;
       if (strpos($strSQL, 'q', $qpos) == $qpos) {
-	$replace = "'" . $replace . "'";
-	$strSQL = str_replace(":{$i}q", $replace, $strSQL);
+	       $replace = "'" . $replace . "'";
+	       $strSQL = str_replace(":{$i}q", $replace, $strSQL);
       } else {
-	$strSQL = str_replace(":$i", $replace, $strSQL);
+	       $strSQL = str_replace(":$i", $replace, $strSQL);
       }
     }
     return $strSQL;

@@ -8,13 +8,14 @@ require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
 
+$cv = configuration_vars::get_instance(); 
 
 $default_theme = get_session_theme();
-//$dev = configuration_vars::get_instance()->development;
-$tpl_print_orders = configuration_vars::get_instance()->print_order_template;
-$tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_template;
-$tpl_print_bill = configuration_vars::get_instance()->print_bill_template;
-$tpl_print_incidents = configuration_vars::get_instance()->print_incidents_template;
+
+$tpl_print_orders = $cv->print_order_template;
+$tpl_print_myorders = $cv->print_my_orders_template;
+$tpl_print_bill = $cv->print_bill_template;
+$tpl_print_incidents = $cv->print_incidents_template;
 
 
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');

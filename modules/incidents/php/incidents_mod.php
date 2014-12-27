@@ -1,18 +1,39 @@
 <?php
 
 
-require_once(__ROOT__. 'php/inc/database.php');
-require_once(__ROOT__. 'local_config/config.php');
-require_once ('general.php');
-require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
+require_once(__ROOT__ . "php/lib/aixmodel.php");
 
 
-class Incident {
+class Incident extends Aixmodel {
 
 
 
-	public function __construct($id=0){
+	public function __construct(){
 
+		parent::__construct("aixada_incident");
+	}
+
+
+
+
+
+	public function read_form_submit(){  
+
+		parent::read_form_submit();
+
+		$ufs = '';
+
+		foreach($_REQUEST['ufs_concerned'] as $uf){
+			$ufs .= $uf . ',';
+		}
+		$ufs = rtrim($ufs, ',');
+
+		$this->arrRow["ufs_concerned"] = $ufs; 
+
+		if ($this->debug){
+			global $firephp; 
+			$firephp->log($this->arrRow, "retrieved fields and values from form submit for {$this->table}");
+		}
 
 	}
 
