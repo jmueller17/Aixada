@@ -32,7 +32,7 @@ function manage_incident($incident_id){
 		//configuration_vars::get_instance()->$coop_name
 		
 		$to = "";
-		$reply_to = "";  
+		$reply_to = null;  
 		
 		//if an email list has been set, use it 
 		if ($gVars->incidents_email_list != ""){
@@ -41,36 +41,21 @@ function manage_incident($incident_id){
 			
 		//otherwise email to individual active users. 
 		} else {
-			$reply_to =  $gVars->admin_email;
-			
 			//get active members
 			$rs = do_stored_query('get_member_listing', 1); 
-			$member_emails = array();
-			while ($row = $rs->fetch_assoc()) {
-	      		array_push($member_emails, $row['email']);
-	    	}
-	    	
-	    	$to = implode(", ", $member_emails);
-	    	$db = DBWrap::get_instance();
-			$db->free_next_results();
+	    	$to = get_list_rs($rs, 'email');
 			
 		}
 		
 
-		
-		$from = $gVars->admin_email; 	
-		$headers = "From: $from \r\n";
-		$headers .= "Reply-To: $reply_to \r\n";
-		$headers .= "Return-Path: $from\r\n";
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		
-		$subject = "[".$gVars->coop_name . " - " . $Text['ti_incidents'] . "] " .$params["subject"];
+		$subject = "[".$Text['ti_incidents']."] " . $params["subject"];
 		$message = "Info: " . $params["author"] . " | " . $params["comis"] . " | " .$params["prov"] . " | " . $params["priority"]; 
-		$message .= "===============================================";
-		$message .= $params["msg"];
+        $message .= "\n";
+		$message .= '<pre style="margin-left:1em; padding: 5px; font-size:120%;'.
+                'border:1px #888 solid; background-color:#ddd;">'.
+            $params["msg"]."</pre>\n";
 
-		if (mail($to,$subject,$message,$headers)){
+		if (send_mail($to,$subject,$message,array('reply_to'=>$reply_to))){
 			$msg = $Text['msg_incident_emailed'];			
 		} else {
 			$msg =  $Text['msg_err_emailed'];		
