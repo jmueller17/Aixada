@@ -159,6 +159,69 @@ function get_param($param_name, $default=null, $transform = '') {
 	return $value;
 }
 
+/**
+ * 
+ * Sends a email message as html. Use internally php mail. The `from` email
+ * address is set acording the key `$admin_email` defined in `config.php`.
+ * @param str $to, 
+ * @param str $subject
+ * @param str $bodyHTML only the body of the html message.
+ * @param array $options valid keys are: 'reply_to', 'cc', 'bcc'
+ * @return boolean as response of php mail.
+ */
+function send_mail($to, $subject, $bodyHTML, $options=null) {
+    if (!isset($options)) {
+        $options = array();
+    }
+    $cfg = configuration_vars::get_instance();
+    $from = $cfg->admin_email;
+
+    // get URL of aixada root
+    $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
+    if (!$pos_root) {
+        $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/');
+    }
+    $ssl_on = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $url_root = (isset($_SERVER['HTTP_HOST']) ? 
+                    $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']).
+                substr($_SERVER['SCRIPT_NAME'],0,$pos_root);
+
+    // get HTML message
+    $subject = $cfg->coop_name.': '.$subject;
+    $messageHTML = 
+        '<html><head><title>'.$subject."</title></head>\r\n".
+        '<body style="font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;">'.
+        "\r\n".$bodyHTML."\r\n".
+        '<hr><div style="color:#888; text-align: center;">'.
+                $cfg->coop_name.': <a href="'.
+                    ($ssl_on ? 'https://' : 'http://').
+                    $url_root.
+                    '/index.php" style="color:#888;">'.$url_root.'</a>'.
+            "</div>\r\n".
+        "</body></html>";
+    $headers = 
+        'From: '.$from."\r\n".
+        'Reply-To: '.
+            (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
+        (isset($options['cc']) ? 'Cc :'.$options['cc']."\r\n" : '').
+        (isset($options['bcc']) ? 'Bcc :'.$options['bcc']."\r\n" : '').
+        'Return-Path: '.$from."\r\n".
+        "X-Mailer: PHP\r\n".
+        "MIME-Version: 1.0\r\n".
+        "Content-Type: text/html; charset=UTF-8\r\n";
+    mb_language("uni");
+    mb_internal_encoding("UTF-8");
+    $subject64 = mb_encode_mimeheader($subject);
+    $response = mail($to, $subject64, $messageHTML, $headers);
+    // start debug
+   /*
+        error_log('send_mail(): '.$to."\r\n".$headers);
+        error_log($messageHTML);
+        return true;
+     */
+    // end debug
+    return $response;
+}
 
 /**
  * Execute a stored query
@@ -193,6 +256,42 @@ function do_stored_query()
   $strSQL .= ')';
 
   return DBWrap::get_instance()->do_stored_query($strSQL);
+}
+
+/**
+ * Execute a SQL query and returs a list as a string of values on firt column.
+ * @param string $strSQL A SQL query
+ * @param string $separator
+ * @param string $text_delimiter
+ * @return string The list as a string or '' if no rows or are null value.
+ */
+function get_list_query($strSQL, $separator=',', $text_delimiter='') {
+    return get_list_rs(
+        DBWrap::get_instance()->Execute($strSQL),
+        0,
+        $separator,
+        $text_delimiter
+    );
+}
+
+/**
+ * Walk a result set to assemble a list  as a string of values on firt column.
+ * @param mysqli_query_type $rs
+ * @param integer|string $field Field on result set, default is 0
+ * @param string $separator
+ * @param string $text_delimiter
+ * @return string The list as a string or '' if no rows or are null value.
+ */
+function get_list_rs($rs, $field=0, $separator=',', $text_delimiter='') {
+    $list = array();
+    while ($row = $rs->fetch_array()) {
+        if (isset($row[$field])) {
+            array_push($list, $text_delimiter.$row[$field].$text_delimiter);
+        }
+    }
+    $db = DBWrap::get_instance();
+    $db->free_next_results();
+    return implode($separator, $list);
 }
 
 class output_formatter {
