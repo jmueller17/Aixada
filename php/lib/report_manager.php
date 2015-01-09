@@ -176,34 +176,34 @@ class report_manager {
   public function write_summarized_orders_html($id, $the_date)
   {
       global $Text;
-      $html = '<table>'
+      $html = '<table style="margin-left:30px; border-collapse:collapse;">'
       	  . '<thead>'	
       	  . '<tr>'	
-          . '<th>' . $Text['product_name'] . '</th>'
-          . '<th>' . $Text['description'] . '</th>'
-          . '<th>' . $Text['total_qty'] . '</th>'
-          . '<th>' . $Text['unit'] . '</th>'
-          . '<th>' . $Text['total_price'] . '</th>'
-          . '</tr></thead><tbody>';
+          . '<th>' . $Text['product_name'] . "</th>\n"
+          . '<th>' . $Text['description'] . "</th>\n"
+          . '<th>' . $Text['total_qty'] . "</th>\n"
+          . '<th>' . $Text['unit'] . "</th>\n"
+          . '<th>' . $Text['total_price'] . "</th>\n"
+          . "</tr>\n</thead>\n<tbody>\n";
       $rs = do_stored_query('summarized_orders_for_provider_and_date', $id, $the_date);
       while ($row = $rs->fetch_assoc()) {
           $html .=
               '<tr>'
-              . '<td><p class="productName">' . $row['product_name'] . '</p></td>'
-              . '<td>'
+              . '<td style="border:1px solid #ccc;padding:0px 2px;"><p class="productName">' . $row['product_name'] . "</p></td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 2px;">'
               . ($row['description'] ? 
                  '<p class="productDescription">' . $row['description'] . '</p>'
-                 : '')
-              . '</td>'
-              . '<td><span class="totalQuantity">' 
+                 : '&nbsp;')
+              . "</td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 2px;text-align:right;"><span class="totalQuantity">' 
               . clean_zeros($row['total_quantity']) 
-              . '</span></td>'
-              . '<td><span class="units">[' . $row['unit'] . ']</span></td>'
-              . '<td><span class="totalPrice">' . $row['total_price'] . '</span></td>'
-              . '</tr>';
+              . "</span></td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 2px;"><span class="units">[' . $row['unit'] . "]</span></td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 2px;text-align:right;"><span class="totalPrice">' . $row['total_price'] . "</span></td>\n"
+              . "</tr>\n";
       }
       DBWrap::get_instance()->free_next_results();
-      return $html . '</tbody></table>';
+      return $html . "</tbody></table>\n";
   }
 
   private function create_summarized_orders_html($the_date)
@@ -251,18 +251,20 @@ class report_manager {
               throw new Exception("Couldn't open {$report_file} for writing");
           $html = $header 
               . '<title>' 
-              . "Order for {$prov_name[$id]} for {$the_date}"
+              . $Text['order'].' '.$Text['for'].' "'.$prov_name[$id].'" '.
+                    $Text['for'].' '.$the_date
               . '</title></head><body>';
           $html .= 
-              '<h1>Order for <span class="providerName">'
+              '<h1>'.$Text['order'].' '.$Text['for'].' <span class="providerName">'
               . $prov_name[$id]
-              . '</span> for '
+              . '</span> '.$Text['for']
               . $the_date
-              . '</h1><p><span class="responsibleUF">Responsible ' 
-              . $Text['uf_short'] . ' ' . $resp_uf[$id] . ' ' . $resp_uf_name[$id] 
+              . '</h1><p><span class="responsibleUF">' 
+              . $Text['responsible_uf'] . ': ' . $Text['uf_short'].$resp_uf[$id] . ' ' . $resp_uf_name[$id] 
               . ' (Tel. ' 
-              . $resp_uf_phone[$id]
-              . ')</span><br/><span class="providerInfo">Info provider: telf: '
+              . $resp_uf_phone[$id]. ')'
+              . '</span><br/><span class="providerInfo">Info '.$Text['provider'].' "'.$prov_name[$id]
+              . '": telf: '
               . $prov_phone[$id]
               . ' / email: '
               . $prov_email[$id]
@@ -389,18 +391,21 @@ class report_manager {
         
         $html = $header 
               . '<title>' 
-              . "Order for {$prov_name[$i]} for {$arr_dates[$i] }"
+              . $Text['order'].' '.$Text['for'].' "'.$prov_name[$i].'" '.
+                    $Text['for'].' '.$arr_dates[$i]
               . '</title></head><body>';
           $html .= 
-              '<h1>Order #'.$arr_order_ids[$i].' for <span class="providerName">'
+              '<h1>'.$Text['order'].' #'.$arr_order_ids[$i].' '.$Text['for']
+              . ' <span class="providerName">'
               . $prov_name[$i]
-              . '</span> for '
+              . '</span> '.$Text['for'].' '
               . $arr_dates[$i] 
-              . '</h1><p><span class="responsibleUF">Responsible ' 
-              . $Text['uf_short'] . ' ' . $resp_uf[$i] . ' ' . $resp_uf_name[$i] 
+              . '</h1><p><span class="responsibleUF">' 
+              . $Text['responsible_uf'] . ': ' .$Text['uf_short'].$resp_uf[$i] . ' ' . $resp_uf_name[$i] 
               //. ' (Tel. ' 
-              //. $resp_uf_phone[$id]
-              . ')</span><br/><span class="providerInfo">Info provider: telf: '
+              //. $resp_uf_phone[$id]. ')'
+              . '</span><br/><span class="providerInfo">Info '.$Text['provider'].' "'.$prov_name[$i]
+              . '": telf: '
               . $prov_phone[$i]
               . ' / email: '
               . $prov_email[$i]
