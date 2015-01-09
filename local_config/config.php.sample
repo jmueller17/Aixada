@@ -54,6 +54,13 @@ class configuration_vars {
   public $max_month_orderable_dates = 12;
   
   /**
+   *
+   * Prevents purchase products with no stock (used in shop_and_order.php)
+   * @var boolean
+   */  
+  public $prevent_out_of_stock_purchase = true;
+  
+  /**
    * 
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
