@@ -67,6 +67,7 @@ $Text['global_title'] = configuration_vars::get_instance()->coop_name;
 $Text['head_ti_validate'] = "Valida";
 
 $Text['head_ti_active_products'] = "Activa/Desactiva Productes demanables";
+//
 $Text['head_ti_active_roles'] = "Rols actius";
 $Text['head_ti_account'] = "Comptes";
 $Text['head_ti_manage_orders'] = "Gestiona les comandes";
@@ -84,15 +85,10 @@ $Text['head_ti_cashbox'] = "Control de caixa";
  *  			capçaleres de les pàgines principals <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "Les UFs podran demanar els següents productes PER EL dia ";
-//$Text['ti_mng_arrived_products'] = "Els següents productes han arribat el dia ";
 $Text['ti_mng_activate_roles'] = "Gestiona els rols d'usuari ";
 $Text['ti_mng_activate_users'] = "Activa usuaris com a ";
-//$Text['ti_mng_move_orders'] = "Canvia una comanda";
 $Text['ti_mng_activate_preorders'] = "Converteix una comanda acumulativa en comanda";
 $Text['ti_mng_members'] = "Gestiona els membres";
-//$Text['ti_mng_ufs'] = "Gestiona les unitats familiars";
-//$Text['ti_mng_dates'] = "De-/activar individualment dates per fer comandes";
-//$Text['ti_mng_dates_pattern'] = "Bulk de-/activar dates per fer comandes";
 $Text['ti_mng_db'] = "Còpia de seguretat de la base de dades"; 
 $Text['ti_order'] = "Fes la comanda per a ";
 $Text['ti_shop'] = "Compra articles ";
@@ -307,6 +303,7 @@ $Text['nav_report_preorder'] = "Comandes acumulatives";
 $Text['nav_report_incidents'] = "Incidents d'avui";
 $Text['nav_report_shop_hu'] = "Per UF";
 $Text['nav_report_shop_pv'] = "Per Proveïdor";
+
 
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Navega / afegeix";
@@ -618,7 +615,6 @@ $Text['msg_err_no_stock'] = "sembla que aquest proveïdor no té estoc";
 $Text['msg_err_qu'] = "La quantitat ha de ser numèrica i superior a 0!";
 $Text['msg_correct_stock'] = "Ajustar així l'estoc hauria de ser l'excepció! El nou estoc s'hauria d'AFEGIR. Estàs segur de voler corregir l'estoc?";
 $Text['btn_yes_corret'] = "Sí, fes la correcció!";
-$Text['ti_mng_stock'] = "Gestiona estoc";
 $Text['search_product'] = "Cerca un producte";
 $Text['add_stock'] = "Afegeix estoc";
 $Text['click_to_edit'] = "Prem una cel·la per a editar-la!";
@@ -694,6 +690,8 @@ $Text['msg_confirm_move'] = "Estàs segur que vols fer aquesta comanda disponibl
 $Text['alter_date'] = "Tria una data alternativa";
 $Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
 
+
+//added 29.09
 
 $Text['order_closes'] = "La comanda es tanca el"; //as in: order closes 20 SEP 2012
 $Text['left_ordering'] = " pendents per demanar."; //as in 4 days left for ordering
@@ -806,10 +804,12 @@ $Text['upcoming_orders'] = "Pròximes comandes";
 $Text['msg_confirm_del_mem'] = "Estas segur de eliminar aquest usuari de la base de dades??";
 $Text['btn_del'] = "Esborrar";
 
+
 $Text['btn_new_provider'] = "Nou proveïdor";
 $Text['btn_new_product'] = "Afegir producte";
 $Text['orderable'] = "Comanda directe"; //product type
 $Text['msg_err_providershort'] = "El nom del proveïdor no pot quedar buit i ha de ser de més de 2 caràcters.";
+$Text['msg_err_productshort']  = "El nom del producte no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_select_responsibleuf'] = "Qui s'encarrega? S'ha de seleccionar un responsable.";
 $Text['msg_err_product_category'] = "S'ha de seleccionar una categoria de producte.";
 $Text['msg_err_order_unit'] = "S'ha de seleccionar una unitat de mesura per a la comanda.";
@@ -827,9 +827,9 @@ $Text['msg_err_del_member'] = "No es pot esborrar aquest usuari per que hi ha re
 $Text['msg_confirm_del_provider'] = "¿Segur que vols esborrar aquest proveïdor?";
 $Text['msg_err_del_provider'] = "No es pot esborrar aquest proveïdor. Esborra primer els seus productes i torna a provar.";
 $Text['price_net'] = "Preu net";
+
 $Text['custom_product_ref'] = "Id extern"; 
 $Text['btn_back_products'] = "Tornar a productes";
-
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Enganxar";
 
@@ -907,9 +907,11 @@ $Text['total_brutto'] = "Brutto total";
 $Text['total_netto'] = "Netto total";
 $Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
 $Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
+
 $Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
 $Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
 $Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
+
 $Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
 $Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
 $Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 

@@ -514,7 +514,7 @@ $Text['icon_purchase'] = 'Buy items now';
 $Text['icon_incidents'] = 'Post an incident';
 $Text['purchase_date'] = 'Date of purchase';
 //$Text['purchase_validated'] = 'Date of validation';
-$Text['ordered_for'] = 'Items ordered for';
+//$Text['ordered_for'] = 'Items ordered for'; //!!DUPLICATE
 $Text['not_validated'] = 'not validated';
 
 
