@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 
 require_once(__ROOT__ . 'php/inc/database.php');
@@ -201,7 +201,7 @@ function reset_password($user_id)
     
     if ($sendAsEmail){
     	DBWrap::get_instance()->free_next_results();     
-		$strSQL = 'SELECT email FROM aixada_user WHERE id = :1q';
+		$strSQL = 'SELECT email, login FROM aixada_user WHERE id = :1q';
     	$rs = $db->Execute($strSQL, $user_id);
     	if($rs->num_rows == 0){
     		throw new Exception("This user has no valid email.");
@@ -209,24 +209,26 @@ function reset_password($user_id)
 		
 		while ($row = $rs->fetch_assoc()) {
       		$toEmail = $row['email'];
+            $login =  $row['login'];
     	}
     	
-    	
-		$subject = "Aixada Reset Password";
-		$message = "Your password has been reset. The new password is " . $newPwd ."\n\n Please logon with the new password. Under My Account, Settings you can change your password.";
-		$from = configuration_vars::get_instance()->admin_email;
-		$headers = "From: $from \r\n";
-		$headers .= "Reply-To: $from \r\n";
-		$headers .= "Return-Path: $from\r\n";
-		$headers .= "X-Mailer: PHP \r\n";
-		
-		
-		if (mail($toEmail,$subject,$message,$headers)){
-			echo $Text['msg_pwd_emailed'];			
-			
-		} else {
-			echo $Text['msg_err_emailed'];		
-			
+        $subject = $Text['msg_pwd_email_reset'];
+        $message = '<p>'.$Text['msg_pwd_change'].
+            '<span style="color:red">'. $newPwd ."</span></p>\n";
+        $message .= '<p>'.str_replace('{$user}',
+            $login,
+            $Text['msg_pwd_email_logon'])."</p>\n";
+        $message .= '<p>'.str_replace('{$menu}',
+                '<span style="color:#666">"'.
+                    $Text['nav_myaccount'].'"</span>:'.
+                '<span style="color:#666">"'.
+                    $Text['nav_myaccount_settings'].'"</span>',
+                $Text['msg_pwd_email_change'])."</p>\n";
+        if (send_mail($toEmail, $subject, $message)){
+            echo $Text['msg_pwd_emailed'];
+        } else {
+            echo $Text['msg_pwd_change'].$newPwd.'<br>'.
+                 '<span style="color:red">'.$Text['msg_err_emailed'].'</span>';
 		}
     	
 
