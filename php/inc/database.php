@@ -227,22 +227,31 @@ class DBWrap {
    */
   private function make_safe_sql_str (&$binds)
   {
+    global $firephp; 
+
     $strSQL = array_shift($binds); 
     foreach ($binds as $index => $name) {
       $replace = $this->mysqli->real_escape_string($name);
+
       $i  = $index+1;
-      $qpos = strpos($strSQL, ":$i") + 2;
-      if ($i>9) $qpos++;
-      if ($i>99) $qpos++;
-      if (strpos($strSQL, 'q', $qpos) == $qpos) {
-	       $replace = "'" . $replace . "'";
-	       $strSQL = str_replace(":{$i}q", $replace, $strSQL);
-      } else {
-	       $strSQL = str_replace(":$i", $replace, $strSQL);
+
+      $exp = "/:".$i."/";
+      $qexp = "/:".$i."q/";
+
+      if (preg_match($qexp, $strSQL) == 1){
+        $replace = "'" . $replace . "'";
+        $strSQL = preg_replace($qexp, $replace, $strSQL, 1);
+
+      } else if (preg_match($exp, $strSQL) == 1){
+        $strSQL = preg_replace($exp, $replace, $strSQL, 1);
       }
+
     }
+
     return $strSQL;
   }
+
+
 
   /**
    * A catch-all function that executes an SQL query.

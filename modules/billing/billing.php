@@ -21,10 +21,8 @@
 	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
 	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
 	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
-	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>
-	   	
+	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>	   	
 		<script type="text/javascript" src="js/datepicker/bootstrap-datetimepicker.min.js"></script>
-
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 
@@ -471,8 +469,9 @@
 	<div id="headwrap">
 		<?php include "../../php/inc/menu.inc.php" ?>
 	</div>
-	<!-- end of headwrap -->
+	<!-- end of main menu -->
 
+	<!-- sub nav menu -->
 	<div class="container">
 		<div class="row">
 			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">

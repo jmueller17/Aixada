@@ -51,6 +51,7 @@ class aixmodel {
 
 		$this->table = $table;  
 		$this->fields = $fields;
+		$this->arrRow = array(); 
 
 		//get fields for this table from automatically generated file (via "make")
 		if ($this->table != "" && count($this->fields)==0){
@@ -71,6 +72,7 @@ class aixmodel {
 				global $firephp; 
 				$firephp->log($this->fields, "Aixmodel initialized fields.");
 		}
+
 
 	}
 
@@ -110,12 +112,21 @@ class aixmodel {
      * Inserts arbitrary columns into a table based on the default field names. 
      *
      * @param array $arrData an array with entries of the form field => value. The values are inserted into the corresponding fields of the table.
+     * @param bool $autoinc If set to 1, the id fields will be ignored and not inserted; this supposes that the db field will auto_increment
      *
      */
-  	public function insert ($arrData){
+  	public function insert ($arrData=array(), $autoinc=true){
 
   		if ($this->table == "")
   			throw new InternalExcetion("Aixmodel table insert exception: no table name given!");
+
+  		if (count($arrData)>0){
+
+  		} else if (count($this->arrRow)>0) {
+  			$arrData = $this->arrRow; 
+  		} else {
+  			throw new Exception("Aixmodel table insert exception: no data provided!");
+  		}	
 
 
   		//construct the array to be passed to db->execute. First param is table name. 
@@ -129,6 +140,9 @@ class aixmodel {
 	    //we loop two times since we don't know how many fields are good and the order of 
 	    //arguments and values needs to be the same. 
 	    foreach ($arrData as $field => $value) {
+	    	
+	    	if (strtolower($field) == "id" && $autoinc) continue; 
+
 			if (in_array($field, $this->fields)) {
 			    if ($first) {
 			    	$first = false; 					
@@ -139,6 +153,12 @@ class aixmodel {
 			    $strSQL .= ':'.$bc;
 			    $bind[] = $field; 
 			    $bc++;
+			} else {
+				if ($this->debug){
+					global $firephp; 
+					$firephp->log($field, "Warning: Field {$field} not found in table " . $this->table . ". Values will be ignored!");
+				}
+
 			}
 	    }
 	    
@@ -146,6 +166,10 @@ class aixmodel {
 	    $first = true; 
 		foreach ($arrData as $field => $value) {
 			if (in_array($field, $this->fields)) {
+				
+				//ig
+				if (strtolower($field) == "id" && $autoinc) continue; 
+
 			    if ($first) {
 					$first = false; 
 			    } else {
@@ -155,6 +179,12 @@ class aixmodel {
 			    $strSQL .= ':'.$bc.'q';
 			    $bind[] = $value; 
 			    $bc++;
+			} else {
+				if ($this->debug){
+					global $firephp; 
+					$firephp->log($field, "Warning: Field {$field} not found in table " . $this->table . ". Values will be ignored!");
+				}
+
 			}
 	    }
 

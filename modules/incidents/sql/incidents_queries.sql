@@ -115,7 +115,7 @@ end|
  *  retrieves listing of incidents
  */
 drop procedure if exists get_incidents_listing|
-create procedure get_incidents_listing(in from_date date, in to_date date, in the_type int)
+create procedure get_incidents_listing(in from_date timestamp, in to_date timestamp, in the_type int)
 begin
 	
 	
@@ -137,7 +137,7 @@ begin
 	on 
 		i.provider_concerned = pv.id
   	where
-	  	i.ts >= from_date and i.ts <= to_date
+	  	i.ts between from_date and to_date
 	  	and i.operator_id = u.id
 	    and	u.member_id = mem.id
 	    and i.incident_type_id >= the_type

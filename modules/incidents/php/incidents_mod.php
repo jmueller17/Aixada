@@ -29,11 +29,14 @@ class Incident extends Aixmodel {
 		$ufs = rtrim($ufs, ',');
 
 		$this->arrRow["ufs_concerned"] = $ufs; 
+		$this->arrRow["operator_id"] =  get_session_user_id();
 
 		if ($this->debug){
 			global $firephp; 
-			$firephp->log($this->arrRow, "retrieved fields and values from form submit for {$this->table}");
+			$firephp->log($this->arrRow, "Retrieved fields and values from form submit for {$this->table}");
 		}
+
+		return $this->arrRow; 
 
 	}
 

@@ -36,11 +36,9 @@ try{
 
 	    //if incident_id > 0 edit, otherwise create new
 	    case 'mngIncident':
-
 			$ax = new Incident();
 			$ax->read_form_submit();
-
-	       	//echo manage_incident(get_param('incident_id',0));
+			$ax->insert();
 	        exit;
 				
 	    case 'delIncident':
@@ -49,8 +47,7 @@ try{
 	        exit;
 
 	    case 'getIncidentsListing':
-
-	        //echo get_incidents_in_range(get_param('filter', 'month'), get_param('fromDate',0), get_param('toDate',0), get_param('type',1) );
+	        print_stored_query('xml','get_incidents_listing', get_param('from_date',''), get_param('to_date',''), get_param('type','1') );            
 	    	exit; 
 	    	
 	    case 'getIncidentsById':
