@@ -558,7 +558,7 @@ function query_XML_noparam($queryname)
 
 function printXML($str) {
   $newstr = '<?xml version="1.0" encoding="utf-8"?>';  
-  $newstr .= $str; 
+  $newstr .= $str.'      ';
   header('Content-Type: text/xml');
   header('Last-Modified: '.date(DATE_RFC822));
   header('Pragma: no-cache');
