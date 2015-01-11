@@ -56,59 +56,6 @@ begin
   	aixada_incident_type;
 end|
 
-/**
- * creates new incidents, edits existing one if id is given. 
- */
-drop procedure if exists manage_incident|
-create procedure manage_incident(in the_id int,
-                              	 in the_subject varchar(100),
-								 in the_type tinyint,
-                              	 in the_operator int,
-                             	 in the_details text,
-                              	 in the_priority int,
-                              	 in the_ufs_concerned varchar(100),
-                              	 in the_comm varchar(100),
-                              	 in the_prov varchar(100),
-                              	 in the_status varchar(10))
-begin
-	
-	if (the_id > 0) then
-	 	update 
-	 		aixada_incident 
-	 	set
-     		incident_type_id = the_type, 
-     		priority = the_priority,
-     		subject = the_subject,
-     		operator_id = the_operator,
-     		details = the_details,
-     		ufs_concerned = the_ufs_concerned,
-     		commission_concerned = the_comm,
-     		provider_concerned = the_prov,
-     		status = the_status
-  		where
-     		id = the_id;
-	else 
-
-		insert into 
-			aixada_incident (incident_type_id, priority, subject, operator_id, details, ufs_concerned, commission_concerned, provider_concerned, status) 
-     	values 
-     		(the_type, the_priority, the_subject, the_operator, the_details, the_ufs_concerned, the_comm, the_prov, the_status);
-	
-	end if; 
-	
-
-end |
-
-
-/**
- * deletes an incident without remorse
- */
-drop procedure if exists delete_incident|
-create procedure delete_incident(in the_id int)
-begin
-  delete from aixada_incident
-  where id = the_id;
-end|
 
 
 /**

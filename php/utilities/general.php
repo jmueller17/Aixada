@@ -9,6 +9,7 @@ require_once(__ROOT__ . "php/lib/output_format.php");
 require_once(__ROOT__ . "php/lib/output_format_csv.php");
 require_once(__ROOT__ . "php/lib/output_format_xml.php");
 require_once(__ROOT__ . "php/lib/output_format_sepa.php");
+require_once(__ROOT__ . "php/lib/output_format_htmltable.php");
 
 
 
@@ -341,6 +342,25 @@ function clean_zeros($value)
 }
 
 
+
+/**
+ * Shortcut function to execute a stored query without returning anything. 
+ * @param array $args the arguments to be passed to the stored query; possibly empty
+ * @return the result set
+ */
+function do_stored_query()
+{
+
+  $args = func_get_args();
+
+  $db = DBWrap::get_instance();
+  $rs = $db->squery($args);
+  $db->free_next_results();
+
+  return $rs;   
+}
+
+
 /**
  *  Utility function to call a stored query and return a string of the result 
  *  in different formats. The first parameter passed to the function needs to be 
@@ -366,6 +386,12 @@ function print_stored_query(){
 }
 
 
+/**
+ *  Utility function to execute a stored query and export the result in the given format. 
+ *  @param array $args  The function arguments. The first argument is the export format (csv, xml, etc.), 
+  *                     second is the filename, and third is bool $publish. The rest of the arguments are the stored procedure params. 
+ *
+ */
 function export_stored_query(){
 
   $args = func_get_args();
@@ -399,43 +425,6 @@ function export_stored_query(){
  *   everything below this line is deprecated
  *
  */
-
-
-
-/**
- * Execute a stored query
- * @param array $args the arguments to be passed to the stored query; possibly empty
- * @return the result set
- */
-function do_stored_query()
-{
-  $args = func_get_args();
-  if (is_array($args[0])) {
-    $args = $args[0];
-  }
-  for ($i=1; $i<count($args); ++$i) {
-    if (is_array($args[$i])) {
-      $args[$i] = $args[$i][0];
-    }
-  }
-
-  $sql_func = array_shift($args);
-
-  $strSQL = 'CALL ' . $sql_func . '(';
-  foreach ($args as $arg) {
-      if (strpos($arg, "'") !== false) {
-          if (strpos($arg, '"') !== false)
-              throw new DataException('Cannot use both symbols \' and " in text');
-          $strSQL .= '"' . $arg . '",';
-      } else 
-          $strSQL .= "'" . $arg . "',";
-  }
-  if (count($args))
-    $strSQL = rtrim($strSQL, ',');
-  $strSQL .= ')';
-
-  return DBWrap::get_instance()->do_stored_query($strSQL);
-}
 
 
 function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)

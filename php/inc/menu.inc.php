@@ -1,228 +1,64 @@
-<!--div class="navbar-fixed-top ax-navbar-top bg-primary" role="navigation">
-	<div class="container">
-		<div class="row">
+<div class="container">
+	<div class="row">
+      	<!-- Static navbar -->
+      	<div class="navbar navbar-default" role="navigation">
+        	<div class="container-fluid">
+          		<div class="navbar-header">
+            		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		              <span class="sr-only">Toggle navigation</span>
+		              <span class="icon-bar"></span>
+		              <span class="icon-bar"></span>
+		              <span class="icon-bar"></span>
+		            </button>
+            		<a class="navbar-brand" href="#"><?=$Text['coop_name'];?> </a>
+          		</div>
 
-			<div class="col-md-12">
-				<div class="pull-right">
-		<?php 
+          		<div class="navbar-collapse collapse">
+	            	<?php 
 
-   	if ($_SESSION['userdata']['login'] != '') {
+	            		try {
+	            			$nav = new menu(configuration_vars::get_instance()->main_nav);
+	            			echo $nav->get_menu(); 
+	            		} catch(Exception $e) {
+	   						header('HTTP/1.0 401 ' . $e->getMessage());
+	    					die ($e->getMessage());
+						} 
 
-   		echo '<a href="docs/index_'.get_session_language().'.php" target="_blank">'.$Text['nav_help'].'</a> | ';	
-   	if (isset($_SESSION['userdata']['can_checkout']) and
-           $_SESSION['userdata']['can_checkout']) {
-           echo '<font color="red">' . $Text['nav_can_checkout'] . '</font> ';
-       }
-     echo  $Text['nav_signedIn'] . " " . $_SESSION['userdata']['login'] . " | "
-       . $Text['uf_long'] . ' ' . $_SESSION['userdata']['uf_id'] . " | " 
-       . $_SESSION['userdata']['provider_id'];
-     echo '<select size="0" name="role_select" id="role_select">';
-     foreach ($_SESSION['userdata']['roles'] as $role) {
-       echo '<option';
-       $rt = (isset($Text[$role]) ? $Text[$role] : "TRANSLATE[$role]");
-       if ($role == $_SESSION['userdata']['current_role'])
-	 echo ' selected';
-       echo ' value="' . $role. '">' . $rt . '</option>'; 
-     } 
-     echo '</select> ';
-     
-     if (configuration_vars::get_instance()->show_menu_language_select){
-	     echo '<select size="0" name="lang_select" id="lang_select">';
-	       $keys = $_SESSION['userdata']['language_keys'];
-	       $names = $_SESSION['userdata']['language_names'];
-	       for ($i=0; $i < count($keys); $i++) {
-	           echo '<option';
-	           if ($keys[$i] == $_SESSION['userdata']['language'])
-	               echo ' selected';
-	           echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
-	       } 
-	     echo '</select> ';
-     }
-       echo " | ";
-      
-      
-	 echo "<a href='javascript:void(null)' id='logoutRef'>".$Text['nav_logout']."</a>";
- 
-   } else {
-     echo ("userdata not set");
-     header('Location:login.php');
-   }
-
-?>
-</div>
-	</div>
-	</div>
-	</div>
-</div>
-<h4>&nbsp;</h4-->
-
-
-	<div class="container">
-		<div class="row">
-      <!-- Static navbar -->
-      <div class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"><?=$Text['coop_name'];?> </a>
-          </div>
-
-          <div class="navbar-collapse collapse">
-            	<?php 
-
-            		try {
-            			$nav = new menu(configuration_vars::get_instance()->main_nav);
-            			echo $nav->get_menu(); 
-            		} catch(Exception $e) {
-   						header('HTTP/1.0 401 ' . $e->getMessage());
-    					die ($e->getMessage());
-					} 
-
-            	?>	
+	            	?>	
             
-		    <ul class="nav navbar-nav navbar-right">
-		       
-		        <li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> &nbsp;
-		          	<?php 
-		          		echo "Hola " . $_SESSION['userdata']['login'] . " (".$Text['uf_short'].$_SESSION['userdata']['uf_id'] .")";
-		          	?> <b class="caret"></b>
-		          </a>
-		          <ul class="dropdown-menu">
-		          	<?php
- 						foreach ($_SESSION['userdata']['roles'] as $role) {
-       						echo '<li><a href="'.$role.'">';
-       							$rt = (isset($Text[$role]) ? $Text[$role] : "TRANSLATE[$role]");
-       								if ($role == $_SESSION['userdata']['current_role']){
-	 									echo '<span class="glyphicon glyphicon-check"></span>';
-	 								}
-    								echo ' ' . $rt . '</a></li>';
-    					}		
-    				?>
-		            <li class="divider"></li>
-					<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
-					<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
-					<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
-		            <li class="divider"></li>
-		            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> <?=$Text['nav_logout'];?></a></li>
-		          </ul>
-		        </li>
-		      </ul>
+				    <ul class="nav navbar-nav navbar-right">
+				       
+				        <li class="dropdown">
+				          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> &nbsp;
+				          	<?php 
+				          		echo "Hola " . $_SESSION['userdata']['login'] . " (".$Text['uf_short'].$_SESSION['userdata']['uf_id'] .")";
+				          	?> <b class="caret"></b>
+				          </a>
+				          <ul class="dropdown-menu">
+				          	<?php
+		 						foreach ($_SESSION['userdata']['roles'] as $role) {
+		       						echo '<li><a href="'.$role.'">';
+		       							$rt = (isset($Text[$role]) ? $Text[$role] : "TRANSLATE[$role]");
+		       								if ($role == $_SESSION['userdata']['current_role']){
+			 									echo '<span class="glyphicon glyphicon-check"></span>';
+			 								}
+		    								echo ' ' . $rt . '</a></li>';
+		    					}		
+		    				?>
+				            <li class="divider"></li>
+							<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
+							<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
+							<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
+				            <li class="divider"></li>
+				            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> <?=$Text['nav_logout'];?></a></li>
+				          </ul>
+				        </li>
+				     </ul>
           
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-      </div>
-  </div>
+          		</div><!--/.nav-collapse -->
+        	</div><!--/.container-fluid -->
+      	</div>
+  	</div>
+ </div>
 
 
-<!--div class="ui-widget-header ui-corner-all" id="menuBgBar">
-<div  id="topMenu">
-<a tabindex="0" href="index.php" 	id="navHome" class="menuTop"><?php echo $Text['nav_home'];?></a>
-<a tabindex="1" href="torn.php" 	id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
-<a tabindex="2" href="shop_and_order.php?what=Shop" 	id="navShop" class="menuTop"><?php echo $Text['nav_shop'];?></a>
-<a tabindex="3" href="shop_and_order.php?what=Order" 		id="navOrder" class="menuTop"><?php echo $Text['nav_order'];?></a>
-<a tabindex="4" href="#" 			id="navManage" class="menuTop"><?php echo $Text['nav_mng'];?></a>
-<a tabindex="5" href="#" id="navReport" class="menuTop"><?php echo $Text['nav_report'];?></a>
-<a tabindex="6" href="#" id="navIncidents" class="menuTop"><?php echo $Text['nav_incidents'];?></a>
-<a tabindex="7" href="#" id="navMyAccount" class="menuTop"><?php echo $Text['nav_myaccount'];?></a>
-</div>
-</div-->
-
-<!--
-<div id="navWizardItems" class="hidden">
-	<ul>
-		<li><a href="validate.php"><?php echo $Text['nav_wiz_validate'];?></a></li>
-		<li><a href="report_torn.php"><?php echo $Text['nav_wiz_torn'];?></a></li>
-		<li><a href="all_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
-		<li><a href="manage_cashbox.php"><?php echo $Text['nav_wiz_cashbox'];?></a></li>
-	</ul>
-</div>
-<div id="navManageItems" class="hidden">
-	<ul>
-		<li><a href="manage_ufmember.php"><?php echo $Text['uf_short'];?> & <?php echo $Text['nav_mng_member'];?></a>
-			<ul>
-			<li>
-            <?php 
-            	if($_SESSION['userdata']['current_role'] == 'Hacker Commission') {
-     				echo '<a href="activate_all_roles.php">';
- 				} else {
-     				echo '<a href="activate_roles.php">';
- 				}  
- 				echo $Text['nav_mng_roles'];?>
- 		</a></li>
-			</ul>
-		</li>
-		
-		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_providers'];?></a></li>
-		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_products'];?></a>
-			<ul>
-				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
-				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li>
-				<li><a href="manage_table.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
-				
-			</ul>
-		</li>
-		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a></li>
-			<!ul>
-
-				<li><a href="manage_preorders.php"><?php echo $Text['nav_mng_preorder'];?></a></li>
-			</ul>
-		</li>
-		<li><a href="manage_money.php"><?php echo $Text['nav_mng_money'];?></a>
-		</li>
-		<li><a href="#TODO"><?php echo $Text['nav_mng_admin'];?></a>
-			<ul>
-				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
-				<li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
-				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li>
-			</ul>
-		</li>
-
-		
-	</ul>
-</div>
-
-<div id="navReportItems" class="hidden">
-	<ul>
-		<li><a href="#"><?php echo $Text['nav_report_sales']; ?></a>
-			<ul>
-				<li><a href="report_shop_ufs.php"><?php echo $Text['nav_report_shop_hu']; ?></a></li>
-				<li><a href="report_sales.php"><?php echo $Text['nav_report_shop_pv']; ?></a></li>
-			</ul>
-		</li>
-		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
-		<li><a href="report_stock.php"><?php echo $Text['nav_mng_stock'];?></a></li>
-		
-		<li><a href="report_torn.php"><?php echo $Text['nav_report_daystats'];?></a></li>
-		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>
-                <ul>
-                 <li><a href="report_timelines.php?oper=uf"><?php echo $Text['nav_report_timelines_uf'];?></a></li>
-                 <li><a href="report_timelines.php?oper=provider"><?php echo $Text['nav_report_timelines_provider'];?></a></li>
-                 <li><a href="report_timelines.php?oper=product"><?php echo $Text['nav_report_timelines_product'];?></a></li>
-                </ul>
-                </li>
-		<li><a href="report_incidents.php"><?php echo $Text['nav_report_incidents'];?></a></li>
-	</ul>
-</div>
-
-<div id="navIncidentsItems" class="hidden">
-	<ul>
-		<li><a href="incidents.php"><?php echo $Text['nav_browse'];?></a></li>
-	</ul>
-</div>
-
-<div id="navMyAcountItems" class="hidden">
-	<ul>
-		<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
-		<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
-		<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
-		<li><a href="my_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
-	</ul>
-</div>
--->

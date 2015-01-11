@@ -16,11 +16,15 @@ class Deliver {
 
 	/**
 	 *	
-	 *	Sends a string back to the client. 
+	 *	Sends a string back to the client, usually in response to an ajax call. 
 	 *	@var string $out_str The output string to be send to the client
 	 *	@var string $format The format of the string, i.e. csv, xml, json, etc. 
 	 */
 	public static function serve_str($out_str, $format){
+		
+		//see http://stackoverflow.com/questions/22121282/php-inserts-hex-number-of-characters-before-the-content
+		//as checked by Xavier M
+		$out_str = $out_str . '   '; 
 
 		header('Content-Type: text/'.$format);
 		header('Last-Modified: '.date(DATE_RFC822));

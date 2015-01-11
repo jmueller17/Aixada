@@ -9,7 +9,6 @@
     <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/aixcss.css" rel="stylesheet">
     <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
-    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link href="js/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?>
@@ -26,6 +25,8 @@
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaExport.js" ></script>
 
+    <?php  } else { ?>
+	    <script type="text/javascript" src="js/js_for_billing.min.js"></script>
     <?php }?>
    		
 
@@ -761,17 +762,11 @@
 
 
 
-
-
-<!-- end of wrap -->
-<!-- / END -->
 <div class="sec-4">
 	<form id="flexform"></form>
 
 
-<iframe name="dataFrame" id="dataFrame" style="display:none"></iframe>
-
-
+	<iframe name="dataFrame" id="dataFrame" style="display:none"></iframe>
 </div>
 
 <div class="sectionSwitchListener"></div>

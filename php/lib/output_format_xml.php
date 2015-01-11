@@ -135,7 +135,7 @@ class output_format_xml extends output_format{
 	    	if ($row_name != ""){
 	    		
 		        $xml_str .= '<'.$row_name;
-		        if (is_numeric($id_index) && $id_index >=0 && $id_index > coun($row)){ 
+		        if (is_numeric($id_index) && $id_index >=0 && $id_index > count($row)){ 
 		            $xml_str .= ' id ="' . $row[$id_index] . '"';
 		        }
 		        $xml_str .= '>';

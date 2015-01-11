@@ -213,18 +213,33 @@ class aixmodel {
 
 
   	/**
-   	 * Generic edit/update function. 
-   	 * @param array $arrData the array that contains the data to be updated must contain a field named 'id' that contains the unique id.
+   	 * 	Generic edit/update function. Either the $arrData needs field of "id" or the $id needs to be set. 
+   	 *	@param int $id The id of the record to be updated. 
+   	 * 	@param array $arrData the array that contains the data to be updated. 
    	 */ 
-  	public function edit($arrData){
+  	public function edit($id=0, $arrData=array()){
 
     	if ($this->table == "")
   			throw new InternalException("Aixmodel table edit exception: no table name given!");
 
-      	if (!array_key_exists('id', $arrData))
-			throw new InternalException('Edit: Update array ' . $arrData . ' for table ' . $this->table . ' does not contain a field named "id"');
-      
-		$this->id = $arrData['id']; 
+
+		if (count($arrData)>0){
+
+  		} else if (count($this->arrRow)>0) {
+  			$arrData = $this->arrRow; 
+  		} else {
+  			throw new Exception("Aixmodel table edit exception: no data provided!");
+  		}	
+
+  		if ($id > 0){
+  			$this->id = $id; 
+  		} else if (array_key_exists('id', $arrData)){
+  			$this->id = $arrData['id']; 
+      	} else {
+			throw new InternalException('Edit: Update array table ' . $this->table . ': no ID given ');
+      	}
+
+		
 
 		$bind = array($this->table);
       	$strSQL = 'UPDATE :1 SET ';

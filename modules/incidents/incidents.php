@@ -59,14 +59,14 @@
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
-				reloadListings("all");
+				reloadListings();
 			})
 
 		$('#datepicker-to').datetimepicker({
 				pickTime:false,
 				startDate : '1/1/2014',
 			}).on("change.dp",function(e){
-				reloadListings("all");
+				reloadListings();
 			})
 
 		$.getAixadaDates('getToday', function (date){
@@ -76,7 +76,7 @@
 	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
 			$('#datepicker-from').data("DateTimePicker").setDate(gPrevMonth);
 
-			reloadListings(".sec-3");
+			reloadListings();
 		});
 		
 		//shortcuts for filtering date range. 
@@ -90,10 +90,11 @@
 		 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
 				$('#datepicker-from').data("DateTimePicker").setDate(fromDate);
 
-				reloadListings("all");
+				reloadListings();
 
 			})
 
+		//create new incident
 		$("#btn-create-incident")
     		.click(function(e){
 
@@ -150,7 +151,6 @@
 
 
 		$('#tbl_incidents tbody')
-			//click on table row
 			.on("click", "tr", function(e){
 
 				resetDetails();
@@ -182,12 +182,12 @@
 		});
 
 
-		//bulk actions
-		$('input[name=bulkAction]')
-			.on('click', function(e){
-				
+		//incidents checkboxes.
+		$('#tbl_incidents tbody')
+			.on('click','td:first-child, input',  function(e){				
 				e.stopPropagation();
 			})
+
 			
 		$('#toggleBulkActions')
 			.click(function(e){
@@ -199,6 +199,7 @@
 				e.stopPropagation();
 			});
 
+		//delete incidents
 		$('#tbl_incidents tbody')
 			.on("click", ".del-incident",  function(e){
 				var id = $(this).parents('tr').attr('incidentId'); 
@@ -256,8 +257,6 @@
 		 *************************************/
 		
 
-
-
 		//detect form submit and prevent page navigation
 		$('#save-btn').click(function(e) { 			
 			var dataSerial = $("#frm-incidents").serialize();
@@ -287,16 +286,11 @@
 			
 		});
 
-			
-
-
-		
-
 
 		function deleteIncident(id){
 			$.ajax({
 			    type: "POST",
-			    url: "php/ctrl/Incidents.php?oper=delIncident&incident_id="+id,
+			    url: "modules/incidents/php/incidents_ctrl.php?oper=delIncident&incident_id="+id,
 			    success: function(msg){
 					resetDetails();
 					$('#tbl_incidents tbody').xml2html('reload');
@@ -327,16 +321,6 @@
 				loadOnInit:true
 		});
 
-		//build type select
-		/*$("#typeSelect")
-			.xml2html("init", {
-				url: 'php/ctrl/Incidents.php',
-				params:'oper=getIncidentTypes',
-				loadOnInit:false,
-				complete: function(){
-					$("#typeSelect option:last").attr("selected",true);
-				}
-		});*/
 
 		//build commission select
 		$("#commissionSelect")
@@ -367,10 +351,10 @@
 		}		
 
 
-				/**
+		/**
 		 *	reloads cart and bill listings
 		 */
-		function reloadListings(sec){
+		function reloadListings(){
 
 			var from_date = $('#datepicker-from').data("DateTimePicker").getDate();
 			var to_date = $('#datepicker-to').data("DateTimePicker").getDate();
@@ -395,10 +379,10 @@
 	<div id="headwrap">
 		<?php include "../../php/inc/menu.inc.php" ?>
 	</div>
-	<!-- end of main menu -->
+	<!-- end of main menu / headwrap -->
 
 	<!-- sub nav -->
-	<div class="container">
+	<div class="container section sec-1">
 		<div class="row">
 			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
 			  	<div class="navbar-header">
@@ -418,7 +402,7 @@
 		  				</button>
 	  				</div>
 
-	  									<div class="col-md-3 section sec-3 sec-1">
+	  				<div class="col-md-3 section sec-3 sec-1">
 						<form class="navbar-form pull-right" role="date">
 							<div class="form-group">
 		                        <div class='input-group date input-group-sm' id='datepicker-from' >
@@ -430,7 +414,7 @@
 		                </form>
 		            </div>
 
-		            <div class="col-md-3 section sec-3 sec-1">
+		            <div class="col-md-3">
 						<form class="navbar-form" role="date">
 							<div class="form-group">
 		                        <div class='input-group date input-group-sm' id='datepicker-to' >
@@ -444,7 +428,7 @@
 
 					
 
-					<div class="btn-group col-md-1 section sec-1 sec-3">
+					<div class="btn-group col-md-1">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
 		    				Actions <span class="caret"></span>
 		  				</button>
@@ -456,7 +440,7 @@
 
 
 
-	  				<div class="btn-group col-md-1 pull-right section sec-3 sec-1">
+	  				<div class="btn-group col-md-1 pull-right">
 						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
 							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
 						</button>
@@ -466,6 +450,7 @@
 							<li class="level-1-indent"><a href="javascript:void(null)" data="weeks,1" class="ctx-nav-filter">Last week</a></li>
 							<li class="level-1-indent"><a href="javascript:void(null)" data="months,1" class="ctx-nav-filter">Last month</a></li>
 							<li class="level-1-indent"><a href="javascript:void(null)" data="months,3" class="ctx-nav-filter">Last 3 month</a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="months,12" class="ctx-nav-filter">Last year</a></li>
 
 						</ul>
 					</div>
@@ -568,7 +553,7 @@
 					<div class="form-group">
 						<label for="details" class="col-sm-2 control-label"><?php echo $Text['message'];?></label>
 					<div class="col-sm-6">
-						<textarea id="details" name="details" class="form-control" placeholder="Your message here"></textarea>
+						<textarea id="incidents_text" name="details" class="form-control" placeholder="Your message here"></textarea>
 					</div>
 					</div>
 

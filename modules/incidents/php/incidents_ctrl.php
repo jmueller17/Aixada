@@ -5,7 +5,6 @@ define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))).DS);
 
 
 require_once(__ROOT__ . "php/utilities/general.php");
-
 require_once(__ROOT__ . "php/lib/aixmodel.php");
 
 require_once("incidents_mod.php");
@@ -19,31 +18,23 @@ if (!isset($_SESSION)) {
 
 try{
 
-    switch (get_param('oper')) {
-
-    	case 'testAix':
-    		$ax = new aixmodel("aixada_unit_measure");
-
-    		$ax->read_form_submit();
-    		//$data = array("id"=>43, "name"=>"poundxx", "unit"=>"pxx");
-    		//$ax->delete(43);
-
-    		exit; 
-    	    	
-    	 case 'getIncidentTypes':
-	        printXML(stored_query_XML_fields('get_incident_types'));
-	        exit;        
-
-	    //if incident_id > 0 edit, otherwise create new
+    switch (get_param('oper')) {  
 	    case 'mngIncident':
-			$ax = new Incident();
-			$ax->read_form_submit();
-			$ax->insert();
+			$in = new Incident();
+			$in->read_form_submit();
+
+			//if id is given, edit existing incident, otherwise create new
+			if ($id >get_param('incident_id',0)){
+				$in->edit($id);
+			} else {
+				$in->insert();
+			}	
+
 	        exit;
 				
 	    case 'delIncident':
-	        echo do_stored_query('delete_incident', get_param('incident_id'));
-	        //echo 1;
+		    $in = new Incident();
+		    $in->delete(get_param('incident_id')); 
 	        exit;
 
 	    case 'getIncidentsListing':
@@ -51,7 +42,7 @@ try{
 	    	exit; 
 	    	
 	    case 'getIncidentsById':
-	    	printXML(stored_query_XML_fields('get_incidents_by_ids', get_param('idlist'), get_param('type',0)));	
+	    	print_stored_query('xml','get_incidents_by_ids', get_param('idlist'), get_param('type',0)  );
 	    	exit;
 
 	    	
