@@ -282,114 +282,6 @@ class DBWrap {
     return $this->mysqli->use_result();
   }
 
-  /**
-   * Inserts arbitrary columns into a table.
-   *
-   * @param array $arrData an array with entries of the form field => value . The values are inserted into the corresponding fields of the table.
-   *
-   */
-  public function Insert ($arrData)
-  {
-      if (!array_key_exists('table', $arrData))
-	  	throw new InternalException('Insert: Input array ' . $arrData . ' does not contain a field named "table"');
-      $table_name = $arrData['table'];
-
-      $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
-      $strVAL = 'VALUES (';
-      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
-      if (!array_key_exists($table_name, $all_col_names)) {
-	  throw new InternalException('Inserting into table ' . $table_name . ' not permitted');
-      }
-      $col_names = $all_col_names[$table_name];
-      $ct = 0;
-      foreach ($arrData as $field => $value) {
-	  if (in_array($field, $col_names)) {
-	      if ($ct > 0) {
-		  $strSQL .= ',';
-		  $strVAL .= ',';
-	      } else $ct++;
-
-	      $strSQL .= $this->mysqli->real_escape_string($field);
-	      $strVAL .= "'" . $this->mysqli->real_escape_string($value) . "'";
-	  }
-      }
-      $strSQL .= ') ' . $strVAL . ');';
-      if (isset($_SESSION['fkeys'][$table_name]))
-	  unset($_SESSION['fkeys'][$table_name]);
-      return $this->do_Execute($strSQL); // TODO: extract new index
-  }
-
-  /**
-   * Generic update function. Works just like Insert.
-   * @param string $table_name the name of the database table
-   * @param array $arrData the array that contains the data to be updated must contain a field named 'id' that contains the unique id.
-   * @see Insert
-   */ 
-  public function Update($arrData)
-  {
-      if (!array_key_exists('table', $arrData))
-	  throw new InternalException('Update: Input array ' . $arrData . ' does not contain a field named "table"');
-      $table_name = $arrData['table'];
-
-      if (!array_key_exists('id', $arrData))
-	  throw new InternalException('Update: Input array ' . $arrData . ' for table ' . $table_name . ' does not contain a field named "id"');
-      $strSQL = 'UPDATE ' . $this->mysqli->real_escape_string($table_name) . ' SET ';
-
-      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
-      if (!array_key_exists($table_name, $all_col_names)) {
-	  throw new InternalException('Updating table ' . $table_name . ' not permitted');
-      }
-      $col_names = $all_col_names[$table_name];
-
-      $ct=0;
-      foreach ($arrData as $field => $value) {
-	  if ($field != 'id' and in_array($field, $col_names)) {
-	      if ($ct > 0) $strSQL .= ','; else $ct++;
-	      $strSQL .= $this->mysqli->real_escape_string($field) . "='" 
-		  . $this->mysqli->real_escape_string($value) . "'";
-	  }
-      }
-      $strSQL .= ' WHERE id=' . $this->mysqli->real_escape_string($arrData['id']) . ';';
-      if (isset($_SESSION['fkeys'][$table_name]))
-	  unset($_SESSION['fkeys'][$table_name]);
-      
-      $success = $this->do_Execute($strSQL);
-    
-      //the check happens on the client side now
-      //for import data, updates should be possible without updating the responsible_uf_id
-      /*if ($table_name == 'aixada_provider') {
-	  $strSQL = "update aixada_product set responsible_uf_id='"
-	      . $this->mysqli->real_escape_string($arrData['responsible_uf_id'])
-	      . "' where provider_id="
-	      . $this->mysqli->real_escape_string($arrData['id']);
-	  $success = $this->do_Execute($strSQL);
-      }*/
-      return $success;
-
-  }
-
-
-  public function Delete($_tn, $_id)
-  {
-      $table_name = $this->mysqli->real_escape_string($_tn);
-      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
-      if (!array_key_exists($table_name, $all_col_names)) {
-	  throw new InternalException('Deleting from table ' . $table_name . ' not permitted');
-      }
-      $id = $this->mysqli->real_escape_string($_id);
-      if ($table_name == 'aixada_product') {
-	  $strSQL = "
-start transaction; 
-delete from aixada_price where product_id='{$id}'; 
-delete from aixada_product where id='{$id}';
-commit;";
-	  $multi = true;
-      } else {
-	  $strSQL = "delete from {$table_name} where id='{$id}'";
-	  $multi = false;
-      }
-      return $this->do_Execute($strSQL, $multi);
-  }
 
   /**
    * @param $count int the total number of entries in the table
@@ -477,6 +369,131 @@ commit;";
     $real_querySQL = $this->make_select_string($fields, $table_name, $filter, $order_by, $order_sense, $page, $limit);
     return $this->canned_select($count_querySQL, $real_querySQL, $page, $limit);
   }
+
+
+
+
+
+  /*****************************************************
+
+    everything below this line is deprecated for 3.0 
+    the add, edit, delete stuff now happens in aixmodel.php. 
+
+  ******************************************************/
+
+
+
+
+  /**
+   * Inserts arbitrary columns into a table.
+   *
+   * @param array $arrData an array with entries of the form field => value . The values are inserted into the corresponding fields of the table.
+   *
+   */
+  public function Insert ($arrData)
+  {
+      if (!array_key_exists('table', $arrData))
+      throw new InternalException('Insert: Input array ' . $arrData . ' does not contain a field named "table"');
+      $table_name = $arrData['table'];
+
+      $strSQL = 'INSERT INTO ' . $this->mysqli->real_escape_string($table_name) . ' (';
+      $strVAL = 'VALUES (';
+      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
+      if (!array_key_exists($table_name, $all_col_names)) {
+    throw new InternalException('Inserting into table ' . $table_name . ' not permitted');
+      }
+      $col_names = $all_col_names[$table_name];
+      $ct = 0;
+      foreach ($arrData as $field => $value) {
+    if (in_array($field, $col_names)) {
+        if ($ct > 0) {
+      $strSQL .= ',';
+      $strVAL .= ',';
+        } else $ct++;
+
+        $strSQL .= $this->mysqli->real_escape_string($field);
+        $strVAL .= "'" . $this->mysqli->real_escape_string($value) . "'";
+    }
+      }
+      $strSQL .= ') ' . $strVAL . ');';
+      if (isset($_SESSION['fkeys'][$table_name]))
+    unset($_SESSION['fkeys'][$table_name]);
+      return $this->do_Execute($strSQL); // TODO: extract new index
+  }
+
+  /**
+   * Generic update function. Works just like Insert.
+   * @param string $table_name the name of the database table
+   * @param array $arrData the array that contains the data to be updated must contain a field named 'id' that contains the unique id.
+   * @see Insert
+   */ 
+  public function Update($arrData)
+  {
+      if (!array_key_exists('table', $arrData))
+    throw new InternalException('Update: Input array ' . $arrData . ' does not contain a field named "table"');
+      $table_name = $arrData['table'];
+
+      if (!array_key_exists('id', $arrData))
+    throw new InternalException('Update: Input array ' . $arrData . ' for table ' . $table_name . ' does not contain a field named "id"');
+      $strSQL = 'UPDATE ' . $this->mysqli->real_escape_string($table_name) . ' SET ';
+
+      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
+      if (!array_key_exists($table_name, $all_col_names)) {
+    throw new InternalException('Updating table ' . $table_name . ' not permitted');
+      }
+      $col_names = $all_col_names[$table_name];
+
+      $ct=0;
+      foreach ($arrData as $field => $value) {
+    if ($field != 'id' and in_array($field, $col_names)) {
+        if ($ct > 0) $strSQL .= ','; else $ct++;
+        $strSQL .= $this->mysqli->real_escape_string($field) . "='" 
+      . $this->mysqli->real_escape_string($value) . "'";
+    }
+      }
+      $strSQL .= ' WHERE id=' . $this->mysqli->real_escape_string($arrData['id']) . ';';
+      if (isset($_SESSION['fkeys'][$table_name]))
+    unset($_SESSION['fkeys'][$table_name]);
+      
+      $success = $this->do_Execute($strSQL);
+    
+      //the check happens on the client side now
+      //for import data, updates should be possible without updating the responsible_uf_id
+      /*if ($table_name == 'aixada_provider') {
+    $strSQL = "update aixada_product set responsible_uf_id='"
+        . $this->mysqli->real_escape_string($arrData['responsible_uf_id'])
+        . "' where provider_id="
+        . $this->mysqli->real_escape_string($arrData['id']);
+    $success = $this->do_Execute($strSQL);
+      }*/
+      return $success;
+
+  }
+
+
+  public function Delete($_tn, $_id)
+  {
+      $table_name = $this->mysqli->real_escape_string($_tn);
+      $all_col_names = unserialize(file_get_contents(__ROOT__ .'col_names.php'));
+      if (!array_key_exists($table_name, $all_col_names)) {
+    throw new InternalException('Deleting from table ' . $table_name . ' not permitted');
+      }
+      $id = $this->mysqli->real_escape_string($_id);
+      if ($table_name == 'aixada_product') {
+    $strSQL = "
+start transaction; 
+delete from aixada_price where product_id='{$id}'; 
+delete from aixada_product where id='{$id}';
+commit;";
+    $multi = true;
+      } else {
+    $strSQL = "delete from {$table_name} where id='{$id}'";
+    $multi = false;
+      }
+      return $this->do_Execute($strSQL, $multi);
+  }
+
+
 }
 
 ?>

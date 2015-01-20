@@ -17,8 +17,8 @@ class Deliver {
 	/**
 	 *	
 	 *	Sends a string back to the client, usually in response to an ajax call. 
-	 *	@var string $out_str The output string to be send to the client
-	 *	@var string $format The format of the string, i.e. csv, xml, json, etc. 
+	 *	@param string $out_str The output string to be send to the client
+	 *	@param string $format The format of the string, i.e. csv, xml, json, etc. 
 	 */
 	public static function serve_str($out_str, $format){
 		
@@ -57,8 +57,8 @@ class Deliver {
 	/**
 	 *
 	 *	Sends a file back to the client, i.e. forces a download. 
-	 *	@var string $path_to_file The full path to the file, including file name
-	 *	@var string $format The format of the generate file as file ending. 
+	 *	@param string $path_to_file The full path to the file, including file name
+	 *	@param string $format The format of the generate file as file ending. 
 	 */
 	public static function serve_file($path_to_file, $format){
 

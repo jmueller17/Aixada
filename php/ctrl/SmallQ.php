@@ -4,10 +4,8 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/inc/database.php");
+
 require_once(__ROOT__ . "php/utilities/general.php");
-require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
 include(__ROOT__ . "php/external/mpdf54/mpdf.php");
 
@@ -45,7 +43,7 @@ try{
 	        
 	    //returns a list of all active providers for shopping (ony name and id). 
 		case 'getActiveProviders':
-			printXML(stored_query_XML_fields('get_all_active_providers'));
+		 	print_stored_query('xml','get_all_active_providers');            
 			exit;
 			
 		case 'getExistingThemes':

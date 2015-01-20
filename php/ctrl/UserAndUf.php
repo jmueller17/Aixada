@@ -3,8 +3,6 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/useruf.php");
 
@@ -21,11 +19,11 @@ try{
   	    
   		
   		case 'getUfListing':
-        	printXML(stored_query_XML_fields('get_uf_listing', get_param('all',0)));
+        	print_stored_query('xml','get_uf_listing', get_param('all',0));
         	exit;
         	
         case 'createUF':
-		   	printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0), get_session_user_id() ));
+		   	print_stored_query('xml','create_uf', get_param('name'), get_param('mentor_uf',0), get_session_user_id() );
 		   	exit;
  		
 	   	case 'editUF':

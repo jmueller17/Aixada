@@ -4,10 +4,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 
-require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
-require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
 
 
@@ -16,7 +13,6 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-DBWrap::get_instance()->debug = true;
 
 try{
 	
@@ -28,25 +24,25 @@ try{
 	     *  retrieves provider and category selects for Shop or Order
 	     */
 	    case 'getOrderProviders':
-	    	printXML(stored_query_XML_fields('get_orderable_providers_for_date', get_param('date')));
+	    	print_stored_query('xml','get_orderable_providers_for_date', get_param('date'));
 	    	exit;
 	    
 	   	case 'getShopProviders':
-	    	printXML(stored_query_XML_fields('get_shop_providers'));
+	    	print_stored_query('xml','get_shop_providers');
 	    	exit;
 	    	
 	    case 'getOrderCategories':
-	    	printXML(stored_query_XML_fields('get_orderable_categories_for_date', get_param('date')));
+	    	print_stored_query('xml','get_orderable_categories_for_date', get_param('date'));
 	    	exit;
 
 	    //retrieves all categories of all products active; optional the date parameter
 	    //would retrieve all categories for stock products and orderable for the given date. 	
 	    case 'getShopCategories':
-	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', 0));
+	    	print_stored_query('xml','get_shop_categories_for_date', 0);
 	    	exit;
 	    	
 	    case 'getStockProviders':
-	    	printXML(stored_query_XML_fields('get_stock_providers'));
+	    	print_stored_query('xml','get_stock_providers');
 	    	exit;
     	
 
@@ -60,19 +56,19 @@ try{
 	     * elseif like != '' 		search product names
 	     */
 	    case 'getOrderProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date'), get_param('all',0), get_param('product_id',0)));
+	    	print_stored_query('xml','get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date'), get_param('all',0), get_param('product_id',0));
 	    	exit;
 	
 	    case 'getShopProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date',0), get_param('all',0), get_param('product_id',0)));
+	    	print_stored_query('xml','get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), get_param('date',0), get_param('all',0), get_param('product_id',0));
 	    	exit;
 	    	
   		case 'getPreorderableProducts':
-	        printXML(stored_query_XML_fields('get_preorderable_products'));
+	        print_stored_query('xml','get_preorderable_products');
 	        exit;
 	        
   		case 'getProductDetail':
-  			printXML(stored_query_XML_fields('get_products_detail', 0,0,'',0,get_param('all',1),get_param('product_id')));
+  			print_stored_query('xml','get_products_detail', 0,0,'',0,get_param('all',1),get_param('product_id'));
 			exit;	        
 	
 
@@ -80,33 +76,12 @@ try{
 	   	 * retrieves the shop | order items for the logged in user. 
 	   	 */
   		case 'getOrderCart':
-  			printXML(stored_query_XML_fields('get_order_cart', get_param('date'), get_session_uf_id()));
+  			print_stored_query('xml','get_order_cart', get_param('date'), get_session_uf_id());
   			exit;
   			
   		case 'getShopCart':
-  			printXML(stored_query_XML_fields('get_shop_cart', get_param('date'), get_session_uf_id(),0,0)); 
+  			print_stored_query('xml','get_shop_cart', get_param('date'), get_session_uf_id(),0,0); 
 			exit; 
-
- 		    	
-	    	
-		/*
-	    case 'makeFavoriteOrderCart':
-	        printXML(stored_query_XML_fields('make_favorite_order_cart', $uf_logged_in, $the_date, $_REQUEST['cart_name']));
-	        exit;
-	
-	    case 'getFavoriteOrderCarts':
-	        printXML(stored_query_XML_fields('get_favorite_order_carts', $uf_logged_in));
-	        exit;
-	
-	    case 'getFavoriteOrdersOfCart':
-	        printXML(stored_query_XML_fields('products_for_favorite_order', $uf_logged_in, $_REQUEST['cart_id']));
-	        exit;
-	
-	    case 'deleteFavoriteOrderCart':
-	        printXML(stored_query_XML_fields('delete_favorite_order_cart', $uf_logged_in, $_REQUEST['cart_id']));
-	        exit;
-	
-		*/
 
     	default:  
     	 //throw new Exception("ctrlShopAndOrder: oper={$_REQUEST['oper']} not supported");  

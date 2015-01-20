@@ -1,17 +1,21 @@
 <?php
 
 define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))).DS); 
 
-require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/inc/database.php");
+
+
 require_once(__ROOT__ . "php/utilities/general.php");
+require_once(__ROOT__ . "php/lib/aixmodel.php");
+
+require_once("incidents_mod.php");
+
+/*require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/account.php");
 require_once(__ROOT__ . "php/lib/report_manager.php");
-require_once(__ROOT__ . "php/lib/account_movement.php");
+require_once(__ROOT__ . "php/lib/account_movement.php");*/
 
 
-$use_session_cache = true; 
 
 
 if (!isset($_SESSION)) {

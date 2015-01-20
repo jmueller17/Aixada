@@ -1,9 +1,5 @@
 <?php 
 
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
@@ -139,7 +135,7 @@ class Bill {
         //validate open carts
         if (count($not_validated) >= 1){
             foreach ($not_validated as $cart_id) {
-                $firephp->log($cart_id, "validating... ");
+                //$firephp->log($cart_id, "validating... ");
                 
                 $db->squery('validate_shop_cart', $cart_id, $operator_id);
                 $db->free_next_results();
