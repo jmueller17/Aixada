@@ -536,10 +536,7 @@
                 			<span class="badge" id="itemCount"></span>
                 		</button>
 					</div>
-                </div>
-
-
-					
+                </div>	
 		</div>
 
 

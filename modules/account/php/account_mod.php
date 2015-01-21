@@ -37,8 +37,8 @@ class Account extends Aixmodel {
 
 	/**
 	 *	
-	 *	@param $accnum The account number. Account or uf number
-	 *	@param $op_id The operator id for any subsequent transactions; this is the session_user_id. 
+	 *	@param int $accnum The account number. Account or uf number
+	 *	@param int $op_id The operator id for any subsequent transactions; this is the session_user_id. 
 	 */
 	public function __construct($accnum, $op_id){
 
@@ -57,7 +57,7 @@ class Account extends Aixmodel {
 
 	/**
 	 *	Sets the current account number, performing sanity checks along the way: does this account exist at all?
-	 *	@param $accnum The account or of number. 
+	 *	@param int $accnum The account or of number. 
 	 */
 	public function set_account($accnum){
 
@@ -81,6 +81,29 @@ class Account extends Aixmodel {
 			throw new Exception("Account number '{$account_number}' does not exists!");
 			exit;
 		}
+	}
+
+
+	/**
+	 *	@param bool $inactive If set to true lists accouns of all UFs, including inactive ones, otherwise only active ufs are listed
+	 */
+	public static function list_accounts($inactive){
+
+	  $strXML = '<accounts>'
+	    . '<row><id f="id">-3</id><name f="name">Caixa</name></row>'
+	    . '<row><id f="id">-2</id><name f="name">Consum</name></row>'
+	    . '<row><id f="id">-1</id><name f="name">Manteniment</name></row>';
+	  $sqlStr = ($inactive)? "SELECT id+1000, id, name FROM aixada_uf":"SELECT id+1000, id, name FROM aixada_uf where active=1";  
+	  $rs = DBWrap::get_instance()->Execute($sqlStr);
+	  
+	  while ($row = $rs->fetch_array()) {
+	    $strXML 
+	      .= '<row>'
+	      . '<id f="id">' . $row[0] . '</id>'
+	      . '<name f="name"><![CDATA[UF ' . $row[1] . ' ' . $row[2] . ']]></name>'
+	      . '</row>';
+	  }
+	  return $strXML . '</accounts>';
 	}
 
 

@@ -8,7 +8,7 @@ define('__ROOT__', dirname(dirname(dirname(dirname(__FILE__)))).DS);
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/aixmodel.php");
 
-require_once("incidents_mod.php");
+require_once("account_mod.php");
 
 /*require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/account.php");
@@ -28,15 +28,17 @@ try{
  	switch ($_REQUEST['oper']) {
 
  		case 'getAllAccounts':
-	        printXML(get_accounts(1));
+ 			$acs = Account::list_accounts(1); 
+ 			Deliver::serve_str($acs, "xml");
 	        exit;
  		
 	    case 'getActiveAccounts':
-	        printXML(get_accounts(0));
+		    $acs = Account::list_accounts(0); 
+ 			Deliver::serve_str($acs, "xml");
 	        exit;   
 	        
   		case 'accountExtract':
-  			echo get_account_extract(get_param('account_id', get_session_uf_id() ), get_param('filter','today'), get_param('fromDate',0), get_param('toDate',0)  );
+  			print_stored_query('xml','get_extract_in_range', get_param('account_id', get_session_uf_id() ), get_param('from_date',0), get_param('to_date',0)  );
   			exit; 
   		
   	 	case 'latestMovements':

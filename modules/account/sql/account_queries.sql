@@ -2,7 +2,6 @@ delimiter |
 
 
 
-
 drop  procedure if exists account_exists|
 create procedure account_exists(in the_account_id int)
 begin
