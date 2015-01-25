@@ -178,7 +178,7 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
 
     // get URL of aixada root
     $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
-    if (!$pos_root) {
+    if ($pos_root === false) {
         $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/');
     }
     $ssl_on = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
@@ -212,15 +212,7 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
     mb_language("uni");
     mb_internal_encoding("UTF-8");
     $subject64 = mb_encode_mimeheader($subject);
-    $response = mail($to, $subject64, $messageHTML, $headers);
-    // start debug
-   /*
-        error_log('send_mail(): '.$to."\r\n".$headers);
-        error_log($messageHTML);
-        return true;
-     */
-    // end debug
-    return $response;
+    return mail($to, $subject64, $messageHTML, $headers);
 }
 
 /**
