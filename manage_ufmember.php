@@ -934,6 +934,8 @@
 					$('.viewMemberElements, .ufDetailElements, .createMemberElements').hide();
 					$('.btn_save_edit_member').button('destroy');
 					$('.btn_save_edit_member').die('click');		//otherwise, save edits will duplicate, triplicate...
+					$('.btn_reset_pwd').button('destroy');
+					$('.btn_reset_pwd').die('click'); //otherwise, reset pwd will duplicate, triplicate...
 					$('.overviewElements').show();
 					break;
 
