@@ -47,7 +47,7 @@ class Deliver_email extends Deliver {
 
 		// get URL of aixada root
 		$pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
-		if (!$pos_root) {
+		if ($pos_root === false) {
 			$pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/');
 		}
 
