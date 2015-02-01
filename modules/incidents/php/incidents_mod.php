@@ -2,6 +2,7 @@
 
 
 require_once(__ROOT__ . "php/lib/aixmodel.php");
+require_once(__ROOT__ . "php/lib/deliver_email.php");
 
 
 class Incident extends Aixmodel {
