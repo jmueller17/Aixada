@@ -496,6 +496,7 @@
 				switch(section){
 
 				case 'overview':
+					getGlobalBalances();
 					//$('.depositElements, .withdrawElements, .movementElements').hide();
 					$('.overviewElements').fadeIn(1000);
 					break;
@@ -526,7 +527,6 @@
 			}
   			
 			switchTo('overview');	
-			getGlobalBalances();
 					
 	});  //close document ready
 	</script>
@@ -646,7 +646,7 @@
 									<option value="-1"><?=$Text['please_select'];?></option>
 									<option class="depositCashElements" value="1"><?=$Text['deposit_by_uf'];?></option>
 									<option class="depositBancElements" value="3"><?=$Text['deposit_sales_cash']; ?></option>
-									<option value="2"><?=$Text['deposit_other'];?></option>
+									<option class="depositCashElements" value="2"><?=$Text['deposit_other'];?></option>
 
 									
 								</select>
@@ -708,7 +708,7 @@
 									<option class="withdrawCashElements" value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
 									<option class="withdrawCashElements" value="3"><?php echo $Text['withdraw_uf']; ?></option>
 									<option class="withdrawCashElements" value="4"><?php echo $Text['withdraw_cuota']; ?></option>
-									<option value="5"><?php echo $Text['withdraw_other'];?></option>
+									<option class="withdrawCashElements" value="5"><?php echo $Text['withdraw_other'];?></option>
 									<option class="withdrawBancElements" value="6"><?php echo $Text['withdraw_provider']; ?></option>
 								</select>
 							</td>
