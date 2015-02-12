@@ -25,7 +25,7 @@
 
    
 	<script type="text/javascript">
-	
+
 	$(function(){
 
 			//set the balance of cashbox(-3) or consume account (-2)
@@ -438,7 +438,7 @@
 				.click(function(e){
 					gSetBalanceAId = -2; 
 					$("#dialog_c_balance").dialog('open');
-					$("#dialog_c_balance").dialog({ title: "Set balance for consume account" });
+					$("#dialog_c_balance").dialog({ title: "<?php echo $Text['set_c_balance'];?>" });
 
   				});
 
