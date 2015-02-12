@@ -498,6 +498,9 @@
 				case 'overview':
 					getGlobalBalances();
 					//$('.depositElements, .withdrawElements, .movementElements').hide();
+                    $('#deposit_description').val('');
+                    $('#withdraw_description').val('');
+                    $('#c_balance_description').val('');
 					$('.overviewElements').fadeIn(1000);
 					break;
 					
