@@ -633,7 +633,7 @@
 				<h2 class="ui-widget-header ui-corner-all"><span class="depositCashElements"><?=$Text['deposit_cashbox'];?></span><span class="depositBancElements"><?=$Text['deposit_banc'];?></span> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="depositMsg" class="ui-corner-all"></p>
 				<div id="deposit_cash_content" class="padding10x5">
-					<form id="deposit_form">
+					<form id="deposit_form" onsubmit="return false;">
 					<table class="tblForms">
 						<tr>
 							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
@@ -692,7 +692,7 @@
 				<h2 class="ui-widget-header ui-corner-all"><span class="withdrawCashElements"><?php echo $Text['widthdraw_cashbox'];?></span> <span class="withdrawBancElements"><?php echo $Text['withdraw_banc'];?></span> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="withdrawMsg" class="ui-corner-all></p>
 				<div id="withdraw_cash_content" class="padding10x5">
-					<form id="withdraw_form">
+					<form id="withdraw_form" onsubmit="return false;">
 						<input type="hidden" name="account_id" value="-3"/>
 					<table class="tblForms">
 						<tr>
