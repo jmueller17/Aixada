@@ -32,7 +32,7 @@ class aixmodel {
 	/**
 	 *	@var int The ID (in the database) of the last insert or current instance
 	 */
-	private $id;
+	protected $id;
 
 
 
