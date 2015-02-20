@@ -584,8 +584,8 @@
   			        var item_net = item_total / (1 + rev_tax/100) / (1 + iva_tax/100);
 				
 				//iva and revtax is contained in the unit_price
-				iva_tax_total += item_net * (iva_tax/100);
 				rev_tax_total += item_net * (rev_tax/100);
+				iva_tax_total += item_net * (1+(rev_tax/100)) * (iva_tax/100);
 	
 				total_net += item_net;
 				
