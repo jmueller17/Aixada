@@ -44,6 +44,21 @@ class configuration_vars {
      You should not need to change anything past this point when installing.
   ****************************************************************************/
 
+  /**
+   *
+   * Allow yourself validate your cart.
+   * (if it is not set `false` is used as default value)
+   * @var boolean
+   */
+  public $validate_self = false;
+
+  /**
+   *
+   * After a cart validation shows warning message if no deposit has been made.
+   * (if it is not set `true` is used as default value)
+   * @var boolean
+   */
+  public $validate_deposit = true;
  
   /**
    * 
