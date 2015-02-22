@@ -444,7 +444,7 @@
 				.live('mouseover', function(e){
 					
 					if (!$(this).hasClass('editable') && gSection == 'review'){
-						var pid = $(this).attr('row_tot')
+						var pid = $(this).attr('row_tot');
 						$(this).children(':first')
 							.addClass('editable')
 							.editable('php/ctrl/Orders.php', {			//init the jeditable plugin
