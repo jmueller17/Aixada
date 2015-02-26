@@ -1750,6 +1750,7 @@ drop procedure if exists move_order_to_shop |
 create procedure move_order_to_shop (in the_order_id int, in the_shop_date date)
 begin
 
+	
 	declare done int default 0; 
 	declare the_uf_id int default 0; 
 	declare the_cart_id int default 0;
@@ -1765,6 +1766,7 @@ begin
 			aixada_order_to_shop os
 		where 
 			os.order_id = the_order_id;	
+	
 	declare continue handler for not found
 		set done = 1; 
 	declare exit handler for sqlexception rollback; 
@@ -1833,14 +1835,18 @@ begin
 				os.unit_price_stamp,
 				os.product_id,
 				os.quantity, 
-				p.iva_percent_id,
-				p.rev_tax_type_id
+				iva.percent,
+				r.rev_tax_percent
 			from
-				aixada_order_to_shop os,
-				aixada_product p
+				aixada_order_to_shop os
+			join (aixada_product p,
+				aixada_iva_type iva,
+				aixada_rev_tax_type r)
+			on p.id = os.product_id
+				and p.iva_percent_id = iva.id
+				and p.rev_tax_type_id = r.id
 			where 
 				os.order_id = the_order_id
-				and p.id = os.product_id
 				and os.uf_id = the_uf_id
 				and os.arrived = 1;
 				
