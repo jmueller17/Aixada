@@ -29,10 +29,65 @@ try{
     		echo get_orders_in_range(get_param('filter'), get_param('uf_id'), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0), get_param('limit',''));
     		exit; 
 
-    	//retrieves list of products that have been ordered. Needed to construct order revision table
+    	//retrieves list of products that have been ordered.
     	case 'getOrderedProductsList':
     		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id',0), get_param('provider_id',0), get_param('date',0) ));
     		exit;
+
+        //retrieves list of products with prices that have been ordered, used to
+        //  construct order revision table.
+        case 'getOrderedProductsListPrices':
+            $_order_id = get_param_int('order_id');
+            $_provider_id = get_param_int('provider_id');
+            $_date = get_param_date('date');
+            $sql = "
+                select distinct
+                    p.id, 
+                    p.name, 
+                    um.unit,
+                    round( 
+                        max(
+                            ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
+                            ) / 
+                        (1 + rev.rev_tax_percent/100) /
+                        (1 + iva.percent/100), 2) gross_price,
+                    iva.percent iva_percent,
+                    round( 
+                        max(
+                            ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
+                            ) /
+                        (1 + rev.rev_tax_percent/100), 2) net_price
+                from
+                    aixada_order_item oi
+                left join 
+                    aixada_order_to_shop ots
+                on  oi.id = ots.order_item_id
+                join (
+                    aixada_product p,
+                    aixada_rev_tax_type rev, 
+                    aixada_iva_type iva,
+                    aixada_unit_measure um
+                ) on 
+                    oi.product_id = p.id
+                    and rev.id = p.rev_tax_type_id
+                    and iva.id = p.iva_percent_id
+                    and um.id =  p.unit_measure_order_id";
+            if ($_order_id) {
+                $sql .= " where oi.order_id = {$_order_id}";
+            } else if($_date && $_provider_id) {
+                $sql .= "
+                    where
+                        oi.date_for_order = '{$_date}'
+                        and p.provider_id = {$_provider_id}";
+            } else {
+                $sql .= " where oi.order_id = -1"; // no rows
+            }
+            $sql .= "
+                group by p.id, p.name, 
+                        um.unit, rev.rev_tax_percent, iva.percent";
+            $sql .= " order by p.name";
+            printXML(query_XML_fields($sql));
+            exit;
 
     	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf and/or product_id if needed. 
     	case 'getProductQuantiesForUfs':
@@ -50,6 +105,48 @@ try{
     		}
     		exit;	
 
+    	//edits, modifies individual gross price of a product into a order
+    	case 'editGrossPrice':
+            // Check parameters
+    		$_product_id = get_param_int('product_id');
+            $_order_id = get_param_int('order_id');
+            $_gross_price = get_param_numeric('gross_price');        
+            if ($_product_id === null || $_order_id === null || $_gross_price === null) {
+                throw new Exception("An error occured during saving the new product gross price!!");     
+            }
+            // Insert oder items to aixada_order_to_shop table if is needed.            
+            $ok = do_stored_query('modify_order_item_detail', $_order_id, 0, 0, 0);
+    		if (!$ok) {
+    			throw new Exception("An error occured during saving the new product gross price!!");      			
+    		}
+            // Get net price
+            $_net_price = get_value_query("
+                select round({$_gross_price} * 
+                    (1 + rev.rev_tax_percent/100) * (1 + iva.percent/100), 2)
+                from  aixada_product p
+                join (aixada_rev_tax_type rev, aixada_iva_type iva)
+                on    rev.id = p.rev_tax_type_id and iva.id = p.iva_percent_id
+                where p.id = {$_product_id}
+            ");
+            // Ok, now update net price!!
+            $ok = DBWrap::get_instance()->do_stored_query("
+                update
+                    aixada_order_to_shop os
+                set
+                    os.unit_price_stamp = {$_net_price}
+                where
+                    os.product_id = {$_product_id}
+                    and os.order_id = {$_order_id}
+            ");
+    		if ($ok){
+	    		echo 'OK;'.$_gross_price.';'.$_net_price;
+    		} else {
+    			throw new Exception("An error occured during saving the new product gross price!!");      			
+    		}
+    		exit;
+
+    	//edits, modifies total quantity of a product for order and adjusts
+        //  the individual quantities proportionally.
     	case 'editTotalQuantity':
     		//$splitParams = explode("_", get_param('product_id'));
     		echo edit_total_order_quantities(get_param('order_id'), get_param('product_id'), get_param('quantity')); //this is the product_id

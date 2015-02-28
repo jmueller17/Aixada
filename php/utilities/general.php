@@ -160,6 +160,70 @@ function get_param($param_name, $default=null, $transform = '') {
 }
 
 /**
+ *
+ * Provides some basic logic to retrieve numeric values from URL parameters. 
+ * @param string       $param_name  Name of the parameter passed along
+ * @param number|null  $default     Default value used when parameter is not
+ *     set, (default value must bee number, if not a null is used as default)
+ * @return number|null Returns a number if parameter exist and it is numeric,
+ *     otherwise returns $default.
+ */
+function get_param_numeric($param_name, $default=null) {
+    $val = get_param($param_name, false);
+    if (!is_numeric($val)) {
+        return (is_numeric($default) ? $default : null);
+    }
+    return $val + 0;
+}
+
+/**
+ *
+ * Provides some basic logic to retrieve integer values from URL parameters. 
+ * @param string    $param_name  Name of the parameter passed along
+ * @param int|null  $default     Default value used when parameter is not set,
+ *     (default value must bee integer, if not a null is used as default)
+ * @return int|null Returns a integer if parameter exist and it is a integer
+ *     number, otherwise returns $default.
+ */
+function get_param_int($param_name, $default=null) {
+    $val = get_param_numeric($param_name);
+    if (!is_int($val)) {
+        return (is_int($default) ? $default : null);
+    }
+    return $val;
+}
+
+/**
+ *
+ * Provides some basic logic to retrieve date values from URL parameters. 
+ * @param string      $param_name   Name of the parameter passed along
+ * @param string|null $default      Default value used when parameter is not
+ *     set, (default value must bee a valid date as format 'Y-m-d', if not a
+ *     null is used as default)
+ * @param string      $input_format Input date format, default is 'Y-m-d'
+ * @return string|null Returns a date with format 'Y-m-d' if parameter exist
+ *     and it is a valid date, otherwise returns $default.
+ */
+function get_param_date($param_name, $default=null, $input_format='Y-m-d') {
+    $val = get_param($param_name, false);
+    if ($val) {
+        $date = date_parse_from_format($input_format, $val);
+    }
+    if (!$val || $date['error_count'] !== 0) {
+        if ($default === null) {
+            return null;
+        }
+        $date = date_parse_from_format('Y-m-d', $default);
+        if ($date['error_count'] !== 0) {
+            return null;
+        }
+    }
+    $date_o = new DateTime();
+    $date_o->setDate($date['year'], $date['month'], $date['day']);
+    return $date_o->format('Y-m-d');
+}
+
+/**
  * 
  * Sends a email message as html. Use internally php mail. The `from` email
  * address is set acording the key `$admin_email` defined in `config.php`.
@@ -251,8 +315,26 @@ function do_stored_query()
 }
 
 /**
- * Execute a SQL query and returs a list as a string of values on firt column.
+ * Execute a SQL query and returns single value of a firts row and firt column.
  * @param string $strSQL A SQL query
+ * @param $not_found 
+ * @return The value found or null if not found colum or row.
+ */
+function get_value_query($strSQL, $not_found = null) {
+    $value = $not_found;
+    $db = DBWrap::get_instance();
+    $rs = $db->Execute($strSQL);
+    $row = $rs->fetch_array();
+    if (isset($row[0])) {
+        $value = $row[0];
+    }
+    $db->free_next_results();    
+    return $value;
+}
+
+/**
+ * Execute a SQL query and returs a list as a string of values on firt column.
+ * @param string|array $strSQL A SQL query
  * @param string $separator
  * @param string $text_delimiter
  * @return string The list as a string or '' if no rows or are null value.
@@ -267,7 +349,7 @@ function get_list_query($strSQL, $separator=',', $text_delimiter='') {
 }
 
 /**
- * Walk a result set to assemble a list  as a string of values on firt column.
+ * Walk a mysqli_result to assemble a list  as a string of values on firt column.
  * @param mysqli_query_type $rs
  * @param integer|string $field Field on result set, default is 0
  * @param string $separator
@@ -357,9 +439,28 @@ function stored_query_XML() //$queryname, $group_tag, $row_tag, $param)
 // make variable argument list
 function stored_query_XML_fields()
 {
+    return rs_XML_fields(do_stored_query(func_get_args()));
+}
+
+/**
+ * Execute a SQL query and returs a XML row set.
+ * @param string|array $strSQL A SQL query
+ * @return string The XML
+ */
+function query_XML_fields($strSQL) {
+    return rs_XML_fields(
+        DBWrap::get_instance()->Execute(func_get_args())
+    );
+}
+
+/**
+ * Walk a mysqli_result and returs a XML row set.
+ * @param mysqli_result $rs
+ * @return string The XML
+ */
+function rs_XML_fields($rs) {
     $strXML = '<rowset>';
     global $Text;
-    $rs = do_stored_query(func_get_args());
     while ($row = $rs->fetch_assoc()) {
         $strXML .= '<row';
         if (isset($row['id'])) 
