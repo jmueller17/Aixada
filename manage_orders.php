@@ -1,4 +1,46 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php 
+    include "php/inc/header.inc.php";
+    
+    // Texts of the literals used only in this page.
+    switch (get_session_language()) {
+    case 'ca-va':
+        $Text['_prv_prices'] = 'Preus del proveïdor (sense imp.rev.)';
+        $Text['_gross_price'] = 'Preu';
+        $Text['_suma'] = 'Suma';
+        $Text['_gross_total'] = 'Imp.Total';
+        $Text['_net_price'] = 'Preu+IVA';
+        $Text['_net_total'] = 'Total+IVA';
+        $Text['_click_to_edit_total'] = 'Clic per ajustar la quantitat total';
+        $Text['_click_to_edit_gprice'] = 'Clic per ajustar el preu';
+        $Text['_saving'] = 'Guardant';
+        $Text['_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
+        break;
+    case 'ca-va':
+        $Text['_prv_prices'] = 'Precios del proveedor (sin imp.rev.)';
+        $Text['_gross_price'] = 'Precio';
+        $Text['_suma'] = 'Suma';
+        $Text['_gross_total'] = 'Imp.Total';
+        $Text['_net_price'] = 'Precio+IVA';
+        $Text['_net_total'] = 'Total+IVA';
+        $Text['_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
+        $Text['_click_to_edit_gprice'] = 'Clic para ajustar el precio';
+        $Text['_saving'] = 'Guardando';
+        $Text['_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
+        break;
+    default: // en
+        $Text['_prv_prices'] = 'Prices provider (without rev.tax)';
+        $Text['_gross_price'] = 'Price';
+        $Text['_suma'] = 'Sum';
+        $Text['_gross_total'] = 'Imp.Total';
+        $Text['_net_price'] = 'Price+VAT';
+        $Text['_net_total'] = 'Total+VAT';
+        $Text['_click_to_edit_total'] = 'Click to adjust total quantities';
+        $Text['_click_to_edit_gprice'] = 'Click to adjust price';
+        $Text['_saving'] = 'Saving';
+        $Text['_ostat_desc_validated'] = 'Items of this order have been validated';
+        break;
+    }
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -9,6 +51,28 @@
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     <!-- link rel="stylesheet" type="text/css" 	 media="screen" href="js/tablesorter/themes/blue/style.css"/-->
+    <style>
+        .tblReviseOrder td.grossPrice,
+        .tblReviseOrder td.netPrice {
+             background-color:#dee;
+        }
+        .tblReviseOrder td.grossRow {
+             background-color:#ece;
+        }
+        .tblReviseOrder td.grossTotalOrder {
+             background-color:#cce;
+        }
+        .tblReviseOrder td.netRow {
+            background-color:#ebe;
+        }
+        .tblReviseOrder td.netTotalOrder {
+            background-color:#bbe;
+        }
+        .orderTotalsDesc {
+            text-align: right;
+            color:#aaa;
+        }
+    </style>
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
@@ -24,6 +88,30 @@
 	   	<script type="text/javascript" src="js/js_for_manage_orders.min.js"></script>
     <?php }?>
      
+	<script type="text/javascript">
+        // Texts of the literals in the language of the user. For use in js.
+        var local_lang = {
+            total:           "<?php echo $Text['total']; ?>",
+            ostat_revised:   "<?php echo $Text['ostat_revised']; ?>",
+            uf_short:        "<?php echo $Text['uf_short']; ?>",
+            click_to_edit:   "<?php echo $Text['click_to_edit']; ?>",
+            ostat_desc_sent:   "<?php echo $Text['ostat_desc_sent']; ?>",
+            ostat_desc_nochanges:   "<?php echo $Text['ostat_desc_nochanges']; ?>",
+            ostat_desc_postponed:   "<?php echo $Text['ostat_desc_postponed']; ?>",
+            ostat_desc_cancel:   "<?php echo $Text['ostat_desc_cancel']; ?>",
+            ostat_desc_changes:   "<?php echo $Text['ostat_desc_changes']; ?>",
+            _ostat_desc_validated:   "<?php echo $Text['_ostat_desc_validated']; ?>",
+            ostat_desc_incomp:   "<?php echo $Text['ostat_desc_incomp']; ?>", 
+            _suma:           "<?php echo $Text['_suma']; ?>",
+            _gross_price:    "<?php echo $Text['_gross_price']; ?>",
+            _gross_total:    "<?php echo $Text['_gross_total']; ?>",
+            _net_price:      "<?php echo $Text['_net_price']; ?>",
+            _net_total:      "<?php echo $Text['_net_total']; ?>",
+            _saving:         "<?php echo $Text['_saving']; ?>",
+            _click_to_edit_total: "<?php echo $Text['_click_to_edit_total']; ?>",
+            _click_to_edit_gprice:"<?php echo $Text['_click_to_edit_gprice']; ?>"
+        };
+    </script>
 	   
 	<script type="text/javascript">
 
@@ -118,18 +206,34 @@
 					url: 'php/ctrl/UserAndUf.php?oper=getUfListing&all=0',
 					dataType:"xml",
 					success: function(xml){
-						var theadStr = '<th><?=$Text['total'];?></th>'; 
+						var theadStr = '<th>'+local_lang.total+'</th>'; 
+						var theadStr2 = '';
 						$(xml).find('row').each(function(){
 							var id = $(this).find('id').text();
 							var colClass = 'Col-'+id;
 							header.push(id);
-							theadStr += '<th class="'+colClass+' hidden col">'+id+'</th>'
+							theadStr += '<th class="'+colClass+' hidden col">'+id+'</th>';
+							theadStr2 += '<td class="'+colClass+' hidden col"></td>';
 						});
 
-						theadStr += '<th><?=$Text['total'];?></th>';
-						theadStr += '<th class="revisedCol"><?=$Text['ostat_revised'];?></th>';
+						theadStr += '<th>'+local_lang.total+'</th>';
+						theadStr2 += '<td>&nbsp;</td>';
+						theadStr += 
+							'<th class="grossLabel">'+local_lang._gross_price+'</th>'+
+							'<th class="grossLabel">'+local_lang._gross_total+'</th>'+
+							'<th class="netLabel">'+local_lang._net_price+'</th>'+
+							'<th class="netLabel">'+local_lang._net_total+'</th>';
+						theadStr2 += 
+							'<td class="grossLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
+							'<td class="grossTotalOrder textAlignRight"></td>'+
+							'<td class="netLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
+							'<td class="netTotalOrder textAlignRight"></td>';
+						theadStr += '<th class="revisedCol">'+local_lang.ostat_revised+'</th>';
+						theadStr2 += '<td>&nbsp;</td>';
 						
-						$('#tbl_reviseOrder thead tr').last().append(theadStr);
+						$('#tbl_reviseOrder thead tr').first().append(theadStr);
+						$('#tbl_reviseOrder thead tr').last().append(theadStr2);
+						$('#tbl_reviseOrder tfoot tr').last().append(theadStr2);
 
 						tblHeaderComplete = true; 
 
@@ -141,7 +245,60 @@
 					}
 			}); //end ajax	
 
-			
+            // Functions used for refreshing the provider delivery note totals.
+            function refreshRowPrices(productId, quTotal) {
+                if (quTotal === undefined) {
+                    quTotal = $('.total_'+productId+' span:first-child')
+                              .first().text();
+                }
+                var productElement = $('#product_'+productId);
+                if (productElement) {
+                    var grossPrice = parseFloat(productElement.attr('gross_price')),
+                        netPrice = parseFloat(productElement.attr('net_price'));
+                    if (quTotal != 0 && // and check if arrived
+                               !$('#ckboxArrived_'+productId).is(':checked')) {
+                        quTotal = 0;
+                    }
+                    $('#grossPrice_'+productId).html('<span>'+grossPrice.toFixed(2)+'</span>');
+                    $('#grossRow_'+productId).html('<span>'+(quTotal * grossPrice).toFixed(2)+'</span>');
+                    $('#netPrice_'+productId).html('<span>'+netPrice.toFixed(2)+'</span>');
+                    $('#netRow_'+productId).html('<span>'+(quTotal * netPrice).toFixed(2)+'</span>');
+                }
+            }
+            function refreshTotalOrder() {
+                var total = 0;
+                $(".grossRow").each(function() {
+                    var text = $(this).text();
+                    if (text) {
+                        total += parseFloat(text);
+                    }
+                });
+                $('.grossTotalOrder').text(total.toFixed(2));
+                total = 0;
+                $(".netRow").each(function() {
+                    var text = $(this).text();
+                    if (text) {
+                        total += parseFloat(text);
+                    }
+                });
+                $('.netTotalOrder').text(total.toFixed(2));
+            }
+            function hideNetTotalOrder() {
+                var hasIva = false;
+                $(".productIdClass").each(function() {
+                    if ($(this).attr('iva_percent') != 0) {
+                        hasIva = true;
+                        return false;
+                    }
+                });
+                if (hasIva === false) {
+                    $('.netLabel').hide();
+                    $('.netTotalOrder').hide();
+                    $('.netPrice').hide();
+                    $('.netRow').hide();
+                }
+            }
+
 			//STEP 2: construct table structure: products and col-cells. 
 			$('#tbl_reviseOrder tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
@@ -159,6 +316,12 @@
 
 					//product total quantities
 					tbodyStr += '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
+                    if (gSection !== 'print') {
+                        tbodyStr += '<td id="grossPrice_'+product_id+'" class="nobr textAlignRight grossPrice"></td>';
+                        tbodyStr += '<td id="grossRow_'+product_id+'"   class="nobr textAlignRight grossRow"></td>';
+                        tbodyStr += '<td id="netPrice_'+product_id+'" class="nobr textAlignRight netPrice"></td>';
+                        tbodyStr += '<td id="netRow_'+product_id+'"     class="nobr textAlignRight netRow"></td>';
+                    }
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -219,6 +382,9 @@
 								var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 								
 								$('.total_'+lastId).html(total);
+								if (gSection !== 'print') {
+									refreshRowPrices(lastId, quTotal);
+								}
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
@@ -233,6 +399,17 @@
 						var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 						$('.total_'+lastId).html(total);
 
+                        if (gSection !== 'print') {
+                            refreshRowPrices(lastId, quTotal);
+                            refreshTotalOrder();
+                            $('.orderTotals').show();
+                            $('.grossLabel').show();
+                            hideNetTotalOrder()
+                        } else {
+                            $('.orderTotals').hide();
+                            $('.grossLabel').hide();
+                            $('.netLabel').hide();
+                        }
 
 						//don't need revised and arrived column for viewing order
 						if (gSection == 'view' || gSection == 'print'){
@@ -454,8 +631,8 @@
 										product_id : pid 
 										},
 									name 	: 'quantity',
-									indicator: 'Saving',
-								    tooltip	: 	'Click to adjust total quantities',
+									indicator: local_lang._saving,
+								    tooltip:   local_lang._click_to_edit_total,
 									callback: function(xml, settings){
 									    var pid = settings.submitdata.product_id;
 									    var total_quantity = 0;
@@ -477,11 +654,42 @@
 										$('.total_' + pid).each(function(){
 											$(this).children(':first').empty().text(total_quantity.toFixed(2));
 										}) 
+										refreshRowPrices(pid, total_quantity);
+										refreshTotalOrder();
 									}//end callback 
 							});
 					}
 			});
-			
+            //adjust gross price
+            $('td.grossPrice').live('mouseover', function(e) {
+                if (!$(this).hasClass('editable') && gSection == 'review') {
+                    var id = $(this).attr('id'),
+                        product_id = id.split('_')[1];
+                    $(this).children(':first')
+                    .addClass('editable')
+                    .editable('php/ctrl/Orders.php', { //init the jeditable plugin
+                        submitdata : {
+                            oper:       'editGrossPrice',
+                            order_id:   gSelRow.attr('orderId'),
+                            product_id: product_id 
+                        },
+                        name:       'gross_price',
+                        indicator:  local_lang._saving,
+                        tooltip:    local_lang._click_to_edit_gprice,
+                        callback: function(response, settings){
+                            var product_id = settings.submitdata.product_id,
+                                prices = response.split(';');
+                            var productElement = $('#product_'+product_id);
+                            if (prices[0]="OK") {
+                                productElement.attr('gross_price', prices[1]);
+                                productElement.attr('net_price', prices[2]);
+                                refreshRowPrices(product_id);
+                                refreshTotalOrder();
+                            }
+                        }//end callback 
+                    });//end editable of jeditable
+                }
+            });
 		
 			//interactivity for editing cells
 			$('td.interactiveCell')
@@ -503,8 +711,11 @@
 										},
 									id 		: 'product_uf',
 									name 	: 'quantity',
-									indicator: 'Saving',
-								    tooltip	: 	'<?=$Text['uf_short'];?> ' + col + '\n' + product + '\n<?=$Text['click_to_edit'];?>',
+									indicator: local_lang._saving,
+								    tooltip	:
+                                        local_lang.uf_short + ' ' + col + '\n' +
+                                        product + '\n' +
+                                        local_lang.click_to_edit,
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
 										
@@ -538,11 +749,13 @@
 					success: function(txt){
 						if (has_arrived){
 							$('.Row-'+product_id).removeClass('missing').addClass('toRevise'); 
+							refreshRowPrices(product_id);
 						} else {
 							$('.Row-'+product_id).removeClass('toRevise').addClass('missing');
 							$('#ckboxRevised_'+product_id).attr('checked','checked');
-							
+							refreshRowPrices(product_id, 0);
 						}
+						refreshTotalOrder();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
@@ -1153,25 +1366,25 @@
 				
 					switch(td.text()){
 						case "1": 
-							td.attr("title","<?php echo $Text['ostat_desc_sent'];?>").html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+							td.attr("title",local_lang.ostat_desc_sent).html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 							break;
 						case "2": 
-							td.attr("title","<?php echo $Text['ostat_desc_nochanges']; ?>").addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr("title",local_lang.ostat_desc_nochanges).addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "3": 
-							td.attr("title","<?php echo $Text['ostat_desc_postponed']; ?>").addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
+							td.attr("title",local_lang.ostat_desc_postponed).addClass('postponed').html('<span class="tdIconCenter ui-icon ui-icon-help"></span>');
 							break;
 						case "4": 
-							td.attr("title","<?php echo $Text['ostat_desc_cancel']; ?>").addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
+							td.attr("title",local_lang.ostat_desc_cancel).addClass('orderCanceled').html('<span class="tdIconCenter ui-icon ui-icon-cancel"></span>');
 							break;
 						case "5":
-							td.attr("title","<?php echo $Text['ostat_desc_changes'];?>").addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
+							td.attr("title",local_lang.ostat_desc_changes).addClass('withChanges').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
 							break;
 						case "6":
-							td.attr("title","Items of this order have been validated").addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
+							td.attr("title",local_lang._ostat_desc_validated).addClass('').html('<span class="tdIconCenter ui-icon ui-icon-cart"></span>');
 							break;
 						case "-1":
-							td.attr("title","<?php echo $Text['ostat_desc_incomp']; ?>").addClass('dim40').html('<p class="textAlignCenter">-</p>');
+							td.attr("title",local_lang.ostat_desc_incomp).addClass('dim40').html('<p class="textAlignCenter">-</p>');
 							break;
 					}
 				}
@@ -1312,7 +1525,7 @@
 							$('#currentOrderStatus').html(gRevStatus[sindex]);
 							$('#dialog_orderStatus').dialog("open");
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
-								params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
+								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
 							break;
 							
@@ -1324,7 +1537,7 @@
 							$('.overviewElements').hide();
 							$('.viewElements').fadeIn(1000);
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
-								params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
+								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
 							
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
@@ -1356,7 +1569,8 @@
 					});
 					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
 					$('.total_'+product_id+' span:first-child').text(totalQ);
-
+					refreshRowPrices(product_id, totalQ);
+					refreshTotalOrder();
 				}
 			
 			
@@ -1638,10 +1852,23 @@
 							<th><?=$Text['unit'];?></th>
 							<th class="arrivedCol"><?=$Text['arrived']; ?></th>
 						</tr>
+						<tr class="orderTotals">
+							<td colspan="3" class="orderTotalsDesc"><?php echo $Text['_prv_prices']; ?><td>
+							<td class="arrivedCol"></td>
+						</tr>
 					</thead>
+					<tfoot>
+						<tr class="orderTotals">
+							<td colspan="3"class="orderTotalsDesc"><?php echo $Text['_prv_prices']; ?><td>
+							<td class="arrivedCol"></td>
+						</tr>
+					</tfoot>
 					<tbody>
 						<tr>							
-							<td>{id}</td>
+							<td id="product_{id}" class="productIdClass"
+								gross_price="{gross_price}"
+								iva_percent="{iva_percent}"
+								net_price="{net_price}">{id}</td>
 							<td>{name}</td>
 							<td id="unit_{id}">{unit}</td>
 							<td class="textAlignCenter arrivedCol"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" id="ckboxArrived_{id}" checked="checked" /></td>
