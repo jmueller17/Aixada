@@ -111,6 +111,14 @@
             _click_to_edit_total: "<?php echo $Text['_click_to_edit_total']; ?>",
             _click_to_edit_gprice:"<?php echo $Text['_click_to_edit_gprice']; ?>"
         };
+
+        // Configuration values used by js code.        
+        var local_cfg = {
+            print_order_template: "<?php echo get_config(
+                        'print_order_template', 'report_order1.php'); ?>",
+            order_review_uf_sequence: "<?php echo get_config(
+                        'order_review_uf_sequence', 'desc'); ?>"
+        };
     </script>
 	   
 	<script type="text/javascript">
@@ -203,7 +211,8 @@
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
 					type: "POST",
-					url: 'php/ctrl/UserAndUf.php?oper=getUfListing&all=0',
+					url: 'php/ctrl/UserAndUf.php?oper=getUfListing&all=0&order='+
+                        local_cfg.order_review_uf_sequence,
 					dataType:"xml",
 					success: function(xml){
 						var theadStr = '<th>'+local_lang.total+'</th>'; 
@@ -1409,7 +1418,7 @@
 							type: 'warning'});
 					} else {
 
-						printWin = window.open('tpl/<?=$tpl_print_orders;?>');
+						printWin = window.open('tpl/'+local_cfg.print_order_template);
 						printWin.focus();
 										
 						var i = 0;  						

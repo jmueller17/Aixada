@@ -19,10 +19,24 @@ try{
 
   switch ($_REQUEST['oper']) {
   	    
-  		
+  		// List of family units.
   		case 'getUfListing':
-        	printXML(stored_query_XML_fields('get_uf_listing', get_param('all',0)));
-        	exit;
+            $sql = 'select * from aixada_uf';
+            if (get_param_int('all') != 1) {
+                $sql .= ' where active = 1';
+            }
+            switch (get_param('order','')) {
+            case 'asc':
+                $sql .= ' order by id asc';
+                break;
+            case 'name':
+                $sql .= ' order by name';
+                break;
+            default;
+                $sql .= ' order by id desc';
+            }
+            printXML(query_XML_fields($sql));
+            exit;
         	
         case 'createUF':
 		   	printXML(stored_query_XML_fields('create_uf', get_param('name'), get_param('mentor_uf',0), get_session_user_id() ));

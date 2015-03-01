@@ -225,6 +225,22 @@ function get_param_date($param_name, $default=null, $input_format='Y-m-d') {
 
 /**
  * 
+ * Provides some basic logic to retrieve values from configuration on config.php
+ * @param string $param_name the name of the configuration value. 
+ * @param $default A default value, if configuration value is not set, the
+ *     default value will be used.
+ */
+function get_config($param_name, $default=null) {
+    $cfg = configuration_vars::get_instance();
+    if (isset($cfg->$param_name)) {
+        return $cfg->$param_name;
+    } else {
+        return $default;
+    }
+}
+
+/**
+ * 
  * Sends a email message as html. Use internally php mail. The `from` email
  * address is set acording the key `$admin_email` defined in `config.php`.
  * @param str $to, 
