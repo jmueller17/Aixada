@@ -657,12 +657,12 @@
 										    	.children(':first')
 										    	.text(quantity);
 										    
-										})
+										});
 										$('#ckboxRevised_'+pid).attr('checked','checked');
 										
 										$('.total_' + pid).each(function(){
 											$(this).children(':first').empty().text(total_quantity.toFixed(2));
-										}) 
+										});
 										refreshRowPrices(pid, total_quantity);
 										refreshTotalOrder();
 									}//end callback 
