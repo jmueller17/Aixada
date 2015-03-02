@@ -440,65 +440,8 @@ function print_stored_query(){
 
 }
 
-<<<<<<< HEAD
-=======
-/**
- * Execute a SQL query and returs a list as a string of values on firt column.
- * @param string $strSQL A SQL query
- * @param string $separator
- * @param string $text_delimiter
- * @return string The list as a string or '' if no rows or are null value.
- */
-function get_list_query($strSQL, $separator=',', $text_delimiter='') {
-    return get_list_rs(
-        DBWrap::get_instance()->Execute($strSQL),
-        0,
-        $separator,
-        $text_delimiter
-    );
-}
 
-/**
- * Walk a result set to assemble a list  as a string of values on firt column.
- * @param mysqli_query_type $rs
- * @param integer|string $field Field on result set, default is 0
- * @param string $separator
- * @param string $text_delimiter
- * @return string The list as a string or '' if no rows or are null value.
- */
-function get_list_rs($rs, $field=0, $separator=',', $text_delimiter='') {
-    $list = array();
-    while ($row = $rs->fetch_array()) {
-        if (isset($row[$field])) {
-            array_push($list, $text_delimiter.$row[$field].$text_delimiter);
-        }
-    }
-    $db = DBWrap::get_instance();
-    $db->free_next_results();
-    return implode($separator, $list);
-}
 
-class output_formatter {
-  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)
-  {
-    $strXML = '';
-    if ($rs) {
-      $strXML .= '<rowset>';
-      if ($page) 
-	$strXML .= '<page>' . $page . '</page>'; 
-      if ($total_pages)
-	$strXML .= '<total>' . $total_pages . '</total>';
-      $strXML .= '<records>' . $total_entries . '</records>';
-      $strXML .= "<rows>";
-      while ($row = $rs->fetch_assoc()) 
-	$strXML .= $this->row_to_XML($row);
-      $rs->free();
-      $strXML .= "</rows>";
-      $strXML .= "</rowset>";
-    }
-    return $strXML;
-  }
->>>>>>> f9a8bcdd2db0d2e4d93bc88173297616f4c62928
 
 /**
  *  Utility function to execute a stored query and export the result in the given format. 
