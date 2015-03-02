@@ -504,7 +504,7 @@ begin
     from aixada_stock_movement 
     left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id
     left join aixada_stock_movement_type as aixada_stock_movement_type on aixada_stock_movement.movement_type_id=aixada_stock_movement_type.id";
-  set @lim = ' ';				 
+set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = concat(@q, @lim);

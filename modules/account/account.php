@@ -71,10 +71,10 @@
 
 		$.getAixadaDates('getToday', function (date){
 			gToday = date[0];
-			gPrevMonth = moment(gToday, "YYYY-MM-DD").subtract(1, 'months').format('YYYY-MM-DD');
+			gStartDate = moment(gToday, "YYYY-MM-DD").subtract(3, 'months').format('YYYY-MM-DD');
 			
 	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
-			$('#datepicker-from').data("DateTimePicker").setDate(gPrevMonth);
+			$('#datepicker-from').data("DateTimePicker").setDate(gStartDate);
 
 			reloadListings();
 		});
@@ -142,13 +142,17 @@
 					$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
 				},
 				complete : function(rowCount){
+					bootbox.hideAll();
 					
-					
-					/*if ($('#tbl_account tbody tr').length == 0){
-						$.showMsg({
-							msg:"<?php echo $Text['msg_err_nomovements']; ?>",
-							type: 'warning'});
-					} */
+					if ($('#tbl_account tbody tr').length == 0){
+						bootbox.alert({
+							title : "Warning",
+							message : "<div class='alert alert-warning'><?php echo $Text['msg_err_nomovements']; ?></div>"
+						});
+						$("#tbl_account").hide();
+					} else {
+						$("#tbl_account").show();
+					}
 
 				}
 		});
@@ -276,14 +280,14 @@
 		                </form>
 	            	</div>
 
-	            	<div class="col-md-3 section sec-1">
+	            	<!--div class="col-md-3 section sec-1">
 	            		<form class="navbar-form">
 							<select id="accountSelect" class="form-control">
 	                    		<option value="-100" selected="selected"><?=$Text['sel_account']; ?></option> 
 			    				<option value="{id}">{id} {name}</option>
 			    			</select>
 		    			</form>
-					</div>
+					</div-->
 
 				
 
@@ -326,9 +330,19 @@
 	<!-- title section -->
 	<div class="container" id="aix-title">
 		<div class="row">
-		    <div class="col-md-10 section sec-1">
-		    	<h1><span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> <?=$Text['ti_report_account']; ?></h1>
+		    <div class="col-md-6 section sec-1">
+		    	<h1><?=$Text['latest_movements']; ?></h1>
 		    </div>
+		    <div class="col-md-6 section sec-1">
+        		<form class="navbar-form pull-right">
+        			<h3>
+						<select id="accountSelect" class="form-control">
+	                		<option value="-100" selected="selected"><?=$Text['sel_account']; ?></option> 
+		    				<option value="{id}">{id} {name}</option>
+		    			</select>
+	    			</h3>
+    			</form>
+			</div>
 			
 			<div class="col-md-10 section sec-2">
 		    	<h1><?=$Text['ti_my_account_money']; ?></h1>
@@ -354,9 +368,9 @@
 						<th><?=$Text['operator']; ?></th>
 						<th><?=$Text['description']; ?></th>
 						<th>Type</th>
-						<th><p class="textAlignCenter"><?=$Text['account']; ?></p></th>
-						<th><p class="textAlignRight"><?=$Text['amount']; ?></p></th>
-						<th><p class="textAlignRight"><?=$Text['balance']; ?></p></th>
+						<th><p class="text-center"><?=$Text['account']; ?></p></th>
+						<th><p class="text-right"><?=$Text['amount']; ?></p></th>
+						<th><p class="text-right"><?=$Text['balance']; ?></p></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -365,9 +379,9 @@
 						<td>{operator}</td>
 						<td>{description}</td>
 						<td>{method}</td>
-						<td><p class="textAlignCenter">{account}</p></td>
-						<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
-						<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
+						<td><p class="text-center">{account}</p></td>
+						<td><p class="text-right"><span class="formatQty">{quantity}</span></p></td>
+						<td><p class="text-right"><span class="formatQty">{balance}</span></p></td>
 					</tr>
 				</tbody>
 				<tfoot>

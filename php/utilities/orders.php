@@ -65,34 +65,31 @@ function finalize_order($provider_id, $date_for_order)
 	
 	if ($config_vars->internet_connection && $config_vars->email_orders){
 		
-		
+        $provider_name = get_list_query(array(
+            'SELECT name FROM aixada_provider WHERE id = :1q',
+            $provider_id));
 		$rm = new report_manager();
 		
-		$message = '<html>';
-		$message .= '<body>';   
-		
-		if ($config_vars->email_order_format == 1){ 
-			$message .= "<h2>".$config_vars->coop_name.". Summarized order ".$date_for_order."</h2>";
-			$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
-			$message .= "<p><br/></p>";
-		} else if ($config_vars->email_order_format == 2){
-			$message .= "<h2>".$config_vars->coop_name.". Detail order ".$date_for_order."</h2>";
-			$message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
-			$message .= "<p><br/></p>";
-		} else if ($config_vars->email_order_format == 3){
-			$message .= "<h2>".$config_vars->coop_name.". Summarized order ".$date_for_order."</h2>";
-			$message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
-			$message .= "<p><br/></p>";
-			$message .= "<h2>".$config_vars->coop_name.". Detail order ".$date_for_order."</h2>";
-			$message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
-			$message .= "<p><br/></p>";
-		}
-		
-		$message .= '</body></html>';
+        $message = '<h2>'.$config_vars->coop_name."</h2>\n";
+        $email_order_format = $config_vars->email_order_format;
+        if ($email_order_format == 1 || $email_order_format == 3){ 
+            $message .= "<h2>".$Text['summarized_orders'].' '.$Text['for'].' "'.
+                    $provider_name.'" '.$Text['for'].' '.
+                    $date_for_order."</h2>\n";
+            $message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
+            $message .= "<p><br/></p>\n";
+        }
+        if ($email_order_format == 2 || $email_order_format == 3){
+            $message .= "<h2>".$Text['detailed_orders'].' '.$Text['for'].' "'.
+                    $provider_name.'" '.$Text['for'].' '.
+                    $date_for_order."</h2>\n";
+            $message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
+            $message .= "<p><br/></p>\n";
+        }
 		
 		$db = DBWrap::get_instance();
 		$db->free_next_results();
-		$strSQL = 'SELECT email FROM aixada_provider WHERE id = :1q';
+		$strSQL = 'SELECT name, email FROM aixada_provider WHERE email is not null and id = :1q';
     	$rs = $db->Execute($strSQL, $provider_id);
 		if($rs->num_rows == 0){
     		throw new Exception("The provider does not have an email.");
@@ -100,46 +97,25 @@ function finalize_order($provider_id, $date_for_order)
     	
 		while ($row = $rs->fetch_assoc()) {
       		$toEmail = $row['email'];
+            $providerName = $row['name'];
     	}
     	
     	$db->free_next_results();
     	
 		$rs = do_stored_query('get_responsible_uf', $provider_id);
-		
-		if($rs->num_rows == 0){
-    		throw new Exception($Text['msg_err_responsible_uf']);
-		}
-
-		$uf_emails = array();
-		//get emails of reponsible ufs
-		while ($row = $rs->fetch_assoc()) {
-      		array_push($uf_emails, $row['email']);
-    	}
     	
-    	$responsible_ufs = implode(", ", $uf_emails);
+    	$responsible_ufs = get_list_rs($rs, 'email');
     	
-    	//also send order to responsible uf 
-    	$toEmail = $toEmail . ", " . $responsible_ufs; 
-    	
-    	$db->free_next_results();
-
-    	
-    	
-		$subject = " " . $config_vars->coop_name . " " .  $Text['order'] . " " .$Text['for'] . " " .$date_for_order;
-		//$subject = $config_vars->coop_name . " order for " .$date_for_order;
-    	$from = $config_vars->admin_email; 
-		
-		$headers = "From: $from \r\n";
-		$headers .= "Reply-To: $responsible_ufs \r\n";
-		$headers .= "Return-Path: $from\r\n";
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		
-		
-		if (mail($toEmail,$subject,$message,$headers)){
+		$subject = $Text['order'].' '.$Text['for'].' "'.$providerName.'" '.
+            $Text['for'].' '.$date_for_order;		
+        if (send_mail($toEmail, $subject, $message, array(
+                        'reply_to'=>$responsible_ufs,
+                        //also send order to responsible uf as cc
+                        'cc'=>$responsible_ufs
+                    ))) {
 			$msg = $Text['msg_order_emailed'];			
 		} else {
-			$msg =  $Text['msg_err_emailed'];		
+			$msg = '<span style="color:red">'.$Text['msg_err_emailed'].'</span>';
 		}
 		
 		
@@ -152,6 +128,7 @@ function finalize_order($provider_id, $date_for_order)
 		while ($row = $rs->fetch_assoc()) {
       		$order_id = $row['id'];
     	}
+        $msg .= $msg!=='' ? '<br>' : '';
 		$msg .= $Text['ostat_desc_fin_send'] . $order_id;
 	} else {
 		throw new Exception ($Text['msg_err_finalize']);

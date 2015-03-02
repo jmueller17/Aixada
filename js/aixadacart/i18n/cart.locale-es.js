@@ -30,7 +30,7 @@
 			},
 			msg : {
 				saveSuccess : "Tus productos se han guardado correctamente",
-				errInput	: "La cuantidad tiene que ser numerico!",
+				errInput	: "La cantidad tiene que ser numérica!",
 				orderClosed : "El producto pertenece a un pedido que ya se ha cerrado. No se puede modificar."
 
 				

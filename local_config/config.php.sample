@@ -51,6 +51,21 @@ class configuration_vars {
      You should not need to change anything past this point when installing.
   ****************************************************************************/
 
+  /**
+   *
+   * Allow yourself validate your cart.
+   * (if it is not set `false` is used as default value)
+   * @var boolean
+   */
+  public $validate_self = false;
+
+  /**
+   *
+   * After a cart validation shows warning message if no deposit has been made.
+   * (if it is not set `true` is used as default value)
+   * @var boolean
+   */
+  public $validate_deposit = true;
  
   /**
    * 
@@ -59,6 +74,13 @@ class configuration_vars {
    * @var num
    */
   public $max_month_orderable_dates = 12;
+  
+  /**
+   *
+   * Prevents purchase products with no stock (used in shop_and_order.php)
+   * @var boolean
+   */  
+  public $prevent_out_of_stock_purchase = true;
   
   /**
    * 
@@ -480,8 +502,27 @@ class configuration_vars {
              
     /**
      *  IMPORT CONTROLS
+     */
+    
+    /**
+     * Character encoding used by sources of importations. The data from a
+     * source are transformed to 'UTF-8' used used internally by Aixada.
      *
+     * If character set from the sources is not known put to 'auto', then could
+     * be lose some chars but is safer than ''. 
+     * Remove or sets to '' to don't make transformation, but in this case if
+     * files don't use UTF-8 some importations could be fail.
      *
+     * See valid codes in: 
+     *          http://php.net/manual/en/mbstring.supported-encodings.php
+     *
+     * NOTE: 'Windows-1252' Is the character encoding of the Latin alphabet
+     *       used by Windows systems.
+	 */
+    public $import_from_char_encoding = 'auto';
+
+    
+    /**
      * if set to true and the import columns/fields match db fields, user will be presented
      * with an option to try to import all allowed columns without explicit column matching. 
      * This makes sense for transfers between aixada platforms where we can assume that columns match
@@ -543,6 +584,46 @@ class configuration_vars {
 								'closing_date' => 'allow')
 								);
  
+	/**
+	 *	Set templates correspondences to directly import by establishing
+     *  correspondences from columns with database fields.
+	 */
+    public $import_templates = array(
+        // Table any db_field_name must be allowed by $allow_import_for.
+        'aixada_product' => array(
+            // Template name
+            'begues' => array(
+                'options' => array( //optional
+                    'import_mode' => '2', // '0' update only (default mode)
+                                          // '1' insert all
+                                          // '2' insert new and update existing
+                    'deactivate_products' => true // option only for products
+                ),
+                'required_fields' => array( //optional
+                    // Rows without a required fields are ignored.
+                    'custom_product_ref', 'name', 'unit_price'
+                ),                    
+                'match_columns' => array( //Required
+                // db_field_name => col_name or regex to match col_name.
+                    'custom_product_ref' => '/.*_product_ref/',
+                    'name' => '/.*name/',
+                    'unit_price' => '/.*unit_price/',
+                    'unit_measure_order_id' => '/.*unit_measure_order_id/',
+                    'unit_measure_shop_id' => '/.*unit_measure_order_id/'
+                ),
+                'forced_values' => array( //optional
+                    'active' => '1',
+                    'category_id' => '1000',
+                    'rev_tax_type_id' => 2
+                ),
+                'updatable_columns' => array( //optional: default is all columns
+                    'name', 'unit_price', 
+                    // updateable columns of forced_values should be included.
+                    'active', 'rev_tax_type_id'
+                )
+            )
+        )
+    );
  
              
 

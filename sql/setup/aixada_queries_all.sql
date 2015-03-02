@@ -572,7 +572,7 @@ begin
      
     
     /** show active products only or include inactive products as well? **/
-    if (include_inactive = 1) then 
+    if (include_inactive = 0) then 
        set wherec = "and p.active=1 and pv.active=1";
     end if;	
    
@@ -726,7 +726,7 @@ begin
 	declare wherec varchar(255) default "p.active = 1";
 	
 	if (the_provider_id > 0) then
-		set wherec = concat("p.provider_id=", the_provider_id, "and p.active = 1");
+		set wherec = concat("p.provider_id=", the_provider_id, " and p.active = 1");
 	end if; 
 	
 	set @q = concat("select
@@ -766,7 +766,11 @@ end|
  * However, stock disappears.... somehow
  */
 drop procedure if exists correct_stock|
-create procedure correct_stock(in the_product_id int, in the_current_stock decimal(10,4), in the_operator_id int)
+create procedure correct_stock(in the_product_id int, 
+								in the_current_stock decimal(10,4), 
+								in the_description varchar(255),
+								in the_movement_type_id int,	
+								in the_operator_id int)
 begin
 	
 	declare err_amount decimal(10,4);
@@ -814,12 +818,13 @@ begin
  		
  	-- reg the stock movement -- 	
  	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	the_current_stock - p.stock_actual,
-     	concat('stock corrected.'),
+		the_description,
+		the_movement_type_id,
      	the_current_stock
     from 
     	aixada_product p
@@ -849,6 +854,7 @@ drop procedure if exists add_stock|
 create procedure add_stock(in the_product_id int, 
 			   in delta_amount decimal(10,4), 
 			   in the_operator_id int, 
+			   in the_movement_type_id int,
 			   in the_description varchar(255))
 begin
    	start transaction;
@@ -863,12 +869,13 @@ begin
 
 	/* register the movement */
    	insert into 
-   		aixada_stock_movement (product_id, operator_id, amount_difference, description, resulting_amount) 
+   		aixada_stock_movement (product_id, operator_id, amount_difference, description, movement_type_id, resulting_amount) 
    	select
      	the_product_id,
      	the_operator_id,
      	delta_amount,
      	the_description,
+     	the_movement_type_id,
      	p.stock_actual
     from 
     	aixada_product p
@@ -908,16 +915,32 @@ end|
  * or all products. 
  */
 drop procedure if exists stock_movements|
-create procedure stock_movements(in the_product_id int, in the_provider_id int, in the_limit varchar(255))
+create procedure stock_movements(	in the_product_id int, 
+									in the_provider_id int, 
+									in from_date varchar(255), 
+									in to_date varchar(255), 
+									in the_limit varchar(255))
 begin
   
 	declare wherec varchar(255) default ""; 
+	declare limitc varchar(255) default "";
+	declare datec varchar(255) default " and sm.ts between '1234-01-02' and '9999-01-01' ";
+
 
 	if (the_provider_id > 0) then
-		set wherec = concat(" and p.id = sm.product_id and p.provider_id = ", the_provider_id);
+		set wherec = concat(" and p.provider_id = ", the_provider_id);
 	elseif (the_product_id > 0) then
-		set wherec = concat(" and p.id = ", the_product_id, " and sm.product_id = p.id ");
+		set wherec = concat(" and p.id = ", the_product_id);
 	end if; 
+
+	if (the_limit != "") then 
+		set limitc = concat(" limit ", the_limit);
+	end if; 
+
+	if (from_date != "" and to_date != "") then
+		set datec = concat(" and sm.ts between '",from_date,"' and '",to_date,"' ");
+	end if; 
+
 	
 	set @q = concat("select
 		sm.*,
@@ -926,20 +949,25 @@ begin
 		p.name as product_name,
 		p.id as product_id,
 		calc_delta_price(sm.amount_difference, p.unit_price, iva.percent) as delta_price,
-		um.unit
+		um.unit,
+		smt.name as movement_type
 	from
 		aixada_stock_movement sm,
 		aixada_member mem,
 		aixada_product p, 
 		aixada_iva_type iva,
-		aixada_unit_measure um
+		aixada_unit_measure um,
+		aixada_stock_movement_type smt
 	where
 		mem.id = sm.operator_id
 		",wherec," 
+		",datec,"
 		and p.unit_measure_shop_id = um.id
 		and p.iva_percent_id = iva.id
+		and sm.product_id = p.id
+		and smt.id = sm.movement_type_id
 	order by
-		sm.product_id desc, sm.ts desc;");
+		sm.ts desc, sm.product_id desc ",limitc,";");
 		
 	prepare st from @q;
   	execute st;
@@ -1807,14 +1835,18 @@ begin
 				os.unit_price_stamp,
 				os.product_id,
 				os.quantity, 
-				p.iva_percent_id,
-				p.rev_tax_type_id
+				iva.percent,
+				r.rev_tax_percent
 			from
-				aixada_order_to_shop os,
-				aixada_product p
+				aixada_order_to_shop os
+			join (aixada_product p,
+				aixada_iva_type iva,
+				aixada_rev_tax_type r)
+			on p.id = os.product_id
+				and p.iva_percent_id = iva.id
+				and p.rev_tax_type_id = r.id
 			where 
 				os.order_id = the_order_id
-				and p.id = os.product_id
 				and os.uf_id = the_uf_id
 				and os.arrived = 1;
 				
@@ -2238,7 +2270,9 @@ begin
 	where
 		p.provider_id = the_provider_id
 		and oi.product_id = p.id
-		and oi.date_for_order = '1234-01-23';
+		and oi.date_for_order = '1234-01-23'
+	group by
+		p.id;
 		
 		
 	-- set the new date_for_order on ordered items-- 
@@ -4428,7 +4462,7 @@ delimiter |
  * The validated parameter specifies if we are interested in validated carts or only those
  * that have not a ts_validated timestamp.
  */
-drop procedure if exists get_shop_cart| 
+drop procedure if exists get_shop_cart|
 create procedure get_shop_cart(in the_date_for_shop date, in the_uf_id int, in the_cart_id int, in validated boolean)
 begin
 
@@ -4492,7 +4526,7 @@ end|
  * a specific date and an uf
  * 
  */
-drop procedure if exists get_order_cart| 
+drop procedure if exists get_order_cart|
 create procedure get_order_cart(in the_date date, in the_uf_id int)
 begin
   declare today date default date(sysdate());	
@@ -4586,6 +4620,27 @@ end |
 
 delimiter ; 
 delimiter |
+
+
+
+
+/**
+ *	deactivates or actives a provider. basically means that deactivated providers
+ *  does not appear anymore in the listings. This does NOT deactivate its products. 
+ */
+drop procedure if exists change_active_status_provider|
+create procedure change_active_status_provider (in the_active_state boolean, in the_provider_id int)
+begin
+
+	update 
+		aixada_provider
+	set 
+		active = the_active_state
+	where 
+		id = the_provider_id;
+
+end|
+
 
 
 /**
@@ -5286,6 +5341,5 @@ begin
      product_id = the_product_id and
      year(ts) = the_year;
 end|
-    
 
 delimiter ;

@@ -8,6 +8,9 @@
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/smoothness/jquery-ui-1.10.0.custom.min.css"/>
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <style>
+        .darkGrayed {color:#777;}
+    </style>
 
 
 	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
@@ -92,6 +95,7 @@
 		        $('.showFileInfo').fadeIn(1000);
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
+		        resetUpload();
 		        $('.loadSpinner').show();
 		   
 				data.submit();
@@ -125,6 +129,20 @@
 			params : 'oper=getAllowedFields&table='+gImportTo,
 			loadOnInit:true,
 			offSet : 1
+		});
+        $('#import_template').xml2html('init',{
+			url: 'php/ctrl/ImportExport.php',
+			params : 'oper=getImportTemplates&table='+gImportTo,
+			loadOnInit:true,
+			offSet : 1,
+			complete : function(rowCount){
+                var div = $('#import_template').parent().parent();
+                if (rowCount == 0){
+					div.hide();
+                } else {
+                	div.show();
+				}
+			}
 		});
 
 
@@ -191,7 +209,12 @@
 		
 		function parseFile(fileName, fullPath){
 			$.ajax({
-				url: 'php/ctrl/ImportExport.php?oper=parseFile&import2Table='+gImportTo+'&file='+fileName+'&fullpath='+fullPath,
+				url: 'php/ctrl/ImportExport.php?oper=parseFile'+
+                    '&import2Table='+gImportTo+
+                    '&file='+fileName+
+                    '&fullpath='+fullPath+
+                    '&import_template='+$('select[name=import_template]').val()+
+                    '&provider_id='+$('input[name=provider_id]').val(),
 			   	method: 'POST',
 			   	//data : fdata, //parse options 
 			   	dataType:'html',
@@ -201,7 +224,11 @@
 			   	success: function(tbl){
 			   		$('.loadSpinner').hide();
 			   		$('.uploadMsgElements').hide();
-			   		constructPreviewTable(tbl);			   		
+                    if (!isNaN(parseInt(tbl,10))) {
+                        showResponse(tbl);
+                    } else {
+                        constructPreviewTable(tbl);
+                    }
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 				   $.showMsg({
@@ -305,20 +332,7 @@
 			   	
 				},
 			   	success: function(msg){
-			   	 	$.showMsg({
-						msg: "<?=$Text['msg_import_success'];?>",
-						buttons: {
-							"<?=$Text['btn_import_another'];?>":function(){						
-								resetUpload();
-								$(this).dialog("close");
-							},
-							"<?=$Text['btn_nothx']; ?>":function(){						
-								window.opener.reloadWhat();
-								window.close();
-							}
-						},
-						type: 'success'});
-			   		
+                    showResponse(msg);
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
 				   $.showMsg({
@@ -342,6 +356,25 @@
 		}
 
 		 
+        function showResponse(importedRows){
+            $.showMsg({
+                title: "<?=$Text['msg_success'];?>",
+                msg: "<?=$Text['msg_import_done'];?>".replace("{$rows}",importedRows) + 
+                     "<br><?=$Text['msg_import_another'];?>",
+                buttons: {
+                    "<?=$Text['btn_import_another'];?>":function(){						
+                        resetUpload();
+                        $(this).dialog("close");
+                    },
+                    "<?=$Text['btn_nothx']; ?>":function(){						
+                        window.opener.reloadWhat();
+                        window.close();
+                    }
+                },
+                type: 'success'
+            });
+        }
+
 							
 	});  //close document ready
 </script>
@@ -368,6 +401,16 @@
 		 <div class="ui-widget"> 
 			<h4>1. <?=$Text['import_step1']; ?></h4>
 			<div class="ui-widget-content ui-corner-all aix-style-padding8x8 adaptHeight">
+                <div class="wrapSelect hidden">
+                    <form id="frmImportTemplate">
+                        <label for="import_template"><?=$Text['direct_import_template']; ?>: </label>
+                        <select id="import_template" name="import_template">
+                            <option value="-1"><?='( ... )';?></option>
+                            <option value="{db_field}">{db_field}</option>
+                        </select>
+                    </form>
+                    <br>
+                </div>
 				<div class="floatLeft aix-layout-fixW450">
 					<form id="frmFileUpload">
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
@@ -375,7 +418,8 @@
 					<br/>
 					<p>&nbsp;<?=$Text['import_allowed']; ?>: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 					<br/>	<br/>
-					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW350 aix-style-padding8x8"><?=$Text['import_file']; ?>: <span class="setFileName"></span></p>
+					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW450 aix-style-padding8x8"><?=$Text['import_file']; ?>:<br>
+						&nbsp;&nbsp;<b class="setFileName"></b></p>
 				</div>
 				<div class="floatLeft">
 					<p class="boldStuff"><?=$Text['public_url'];?></p><br/>
@@ -415,8 +459,23 @@
 				<p><?=$Text['import_qnew'];?></p> 
 				<p>
 					<form id="frmImpOptions">
-					<input type="radio" name="append_new" value="1" /> <?=$Text['import_createnew'];?> <br/>
-					<input type="radio" name="append_new" value="0" checked="checked"/> <?=$Text['import_update'];?>
+                    <?php
+                    $importIgnoreRowsTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_rows']);
+                    $importIgnoreValueTxt = str_replace('{$match_field}',
+                        '<span class="setRequiredColumn"></span>',
+                        $Text['import_ignore_value']);
+                    ?>
+					<input type="radio" name="import_mode" value="2" checked="checked" />
+						<?=$Text['import_create_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="1" />
+						<?=$Text['import_createnew'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="0" />
+						<?=$Text['import_update'];?>
+						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span>
 					</form>
 				</p>
 				<br/>

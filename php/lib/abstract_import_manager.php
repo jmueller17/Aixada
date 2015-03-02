@@ -53,15 +53,31 @@ class abstract_import_manager {
 	 * contains those fields that can be imported and that have been mapped in the original data file.
 	 * @var array 
 	 */
-	protected $_import_fields = array(); 
+	protected $_import_fields = array(); 	
+	
+	/**
+	 * The list of fields that are available for uptade as speciied in
+     * config.php for each table. import_fields4update contains those fields
+	 * that can be imported and that have been mapped in the original data file.
+	 * @var array 
+	 */
+	protected $_import_fields4update = array();
 	
 	
 	/**
-	 * Mapping of data columns to db-fields
+	 * Mapping of data columns to db-fields used for insert and retrieve all
+     * rows of the data_table column against which the db entries are matched.
 	 * @var hash
 	 */
 	protected $_col_map = null;
 	
+	
+	/**
+	 * Mapping of data columns to db-fields used for update
+	 * @var hash
+	 */
+	protected $_col_map_update = null;
+
 	
 	/**
 	 * 
@@ -146,12 +162,25 @@ class abstract_import_manager {
     		$this->_import_data_table = $data_table; 
     	}
     	
+    	// Set maps
+        if ($map != null && count($map) == 2 && 
+                    isset($map['map_insert']) && 
+                    isset($map['map_update'])) { // use dual map
+            $this->_col_map = $map['map_insert'];
+            $this->_col_map_update = $map['map_update'];
+        } else { // use single map
+            $this->_col_map = $map;
+            $this->_col_map_update = $map;
+        }
     	
     	//check which db table fields are available for importing and which ones are specified in the map. 
     	foreach ($import_rights[$this->_db_table] as $field => $value) {
     		if ($value == 'allow'){
-    			if (isset($map[$field])){
+    			if (isset($this->_col_map[$field])){
 	    			array_push($this->_import_fields, $field);
+    			}
+    			if (isset($this->_col_map_update[$field])){
+	    			array_push($this->_import_fields4update, $field);
     			}
     		} else {
     			global $firephp;
@@ -160,14 +189,12 @@ class abstract_import_manager {
     	}
     	
     	//check if db_match_field is in map
-    	if (!isset($map[$this->_db_match_field])){
+    	if (!isset($this->_col_map[$this->_db_match_field])){
     		throw new Exception("Import error: required match field '{$this->_db_match_field}' not found. You are either trying to import the wrong data for this table or have not associated the right column in the table preview!");
     		exit; 
     		
     	}
     
-    	$this->_col_map = $map;
-		    	
 		if (count($this->_import_fields) == 0){
 			throw new Exception("Import error: can't find any allowed fields for importing into table '{$destination_table}'. Check your config.php!  ");	
 			exit; 
@@ -206,8 +233,12 @@ class abstract_import_manager {
 	 * 		2: get new rows for insert, 
 	 * 		3: construct rows and execute sql in each case
 	 * @param boolean $append_new control insert behavior of new data rows
+     * @param boolean $keep_match_field Set to true to keep db_match_field into
+     *        insert staments (and rows without it are ignored) If $append_new
+     *        is false $keep_match_field is ignored.
+     * @return integer Number of rows imported.
 	 */
-    public function import($append_new=false){
+    public function import($append_new=false, $keep_match_field = false){
     	
     	//format array('db_id'=>'custom_ref', ...)
     	$update_ids = $this->match_db_entries();
@@ -221,6 +252,7 @@ class abstract_import_manager {
     	$firephp->log($update_ids, "update_ids");
     	$firephp->log($insert_rows, "insert_rows");*/
     	
+    	$imported_rows_count = 0;
     	if (count($update_ids) > 0){
 	    	//should be unique values
 			$dup = $this->_check_duplicates($update_ids);
@@ -229,12 +261,14 @@ class abstract_import_manager {
 				exit; 
 			}
 	    		
-    		$this->update_rows($update_ids);
+    		$imported_rows_count += $this->update_rows($update_ids);
     	}
     	
     	if ($append_new && count($insert_rows)){
-    		$this->insert_rows($insert_rows);	
+    		$imported_rows_count +=
+                            $this->insert_rows($insert_rows, $keep_match_field);
     	}
+        return $imported_rows_count;
     }
     
    
@@ -243,6 +277,7 @@ class abstract_import_manager {
      * 
      * Constructs update rows for already existing entries in the corresponding database table. 
      * @param array $update_ids of the format array('id'=>'custom ref value',...)
+     * @return integer Number of rows updated.
      */
     protected function update_rows($update_ids){
 
@@ -250,7 +285,11 @@ class abstract_import_manager {
 
     	global $firephp; 
     	
+    	if (count($this->_import_fields4update) == 0) {
+    		return; 
+    	}
     	
+    	$imported_rows_count = 0;
     	foreach($update_ids as $id => $match_id){
     		
     		//retrieve row from import data table
@@ -263,9 +302,9 @@ class abstract_import_manager {
     		array_merge($db_update_row, $this->_db_update_row_prefix);
     		
     		//take fields to be imported
-    		foreach($this->_import_fields as $db_field){
+    		foreach($this->_import_fields4update as $db_field){
     			//lookup its corresponding column in the import data table 	
-    			$col_index = $this->_col_map[$db_field];
+    			$col_index = $this->_col_map_update[$db_field];
     			
     			//value to be imported
     			$import_value = $row[$col_index]; 
@@ -283,7 +322,9 @@ class abstract_import_manager {
 			
 			//do sqlupdate row
 			try {
-				$db->Update($db_update_row);
+                if ($db->Update($db_update_row)) {
+                    $imported_rows_count++;
+                }
 			}  catch(Exception $e) {
     			header('HTTP/1.0 401 ' . $e->getMessage());
     			die ($e->getMessage());
@@ -291,6 +332,7 @@ class abstract_import_manager {
     		
     		
     	} 
+        return $imported_rows_count;
     }
     
     
@@ -299,12 +341,16 @@ class abstract_import_manager {
      * 
      * Constructs array of db field => value pairs that can is passed to the dbWrapper-Insert function
      * @param array $insert_ids array of custom ref values that identify the rows to be inserted in the data table
+     * @param boolean $keep_match_field Set to true to keep db_match_field into
+     *        insert staments (and rows without it are ignored)
+     * @return integer Number of rows inserted.
      */
-	protected function insert_rows($insert_ids){
+	protected function insert_rows($insert_ids, $keep_match_field = false){
     	$db = DBWrap::get_instance();
     	global $firephp; 
     	
     	
+    	$imported_rows_count = 0;
     	foreach($insert_ids as $id => $index){	
     		//retrieve row from import data table could have an external id or not!!
     		$row = $this->_import_data_table->get_row($index);
@@ -332,25 +378,36 @@ class abstract_import_manager {
     			//because this field is empty when importing new products, we need to set the custom_product_ref to null
     			//i.e. leave it out of the sql insert string. Same would happen for nif of providers, although this has not a unique constraint
     			if ($db_field == $this->_db_match_field){
-    				//$db_insert_row[$db_field] = null;  don't  uncomment this.. leave it to sql to insert null
+                    if ($keep_match_field) { // otherwise db_match_field (set by subclasses) are ignored.
+                        if ($row[$col_index] == '') { // So row are ignored.
+                            $db_insert_row = null;
+                            break;
+                        }
+                        $db_insert_row[$db_field] = $row[$col_index];
+                    } 
     			} else {
     				//add it to the import_row	
 					$db_insert_row[$db_field] = $row[$col_index];	
     			}
 			}
 
-			$firephp->log($db_insert_row, "insert row");
-			
-			//do sql
-			try {
-				$db->Insert($db_insert_row);
-			}  catch(Exception $e) {
-    			header('HTTP/1.0 401 ' . $e->getMessage());
-    			die ($e->getMessage());
+            if ($db_insert_row != null) {
+                $firephp->log($db_insert_row, "insert row");
+                
+                //do sql
+                try {
+                    if ($db->Insert($db_insert_row)) {
+                        $imported_rows_count++;
+                    }
+                }  catch(Exception $e) {
+                    header('HTTP/1.0 401 ' . $e->getMessage());
+                    die ($e->getMessage());
+				}
 			} 
     		
     		
     	}  
+  		return $imported_rows_count;
     }
     
     
@@ -363,6 +420,7 @@ class abstract_import_manager {
     private function _build_foreign_key_cache($key_array){
     	$db = DBWrap::get_instance();
     	
+    	$this->_foreign_keys = array();
     	foreach ($key_array as $db_field=>$refs){
     		if (isset($refs) && count($refs) > 1){
 	    		$sql = "select ". $refs[1]." from " . $refs[0];
@@ -445,12 +503,38 @@ class abstract_import_manager {
     
     
     /**
+     *
+     * utility to make a list of match_col values.
+     * @return string
+     */
+    protected function get_match_col_values() {
+        $db = DBWrap::get_instance();
+        $sql = '';
+        foreach($this->_match_col as $val){
+            if ($val != ''){
+                $sql .= "'".$db->escape_string($val)."',";
+            }
+        }
+        return rtrim($sql, ",");
+    }
+
+    /**
      * 
      * utility wrapper for parsing different uploaded files and returning a 2d array (data_table) with the values
      * @param string $path2File the full path to the file 
+     * @param string $from_char_encoding Character encoding used by the file 
+     *      (data are transformed to UTF-8), default is use the value 
+     *      from config.php. Set to '' to ignore transformation.
      */
-    public static function parse_file($path2File, $db_table=''){
-    	
+    public static function parse_file($path2File, $db_table='',
+                                                    $from_char_encoding='$cfg'){
+        $cfg = configuration_vars::get_instance();
+        if ($from_char_encoding == '$cfg') {
+            if (isset($cfg->import_from_char_encoding)) {
+                $from_char_encoding = $cfg->import_from_char_encoding;
+            }
+        }
+        
     	$rowc = 0;
   		$_data_table = null; 
   		$_header = false; 		
@@ -468,6 +552,7 @@ class abstract_import_manager {
 					$values[] = (string)$elem;
 					$fieldnames[] = $elem->getName(); 
 				}
+				abstract_import_manager::encode_utf8($values, $from_char_encoding);
 				$_data_table[$rowc++] = $values; 
 			}
 			array_unshift($_data_table, $fieldnames);
@@ -476,6 +561,7 @@ class abstract_import_manager {
   		} else if (in_array($extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
 	 		$Reader = new SpreadsheetReader($path2File);
 			foreach ($Reader as $Row){    
+			  	abstract_import_manager::encode_utf8($Row, $from_char_encoding);
 			  	$_data_table[$rowc++] = $Row; 
 	
 			}	
@@ -496,7 +582,25 @@ class abstract_import_manager {
 		return new data_table($_data_table, $_header, $db_table);
     }
     
-    
+    /**
+     * Transforms character encoding used by the array elements to UTF-8
+     *
+     * @param array $array Array to transform (argument by reference)
+     * @param string $from_char_encoding Character encoding used by $array 
+     *      elements, varue '' is ignored.
+     */
+    public static function encode_utf8(&$array, $from_char_encoding) {
+        if ($from_char_encoding != '') {
+            array_walk(
+                $array, 
+                function(&$string, $index, $char_encoding) {
+                    $string = mb_convert_encoding(
+                                      $string, 'UTF-8', $char_encoding);
+                },
+                $from_char_encoding
+            );
+        }
+    }
 
 } //end class abstract_import_manager
 

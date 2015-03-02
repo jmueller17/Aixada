@@ -149,7 +149,7 @@
 				rowComplete : function (rowIndex, row){
 					
 					var product_id = $(row).children(':first').text();
-					var tbodyStr = '<td class="nobr totalQu total_'+product_id+'"></td>';
+					var tbodyStr = '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
 					
 					for (var i=0; i<header.length; i++){
 						var colClass = 'Col-'+header[i];
@@ -158,7 +158,7 @@
 					}
 
 					//product total quantities
-					tbodyStr += '<td class="nobr totalQu total_'+product_id+'"></td>';
+					tbodyStr += '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -396,20 +396,17 @@
 							url: 'php/ctrl/Orders.php?oper=preorderToOrder&provider_id='+gSelRow.attr('providerId')+'&date_for_order='+$.getSelectedDate('#datepicker2'),
 							success: function(txt){
 
+								
+							},
+							complete : function(){
 								$this.button('disable');
 								setTimeout(function(){
 									$this.dialog( "close" );
 									$('#tbl_orderOverview tbody').xml2html('reload',{
 										params : 'oper=getOrdersListing&filter=pastMonths2Future',
 									});
-									//switchTo('overview');
 								},500);
-							},
-							error : function(XMLHttpRequest, textStatus, errorThrown){
-								$.showMsg({
-									msg:XMLHttpRequest.responseText,
-									type: 'error'});
-								
+
 							}
 						});
 	
@@ -447,7 +444,7 @@
 				.live('mouseover', function(e){
 					
 					if (!$(this).hasClass('editable') && gSection == 'review'){
-						var pid = $(this).prev().attr('row')
+						var pid = $(this).attr('row_tot');
 						$(this).children(':first')
 							.addClass('editable')
 							.editable('php/ctrl/Orders.php', {			//init the jeditable plugin

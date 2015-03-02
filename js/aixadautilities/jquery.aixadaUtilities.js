@@ -46,7 +46,7 @@ $(function(){
 				
 				$('.formatQty',obj).each(function(){
 					var b = $(this).text();
-		        	var css = (new Number(b) >= 0)? 'aix-style-pos-balance':'aix-style-neg-balance';					
+		        	var css = (new Number(b) >= 0)? '':'bg-danger';					
 		        	$(this).addClass(css);
 		        	if (typeof cursign != 'undefined') $(this).append(cursign);
 				})
@@ -62,7 +62,7 @@ $(function(){
 		
 		checkFormLength : function (input, min, max, callbackfn) {
 			if ( input.val().length > max || input.val().length < min ) {
-				input.addClass( "ax-has-error" );
+				input.addClass( "has-error" );
 				return false; 
 			} else {
 				return true; 
@@ -71,7 +71,7 @@ $(function(){
 		
 		checkRegexp : function ( o, regexp, n ) {
 			if ( !( regexp.test( o.val() ) ) ) {
-				o.addClass( "ax-has-error" );
+				o.addClass( "has-error" );
 				return false;
 			} else {
 				return true;
@@ -81,7 +81,7 @@ $(function(){
 		checkPassword: function (pwd, retyped){
 			
 			if (pwd.val() != retyped.val()){
-				pwd.addClass( "ax-has-error" );
+				pwd.addClass( "has-error" );
 				//$.updateTips('#registerMsg','error', "<?php echo $Text['msg_err_pwdctrl']; ?>");
 				return false; 
 			} else {
@@ -111,7 +111,7 @@ $(function(){
 			
 			if (isNaN(num)) {
 
-				input.addClass("ax-has-error");
+				input.addClass("has-error");
 				
 				input.val(resetValue);
 				

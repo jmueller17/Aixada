@@ -25,7 +25,7 @@
 
    
 	<script type="text/javascript">
-	
+
 	$(function(){
 
 			//set the balance of cashbox(-3) or consume account (-2)
@@ -438,7 +438,7 @@
 				.click(function(e){
 					gSetBalanceAId = -2; 
 					$("#dialog_c_balance").dialog('open');
-					$("#dialog_c_balance").dialog({ title: "Set balance for consume account" });
+					$("#dialog_c_balance").dialog({ title: "<?php echo $Text['set_c_balance'];?>" });
 
   				});
 
@@ -496,7 +496,11 @@
 				switch(section){
 
 				case 'overview':
+					getGlobalBalances();
 					//$('.depositElements, .withdrawElements, .movementElements').hide();
+                    $('#deposit_description').val('');
+                    $('#withdraw_description').val('');
+                    $('#c_balance_description').val('');
 					$('.overviewElements').fadeIn(1000);
 					break;
 					
@@ -526,7 +530,6 @@
 			}
   			
 			switchTo('overview');	
-			getGlobalBalances();
 					
 	});  //close document ready
 	</script>
@@ -630,7 +633,7 @@
 				<h2 class="ui-widget-header ui-corner-all"><span class="depositCashElements"><?=$Text['deposit_cashbox'];?></span><span class="depositBancElements"><?=$Text['deposit_banc'];?></span> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="depositMsg" class="ui-corner-all"></p>
 				<div id="deposit_cash_content" class="padding10x5">
-					<form id="deposit_form">
+					<form id="deposit_form" onsubmit="return false;">
 					<table class="tblForms">
 						<tr>
 							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
@@ -646,7 +649,7 @@
 									<option value="-1"><?=$Text['please_select'];?></option>
 									<option class="depositCashElements" value="1"><?=$Text['deposit_by_uf'];?></option>
 									<option class="depositBancElements" value="3"><?=$Text['deposit_sales_cash']; ?></option>
-									<option value="2"><?=$Text['deposit_other'];?></option>
+									<option class="depositCashElements" value="2"><?=$Text['deposit_other'];?></option>
 
 									
 								</select>
@@ -689,7 +692,7 @@
 				<h2 class="ui-widget-header ui-corner-all"><span class="withdrawCashElements"><?php echo $Text['widthdraw_cashbox'];?></span> <span class="withdrawBancElements"><?php echo $Text['withdraw_banc'];?></span> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
 				<p id="withdrawMsg" class="ui-corner-all></p>
 				<div id="withdraw_cash_content" class="padding10x5">
-					<form id="withdraw_form">
+					<form id="withdraw_form" onsubmit="return false;">
 						<input type="hidden" name="account_id" value="-3"/>
 					<table class="tblForms">
 						<tr>
@@ -708,7 +711,7 @@
 									<option class="withdrawCashElements" value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
 									<option class="withdrawCashElements" value="3"><?php echo $Text['withdraw_uf']; ?></option>
 									<option class="withdrawCashElements" value="4"><?php echo $Text['withdraw_cuota']; ?></option>
-									<option value="5"><?php echo $Text['withdraw_other'];?></option>
+									<option class="withdrawCashElements" value="5"><?php echo $Text['withdraw_other'];?></option>
 									<option class="withdrawBancElements" value="6"><?php echo $Text['withdraw_provider']; ?></option>
 								</select>
 							</td>

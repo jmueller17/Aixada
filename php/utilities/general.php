@@ -172,6 +172,61 @@ function get_param($param_name, $default=null, $transform = '') {
 	return $value;
 }
 
+/**
+ * 
+ * Sends a email message as html. Use internally php mail. The `from` email
+ * address is set acording the key `$admin_email` defined in `config.php`.
+ * @param str $to, 
+ * @param str $subject
+ * @param str $bodyHTML only the body of the html message.
+ * @param array $options valid keys are: 'reply_to', 'cc', 'bcc'
+ * @return boolean as response of php mail.
+ */
+function send_mail($to, $subject, $bodyHTML, $options=null) {
+    if (!isset($options)) {
+        $options = array();
+    }
+    $cfg = configuration_vars::get_instance();
+    $from = $cfg->admin_email;
+
+    // get URL of aixada root
+    $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
+    if ($pos_root === false) {
+        $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/');
+    }
+    $ssl_on = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $url_root = (isset($_SERVER['HTTP_HOST']) ? 
+                    $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']).
+                substr($_SERVER['SCRIPT_NAME'],0,$pos_root);
+
+    // get HTML message
+    $subject = $cfg->coop_name.': '.$subject;
+    $messageHTML = 
+        '<html><head><title>'.$subject."</title></head>\r\n".
+        '<body style="font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;">'.
+        "\r\n".$bodyHTML."\r\n".
+        '<hr><div style="color:#888; text-align: center;">'.
+                $cfg->coop_name.': <a href="'.
+                    ($ssl_on ? 'https://' : 'http://').
+                    $url_root.
+                    '/index.php" style="color:#888;">'.$url_root.'</a>'.
+            "</div>\r\n".
+        "</body></html>";
+    $headers = 
+        'From: '.$from."\r\n".
+        'Reply-To: '.
+            (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
+        (isset($options['cc']) ? 'Cc :'.$options['cc']."\r\n" : '').
+        (isset($options['bcc']) ? 'Bcc :'.$options['bcc']."\r\n" : '').
+        'Return-Path: '.$from."\r\n".
+        "X-Mailer: PHP\r\n".
+        "MIME-Version: 1.0\r\n".
+        "Content-Type: text/html; charset=UTF-8\r\n";
+    mb_language("uni");
+    mb_internal_encoding("UTF-8");
+    $subject64 = mb_encode_mimeheader($subject);
+    return mail($to, $subject64, $messageHTML, $headers);
+}
 
 function get_config_menu($user_role)
 {
@@ -385,6 +440,65 @@ function print_stored_query(){
 
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Execute a SQL query and returs a list as a string of values on firt column.
+ * @param string $strSQL A SQL query
+ * @param string $separator
+ * @param string $text_delimiter
+ * @return string The list as a string or '' if no rows or are null value.
+ */
+function get_list_query($strSQL, $separator=',', $text_delimiter='') {
+    return get_list_rs(
+        DBWrap::get_instance()->Execute($strSQL),
+        0,
+        $separator,
+        $text_delimiter
+    );
+}
+
+/**
+ * Walk a result set to assemble a list  as a string of values on firt column.
+ * @param mysqli_query_type $rs
+ * @param integer|string $field Field on result set, default is 0
+ * @param string $separator
+ * @param string $text_delimiter
+ * @return string The list as a string or '' if no rows or are null value.
+ */
+function get_list_rs($rs, $field=0, $separator=',', $text_delimiter='') {
+    $list = array();
+    while ($row = $rs->fetch_array()) {
+        if (isset($row[$field])) {
+            array_push($list, $text_delimiter.$row[$field].$text_delimiter);
+        }
+    }
+    $db = DBWrap::get_instance();
+    $db->free_next_results();
+    return implode($separator, $list);
+}
+
+class output_formatter {
+  public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)
+  {
+    $strXML = '';
+    if ($rs) {
+      $strXML .= '<rowset>';
+      if ($page) 
+	$strXML .= '<page>' . $page . '</page>'; 
+      if ($total_pages)
+	$strXML .= '<total>' . $total_pages . '</total>';
+      $strXML .= '<records>' . $total_entries . '</records>';
+      $strXML .= "<rows>";
+      while ($row = $rs->fetch_assoc()) 
+	$strXML .= $this->row_to_XML($row);
+      $rs->free();
+      $strXML .= "</rows>";
+      $strXML .= "</rowset>";
+    }
+    return $strXML;
+  }
+>>>>>>> f9a8bcdd2db0d2e4d93bc88173297616f4c62928
 
 /**
  *  Utility function to execute a stored query and export the result in the given format. 
@@ -574,7 +688,39 @@ function HTMLwrite($strHTML, $filename)
 }
 
 
+/**
+ * Returns a XML body with a list of template names defined in 'config.php'
+ * for a database table name.
+ * @param string $db_table_name The database table name.
+ * @return string The XML list of teplate names.
+ */
+function get_import_templates_list($db_table_name) {
+    $templates = get_import_templates($db_table_name);
+    $xml = '<rows>';
+    foreach ($templates as $field => $value) {
+        $xml .= '<row><db_field>'.$field.'</db_field></row>';
+    }
+    return $xml.'</rows>';
+}
 
+/**
+ * Returns a array of templates defined in 'config.php' for a database
+ * table name.
+ * @param string $db_table_name The database table name.
+ * @return array The array of teplates, returns an empty array if no defined
+ *      templates for this table.
+ */
+function get_import_templates($db_table_name) {
+    $cfg = configuration_vars::get_instance();
+    if (isset($cfg->import_templates)) {
+        $import_templates = $cfg->import_templates;
+        if (isset($import_templates[$db_table_name])) {
+            return $import_templates[$db_table_name];
+        }
+    }
+    // If not exists any template for this table returns a empty array.
+    return array();
+}
 
 class output_formatter {
   public function rowset_to_jqgrid_XML($rs, $total_entries=0, $page=0, $limit=0, $total_pages=0)

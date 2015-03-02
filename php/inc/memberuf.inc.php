@@ -45,11 +45,11 @@
 						</tr>
 						<tr>
 							<td><label for="email"><?php echo $Text['email'];?></label></td>
-							<td colspan="5"><input type="text" name="email" value="{email}" class="ui-widget-content ui-corner-all" /></td>
+							<td colspan="5"><input type="text" name="email" value="{email}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
 						</tr>
 						<tr>
 							<td><label for="web"><?php echo $Text['web'];?></label></td>
-							<td colspan="5"><input type="text" name="web"value="{web}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
+							<td colspan="5"><input type="text" name="web" value="{web}" class="inputTxtMax ui-widget-content ui-corner-all" /></td>
 						</tr>
 						<tr>
 							<td><label for="notes"><?php echo $Text['notes'];?></label></td>

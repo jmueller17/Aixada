@@ -67,6 +67,7 @@ $Text['global_title'] = configuration_vars::get_instance()->coop_name;
 $Text['head_ti_validate'] = "Valida";
 
 $Text['head_ti_active_products'] = "Activa/Desactiva Productes demanables";
+//
 $Text['head_ti_active_roles'] = "Rols actius";
 $Text['head_ti_account'] = "Comptes";
 $Text['head_ti_manage_orders'] = "Gestiona les comandes";
@@ -84,15 +85,10 @@ $Text['head_ti_cashbox'] = "Control de caixa";
  *  			capçaleres de les pàgines principals <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "Les UFs podran demanar els següents productes PER EL dia ";
-//$Text['ti_mng_arrived_products'] = "Els següents productes han arribat el dia ";
 $Text['ti_mng_activate_roles'] = "Gestiona els rols d'usuari ";
 $Text['ti_mng_activate_users'] = "Activa usuaris com a ";
-//$Text['ti_mng_move_orders'] = "Canvia una comanda";
 $Text['ti_mng_activate_preorders'] = "Converteix una comanda acumulativa en comanda";
 $Text['ti_mng_members'] = "Gestiona els membres";
-//$Text['ti_mng_ufs'] = "Gestiona les unitats familiars";
-//$Text['ti_mng_dates'] = "De-/activar individualment dates per fer comandes";
-//$Text['ti_mng_dates_pattern'] = "Bulk de-/activar dates per fer comandes";
 $Text['ti_mng_db'] = "Còpia de seguretat de la base de dades"; 
 $Text['ti_order'] = "Fes la comanda per a ";
 $Text['ti_shop'] = "Compra articles ";
@@ -110,7 +106,7 @@ $Text['ti_my_account_money'] = "Diners";
 $Text['ti_all_sales'] = "Totes les compres anteriors de la UF";
 $Text['ti_login_news'] = "Inici de sessió i notícies";
 $Text['ti_timeline'] = "Informe línia de temps";
-$Text['ti_report_torn'] = "Resum del torn d'aviu";
+$Text['ti_report_torn'] = "Resum del torn d'avui";
 //$Text['ti_mng_cashbox'] = "Caixa";
 
 
@@ -122,7 +118,7 @@ $Text['ti_report_torn'] = "Resum del torn d'aviu";
 $Text['Consumer'] = 'Consumidor';
 $Text['Checkout'] = 'Caixa';
 $Text['Consumer Commission'] = 'Comissió de consum';
-$Text['Econo-Legal Commission'] = 'Comissió econolegal';
+$Text['Econo-Legal Commission'] = 'Comissió econo-legal';
 $Text['Logistic Commission'] = 'Comissió de logística';
 $Text['Hacker Commission'] = "Comissió d'informàtica";
 $Text['Fifth Column Commission'] = 'La cinquena';
@@ -198,7 +194,7 @@ $Text['short_desc'] = 'Breu descripció';
 $Text['withdraw_type'] = 'Tipus de reintegrament';
 $Text['withdraw_for_provider'] = 'Fer un reintegrament a un proveïdor';
 $Text['withdraw_other'] = 'Altres reintegraments...';
-$Text['withdraw_provider'] = 'Proveïdor del reintegrament';
+$Text['withdraw_provider'] = 'Reintegrament per pagar a Proveïdors';
 $Text['btn_make_withdrawal'] = 'Reintegrament';
 $Text['correct_balance'] = 'Corregir balanç';
 $Text['set_balance'] = 'Actualitzar balanç de la caixa';
@@ -308,6 +304,7 @@ $Text['nav_report_incidents'] = "Incidents d'avui";
 $Text['nav_report_shop_hu'] = "Per UF";
 $Text['nav_report_shop_pv'] = "Per Proveïdor";
 
+
 $Text['nav_incidents'] = "Incidents";
 	$Text['nav_browse'] = "Navega / afegeix";
 $Text['nav_myaccount'] = "El meu compte";
@@ -343,7 +340,7 @@ $Text['btn_create'] = "Crea";
 $Text['btn_close'] = "Tanca";
 $Text['btn_make_deposit'] = "Ingressa";
 $Text['btn_new_incident'] = "Incident nou";
-$Text['btn_reset_pwd'] = "Reestableix contrasenya"; 
+$Text['btn_reset_pwd'] = "Re-estableix contrasenya"; 
 $Text['btn_view_cart'] = "Cistella"; 
 $Text['btn_view_cart_lng'] = "Només veure la cistella";
 $Text['btn_view_list'] = "Productes";
@@ -513,21 +510,16 @@ $Text['purchase_future'] = 'Les meves comandes';
 //$Text['purchase_prev'] = 'Compres anteriors';
 $Text['icon_order'] = 'La propera comanda';
 $Text['icon_purchase'] = 'Fes la teva compra';
-$Text['icon_incidents'] = 'Fes una incidencia';
+$Text['icon_incidents'] = 'Fes una incidència';
 $Text['purchase_date'] = 'Data de la compra';
 //$Text['purchase_validated'] = 'Data de la validació';
 //$Text['ordered_for'] = 'Comanda pel';
 $Text['not_validated'] = 'sense validar';
 
-
-
-
-
-
-/* Novetats */
+/* definitely new stuff */
 
 $Text['download_db_zipped'] = 'Descarrega base de dades comprimida';
-$Text['backup'] = 'Entesos, copia la base de dades!';
+$Text['backup'] = 'Entesos, fes una copia la base de dades!';
 $Text['filter_incidents'] = 'Filtra incidents';
 $Text['todays'] = "d'avui";
 $Text['recent_ones'] = 'Recents';
@@ -561,7 +553,7 @@ $Text['qu'] = 'Qu';
 $Text['msg_err_deactivatedUser'] = "El teu compte d'usuari ha estat desactivat!";
 $Text['order'] = 'Comanda';
 $Text['order_pl'] = 'Comandes';
-$Text['msg_already_validated'] = 'La cistella sel·leccionada ja està validada. Vols veure els productes que hi ha?';
+$Text['msg_already_validated'] = 'La cistella seleccionada ja està validada. Vols veure els productes que hi ha?';
 $Text['validated_at'] = "Validat en data "; //refers to a date/hour
 
 
@@ -584,7 +576,7 @@ $Text['order_closed'] = "La comanda d'aquest proveïdor està tancada.";
 $Text['head_ti_sales'] = "Llistat de vendes"; 
 $Text['not_yet_val'] = "pendent de validar";
 $Text['val_by'] = "Validat per";
-$Text['purchase_details'] = "Detall de la compra de la cistella nº";
+$Text['purchase_details'] = "Detall de la compra de la cistella n.";
 $Text['filter_uf'] = "Filtra per UF";
 $Text['purchase_uf'] = "Compra de la UF";
 $Text['quantity_short'] = "Qu";
@@ -595,7 +587,7 @@ $Text['nav_mng_iva'] = "tipus d'IVA";
 $Text['nav_mng_money'] = "Diners";
 $Text['nav_mng_admin'] = "Admin";
 $Text['nav_mng_users'] = "Usuaris";
-$Text['nav_mng_access_rights'] = "Permisos d'acccés";
+$Text['nav_mng_access_rights'] = "Permisos d'accés";
 $Text['msg_sel_account'] = "Tria un compte primer, i aleshores filtra'n els resultats!";
 $Text['msg_err_nomovements'] = "Mala sort, no hi ha moviments per a aquest compte en aquesta data. Prova a ampliar el període consultat amb el botó de filtre.";
 $Text['active_changed_uf'] = "Estat actiu de la UF modificat";
@@ -618,7 +610,6 @@ $Text['msg_err_no_stock'] = "sembla que aquest proveïdor no té estoc";
 $Text['msg_err_qu'] = "La quantitat ha de ser numèrica i superior a 0!";
 $Text['msg_correct_stock'] = "Ajustar així l'estoc hauria de ser l'excepció! El nou estoc s'hauria d'AFEGIR. Estàs segur de voler corregir l'estoc?";
 $Text['btn_yes_corret'] = "Sí, fes la correcció!";
-$Text['ti_mng_stock'] = "Gestiona estoc";
 $Text['search_product'] = "Cerca un producte";
 $Text['add_stock'] = "Afegeix estoc";
 $Text['click_to_edit'] = "Prem una cel·la per a editar-la!";
@@ -635,12 +626,12 @@ $Text['finalize_now'] = "Finalitza ara";
 $Text['msg_err_order_filter'] = "No hi ha comandes coincidents amb el filtre.";
 $Text['msg_finalize'] = "Estàs a punt de finalitzar la comanda. Si ho fas, ja no podràs fer modificacions a la comanda. Estàs segur de voler continuar?";
 $Text['msg_finalize_open'] = "Aquesta comanda encara està oberta. Si la finalitzes ara, l'estaràs tancant abans de la seva data límit. Estàs segur de voler continuar?";
-$Text['msg_wait_tbl'] = "L'encapçalament de la taula s'està construïnt. Això pot trigar una mica en funció de la velocitat del teu navegador. Torna-ho a provar en 5 segons. ";
+$Text['msg_wait_tbl'] = "L'encapçalament de la taula s'està construint. Això pot trigar una mica en funció de la velocitat del teu navegador. Torna-ho a provar en 5 segons. ";
 $Text['msg_err_invalid_id'] = "No s'ha trobat un ID de la comanda! Aquesta comanda no s'ha enviat al proveïdor!!";
 $Text['msg_revise_revised'] = "Els elements de la comanda ja han estat revisats i carregats a les cistelles dels usuaris per a la data indicada. Tornar-los a revisar alteraria les modificacions ja fetes, i podria interferir amb les modificacions fetes pels propis usuaris. <br/><br/> Estàs segur de voler continuar?! <br/><br/>Si acceptes s'eliminaran els articles de les cistelles, i el procés de revisió començarà de nou.";
 $Text['wait_reset'] = "Si us plau, espera mentre re-inicialitzo la comanda...";
 $Text['msg_err_already_val'] = "Alguns dels elements de la comanda ja han estat validats! Em sap greu, però ja no s'hi poden fer modificacions!!";
-$Text['print_several'] = "Hi ha més d'una comanda sel·leccionada. Vols imprimir-les totes?";
+$Text['print_several'] = "Hi ha més d'una comanda seleccionada. Vols imprimir-les totes?";
 $Text['btn_yes_all'] = "Sí, imprimeix-les totes";
 $Text['btn_just_one'] = "No, només una";
 $Text['ostat_revised'] = "Revisat";
@@ -655,7 +646,7 @@ $Text['ostat_desc_cancel'] = "La comanda s'ha cancel·lat";
 $Text['ostat_desc_changes'] = "Revisat amb modificacions";
 $Text['ostat_desc_incomp'] = "Comanda ignorada. Falta informació anterior a la v2.5";
 $Text['set_ostat_desc_arrived'] = "La majoria o tots els productes han arribat. Procedir amb la revisió i distribució de productes a les cistelles...";
-$Text['set_ostat_desc_postpone'] = "La comanda no ha arribat a la data esperada, però probalement ho faci en les properes setmanes.";
+$Text['set_ostat_desc_postpone'] = "La comanda no ha arribat a la data esperada, però provablement ho faci en les properes setmanes.";
 $Text['set_ostat_desc_cancel'] = "Els productes no arribaran mai.";
 $Text['msg_move_to_shop'] = "Els articles han estat carregats a les cistelles de la compra de les dates corresponents.";
 $Text['msg_err_noselect'] = "No has seleccionat res!";
@@ -676,7 +667,7 @@ $Text['filter_next_week'] = "Propera setmana";
 $Text['filter_future'] = "Totes les comandes futures";
 $Text['filter_month'] = "Darrer mes";
 $Text['filter_postponed'] = "Posposades";
-$Text['with_sel'] = "Amb selecionats...";
+$Text['with_sel'] = "Amb seleccionats...";
 $Text['dwn_zip'] = "Descarrega en zip";
 $Text['closes_days'] = "Es tanca en dies";
 $Text['sent_off'] = "Enviat al proveïdor";
@@ -695,10 +686,12 @@ $Text['alter_date'] = "Tria una data alternativa";
 $Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
 
 
+//added 29.09
+
 $Text['order_closes'] = "La comanda es tanca el"; //as in: order closes 20 SEP 2012
 $Text['left_ordering'] = " pendents per demanar."; //as in 4 days left for ordering
 $Text['ostat_closed'] = "La comanda està tancada";
-$Text['ostat_desc_fin_send'] = "La comanda s'ha finalitzat i enviat al proveïdor. La referència és: #";
+$Text['ostat_desc_fin_send'] = "La comanda s'ha tancat. La referència és: #";
 $Text['msg_err_past'] = "Això és al passat! <br/> Massa tard per a modificar-hi coses.";
 $Text['msg_err_is_deactive_p'] = "Aquest producte està desactivat. Per a obrir-lo per a una data primer l'has d'activar.";
 $Text['msg_err_deactivate_p'] = "Estàs a punt de desactivar el producte. Això vol dir que les dates en que és demanable també s'eliminaran.<br/><br/>Estàs segur que vols desactivar el producte? També podries desactivar les dates en que és demanable, clicant a les caselles corresponents.";
@@ -724,7 +717,7 @@ $Text['msg_pattern'] = "NOTA: Aquesta acció regenerarà els productes i dates a
 $Text['sel_closing_date'] = "Tria una nova data de tancament";
 $Text['btn_mod_date'] = "Modifica la data de tancament";
 $Text['btn_repeat'] = "Repeteix el patró!";
-$Text['btn_entire_row'] = "(Des)activa tota la fila";
+$Text['btn_entire_row'] = "Activa/desactiva tota la columna";
 $Text['btn_deposit'] = "Dipòsit";
 $Text['btn_withdraw'] = "Reintegrament";
 $Text['deposit_desc'] = "Ingrés en efectiu";
@@ -754,7 +747,7 @@ $Text['show_deactivated'] = "Mostra productes desactivats";
 $Text['nav_report_sales'] = "Compres"; 
 $Text['nav_help'] = "Ajuda"; 
 $Text['withdraw_from'] = "Retirar diners de";  //account
-$Text['withdraw_to_bank'] = "Retirar diners de banc";
+$Text['withdraw_to_bank'] = "Retirar diners de caixa pel banc";
 $Text['withdraw_uf'] = "Retirar diners de compte UF"; 
 $Text['withdraw_cuota'] = "Retirar quota de membre";
 $Text['msg_err_noorder'] = "No s'ha trobat cap producte per el període seleccionat!";
@@ -768,11 +761,14 @@ $Text['closed'] = "tancat";
 $Text['preorder_item'] = "Aquest producte forma part d'una comanda acumulativa";
 $Text['do_preorder'] = "Des-/activar com comanda acumulativa";
 $Text['do_deactivate_prod'] = "Activar/desactivar producte";
-$Text['msg_make_preorder_p'] = "Aixó es una comanda acumulativa, per tant encara no te data d'entrega";
+$Text['msg_make_preorder_p'] = "Això es una comanda acumulativa, per tant encara no te data d'entrega";
 $Text['btn_ok_go'] = "Ok, endavant!";
 $Text['msg_pwd_emailed'] = "La nova contrasenya s'ha enviat a l'usuari";
+$Text['msg_pwd_email_reset'] = "La teva contrasenya s'ha restablert.";
+$Text['msg_pwd_email_logon'] = "Identifica't".' com {$user} amb la nova contrasenya.';
+$Text['msg_pwd_email_change'] = 'Podràs canviar la contrasenya a {$menu}.';
 $Text['msg_pwd_change'] = "La nova contrasenya és: ";
-$Text['msg_err_emailed'] = "Error d'enviament!";
+$Text['msg_err_emailed'] = "Ha fallat l'enviament del email!";
 $Text['msg_order_emailed'] = "La comanda s'ha enviat correctament!";
 $Text['msg_err_responsible_uf'] = "No s'ha trobat cap responsable per aquest producte";
 $Text['msg_err_finalize'] = "Ups... error al finalitzar comanda!";
@@ -782,7 +778,7 @@ $Text['btn_load_cart'] = "Continua amb la següent UF";
 $Text['btn_deposit_now'] = "Fes l'ingrés ara";
 $Text['msg_err_stock_mv'] = "De moment no hi ha cap moviment d'estoc per aquest producte.";
 
-$Text['ti_report_shop_pv'] = "Total vendes per proveidor";
+$Text['ti_report_shop_pv'] = "Total vendes per proveïdor";
 $Text['filter_all_sales'] = "Totes les vendes";
 $Text['filter_exact'] = "Escull dades";
 $Text['total_4date'] = "Total";
@@ -791,12 +787,12 @@ $Text['sel_sales_dates'] = "Per quines dades vols consultar les vendes?";
 $Text['sel_sales_dates_ti'] = "Escull un període"; 
 
 $Text['instant_repeat'] = "Repeteix directament";
-$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estàs segur de desactivar-l'ho? Això esborarrà la comanda d'aquest producte de les cistelles.";
+$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estàs segur de desactivar-l'ho? Això esborrarà la comanda d'aquest producte de les cistelles.";
 $Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per a la resta de les dates activades?";
 $Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquesta data. No es pot desactivar!";
 $Text['msg_pre2Order'] = "Converteix aquesta comanda acumulativa a comanda normal. Pots triar una data d'entrega";
 
-$Text['msg_err_modified_order'] = "Algú ha modificat els productes a demanar per la data actual. Alguns productes que havíes demanat ja no estàn disponibles i desapareixeràn del teu carret una vegada recarregat.";
+$Text['msg_err_modified_order'] = "Algú ha modificat els productes a demanar per la data actual. Alguns productes que havies demanat ja no estan disponibles i desapareixeran del teu carret una vegada recarregat.";
 $Text['btn_confirm_del'] = "Esborrar! Estic segur";
 $Text['print_new_win'] = "Nova finestra";
 $Text['print_pdf'] = "Descarregar pdf";
@@ -806,16 +802,18 @@ $Text['upcoming_orders'] = "Pròximes comandes";
 $Text['msg_confirm_del_mem'] = "Estas segur de eliminar aquest usuari de la base de dades??";
 $Text['btn_del'] = "Esborrar";
 
+
 $Text['btn_new_provider'] = "Nou proveïdor";
 $Text['btn_new_product'] = "Afegir producte";
 $Text['orderable'] = "Comanda directe"; //product type
 $Text['msg_err_providershort'] = "El nom del proveïdor no pot quedar buit i ha de ser de més de 2 caràcters.";
+$Text['msg_err_productshort']  = "El nom del producte no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_select_responsibleuf'] = "Qui s'encarrega? S'ha de seleccionar un responsable.";
 $Text['msg_err_product_category'] = "S'ha de seleccionar una categoria de producte.";
 $Text['msg_err_order_unit'] = "S'ha de seleccionar una unitat de mesura per a la comanda.";
 $Text['msg_err_shop_unit'] = "S'ha de seleccionar una unitat de mesura per a la venda.";
 $Text['click_row_edit'] = "Fes clic per editar.";
-$Text['click_to_list'] = "Fes click per a desplegar la llista de productes.";
+$Text['click_to_list'] = "Fes clic per a desplegar la llista de productes.";
 $Text['head_ti_provider'] = "Gestió de proveïdors i productes";
 $Text['edit'] = "Editar";
 $Text['ti_create_provider'] = "Afegir proveïdor";
@@ -827,9 +825,9 @@ $Text['msg_err_del_member'] = "No es pot esborrar aquest usuari per que hi ha re
 $Text['msg_confirm_del_provider'] = "¿Segur que vols esborrar aquest proveïdor?";
 $Text['msg_err_del_provider'] = "No es pot esborrar aquest proveïdor. Esborra primer els seus productes i torna a provar.";
 $Text['price_net'] = "Preu net";
+
 $Text['custom_product_ref'] = "Id extern"; 
 $Text['btn_back_products'] = "Tornar a productes";
-
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Enganxar";
 
@@ -856,24 +854,30 @@ $Text['stock_info'] = "Nota: es poden consultar tots els canvis d'estoc (addicio
 $Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc (addicions, correccions, pèrdues totals) des de la secció Informes &gt; Estoc.";
 
 
+$Text['msg_success'] = "Fi correcte.";
 $Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
 $Text['msg_err_upload'] = "S'ha produït un error en la càrrega de l'arxiu "; 
 $Text['msg_import_matchcol'] = "Cal fer coincidir les entrades de la base de dades amb les files de la taula. Has d'assignar la columna que correspon a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "Quines altres columnes de la taula vols importar a més de la columna necessària?"; 
-$Text['msg_import_success'] = "L'importació ha funcionat correctament. Vols importar un altre arxiu?"; 
+$Text['msg_import_done'] = "S'han".' importat {$rows} línies.'; 
+$Text['msg_import_another'] = "Vols importar un altre arxiu?"; 
 $Text['btn_import_another'] = "Importar un altre"; 
 $Text['btn_nothx'] = "No, gràcies"; 
+$Text['direct_import_template'] = "Plantilla d'importació directa";
 $Text['import_allowed'] = "Formats compatibles"; //as in allowed file formats
 $Text['import_file'] = "Arxiu d'importació"; 
 $Text['public_url'] = "URL pública";
-$Text['btn_load_file'] = "Afegi arxiu";
+$Text['btn_load_file'] = "Carregar arxiu";
 $Text['msg_uploading'] = "S'està carregant el fitxer i s'està generant la vista prèvia. Espera ...";
 $Text['msg_parsing'] = "S'està llegint l'arxiu del servidor i s'està analitzant. Espera ...";
 $Text['import_step1'] = "Afegir arxiu";
 $Text['import_step2'] = "Vista prèvia de les dades i assignació de columnes";
 $Text['import_reqcol'] = "Columna necessària";
+$Text['import_ignore_rows'] = '(les línies sense "{$match_field}" '."s'ignoraran)";
+$Text['import_ignore_value'] = '(el valor de la columna "{$match_field}" '."s'ignorarà)";
 $Text['import_auto'] = "Tinc bones notícies: gairebé totes les dades (columnes) s'han pogut reconèixer i pots intentar la importació automàtica. De tota manera, l'opció més segura és previsualitzar primer el contingut i després realitzar l'assignació de columnes de la taula manualment.";
 $Text['import_qnew'] = "Què vols fer amb les dades que no existeixen a la base de dades actual?";
+$Text['import_create_update'] = "Crear entrades noves i actualitzar les existents";
 $Text['import_createnew'] = "Crear entrades noves";
 $Text['import_update'] = "Actualitzar només les files existents";
 $Text['btn_imp_direct'] = "Importar directament";
@@ -883,38 +887,39 @@ $Text['sel_matchcol'] = "Assignar columna ...";
 $Text['ti_import_products'] = "Importar o actualitzar els productes de "; 
 $Text['ti_import_providers'] = "Importar proveïdor"; 
 $Text['head_ti_import'] = "Assistent d'importació";
-
-$Text['withdraw_desc_banc'] = "Withdraw money from account or make transfer for provider payment.";
-$Text['deposit_desc_banc'] = "Register all incoming money to consum account.";
-$Text['deposit_banc'] = "Deposit to consume account";
-$Text['withdraw_banc'] = "Withdraw from consume account";
-$Text['deposit_sales_cash'] = "Deposit sales cash";
-$Text['ti_stock_report'] = "Stock report for "; 
-$Text['netto_stock'] = "Netto stock value"; 
-$Text['brutto_stock'] = "Brutto stock value"; 
-$Text['total_netto_stock'] = "Total netto stock value"; 
-$Text['total_brutto_stock'] = "Total brutto stock value"; 
-$Text['sales_total_pv'] = "Sales total for provider ";
-$Text['dates_breakdown'] = "Dates break down"; 
-$Text['price_brutto'] = "Price brutto"; 
-$Text['total_brutto'] = "Brutto total";
-$Text['total_netto'] = "Netto total";
-$Text['msg_err_oldPwdWrong'] = "Sorry, but you got your old password wrong. Please try again. "; 
-$Text['msg_err_adminStuff'] = "Insufficient access priviledges. Only Admin can do that!";
-$Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
-$Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
-$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
-$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
-$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
-$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
-$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
-$Text['no_stock'] = "Out of stock!!";
-$Text['stock_mov_type'] = "Movement type";
 $Text['ti_search_results'] = "Search results - products";
 $Text['ti_confirm'] = "Think before clicking!";
 $Text['ti_error_form'] = "Form error";
 $Text['ti_error_exec'] = "Execution Error!!";
+$Text['withdraw_desc_banc'] = "Retirar diners del compte o transferir per pagament a proveïdors.";
+$Text['deposit_desc_banc'] = "Registrar tots els diners entrants al compte de consum.";
+$Text['deposit_banc'] = "Dipositar en el compte de consum";
+$Text['withdraw_banc'] = "Retirar diners del compte de consum";
+$Text['deposit_sales_cash'] = "Dipòsit de vendes en efectiu";
+$Text['ti_stock_report'] = "Informe de stock para "; 
+$Text['netto_stock'] = "Valor net del stock"; 
+$Text['brutto_stock'] = "Valor brut del stock"; 
+$Text['total_netto_stock'] = "Valor net total del stock"; 
+$Text['total_brutto_stock'] = "Valor brut total del stock"; 
+$Text['sales_total_pv'] = "Vendes totals del proveïdor ";
+$Text['dates_breakdown'] = "Data de venciment"; //decía "break down"
+$Text['price_brutto'] = "Preu brut"; 
+$Text['total_brutto'] = "Total brut";
+$Text['total_netto'] = "Total net";
+$Text['msg_err_oldPwdWrong'] = "Disculpi, la seva contrasenya antiga no és correcta. Per favor, intenti-ho de nou. "; 
+$Text['msg_err_adminStuff'] = "Privilegis d'accés insuficients. Només un administrador pot fer això!";
+$Text['set_c_balance'] = "Actualitzar balanç del compte de consum";
 
+$Text['msg_err_deactivate_prdrow'] = "Aquest producte no pot ser desactivat ja que té algunes dates activades per poder fer comandes. Desactivi primer individualment aquestes dates del producte!";
+$Text['msg_err_deactivate_ir'] = "Nos es pot desactivar algunes dates d'aquest producte ja que ja hi ha ítems demanats. Desactiveu usant Repeteix directament o desactiveu individualment els ítems producte/data.";
+$Text['msg_err_deactivate_product'] = "Hi ha comandes obertes per aquest producte. Al desactivar s'eliminarà aquest article de les comandes corresponents. L'eliminació d'articles d'una comanda no es pot desfer.";
+
+$Text['msg_activate_prod_ok'] = "El producte s'ha activat amb èxit."; 
+$Text['msg_deactivate_prod_ok'] = "El producte s'ha desactivat amb èxit."; 
+$Text['msg_activate_prov_ok'] = "El proveïdor s'ha activat amb èxit."; 
+$Text['msg_deactivate_prov_ok'] = "El proveïdor s'ha desactivat amb èxit."; 
+$Text['no_stock'] = "Sense stock!!";
+$Text['stock_mov_type'] = "Tipus de moviment";
 
 
 ?>

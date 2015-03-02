@@ -28,7 +28,15 @@
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
 
 
-
+    <?php 
+        $cfg = configuration_vars::get_instance();
+        $cfg_js_validate_self =
+            (isset($cfg->validate_self) && $cfg->validate_self) ?
+            'true' : 'false'; // default false
+        $cfg_js_validate_deposit =
+            (isset($cfg->validate_deposit) && !$cfg->validate_deposit) ?
+            'false' : 'true'; // default true
+    ?>
 	<script type="text/javascript">
 	$(function(){
 
@@ -42,6 +50,8 @@
 
 			//get the operator user id to prevent own validation
 			var gTornUfId = <?=get_session_uf_id();?>;
+			var cfg_js_validate_self = <?php echo $cfg_js_validate_self; ?>;
+			var cfg_js_validate_deposit = <?php echo $cfg_js_validate_deposit; ?>;
 
 
 			//stores todays date
@@ -73,7 +83,7 @@
 						$(row).append(non_validated_carts);
 
 						//dim out own uf
-						if ($(row).val() == gTornUfId){	//cannot validate yourself
+						if ($(row).val() == gTornUfId && !cfg_js_validate_self){	//cannot validate yourself
 							$(row).addClass('dim60');
 						}
 					},
@@ -85,7 +95,7 @@
 					var last_uf = $('#deposit .insert_uf_id').text();
 					var uf_id = $("option:selected", this).val();
 
-					if (!checkMadeDeposit(last_uf, uf_id)) {
+					if (cfg_js_validate_deposit && !checkMadeDeposit(last_uf, uf_id)) {
 						return false;
 					}
 
@@ -94,7 +104,7 @@
 						resetDeposit();
 						return false;
 
-					} else if (uf_id == gTornUfId){ //cannot validate your own cart
+					} else if (uf_id == gTornUfId && !cfg_js_validate_self){ //cannot validate your own cart
 						$.showMsg({
 							msg:"<?php echo $Text['msg_err_validate_self'];?>",
 							type: 'error'});
@@ -197,7 +207,7 @@
 				var uf_id = $(this).attr('ufId');
 
 
-				if (!checkMadeDeposit(last_uf, uf_id)) {
+				if (cfg_js_validate_deposit && !checkMadeDeposit(last_uf, uf_id)) {
 					return false;
 				}
 
@@ -210,7 +220,7 @@
 				var cart_id = $(this).attr('shopId');
 				var date_for_shop = $(this).attr('dateForShop');
 
-				if (uf_id == gTornUfId){ //cannot validate your own cart
+				if (uf_id == gTornUfId && !cfg_js_validate_self){ //cannot validate your own cart
 					$.showMsg({
 						msg:"<?php echo $Text['msg_err_validate_self'];?>",
 						type: 'error'});

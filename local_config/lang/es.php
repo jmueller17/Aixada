@@ -66,6 +66,7 @@ $Text['head_ti_order'] = "Pedido";
 $Text['head_ti_shop'] = "Comprar productos";
 $Text['head_ti_reports'] = "Informes"; 
 $Text['head_ti_validate'] = "Validar";
+
 $Text['head_ti_active_products'] = "Productos activos";
 $Text['head_ti_arrived_products'] = "Productos que han llegado";
 $Text['head_ti_active_roles'] = "Roles activos";
@@ -86,7 +87,7 @@ $Text['head_ti_cashbox'] = "Control de caja";
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "Las UFs podrán pedir lo siguiente PARA el día  ";
-$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día ";
+$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día "; // no consta en 'en.php'
 $Text['ti_mng_activate_roles'] = "Gestionar los roles de usuario ";
 $Text['ti_mng_activate_users'] = "Activar usuarios como ";
 $Text['ti_mng_move_orders'] = "Cambiar un pedido";
@@ -114,6 +115,7 @@ $Text['ti_login_news'] = "Inicio de sesión y noticias";
 $Text['ti_timeline'] = "Informe línea de tiempo";
 $Text['ti_report_torn'] = "Resumen del turno de hoy";
 $Text['ti_mng_cashbox'] = "Control de caja";
+
 
 /**
  * 				roles
@@ -145,7 +147,6 @@ $Text['msg_no_report'] = "No se han encontrado productores/productos para la fec
 /**
  * 				uf member manage
  */
-
 $Text['search_memberuf'] = "Buscar nombre";
 $Text['browse_memberuf'] = "Navegar";
 $Text['assign_members'] = "Asignar miembros";
@@ -198,7 +199,7 @@ $Text['short_desc'] = 'Descripción';
 $Text['withdraw_type'] = 'Tipo de pago';
 $Text['withdraw_for_provider'] = 'Para un proveedor';
 $Text['withdraw_other'] = 'Otros tipos de pago..';
-$Text['withdraw_provider'] = 'Pago del proveedor';
+$Text['withdraw_provider'] = 'Reintegro para pago a proveedores';
 $Text['btn_make_withdrawal'] = 'Paga';
 $Text['correct_balance'] = 'Corregir balance';
 $Text['set_balance'] = 'Actualizar balance de la caja';
@@ -254,14 +255,16 @@ $Text['ts_validated'] = 'Validada';
 $Text['welcome_logon'] = "Bienvenid@s a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
+$Text['old_pwd'] = "Contraseña antigua";
 $Text['retype_pwd']	= "Vuelve a escribir la contraseña";
 $Text['lang']	= "Idioma";
 $Text['msg_err_incorrectLogon'] = "Acceso incorrecto";
 $Text['msg_err_noUfAssignedYet'] = "Todavía no has sido asignado a ninguna UF: Por favor, pide que te den de alta.";
+
+
 $Text['msg_reg_success'] = "Te has registrado correctamente, pero tu usuario aún no se ha aprobado. Registra el resto de miembros de tu UF y contacta con un responsable para finalizar el registro.";
 $Text['register'] = "Registro";
 $Text['required_fields'] = " son campos obligatorios";
-$Text['old_pwd'] = "Contraseña antigua";
 
 
 /**
@@ -295,12 +298,12 @@ $Text['nav_mng'] = "Gestionar";
 $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
 $Text['nav_report_account'] = "Cuentas";
-$Text['nav_report_preorder'] = "Prepedidos";
 $Text['nav_report_timelines'] = "Evolución de " . configuration_vars::get_instance()->coop_name;;
 $Text['nav_report_timelines_uf'] = "Por UFs";
 $Text['nav_report_timelines_provider'] = "Por Proveedores";
 $Text['nav_report_timelines_product'] = "Por Productos";
 $Text['nav_report_daystats'] = "Estadísticas diarias";
+$Text['nav_report_preorder'] = "Prepedidos";
 $Text['nav_report_incidents'] = "Incidentes de hoy";
 $Text['nav_report_shop_hu'] = "Por UF";
 $Text['nav_report_shop_pv'] = "Por proveedores";
@@ -406,7 +409,7 @@ $Text['msg_err_email'] = "El formato del correo electrónico no es correcto. Tie
 $Text['msg_err_select_uf'] = "Para asignar un nuevo miembro a una UF primero tienes que seleccionar la UF clicando sobre ella. Si quieres crear una nueva UF, hazlo clicando en + Nueva UF.";
 $Text['msg_err_select_non_member'] = "Para asignar un nuevo miembro a una UF, primero tienes que seleccionarlo de la lista de no miembros que hay a la derecha."; 
 $Text['msg_err_insufficient_stock'] = 'No hay suficiente stock de ';
-$Text['msg_err_validate_self'] = '¡No puedes validarte a ti mismo!';
+
 
 $Text['msg_edit_success'] = "Los datos editados se han guardado correctamente.";
 $Text['msg_edit_mysettings_success'] = "La nueva configuración se ha guardado correctamente.";
@@ -428,6 +431,7 @@ $Text['msg_delete_incident'] = "¿Seguro que quieres eliminar este incidente?";
  *  Product categories
  */
 $Text['SET_ME'] 			= 'Completar...';
+
 $Text['prdcat_vegies']		 	= "Verduras";
 $Text['prdcat_fruit'] 			= "Fruta";
 $Text['prdcat_mushrooms'] 		= "Setas";
@@ -478,6 +482,12 @@ $Text['stock_min'] = 'Cantidad mínima para tener en stock';
 $Text['stock_actual'] = 'Cantidad actual en stock';
 $Text['delta_stock'] = "Diferencia con el stock mínimo";
 $Text['description_url'] = 'URL de descripción';
+
+
+/**
+ * added after 14.5
+ */
+$Text['msg_err_validate_self'] = '¡No puedes validarte a ti mismo!';
 $Text['msg_err_preorder'] = 'El pedido acumulativo tiene que ser con una fecha futura.';
 $Text['msg_preorder_success'] = 'El pedido acumulativo se ha activado correctamente para la fecha:';
 $Text['msg_can_be_ordered'] =  'Se puede hacer un pedido en este día';
@@ -489,15 +499,14 @@ $Text['start_date'] = 'Mostrar los registros empezando por el ';
 $Text['date'] = 'Fecha';
 $Text['iva'] = 'IVA';
 
+
 $Text['Download zip'] = 'Bajar fichero comprimido con todos los pedidos';
 $Text['product_singular'] = 'producto';
 $Text['product_plural'] = 'productos';
 $Text['confirm_db_backup'] = '¿Estás seguro de hacer una copia de seguridad de toda la base de datos? Esto llevará un tiempo';
 $Text['show_date_field'] = "Pulsa aquí para mostrar el campo de calendario y seleccionar una fecha diferente de hoy";
 
-/**
- *   Home
- */
+
 $Text['purchase_current'] = 'Mis compras';
 $Text['items_bought'] = 'Compras anteriores';
 $Text['purchase_future'] = 'Mis pedidos';
@@ -507,7 +516,7 @@ $Text['icon_purchase'] = 'Haz tu compra ahora';
 $Text['icon_incidents'] = 'Incidencias';
 $Text['purchase_date'] = 'Fecha de la compra';
 $Text['purchase_validated'] = 'Fecha de la validación';
-$Text['ordered_for'] = 'Pedido hecho para el';
+//$Text['ordered_for'] = 'Pedido hecho para el'; //!!DUPLICATE
 $Text['not_validated'] = 'no validado';
 
 /* definitely new stuff */
@@ -604,7 +613,6 @@ $Text['msg_err_no_stock'] = "Aparentemente este proveedor no tiene stock";
 $Text['msg_err_qu'] = "¡La cantidad debe ser numérica y mayor que 0!";
 $Text['msg_correct_stock'] = "¡Ajustar el stock de esta forma debería ser una excepción! El stock nuevo tiene que ser siempre AÑADIDO. Está seguro de corregir el stock de este producto? Como se enteren los informáticos le van a.....";
 $Text['btn_yes_corret'] = "¡Sí, haz la modificación!";
-$Text['ti_mng_stock'] = "Gestionar stock";
 $Text['search_product'] = "Buscar un producto";
 $Text['add_stock'] = "Añadir stock";
 $Text['click_to_edit'] = "¡Clicar la celdas para editar!";
@@ -685,7 +693,7 @@ $Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versi
 $Text['order_closes'] = "El pedido se cierra el"; //as in: order closes 20 SEP 2012
 $Text['left_ordering'] = " pendientes de pedir."; //as in 4 days left for ordering
 $Text['ostat_closed'] = "El pedido está cerrado";
-$Text['ostat_desc_fin_send'] = "El pedido se ha cerrado y enviado al proveedor. La referencia es: #";
+$Text['ostat_desc_fin_send'] = "El pedido se ha cerrado. La referencia es: #";
 $Text['msg_err_past'] = "¡Esto es el pasado! <br/> Demasiado tarde para modificar cosas.";
 $Text['msg_err_is_deactive_p'] = "Este producto está desactivado. Para abrirlo para una fecha primero debes activarlo.";
 $Text['msg_err_deactivate_p'] = "Estás a punto de desactivar el producto. Esto quiere decir que las fechas en que se puede pedir también se eliminaran.<br/><br/>También podrias desactivar las fechas en que se puede pedir clicando en las casillas correspondientes.";
@@ -700,7 +708,6 @@ $Text['minus_seven'] = "Mostrar -7 días";
 $Text['btn_earlier'] = "Antes de"; //cómo más temprano
 $Text['btn_later'] = "después de"; //más tarde... futuro
 
-
 //la frase entera es: "activate the selected day and products for the next  1|2|3.... month(s) every week | second week | third week | fourth week.
 $Text['pattern_intro'] = "Activa los productos i días para los próximos ";
 $Text['pattern_scale'] = "meses ";
@@ -712,7 +719,7 @@ $Text['msg_pattern'] = "¡NOTA: Esta acción regenerará los productos y fechas 
 $Text['sel_closing_date'] = "Elegir una nueva fecha de cierre";
 $Text['btn_mod_date'] = "Modificar la fecha de cierre";
 $Text['btn_repeat'] = "¡Repetir el patrón!";
-$Text['btn_entire_row'] = "(Des)activa toda la columna";
+$Text['btn_entire_row'] = "Activa/desactiva toda la columna";
 $Text['btn_deposit'] = "Depósito";
 $Text['btn_withdraw'] = "Reintegro";
 $Text['deposit_desc'] = "Ingreso en efectivo";
@@ -723,7 +730,7 @@ $Text['maintenance_account'] = "Mantenimiento";
 $Text['posted_by'] = "Creado por"; //Posted by
 $Text['ostat_yet_received'] = "pendiente de recibir";
 $Text['ostat_is_complete'] = "está completo";
-$Text['ostat_postponed'] = "postpuesto";
+$Text['ostat_postponed'] = "pospuesto";
 $Text['ostat_canceled'] = "cancelado";
 $Text['ostat_changes'] = "con cambios";
 $Text['filter_todays'] = "De hoy";
@@ -738,14 +745,13 @@ $Text['gross_amount'] = "Importe bruto"; //importe brutto
 $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
-
 $Text['show_deactivated'] = "Mostrar desactivados"; 
 $Text['nav_report_sales'] = "Ventas"; 
 $Text['nav_help'] = "Ayuda"; 
 $Text['withdraw_from'] = "Retirar dinero ";  //account
-$Text['withdraw_to_bank'] = "Retirar dinero de banco";
+$Text['withdraw_to_bank'] = "Retirar dinero de caja para el banco";
 $Text['withdraw_uf'] = "Retirar dinero de cuenta HU";
-$Text['withdraw_cuota'] = "Retirar dinero de quota";
+$Text['withdraw_cuota'] = "Retirar dinero de cuota";
 $Text['msg_err_noorder'] = "No hay pedidos para la selección!";
 $Text['primer_torn'] = "Primer Turno";
 $Text['segon_torn'] = "Segundo Turno";
@@ -759,9 +765,12 @@ $Text['do_preorder'] = "De-/activar cómo pedido acumulativo";
 $Text['do_deactivate_prod'] = "Activar/desactivar producto";
 $Text['msg_make_preorder_p'] = "Éste pedido es acumulativo, por lo tanto todavía no tiene fecha de entrega";
 $Text['btn_ok_go'] = "OK, adelante!";
-$Text['msg_pwd_emailed'] = "La nueva constraseña se ha enviado al usuario";
-$Text['msg_pwd_change'] = "La nueva constraseña es: ";
-$Text['msg_err_emailed'] = "¡Error de envío!";
+$Text['msg_pwd_emailed'] = "La nueva contraseña se ha enviado al usuario";
+$Text['msg_pwd_email_reset'] = 'Tu contraseña se ha restablecido.';
+$Text['msg_pwd_email_logon'] = 'Identificate como {$user} con la nueva contraseña.';
+$Text['msg_pwd_email_change'] = 'Podrás cambiar la contraseña en {$menu}.';
+$Text['msg_pwd_change'] = "La nueva contraseña es: ";
+$Text['msg_err_emailed'] = "¡Ha fallado el envío del email!";
 $Text['msg_order_emailed'] = "El pedido se ha enviado correctamente!";
 $Text['msg_err_responsible_uf'] = "No hay responsable para éste producto";
 $Text['msg_err_finalize'] = "Ups...¡Error al finalizar pedido!";
@@ -769,23 +778,23 @@ $Text['msg_err_cart_sync'] = "Tu pedido no está sincronizado con la base de dat
 $Text['msg_err_no_deposit'] = "La última UF no ha realizado ningún depósito?!!!";
 $Text['btn_load_cart'] = "Continua con la siguiente UF";
 $Text['btn_deposit_now'] = "Haz el ingreso ahora";
-$Text['msg_err_stock_mv'] = "De momento, no han habido movimientos de estoc para este producto!";
+$Text['msg_err_stock_mv'] = "De momento, no han habido movimientos de stock para este producto!";
 
 $Text['ti_report_shop_pv'] = "Total ventas por proveedor";
 $Text['filter_all_sales'] = "Todas las ventas";
 $Text['filter_exact'] = "Elegir periodo";
 $Text['total_4date'] = "Total para la fecha";
 $Text['total_4provider'] = "Suma";
-$Text['sel_sales_dates'] = "Muestra ventas por proveedor y el periodo selecionado:";
+$Text['sel_sales_dates'] = "Muestra ventas por proveedor y el periodo seleccionado:";
 $Text['sel_sales_dates_ti'] = "Elige un periodo";
- 
+
 $Text['instant_repeat'] = "Repetir directamente";
 $Text['msg_confirm_delordereditems'] = "Este producto ya se ha pedido este día. Estás seguro de desactivarlo? Esto  borrará el pedido de las cestas. ";
-$Text['msg_confirm_instantr'] = "Quieres repetir la misma accion para el resto de las fechas activas? ";
+$Text['msg_confirm_instantr'] = "Quieres repetir la misma acción para el resto de las fechas activas? ";
 $Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No se puede borrar.";
 $Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. Se crea una fecha de entrega. ";
 
-$Text['msg_err_modified_order'] = "Someone has modified the orderable products for the current date while you were ordering. Some products that you had ordered are no longer available and will disappear from your cart after it has been reloaded.";
+$Text['msg_err_modified_order'] = "Alguien ha modificado los productos a pedir para fecha actual. Algunos productos que habías pedido ya no están disponibles y desaparecerán de tu carrito una vez recargado.";
 $Text['btn_confirm_del'] = "Sí, eliminar!!";
 $Text['print_new_win'] = "Ventana nueva";
 $Text['print_pdf'] = "Descarga pdf";
@@ -794,6 +803,7 @@ $Text['upcoming_orders'] = "Próximos pedidos";
 
 $Text['msg_confirm_del_mem'] = "Estas seguro de eliminar el usuario de la base de datos??";
 $Text['btn_del'] = "Eliminar";
+
 
 $Text['btn_new_provider'] = "Nuevo proveedor";
 $Text['btn_new_product'] = "Añadir producto";
@@ -817,13 +827,13 @@ $Text['msg_err_del_member'] = "No se puede borrar este usuario porque hay refere
 $Text['msg_confirm_del_provider'] = "¿Seguro que quieres borrar este proveedor?";
 $Text['msg_err_del_provider'] = "No se puede borrar este proveedor. Borra sus productos antes y vuelve a probar.";
 $Text['price_net'] = "Precio neto";
+
 $Text['custom_product_ref'] = "Id externo"; 
 $Text['btn_back_products'] = "Volver a productos";
-
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Pegar";
 
-$Text['search_provider'] = "Buscar proveidor";
+$Text['search_provider'] = "Buscar proveedor";
 $Text['msg_err_export'] = "Error al exportar datos";
 $Text['export_uf'] = "Exportar Miembros";
 $Text['btn_export'] = "Exportar";
@@ -846,13 +856,16 @@ $Text['stock_info'] = "Nota: se pueden consultar todos los cambios de stock (adi
 $Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de stock (adiciones, correcciones, pérdidas totales) desde la sección Informes &gt; Stock.";
 
 
+$Text['msg_success'] = "Fin correcto";
 $Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 
 $Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo "; 
 $Text['msg_import_matchcol'] = "Hay que hacer coincidir las entradas de la base de datos con las filas de la tabla. Debes asignar la columna que corresponde a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
 $Text['msg_import_furthercol'] = "¿Qué otras columnas de la tabla quieres importar además de la columna necesaria?"; 
-$Text['msg_import_success'] = "La importación ha funcionado correctamente. ¿Quieres importar otro archivo?"; 
+$Text['msg_import_done'] = 'Se han importado {$rows} líneas.'; 
+$Text['msg_import_another'] = "¿Quieres importar otro archivo?"; 
 $Text['btn_import_another'] = "Importar otro"; 
 $Text['btn_nothx'] = "No, gracias"; 
+$Text['direct_import_template'] = "Plantilla de importación directa";
 $Text['import_allowed'] = "Formatos compatibles"; //as in allowed file formats
 $Text['import_file'] = "Archivo de importación"; 
 $Text['public_url'] = "URL pública";
@@ -860,10 +873,13 @@ $Text['btn_load_file'] = "Cargar archivo";
 $Text['msg_uploading'] = "Se está cargando el archivo y se está generando la vista previa. Espera...";
 $Text['msg_parsing'] = "Se está leyendo el archivo del servidor y se está analizando. Espera...";
 $Text['import_step1'] = "Selección de archivo";
-$Text['import_step2'] = "Vista previa de los datos y asignacíón de columnas";
+$Text['import_step2'] = "Vista previa de los datos y asignación de columnas";
 $Text['import_reqcol'] = "Columna necesaria";
+$Text['import_ignore_rows'] = '(las líneas sin "{$match_field}" se ignorarán)';
+$Text['import_ignore_value'] = '(el valor de la columna "{$match_field}" se ignorará)';
 $Text['import_auto'] = "Tengo buenas noticias: casi todos los datos (columnas) se han podido reconocer y puedes intentar la importación automática. No obstante, la opción más segura es previsualizar primero el contenido y luego realizar la asignación de columnas de la tabla manualmente.";
 $Text['import_qnew'] = "¿Qué quieres hacer con los datos que no existen en la base de datos actual?";
+$Text['import_create_update'] = "Crear entradas nuevas y actualizar las existentes";
 $Text['import_createnew'] = "Crear entradas nuevas";
 $Text['import_update'] = "Sólo actualizar las filas existentes";
 $Text['btn_imp_direct'] = "Importar directamente";
@@ -889,24 +905,22 @@ $Text['dates_breakdown'] = "Fechas de vencimiento"; //decía "break down"
 $Text['price_brutto'] = "Precio bruto"; 
 $Text['total_brutto'] = "Total bruto";
 $Text['total_netto'] = "Total neto";
-$Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por vafor, intente de nuevo. "; 
+$Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por favor, inténtelo de nuevo. "; 
 $Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un administrador puede hacer eso!";
-
-$Text['msg_err_deactivate_prdrow'] = "This product cannot be deactivated because it has ordered items for certain dates. Deactivate the product for those individual dates first!";
-$Text['msg_err_deactivate_ir'] = "You cannot deactivate several dates for this product since certain dates contain already ordered items. Either turn off Instant Repeat or deactivate the ordered products/date individually.";
-$Text['msg_err_deactivate_product'] = "There are open orders for this product. Deactivating it will remove these items from the corresponding order carts. Deleting order items cannot be undone.";
-$Text['msg_activate_prod_ok'] = "The product has been activated successfuly."; 
-$Text['msg_deactivate_prod_ok'] = "The product has been deactivated successfuly."; 
-$Text['msg_activate_prov_ok'] = "The provider has been activated successfuly."; 
-$Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfuly."; 
-$Text['no_stock'] = "Out of stock!!";
-$Text['stock_mov_type'] = "Movement type";
-$Text['ti_search_results'] = "Search results - products";
-$Text['ti_confirm'] = "Think before clicking!";
+$Text['ti_search_results'] = "Resultados de busqueda - productos";
+$Text['ti_confirm'] = "Cuidado!";
 $Text['ti_error_form'] = "Form error";
-$Text['ti_error_exec'] = "Execution Error!!";
-
-
+$Text['ti_error_exec'] = "Error de execución!!";
+$Text['set_c_balance'] = "Actualizar balance de la cuenta de consumo";
+$Text['msg_err_deactivate_prdrow'] = "Este producto no puede ser desactivado ya que tiene algunas fechas activadas para poder hacer pedidos. Desactive primero individualmente aquestas fechas del producto!";
+$Text['msg_err_deactivate_ir'] = "Nos se puede desactivar algunas fechas de este producto ya que hay ítemes pedidos. Desactive usando Repetir directamente o desactive individualmente los ítemes producto/fecha.";
+$Text['msg_err_deactivate_product'] = "Hay pedidos abiertos para este producto. Al desactivar eliminará este artículo de los pedidos correspondientes. La eliminación de artículos de un pedido no se puede deshacer.";
+$Text['msg_activate_prod_ok'] = "El producto se ha activado con éxito."; 
+$Text['msg_deactivate_prod_ok'] = "El producto se ha desactivado con éxito."; 
+$Text['msg_activate_prov_ok'] = "El proveedor se ha activado con éxito."; 
+$Text['msg_deactivate_prov_ok'] = "El proveedor se ha desactivado con éxito."; 
+$Text['no_stock'] = "Sin stock!!";
+$Text['stock_mov_type'] = "Tipo de movimiento";
 
 
 
