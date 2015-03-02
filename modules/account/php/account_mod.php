@@ -313,32 +313,25 @@ class Account extends Aixmodel {
 
 
 
+	/**
+	 * 
+	 * retrieves list of UFs with negative account balance
+	 */
+	function get_negative_accounts()
+	{
+	    $strXML = '<negative_accounts>';
+	    $rs = do_stored_query('negative_accounts');
+	    while ($row = $rs->fetch_assoc()) {
+	        $strXML .= '<account>';
+	        foreach ($row as $field => $value) {
+	            $strXML .= "<{$field}><![CDATA[{$value}]]></{$field}>";
+	        }
+	        $strXML .= '</account>';
+	    }
+	    $strXML .= '</negative_accounts>';
+	    return $strXML;
+	}
 
-
-
-}
-
-
-
-
-/**
- * 
- * retrieves list of UFs with negative account balance
- */
-function get_negative_accounts()
-{
-    $strXML = '<negative_accounts>';
-    $rs = do_stored_query('negative_accounts');
-    while ($row = $rs->fetch_assoc()) {
-        $strXML .= '<account>';
-        foreach ($row as $field => $value) {
-            $strXML .= "<{$field}><![CDATA[{$value}]]></{$field}>";
-        }
-        $strXML .= '</account>';
-    }
-    $strXML .= '</negative_accounts>';
-    return $strXML;
-}
 
 
 
