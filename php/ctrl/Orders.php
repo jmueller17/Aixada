@@ -46,17 +46,16 @@ try{
                     p.name, 
                     um.unit,
                     round( 
-                        max(
-                            ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
-                            ) / 
+                        max(ifnull(ots.unit_price_stamp, oi.unit_price_stamp)) / 
                         (1 + rev.rev_tax_percent/100) /
                         (1 + iva.percent/100), 2) gross_price,
                     iva.percent iva_percent,
                     round( 
-                        max(
-                            ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
-                            ) /
-                        (1 + rev.rev_tax_percent/100), 2) net_price
+                        max(ifnull(ots.unit_price_stamp, oi.unit_price_stamp)) /
+                        (1 + rev.rev_tax_percent/100), 2) net_price,
+                    rev.rev_tax_percent,
+                    max(ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
+                        ) uf_price
                 from
                     aixada_order_item oi
                 left join 
@@ -120,26 +119,32 @@ try{
     			throw new Exception("An error occured during saving the new product gross price!!");      			
     		}
             // Get net price
-            $_net_price = get_value_query("
-                select round({$_gross_price} * 
-                    (1 + rev.rev_tax_percent/100) * (1 + iva.percent/100), 2)
+            
+            $row = get_row_query("
+                select 
+                    round({$_gross_price} * 
+                        (1 + iva.percent/100), 2) net_price,
+                    round({$_gross_price} * 
+                        (1 + iva.percent/100) * 
+                        (1 + rev.rev_tax_percent/100), 2) uf_price
                 from  aixada_product p
                 join (aixada_rev_tax_type rev, aixada_iva_type iva)
                 on    rev.id = p.rev_tax_type_id and iva.id = p.iva_percent_id
                 where p.id = {$_product_id}
             ");
+            $_uf_price = $row['uf_price'];
             // Ok, now update net price!!
             $ok = DBWrap::get_instance()->do_stored_query("
                 update
                     aixada_order_to_shop os
                 set
-                    os.unit_price_stamp = {$_net_price}
+                    os.unit_price_stamp = {$_uf_price}
                 where
                     os.product_id = {$_product_id}
                     and os.order_id = {$_order_id}
             ");
     		if ($ok){
-	    		echo 'OK;'.$_gross_price.';'.$_net_price;
+	    		echo 'OK;'.$_gross_price.';'.$row['net_price'].';'.$_uf_price;
     		} else {
     			throw new Exception("An error occured during saving the new product gross price!!");      			
     		}

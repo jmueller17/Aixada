@@ -255,23 +255,43 @@
 			}); //end ajax	
 
             // Functions used for refreshing the provider delivery note totals.
-            function refreshRowPrices(productId, quTotal) {
-                if (quTotal === undefined) {
-                    quTotal = $('.total_'+productId+' span:first-child')
-                              .first().text();
-                }
+            function refreshRowPrices(productId) {
                 var productElement = $('#product_'+productId);
                 if (productElement) {
                     var grossPrice = parseFloat(productElement.attr('gross_price')),
-                        netPrice = parseFloat(productElement.attr('net_price'));
-                    if (quTotal != 0 && // and check if arrived
-                               !$('#ckboxArrived_'+productId).is(':checked')) {
-                        quTotal = 0;
+                        ivaCoef = 1 + 
+                            parseFloat(productElement.attr('iva_percent')) / 100,                        
+                        netPrice = parseFloat(productElement.attr('net_price')),
+                        revTaxCoef = 1 +
+                            parseFloat(productElement.attr('rev_tax_percent')) / 100,
+                        ufPrice = parseFloat(productElement.attr('uf_price')),
+                        grossTotal = 0,
+                        netTotal = 0;
+                    if ($('#ckboxArrived_'+productId).is(':checked')) {
+                        var quTotal = parseFloat(
+                            $('.total_'+productId+' span:first-child')
+                                                               .first().text());
+                        netTotal = Math.round(100 * quTotal * 
+                                                    ufPrice / revTaxCoef) / 100;
+                        grossTotal = Math.round(100 * quTotal * 
+                                          ufPrice / revTaxCoef / ivaCoef) / 100;
+                        /* individual for any UF
+                        $('.Row-'+productId).each(function(){
+                            var text = $(this).text();
+                            if (text) {
+                                var qua = parseFloat(text);                                
+                                netTotal += Math.round(100 * qua * 
+                                                ufPrice / revTaxCoef) / 100;
+                                grossTotal += Math.round(100 * qua * 
+                                      ufPrice / revTaxCoef / ivaCoef) / 100;
+                            }
+                        });
+                        */
                     }
                     $('#grossPrice_'+productId).html('<span>'+grossPrice.toFixed(2)+'</span>');
-                    $('#grossRow_'+productId).html('<span>'+(quTotal * grossPrice).toFixed(2)+'</span>');
+                    $('#grossRow_'+productId).html('<span>'+grossTotal.toFixed(2)+'</span>');
                     $('#netPrice_'+productId).html('<span>'+netPrice.toFixed(2)+'</span>');
-                    $('#netRow_'+productId).html('<span>'+(quTotal * netPrice).toFixed(2)+'</span>');
+                    $('#netRow_'+productId).html('<span>'+netTotal.toFixed(2)+'</span>');
                 }
             }
             function refreshTotalOrder() {
@@ -392,7 +412,7 @@
 								
 								$('.total_'+lastId).html(total);
 								if (gSection !== 'print') {
-									refreshRowPrices(lastId, quTotal);
+									refreshRowPrices(lastId);
 								}
 								quTotal = 0; 
 								quShopTotal = 0; 
@@ -409,7 +429,7 @@
 						$('.total_'+lastId).html(total);
 
                         if (gSection !== 'print') {
-                            refreshRowPrices(lastId, quTotal);
+                            refreshRowPrices(lastId);
                             refreshTotalOrder();
                             $('.orderTotals').show();
                             $('.grossLabel').show();
@@ -663,7 +683,7 @@
 										$('.total_' + pid).each(function(){
 											$(this).children(':first').empty().text(total_quantity.toFixed(2));
 										});
-										refreshRowPrices(pid, total_quantity);
+										refreshRowPrices(pid);
 										refreshTotalOrder();
 									}//end callback 
 							});
@@ -692,6 +712,7 @@
                             if (prices[0]="OK") {
                                 productElement.attr('gross_price', prices[1]);
                                 productElement.attr('net_price', prices[2]);
+                                productElement.attr('uf_price', prices[3]);
                                 refreshRowPrices(product_id);
                                 refreshTotalOrder();
                             }
@@ -758,12 +779,11 @@
 					success: function(txt){
 						if (has_arrived){
 							$('.Row-'+product_id).removeClass('missing').addClass('toRevise'); 
-							refreshRowPrices(product_id);
 						} else {
 							$('.Row-'+product_id).removeClass('toRevise').addClass('missing');
 							$('#ckboxRevised_'+product_id).attr('checked','checked');
-							refreshRowPrices(product_id, 0);
 						}
+						refreshRowPrices(product_id);
 						refreshTotalOrder();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
@@ -1578,7 +1598,7 @@
 					});
 					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
 					$('.total_'+product_id+' span:first-child').text(totalQ);
-					refreshRowPrices(product_id, totalQ);
+					refreshRowPrices(product_id);
 					refreshTotalOrder();
 				}
 			
@@ -1877,7 +1897,9 @@
 							<td id="product_{id}" class="productIdClass"
 								gross_price="{gross_price}"
 								iva_percent="{iva_percent}"
-								net_price="{net_price}">{id}</td>
+								net_price="{net_price}"
+								rev_tax_percent="{rev_tax_percent}"
+								uf_price="{uf_price}">{id}</td>
 							<td>{name}</td>
 							<td id="unit_{id}">{unit}</td>
 							<td class="textAlignCenter arrivedCol"><input type="checkbox" name="hasArrived" hasArrivedId="{id}" id="ckboxArrived_{id}" checked="checked" /></td>

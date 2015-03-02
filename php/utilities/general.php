@@ -331,21 +331,20 @@ function do_stored_query()
 }
 
 /**
- * Execute a SQL query and returns single value of a firts row and firt column.
+ * Execute a SQL query and returns first row.
  * @param string $strSQL A SQL query
  * @param $not_found 
- * @return The value found or null if not found colum or row.
+ * @return array The first row found or null if not found row.
  */
-function get_value_query($strSQL, $not_found = null) {
-    $value = $not_found;
+function get_row_query($strSQL, $not_found = null) {
     $db = DBWrap::get_instance();
     $rs = $db->Execute($strSQL);
     $row = $rs->fetch_array();
-    if (isset($row[0])) {
-        $value = $row[0];
+    if (!$row) {
+        return $not_found;
     }
     $db->free_next_results();    
-    return $value;
+    return $row;
 }
 
 /**
