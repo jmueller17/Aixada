@@ -24,7 +24,7 @@ try{
 			$in->read_form_submit();
 
 			//if id is given, edit existing incident, otherwise create new
-			if ($id >get_param('incident_id',0)){
+			if ($id = get_param('incident_id',0)){
 				$in->edit($id);
 			} else {
 				$in->insert();
