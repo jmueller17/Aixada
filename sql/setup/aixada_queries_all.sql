@@ -1379,7 +1379,8 @@ begin
 		from
 			aixada_order_to_shop ots
 		where 
-			ots.order_id = the_order_id);
+			ots.arrived = 1
+			and ots.order_id = the_order_id);
 	
 	-- show how much of the order has been validated as uf carts. if people pay this is real income --
 	set validated_income = 
