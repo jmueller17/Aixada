@@ -15,7 +15,7 @@
         $Text['_saving'] = 'Guardant';
         $Text['_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
         break;
-    case 'ca-va':
+    case 'es':
         $Text['_prv_prices'] = 'Precios del proveedor (sin imp.rev.)';
         $Text['_gross_price'] = 'Precio';
         $Text['_suma'] = 'Suma';
