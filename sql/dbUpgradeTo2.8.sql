@@ -54,3 +54,20 @@ insert into
 values 
 		('2.8'); 
 
+
+/**
+ *	aixada_order_to_shop now is not a temporal table
+ */
+insert into 
+	aixada_order_to_shop (
+        order_item_id, uf_id, order_id, unit_price_stamp, product_id,
+        quantity, arrived, revised
+    )
+select
+	si.order_item_id, oi.uf_id,oi.order_id, si.unit_price_stamp, si.product_id,
+    si.quantity, 1 arrived, 1  revised
+from
+    aixada_shop_item si,
+    aixada_order_item oi
+where 
+    oi.id = si.order_item_id;
