@@ -201,7 +201,7 @@ class Deliver {
 	 *	Utility function to create a pdf from an existing file (such as html) or a string directly. 
 	 */
 	public static function create_pdf($file, $str){
-
+		
 
 	}
 

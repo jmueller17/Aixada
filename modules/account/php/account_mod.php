@@ -92,7 +92,7 @@ class Account extends Aixmodel {
 	  $strXML = '<accounts>'
 	    . '<row><id f="id">-3</id><name f="name">Caixa</name></row>'
 	    . '<row><id f="id">-2</id><name f="name">Consum</name></row>'
-	    . '<row><id f="id">-1</id><name f="name">Manteniment</name></row>';
+	    . '<row><id f="id">-1</id><name f="name">Manteniment</name></row>';	
 	  $sqlStr = ($inactive)? "SELECT id+1000, id, name FROM aixada_uf":"SELECT id+1000, id, name FROM aixada_uf where active=1";  
 	  $rs = DBWrap::get_instance()->Execute($sqlStr);
 	  
