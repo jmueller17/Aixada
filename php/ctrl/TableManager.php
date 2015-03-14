@@ -123,7 +123,7 @@ function post_edit_hook($request)
 	$db = DBWrap::get_instance();
 	$row = $db->Execute("select current_price from aixada_price where product_id=:1", $request['id'])->fetch_array();
 	if ($row[0] != $request['unit_price']) {
-	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], $_SESSION['userdata']['uf_id']);
+	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], $_SESSION['userdata']['user_id']);
 	}
 	break;
     default:
@@ -135,7 +135,7 @@ function post_create_hook($index, $request)
 {
     switch ($request['table']) {
     case 'aixada_product': 
-	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], $_SESSION['userdata']['uf_id']);
+	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], $_SESSION['userdata']['user_id']);
 	break;
     default:
 	break;
