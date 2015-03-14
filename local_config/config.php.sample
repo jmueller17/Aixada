@@ -76,6 +76,17 @@ class configuration_vars {
   public $prevent_out_of_stock_purchase = true;
   
   /**
+   *
+   * Allows to choose the order in which the UF will be displayed when reviewing
+   *    look and print orders.
+   * Possible values are: `asc` (by id_uf in ascending), `desc` (by id_uf
+   *    descending) and `name` (alphabetically by name) Default value is `desc`.
+   * 
+   */
+  public $order_review_uf_sequence = 'desc';
+  
+  
+  /**
    * 
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
