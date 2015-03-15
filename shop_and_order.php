@@ -490,7 +490,7 @@
 
 
 	<div class="container">
-		<!-- page header -->
+		<!-- page subnav / header -->
 		<div class="row">
 	    		<div class="col-md-4">
 	    			<h1 class="section sec-1">
@@ -512,17 +512,18 @@
 				</div>
 	    		<div class="col-md-4 pull-left">
 	    			<h1 class="section sec-1">
-					<div class="form-group">
-                        <div class='input-group date' id='datepicker' >
-                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" />
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>
+						<div class="form-group">
+	                        <div class='input-group date' id='datepicker' >
+	                            <input type='text' class="form-control" id="inputField" data-format="dddd, ll" />
+	                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+	                            </span>
+	                        </div>
+                    	</div>
                     </h1>
                 </div>
                 <div class="col-md-4">
                 	<div class="btn-group pull-right">
+                		<h1>
 	                	<button class="btn btn-primary change-sec" type="button" toggle-section="#sec-2,#sec-1">
                 			<span class="glyphicon glyphicon-shopping-cart pull-left"></span>
                 			&nbsp;&nbsp;&nbsp;
@@ -531,10 +532,10 @@
 								} else if ($_REQUEST['what'] == 'Shop') {
 									echo 'Shop cart';
 								}?>
-
                 			&nbsp;&nbsp;&nbsp;&nbsp;
                 			<span class="badge" id="itemCount"></span>
                 		</button>
+                	</h1>
 					</div>
                 </div>	
 		</div>
