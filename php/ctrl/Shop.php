@@ -1,15 +1,17 @@
 <?php
+
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
-require_once(__ROOT__ . "local_config/config.php");
-require_once(__ROOT__ . "php/inc/database.php");
+
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/shop.php");
 
 if (!isset($_SESSION)) {
     session_start();
 }
+
+
 
 try{
 
@@ -22,7 +24,7 @@ try{
 
     	//returns shopping cart(s) for logged user!  
     	case 'getShopCart':
-    		printXML(stored_query_XML_fields('get_shop_cart', get_param('date',0), get_session_uf_id(), get_param('shop_id',0),1), get_param('validated',0));
+    		print_stored_query('xml','get_shop_cart', get_param('date',0), get_session_uf_id(), get_param('shop_id',0), get_param('validated',0) );
     		exit;
     		
 
@@ -37,19 +39,19 @@ try{
 			exit;
     		
 		case 'getProductsBelowMinStock':
-	    	printXML(query_XML_noparam('products_below_min_stock'));
+	    	//printXML(query_XML_noparam('products_below_min_stock'));
 	    	exit;
 	    
 	    case 'stockMovements':
-        	printXML(stored_query_XML_fields('stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('from_date',""), get_param('to_date',""), get_param('limit', 0)));
+        	print_stored_query('xml','stock_movements', get_param('product_id',0), get_param('provider_id',0), get_param('from_date',""), get_param('to_date',""), get_param('limit', 0));
         	exit;
         	
 	    case 'getTotalSalesByProviders':
-	    	printXML(stored_query_XML_fields('get_purchase_total_by_provider', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('groupby','')  ));
+	    	print_stored_query('xml','get_purchase_total_by_provider', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('groupby','')  );
 			exit;
 			
 	    case 'getDetailSalesByProvider':
-	    	printXML(stored_query_XML_fields('get_purchase_total_of_products', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('validated',1), get_param('groupby','')));
+	    	print_stored_query('xml','get_purchase_total_of_products', get_param('from_date',0), get_param('to_date',0), get_param('provider_id',0), get_param('validated',1), get_param('groupby',''));
 			exit; 	    	
 	    	
     		

@@ -113,7 +113,7 @@
 		$("#tbl_stock_movements tbody").xml2html("init", {
 			url: 'php/ctrl/Shop.php',
 			params : 'oper=stockMovements&limit=50',
-			loadOnInit:true,
+			loadOnInit:false,
 			rowComplete : function (rowIndex, row){
 				$.formatQuantity(row);
 			},
@@ -1357,47 +1357,72 @@
 	</div>
 	<!-- end of headwrap -->
 	
-	<div class="container">	
+
+	<!-- sub nav -->
+	<div class="container section sec-1">
 		<div class="row">
-			<div class="col-md-6"></div>
-			<div class="col-md-4 section sec-1 sec-2 sec-2-search-product">
-				<div class="input-group">
-			    	<input type="text" id="search" class="form-control" placeholder="<?=$Text['search_product'];?>">
-			      	<span class="input-group-btn">
-			        	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span>&nbsp;</button>
-			      	</span>
-				</div>
-			</div>
-			<div class="col-md-1 section sec-1 sec-2 sec-2-search-product">
-				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	    				Actions <span class="caret"></span>
-	  				</button>
-					<ul class="dropdown-menu" role="menu">
-						<li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_provider'];?></a></li>
-						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-provider"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
-						<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-provider"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
+			  	<div class="navbar-header">
+			     	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sub-navbar-collapse">
+				        <span class="sr-only">Toggle navigation</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+			      	</button>
+	    		</div>
 
-						<li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_product'];?></a></li>
-					   	<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-product"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
-						<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-product"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
- 						
-					</ul>
-				</div>
-			</div>
-			<div class="col-md-1 section sec-1 sec-2 sec-2-search-product">
-				<div class="btn-group pull-right">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="<?=$Text['btn_filter'];?>">
-						<span class="glyphicon glyphicon-filter"></span> <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" role="menu">
-					    <li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-provider"><span class=""></span> <?=$Text['active_providers'];?></a></li>
-					    <li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-product"><span class=""></span> <?=$Text['active_products'];?></a></li>
-					</ul>
-				</div>
-			</div>
+	    		<div class="navbar-collapse collapse" id="sub-navbar-collapse">
+		    	
+		    		<div class="col-md-6"></div>	
+					<div class="col-md-4 section sec-1 sec-2 sec-2-search-product">
+						<form class="navbar-form" role="search">
+						<div class="input-group">
+					    	<input type="text" id="search" class="form-control" placeholder="<?=$Text['search_product'];?>">
+					      	<span class="input-group-btn">
+					        	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span>&nbsp;</button>
+					      	</span>
+						</div>
+					</form>
+	  				</div>
+
+	  				
+					<div class="btn-group col-md-1 section sec-1 sec-2 sec-2-search-product pull-right">
+						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+		    				Actions <span class="caret"></span>
+		  				</button>
+						<ul class="dropdown-menu" role="menu">
+							<li class="section sec-1"><a href="#sec-6" class="change-sec ctx-nav ctx-nav-new-provider"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_provider'];?></a></li>
+							<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-provider"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+							<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-provider"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+							<li class="section sec-2"><a href="#sec-4" class="change-sec ctx-nav ctx-nav-new-product"><span class="glyphicon glyphicon-plus-sign"></span> <?=$Text['btn_new_product'];?></a></li>
+						   	<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-import-product"><span class="glyphicon glyphicon-import"></span> <?=$Text['btn_import'];?></a></li>
+							<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-export-product"><span class="glyphicon glyphicon-export"></span> <?=$Text['btn_export'];?></a></li>
+						</ul>
+					</div>
+
+
+
+	  				<div class="btn-group col-md-1 pull-right section sec-1 sec-2 sec-2-search-produc">
+						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown" title="<?=$Text['btn_filter'];?>" >
+							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li class="section sec-1"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-provider"><span class=""></span> <?=$Text['active_providers'];?></a></li>
+							<li class="section sec-2"><a href="javascript:void(null)" class="ctx-nav ctx-nav-filter-active-product"><span class=""></span> <?=$Text['active_products'];?></a></li>
+						</ul>
+					</div>
+					
+
+
+		      	</div>
+			</nav>
 		</div>
+	</div><!-- end sub nav -->
 
+
+
+
+	<div class="container" id="aix-title">
 		<div class="row">
 			<div class="col-md-9">
 		    	<h1 class="section sec-1"> <?php echo $Text['head_ti_provider']; ?></h1>
