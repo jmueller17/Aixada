@@ -25,8 +25,6 @@ insert into aixada_product_category values
 		(21000, 'prdcat_health'),
 		(22000, 'prdcat_misc');
 
-
-
 insert into aixada_orderable_type values
        (1, 'stock'),
        (2, 'orderable');
@@ -56,30 +54,11 @@ insert into aixada_unit_measure values
        (13, 'bunch','bunch');
 
 
-insert into aixada_payment_method (id, description, details)
-       values 
-       	(1, 'cash', 'cash payment'), 
-       	(5,'stock', 'register gain or loss of stock'),
-		(6,'validation', 'register validation of cart'),
-		(7,'deposit','register the inpayment of cash'),
-		(8,'bill','register withdrawal for bill payment to provider'),
-		(9,'correction','by-hand correction of account balance'),
-		(10,'withdrawal','default cash withdrawal'),
-		(11,'setup','account setup');
-       
-
 insert into aixada_currency 
 	values
        (1, 'Euro', 1.0),
        (2, 'Solidary Currency', 1.0);
 		
-
-insert into aixada_incident_type
-   values        
-      (1, 'internal', 'incidents are restricted to loggon in users.'),
-      (2, 'internal + email', 'like 1 + incidents are send out as email if possible'),
-      (3, 'internal + portal', 'like 1 + incidents are posted on the portal'),
-      (4, 'internal + email + portal', 'Incidents are posted internally, send out as email and posted on the portal');
             
 insert into 
 	aixada_stock_movement_type (name, description)
@@ -92,5 +71,5 @@ values
 insert into 
 	aixada_version (version) 
 values 
-		('2.8'); 
+		('3.0'); 
       

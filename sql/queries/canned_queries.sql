@@ -28,6 +28,50 @@ begin
   deallocate prepare st;
 end|
 
+drop procedure if exists aixada_bill_list_all_query|
+create procedure aixada_bill_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_bill.id,
+      aixada_bill.ref_bill,
+      aixada_bill.uf_id,
+      aixada_uf.name as uf_name,
+      aixada_bill.operator_id,
+      aixada_bill.description,
+      aixada_bill.date_for_bill,
+      aixada_bill.ts_validated 
+    from aixada_bill 
+    left join aixada_uf as aixada_uf on aixada_bill.uf_id=aixada_uf.id";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
+drop procedure if exists aixada_bill_rel_cart_list_all_query|
+create procedure aixada_bill_rel_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
+begin
+  set @q = "select
+      aixada_bill_rel_cart.id,
+      aixada_bill_rel_cart.bill_id,
+      aixada_bill.description as bill,
+      aixada_bill_rel_cart.cart_id,
+      aixada_cart.name as cart 
+    from aixada_bill_rel_cart 
+    left join aixada_bill as aixada_bill on aixada_bill_rel_cart.bill_id=aixada_bill.id
+    left join aixada_cart as aixada_cart on aixada_bill_rel_cart.cart_id=aixada_cart.id";
+  set @lim = ' ';				 
+ if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
+  set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
+  set @q = concat(@q, @lim);
+  prepare st from @q;
+  execute st;
+  deallocate prepare st;
+end|
+
 drop procedure if exists aixada_cart_list_all_query|
 create procedure aixada_cart_list_all_query (in the_index char(50), in the_sense char(4), in the_start int, in the_limit int, in the_filter text)
 begin
@@ -504,7 +548,7 @@ begin
     from aixada_stock_movement 
     left join aixada_product as aixada_product on aixada_stock_movement.product_id=aixada_product.id
     left join aixada_stock_movement_type as aixada_stock_movement_type on aixada_stock_movement.movement_type_id=aixada_stock_movement_type.id";
-set @lim = ' ';				 
+  set @lim = ' ';				 
  if the_filter is not null and length(the_filter) > 0 then set @lim = ' where '; end if;
   set @lim = concat(@lim, the_filter, ' order by active desc, ', the_index, ' ', the_sense, ' limit ', the_start, ', ', the_limit);
   set @q = concat(@q, @lim);
@@ -619,6 +663,7 @@ create procedure aixada_version_list_all_query (in the_index char(50), in the_se
 begin
   set @q = "select
       aixada_version.id,
+      aixada_version.module_name,
       aixada_version.version 
     from aixada_version ";
   set @lim = ' ';				 

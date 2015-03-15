@@ -31,19 +31,12 @@
 
      
      -- create roles --
-  	insert into 
-  		aixada_user_role (user_id, role) 
-  	values 
-    (1, 'Hacker Commission');
+insert into 
+  aixada_user_role (user_id, role) 
+values 
+  (1, 'Hacker Commission');
     
-    
-    -- create accounts --
-    insert into aixada_account (account_id, quantity, payment_method_id, currency_id, description, operator_id, ts, balance)
-	values
-		(-3, 0, 11, 1, 'cashbox setup', 1, now(), 0),
-		(-2, 0, 11, 1, 'consum setup', 1, now(), 0),
-		(-1, 0, 11, 1, 'maintenance setup', 1, now(), 0),
-	   	(1001,0, 11, 1, 'admin account setup', 1, now(), 0 );
+
     
     	
     

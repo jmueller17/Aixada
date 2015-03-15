@@ -7,6 +7,12 @@ class canned_table_manager {
  case 'aixada_account':
      return "['id','TRANSLATION(account_id)','Cantidad','TRANSLATION(payment_method_id)','TRANSLATION(currency_id)','Descripci\u00f3n','TRANSLATION(operator_id)','TRANSLATION(ts)','Balance']";
 
+ case 'aixada_bill':
+     return "['id','TRANSLATION(ref_bill)','TRANSLATION(uf)','TRANSLATION(operator_id)','Descripci\u00f3n','TRANSLATION(date_for_bill)','Validada']";
+
+ case 'aixada_bill_rel_cart':
+     return "['id','Factura','TRANSLATION(cart)']";
+
  case 'aixada_cart':
      return "['id','Nombre','TRANSLATION(uf)','Fecha de compra','TRANSLATION(operator_id)','Validada','TRANSLATION(ts_last_saved)']";
 
@@ -83,7 +89,7 @@ class canned_table_manager {
      return "['TRANSLATION(user_id)','TRANSLATION(role)']";
 
  case 'aixada_version':
-     return "['id','TRANSLATION(version)']";
+     return "['id','TRANSLATION(module_name)','TRANSLATION(version)']";
 
     }
   }
@@ -92,6 +98,12 @@ class canned_table_manager {
     switch($table) {
  case 'aixada_account':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'account_id',index:'account_id',label:'TRANSLATION(account_id)',width:'150',xmlmap:'account_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'quantity',index:'quantity',label:'Cantidad',width:'150',xmlmap:'quantity',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'payment_method_id',index:'payment_method_id',label:'TRANSLATION(payment_method_id)',width:'150',xmlmap:'payment_method_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'currency_id',index:'currency_id',label:'TRANSLATION(currency_id)',width:'150',xmlmap:'currency_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'description',index:'description',label:'Descripci\u00f3n',width:'255',xmlmap:'description',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts',index:'ts',label:'TRANSLATION(ts)',width:'300',xmlmap:'ts',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'balance',index:'balance',label:'Balance',width:'150',xmlmap:'balance',editable:false,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
+
+ case 'aixada_bill':
+     return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'ref_bill',index:'ref_bill',label:'TRANSLATION(ref_bill)',width:'150',xmlmap:'ref_bill',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'uf_id',index:'uf',label:'TRANSLATION(uf_id)',width:'300',xmlmap:'uf',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_uf&field1=id&field2=name'}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'description',index:'description',label:'Descripci\u00f3n',width:'255',xmlmap:'description',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'date_for_bill',index:'date_for_bill',label:'TRANSLATION(date_for_bill)',width:'300',xmlmap:'date_for_bill',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts_validated',index:'ts_validated',label:'Validada',width:'300',xmlmap:'ts_validated',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
+
+ case 'aixada_bill_rel_cart':
+     return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'bill_id',index:'bill',label:'TRANSLATION(bill_id)',width:'300',xmlmap:'bill',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_bill&field1=id&field2=description'}},{name:'cart_id',index:'cart',label:'Id de la cesta',width:'300',xmlmap:'cart',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_cart&field1=id&field2=name'}}]";
 
  case 'aixada_cart':
      return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'name',index:'name',label:'Nombre',width:'255',xmlmap:'name',editable:true,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'uf_id',index:'uf',label:'TRANSLATION(uf_id)',width:'300',xmlmap:'uf',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true},edittype:'select',editoptions:{dataUrl:'php\/ctrl\/SmallQ.php?oper=getFieldOptions&table=aixada_uf&field1=id&field2=name'}},{name:'date_for_shop',index:'date_for_shop',label:'Fecha de compra',width:'300',xmlmap:'date_for_shop',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'operator_id',index:'operator_id',label:'TRANSLATION(operator_id)',width:'150',xmlmap:'operator_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts_validated',index:'ts_validated',label:'Validada',width:'300',xmlmap:'ts_validated',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'ts_last_saved',index:'ts_last_saved',label:'TRANSLATION(ts_last_saved)',width:'300',xmlmap:'ts_last_saved',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
@@ -169,7 +181,7 @@ class canned_table_manager {
      return "[{name:'user_id',index:'user_id',label:'TRANSLATION(user_id)',width:'150',xmlmap:'user_id',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'role',index:'role',label:'TRANSLATION(role)',width:'100',xmlmap:'role',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
  case 'aixada_version':
-     return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'version',index:'version',label:'TRANSLATION(version)',width:'42',xmlmap:'version',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
+     return "[{name:'id',index:'id',label:'id',width:'150',xmlmap:'id',editable:false,hidden:false,editrules:{edithidden:true,searchhidden:true}},{name:'module_name',index:'module_name',label:'TRANSLATION(module_name)',width:'100',xmlmap:'module_name',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}},{name:'version',index:'version',label:'TRANSLATION(version)',width:'42',xmlmap:'version',editable:true,hidden:true,editrules:{edithidden:true,searchhidden:true}}]";
 
     }
   }
@@ -178,6 +190,12 @@ class canned_table_manager {
     switch($table) {
  case 'aixada_account':
      return "[]";
+
+ case 'aixada_bill':
+     return "[uf_id]";
+
+ case 'aixada_bill_rel_cart':
+     return "[bill_id,cart_id]";
 
  case 'aixada_cart':
      return "[uf_id]";
