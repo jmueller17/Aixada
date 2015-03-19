@@ -618,7 +618,7 @@ $Text['msg_correct_stock'] = "Adjusting stock this way should be the exception! 
 $Text['btn_yes_corret'] = "Yes, make correction!";
 $Text['search_product'] = "Search a product";
 $Text['add_stock'] = "Add stock";
-$Text['click_to_edit'] = "Click table cells to edit!";
+$Text['click_to_edit'] = "Click cell to edit!";
 $Text['no_results'] = "The search produced no results.";
 $Text['for'] = "for"; //as in order FOR Aurora
 $Text['date_for_order'] = "Delivery date";
@@ -923,6 +923,19 @@ $Text['msg_activate_prov_ok'] = "The provider has been activated successfully.";
 $Text['msg_deactivate_prov_ok'] = "The provider has been deactivated successfully."; 
 $Text['no_stock'] = "Out of stock!!";
 $Text['stock_mov_type'] = "Movement type";
+
+// Orders
+$Text['or_prv_prices'] = 'Prices provider (without rev.tax)';
+$Text['or_gross_price'] = 'Price';
+$Text['or_suma'] = 'Sum';
+$Text['or_gross_total'] = 'Imp.Total';
+$Text['or_net_price'] = 'Price+VAT';
+$Text['or_net_total'] = 'Total+VAT';
+$Text['or_click_to_edit_total'] = 'Click to adjust total quantities';
+$Text['or_click_to_edit_gprice'] = 'Click to adjust price';
+$Text['or_saving'] = 'Saving';
+$Text['or_ostat_desc_validated'] = 'Items of this order have been validated';
+
 
 //$Text[''] = ""; 
 

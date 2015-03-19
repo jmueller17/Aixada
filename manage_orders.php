@@ -1,46 +1,4 @@
-<?php 
-    include "php/inc/header.inc.php";
-    
-    // Texts of the literals used only in this page.
-    switch (get_session_language()) {
-    case 'ca-va':
-        $Text['_prv_prices'] = 'Preus del proveïdor (sense imp.rev.)';
-        $Text['_gross_price'] = 'Preu';
-        $Text['_suma'] = 'Suma';
-        $Text['_gross_total'] = 'Imp.Total';
-        $Text['_net_price'] = 'Preu+IVA';
-        $Text['_net_total'] = 'Total+IVA';
-        $Text['_click_to_edit_total'] = 'Clic per ajustar la quantitat total';
-        $Text['_click_to_edit_gprice'] = 'Clic per ajustar el preu';
-        $Text['_saving'] = 'Guardant';
-        $Text['_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
-        break;
-    case 'es':
-        $Text['_prv_prices'] = 'Precios del proveedor (sin imp.rev.)';
-        $Text['_gross_price'] = 'Precio';
-        $Text['_suma'] = 'Suma';
-        $Text['_gross_total'] = 'Imp.Total';
-        $Text['_net_price'] = 'Precio+IVA';
-        $Text['_net_total'] = 'Total+IVA';
-        $Text['_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
-        $Text['_click_to_edit_gprice'] = 'Clic para ajustar el precio';
-        $Text['_saving'] = 'Guardando';
-        $Text['_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
-        break;
-    default: // en
-        $Text['_prv_prices'] = 'Prices provider (without rev.tax)';
-        $Text['_gross_price'] = 'Price';
-        $Text['_suma'] = 'Sum';
-        $Text['_gross_total'] = 'Imp.Total';
-        $Text['_net_price'] = 'Price+VAT';
-        $Text['_net_total'] = 'Total+VAT';
-        $Text['_click_to_edit_total'] = 'Click to adjust total quantities';
-        $Text['_click_to_edit_gprice'] = 'Click to adjust price';
-        $Text['_saving'] = 'Saving';
-        $Text['_ostat_desc_validated'] = 'Items of this order have been validated';
-        break;
-    }
-?>
+<?php include "php/inc/header.inc.php"; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -100,16 +58,16 @@
             ostat_desc_postponed:   "<?php echo $Text['ostat_desc_postponed']; ?>",
             ostat_desc_cancel:   "<?php echo $Text['ostat_desc_cancel']; ?>",
             ostat_desc_changes:   "<?php echo $Text['ostat_desc_changes']; ?>",
-            _ostat_desc_validated:   "<?php echo $Text['_ostat_desc_validated']; ?>",
+            _ostat_desc_validated:   "<?php echo $Text['or_ostat_desc_validated']; ?>",
             ostat_desc_incomp:   "<?php echo $Text['ostat_desc_incomp']; ?>", 
-            _suma:           "<?php echo $Text['_suma']; ?>",
-            _gross_price:    "<?php echo $Text['_gross_price']; ?>",
-            _gross_total:    "<?php echo $Text['_gross_total']; ?>",
-            _net_price:      "<?php echo $Text['_net_price']; ?>",
-            _net_total:      "<?php echo $Text['_net_total']; ?>",
-            _saving:         "<?php echo $Text['_saving']; ?>",
-            _click_to_edit_total: "<?php echo $Text['_click_to_edit_total']; ?>",
-            _click_to_edit_gprice:"<?php echo $Text['_click_to_edit_gprice']; ?>"
+            _suma:           "<?php echo $Text['or_suma']; ?>",
+            _gross_price:    "<?php echo $Text['or_gross_price']; ?>",
+            _gross_total:    "<?php echo $Text['or_gross_total']; ?>",
+            _net_price:      "<?php echo $Text['or_net_price']; ?>",
+            _net_total:      "<?php echo $Text['or_net_total']; ?>",
+            _saving:         "<?php echo $Text['or_saving']; ?>",
+            _click_to_edit_total: "<?php echo $Text['or_click_to_edit_total']; ?>",
+            _click_to_edit_gprice:"<?php echo $Text['or_click_to_edit_gprice']; ?>"
         };
 
         // Configuration values used by js code.        
@@ -338,9 +296,10 @@
 					var tbodyStr = '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
 					
 					for (var i=0; i<header.length; i++){
-						var colClass = 'Col-'+header[i];
-						var rowClass = 'Row-'+product_id;
-						tbodyStr += '<td class="'+colClass+' '+rowClass+' hidden interactiveCell toRevise" col="'+header[i]+'" row="'+product_id+'"></td>';
+						var uf_id = header[i],
+							colClass = 'Col-'+uf_id,
+							rowClass = 'Row-'+product_id;
+						tbodyStr += '<td class="'+colClass+' '+rowClass+' hidden interactiveCell toRevise textAlignCenter" col="'+uf_id+'" row="'+product_id+'"></td>';
 					}
 
 					//product total quantities
@@ -389,7 +348,7 @@
 							var tblRow = '.Row-'+product_id;
 							var pid	= product_id + '_' + uf_id; 
 							
-							$(tblCol+tblRow).append(' <p id="'+pid+'" class="textAlignCenter">'+qu+''+quShopHTML+'</p>')
+							$(tblCol+tblRow).html(qu+''+quShopHTML);
 							
 							if (revised == true) {
 								$(tblCol+tblRow).removeClass('toRevise').addClass('revised');
@@ -674,7 +633,6 @@
 										    $(selector)
 										    	.removeClass('toRevise')
 										    	.addClass('revised')
-										    	.children(':first')
 										    	.text(quantity);
 										    
 										});
@@ -727,21 +685,18 @@
 					var col = $(this).attr('col');
 					var row = $(this).attr('row');
 					var product = $(this).parent().children().eq(1).text();
-
-					//$('.Row-'+row).addClass('editHighlightRow');
-					//$('.Col-'+col).addClass('editHighlightCol');
-					
 					if (!$(this).hasClass('editable') && gSection == 'review'){
-						$(this).children(':first')
-							.addClass('editable')
+						$(this).addClass('editable')
 							.editable('php/ctrl/Orders.php', {			//init the jeditable plugin
 									submitdata : {
 										oper: 'editQuantity',
-										order_id : gSelRow.attr('orderId')
-										},
-									id 		: 'product_uf',
+										order_id : gSelRow.attr('orderId'),
+										product_id: row,
+										uf_id: col
+									},
 									name 	: 'quantity',
 									indicator: local_lang._saving,
+									placeholder:'',
 								    tooltip	:
                                         local_lang.uf_short + ' ' + col + '\n' +
                                         product + '\n' +
@@ -749,7 +704,7 @@
 									callback: function(value, settings){
 										$(this).parent().removeClass('toRevise').addClass('revised');
 										
-										recalcRowTotal($(this).parent().attr('row'));
+										recalcRowTotal(row);
 									} 
 						});
 
@@ -1593,8 +1548,7 @@
 				function recalcRowTotal(product_id){
 					var totalQ = 0; 
 					$('td.Row-'+product_id).filter(':not(:hidden)').each(function(){
-						totalQ += new Number($("p",this).text());
-
+						totalQ += new Number($(this).text());
 					});
 					if (totalQ.toString().length > 7) 	totalQ = totalQ.toFixed(3);
 					$('.total_'+product_id+' span:first-child').text(totalQ);
@@ -1882,13 +1836,13 @@
 							<th class="arrivedCol"><?=$Text['arrived']; ?></th>
 						</tr>
 						<tr class="orderTotals">
-							<td colspan="3" class="orderTotalsDesc"><?php echo $Text['_prv_prices']; ?><td>
+							<td colspan="3" class="orderTotalsDesc"><?php echo $Text['or_prv_prices']; ?><td>
 							<td class="arrivedCol"></td>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr class="orderTotals">
-							<td colspan="3"class="orderTotalsDesc"><?php echo $Text['_prv_prices']; ?><td>
+							<td colspan="3"class="orderTotalsDesc"><?php echo $Text['or_prv_prices']; ?><td>
 							<td class="arrivedCol"></td>
 						</tr>
 					</tfoot>
