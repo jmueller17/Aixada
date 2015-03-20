@@ -511,10 +511,12 @@
 	
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">
+				<?php if ($cfg_use_shop) {  // USE SHOP: start  ?>
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
 					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
 				</div>
+				<?php } // - - - - - - - - - - USE SHOP: end ?>
 				<div class="homeIcon">
 					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
 					<p><a href="shop_and_order.php?what=Order"><?php echo $Text['icon_order'];?></a></p>
