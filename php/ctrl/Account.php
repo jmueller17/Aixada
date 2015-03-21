@@ -9,6 +9,7 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/account.php");
 require_once(__ROOT__ . "php/lib/report_manager.php");
 require_once(__ROOT__ . "php/lib/account_movement.php");
+require_once(__ROOT__ . "php/lib/account_operations.php");
 
 
 $use_session_cache = true; 
@@ -20,46 +21,110 @@ if (!isset($_SESSION)) {
 
 
 try{ 
-   	
+   	$ao = new account_operations();
  	switch ($_REQUEST['oper']) {
+        case 'getAccounts':
+	        printXML($ao->get_accounts_XML(
+                get_param_int('all', 0), 
+                get_param_array_int('account_types'), 
+                get_param_int('show_uf'), 
+                get_param_int('show_providers')
+            ));
+            exit;
 
  		case 'getAllAccounts':
-	        printXML(get_accounts(1));
+	        printXML($ao->get_accounts_XML(1, array(1,2), 1, 1));
 	        exit;
  		
 	    case 'getActiveAccounts':
-	        printXML(get_accounts(0));
+	        printXML($ao->get_accounts_XML(0, array(1,2), 1, 1));
 	        exit;   
 	        
   		case 'accountExtract':
-  			echo get_account_extract(get_param('account_id', get_session_uf_id() ), get_param('filter','today'), get_param('fromDate',0), get_param('toDate',0)  );
+  			echo get_account_extract(
+				get_param('account_id', get_session_uf_id() ), 
+				get_param('filter','today'),
+				get_param('fromDate',0),
+				get_param('toDate',0)
+			);
   			exit; 
   		
-  	 	case 'latestMovements':
-  	 		printXML(stored_query_XML_fields('latest_movements'));
+  	 	case 'latestMovements':  	 		
+            $rs = $ao->latest_movements_rs(
+                get_param_int('limit', 10), 
+                get_param_array_int('account_types'), 
+                get_param_int('show_uf', 1), 
+                get_param_int('show_providers', 0)
+            );
+            if ($rs) {
+                printXML(rs_XML_fields($rs));
+            }
 	    	exit;
 	    	
+	    case 'getBalances':
+            printXML(
+				$ao->get_balances_XML(get_param_array_int('account_types'))
+			);
+            exit;
+
+	   	case 'getUfBalances':
+			printXML(rs_XML_fields(
+				$ao->get_uf_balances_rs(
+					get_param_int('all', 0),                
+					get_param_int('negative', 0)
+				)
+			));
+	    	exit;
+			
 	   	case 'getNegativeAccounts':
-	  		printXML(get_negative_accounts());
+			printXML(rs_XML_fields(
+				$ao->get_uf_balances_rs(0, 1)
+			));
 	    	exit;
 	    	
-	    case 'getIncomeSpendingBalance': 
-	    	printXML(stored_query_XML_fields('income_spending_balance', get_param('date',0)));
+	    case 'getIncomeSpendingBalance':
+			printXML(rs_XML_fields(
+				$ao->income_spending_rs(
+					get_param_date('date',date("Y-m-d")),
+					get_param_array_int('account_types', array(1))
+				)
+			));
 	    	exit;
-	    	
 	    	
 	    case 'globalAccountsBalance':
 	    	printXML(stored_query_XML_fields('global_accounts_balance'));
 			exit;
 			
-	    case 'correctBalance':
+        case 'addOperation':
+            echo $ao->add_operation(
+                get_param('account_operation',''),
+                array(
+                    'account_from_id' => get_param_int('account_from_id'),	
+                    'uf_from_id' => get_param_int('uf_from_id'),	
+                    'provider_from_id' => get_param_int('provider_from_id'),	
+                    'account_to_id' => get_param_int('account_to_id'),	
+                    'uf_to_id' => get_param_int('uf_to_id'),
+                    'provider_to_id' => get_param_int('provider_to_id')
+                ),	
+                get_param_numeric('quantity'),
+                get_param('description','')
+            );
+            exit;
+        
+        case 'correctBalance':
 	    	echo do_stored_query('correct_account_balance', get_param('account_id'), get_param('balance'), get_session_user_id(), get_param('description','') );
 	    	exit;
 
 
 	    case 'depositCashForUf':
-	    	$a = new account_movement(get_session_user_id()); 
-	    	$a->deposit_cash_for_uf(get_param('quantity'), get_param('account_id'), get_param('description',''));
+            $ao->add_operation('deposit_uf',
+                array(
+                    'uf_from_id' => get_param_int('account_id'),	
+                    'account_to_id' => -3
+                ),	
+                get_param_numeric('quantity'),
+                get_param('description','Cash deposit')
+            );
 	    	exit; 
 
 	    case 'depositCash':

@@ -78,7 +78,7 @@ $Text['head_ti_manage_uf'] = "Unidades familiares/Miembros";
 $Text['head_ti_incidents'] = "Incidentes";
 $Text['head_ti_stats'] = "Estadísticas diarias";
 $Text['head_ti_prev_orders'] = "Mis compras anteriores"; 
-$Text['head_ti_cashbox'] = "Control de caja"; 
+$Text['head_ti_cashbox'] = "Control de dinero"; 
 
 
 
@@ -206,6 +206,50 @@ $Text['correct_balance'] = 'Corregir balance';
 $Text['set_balance'] = 'Actualizar balance de la caja';
 $Text['current_balance'] = 'Balance actual';
 $Text['name_cash_account'] = 'Caja';
+
+// See `account_operations.config.php`
+//     * Translated keys of $config_account_operations with the prefix 'mon_op_'
+$Text['mon_op_deposit_uf'] = 'Ingreso de UF';
+$Text['mon_op_deposit_others'] = 'Ingreso otros';
+$Text['mon_op_debit_uf'] = 'Cargo a UF';
+$Text['mon_op_pay_pr'] = 'Pago a Prv.';
+$Text['mon_op_refund_uf'] = 'Devolución a UF.';
+$Text['mon_op_withdraw_others'] = 'Pago otros';
+$Text['mon_op_invoice_pr'] = 'Factura de Prv.';
+$Text['mon_op_move'] = 'Mover';
+$Text['mon_op_correction'] = 'Ajustar saldo';
+// See `account_operations.config.php`
+//   * Translated sub-keys values from 'default_desc' and 'auto_desc'
+//     on $config_account_operations with the prefix 'mon_desc_'
+$Text['mon_desc_deposit_uf'] = 'Deposito de UF';
+$Text['mon_desc_deposit_from_uf'] = 'Deposito de la cuenta-UF: {uf_from_id}. {comment}';
+$Text['mon_desc_payment'] = 'Pago a proveedor';
+$Text['mon_desc_payment_to_provider'] = 'Pago a la cuenta-proveedor: {provider_to_id}. {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Restitución a la cuenta-UF: {uf_to_id}. {comment}';
+$Text['mon_desc_invoice'] = 'Factura de proveedor.';
+$Text['mon_desc_treasury_movement'] = 'Movimiento de tesorería.';
+$Text['mon_desc_move_from'] = 'Movimiento de tesorería de la cuenta: {account_from_id}. {comment}';
+$Text['mon_desc_move_to'] = 'Movimiento de tesorería a la cuenta: {account_to_id}. {comment}';
+$Text['mon_desc_correction'] = 'Corrección de saldo';
+// Used in manege_money.php and controllers
+$Text['mon_send'] = 'Confirmar';
+$Text['mon_from'] = 'De';
+$Text['mon_to'] = 'A';
+$Text['mon_all_active_uf'] = '* Todas las UF activas *';
+$Text['mon_success'] = 'La operación ha tenido éxito, {count} anotaciones!';
+$Text['mon_war_decimals'] = "La cantidad no debe tener más de dos decimales!";
+$Text['mon_war_gt_zero'] = "Cantidad debe ser mayor que cero!";
+$Text['mon_war_accounts_not_set'] = "Alguna de las cuentas requeridas no constan.";
+$Text['mon_war_description'] = "Debe escribir un breve comentario.";
+$Text['mon_dailyTreasurySummary'] = "Resumen Tesorería de hoy";
+$Text['mon_balance'] = "Saldo";
+$Text['mon_dailyBalance'] = "Saldo del día";
+$Text['mon_accountBalances'] = "Saldo de las cuentas";
+$Text['mon_uf_balances'] = "Saldo de las UFs";
+$Text['mon_result'] = "Resultado";
+$Text['mon_lastOper'] = "Última operación";
+$Text['mon_operation_account'] = "Hacer operaciones";
+$Text['mon_list_account'] = "Consultar movimientos de una cuenta";
 
 /**
  *				validate

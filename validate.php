@@ -1,4 +1,7 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php 
+	include "php/inc/header.inc.php";
+	require_once(__ROOT__.'php/lib/account_writers.php');
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -420,38 +423,6 @@
 					}
 			});
 
-
-  			 //negative ufs
-			 $('#negative_ufs tbody').xml2html('init',{
-					url		: 'php/ctrl/Account.php',
-					params	: 'oper=getNegativeAccounts',
-					loadOnInit: true,
-					rowName : 'account',
-                    autoReload: 103020,
-                    beforeLoad : function(){
-						$('#negative_ufs .loadSpinner').show();
-					},
-					rowComplete : function (rowIndex, row){
-						$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
-					},
-					complete : function(){
-						$('#negative_ufs .loadSpinner').hide();
-					}
-			});
-
-  			 //daily stats
-			 $('#dailyStats tbody').xml2html('init',{
-					url		: 'php/ctrl/Account.php',
-					params	: 'oper=getIncomeSpendingBalance',
-                 	//autoReload: 100200,
-                 	loadOnInit:true,
-                 	beforeLoad : function(){
-						$('#dailyStats .loadSpinner').show();
-					},
-					complete : function(){
-						$('#dailyStats .loadSpinner').hide();
-					}
-			});
 
 			//negative stock
 			 $('#min_stock tbody').xml2html('init',{
@@ -892,46 +863,8 @@
 				</div>
 			</div>
 
-
-			<div id="monitorUFs" class="ui-widget">
-				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['negativeUfs'];?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-
-						<table id="negative_ufs" class="tblListingDefault">
-							<thead>
-								<tr>
-									<th class="textAlignRight"><?php echo $Text['uf_short'];?></th>
-									<th class="textAlignLeft"><?php echo $Text['name'];?></th>
-									<th class="textAlignRight"><?php echo $Text['balance'];?></th>
-									<th><?php echo $Text['lastUpdate'];?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><p class="textAlignRight">{uf}</p></td>
-									<td><p class="textAlignLeft">{name}</p></td>
-									<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
-									<td>{last_update}</td>
-								</tr>
-							</tbody>
-						</table>
-
-				</div>
-			</div>
-
-			<div id="monitorGlobals" class="ui-widget">
-				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['name_cash_account']; ?><span class="loadAnim floatRight hidden"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-					<table id="dailyStats" class="tblListingDefault">
-						<tbody>
-							<tr><td><p><?php echo $Text['totalIncome'];?></p></td><td><p class="textAlignRight">{income}</p></td></tr>
-							<tr><td><p><?php echo $Text['totalSpending'];?></p></td><td><p class="textAlignRight">{spending}</p></td></tr>
-							<tr><td><p><?php echo $Text['balance'];?></p></td><td><p class="textAlignRight">{balance}</p></td></tr>
-						</tbody>
-					</table>
-
-				</div>
-			</div>
+			<?php write_negative_ufs(); ?>
+			<?php write_dailyStats(); ?>
 
 
 			<div id="monitorStock" class="ui-widget hidden">

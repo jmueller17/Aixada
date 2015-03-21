@@ -24,32 +24,6 @@ function get_negative_accounts()
     return $strXML;
 }
 
-
-/**
- * 
- * Retrieves list of accounts
- * @param boolean $all if set to true, list active and non-active accounts. when set to false, list only active UFs
- */
-function get_accounts($all=0)
-{
-  $strXML = '<accounts>'
-    . '<row><id f="id">-3</id><name f="name">Caixa</name></row>'
-    . '<row><id f="id">-2</id><name f="name">Consum</name></row>'
-    . '<row><id f="id">-1</id><name f="name">Manteniment</name></row>';
-  $sqlStr = ($all)? "SELECT id+1000, id, name FROM aixada_uf":"SELECT id+1000, id, name FROM aixada_uf where active=1";  
-  $rs = DBWrap::get_instance()->Execute($sqlStr);
-  
-  while ($row = $rs->fetch_array()) {
-    $strXML 
-      .= '<row>'
-      . '<id f="id">' . $row[0] . '</id>'
-      . '<name f="name"><![CDATA[UF ' . $row[1] . ' ' . $row[2] . ']]></name>'
-      . '</row>';
-  }
-  return $strXML . '</accounts>';
-}
-
-
 /**
  * 
  * produces an extract of the money movements for the selected account and time-period

@@ -4944,7 +4944,7 @@ begin
       aixada_account
     where 
       account_id = the_account_id
-    order by ts desc
+    order by ts desc, id desc
     limit 1; 
   
     set new_balance = current_balance + the_quantity; 
@@ -4986,7 +4986,7 @@ begin
   		aixada_account
   	where 
   		account_id = the_account_id
-  	order by ts desc
+  	order by ts desc, id desc
   	limit 1; 
 	
   	set quantity = -(current_balance - the_balance); 
@@ -5017,7 +5017,7 @@ begin
 	where
 		account_id = the_account_id 
 	order by
-		ts desc
+		ts desc, id desc
 	limit 1;
 end|
 
@@ -5035,7 +5035,7 @@ begin
 	where
 		account_id = -2 
 	order by
-		ts desc
+		ts desc, id desc
 	limit 1)
 	union all
 	(select
@@ -5045,7 +5045,7 @@ begin
 	where
 		account_id = -2 
 	order by
-		ts desc
+		ts desc, id desc
 	limit 1)
 	union all
 	(select
@@ -5055,7 +5055,7 @@ begin
 	where
 		account_id = -3 
 	order by
-		ts desc
+		ts desc, id desc
 	limit 1);
 end|
 
@@ -5072,14 +5072,14 @@ begin
 	a.balance, 
 	a.ts as last_update 
   from (select 
-			account_id, max(ts) as MaxDate 
+			account_id, max(id) as MaxId 
 		from 
 			aixada_account 
 		group by 
 			account_id) r, aixada_account a, aixada_uf uf
   where 
 	a.account_id = r.account_id 
-	and a.ts = r.MaxDate
+	and a.id = r.MaxId
 	and a.balance < 0
     and uf.active = 1
     and uf.id = a.account_id -1000
@@ -5119,7 +5119,7 @@ begin
  		and a.operator_id = u.id
  		and u.member_id = mem.id
  	order by 
- 		a.ts desc; 
+ 		a.ts desc, id desc; 
  
 end|
 
@@ -5155,7 +5155,8 @@ begin
    on a.account_id - 1000 = uf.id
  where a.account_id > 0
    and a.ts < tomorrow
- order by a.ts desc limit 10;
+ order by a.ts desc, id desc
+ limit 10;
 end|
 
 

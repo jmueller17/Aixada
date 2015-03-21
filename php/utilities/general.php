@@ -195,6 +195,37 @@ function get_param_int($param_name, $default=null) {
     return $val;
 }
 
+
+/**
+ * Provides some basic logic to retrieve array of integers from URL parameters. 
+ * @param string    $param_name  Name of the parameter passed along
+ * @param array(int|string)|string|null  $default  Default value used when 
+ *     parameter is not set (default value must bee a array of integers or a
+ *     string that corresponds to a list integers, if not null is used as
+ *     default)
+ * @return array(int)|null Returns a array of integers if parameter exist and it
+ *     is a array of integers, otherwise returns $default.
+ */
+function get_param_array_int($param_name, $default=null, $separator=',') {
+	$val = get_param($param_name, false);
+	if ($val !== false) {
+		$str_array = explode($separator, $val);
+	} else {
+		if (!$default) { return null; } // exit
+		if (is_array($default)) {
+			$str_array = $default;
+		} else {
+			$str_array = explode($separator, $default);
+		}
+	}
+	$result = array();
+	foreach ($str_array as $item) {
+		if (!is_numeric($item) || !is_int($item+0)) { return null; } // exit
+		array_push($result, $item+0);
+	}
+	return $result;
+}
+
 /**
  *
  * Provides some basic logic to retrieve date values from URL parameters. 
@@ -239,6 +270,30 @@ function get_config($param_name, $default=null) {
     } else {
         return $default;
     }
+}
+
+/**
+ * Provides some basic logic to retrieve translations using the $Text array.
+ * @param string $text_code The code of the text to translate.
+ * @param $replace Associative array with the parameters to replace (search=>value)
+ * @return Text translated
+ */
+function i18n($text_code, $replace=null) {
+	global $Text;
+	if (!isset($Text[$text_code])) {
+		return "i18n('{$text_code}')";
+	}
+	$text = $Text[$text_code];
+    if ($replace && count($replace)){
+		$r_search = array();
+		$r_replace = array();
+		foreach ($replace as $key => $value) {
+			array_push($r_search, '{'.$key.'}');
+			array_push($r_replace, $value);
+		}
+		$text = str_replace($r_search, $r_replace, $text);
+	}
+	return $text;
 }
 
 /**
@@ -460,40 +515,74 @@ function stored_query_XML_fields()
 }
 
 /**
- * Execute a SQL query and returs a XML row set.
+ * Execute a SQL query and returns a XML <rowset>.
  * @param string|array $strSQL A SQL query
  * @return string The XML
  */
 function query_XML_fields($strSQL) {
-    return rs_XML_fields(
+    return '<rowset>'.query_to_XML($strSQL).'</rowset>';
+}
+
+/**
+ * Execute a SQL query and returns a list of XML <row>.
+ * @param string|array $strSQL A SQL query
+ * @param array(string) $formats Associative array with field_name and format.
+ * @return string The XML
+ */
+function query_to_XML($strSQL) {
+    return rs_to_XML(
         DBWrap::get_instance()->Execute(func_get_args())
     );
 }
 
 /**
- * Walk a mysqli_result and returs a XML row set.
+ * Walk a mysqli_result and returns a XML <rowset>.
  * @param mysqli_result $rs
+ * @param array(string) $formats Associative array with field_name and format.
  * @return string The XML
  */
 function rs_XML_fields($rs) {
-    $strXML = '<rowset>';
-    global $Text;
-    while ($row = $rs->fetch_assoc()) {
-        $strXML .= '<row';
-        if (isset($row['id'])) 
-            $strXML .= ' id ="' . $row['id'] . '"';
-        $strXML .= '>';
-        foreach ($row as $field => $value) {
-            if ($field == 'description' and isset($Text[$value])) 
-                $value = $Text[$value];
-            $strXML 
-                .= '<' . $field . ' f="' . $field 
-                . '"><![CDATA[' . clean_zeros($value) . "]]></$field>";
+    return '<rowset>'.rs_to_XML($rs).'</rowset>';
+}
+
+/**
+ * Walk a mysqli_result and returns a list of XML <row>.
+ * @param mysqli_result $rs
+ * @param array(string) $formats Associative array with field_name and format. 
+ * @return string The XML
+ */
+function rs_to_XML($rs) {
+    $strXML = '';
+    if ($rs) {
+        while ($row = $rs->fetch_assoc()) {
+            $strXML .= array_to_XML($row);
         }
-        $strXML .= '</row>';
+        $rs->free();
     }
-    $strXML .= '</rowset>';
     return $strXML;
+}
+
+/**
+ * Tranform a assoc array to a XML <row>.
+ * @param array $ass_array A associative array
+ * @param array(string) $formats Associative array with field_name and format. 
+ * @return string The XML
+ */
+function array_to_XML($ass_array) {
+    global $Text;
+    $strXML = '<row';
+    if (isset($ass_array['id'])) {
+        $strXML .= ' id ="'.$ass_array['id'].'"';
+    }
+    $strXML .= '>';
+    foreach ($ass_array as $field => $value) {
+        if ($field == 'description' and isset($Text[$value])) {
+            $value = $Text[$value];
+        }
+        $strXML .= "<{$field} f=\"{$field}\"><![CDATA[".
+                                           clean_zeros($value)."]]></{$field}>";
+    }
+    return $strXML .= '</row>';    
 }
 
 function query_XML() //$strSQL, $group_tag, $row_tag, $param1=0, $param2=0)
