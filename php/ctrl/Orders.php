@@ -29,10 +29,19 @@ try{
     		echo get_orders_in_range(get_param('filter'), get_param('uf_id'), get_param('fromDate',0), get_param('toDate',0), get_param('steps',0), get_param('range',0), get_param('limit',''));
     		exit; 
 
-    	//retrieves list of products that have been ordered. Needed to construct order revision table
+    	//retrieves list of products that have been ordered.
     	case 'getOrderedProductsList':
     		printXML(stored_query_XML_fields('get_ordered_products_list', get_param('order_id',0), get_param('provider_id',0), get_param('date',0) ));
     		exit;
+
+        //retrieves list of products with prices that have been ordered, used to
+        //  construct order revision table.
+        case 'getOrderedProductsListPrices':
+            printXML(rs_XML_fields(get_ordered_products_with_prices(
+                get_param_int('order_id'), get_param_int('provider_id'),
+                get_param_date('date')
+            )));
+            exit;
 
     	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf and/or product_id if needed. 
     	case 'getProductQuantiesForUfs':
@@ -41,17 +50,21 @@ try{
     		
     	//edits, modifies individual product quanties for order
     	case 'editQuantity':
-    		$splitParams = explode("_", get_param('product_uf'));
-    		$ok = do_stored_query('modify_order_item_detail', get_param('order_id'), $splitParams[0], $splitParams[1] , get_param('quantity'));
-    		if ($ok){
-	    		echo get_param('quantity');
-    		} else {
-    			throw new Exception("An error occured during saving the new product quantity!!");      			
-    		}
+    		echo edit_order_quantity(
+                get_param_int('order_id'), get_param_int('product_id'), 
+                get_param_int('uf_id'), get_param_numeric('quantity'));
     		exit;	
 
+    	//edits, modifies individual gross price of a product into a order
+    	case 'editGrossPrice':
+            echo edit_order_gross_price(
+                get_param_int('order_id'), get_param_int('product_id'),
+                get_param_numeric('gross_price'));
+            exit;
+
+    	//edits, modifies total quantity of a product for order and adjusts
+        //  the individual quantities proportionally.
     	case 'editTotalQuantity':
-    		//$splitParams = explode("_", get_param('product_id'));
     		echo edit_total_order_quantities(get_param('order_id'), get_param('product_id'), get_param('quantity')); //this is the product_id
     		exit;
     	

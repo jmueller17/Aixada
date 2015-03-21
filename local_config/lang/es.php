@@ -615,7 +615,7 @@ $Text['msg_correct_stock'] = "¡Ajustar el stock de esta forma debería ser una 
 $Text['btn_yes_corret'] = "¡Sí, haz la modificación!";
 $Text['search_product'] = "Buscar un producto";
 $Text['add_stock'] = "Añadir stock";
-$Text['click_to_edit'] = "¡Clicar la celdas para editar!";
+$Text['click_to_edit'] = "¡Clica la celda para editar!";
 $Text['no_results'] = "La búsqueda no ha producido resultados.";
 $Text['for'] = "para"; //as in order FOR Aurora
 $Text['date_for_order'] = "Fecha de entrega";
@@ -922,6 +922,16 @@ $Text['msg_deactivate_prov_ok'] = "El proveedor se ha desactivado con éxito.";
 $Text['no_stock'] = "Sin stock!!";
 $Text['stock_mov_type'] = "Tipo de movimiento";
 
-
+// Orders
+$Text['or_prv_prices'] = 'Precios del proveedor (sin imp.rev.)';
+$Text['or_gross_price'] = 'Precio';
+$Text['or_suma'] = 'Suma';
+$Text['or_gross_total'] = 'Imp.Total';
+$Text['or_net_price'] = 'Precio+IVA';
+$Text['or_net_total'] = 'Total+IVA';
+$Text['or_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
+$Text['or_click_to_edit_gprice'] = 'Clic para ajustar el precio';
+$Text['or_saving'] = 'Guardando';
+$Text['or_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
 
 ?>

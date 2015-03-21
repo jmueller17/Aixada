@@ -53,6 +53,14 @@ class configuration_vars {
 
   /**
    *
+   * Indicates whether the store is used. If true (or missing), direct purchase
+   * options are shown, otherwise can only make orders.
+   * @var boolean
+   */
+  public $use_shop = true;
+
+  /**
+   *
    * Allow yourself validate your cart.
    * (if it is not set `false` is used as default value)
    * @var boolean
@@ -81,6 +89,17 @@ class configuration_vars {
    * @var boolean
    */  
   public $prevent_out_of_stock_purchase = true;
+  
+  /**
+   *
+   * Allows to choose the order in which the UF will be displayed when reviewing
+   *    look and print orders.
+   * Possible values are: `asc` (by id_uf in ascending), `desc` (by id_uf
+   *    descending) and `name` (alphabetically by name) Default value is `desc`.
+   * 
+   */
+  public $order_review_uf_sequence = 'desc';
+  
   
   /**
    * 

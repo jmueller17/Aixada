@@ -612,7 +612,7 @@ $Text['msg_correct_stock'] = "Ajustar així l'estoc hauria de ser l'excepció! E
 $Text['btn_yes_corret'] = "Sí, fes la correcció!";
 $Text['search_product'] = "Cerca un producte";
 $Text['add_stock'] = "Afegeix estoc";
-$Text['click_to_edit'] = "Prem una cel·la per a editar-la!";
+$Text['click_to_edit'] = "Prem la cel·la per a editar-la!";
 $Text['no_results'] = "No hi ha resultats de la cerca.";
 $Text['for'] = "per a"; //as in order FOR Aurora
 $Text['date_for_order'] = "Data d'entrega";
@@ -921,5 +921,17 @@ $Text['msg_deactivate_prov_ok'] = "El proveïdor s'ha desactivat amb èxit.";
 $Text['no_stock'] = "Sense stock!!";
 $Text['stock_mov_type'] = "Tipus de moviment";
 
+
+// Orders
+$Text['or_prv_prices'] = 'Preus del proveïdor (sense imp.rev.)';
+$Text['or_gross_price'] = 'Preu';
+$Text['or_suma'] = 'Suma';
+$Text['or_gross_total'] = 'Imp.Total';
+$Text['or_net_price'] = 'Preu+IVA';
+$Text['or_net_total'] = 'Total+IVA';
+$Text['or_click_to_edit_total'] = 'Clic per ajustar la quantitat total';
+$Text['or_click_to_edit_gprice'] = 'Clic per ajustar el preu';
+$Text['or_saving'] = 'Guardant';
+$Text['or_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
 
 ?>

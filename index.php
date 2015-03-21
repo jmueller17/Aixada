@@ -43,8 +43,6 @@
 	<div id="headwrap">
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
-	<!-- end of main menu / headwrap -->
-
 
 	<div class="container">
 

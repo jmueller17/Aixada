@@ -17,11 +17,10 @@ try{
 
   switch ($_REQUEST['oper']) {
   	    
-  		
+  		// List of family units.
   		case 'getUfListing':
         	print_stored_query('xml','get_uf_listing', get_param('all',0));
-        	exit;
-        	
+        	exit;        	
         case 'createUF':
 		   	print_stored_query('xml','create_uf', get_param('name'), get_param('mentor_uf',0), get_session_user_id() );
 		   	exit;
