@@ -44,30 +44,48 @@ class Deliver_email extends Deliver {
 	    	$to = implode(", ", $member_emails);
 		}
 
+
+
+	    // get URL of aixada root
+	    $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
+	    if ($pos_root === false) {
+	        $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/');
+	    }
+	    $ssl_on = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+	    $url_root = (isset($_SERVER['HTTP_HOST']) ? 
+	                    $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']).
+	                substr($_SERVER['SCRIPT_NAME'],0,$pos_root);
+
+
+
+
+
 		// get HTML message
-		$subject = $cfg->coop_name.': '.$subject;
-		$messageHTML =
-			'<html><head><title>'.$subject."</title></head>\r\n".
-			'<body style="font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;">'.
-			"\r\n".$bodyHTML."\r\n".
-			'<hr><div style="color:#888; text-align: center;">'.
-			'<a href="'.$cfg->basedir.'" style="color:#888;">'.$cfg->coop_name.'</a>'.
-			"</div>\r\n".
-			"</body></html>";
-		
-		$headers =
-		'From: '.$from."\r\n".
-		'Reply-To: '.
-			(isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
-			(isset($options['cc']) ? 'Cc :'.$options['cc']."\r\n" : '').
-			(isset($options['bcc']) ? 'Bcc :'.$options['bcc']."\r\n" : '').
-		'Return-Path: '.$from."\r\n".
-		"X-Mailer: PHP\r\n".
-		"MIME-Version: 1.0\r\n".
-		"Content-Type: text/html; charset=UTF-8\r\n";
-		mb_language("uni");
-		mb_internal_encoding("UTF-8");
-		$subject64 = mb_encode_mimeheader($subject);
+	    $subject = $cfg->coop_name.': '.$subject;
+	    $messageHTML = 
+	        '<html><head><title>'.$subject."</title></head>\r\n".
+	        '<body style="font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;">'.
+	        "\r\n".$bodyHTML."\r\n".
+	        '<hr><div style="color:#888; text-align: center;">'.
+	                $cfg->coop_name.': <a href="'.
+	                    ($ssl_on ? 'https://' : 'http://').
+	                    $url_root.
+	                    '/index.php" style="color:#888;">'.$url_root.'</a>'.
+	            "</div>\r\n".
+	        "</body></html>";
+	    $headers = 
+	        'From: '.$from."\r\n".
+	        'Reply-To: '.
+	            (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
+	        (isset($options['cc']) ? 'Cc :'.$options['cc']."\r\n" : '').
+	        (isset($options['bcc']) ? 'Bcc :'.$options['bcc']."\r\n" : '').
+	        'Return-Path: '.$from."\r\n".
+	        "X-Mailer: PHP\r\n".
+	        "MIME-Version: 1.0\r\n".
+	        "Content-Type: text/html; charset=UTF-8\r\n";
+	    mb_language("uni");
+	    mb_internal_encoding("UTF-8");
+	    $subject64 = mb_encode_mimeheader($subject);
 
 		$response = mail($to, $subject64, $messageHTML, $headers);
 

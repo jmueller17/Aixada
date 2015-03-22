@@ -935,7 +935,7 @@ $Text['negate'] = "No";
 $Text['deactivate_provider'] = "Are you sure you want to deactivate this provider? This will hide all its products from ordering and buying";
 $Text['active_providers'] ="Active providers only";
 $Text['active_products'] ="Active products only";
-$Text['ti_create_product'] = "Add new product"
+$Text['ti_create_product'] = "Add new product";
 
 
 // Orders

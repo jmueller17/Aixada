@@ -53,3 +53,25 @@ th p {margin-bottom:0px;}
     border-width: 1;
     margin-top:-1px;
 }
+
+
+/** manage order table **/
+        .tblReviseOrder td.grossPrice,
+        .tblReviseOrder td.netPrice {
+             background-color:#dee;
+        }
+        .tblReviseOrder td.grossRow {
+             background-color:#ece;
+        }
+        .tblReviseOrder td.grossTotalOrder {
+             background-color:#cce;
+        }
+        .tblReviseOrder td.netRow {
+            background-color:#ebe;
+        }
+        .tblReviseOrder td.netTotalOrder {
+            background-color:#bbe;
+        }
+        .orderTotalsDesc {
+            text-align: right;
+            color:#aaa;

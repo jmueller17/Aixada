@@ -2,46 +2,30 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
+	<base href="<?php echo $cv->basedir; ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php echo $Text['global_title'] ." -  " .$Text['head_ti_manage_orders']; ?></title>
 
- 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
-    <!-- link rel="stylesheet" type="text/css" 	 media="screen" href="js/tablesorter/themes/blue/style.css"/-->
-    <style>
-        .tblReviseOrder td.grossPrice,
-        .tblReviseOrder td.netPrice {
-             background-color:#dee;
-        }
-        .tblReviseOrder td.grossRow {
-             background-color:#ece;
-        }
-        .tblReviseOrder td.grossTotalOrder {
-             background-color:#cce;
-        }
-        .tblReviseOrder td.netRow {
-            background-color:#ebe;
-        }
-        .tblReviseOrder td.netTotalOrder {
-            background-color:#bbe;
-        }
-        .orderTotalsDesc {
-            text-align: right;
-            color:#aaa;
-        }
-    </style>
+    <link href="js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/aixcss.css" rel="stylesheet">
+    <link href="js/ladda/ladda-themeless.min.css" rel="stylesheet">
+  	<link href="js/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>   	
+	    <script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaSwitchSection.js" ></script>
+	   	
+	   	<script type="text/javascript" src="js/bootbox/bootbox.js"></script>
+	   	<script type="text/javascript" src="js/ladda/spin.min.js"></script>
+	   	<script type="text/javascript" src="js/ladda/ladda.min.js"></script>
+	   	<script type="text/javascript" src="js/datepicker/moment-with-langs.min.js"></script>	   	
+		<script type="text/javascript" src="js/datepicker/bootstrap-datetimepicker.min.js"></script>
 	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
-	   	<script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
-	   	  
+
    	<?php  } else { ?>
 	   	<script type="text/javascript" src="js/js_for_manage_orders.min.js"></script>
     <?php }?>
@@ -87,43 +71,133 @@
 	
 	$(function(){
 
-			$('.reviewElements, .viewElements').hide();
-			$('.success_msg').hide();
-
-			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 			
+		var header = [];
 
-			var header = [];
+		var tblHeaderComplete = false; 
 
-			var tblHeaderComplete = false; 
+		//the selected order row that is currently revised or viewed
+		var gSelRow = null; 
 
-			//the selected order row that is currently revised or viewed
-			var gSelRow = null; 
+		//indicates page subsection: overview | review | view
+		var gSection = 'overview';
 
-			//indicates page subsection: overview | review | view
-			var gSection = 'overview';
+		//new window for printing
+		var printWin = null;
 
-			//new window for printing
-			var printWin = null;
+		//index for current order that is loaded/printed during bulk actions
+		var gPrintIndex  = -1; 
 
-			//index for current order that is loaded/printed during bulk actions
-			var gPrintIndex  = -1; 
-
-			//order revision status states. 
-			var gRevStatus = [null, 'finalized','revised','postponed','canceled','revisedMod'];
+		//order revision status states. 
+		var gRevStatus = [null, 'finalized','revised','postponed','canceled','revisedMod'];
 
 
-			//if this page has been called from torn...
-			var gLastPage = $.getUrlVar('lastPage');
+		//if this page has been called from torn...
+		var gLastPage = $.getUrlVar('lastPage');
 
-			//order overview filter option
-			var gFilter = (typeof $.getUrlVar('filter') == "string")? $.getUrlVar('filter'):'pastMonths2Future';
+		//order overview filter option
+		//var gFilter = (typeof $.getUrlVar('filter') == "string")? $.getUrlVar('filter'):'pastMonths2Future';
 
-			//global today date
-			var gToday = '';
+		//global today date
+		var gToday = '';
 
+
+		//hide all sections
+		$('.section').hide();
+
+		//init change section lib
+		$('.change-sec')
+			.switchSection("init",{
+				afterSectionSwitch : function(section){
+					
+					if (section == ".sec-2"){
+
+
+						var title = gSelRow.children().eq(2).text();
+						$('.set-provider').html(title);							
+						
+
+						$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
+							params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
+						})
+						
+					
+
+						$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
+							params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
+							complete : function(rowCount){
+								$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
+								$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
+								//copy the order status 
+								var tdStatus = gSelRow.children().eq(8).clone();
+								$('#orderDetailRevisionStatus').before(tdStatus).remove();
+							}
+		 				});
+		 			}
+
+
+				}
+
+			});
+
+		//show section 1
+		$('.sec-1').show();
+
+
+		bootbox.setDefaults({
+			locale:"<?=$language;?>"
+		})
+
+
+		//order overview date filter 
+		$('#datepicker-from').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+			}).on("change.dp",function(e){
+				reloadOrders();
+			})
+
+		$('#datepicker-to').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+			}).on("change.dp",function(e){
+				reloadOrders();
+			})
+
+
+		//set the shopping date when distributing orders 
+		$('#datepicker-distribute').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+			}).on("change.dp",function(e){
+				$('.set-shopdate').text($.getCustomDate(date[0]));	
+			})
+
+
+		//set delivery date when closing preorder
+		$('#datepicker-preorder').datetimepicker({
+				pickTime:false,
+				startDate : '1/1/2014',
+			}).on("change.dp",function(e){
+				
+			})
+
+
+		$.getAixadaDates('getToday', function (date){
+			gToday = date[0];
+			gPrevMonth = moment(gToday, "YYYY-MM-DD").subtract(6, 'months').format('YYYY-MM-DD');
 			
+	 		$('#datepicker-to').data("DateTimePicker").setDate(gToday);
+			$('#datepicker-from').data("DateTimePicker").setDate(gPrevMonth);
+			$('#datepicker-distribute').data("DateTimePicker").setDate(gToday);
+			$('.set-shopdate').text($.getCustomDate(date[0]));		
+
+			reloadOrders();
+		});
+	
+
+
+		/*	
 			//set shoping date
 			$("#datepicker").datepicker({
 				dateFormat 	: 'DD, d MM, yy',
@@ -131,7 +205,7 @@
 					$('#indicateShopDate').text(dateText);
 				}
 			}).hide();
-
+		
 			
 			//date for order for convert preorder
 			$("#datepicker2").datepicker({
@@ -150,12 +224,10 @@
 
 				}
 			});
+		
 
 			
-			$('#showDatePicker').click(function(){
-				$('#datepicker').toggle();
-			});
-
+			
 			$.getAixadaDates('getToday', function (date){
 				gToday = $.datepicker.parseDate('yy-mm-dd', date[0]);
 				$("#datepicker").datepicker('setDate', gToday);
@@ -164,7 +236,11 @@
 				$('#indicateShopDate').text($.getCustomDate(date[0]));		
 			});	
 			
-	
+	*/
+
+
+
+
 
 			//STEP 1: retrieve all active ufs in order to construct the table header
 			$.ajax({
@@ -206,9 +282,7 @@
 
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});	
+						bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);	
 					}
 			}); //end ajax	
 
@@ -293,6 +367,7 @@
 				rowComplete : function (rowIndex, row){
 					
 					var product_id = $(row).children(':first').text();
+
 					var tbodyStr = '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
 					
 					for (var i=0; i<header.length; i++){
@@ -436,9 +511,7 @@
 
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
+						bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 					}
 			}); //end ajax	
 						
@@ -446,28 +519,12 @@
 			});
 
 			
-			/**
-			 *	returns to order overview  TODO: check for unsaved changes
-			 */
-			$("#btn_overview").button({
-				 icons: {
-		        		primary: "ui-icon-circle-arrow-w"
-		        	}
-				 })
-        		.click(function(e){
-    				switchTo('overview'); 
-        		}).hide();
-
 			
 			/**
 			 *	copies order_items after revision into aixada_shop_item only if not already
 			 *	validated items exist;  
 			 */
-			$("#btn_setShopDate").button({
-				 icons: {
-		        		primary: "ui-icon-cart"
-		        	}
-				 })
+			$("#btn-distribute")
        			.click(function(e){
            			var allRevised = true;
 					$('input:checkbox[name="revised"]').each(function(){
@@ -479,10 +536,10 @@
 					});
 
 					if (allRevised){
-						$('#dialog_setShopDate').dialog("open");
+						//$('#dialog_setShopDate').dialog("open");
 					} else {
 
-						$.showMsg({
+						/*$.showMsg({
 							msg:"<?=$Text['msg_err_unrevised']?>",
 							buttons: {
 								"<?=$Text['btn_dis_anyway'];?>":function(){						
@@ -493,12 +550,13 @@
 									$( this ).dialog( "close" );
 								}
 							},
-							type: 'confirm'});
+							type: 'confirm'});*/
 
 					}
        			}).hide();
 
-			$('#dialog_setShopDate').dialog({
+			
+			/*$('#dialog_setShopDate').dialog({
 				autoOpen:false,
 				width:480,
 				height:600,
@@ -521,9 +579,7 @@
 								},2000);
 							},
 							error : function(XMLHttpRequest, textStatus, errorThrown){
-								$.showMsg({
-									msg:XMLHttpRequest.responseText,
-									type: 'error'});
+								bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 								
 							}
 						});
@@ -535,12 +591,13 @@
 						$( this ).dialog( "close" );
 						} 
 				}
-			});
+			});*/
 				
 
 			/**
 			 *	when closing a preorder, a delivery date needs to be set. 
 			 */
+			/*
 			$('#dialog_convertPreorder').dialog({
 				autoOpen:false,
 				width:420,
@@ -550,9 +607,11 @@
 						var $this = $(this);
 
 						if ($.getSelectedDate('#datepicker2') == $.datepicker.formatDate('yy-mm-dd', gToday)){
-							$.showMsg({
-								msg:"Please select an order date starting from at least tomorrow onwards.",
-								type: 'warning'});
+							bootbox.alert({
+								title : "Warning",
+								message : "<div class='alert alert-warning'>Please select an order date starting from at least tomorrow onwards.</div>"
+							});	
+
 							return false; 
 						}
 						
@@ -582,11 +641,12 @@
 						$( this ).dialog( "close" );
 						} 
 				}
-			});
+			});*/
 
 
 			
 			//export order options dialog
+			/*
 			$('#dialog_export_options').dialog({
 				autoOpen:false,
 				width:580,
@@ -600,13 +660,13 @@
 						$( this ).dialog( "close" );
 						} 
 				}
-			});
+			});*/
 			
 
 
 			//adjust total quantities
 			$('td.totalQu')
-				.live('mouseover', function(e){
+				.on('mouseover', function(e){
 					
 					if (!$(this).hasClass('editable') && gSection == 'review'){
 						var pid = $(this).attr('row_tot');
@@ -648,7 +708,8 @@
 					}
 			});
             //adjust gross price
-            $('td.grossPrice').live('mouseover', function(e) {
+            $('td.grossPrice')
+            .on('mouseover', function(e) {
                 if (!$(this).hasClass('editable') && gSection == 'review') {
                     var id = $(this).attr('id'),
                         product_id = id.split('_')[1];
@@ -681,7 +742,7 @@
 		
 			//interactivity for editing cells
 			$('td.interactiveCell')
-				.live('mouseover', function(e){						//make each cell editable on mouseover. 
+				.on('mouseover', function(e){						//make each cell editable on mouseover. 
 					var col = $(this).attr('col');
 					var row = $(this).attr('row');
 					var product = $(this).parent().children().eq(1).text();
@@ -711,7 +772,7 @@
 					}
 
 			})
-			.live('mouseout', function(e){
+			.on('mouseout', function(e){
 				//var col = $(this).attr('col');
 				//var row = $(this).attr('row');
 
@@ -724,7 +785,8 @@
 			/**
 			 *	uncheck an entire product row (product did not arrive). 
 			 */
-			$('input:checkbox[name="hasArrived"]').live('click', function(e){
+			$('input:checkbox[name="hasArrived"]')
+			.on('click', function(e){
 				var product_id = $(this).attr('hasArrivedId');
 				var has_arrived = $(this).is(':checked')? 1:0; 
 				var is_revised = 1; 
@@ -742,10 +804,7 @@
 						refreshTotalOrder();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
-						
+						bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 					}
 				});
 			});
@@ -755,7 +814,7 @@
 			 *	mark an entire product row as revised. the status is saved in 
 			 *  the order_to_shop table.  
 			 */
-			$('input:checkbox[name="revised"]').live('click', function(e){
+			$('input:checkbox[name="revised"]').on('click', function(e){
 				var product_id = $(this).attr('isRevisedId');	
 				var is_revised = $(this).is(':checked')? 1:0;
 				var has_arrived = $('#ckboxArrived_'+product_id).is(':checked')? 1:0;
@@ -773,9 +832,7 @@
 
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
+						bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 					}
 				});
 				
@@ -792,17 +849,17 @@
 			 });
 
 
-			//edit/save the notes, payment_ref and delivery_ref pages
+			//edit/save the notes, payment_ref and deonry_ref pages
 			$('.editOrderDetail')
-				.live('focus', function(e){
+				.on('focus', function(e){
 					if (gSelRow.attr('orderId') > 0) {
 					} else {
-						$.showMsg({
+						/*$.showMsg({
 							msg:"<?=$Text['msg_err_edit_order'];?>",
-							type: 'warning'});
+							type: 'warning'});*/
 					}
 				})
-				.live('keyup', function(e){
+				.on('keyup', function(e){
 					//hitting return saves it
 					if (e.keyCode == 13 && gSelRow.attr('orderId') > 0){
 						$.ajax({
@@ -812,15 +869,13 @@
 								$('.editOrderDetail').attr('disabled',true);
 							},
 							success: function(txt){
-								$.showMsg({
+								/*$.showMsg({
 									msg:"Saved successfully!",
-									type: 'success'});
+									type: 'success'});*/
 								
 							},
 							error : function(XMLHttpRequest, textStatus, errorThrown){
-								$.showMsg({
-									msg:XMLHttpRequest.responseText,
-									type: 'error'});
+								bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 							},
 							complete : function(){
 								$('.editOrderDetail').attr('disabled',false);
@@ -831,14 +886,9 @@
 				})
 
 				//revise button which switches from order detail view to revise screen
-				$("#btn_setReview")
-				.button({
-					icons: {
-			        	primary: "ui-icon-check"
-					}
-			    }).click(function(e){
+				$("#btn_setReview").click(function(e){
 				    //TODO needs to trigger the revise buttons to check order status
-			    	//$('.reviseOrderBtn').trigger('click');
+			    	//$('.btn-revise-order').trigger('click');
 				  });
 
 				
@@ -846,38 +896,27 @@
 			/***********************************************************
 			 *		ORDER REVISION STATUS
 			 **********************************************************/
-			 $("#btn_revised").button({
-				 icons: {
-		        		primary: "ui-icon-check"
-		        	}
-				 })
+			 $("#btn_revised")
        			.click(function(e){
-					$("#dialog_orderStatus").dialog("close");
+					//$("#dialog_orderStatus").dialog("close");
        			});
 			
-			 $("#btn_canceled").button({
-				 icons: {
-		        		primary: "ui-icon-cancel"
-		        	}
-				 })
+			 $("#btn_canceled")
        			.click(function(e){
 					setOrderStatus(4);
        			});
     			
-			 $("#btn_postponed").button({
-				 icons: {
-		        	}
-				 })
+			 $("#btn_postponed")
        			.click(function(e){
 					setOrderStatus(3);
        			});
 
-			 $('#dialog_orderStatus').dialog({
+			 /*$('#dialog_orderStatus').dialog({
 					autoOpen:false,
 					width:450,
 					height:420,
 					modal:true
-				});
+				});*/
 
 			//upon entering the revision page, the overall order status is set. 
 			function setOrderStatus(status){
@@ -890,9 +929,7 @@
 						switchTo('overview');
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.showMsg({
-							msg:XMLHttpRequest.responseText,
-							type: 'error'});
+						bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 					}
 				});
 
@@ -909,7 +946,7 @@
 					//load the stuff through the export channel
 					$('#exportChannel').attr('src',urlStr);
 					setTimeout(function(){
-						$('#dialog_export_options').dialog("close");
+						//$('#dialog_export_options').dialog("close");
 					}, 2000);
 				}	
 			}
@@ -918,9 +955,7 @@
 			function checkExportForm(){
 				var frmData = $('#frm_export_options').serialize();
 				if (!$.checkFormLength($('input[name=exportName]'),1,150)){
-					$.showMsg({
-						msg:"File name cannot be empty!",
-						type: 'error'});
+					bootbox.alert("File name cannot be empty!");
 					return false;
 				}
 				return frmData; 
@@ -929,16 +964,18 @@
 
 			
 			
+
+
+
 			/***********************************************************
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
-			//var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
+			
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
-				params : 'oper=getOrdersListing&filter='+gFilter, 
-				loadOnInit : true, 
+				loadOnInit : false, 
 				beforeLoad : function(){
-					$('.loadSpinner').show();
+					
 				},
 				rowComplete : function (rowIndex, row){
 					var tds = $(row).children();
@@ -979,21 +1016,38 @@
 				complete : function (rowCount){
 					$("#tbl_orderOverview").trigger("update"); 
 					if (rowCount == 0){
-						$.showMsg({
+						/*$.showMsg({
 							msg:"<?=$Text['msg_err_order_filter'];?>",
-							type: 'warning'});
+							type: 'warning'});*/
 					}
 					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight');
-					$('.loadSpinner').hide(); 					
+									
 				}
 			});
+
+
+			//reload orders 
+			function reloadOrders(){
+
+				var from_date = $('#datepicker-from').data("DateTimePicker").getDate();
+				var to_date = $('#datepicker-to').data("DateTimePicker").getDate();
+				from_date = moment(from_date).format("YYYY-MM-DD") + " 00:00:00";
+				to_date = moment(to_date).format("YYYY-MM-DD") + " 23:59:59"; //we compare a time stamp! 
+
+
+				$('#tbl_orderOverview tbody').xml2html('reload',{		
+					url : 'php/ctrl/Orders.php',
+					params : 'oper=getOrdersListing&from_date='+from_date+'&to_date='+to_date,
+				});
+
+			}
 
 
 			/**
 			 *	To finalize an order means no further modifications are possile. 
 			 */
 			$('.finalizeOrder')
-				.live('click', function(e){
+				.on('click', function(e){
 					gSelRow = $(this).parents('tr');
 					var date = $(this).parents('tr').attr('dateForOrder');
 					var providerId = $(this).parents('tr').attr('providerId');
@@ -1002,7 +1056,7 @@
 
 					
 					if (date == '1234-01-23'){ // is preorder, finalize means to assign also an order date
-						$("#dialog_convertPreorder").dialog("open");
+						//$("#dialog_convertPreorder").dialog("open");
 
 						e.stopPropagation();
 						return false; 
@@ -1012,62 +1066,44 @@
 					if (timeLeft > 0){
 						msgt = "<?=$Text['msg_finalize_open'];?>"
 					}
-					
-					$.showMsg({
-						msg: msgt,
-						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
+
+					bootbox.confirm({
+						title : "<?=$Text['ti_confirm'];?>",
+						message : "<div class='alert alert-warning'>"+msgt+"</div>",
+						callback : function(ok){
+							if (ok){
 								finalizeOrder(providerId, date);
-								$(this).dialog("close");
-							},
-							"<?=$Text['btn_cancel'];?>" : function(){
-								$( this ).dialog( "close" );
-							}
-						},
-						type: 'confirm'});
+							} else {
+								bootbox.hideAll();
+							}	
+						}
+					});
+					
 					
 					e.stopPropagation();
 			});
 
 			
 			
-			$('#tbl_orderOverview tbody tr')
-				.live('mouseover', function(e){
-					$(this).addClass('ui-state-hover');
+			$('#tbl_orderOverview tbody')
+				.on('click', 'tr', function(e){
 					
-				})
-				.live('mouseout',function(e){
-					$(this).removeClass('ui-state-hover');
-					
-				})
-				.live('click', function(e){
-					$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
-					gSelRow = $(this); 
-					gSelRow.addClass('ui-state-highlight');
-					$('.col').hide();	
-					switchTo('view',{});
-				});
-			
-			
-			$("#tbl_orderOverview").tablesorter(); 
-			$("#tbl_orderOverview").bind('sortEnd', function(){
-				$('tr',this).removeClass('rowHighlight')
-				$('tr:even',this).addClass('rowHighlight');
-			});
 
-			
-			$('.iconContainer')
-				.live('mouseover', function(e){
-					$(this).addClass('ui-state-hover');
-				})
-				.live('mouseout', function (e){
-					$(this).removeClass('ui-state-hover');
+					gSelRow = $(this); 
+
+					//$('.col').hide();	
+					
+					$('.change-sec').switchSection("changeTo",".sec-2");
+
+					
 				});
+			
+			
 			
 
 			//revise order icon 
-			$('.reviseOrderBtn')
-				.live('click', function(e){
+			$('.btn-revise-order')
+				.on('click', function(e){
 					$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
 					gSelRow = $(this).parents('tr'); 
 					gSelRow.addClass('ui-state-highlight');
@@ -1079,25 +1115,30 @@
 					
 					//order comes from pre v2.5 database we miss some info
 					if (status == "-1"){
-						$.showMsg({
-							msg:"<?=$Text['msg_err_miss_info'];?>",
-							type: 'error'});
+						bootbox.alert({
+							title : "Error",
+							message : "<div class='alert alert-warning'><?=$Text['msg_err_miss_info'];?></div>"
+						});	
+						
 						return false; 
 					}
 					
 					//if table header ajax call has not finished, wait
 					if (!tblHeaderComplete){
-						$.showMsg({
-							msg:"<?=$Text['msg_wait_tbl'];?>",
-							type: 'error'});
+						bootbox.alert({
+							title : "Error",
+							message : "<div class='alert alert-warning'><?=$Text['msg_wait_tbl'];?></div>"
+						});
+
 						return false; 
 					}
 
 					//need the order id
 					if (gSelRow.attr('orderId') <= 0){
-						$.showMsg({
-							msg:"<?=$Text['msg_err_invalid_id'];?>",
-							type: 'error'});
+						bootbox.alert({
+							title : "Error",
+							message : "<div class='alert alert-warning'><?=$Text['msg_err_invalid_id'];?></div>"
+						});
 						return false; 
 					}
 
@@ -1119,10 +1160,12 @@
 							//test fails!! 
 							//alert("has cart " + hasCart + "  isvalidated "  + isValidated);
 							if (hasCart && !isValidated){
-								$.showMsg({
-									msg:"<?=$Text['msg_revise_revised'];?>",
-									buttons: {
-										"<?=$Text['btn_ok'];?>":function(){	
+
+								bootbox.confirm({
+									title : "Warning",
+									message : "<div class='alert alert-warning'><?=$Text['msg_revise_revised'];?></div>",
+									callback : function(ok){
+										if (ok){
 											//reset this order to "finalized"
 											$(this).html('<?=$Text['wait_reset'];?>');
 											gSelRow.children().eq(8).attr('revisionStatus',1);
@@ -1131,21 +1174,21 @@
 												$this.html('Done!');
 												setTimeout(function(){
 													switchTo('review', {});
-													$this.dialog("close");
+													//$this.dialog("close");
 												}, 1000);
 												
-											});					
-										},
-										"<?=$Text['btn_cancel'];?>" : function(){
-											$( this ).dialog( "close" );
-										}
-									},
-									type: 'warning'});
+											});		
+										} else {
+											bootbox.hideAll();
+										}	
+									}
+								});
+
+								
 
 							} else if (isValidated){
-								$.showMsg({
-									msg:"<?=$Text['msg_err_already_val'];?>",
-									type: 'error'});
+								bootbox.alert("<?=$Text['msg_err_already_val'];?>");
+
 							} else {
 								switchTo('review', {});
 							}		 
@@ -1159,32 +1202,24 @@
 
 			
 				//global header print buttun
-				$("#btn_print").button({
-				 icons: {
-		        		primary: "ui-icon-print"
-		        	}
-				 })
+				$("#btn_print")
         		.click(function(e){
         			printQueue();
         		});
 
 
         		//download selected as zip
-				$("#btn_zip").button({
-					 icons: {
-			        		primary: "ui-icon-suitcase"
-			        	}
-					 })
+				$("#btn_zip")
 	        		.click(function(e){
 	        			if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-							$.showMsg({
+							/*$.showMsg({
 								msg:"<?=$Text['msg_err_noselect'];?>",
 								buttons: {
 									"<?=$Text['btn_ok'];?>":function(){						
-										$(this).dialog("close");
+										//$(this).dialog("close");
 									}
 								},
-								type: 'warning'});
+								type: 'warning'});*/
 	        			} else {
 		        			var orderRow = ''; 								
 							$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
@@ -1200,21 +1235,16 @@
 
 				// export single order
 				$('#btn_order_export')
-					.button({
-						icons: {
-							primary: "ui-icon-transferthick-e-w"
-			        	}
-					})
 					.click(function(e){
 						$('#dialog_export_options')
-							.data("export", "order")
-							.dialog("open");
+							//.data("export", "order")
+							//.dialog("open");
 					 }); 
         		
 
 				//view selected order (no editing)
 				/*$('.viewOrderBtn')
-					.live('click', function(e){
+					.on('click', function(e){
 						gSelRow = $(this).parents('tr'); 
 						$('.col').hide();	
 						switchTo('view',{});
@@ -1223,7 +1253,7 @@
 				
 				//print the selected order. If more than one is selected, confirm bulk print
 				/*$('.printOrderBtn')
-				.live('click', function(e){
+				.on('click', function(e){
 					$this = $(this);
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
 						$.showMsg({
@@ -1256,7 +1286,7 @@
 
 				
 			
-				$("#tblViewOptions")
+				/*$("#tblViewOptions")
 				.button({
 					icons: {
 			        	secondary: "ui-icon-triangle-1-s"
@@ -1276,11 +1306,12 @@
 						
 					}//end item selected 
 				});//end menu
+				*/
 
 
 				//bulk actions
 				$('input[name=bulkAction]')
-					.live('click', function(e){
+					.on('click', function(e){
 						e.stopPropagation();
 					})
 				
@@ -1329,9 +1360,7 @@
 							window.frames['dataFrame'].window.location = zipURL;
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
+							bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 						},
 						complete : function(){
 							$('#bulkActionsTop, #bulkActionsBottom').val(-1).attr('selected','selected');
@@ -1380,14 +1409,15 @@
 					gSelRow = null;  
 
 					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-						$.showMsg({
+						/*$.showMsg({
 							msg:"<?=$Text['msg_err_noselect'];?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){						
 									$(this).dialog("close");
 								}
 							},
-							type: 'warning'});
+							type: 'warning'});*/
+
 					} else {
 
 						printWin = window.open('tpl/'+local_cfg.print_order_template);
@@ -1440,14 +1470,14 @@
 						url: 'php/ctrl/Orders.php?oper=finalizeOrder&provider_id='+providerId+'&date='+orderDate,
 						success: function(txt){
 							$('#tbl_orderOverview tbody').xml2html('reload');
-							$.showMsg({
-								msg:txt,
-								type: 'success'});
+							bootbox.alert({
+								title : "Success",
+								message : "<div class='success'>"+txt+"</div>"
+							});
+						
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
+							bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 							
 						}
 					});			
@@ -1467,9 +1497,7 @@
 							callbackfn.call(this);
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
+							bootbox.alert("An error has occured: " + XMLHttpRequest.responseText);
 							
 						}
 					});		
@@ -1504,35 +1532,17 @@
 							$('#dialog_orderStatus button').button('enable');
 							$('#btn_'+gRevStatus[sindex]).button('disable');
 							$('#currentOrderStatus').html(gRevStatus[sindex]);
-							$('#dialog_orderStatus').dialog("open");
+							//$('#dialog_orderStatus').dialog("open");
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
 							break;
 							
 						case 'view':
-							var title = gSelRow.children().eq(2).text();
 
-							//$('#viewOrderRevisionStatus') set the order status here. 
-							$('.providerName').html(title);							
-							$('.overviewElements').hide();
-							$('.viewElements').fadeIn(1000);
-							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
-								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
-							})
 							
-							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
-								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
-								complete : function(rowCount){
-									$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
-									$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
-									//copy the order status 
-									var tdStatus = gSelRow.children().eq(8).clone();
-									$('#orderDetailRevisionStatus').before(tdStatus).remove();
-								}
-			 				});
 							
-							$('#btn_setShopDate').hide();
+							
 							break;
 					}
 					gSection = page; 
@@ -1560,72 +1570,141 @@
 	
 	
 </script>
-
-
 </head>
 <body>
-<div id="wrap">
+
 	<div id="headwrap">
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
-	<!-- end of headwrap -->
-	
-	<div id="stagewrap">
-	
-		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol50">
-				<button id="btn_overview" class="floatLeft reviewElements viewElements"><?php echo $Text['overview'];?></button>
-				<h1 class="reviewElements"><?=$Text['ti_revise'];?> <span class="providerName"></span></h1>
-				<h1 class="viewElements"><?=$Text['ti_order_detail'];?> <span class="providerName aix-style-provider-name"></span></h1>
-		    	<h1 class="overviewElements"><?=$Text['ti_mng_orders'];?></h1>
-		    </div>
-		   	<div id="titleRightCol50">
-		   		<!-- button id="btn_setReview" class="viewElements btn_right"><?=$Text['btn_revise']; ?></button-->
-		   		
-		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
-				<button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['filter_orders']; ?></button>
-				<button id="btn_order_export" class="floatRight viewElements" ><?php echo $Text['btn_export']; ?></button>
-				
-				<div id="tblOptionsItems" class="hidden">
-					<ul>
-						<li><a href="javascript:void(null)" id="ordersForToday"><?=$Text['filter_expected'] ?></a></li>
-						<li><a href="javascript:void(null)" id="nextWeek"><?=$Text['filter_next_week'] ;?></a></li>
-						<li><a href="javascript:void(null)" id="futureOrders"><?=$Text['filter_future'];?></a></li>
-						<li><a href="javascript:void(null)" id="pastMonth"><?=$Text['filter_month'] ; ?></a></li>
-						<li><a href="javascript:void(null)" id="pastYear"><?=$Text['filter_year'];?></a></li>
-						<li><a href="javascript:void(null)" id="limboOrders"><?=$Text['filter_postponed'];?></a></li>
-						<li><a href="javascript:void(null)" id="preOrders"><?=$Text['nav_report_preorder'];?></a></li>
-					</ul>
-				</div>	
-				<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
-		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
-		   	</div> 	
-		</div> <!--  end of title wrap -->
-		<div class="ui-widget overviewElements" id="withSelected">
-			<!-- p  class="textAlignLeft">
-				<select id="bulkActionsTop">
-					<option value="-1"><?=$Text['with_sel'];?></option>
-					<option value="print"><?=$Text['printout'];?></option>
-					<option value="download"><?=$Text['dwn_zip'];?></option>
-				</select>
-			</p-->
+	<!-- end of main menu / headwrap -->
+
+
+	<!-- sub nav -->
+	<div class="container section sec-1">
+		<div class="row">
+			<nav class="navbar navbar-default" role="navigation" id="ax-submenu">
+			  	<div class="navbar-header">
+			     	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sub-navbar-collapse">
+				        <span class="sr-only">Toggle navigation</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+			      	</button>
+	    		</div>
+
+	    		<div class="navbar-collapse collapse" id="sub-navbar-collapse">
+		    	
+
+		    		<div class="col-md-4">
+						<button type="button" class="btn btn-success btn-sm navbar-btn section sec-2" id="btn-distribute">
+		    				<span class="glyphicon glyphicon glyphicon-ok-sign"></span> <?=$Text['btn_distribute'];?>
+		  				</button>
+	  				</div>
+
+	  				<div class="col-md-3 section sec-3 sec-1">
+						<form class="navbar-form pull-right" role="date">
+							<div class="form-group">
+		                        <div class='input-group date input-group-sm' id='datepicker-from' >
+		                            <input type='text' class="form-control" id="date-from" data-format="dddd, ll" placeholder="From" />
+		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
+
+		            <div class="col-md-3">
+						<form class="navbar-form" role="date">
+							<div class="form-group">
+		                        <div class='input-group date input-group-sm' id='datepicker-to' >
+		                            <input type='text' class="form-control" name="date-to" data-format="dddd, ll" placeholder="To" />
+		                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </form>
+	            	</div>
+
+					
+
+					<div class="btn-group col-md-1">
+						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+		    				Actions <span class="caret"></span>
+		  				</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="javascript:void(null)" class="ctx-nav ctx-nav-print"><span class="glyphicon glyphicon-export"></span> <?=$Text['printout'];?></a></li>
+						    <li><a href="javascript:void(null)" class="ctx-nav ctx-nav-zip"><span class="glyphicon glyphicon-export"></span> Zip</a></li>
+						</ul>
+						
+					</div>
+
+	  				<div class="btn-group col-md-1 pull-right">
+						<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+							<span class="glyphicon glyphicon-filter"></span>&nbsp; <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="javascript:void(null)">Filter</a></li>
+						    <li class="level-1-indent"><a href="javascript:void(null)" data="days,0" class="ctx-nav-filter"><?=$Text['filter_postponed'];?></a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="weeks,1" class="ctx-nav-filter"><?=$Text['nav_report_preorder'];?></a></li>
+						    <li class="level-1-indent"><a href="javascript:void(null)" data="days,0" class="ctx-nav-filter"><?=$Text['filter_expected'] ?></a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="weeks,-1" class="ctx-nav-filter"><?=$Text['filter_next_week'] ;?></a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="year,-1" class="ctx-nav-filter"><?=$Text['filter_future'];?></a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="months,3" class="ctx-nav-filter"><?=$Text['filter_month'] ; ?></a></li>
+							<li class="level-1-indent"><a href="javascript:void(null)" data="months,12" class="ctx-nav-filter"><?=$Text['filter_year'];?></a></li>
+
+						</ul>
+					</div>
+
+		      	</div>
+			</nav>
 		</div>
-		<div id="orderOverview" class="ui-widget overviewElements">
-			<div class="ui-widget-header ui-corner-all">
-				<p style="height:30px;"><span style="float:right; margin-top:0px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></p>
-			</div>
-			<div class="ui-widget-content">
-			<table id="tbl_orderOverview" class="tblListingDefault">
+	</div><!-- end sub nav -->
+
+
+
+	<div class="container" id="aix-title">
+		<div class="row">
+			<!-- SECTION 1: ORDER LISTING -->
+			<div class="col-md-10 section sec-1">
+		    	<h1><?=$Text['ti_mng_orders'];?></h1>
+		    </div>
+
+		    <!-- SECTION 2: REVISE ORDER -->
+			<div class="col-md-10 section sec-2">
+		    	<h1>
+		    		<span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> 
+		    		<?=$Text['ti_revise'];?> <span class="set-provider"></span>
+		    	</h1>
+		    </div>
+
+		    <!-- SECTION 3: VIEW ORDER DETAIL -->
+		 	<div class="col-md-10 section sec-3">
+		    	<h1>
+		    		<span class="glyphicon glyphicon-chevron-left change-sec" target-section="#sec-1"></span> 
+		    		<?=$Text['ti_order_detail'];?> <span class="set-provider"></span>
+		    	</h1>
+		    </div>
+
+		</div>
+	</div>
+
+
+
+	<!-- SECTION 1: ORDER LISTING -->
+	<div class="container">
+		<div class="row">
+			<div class="section sec-1">
+				<table id="tbl_orderOverview" class="table table-hover">
 				<thead>
 					<tr>
 						<th>&nbsp;<input type="checkbox" id="toggleBulkActions" name="toggleBulk"/></th>
-						<th class="clickable"><?=$Text['id'];?><span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable textAlignLeft"><?=$Text['provider_name'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable"><?=$Text['ordered_for'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th><?=$Text['id'];?></th>
+						<th><?=$Text['provider_name'];?> </span></th>
+						<th><?=$Text['ordered_for'];?></th>
 						<th><?=$Text['closes_days'];?></th>
 						<th><?=$Text['sent_off'];?></th>
-						<th class="clickable"><?=$Text['date_for_shop'];?> <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
-						<th class="clickable"><?=$Text['order_total'];?>  <span class="ui-icon ui-icon-triangle-2-n-s floatRight"></span></th>
+						<th><?=$Text['date_for_shop'];?></th>
+						<th><?=$Text['order_total'];?> </th>
 						<th><?=$Text['status'];?></th>
 						<th><?=$Text['actions'];?></th>
 					</tr>
@@ -1634,43 +1713,31 @@
 					<tr id="{id}" orderId="{id}" dateForOrder="{date_for_order}" providerId="{provider_id}" class="clickable">
 						<td><input type="checkbox" name="bulkAction"/></td>
 						<td>{id}</td>
-						<td class="textAlignRight minPadding"><p class="textAlignLeft">{provider_name}</p></td>
+						<td><p class="text-left">{provider_name}</p></td>
 						<td>{date_for_order}</td>
 						<td>{time_left}</td>
 						<td>{ts_sent_off}</td>
 						<td>{date_for_shop}</td>
-						<td><p  class="textAlignRight">{order_total}<?php echo $Text['currency_sign']; ?>&nbsp;&nbsp;</p></td>
+						<td><p  class="text-right">{order_total}<?php echo $Text['currency_sign']; ?>&nbsp;&nbsp;</p></td>
 						<td>{revision_status}</td>
-						<td class="aix-layout-fixW100s">				
-							<a href="javascript:void(null)" class="reviseOrderBtn nobr"><?php echo $Text['btn_revise']; ?></a>
+						<td>
+							<span class="glyphicon glyphicon-pencil btn-revise-order pull-left" title="<?=$Text['btn_revise'];?>"></span>				
 						</td>
 					</tr>
 				</tbody>
-				<tfoot>
-					<tr>
-						<td><span class="ui-icon ui-icon-arrowreturnthick-1-e"></span></td>
-						<td colspan="6">
-							<p  class="textAlignLeft">
-							<select id="bulkActionsBottom">
-								<option value="-1"><?=$Text['with_sel'];?></option>
-								<option value="print"><?=$Text['printout'];?></option>
-								<option value="download"><?=$Text['dwn_zip'];?></option>
-							</select>
-							</p>
-						</td>
-					</tr>
-				</tfoot>
 			</table>
-			</div> <!-- widget content -->
+			</div> 
 		</div>
-		
-		<div id="viewOrderInfo" class="ui-widget viewElements">
-			<div class="ui-widget-header ui-corner-all textAlignCenter">
-				<h3>&nbsp;</h3>
-			</div>
-			<div class="ui-widget-content ui-corner-all">
-				
-				<table id="tbl_orderDetailInfo" class="tblListingBorder2">
+	</div>
+
+
+
+
+	<!-- SECTION 2: ORDER INFO -->
+	<div class="container">
+		<div class="row">
+			<div class="section sec-2">				
+				<table id="tbl_orderDetailInfo" class="table table-bordered">
 					<thead>	
 						<tr>
 							<th colspan="2"><p><?=$Text['provider_name'];?></p></th>
@@ -1812,19 +1879,18 @@
 					</tr>
 					</tbody>
 				</table>
-				
-				
-				
-				
 			</div>
 		</div>
+	</div>
 
-		<div id="reviseOrder" class="ui-widget reviewElements viewElements">
-			<div class="ui-widget-header ui-corner-all textAlignCenter reviewElements">
-				<h3 id="orderInfoDate"></h3>
-			</div>
-			<div class="ui-widget-content">
-				<table id="tbl_reviseOrder" class="tblReviseOrder">
+	
+
+
+	<!-- SECTION 3: REVISE ORDER -->
+	<div class="container">
+		<div class="row">
+			<div class="section sec-2 sec-3">	
+				<table id="tbl_reviseOrder" class="table table-bordered">
 					<thead>
 						<tr>
 							<th><?=$Text['id'];?></th>
@@ -1861,15 +1927,13 @@
 					</tfoot>
 				</table>
 			</div>
-		</div>	
-		
-	
+		</div>		
 	</div>
-	<!-- end of stage wrap -->
-</div>
-<!-- end of wrap -->
 
-<div id="dialog_orderStatus" title="Set Order Status">
+
+
+
+<div id="dialog_orderStatus" title="Set Order Status" class="section sec-4">
 	<p>&nbsp;</p>
 	<p><?php echo $Text['msg_cur_status'];?>: <span id="currentOrderStatus" class="ui-state-highlight ui-corner-all aix-style-padding3x3"></span>.</p>
 	<p><?php echo $Text['msg_change_status']; ?>: </p>
@@ -1884,31 +1948,50 @@
 </div>	
 
 
-<div id="dialog_convertPreorder" title="Convert preorder to order">
+<div id="dialog_convertPreorder" title="Convert preorder to order" class="section sec-4">
 	<p>&nbsp;</p>
 	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"></p>
 	<p><?php echo $Text['msg_pre2Order']; ?></p>
 	<p>&nbsp;</p>
-	<div id="datepicker2"></div>
+	
+	<form class="navbar-form pull-right" role="date">
+		<div class="form-group">
+            <div class='input-group date input-group-sm' id='datepicker-preorder2order' >
+                <input type='text' class="form-control" id="date-from" data-format="dddd, ll" placeholder="From" />
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </form>
+
+
 </div>
 
-<div id="dialog_setShopDate" title="Set shopping date">
+<div id="dialog_setShopDate" title="Set shopping date" class="section sec-4">
 	<p>&nbsp;</p>
 	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"><?php echo $Text['msg_move_to_shop']; ?></p>
 	<p><?php echo $Text['msg_confirm_move']; ?></p>
 	<br/>
-	<p class="textAlignCenter boldStuff" id="indicateShopDate"></p> 
+	<p class="textAlignCenter boldStuff set-shopdate"></p> 
 	<br/>
 	<p><a href="javascript:void(null)" id="showDatePicker"><?php echo $Text['alter_date']; ?></a> </p>
 	<br/>
-	<div id="datepicker"></div>
+	<form class="navbar-form pull-right" role="date">
+		<div class="form-group">
+            <div class='input-group date input-group-sm' id='datepicker-distribute' >
+                <input type='text' class="form-control" id="date-from" data-format="dddd, ll" placeholder="From" />
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </form>
 </div>
 <iframe name="dataFrame" style="display:none;"></iframe>
 <form id="submitZipForm" class="hidden"></form>
 
 
 <iframe id="exportChannel" src="" style="display:none; visibility:hidden;" name="exportChannel"></iframe>
-<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>">
+<div id="dialog_export_options" title="<?php echo $Text['export_options']; ?>" class="section sec-4">
 <?php include("tpl/export_dialog.php");?>
 </div>
 
