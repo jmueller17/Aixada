@@ -196,7 +196,8 @@ $(function(){
 					} else if (type == 'notice'){
 						style = 'ui-state-highlight';
 					}
-
+					$( where ).removeClass(
+							'success_tips ui-state-error ui-state-highlight');
 					$( where )
 						.text( msg )
 						.addClass(style);
