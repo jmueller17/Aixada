@@ -191,7 +191,7 @@ $(function(){
 					_clear_func = function() {
 						_clear_idTimeout = null;
 						$(_clear_where).hide().text('')
-													.removeClass(_clear_style);
+							.removeClass(_clear_style);
 					};
 				return function(where, type, msg, timing ) {
 					
