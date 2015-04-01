@@ -184,7 +184,16 @@ $(function(){
 	};
 	
 	$.extend({
-			updateTips: function(where, type, msg, timing ) {
+			updateTips: (function() {
+				var _clear_where,
+					_clear_style,
+					_clear_idTimeout = null,
+					_clear_func = function() {
+						_clear_idTimeout = null;
+						$(_clear_where).hide().text('')
+													.removeClass(_clear_style);
+					};
+				return function(where, type, msg, timing ) {
 					
 					var style = 'ui-state-highlight';
 					var milsecs = (timing >= 0)? timing:10000;
@@ -196,18 +205,18 @@ $(function(){
 					} else if (type == 'notice'){
 						style = 'ui-state-highlight';
 					}
-					$( where ).removeClass(
-							'success_tips ui-state-error ui-state-highlight');
+					if (_clear_idTimeout) {
+						clearTimeout(_clear_idTimeout);
+						_clear_func();
+					}
 					$( where )
 						.text( msg )
-						.addClass(style);
-					setTimeout(function() {
-						$(where)
-							.text('')
-							.removeClass(style);
-					}, milsecs );
-				}
-		
+						.addClass(style).show();
+					_clear_where = where;
+					_clear_style = style;
+					_clear_idTimeout = setTimeout(_clear_func, milsecs );
+				};
+			})()
 	});
 	
 	
