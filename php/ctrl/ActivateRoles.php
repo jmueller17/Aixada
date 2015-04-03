@@ -60,7 +60,7 @@ try{
       $sql =  'delete from aixada_user_role where user_id=' . $user_id . '; ';
       $sql .= 'insert into aixada_user_role values ';
       $first = true;
-      foreach (split(',', $_REQUEST['role_ids']) as $role) {
+      foreach (explode(',', $_REQUEST['role_ids']) as $role) {
           if ($first) {
               $first = false;
           } else {
@@ -78,7 +78,7 @@ try{
       $sql =  "delete from aixada_user_role where role='$role'; ";
       $sql .= 'insert into aixada_user_role values ';
       $first = true;
-      foreach (split(',', $_REQUEST['user_ids']) as $user_id) {
+      foreach (explode(',', $_REQUEST['user_ids']) as $user_id) {
           if ($first) {
               $first = false;
           } else {
