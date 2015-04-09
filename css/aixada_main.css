@@ -74,7 +74,11 @@ option 				{padding:1px 5px;}
 /** different table styles **/
 table.tblListingDefault				{width:100%;  border-collapse:collapse;}
 table.tblListingDefault th			{background:#f3f3f3; padding:4px 2px; text-align:left;}
+table.tblListingDefault th.textAlignRight { text-align: right; }
+table.tblListingDefault th.textAlignCenter { text-align: center; }
 table.tblListingDefault td			{padding:2px 8px; text-align:left; vertical-align:bottom;}
+table.tblListingDefault td.textAlignRight { text-align: right; }
+table.tblListingDefault td.textAlignCenter { text-align: center; }
 table.tblListingDefault tfoot td	{padding:2px 4px; margin:1px; text-align:right;}
 
 table.tblListingGrid			{width:100%;}
