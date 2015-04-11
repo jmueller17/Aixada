@@ -6,7 +6,6 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
-require_once(__ROOT__ . "php/utilities/account.php");
 require_once(__ROOT__ . "php/lib/report_manager.php");
 require_once(__ROOT__ . "php/lib/account_movement.php");
 require_once(__ROOT__ . "php/lib/account_operations.php");
@@ -41,24 +40,21 @@ try{
 	        exit;   
 	        
   		case 'accountExtract':
-  			echo get_account_extract(
-				get_param('account_id', get_session_uf_id() ), 
+  			printXML($ao->get_account_extract_XML(
+				get_param_int('account_id', get_session_uf_id() ), 
 				get_param('filter','today'),
 				get_param('fromDate',0),
 				get_param('toDate',0)
-			);
+			));
   			exit; 
   		
   	 	case 'latestMovements':  	 		
-            $rs = $ao->latest_movements_rs(
+            printXML($ao->latest_movements_XML(
                 get_param_int('limit', 10), 
                 get_param_array_int('account_types'), 
                 get_param_int('show_uf', 1), 
                 get_param_int('show_providers', 0)
-            );
-            if ($rs) {
-                printXML(rs_XML_fields($rs));
-            }
+            ));
 	    	exit;
 	    	
 	    case 'getBalances':
@@ -68,26 +64,20 @@ try{
             exit;
 
 	   	case 'getUfBalances':
-			printXML(rs_XML_fields(
-				$ao->get_uf_balances_rs(
+			printXML($ao->get_uf_balances_XML(
 					get_param_int('all', 0),                
 					get_param_int('negative', 0)
-				)
 			));
 	    	exit;
 			
 	   	case 'getNegativeAccounts':
-			printXML(rs_XML_fields(
-				$ao->get_uf_balances_rs(0, 1)
-			));
+			printXML($ao->get_uf_balances_XML(0, 1));
 	    	exit;
 	    	
 	    case 'getIncomeSpendingBalance':
-			printXML(rs_XML_fields(
-				$ao->income_spending_rs(
-					get_param_date('date',date("Y-m-d")),
+			printXML($ao->get_income_spending_XML(
+					get_param_date('date', date("Y-m-d")),
 					get_param_array_int('account_types', array(1))
-				)
 			));
 	    	exit;
 	    	

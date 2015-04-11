@@ -10,15 +10,28 @@ class account_operations {
     
     public function __construct ($lang='') { // TODO: Use a lang other than User. 
         $this->cfg_accounts = get_config('accounts', array());
-        $this->cfg_use_providers = isset($this->cfg_accounts['use_providers']) && 
-				$this->cfg_accounts['use_providers'];
+        $this->cfg_use_providers = isset($this->cfg_accounts['use_providers']) ? 
+				true : false;
 	}
     
     // --------------------------------------------
     // READ
     // --------------------------------------------
-    
-    public function latest_movements_rs(
+    public function latest_movements_XML(
+                            $limit, $account_types, $show_uf, $show_providers) {
+		return rs_XML_fields(
+			$this->latest_movements_rs(
+						$limit, $account_types, $show_uf, $show_providers),
+			cnv_config_formats(array(
+				'id' =>         '',
+				'account_id' => '',
+				'ts'=>          'datetime',
+				'quantity' =>   'amount',
+				'balance' =>    'amount'
+			))
+		);
+	}
+    protected function latest_movements_rs(
                             $limit, $account_types, $show_uf, $show_providers) {
         $sql = array();
         $db = DBWrap::get_instance();
@@ -138,8 +151,20 @@ class account_operations {
         }
         return '<accounts>'.$strXML.'</accounts>';
     }
-    
-	public function get_uf_balances_rs($all, $negative) {
+	
+	/**
+	 *
+	 */
+    public function get_uf_balances_XML($all, $negative) {
+		return rs_XML_fields(
+			$this->get_uf_balances_rs($all, $negative),
+			cnv_config_formats(array(
+				'last_update'=> 'datetime',
+				'balance' => 'amount'
+			))
+		);
+	}
+	protected function get_uf_balances_rs($all, $negative) {
 		$sql = 
 			"select
 				a.account_id,
@@ -168,13 +193,20 @@ class account_operations {
 	}
 	
     public function get_balances_XML($account_types) {
+		$formats = cnv_config_formats(array(
+			'account_id' => '',
+			'balance' => 'amount',
+			'result' => 'amount',
+			'last_update' => 'datetime'
+		));
         $strXML = '';
         $result = 0;
         $rs = $this->balances_rs($account_types);
         while ($row = $rs->fetch_assoc()) {
             $result += 
                     $row['account_id'] < 0 ? $row['balance'] : -$row['balance'];
-            $strXML .= array_to_XML(array(
+            $strXML .= array_to_XML(
+				array(
                     'account_id' => $row['account_id'],
                     'name' => $row['name'].(
                         $row['account_id'] > 1 ? '#'.$row['account_count'] : ''
@@ -182,7 +214,8 @@ class account_operations {
                     'balance' => $row['balance'],
                     'result' => $result,
                     'last_update' => $row['last_update']
-            ));
+				), $formats
+			);
         }
         $rs->free();
         return '<rowset>'.$strXML.'</rowset>';
@@ -249,7 +282,19 @@ class account_operations {
             order by account_group_or;";
         return DBWrap::get_instance()->Execute($sql);
     }
-    public function income_spending_rs($date, $account_types) {
+	
+	public function get_income_spending_XML($date, $account_types) {
+		return rs_XML_fields(
+			$this->get_income_spending_rs($date, $account_types),
+			cnv_config_formats(array(
+				'account_id' => '',
+				'income' => 'amount',
+				'spending' => 'amount',
+				'balance' => 'amount'
+			))
+		);
+	}
+    protected function get_income_spending_rs($date, $account_types) {
         $sql = "
             select account_group_id account_id,
 					concat(account_desciption,'#',count(*)) name, 
@@ -289,6 +334,69 @@ class account_operations {
         return DBWrap::get_instance()->Execute($sql);
 	}
 
+	/**
+ * 
+ * produces an extract of the money movements for the selected account and time-period
+ * @param unknown_type $account_id
+ * @param unknown_type $filter
+ * @param unknown_type $from_date
+ * @param unknown_type $to_date
+ */
+function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
+	
+	$today = date('Y-m-d', strtotime('Today'));
+	$tomorrow = date('Y-m-d', strtotime('Today + 1 day'));
+	$prev_2month = date('Y-m-d', strtotime('Today - 2 month'));
+	$prev_year	 = 	date('Y-m-d', strtotime('Today - 13 month'));
+	
+	$very_distant_future = '9999-12-30';
+	$very_distant_past	= '1980-01-01';
+	
+	$account_id = (0< $account_id and $account_id < 1000)? $account_id+1000:$account_id;
+	
+	$formats = cnv_config_formats(array(
+		'id' => '',
+		'account_id' => '',
+		'balance' => 'amount',
+		'quantity' => 'amount',
+		'ts' => 'datetime'
+	));
+	
+	switch ($filter) {
+	// all orders where date_for_order = today
+	case 'past2Month':
+		return rs_XML_fields(
+			do_stored_query('get_extract_in_range', $account_id,
+				$prev_2month, $tomorrow),
+			$formats);
+	case 'pastYear':
+		return rs_XML_fields(
+			do_stored_query('get_extract_in_range', $account_id,
+				$prev_year, $tomorrow),
+			$formats);
+	case 'today':
+		return rs_XML_fields(
+			do_stored_query('get_extract_in_range', $account_id,
+				$today, $tomorrow),
+			$formats);
+	case 'exact':
+		return rs_XML_fields(
+			do_stored_query('get_extract_in_range', $account_id,
+				$from_date, $to_date),
+			$formats
+		);
+	case 'all':
+		return rs_XML_fields(
+			do_stored_query('get_extract_in_range', $account_id, 
+				$very_distant_past, $very_distant_future),
+			$formats
+		);
+	default:
+		throw new Exception("account_extract: param={$filter} not supported");  
+		break;
+	}
+}
+	
     // --------------------------------------------
     // ACTIONS
     // --------------------------------------------

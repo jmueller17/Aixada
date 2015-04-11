@@ -273,6 +273,34 @@ function get_config($param_name, $default=null) {
 }
 
 /**
+ * Tranform a $field_types assoc array to field_formats assoc array using the 
+ *      configuration value $type_formats.
+ * @param array(string) $field_types Associative array with field_name and type of format. 
+ * @return array() $field_formats Associative array with field_name and format.
+ */
+function cnv_config_formats($field_types) {
+    $cfg_formats = get_config('type_formats');
+    if (!$cfg_formats) {
+        return null;
+    }
+    $field_formats = array();
+    foreach ($field_types as $field_name => $content) {
+        foreach (array('dates','numbers') as $type) {
+            if (isset($cfg_formats[$type]) &&
+                        array_key_exists($content, $cfg_formats[$type])) {
+                $field_formats[$field_name] = array(
+                    'type' => $type,
+                    'format' => $cfg_formats[$type][$content]
+                );
+                break;
+            }
+        }
+        
+    }
+    return $field_formats;
+}
+
+/**
  * Provides some basic logic to retrieve translations using the $Text array.
  * @param string $text_code The code of the text to translate.
  * @param $replace Associative array with the parameters to replace (search=>value)
@@ -526,36 +554,36 @@ function query_XML_fields($strSQL) {
 /**
  * Execute a SQL query and returns a list of XML <row>.
  * @param string|array $strSQL A SQL query
- * @param array(string) $formats Associative array with field_name and format.
+ * @param array(string) $field_formats Associative array with field_name and format.
  * @return string The XML
  */
-function query_to_XML($strSQL) {
+function query_to_XML($strSQL, $field_formats = array()) {
     return rs_to_XML(
-        DBWrap::get_instance()->Execute(func_get_args())
+        DBWrap::get_instance()->Execute(func_get_args()), $field_formats
     );
 }
 
 /**
  * Walk a mysqli_result and returns a XML <rowset>.
  * @param mysqli_result $rs
- * @param array(string) $formats Associative array with field_name and format.
+ * @param array(string) $field_formats Associative array with field_name and format.
  * @return string The XML
  */
-function rs_XML_fields($rs) {
-    return '<rowset>'.rs_to_XML($rs).'</rowset>';
+function rs_XML_fields($rs, $field_formats = array()) {
+    return '<rowset>'.rs_to_XML($rs, $field_formats).'</rowset>';
 }
 
 /**
  * Walk a mysqli_result and returns a list of XML <row>.
  * @param mysqli_result $rs
- * @param array(string) $formats Associative array with field_name and format. 
+ * @param array(string) $field_formats Associative array with field_name and format. 
  * @return string The XML
  */
-function rs_to_XML($rs) {
+function rs_to_XML($rs, $field_formats = array()) {
     $strXML = '';
     if ($rs) {
         while ($row = $rs->fetch_assoc()) {
-            $strXML .= array_to_XML($row);
+            $strXML .= array_to_XML($row, $field_formats);
         }
         $rs->free();
     }
@@ -565,10 +593,10 @@ function rs_to_XML($rs) {
 /**
  * Tranform a assoc array to a XML <row>.
  * @param array $ass_array A associative array
- * @param array(string) $formats Associative array with field_name and format. 
+ * @param array(string) $field_formats Associative array with field_name and format. 
  * @return string The XML
  */
-function array_to_XML($ass_array) {
+function array_to_XML($ass_array, $field_formats) {
     global $Text;
     $strXML = '<row';
     if (isset($ass_array['id'])) {
@@ -576,11 +604,45 @@ function array_to_XML($ass_array) {
     }
     $strXML .= '>';
     foreach ($ass_array as $field => $value) {
-        if ($field == 'description' and isset($Text[$value])) {
-            $value = $Text[$value];
+        if ($field_formats && isset($field_formats[$field])) {
+            $format = $field_formats[$field];
+            if (isset($format['type'])) {
+                $format_f = $format['format'];                    
+                switch ($format['type']) {
+                case 'dates':
+                    if (!$format_f) {
+                        $value_f = $value;
+                    } else {
+                        $value_f = date($format['format'], strtotime($value));
+                    }
+                    break;
+                case 'numbers':
+                    if (!$format_f) {
+                        $value_f = $value;
+                    } elseif (substr($format_f,0,1) == 'z') {
+                        $value_f = clean_zeros($value);
+                    } else {
+                        $value_f = number_format($value,
+                            substr($format_f,0,1),
+                            substr($format_f,1,1),
+                            substr($format_f,2,1)
+                        );
+                    }
+                    break;
+                default:
+                    $value_f = $value;
+                }
+            } else {
+                $value_f = $value;
+            }
+            $strXML .= "<{$field} f=\"{$field}\">{$value_f}</{$field}>";
+        } else {
+            if ($field == 'description' and isset($Text[$value])) {
+                $value = $Text[$value];
+            }
+            $strXML .= "<{$field} f=\"{$field}\"><![CDATA[".
+                clean_zeros($value)."]]></{$field}>";
         }
-        $strXML .= "<{$field} f=\"{$field}\"><![CDATA[".
-                                           clean_zeros($value)."]]></{$field}>";
     }
     return $strXML .= '</row>';    
 }
