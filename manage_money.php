@@ -1,4 +1,8 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php 
+	include "php/inc/header.inc.php";    
+	require_once(__ROOT__.'php/lib/account_operations.config.php');
+	require_once(__ROOT__.'php/lib/account_writers.php');
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -6,800 +10,502 @@
 	<title><?php echo $Text['global_title'] . " - " . $Text['head_ti_cashbox'];?></title>
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
-    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
+	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
+	<link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+<style>
+	table.tblForms td label { float: none; }
+	/* ol_selectable */
+	.ol_selectable .ui-selecting { background: #FECA40;  }
+	.ol_selectable .ui-selected  { background: #F39814; color: white; }
+	.ol_selectable { 
+		list-style-type: none; 
+		margin: 0; padding: 0; 
+		line-height: 200%;
+	}
+	.ol_selectable li {
+		display: inline-block; 
+		font-weight: normal;
+		cursor: pointer; 
+		margin: 3px; padding: 0 0.4em; 
+		border-radius: 4px;
+	}
+</style>
 	
 
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	      <script type="text/javascript" src="js/jquery/jquery.js"></script>
+	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
+		<script type="text/javascript" src="js/jquery/jquery.js"></script>
 		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
 		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
 		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   
-   	<?php  } else { ?>
-	    <script type="text/javascript" src="js/js_for_manage_money.min.js"></script>
-    <?php }?>
+		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+	<?php  } else { ?>
+		<script type="text/javascript" src="js/js_for_manage_money.min.js"></script>
+	<?php }?>
 
-   
-	<script type="text/javascript">
+<?php
+// Generate html to use in the form.
+	function write_account_html_select($name, $text_dir, $text_name, $ctr_options) {
+		$html = 
+			'<tr class="'.$name.'_tr"><td>'.i18n($text_dir).
+				' <span style="color:#777">'.i18n($text_name).'</span></td>'.
+			'<td><select name="'.$name.'_id" id="'.$name.'_id">'.
+				'<option value="" selected="selected">(...)</option>'.
+				'<option value="{id}">{name}</option>'.
+				"</select>\n".
+			'<script>'.
+			'set_optionsLoad_controller("'.$name.'_id","'.$ctr_options.'");'.
+			"</script></td></tr>\n";
+		echo $html;
+	}
+	function write_operation_html_ul() { // filter by local_config
+		$local_accounts = get_config('accounts', array());
+		$local_use_providers = isset($local_accounts['use_providers']) && 
+				$local_accounts['use_providers'];
+		global $config_account_operations;
+		if (isset($local_accounts['account_operations'])) {
+			$local_operation_accounts = $local_accounts['account_operations'];
+			foreach ($local_operation_accounts as $operation_name) {
+				write_operation_html_li(
+					$local_use_providers, $operation_name,
+					$config_account_operations[$operation_name]);
+			}
+		} else {
+			foreach ($config_account_operations as $operation_name => $cfg_operation) {
+				write_operation_html_li(
+					$local_use_providers, $operation_name, $cfg_operation);
+			}
+		}
+	}
+	function write_operation_html_li(
+			$local_use_providers, $operation_name, $cfg_operation) {
+		if ($local_use_providers || (
+				!array_key_exists('provider_from', $cfg_operation) && 
+				!array_key_exists('provider_to', $cfg_operation)) ) {
+			echo '<li class="ui-widget-header" val="'.$operation_name.'">'.
+					i18n('mon_op_'.$operation_name).'</li>';
+		}
+	}
+	function write_cfg_operations_to_js() {
+		global $config_account_operations;
+		foreach ($config_account_operations as $operation_name => $cfg_operation) {
+			$id_names = array();
+			$description = '';
+			foreach ($cfg_operation as $account_id_name => $o_params) {
+				if (isset($o_params['default_desc'])) {
+					$description = i18n('mon_desc_'.$o_params['default_desc']);
+				}
+				array_push($id_names, '"'.$account_id_name.'"');
+			}
+			echo "
+			{$operation_name}: {
+				op:[".implode(', ', $id_names)."],
+				desc: \"{$description}\"
+			},";
+		}
+		echo "  false: null //end of list;\n";
+	}
+?>
+<script>
+	function set_optionsLoad_controller(id, ctr_options) {
+		$('#'+id).xml2html("init",{
+			url: "php/ctrl/Account.php",
+			params: 'oper=getAccounts&all=0'+ctr_options,
+			offSet	: 1,
+			loadOnInit : true,
+			complete : function(){ }
+		})
+		.change(function(e){
+			allowOperation();
+		});
+	}
+</script>
 
+<script type="text/javascript">
+	// Texts of the literals in the language of the user. For use in js.
+	var local_lang = {
+		mon_send: "<?php echo i18n('mon_send'); ?>",
+		currency_sign: "<?php echo i18n('currency_sign'); ?>"
+	};
+
+	// Configuration values used by js code.
+	var local_cfg = {
+		default_theme: "<?=$default_theme;?>"
+	};
+	
+	// Operation configuration
+	var locat_cfg_operations = {<?php write_cfg_operations_to_js(); ?>};
+
+</script>
+<script>
+	var _operationAccounts = [];
+	function allowOperation(){
+		var allow = true;
+		if (!$.isNumeric($('#operation_amount').val())) {
+			allow = false;
+		};
+		for (var i = 0, len = _operationAccounts.length; i <len; i++) {
+			var aa=$('#'+_operationAccounts[i]+'_id');
+			if (!$.isNumeric($('#'+_operationAccounts[i]+'_id').val())) {
+				allow = false;
+			};
+		}
+		if (allow) {
+			$('#operation_submit').button('enable');
+		} else {
+			$('#operation_submit').button('disable');
+		}
+	}
+	function account_operation_change(operation_code){
+		$('.account_to_tr').hide();
+		$('.account_from_tr').hide();
+		$('.uf_to_tr').hide();
+		$('.uf_from_tr').hide();
+		$('.provider_to_tr').hide();
+		$('.provider_from_tr').hide();
+		var _operationAccounts = locat_cfg_operations[operation_code];
+		if (!_operationAccounts) {
+			_operationAccounts = {op:[], desc:''};
+			$('.mov_text_tr').hide();
+			return;
+		}
+		for (var i = 0, len = _operationAccounts.op.length; i <len; i++) {
+			$('.'+_operationAccounts.op[i]+'_tr').show();
+		}
+		$('#operation_note')
+			.val('')
+			.attr("placeholder", _operationAccounts.desc);
+		$('.mov_text_tr').show();
+	}
+	function endOperation() {
+		$('#operation_amount').val('');
+		allowOperation();
+		reloadOperationPanels();
+	}
+	function reloadOperationPanels() {
+		var _reload = function(selector){
+			var sel_items = selector.split(" ");
+			if ($(sel_items[0]).css('display') !== "none") {
+				$(selector).xml2html('reload');
+			}
+		};
+		_reload('#latestMovements tbody');
+		_reload('#accountBalances tbody');
+		_reload('#dailyStats tbody');
+		_reload('#negative_ufs tbody');
+		_reload('#uf_balances tbody');
+	}
+	
 	$(function(){
-
-			//set the balance of cashbox(-3) or consume account (-2)
-			var gSetBalanceAId = -3; 
-
-		
-			/**
-			 * 	account listing
-			 */
-			 $('#list_account tbody').xml2html('init',{
-					url				: 'php/ctrl/Account.php',
-					params			: 'oper=accountExtract&account_id=-3&start_date=2200-01-01&num_rows=400',
-					resultsPerPage 	: 20,
-					loadOnInit 		: false, 
-					paginationNav 	: '#list_account tfoot td',
-					beforeLoad 		: function(){
-						$('#cashbox_listing .loadAnim').show();
-					},
-					complete 		: function(rowCount){
-						$('#cashbox_listing .loadAnim').hide();
-
-						var balance = $('tr td', this).eq(5).html();
-						$('#balance').html(balance);
+		//loading animation
+		$('.loadSpinner').attr('src', "img/ajax-loader-"+
+			local_cfg.default_theme+".gif").hide();
+	
+		//init tabs
+		$("#tabs").tabs({
+			'select': function(event, ui) {
+				// Reload the list account
+				if (ui.tab && $(ui.tab).attr('href') === "#tabs-2") {
+					if ($('#account_select').val()) {
+						$('#list_account tbody').xml2html('reload');
 					}
-			});
-
-
-			/**
-			 *	load ufs. make depost in cashbox and account. 
-			 */
-			 $('.uf_account_select').xml2html('init',{
-					url 	: 'php/ctrl/Account.php',
-					params 	: 'oper=getAllAccounts', 
-					offSet	: 1, 
-					loadOnInit : true, 
-					complete : function(){
-						$('option[value="-1"], option[value="-2"], option[value="-3"]', this).hide();
-						//$('option[value="-3"]', this).attr('selected','selected');
-						
-					}
-				//event listener to load items for this uf to validate
-				}).change(function(e){
-					allowDeposit();		
-					allowWithdraw();		
-								
-			});
-
-
-			/**
-			 * hide show specific deposit fields
-			 */
-			$('.uf_sel_tr, .comment_tr').hide();
-			$('#sel_deposite_type').change(function(e){
-				var sel_id = parseInt($("option:selected", this).val());
-				$('.comment_tr').show(); 
-				//make deposit for UF
-				if (sel_id == 1){
-					$('.uf_account_select option[value="-10"]').attr('selected','selected')
-					$('.uf_sel_tr').show();
-				
-				//other type of deposits
-				} else if (sel_id == 2) {
-					$('.uf_account_select option[value="-3"]').attr('selected','selected');
-					$('.uf_sel_tr').hide();
-
-				} else if (sel_id == -1){
-					$('.uf_sel_tr, .comment_tr').hide();
 				}
-				allowDeposit();
-			});
-
-
-			/**
-			 * hide show specific withdraw fields
-			 */			
-			$('.uf_sel_tr, .comment_tr').hide();
-			$('#sel_withdraw_type').change(function(){
-				var sel_id = parseInt($("option:selected", this).val()); 
-				$('.comment_tr').show();
-				$('.uf_account_select option[value="-3"]').attr('selected','selected');
-				$('.uf_sel_tr').hide();
-				
-				//widthdraw to pay provider
-				if (sel_id == 1){
-					
-					
-				//withdraw to take money to the bank
-				} else if (sel_id == 2) {
-					
-
-				//uf stuff
-				} else if (sel_id == 3 || sel_id == 4) {
-					$('.uf_account_select option[value="-10"]').attr('selected','selected')
-					$('.uf_sel_tr').show();
-
-				//all other stuff
-				} else if (sel_id == 5) {
-					
-				} else if (sel_id == -1){
-					//$('.uf_sel_tr, .comment_tr').hide();
-				} 
-				
-				allowWithdraw();
-			});
-
-			
-			/**
-			 * 	checks if all deposit submit criteria are met. 
-			 */
-  			function allowDeposit(){
-  				var allow = true; 
-  	  			var deposit_type = $('#sel_deposite_type option:selected').val();
-  	  			var amount = $.checkNumber($('#deposit_amount'), '', 2);			
-  				var uf_id = parseInt($("#deposit_form .uf_account_select option:selected").val()) - 1000;
-
-  				$('#deposit_amount').val(amount);
-  				
-  	  			allow = allow && (amount > 0) && (deposit_type==3 || (deposit_type==2 || ((uf_id > 0) && (deposit_type == 1))));
-
-  	  			if (allow) {
-  	  				$('#deposit_submit').button('enable');
-  	  	  		} else {
-	  	  	  		$('#deposit_submit').button('disable');
-  	  	  	  	}
-  	  		} 	
-
-
-  			/**
-			 * 	checks if all withdraw submit criteria are met. 
-			 */
-  			function allowWithdraw(){
-  				var allow = true; 
-  	  			var withdraw_type = $('#sel_withdraw_type option:selected').val()
-  	  			var amount = $.checkNumber($('#withdraw_amount'), '', 2);
-  	  			var uf_id = parseInt($("#withdraw_form .uf_account_select option:selected").val()) - 1000;
-
-  	  			$('#withdraw_amount').val(amount);
-				
-  	  			allow = allow && (amount > 0) && (((withdraw_type == 2 || withdraw_type == 1 || withdraw_type == 5 || withdraw_type == 6) || ((uf_id > 0) && (withdraw_type == 3 || withdraw_type == 4))));
-
-  	  			if (allow) {
-  	  				$('#withdrawal_submit').button('enable');
-  	  	  		} else {
-	  	  	  		$('#withdrawal_submit').button('disable');
-  	  	  	  	}
-  	  		} 			
-
-
-  			
-  			/**
-  			 *	reset deposit / withdrawal
-  			 */
-			function resetDeposit(){
-				var n = new Number(0); 
-				$('#deposit_amount').val(n.toFixed(2));
-				$('#sel_deposite_type').trigger("change");
 			}
+		});
 
-			function resetWithdrawal(){
-				var n = new Number(0); 
-				$('#withdraw_amount').val(n.toFixed(2));
-				$('#sel_withdraw_type').trigger("change");
-			}
-
-			
-
-  			$('#deposit_amount')
-  	  			.blur(function(e){
-  	  				allowDeposit();
-  	  	  		});
-  	  		
-  			$('#withdraw_amount')
-  	  			.blur(function(e){
-  	  				allowWithdraw();
-  	  	  		})
-
-
-  			
-  	
-  			/**
-  			 *	DEPOSIT SUBMIT
-  			 */
-			$('#deposit_submit').button({
-					disabled:true,
-					icons: {
-		                primary: "ui-icon-arrowthick-1-s"
-		            }
-			}).click(function(){
-  				var dataSerial = $('#deposit_form').serialize();
-				$('#deposit_submit').button('disable');
-
-				//decide which money movement
-				var sel_id  = parseInt($('#sel_deposite_type option:selected').val());
-				var oper = ""; 
-
-				switch (sel_id){
-					case 1:
-						oper = "depositCashForUf";
-						break;
-					case 2: 
-						oper = "depositCash";
-						break;
-					case 3: 
-						oper = "depositSalesCash";
-						break;
+		/**
+		 * 	MONITOR Money, daily stats, negative ufs
+		 */
+		$('#latestMovements tbody').xml2html('init',{
+				url		: 'php/ctrl/Account.php',
+				params	: 'oper=latestMovements&account_types=1&show_uf=1&show_providers=1',
+				rowComplete : function (rowIndex, row){
+					$.formatQuantity(row, local_lang.currency_sign);
+				},
+				complete : function (rowCount){
+					$('#latestMovements tbody tr:even').addClass('rowHighlight');
 				}
-				
+		});
 
-				$.ajax({
-					type: "POST",
-					url: "php/ctrl/Account.php?oper="+oper,
-					data: dataSerial,	
-					beforeSend : function (){
-						$('#depositAnim').show();
-					},	
-					success: function(msg){
-						$.updateTips("#depositMsg", "success", "<?=$Text['msg_deposit_success'];?>" );
-						resetDeposit();
-								
-						$('#list_account tbody').xml2html('reload',{
-							params: 'oper=latestMovements'
-						});
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown){
-						$.updateTips("#depositMsg","error", XMLHttpRequest.responseText);
-					},
-					complete : function(msg){
-						$('#deposit_submit').button('enable');
-						$('#depositAnim').hide();
-					}
-				}); //end ajax
-
-			});
-
-
-  			/**
-  			 *	WITHDRAW SUBMIT
-  			 */
-			$('#withdrawal_submit')
-				.button({
-					disabled:true,
-					icons: {
-	                	primary: "ui-icon-arrowthick-1-n"
-	            	}
-				})
-				.click(function(){
-	  				var dataSerial = $('#withdraw_form').serialize();
-					$('#withdrawal_submit').button('disable');
-
-
-					//decide which money movement
-					var sel_id  = parseInt($('#sel_withdraw_type option:selected').val());
-					var oper = ""; 
-
-					switch (sel_id){
-						case 1:
-							oper = "payProviderCash";
-							break;
-						case 2: 
-							oper = "withdrawCashForBank";
-							break;
-						case 3: 
-							oper = "withdrawCashFormUFAccount";
-							break;
-
-						case 4: 
-							oper = "withdrawMemberQuota";
-							break;
-						case 5: 
-							oper = "withdrawCash";
-							break;
-						case 6: 
-							oper = "payProviderBank";
-							break;
-					}	
-					
-
-					$.ajax({
-						type: "POST",
-						url: "php/ctrl/Account.php?oper="+oper,
-						data: dataSerial,	
-						beforeSend : function (){
-							$('#withdrawAnim').show();
-						},	
-						success: function(msg){
-							$.updateTips("#withdrawMsg", "success", "<?=$Text['msg_withdrawal_success'];?>" );
-							resetWithdrawal();
-									
-							$('#list_account tbody').xml2html('reload',{
-								params	: 'oper=latestMovements'
-							});
-						},
-						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.updateTips("#withdrawMsg","error", XMLHttpRequest.responseText);
-						},
-						complete : function(msg){
-							$('#withdrawal_submit').button('enable');
-							$('#withdrawAnim').hide();
-						}
-					}); //end ajax
-
-			});
-
-
-					
-
-
-  			 
-  			$("#dialog_c_balance").dialog({
-  				autoOpen: false,
-  				width: 450,
-  				modal: true,
-  				buttons: {
-  					"<?=$Text['btn_submit'];?>": function() {
-
-							var amount = $.checkNumber($('#c_balance_quantity'), '', 2); 
-  							var notes = $('#c_balance_description').val();
-					        var css = (new Number(amount) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
-
-
-							if (!amount){
-								$.updateTips("#c_balance_Msg","error", "<?php echo $Text['msg_err_only_num'];?>");
-								return false; 
-							}
-	  							
-  							//
-  							$.ajax({
-  								type: "POST",
-								url : "php/ctrl/Account.php?oper=correctBalance&account_id="+gSetBalanceAId+"&balance="+amount+"&description="+notes,
-  						        success :  function(msg){
-
-  						        	//$('.setTotalCashbox').addClass(css).text(amount).fadeIn(1000);
-  						        	getGlobalBalances();
-
-  									$('#c_balance_quantity').val("");  
-  									$("#dialog_c_balance").dialog( "close" );
-  								}, 
-  								error : function(XMLHttpRequest, textStatus, errorThrown){
-  							    	$.updateTips('#c_balance_Msg','error', XMLHttpRequest.responseText);
-  							   	},
-  							   	complete: function(){
-  								}  		
-  							});
-  						
-  					},
-  					"<?=$Text['btn_cancel'];?>": function() {
-  						$('#c_balance_quantity').val("");  
-  						$( this ).dialog( "close" );
-  					}
-  				}
-  			});		
-
-
-
-
-  			//$('button').button();
-
-  			$("#btn_overview").button({
-				 icons: {
-		        		primary: "ui-icon-circle-arrow-w"
-		        	}
-				 })
-        		.click(function(e){
-    				switchTo('overview'); 
-        		}).hide();
-  			
-
-  			/**
-  			 *	Main cashbox menu buttons
-  			 */
-  			$('#btn_nav_dCashbox')
-  				.button()
-  				.click(function(e){
-					switchTo('depositCash');
-  	  			});
-
-  			$('#btn_nav_wCashbox')
-				.button()
-				.click(function(e){
-					switchTo('withdrawCash');
-	  			});
-
-  			$('#btn_nav_cCashbox')
-				.button()
-				.click(function(e){
-					gSetBalanceAId = -3; 
-					$("#dialog_c_balance").dialog('open');
-					$("#dialog_c_balance").dialog({ title: "<?php echo $Text['set_balance'];?>" });
-  				});
-
-  			
-
-  			/**
-  			 *	Main consum account menu buttons
-  			 */
-  			$('#btn_nav_dCAccount')
-  				.button()
-  				.click(function(e){
-					switchTo('depositBanc');
-  	  			});
-
-  			$('#btn_nav_wCAccount')
-				.button()
-				.click(function(e){
-					switchTo('withdrawBanc');
-	  			});
-
-  			$('#btn_nav_cCAccount')
-				.button()
-				.click(function(e){
-					gSetBalanceAId = -2; 
-					$("#dialog_c_balance").dialog('open');
-					$("#dialog_c_balance").dialog({ title: "<?php echo $Text['set_c_balance'];?>" });
-
-  				});
-
-	  			
-			function getGlobalBalances(){
-	  			//retrieve balance of global accounts
-	  			$.ajax({
-						type: "POST",
-						url : "php/ctrl/Account.php?oper=globalAccountsBalance",
-						dataType : 'xml',
-				        success :  function(xml){
-	
-					        	$(xml).find('row').each(function(){
-						        	
-					        		var id = $(this).find('account_id').text();
-						        	var balance = $(this).find('balance').text();
-	
-						        	var css = (new Number(balance) > 0)? 'aix-style-pos-balance':'aix-style-neg-balance';
-						        	
-						        	switch(id){
-						        		case '-3':
-							        		$('.setTotalCashbox').addClass(css).text(balance);
-							        		break;
-						        		case '-2':
-						        			$('.setTotalConsum').addClass(css).text(balance);
-						       				break;
-						        		case '-1':
-						        			$('.setTotalMaintenance').addClass(css).text(balance);
-						       				break;
-						        	}
-	
-						        });
+		//Account balances
+		$('#accountBalances tbody').xml2html('init',{
+			url		: 'php/ctrl/Account.php',
+			params	: 'oper=getBalances&account_types=1,1000,2000',
+			beforeLoad : function(){
+				$('#accountBalances .loadSpinner').show();
+			},
+			rowComplete : function (rowIndex, row){
+				$.formatQuantity(row, local_lang.currency_sign);
+			},
+			complete : function(){
+				$('#accountBalances .loadSpinner').hide();
+			}
+		});
 		
-						}, 
-						error : function(XMLHttpRequest, textStatus, errorThrown){
-							$.showMsg({
-								msg:XMLHttpRequest.responseText,
-								type: 'error'});
-					   	} 		
+		//UF balances
+		$('#uf_balances tbody').xml2html('init',{
+			url		: 'php/ctrl/Account.php',
+			params	: 'oper=getUfBalances',
+			beforeLoad : function(){
+				$('#uf_balances_ui .loadSpinner').show();
+			},
+			rowComplete : function (rowIndex, row){
+				$.formatQuantity(row, local_lang.currency_sign);
+			},
+			complete : function(){
+				$('#uf_balances_ui .loadSpinner').hide();
+			}
+		});
+
+		// Show/hide blocks
+		$('.left-icons').bind("mouseenter", function(){
+			if ($(this).hasClass('ui-icon-triangle-1-s')){
+				$(this).removeClass('ui-icon-triangle-1-s')
+					.addClass('ui-icon-circle-triangle-s');
+			} else {
+				$(this).removeClass('ui-icon-triangle-1-e')
+					.addClass('ui-icon-circle-triangle-e');
+			}
+		}).bind("mouseleave", function(){
+			if ($(this).hasClass('ui-icon-circle-triangle-s')){
+				$(this).removeClass('ui-icon-circle-triangle-s')
+					.addClass('ui-icon-triangle-1-s');
+			} else {
+				$(this).removeClass('ui-icon-circle-triangle-e')
+					.addClass('ui-icon-triangle-1-e');
+			}
+		}).bind("click", function(){
+			$(this).parent().next().toggle();
+			reloadOperationPanels();
+			if ($(this).hasClass('ui-icon-circle-triangle-s')){
+				$(this).removeClass('ui-icon-circle-triangle-s')
+					.addClass('ui-icon-circle-triangle-e');
+			} else {
+				$(this).removeClass('ui-icon-circle-triangle-e')
+					.addClass('ui-icon-circle-triangle-s');
+			}
+		});
+		
+		// Operations
+		$("#operation_codes").selectable({
+			selecting: function (event, ui) {
+				// Can select only one button
+				$(event.target).children('.ui-selected').removeClass('ui-selected');
+			},
+			stop: function() {
+				var operation_code ='';
+				$( ".ui-selected", this ).each(function() {
+					// Set text button
+					$('#operation_submit .ui-button-text').text(
+						local_lang.mon_send+': '+$(this).text()
+					);
+					// Set operation code
+					operation_code = $(this).attr("val");
 				});
+				$("#account_operation").val(operation_code);
+				account_operation_change(operation_code);
+				allowOperation();
 			}
-	
-
-			function switchTo(section){
-								
-				//reset selects; 
-				$('#sel_withdraw_type option[value="-1"]').attr('selected','selected');
-				$('#sel_deposite_type option[value="-1"]').attr('selected','selected');
-
-				resetDeposit();
-				resetWithdrawal();
-
-				$('.overviewElements, .withdrawElements, .withdrawCashElements, .withdrawBancElements, .depositElements, .depositBancElements, .depositCashElements, .movementElements').hide();
-				
-				switch(section){
-
-				case 'overview':
-					getGlobalBalances();
-					//$('.depositElements, .withdrawElements, .movementElements').hide();
-                    $('#deposit_description').val('');
-                    $('#withdraw_description').val('');
-                    $('#c_balance_description').val('');
-					$('.overviewElements').fadeIn(1000);
-					break;
-					
-				case 'depositCash':
-					$('.depositElements, .depositCashElements').fadeIn(1000);
-					break;
-
-				case 'depositBanc':
-					//$('.overviewElements, .withdrawElements').hide();
-					$('.depositElements, .depositBancElements').fadeIn(1000);
-					break;
-				
-
-				case 'withdrawCash':
-					//$('.overviewElements, .depositElements').hide();
-					$('.withdrawElements, .withdrawCashElements').fadeIn(1000);
-					break;
-
-				case 'withdrawBanc':
-					//$('.overviewElements, .depositElements').hide();
-					$('.withdrawElements, .withdrawBancElements').fadeIn(1000);
-					break;
-				
-					
-
+		});
+		$('#operation_amount').change(function(e){
+			allowOperation();
+		});
+		$('#operation_submit').button({
+			disabled:true,
+			icons: {
+				primary: "ui-icon-arrowthick-1-s"
+			}
+		}).click(function(){
+			var dataSerial = $('#operation_form').serialize();
+			$('#operation_submit').button('disable');
+			$.ajax({
+				type: "POST",
+				url: "php/ctrl/Account.php?oper=addOperation",
+				data: dataSerial,
+				beforeSend : function (){
+					$('#operationAnim').show();
+				},
+				success: function(msg){
+					$.updateTips("#submitMsg", "success", msg);
+					endOperation();
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					$.updateTips("#submitMsg", "error", XMLHttpRequest.responseText);
+				},
+				complete : function(msg){
+					$('#operation_submit').button('enable');
+					$('#operationAnim').hide();
 				}
-			}
-  			
-			switchTo('overview');	
-					
+			}); //end ajax
+		});
+		account_operation_change("");
+		allowOperation();
+		reloadOperationPanels();
 	});  //close document ready
-	</script>
+</script>
+
 </head>
+<?php flush(); ?>
 <body>
 <div id="wrap">
-
-	<div id="headwrap">
-		<?php include "php/inc/menu.inc.php" ?>
+<div id="headwrap">
+	<?php include "php/inc/menu.inc.php" ?>
+</div><!-- end of headwrap -->
+<div id="stagewrap" class="ui-widget">
+	<div id="titlewrap">			
+		<h1><?php echo $Text['head_ti_cashbox']; ?></h1>
 	</div>
-	<!-- end of headwrap -->
-	
-	
-	<div id="stagewrap" class="ui-widget">
-	
-		<div id="titlewrap" class="ui-widget">
-			<div id="titleLeftCol">
-				<button id="btn_overview" class="floatLeft depositElements withdrawElements"><?php echo $Text['overview'];?></button>
+	<div class="aix-layout-splitW60 floatLeft">
+	<div id="tabs">
+		<span style="float:right; margin-top:6px; margin-right:10px;" ><img id="cartAnim" class="loadSpinner" src="img/ajax-loader.gif"/></span>
+		<ul>
+			<li><a href="#tabs-1"><?php echo $Text['mon_operation_account']; ?></a></li>
+			<li><a href="#tabs-2"><?php echo $Text['mon_list_account']; ?></a></li>
+		</ul>
+		<div id="tabs-1">
+			<div class="ui-widget">
+			<form id="operation_form" onsubmit="return false;">
+				<div>                
+					<input type="hidden" name="account_operation" id="account_operation" value=""/>
+					<ol id="operation_codes" class="ol_selectable"><?php 
+						write_operation_html_ul(); 
+					?></ol>
+				</div>
+				<div id="submitMsg"></div>                     
+				<table class="tblForms" style="width:100%">                     
+				<tr><td style="padding-bottom:5px" colspan="2">            
+				<?php
+					write_account_html_select(
+						'account_from', 'mon_from', 'account',          '&account_types=1');
+					write_account_html_select(
+						'uf_from',      'mon_from', 'uf_long',          '&show_uf=1');
+					write_account_html_select(
+						'provider_from','mon_from', 'provider_name',    '&show_providers=1');
+					write_account_html_select(
+						'account_to',   'mon_to',   'account',          '&account_types=1');
+					write_account_html_select(
+						'uf_to',        'mon_to',   'uf_long',          '&show_uf=2');
+					write_account_html_select(
+						'provider_to',  'mon_to',   'provider_name',    '&show_providers=1');
+				?>
+				<tr class="mov_text_tr"><td><?php echo $Text['amount'];?>:&nbsp;&nbsp;</td>
+					<td><input type="text" autocomplete="off" name="quantity" id="operation_amount" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/></td></tr>
+				<tr class="mov_text_tr"><td><?php echo $Text['comment'];?>:&nbsp;&nbsp;</td>
+					<td><input type="text" autocomplete="off" name="description" id="operation_note" class="inputTxtMax ui-widget-content ui-corner-all" value=""/></td></tr>
+				<tr><td style="width:10em">&nbsp;</td><td>
+					<button id="operation_submit"><?=$Text['btn_make_deposit']; ?></button>
+					<span class="loadAnim floatRight hidden" id="operationAnim">
+						<img src="img/ajax-loader.gif"/></span>
+					</td>
+				</tr>
+				</table>
+			</form>
 			</div>
-		</div><!-- end titlewrap -->
-		
-		<div class="aix-layout-center60 ui-widget"> 
-		<div id="account_overview" class="overviewElements aix-style-entry-widget">
-		
-			<h2 class="clickable"><?php echo $Text['name_cash_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalCashbox"">-</span> <?php echo $Text['currency_sign'];?></span></h2>
-			<table>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCashbox"><?php echo $Text['btn_deposit']; ?></button>
-					</td>
-					<td><p><?php echo $Text['deposit_desc']; ?></p></td>
-				</tr>
-				
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCashbox"><?php echo $Text['btn_make_withdrawal']; ?></button>
-					</td>
-					<td><p><?php echo $Text['withdraw_desc']; ?></p></td>
-				</tr>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_cCashbox"><?php echo $Text['btn_set_balance']; ?></button>
-					</td>
-					<td><p><?php echo $Text['set_bal_desc']; ?></p></td>
-				</tr>
-				
-			</table>
-			<p>&nbsp;</p>
-	
-			<h2><?php echo $Text['consum_account']; ?> <span class="floatRight"><?=$Text['current_balance'];?>: <span class="setTotalConsum">-</span> <?php echo $Text['currency_sign'];?></span></h2>
-			<table>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_dCAccount"><?php echo $Text['btn_deposit']; ?></button>
-					</td>
-					<td><p><?php echo $Text['deposit_desc_banc']; ?></p></td>
-				</tr>
-				
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_wCAccount"><?php echo $Text['btn_make_withdrawal']; ?></button>
-					</td>
-					<td><p><?php echo $Text['withdraw_desc_banc']; ?></p></td>
-				</tr>
-				<tr>
-					<td>
-						<button class="aix-layout-fixW150" id="btn_nav_cCAccount"><?php echo $Text['btn_set_balance']; ?></button>
-					</td>
-					<td><p><?php echo $Text['set_bal_desc']; ?></p></td>
-				</tr>
-				
-			</table>
-			<p>&nbsp;</p>
-			<span class="hidden">
-			<h2><?php echo $Text['maintenance_account']; ?>  <span class="floatRight"><?=$Text['current_balance'];?><span class="setTotalMaintenance">-</span></span></h2>
-			<table>
-				<tr>
-					<td class="aix-layout-fixW150">
-						
-					</td>
-					<td><p>...</p></td>
-				</tr>
-				
-				<tr>
-					<td>
-						
-					</td>
-					<td><p></p></td>
-				</tr>
-			</table>
-			</span>
-		</div>
-		</div>
-
-
-		<!-- DESPOT CASH / BANC SECTION -->
-
-		<div id="deposit_cash" class="ui-widget aix-layout-center60 depositElements">
-		<div class="aix-style-highlight-deposit ui-corner-all" >
-			<div class="ui-widget-content ui-corner-all">
-				<h2 class="ui-widget-header ui-corner-all"><span class="depositCashElements"><?=$Text['deposit_cashbox'];?></span><span class="depositBancElements"><?=$Text['deposit_banc'];?></span> <span class="loadAnim floatRight hidden" id="depositAnim"><img src="img/ajax-loader.gif"/></span></h2>
-				<p id="depositMsg" class="ui-corner-all"></p>
-				<div id="deposit_cash_content" class="padding10x5">
-					<form id="deposit_form" onsubmit="return false;">
-					<table class="tblForms">
-						<tr>
-							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
-							<td><input type="text" name="quantity" id="deposit_amount" class="inputTxtMiddle ui-widget-content ui-corner-all " value="0.00"/>&nbsp;<?php echo $Text['currency_sign'];?></td>
-						</tr>
-						<tr>
-							<td colspan="2"><br/></td>
-						</tr>
-						<tr>
-							<td><?=$Text['deposit_type'];?>:&nbsp;&nbsp;</td>
-							<td>
-								<select id="sel_deposite_type">
-									<option value="-1"><?=$Text['please_select'];?></option>
-									<option class="depositCashElements" value="1"><?=$Text['deposit_by_uf'];?></option>
-									<option class="depositBancElements" value="3"><?=$Text['deposit_sales_cash']; ?></option>
-									<option class="depositCashElements" value="2"><?=$Text['deposit_other'];?></option>
-
-									
-								</select>
-							</td>
-						</tr>
-						<tr class="uf_sel_tr">
-							<td><?=$Text['make_deposit_4HU'];?>:&nbsp;&nbsp;</td>
-							<td>
-								<select class="uf_account_select" name="account_id">
-		    						<option value="-10" selected="selected"><?php echo $Text['sel_uf_or_account']; ?></option>
-		    						<option value="{id}">{name}</option>
-			    				</select>
-							</td>
-						</tr>
-						
-						<tr class="comment_tr">
-							<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>
-							<td>
-								<input type="text" name="description" id="deposit_description" class="inputTxtLarge ui-widget-content ui-corner-all" value=""/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><br/></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><button id="deposit_submit"><?=$Text['btn_make_deposit']; ?></button></td>
-						</tr>
-						</table>
-						</form>
-					</div>
-				</div>
-		</div>
-		</div>
-		
-		
-		<div id="withdraw_cash" class="ui-widget  aix-layout-center60 withdrawElements">
-			<div class="aix-style-highlight-withdrawl ui-corner-all"> 
-			<div class="ui-widget-content ui-corner-all" >
-				<h2 class="ui-widget-header ui-corner-all"><span class="withdrawCashElements"><?php echo $Text['widthdraw_cashbox'];?></span> <span class="withdrawBancElements"><?php echo $Text['withdraw_banc'];?></span> <span class="loadAnim floatRight hidden" id="withdrawAnim"><img src="img/ajax-loader.gif"/></span></h2>
-				<p id="withdrawMsg" class="ui-corner-all></p>
-				<div id="withdraw_cash_content" class="padding10x5">
-					<form id="withdraw_form" onsubmit="return false;">
-						<input type="hidden" name="account_id" value="-3"/>
-					<table class="tblForms">
-						<tr>
-							<td><?=$Text['amount'];?>:&nbsp;&nbsp;</td>
-							<td>-<input type="text" name="quantity" id="withdraw_amount" class="inputTxtLarge  ui-widget-content ui-corner-all " value="0.00"/>&nbsp;<?php echo $Text['currency_sign'];?></td>
-						</tr>
-						<tr>
-							<td colspan="2"><br/></td>
-						</tr>
-						<tr>
-							<td><?=$Text['withdraw_type'];?>:&nbsp;&nbsp;</td>
-							<td>
-								<select id="sel_withdraw_type">
-									<option value="-1"><?php echo $Text['please_select'];?></option>
-									<option class="withdrawCashElements" value="1"><?php echo $Text['withdraw_provider']; ?></option>
-									<option class="withdrawCashElements" value="2"><?php echo $Text['withdraw_to_bank']; ?></option>
-									<option class="withdrawCashElements" value="3"><?php echo $Text['withdraw_uf']; ?></option>
-									<option class="withdrawCashElements" value="4"><?php echo $Text['withdraw_cuota']; ?></option>
-									<option class="withdrawCashElements" value="5"><?php echo $Text['withdraw_other'];?></option>
-									<option class="withdrawBancElements" value="6"><?php echo $Text['withdraw_provider']; ?></option>
-								</select>
-							</td>
-						</tr>						
-						<tr class="uf_sel_tr">
-							<td><?php echo $Text['withdraw_from']; ?>:&nbsp;&nbsp;</td>
-							<td>
-								<select class="uf_account_select" name="account_id">
-		    						<option value="-10" selected="selected"><?php echo $Text['sel_uf_or_account']; ?></option>
-		    						<option value="{id}">{name}</option>
-			    				</select>
-							</td>
-						</tr>
-						
-						<tr class="comment_tr">
-							<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>
-							<td>
-								<input type="text" name="description" id="withdraw_description" class="inputTxtLarge ui-widget-content ui-corner-all" value=""/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><br/></td>
-						</tr>
-
-						
-						<tr>
-							<td></td>
-							<td><button id="withdrawal_submit"><?=$Text['btn_make_withdrawal']; ?>!</button></td>
-						</tr>
-					</table>
-					</form>
-				</div>
+		</div><!-- end tab-1 -->
+		<div id="tabs-2">
+			<div class="ui-widget">
+				<div><?php write_list_account_select(); ?></div>
+				<?php write_list_account(); ?>
+			</div>
+		</div><!-- end tab-2 -->
+	</div><!-- end tabs -->
+	</div><!-- end left col -->
+	<div class="aix-layout-splitW40 floatRight">
+		<div id="monitorFlows" class="ui-widget">
+			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+				<h3 class="ui-widget-header ui-corner-all"><span 
+					class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php
+						echo $Text['latest_movements'];?> <span 
+					class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+				<table id="latestMovements" class="tblListingDefault">
+				<thead>
+					<tr>
+						<th colspan="2"><?php echo $Text['account'];?></th>
+						<th><?php echo $Text['transfer_type'];?></th>
+						<th class="textAlignRight"><?php echo $Text['amount'];?>&nbsp;</th>
+						<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{account_id}</td>
+						<td>{account_name}</td>
+						<td>{method}</td>
+						<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
+						<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
+					</tr>
+				</tbody>
+				</table>
 			</div>
 		</div>
-		</div>
-		
-
-		<div id="cashbox_listing" class="ui-widget movementElements">
-			<div class="ui-widget-content ui-corner-all">
-					<h2 class="ui-widget-header ui-corner-all minPadding"><?=$Text['latest_movements'];?> <?php echo $Text['name_cash_account'];?><span class="loadAnim floatRight hidden"><img src="img/ajax-loader.gif"/></span></h2>
-					<table id="list_account"  class="table_listing">
+		<?php write_dailyStats('', true, 0, false); ?>
+		<div class="ui-widget">
+			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+				<h3 class="ui-widget-header ui-corner-all"><span 
+					class="left-icons ui-icon ui-icon-triangle-1-e"></span><?php
+						echo $Text['mon_accountBalances']; ?> <span 
+					class="loadAnim floatRight hidden"><img 
+					class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+				<table id="accountBalances" class="tblListingDefault hidden">
 					<thead>
 						<tr>
-							<th><?php echo $Text['date'];?></th>
-							<th><?php echo $Text['operator']; ?></th>
-							<th><?php echo $Text['description']; ?></th>
-							<th><?php echo $Text['account']; ?></th>
-							<th><?php echo $Text['amount']; ?></th>
-							<th><?php echo $Text['balance']; ?></th>
+							<th colspan="2"><?php echo $Text['account'];?></th>
+							<th class="textAlignRight"><?php 
+								echo $Text['mon_balance'];?>&nbsp;</th>
+							<th class="textAlignRight"><?php
+								echo $Text['mon_result'];?>&nbsp;</th>
+							<th><?php echo $Text['mon_lastOper'];?></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="xml2html_tpl">
-							<td>{ts}</td>
-							<td>{operator}</td>
-							<td>{description}</td>
-							<td>{account}</td>
-							<td>{quantity}</td>
-							<td>{balance}</td>
-						</tr>
+						<tr>
+							<td>{account_id}</td>
+							<td>{name}</td>
+							<td><p class="textAlignRight">
+								<span class="formatQty">{balance}</span>
+							</p></td>
+							<td><p class="textAlignRight">
+								<span class="formatQty">{result}</span>
+							</p></td>
+							<td>{last_update}</td>
+						 </tr>
 					</tbody>
-					<tfoot>
-						<tr><td></td></tr>
-					</tfoot>
-					</table>
-					
-					
-			</div>	
+				</table>
+			</div>         
 		</div>
-	</div><!-- end of stage wrap -->
-<div/>
-<!-- end of wrap -->
-<div id="dialog_c_balance" title="">
-	<p id="c_balance_Msg" class="minPadding ui-corner-all"></p>
-	<p><br/></p>
-	<form id="c_balance_form">	
-		<table class="tblForms">
-			<tr>
-				<td><?php echo $Text['current_balance']; ?>:&nbsp;&nbsp;</td>
-				<td><input type="text" name="c_balance_quantity" id="c_balance_quantity" class="ui-widget-content ui-corner-all " value=""/>&nbsp;<?php echo $Text['currency_sign'];?></td>
-			</tr>
-			<tr>
-				<td><?=$Text['comment'];?>:&nbsp;&nbsp;</td>
-				<td><input type="text" name="c_balance_description" id="c_balance_description" class=" ui-widget-content ui-corner-all " value=""/></td>
-			</tr>								
-		</table>
-	</form>
-</div>
+		<?php write_negative_ufs('', true, 0, false); ?>
+		<div id="uf_balances_ui" class="ui-widget">
+			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+				<h3 class="ui-widget-header ui-corner-all"><span 
+					class="left-icons ui-icon ui-icon-triangle-1-e"></span><?php
+						echo $Text['mon_uf_balances'];?><span 
+					class="loadAnim floatRight"><img 
+					class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+					<table id="uf_balances" class="tblListingDefault hidden">
+						<thead>
+							<tr>
+								<th class="textAlignRight"><?php echo $Text['uf_short'];?></th>
+								<th class="textAlignLeft"><?php echo $Text['name'];?></th>
+								<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
+								<th><?php echo $Text['mon_lastOper'];?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><p class="textAlignRight">{uf}</p></td>
+								<td><p class="textAlignLeft">{name}</p></td>
+								<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
+								<td>{last_update}</td>
+							</tr>
+						</tbody>
+					</table>
 
+			</div>
+		</div>
+	</div><!-- end of right col -->
+</div><!-- end of stage wrap -->
+</div><!-- end of wrap -->
+<!-- / END -->
 </body>
 </html>
