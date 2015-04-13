@@ -55,6 +55,7 @@ function write_negative_ufs(
 				},
 				complete : function(){
 					$('#monitorUFs .loadSpinner').hide();
+					$('#negative_ufs tbody tr:odd').addClass('rowHighlight');
 				}
 			});
 		}
@@ -122,6 +123,7 @@ function write_dailyStats(
 				},
 				complete : function(){
 					$('#monitorGlobals .loadSpinner').hide();
+					$('#dailyStats tbody tr:odd').addClass('rowHighlight');
 				}
 			});
 		}
@@ -231,7 +233,7 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
 							type: 'warning'
 						});
 					} else {
-						$('#list_account tbody tr:even').addClass('rowHighlight'); 
+						$('#list_account tbody tr:odd').addClass('rowHighlight'); 
 					}
 				}
 			});

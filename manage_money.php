@@ -220,11 +220,15 @@
 		$('#latestMovements tbody').xml2html('init',{
 				url		: 'php/ctrl/Account.php',
 				params	: 'oper=latestMovements&account_types=1&show_uf=1&show_providers=1',
+				beforeLoad : function(){
+					$('#latestMovements_ui .loadSpinner').show();
+				},
 				rowComplete : function (rowIndex, row){
 					$.formatQuantity(row, local_lang.currency_sign);
 				},
 				complete : function (rowCount){
-					$('#latestMovements tbody tr:even').addClass('rowHighlight');
+					$('#latestMovements_ui .loadSpinner').hide();
+					$('#latestMovements tbody tr:odd').addClass('rowHighlight');
 				}
 		});
 
@@ -233,13 +237,14 @@
 			url		: 'php/ctrl/Account.php',
 			params	: 'oper=getBalances&account_types=1,1000,2000',
 			beforeLoad : function(){
-				$('#accountBalances .loadSpinner').show();
+				$('#accountBalances_ui .loadSpinner').show();
 			},
 			rowComplete : function (rowIndex, row){
 				$.formatQuantity(row, local_lang.currency_sign);
 			},
 			complete : function(){
-				$('#accountBalances .loadSpinner').hide();
+				$('#accountBalances_ui .loadSpinner').hide();
+				$('#accountBalances tbody tr:odd').addClass('rowHighlight');
 			}
 		});
 		
@@ -255,6 +260,7 @@
 			},
 			complete : function(){
 				$('#uf_balances_ui .loadSpinner').hide();
+				$('#uf_balances tbody tr:odd').addClass('rowHighlight');
 			}
 		});
 
@@ -410,38 +416,40 @@
 			</div>
 		</div><!-- end tab-2 -->
 	</div><!-- end tabs -->
+	<br>
+	<div id="latestMovements_ui" class="ui-widget">
+		<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+			<h3 class="ui-widget-header ui-corner-all"><span 
+				class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php
+					echo $Text['latest_movements'];?> <span 
+				class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+			<table id="latestMovements" class="tblListingDefault">
+			<thead>
+				<tr>
+					<th colspan="2"><?php echo $Text['account'];?></th>
+					<th><?php echo $Text['transfer_type'];?></th>
+					<th class="textAlignRight"><?php echo $Text['amount'];?>&nbsp;</th>
+					<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{account_id}</td>
+					<td>{account_name}</td>
+					<td>{method}</td>
+					<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
+					<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
 	</div><!-- end left col -->
 	<div class="aix-layout-splitW40 floatRight">
-		<div id="monitorFlows" class="ui-widget">
-			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-				<h3 class="ui-widget-header ui-corner-all"><span 
-					class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php
-						echo $Text['latest_movements'];?> <span 
-					class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-				<table id="latestMovements" class="tblListingDefault">
-				<thead>
-					<tr>
-						<th colspan="2"><?php echo $Text['account'];?></th>
-						<th><?php echo $Text['transfer_type'];?></th>
-						<th class="textAlignRight"><?php echo $Text['amount'];?>&nbsp;</th>
-						<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{account_id}</td>
-						<td>{account_name}</td>
-						<td>{method}</td>
-						<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
-						<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
-					</tr>
-				</tbody>
-				</table>
-			</div>
-		</div>
 		<?php write_dailyStats('', true, 0, false); ?>
 		<div class="ui-widget">
-			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+			<div id="accountBalances_ui" 
+					class="ui-widget-content ui-corner-all aix-style-observer-widget">
 				<h3 class="ui-widget-header ui-corner-all"><span 
 					class="left-icons ui-icon ui-icon-triangle-1-e"></span><?php
 						echo $Text['mon_accountBalances']; ?> <span 
