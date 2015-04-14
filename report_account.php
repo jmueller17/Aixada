@@ -43,8 +43,11 @@
 			if (what == 'my_account'){
 				$('.myAccountElements').show();
 				$('.reportAccountElements').hide();
-				$('#account_listing .account_id').text(
-					1000 + <?php echo get_session_uf_id(); ?>);
+				$('#account_listing .account_id').text("<?php 					
+					echo (1000 + get_session_uf_id()).' '.
+						get_row_query('SELECT name from aixada_uf where id='.
+							get_session_uf_id())['name']; 
+				?>");
 			} else { 
 				$('.myAccountElements').hide();
 				$('.reportAccountElements').show();
