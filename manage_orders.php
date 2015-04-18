@@ -1553,8 +1553,11 @@
 							$('.orderTotals').hide();
 							$('#tbl_reviseOrder').hide();
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
-								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
-							})
+								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+
+									'&provider_id='+gSelRow.attr("providerId")+
+									'&date='+gSelRow.attr("dateForOrder")+
+									'&page=review'
+							});
 							break;
 							
 						case 'view':

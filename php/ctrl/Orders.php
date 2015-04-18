@@ -39,7 +39,8 @@ try{
         case 'getOrderedProductsListPrices':
             printXML(rs_XML_fields(get_ordered_products_with_prices(
                 get_param_int('order_id'), get_param_int('provider_id'),
-                get_param_date('date')
+                get_param_date('date'),
+				get_param('page', '-')
             )));
             exit;
 

@@ -417,7 +417,11 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
  * @param string|null $date Date for order (used only when $order_id is null)
  * @return mysqli_result
  */
-function get_ordered_products_with_prices($order_id, $provider_id, $date) {
+function get_ordered_products_with_prices($order_id, $provider_id, $date,
+			$page='-') {
+	if ($page === 'review') {
+		prepare_order_to_shop($order_id);
+	}
     $sql = "
         select distinct
             p.id, 
