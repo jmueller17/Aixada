@@ -165,6 +165,7 @@
 
 
 							if (cart_id > 0 ){
+								$('#cartLayer').aixadacart('resetCart');
 								loadCart(cart_id, date_for_shop);
 							} else {
 								$('.cartTitle, .validatedCartTitle').hide();
@@ -246,7 +247,7 @@
 					var css = (date_for_shop != gToday)? 'ui-state-highlight':'dim40';
 					var df = '('+$.getCustomDate(date_for_shop, 'D, d M, yy')+')';
 					$('.showCartDate').addClass(css).text(df);
-
+					$('#cartLayer').aixadacart('resetCart');
 					loadCart(cart_id, date_for_shop);
 				//if already validated, the offer choice to see purchase details
 				} else {
