@@ -163,15 +163,16 @@ function get_param($param_name, $default=null, $transform = '') {
  *
  * Provides some basic logic to retrieve numeric values from URL parameters. 
  * @param string       $param_name  Name of the parameter passed along
- * @param number|null  $default     Default value used when parameter is not
- *     set, (default value must bee number, if not a null is used as default)
+ * @param number|string|null  $default     Default value used when parameter is
+ *     not set (default value must bee numeric and if it is a string it will be
+ *     converted to a number, otherwise null is used)
  * @return number|null Returns a number if parameter exist and it is numeric,
  *     otherwise returns $default.
  */
 function get_param_numeric($param_name, $default=null) {
     $val = get_param($param_name, false);
     if (!is_numeric($val)) {
-        return (is_numeric($default) ? $default : null);
+        return (is_numeric($default) ? $default + 0 : null);
     }
     return $val + 0;
 }
@@ -180,15 +181,16 @@ function get_param_numeric($param_name, $default=null) {
  *
  * Provides some basic logic to retrieve integer values from URL parameters. 
  * @param string    $param_name  Name of the parameter passed along
- * @param int|null  $default     Default value used when parameter is not set,
- *     (default value must bee integer, if not a null is used as default)
+ * @param int|string|null $default Default value used when parameter is not set,
+ *     (default value must bee a numeric value without decimals and if it is a
+ *      string it will be converted to a integer, otherwise null is used)
  * @return int|null Returns a integer if parameter exist and it is a integer
  *     number, otherwise returns $default.
  */
 function get_param_int($param_name, $default=null) {
     $val = get_param_numeric($param_name);
     if (!is_int($val)) {
-        return (is_int($default) ? $default : null);
+        return (is_numeric($default) && is_int($default+0) ? $default+0 : null);
     }
     return $val;
 }
