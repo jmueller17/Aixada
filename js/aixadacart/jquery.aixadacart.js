@@ -522,7 +522,13 @@
 
   	};//end public plugin methods
 
-  	
+    // See: http://stackoverflow.com/questions/21091727/javascript-tofixed-function
+  	function round2dNum(num){
+        return Math.round(num * 100) / 100;
+    }
+    function round2dText(num){
+        return (Math.round(num * 100) / 100).toFixed(2);
+    }
   	/**
   	 *  utility function; replaces "," with "." and makes sure no letters are in the quantity input
   	 */
@@ -538,7 +544,7 @@
 			.dialog('option','title','Warning')
 			.dialog("open");
 			var nv = new Number(0);
-			return nv.toFixed(2);
+			return round2dText(nv);
 		} else {
 			return fmtInput; 
 		}
@@ -555,7 +561,7 @@
 		$("#cart_quantity_"+itemObj.id).val(itemObj.quantity);
 			
 		//set/update the total cost for item
-		$("#item_total_"+itemObj.id).text(String(item_total.toFixed(2)));
+		$("#item_total_"+itemObj.id).text(String(round2dText(item_total)));
 		
 		if (itemObj.isPreorder) return;
 	}
@@ -579,7 +585,7 @@
 				var rev_tax 	= parseFloat($("#cart_rev_tax_percent_"+id, $(this)).val());
 				var iva_tax 	= parseFloat($("#cart_iva_percent_"+id, $(this)).val());
 				
-				var item_total 	= price * quantity; 
+				var item_total 	= round2dNum(price * quantity); 
 				
   			        var item_net = item_total / (1 + rev_tax/100) / (1 + iva_tax/100);
 				
@@ -592,10 +598,10 @@
 				total += item_total;
 			});
 
-			$('#aixada_cart_list td.total_net').text(String(total_net.toFixed(2)));
-			$('#aixada_cart_list td.iva_tax_total').text(String(iva_tax_total.toFixed(2)));
-			$('#aixada_cart_list td.rev_tax_total').text(String(rev_tax_total.toFixed(2)));
-			$('#aixada_cart_list td.total').text(String(total.toFixed(2)));
+			$('#aixada_cart_list td.total_net').text(String(round2dText(total_net)));
+			$('#aixada_cart_list td.iva_tax_total').text(String(round2dText(iva_tax_total)));
+			$('#aixada_cart_list td.rev_tax_total').text(String(round2dText(rev_tax_total)));
+			$('#aixada_cart_list td.total').text(String(round2dText(total)));
 	}
   	
 	

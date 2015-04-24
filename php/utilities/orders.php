@@ -130,7 +130,7 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
         $ok = do_stored_query('modify_order_item_detail', 
                                 $order_id, $product_id, $uf_id, $quantity);
     } else {
-        // New aixada_order_item and aixada_order_to_shop
+        // CREATE aixada_order_item and aixada_order_to_shop
         // 0. Insert oder items to aixada_order_to_shop table if is needed.            
         // 1. Copy any aixada_order_item on order and protduct with 0 quantity
         $db = DBWrap::get_instance();
@@ -138,8 +138,10 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
         $ok = $db->Execute("
             INSERT INTO aixada_order_item (
                 uf_id, order_id, unit_price_stamp, date_for_order, 
+                -- TODO (phase 2): iva_percent, rev_tax_percent,
                 product_id, quantity )
             SELECT {$uf_id}, order_id, unit_price_stamp, date_for_order,
+                -- TODO (phase 2): iva_percent, rev_tax_percent,
                 product_id, 0
             FROM aixada_order_item 
             WHERE order_id={$order_id} and product_id = {$product_id}
@@ -155,13 +157,16 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
         $ok = $db->Execute("
             INSERT INTO aixada_order_to_shop (
                 order_item_id, uf_id, order_id, unit_price_stamp, product_id,
+                iva_percent, rev_tax_percent,
                 quantity, arrived, revised
             )
             SELECT
-                id, uf_id, order_id, unit_price_stamp, product_id,
+                {$new_order_item_id}, {$uf_id}, order_id, unit_price_stamp, product_id,
+                iva_percent, rev_tax_percent,
                 {$quantity}, 1, 1
-            FROM aixada_order_item
-            WHERE id = {$new_order_item_id};"
+            FROM aixada_order_to_shop
+            WHERE order_id={$order_id} and product_id = {$product_id}
+            LIMIT 1;"
         );
     }
     if (!$ok) {
@@ -195,18 +200,18 @@ function edit_order_gross_price($order_id, $product_id, $gross_price) {
     // Get net price            
     
 	global $pri_dec;
+    $gross_price = round($gross_price, 2);
 	$row = get_row_query("
-        select 
+        SELECT 
             round({$gross_price} * 
-                (1 + iva.percent/100), {$pri_dec}) net_price,
+                (1 + iva_percent/100), 2) net_price,
             round({$gross_price} * 
-                (1 + iva.percent/100) * 
-                (1 + rev.rev_tax_percent/100), {$pri_dec}) uf_price
-        from  aixada_product p
-        join (aixada_rev_tax_type rev, aixada_iva_type iva)
-        on    rev.id = p.rev_tax_type_id and iva.id = p.iva_percent_id
-        where p.id = {$product_id}
-    ");
+                (1 + iva_percent/100) * 
+                (1 + rev_tax_percent/100), {$pri_dec}) uf_price
+        FROM aixada_order_to_shop
+        WHERE order_id={$order_id} and product_id = {$product_id}
+        LIMIT 1;"
+    );
     $_uf_price = $row['uf_price'];
     // Ok, now update net price!!
     $ok = DBWrap::get_instance()->do_stored_query("
@@ -424,20 +429,10 @@ function get_ordered_products_with_prices($order_id, $provider_id, $date,
 	}
     $sql = "
         select distinct
-            p.id, 
-            p.name, 
-            um.unit,
-            round( 
-                max(ifnull(ots.unit_price_stamp, oi.unit_price_stamp)) / 
-                (1 + rev.rev_tax_percent/100) /
-                (1 + iva.percent/100), 2) gross_price,
-            iva.percent iva_percent,
-            round( 
-                max(ifnull(ots.unit_price_stamp, oi.unit_price_stamp)) /
-                (1 + rev.rev_tax_percent/100), 2) net_price,
-            rev.rev_tax_percent,
-            max(ifnull(ots.unit_price_stamp,oi.unit_price_stamp)
-                ) uf_price
+            p.id, p.name, um.unit,
+            ifnull(ots.unit_price_stamp, oi.unit_price_stamp) uf_price,
+            ifnull(ots.rev_tax_percent, rev.rev_tax_percent) rev_tax_percent,
+            ifnull(ots.iva_percent, iva.percent) iva_percent            
         from
             aixada_order_item oi
         left join 
@@ -462,10 +457,19 @@ function get_ordered_products_with_prices($order_id, $provider_id, $date,
     } else {
         $sql .= " where oi.order_id = -1"; // no rows
     }
-    $sql .= "
-        group by p.id, p.name, 
-                um.unit, rev.rev_tax_percent, iva.percent";
-    $sql .= " order by p.name";
-    return DBWrap::get_instance()->Execute($sql);
+    $sql2 = "
+        SELECT id, name, unit,
+            max(r.uf_price) uf_price,
+            max(r.rev_tax_percent) rev_tax_percent,
+            max(r.iva_percent) iva_percent,
+            round( max(r.uf_price) / 
+                (1 + max(r.rev_tax_percent)/100) /
+                (1 + max(r.iva_percent)/100), 2 ) gross_price,
+            round( max(r.uf_price) / 
+                (1 + max(r.rev_tax_percent)/100), 2 ) net_price
+        FROM({$sql}) r
+        group by id, name, unit
+        order by name;";
+    return DBWrap::get_instance()->Execute($sql2);
 }
 ?>

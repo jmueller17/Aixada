@@ -269,7 +269,7 @@ begin
   declare total_price decimal(10,2);
   
   select 
-	sum(si.quantity * si.unit_price_stamp) into total_price
+	sum( CAST(si.quantity * si.unit_price_stamp as decimal(10,2)) ) into total_price
   from 
 	aixada_shop_item si
   where
