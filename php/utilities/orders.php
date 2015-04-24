@@ -1,5 +1,6 @@
 <?php
-$pri_dec = 6;
+// Define decimals to use in price_stamp
+$price_stamp_decimals = 6;
 
 
 require_once(__ROOT__ . 'php/inc/database.php');
@@ -59,7 +60,7 @@ function prepare_order_to_shop($order_id) {
 		limit 1;"
 	);
 	if (!$is_edited) {
-		global $pri_dec;
+		global $price_stamp_decimals;
 		$sql = "
 			insert into aixada_order_to_shop (
 				order_item_id, uf_id, order_id,
@@ -75,7 +76,7 @@ function prepare_order_to_shop($order_id) {
 						(1 + iva.percent/100) / 
 						(1 + rev.rev_tax_percent/100), 2) * 
 					(1 + iva.percent/100) * 
-					(1 + rev.rev_tax_percent/100), {$pri_dec}),
+					(1 + rev.rev_tax_percent/100), {$price_stamp_decimals}),
 				iva.percent, rev.rev_tax_percent,
 				oi.product_id, oi.quantity
 			from
@@ -199,15 +200,15 @@ function edit_order_gross_price($order_id, $product_id, $gross_price) {
     
     // Get net price            
     
-	global $pri_dec;
+	global $price_stamp_decimals;
     $gross_price = round($gross_price, 2);
 	$row = get_row_query("
         SELECT 
             round({$gross_price} * 
-                (1 + iva_percent/100), 2) net_price,
+                (1 + iva_percent/100), {$price_stamp_decimals}) net_price,
             round({$gross_price} * 
                 (1 + iva_percent/100) * 
-                (1 + rev_tax_percent/100), {$pri_dec}) uf_price
+                (1 + rev_tax_percent/100), {$price_stamp_decimals}) uf_price
         FROM aixada_order_to_shop
         WHERE order_id={$order_id} and product_id = {$product_id}
         LIMIT 1;"
