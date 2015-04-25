@@ -212,20 +212,28 @@ $Text['mon_op_withdraw_others'] = 'Pagament altres';
 $Text['mon_op_invoice_pr'] = 'Factura de Prv.';
 $Text['mon_op_move'] = 'Moure';
 $Text['mon_op_correction'] = 'Ajustar saldo';
+$Text['mon_op_a_debit_uf'] = 'Anul·lar Càrrec a UF';
+$Text['mon_op_a_pay_pr'] = 'Anul·lar Pag.Prv.';
+$Text['mon_op_a_invoice_pr'] = 'Anul·lar Factura Prv.';
 // See `account_operations.config.php`
 //   * Translated sub-keys values from 'default_desc' and 'auto_desc'
 //     on $config_account_operations with the prefix 'mon_desc_'
 $Text['mon_desc_deposit_uf'] = 'Dipòsit de UF';
-$Text['mon_desc_deposit_from_uf'] = 'Dipòsit del compte-UF: {uf_from_id}. {comment}';
+$Text['mon_desc_deposit_from_uf'] = 'Dipòsit de UF #{uf_from_id} {comment}';
 $Text['mon_desc_payment'] = 'Pagament a proveïdor';
-$Text['mon_desc_payment_to_provider'] = 'Pagament al compte-proveïdor: {provider_to_id}. {comment}';
-$Text['mon_desc_refund_to_uf'] = 'Restitució al compte-UF: {uf_to_id}. {comment}';
+$Text['mon_desc_payment_to_provider'] = 'Pagament a #{provider_to_id} {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Restitució a UF #{uf_to_id} {comment}';
 $Text['mon_desc_invoice'] = 'Factura de proveïdor.';
 $Text['mon_desc_treasury_movement'] = 'Moviment de tresoreria.';
-$Text['mon_desc_move_from'] = 'Moviment de tresoreria del compte: {account_from_id}. {comment}';
-$Text['mon_desc_move_to'] = 'Moviment de tresoreria al compte: {account_to_id}. {comment}';
+$Text['mon_desc_move_from'] = 'Moviment ve de #{account_from_id} {comment}';
+$Text['mon_desc_move_to'] = 'Moviment va a #{account_to_id} {comment}';
 $Text['mon_desc_correction'] = 'Correcció de saldo';
+$Text['mon_desc_a_payment_to_provider'] = 'ANUL·LAR Pagament a #{provider_from_id} {comment}';
+$Text['mon_desc_a_payment'] = 'ANUL·LAR Pagament a proveïdor';
+$Text['mon_desc_a_invoice'] = 'ANUL·LAR Factura de proveïdor.';
 // Used in manege_money.php and controllers
+$Text['mon_ops_standard'] = 'Normals';
+$Text['mon_ops_corrections'] = 'Correccions';
 $Text['mon_send'] = 'Confirmar';
 $Text['mon_from'] = 'De';
 $Text['mon_to'] = 'A';

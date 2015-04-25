@@ -412,7 +412,7 @@ function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
               "&account_operation=\"{$account_operation}\" is not configured.");
             exit; 
         }
-        $cfg_operation = $_operations[$account_operation];
+        $cfg_operation = $_operations[$account_operation]['accounts'];
         
         // chk Amount decimals
         if ($quantity != floor(round($quantity*100, 6))/100) {
@@ -446,9 +446,7 @@ function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
         // All ok!, so do movements
         $success_count = 0;
 		$r_replace = array(
-			'comment' => $description !== '' ? 
-				i18n('comment').': "'.$description.'"' : 
-				'');
+			'comment' => $description !== '' ? '"'.$description.'"' : '');
 		foreach ($accounts as $account_id_name => $account_id_value) {
 			$r_replace[$account_id_name] = $account_id_value;
 		}

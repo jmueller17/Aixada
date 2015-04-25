@@ -17,7 +17,10 @@
 	table.tblForms td label { float: none; }
 	/* ol_selectable */
 	.ol_selectable .ui-selecting { background: #FECA40;  }
-	.ol_selectable .ui-selected  { background: #F39814; color: white; }
+	.ol_selectable .ui-selected  {
+        background: #F39814; border-color: #555;
+        color: white;
+    }
 	.ol_selectable { 
 		list-style-type: none; 
 		margin: 0; padding: 0; 
@@ -30,6 +33,23 @@
 		margin: 3px; padding: 0 0.4em; 
 		border-radius: 4px;
 	}
+    .vertical li {
+        display: block;
+        text-align: center;
+    }
+    /* layout */
+    #ops {
+        float:left; 
+        width:7.4em; 
+        margin-left:-1.2em; 
+        padding:2px; 
+        background-color:#fdd; 
+        border-radius: 4px; border: 1px solid #bbb;
+    }
+    #ops-1, #ops-2 {
+        margin-left:6.8em;
+        padding:0 .5em 0 0;
+    }
 </style>
 	
 
@@ -59,7 +79,7 @@
 			"</script></td></tr>\n";
 		echo $html;
 	}
-	function write_operation_html_ul() { // filter by local_config
+	function write_operation_html_ul($correction) { // filter by local_config
 		$local_accounts = get_config('accounts', array());
 		$local_use_providers = isset($local_accounts['use_providers']) && 
 				$local_accounts['use_providers'];
@@ -67,22 +87,26 @@
 		if (isset($local_accounts['account_operations'])) {
 			$local_operation_accounts = $local_accounts['account_operations'];
 			foreach ($local_operation_accounts as $operation_name) {
-				write_operation_html_li(
-					$local_use_providers, $operation_name,
-					$config_account_operations[$operation_name]);
+                write_operation_html_li(
+                        $local_use_providers, $correction, $operation_name);
 			}
 		} else {
 			foreach ($config_account_operations as $operation_name => $cfg_operation) {
-				write_operation_html_li(
-					$local_use_providers, $operation_name, $cfg_operation);
+                write_operation_html_li(
+                        $local_use_providers, $correction, $operation_name);
 			}
 		}
 	}
-	function write_operation_html_li(
-			$local_use_providers, $operation_name, $cfg_operation) {
-		if ($local_use_providers || (
-				!array_key_exists('provider_from', $cfg_operation) && 
-				!array_key_exists('provider_to', $cfg_operation)) ) {
+	function write_operation_html_li($use_prov, $correction, $operation_name) {
+        global $config_account_operations;
+        $cfg_operation = $config_account_operations[$operation_name];
+        $is_corr = isset($cfg_operation['correction']) && $cfg_operation['correction'];
+        if ($correction !== !!$is_corr) {
+            return;
+        }
+		if ($use_prov || (
+				!array_key_exists('provider_from', $cfg_operation['accounts']) && 
+				!array_key_exists('provider_to', $cfg_operation['accounts'])) ) {
 			echo '<li class="ui-widget-header" val="'.$operation_name.'">'.
 					i18n('mon_op_'.$operation_name).'</li>';
 		}
@@ -92,7 +116,7 @@
 		foreach ($config_account_operations as $operation_name => $cfg_operation) {
 			$id_names = array();
 			$description = '';
-			foreach ($cfg_operation as $account_id_name => $o_params) {
+			foreach ($cfg_operation['accounts'] as $account_id_name => $o_params) {
 				if (isset($o_params['default_desc'])) {
 					$description = i18n('mon_desc_'.$o_params['default_desc']);
 				}
@@ -294,7 +318,27 @@
 		});
 		
 		// Operations
-		$("#operation_codes").selectable({
+        $("#ops").selectable({
+            selected: 1,
+            selecting: function (event, ui) {
+				// Can select only one button
+				$(event.target).children('.ui-selected').removeClass('ui-selected');
+			},
+            stop: function() {
+                $( ".ui-selected", this ).each(function() {
+                    var selEle = $(this).attr("val");
+                    var noSel = selEle === '#ops-1' ? '#ops-2' : '#ops-1';
+                    $(noSel).hide()
+                        .children('.ui-selected').removeClass('ui-selected');
+					$(selEle).show()
+                        .children('.ui-selected').removeClass('ui-selected');
+                    // No operation is selected.
+                    account_operation_change("");
+                    allowOperation();
+				});
+			}
+        });
+        var selectableObj = {
 			selecting: function (event, ui) {
 				// Can select only one button
 				$(event.target).children('.ui-selected').removeClass('ui-selected');
@@ -313,7 +357,9 @@
 				account_operation_change(operation_code);
 				allowOperation();
 			}
-		});
+		};
+		$("#ops-1").selectable(selectableObj);
+        $("#ops-2").selectable(selectableObj);
 		$('#operation_amount').change(function(e){
 			allowOperation();
 		});
@@ -372,14 +418,21 @@
 		<div id="tabs-1">
 			<div class="ui-widget">
 			<form id="operation_form" onsubmit="return false;">
-				<div>                
+                <div>
 					<input type="hidden" name="account_operation" id="account_operation" value=""/>
-					<ol id="operation_codes" class="ol_selectable"><?php 
-						write_operation_html_ul(); 
-					?></ol>
+                    <ul id="ops" class="ol_selectable vertical">
+                        <li class="ui-widget-header ui-selected" val="#ops-1"><?php echo $Text['mon_ops_standard']; ?></li>
+                        <li class="ui-widget-header" val="#ops-2"><?php echo $Text['mon_ops_corrections']; ?></li>
+                    </ul>
+					<ul id="ops-1" class="ol_selectable"><?php 
+						write_operation_html_ul(false); 
+					?></ul>
+                    <ul id="ops-2" class="ol_selectable hidden"><?php 
+						write_operation_html_ul(true);
+					?></ul -->
 				</div>
 				<div id="submitMsg"></div>                     
-				<table class="tblForms" style="width:100%">                     
+				<table class="tblForms" style="width:100%;clear:both">                     
 				<tr><td style="padding-bottom:5px" colspan="2">            
 				<?php
 					write_account_html_select(

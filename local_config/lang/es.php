@@ -218,20 +218,28 @@ $Text['mon_op_withdraw_others'] = 'Pago otros';
 $Text['mon_op_invoice_pr'] = 'Factura de Prv.';
 $Text['mon_op_move'] = 'Mover';
 $Text['mon_op_correction'] = 'Ajustar saldo';
+$Text['mon_op_a_debit_uf'] = 'Anular Cargo a UF';
+$Text['mon_op_a_pay_pr'] = 'Anular Pag.Prv.';
+$Text['mon_op_a_invoice_pr'] = 'Anular Factura Prv.';
 // See `account_operations.config.php`
 //   * Translated sub-keys values from 'default_desc' and 'auto_desc'
 //     on $config_account_operations with the prefix 'mon_desc_'
 $Text['mon_desc_deposit_uf'] = 'Deposito de UF';
-$Text['mon_desc_deposit_from_uf'] = 'Deposito de la cuenta-UF: {uf_from_id}. {comment}';
+$Text['mon_desc_deposit_from_uf'] = 'Deposito de UF #{uf_from_id} {comment}';
 $Text['mon_desc_payment'] = 'Pago a proveedor';
-$Text['mon_desc_payment_to_provider'] = 'Pago a la cuenta-proveedor: {provider_to_id}. {comment}';
-$Text['mon_desc_refund_to_uf'] = 'Restitución a la cuenta-UF: {uf_to_id}. {comment}';
+$Text['mon_desc_payment_to_provider'] = 'Pago a #{provider_to_id} {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Restitución a  UF: #{uf_to_id} {comment}';
 $Text['mon_desc_invoice'] = 'Factura de proveedor.';
 $Text['mon_desc_treasury_movement'] = 'Movimiento de tesorería.';
-$Text['mon_desc_move_from'] = 'Movimiento de tesorería de la cuenta: {account_from_id}. {comment}';
-$Text['mon_desc_move_to'] = 'Movimiento de tesorería a la cuenta: {account_to_id}. {comment}';
+$Text['mon_desc_move_from'] = 'Movimiento viene de #{account_from_id} {comment}';
+$Text['mon_desc_move_to'] = 'Movimiento va a #{account_to_id} {comment}';
 $Text['mon_desc_correction'] = 'Corrección de saldo';
+$Text['mon_desc_a_payment_to_provider'] = 'ANULAR Pago a #{provider_from_id} {comment}';
+$Text['mon_desc_a_payment'] = 'ANULAR Pago a proveedor';
+$Text['mon_desc_a_invoice'] = 'ANULAR Factura de proveedor.';
 // Used in manege_money.php and controllers
+$Text['mon_ops_standard'] = 'Normales';
+$Text['mon_ops_corrections'] = 'Correcciones';
 $Text['mon_send'] = 'Confirmar';
 $Text['mon_from'] = 'De';
 $Text['mon_to'] = 'A';

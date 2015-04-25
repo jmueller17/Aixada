@@ -215,20 +215,28 @@ $Text['mon_op_withdraw_others'] = 'Withdraw others';
 $Text['mon_op_invoice_pr'] = 'Invoice from Prv.';
 $Text['mon_op_move'] = 'Move';
 $Text['mon_op_correction'] = 'Balance correction';
+$Text['mon_op_a_debit_uf'] = 'Anular Càrrec a UF';
+$Text['mon_op_a_pay_pr'] = 'Anular Pag.Prv.';
+$Text['mon_op_a_invoice_pr'] = 'Anular Factura Prv.';
 // See `account_operations.config.php`
 //   * Translated sub-keys values from 'default_desc' and 'auto_desc'
 //     on $config_account_operations with the prefix 'mon_desc_'
 $Text['mon_desc_deposit_uf'] = 'Deposit from HU';
-$Text['mon_desc_deposit_from_uf'] = 'Deposit from HU-account: {uf_from_id}. {comment}';
+$Text['mon_desc_deposit_from_uf'] = 'Deposit from HU #{uf_from_id} {comment}';
 $Text['mon_desc_payment'] = 'Payment to provider';
-$Text['mon_desc_payment_to_provider'] = 'Payment to provider-account: {provider_to_id}. {comment}';
-$Text['mon_desc_refund_to_uf'] = 'Refund to HU-account: {uf_to_id}. {comment}';
+$Text['mon_desc_payment_to_provider'] = 'Payment to #{provider_to_id} {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Refund to HU: #{uf_to_id} {comment}';
 $Text['mon_desc_invoice'] = 'Provider invoice.';
 $Text['mon_desc_treasury_movement'] = 'Treasury movement.';
-$Text['mon_desc_move_from'] = 'Move treasury from account : {account_from_id}. {comment}';
-$Text['mon_desc_move_to'] = 'Move treasury to account : {account_to_id}. {comment}';
+$Text['mon_desc_move_from'] = 'Move from #{account_from_id} {comment}';
+$Text['mon_desc_move_to'] = 'Move to #{account_to_id} {comment}';
 $Text['mon_desc_correction'] = 'Balance correction';
+$Text['mon_desc_a_payment_to_provider'] = 'ANNULAR Payment to #{provider_to_id} {comment}';
+$Text['mon_desc_a_payment'] = 'ANNULAR Payment to provider';
+$Text['mon_desc_a_invoice'] = 'ANNULAR Provider invoice.';
 // Used in manege_money.php and controllers
+$Text['mon_ops_standard'] = 'Standard';
+$Text['mon_ops_corrections'] = 'Corrections';
 $Text['mon_send'] = 'Send';
 $Text['mon_from'] = 'From';
 $Text['mon_to'] = 'To';
