@@ -554,10 +554,10 @@ function query_XML_fields($strSQL) {
 /**
  * Execute a SQL query and returns a list of XML <row>.
  * @param string|array $strSQL A SQL query
- * @param array(string) $field_formats Associative array with field_name and format.
+ * @param array(string)|null $field_formats Associative array with field_name and format.
  * @return string The XML
  */
-function query_to_XML($strSQL, $field_formats = array()) {
+function query_to_XML($strSQL, $field_formats = null) {
     return rs_to_XML(
         DBWrap::get_instance()->Execute(func_get_args()), $field_formats
     );
@@ -566,20 +566,20 @@ function query_to_XML($strSQL, $field_formats = array()) {
 /**
  * Walk a mysqli_result and returns a XML <rowset>.
  * @param mysqli_result $rs
- * @param array(string) $field_formats Associative array with field_name and format.
+ * @param array(string)|null $field_formats Associative array with field_name and format.
  * @return string The XML
  */
-function rs_XML_fields($rs, $field_formats = array()) {
+function rs_XML_fields($rs, $field_formats = null) {
     return '<rowset>'.rs_to_XML($rs, $field_formats).'</rowset>';
 }
 
 /**
  * Walk a mysqli_result and returns a list of XML <row>.
  * @param mysqli_result $rs
- * @param array(string) $field_formats Associative array with field_name and format. 
+ * @param array(string)|null $field_formats Associative array with field_name and format. 
  * @return string The XML
  */
-function rs_to_XML($rs, $field_formats = array()) {
+function rs_to_XML($rs, $field_formats = null) {
     $strXML = '';
     if ($rs) {
         while ($row = $rs->fetch_assoc()) {
@@ -593,10 +593,10 @@ function rs_to_XML($rs, $field_formats = array()) {
 /**
  * Tranform a assoc array to a XML <row>.
  * @param array $ass_array A associative array
- * @param array(string) $field_formats Associative array with field_name and format. 
+ * @param array(string)|null $field_formats Associative array with field_name and format. 
  * @return string The XML
  */
-function array_to_XML($ass_array, $field_formats) {
+function array_to_XML($ass_array, $field_formats = null) {
     global $Text;
     $strXML = '<row';
     if (isset($ass_array['id'])) {
