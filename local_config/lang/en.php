@@ -248,6 +248,7 @@ $Text['mon_war_accounts_not_set'] = "Required accounts are not set.";
 $Text['mon_war_description'] = "Account movement warning: should write a short comment.";
 $Text['mon_dailyTreasurySummary'] = "Treasury Summary of the day";
 $Text['mon_balance'] = "Balance";
+$Text['mon_amount'] = "Amount";
 $Text['mon_dailyBalance'] = "Balance of the day";
 $Text['mon_accountBalances'] = "Balance of accounts";
 $Text['mon_uf_balances'] = "HU balances";

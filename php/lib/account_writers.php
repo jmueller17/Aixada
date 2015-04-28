@@ -147,11 +147,12 @@ function write_list_account_select() {
 	<?php
 }
 
-function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
+function write_list_account($addClasses = '', $p_msg_err_nomovements='', 
+        $account_types='1,2') {
 	global $Text;
 	?>
 	<div id="account_listing" class="ui-widget">
-		<div class="ui-widget-content ui-corner-all">				
+		<div class="ui-widget-content ui-corner-all">
 			<h3 class="ui-widget-header ui-corner-all"><span
 				style="color:#777"><?=$Text['latest_movements'];?>:</span> <span
 				class="account_id"></span> <span
@@ -165,7 +166,7 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
 					<th><?php echo $Text['description']; ?></th>
 					<th>Type</th>
 					<th class="textAlignRight"><?php 
-						echo $Text['amount']; ?></th>
+						echo $Text['mon_amount']; ?></th>
 					<th class="textAlignRight"><?php 
 						echo $Text['mon_balance']; ?></th>
 				</tr>
@@ -191,17 +192,18 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
 		 * 	account extract
 		 */
 		function load_write_list_account(p_currency_sign,
-				p_msg_err_nomovements) {
+				p_msg_err_nomovements, account_types) {
 			$("#account_select").xml2html("init", {
 				url: 'php/ctrl/Account.php',
-				params : 'oper=getActiveAccounts',
+				params : 'oper=getAccounts&all=0&account_types='+account_types+
+					'&show_uf=1&show_providers=1',
 				offSet : 1,
 				loadOnInit: true
 			}).change(function(){
 				//get the id of the provider
 				var account_sel = $("option:selected", this),
 					account_id = account_sel.val(),
-					account_name = account_sel.text();					
+					account_name = account_sel.text();
 				if (!account_id) {
 					$('#list_account tbody').xml2html('removeAll');
 					$('#account_listing .account_id').text('');
@@ -211,7 +213,7 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
 				$('#list_account tbody').xml2html('reload', {
 					params: 'oper=accountExtract&account_id='+account_id+
 						'&filter=pastYear'
-				});						
+				});
 			}); //end select change
 			$('#list_account tbody').xml2html('init',{
 				url		: 'php/ctrl/Account.php',
@@ -242,7 +244,8 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='') {
 	<script>
 		load_write_list_account("<?php 
 			echo $Text['currency_sign']; ?>", "<?php 
-			echo $p_msg_err_nomovements; ?>");
+			echo $p_msg_err_nomovements; ?>", "<?php 
+			echo $account_types; ?>");
 	</script>
 	<?php
 }

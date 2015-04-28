@@ -245,13 +245,14 @@ $Text['mon_war_accounts_not_set'] = "Algun dels comptes requerits no consten.";
 $Text['mon_war_description'] = "Ha d'escriure un breu comentari.";
 $Text['mon_dailyTreasurySummary'] = "Resum Tresoreria d'avui";
 $Text['mon_balance'] = "Saldo";
+$Text['mon_amount'] = "Import";
 $Text['mon_dailyBalance'] = "Saldo del dia";
 $Text['mon_accountBalances'] = "Saldo dels comptes";
 $Text['mon_uf_balances'] = "Saldo de les UFs";
 $Text['mon_result'] = "Resultat";
 $Text['mon_lastOper'] = "Última operació";
 $Text['mon_operation_account'] = "Fer operacions";
-$Text['mon_list_account'] = "Consultar moviments d'un compte";
+$Text['mon_list_account'] = "Consultar operacions d'un compte";
 
 /**
  *				validar

@@ -251,13 +251,14 @@ $Text['mon_war_accounts_not_set'] = "Alguna de las cuentas requeridas no constan
 $Text['mon_war_description'] = "Debe escribir un breve comentario.";
 $Text['mon_dailyTreasurySummary'] = "Resumen Tesorería de hoy";
 $Text['mon_balance'] = "Saldo";
+$Text['mon_amount'] = "Importe";
 $Text['mon_dailyBalance'] = "Saldo del día";
 $Text['mon_accountBalances'] = "Saldo de las cuentas";
 $Text['mon_uf_balances'] = "Saldo de las UFs";
 $Text['mon_result'] = "Resultado";
 $Text['mon_lastOper'] = "Última operación";
 $Text['mon_operation_account'] = "Hacer operaciones";
-$Text['mon_list_account'] = "Consultar movimientos de una cuenta";
+$Text['mon_list_account'] = "Consultar operaciones de una cuenta";
 
 /**
  *				validate

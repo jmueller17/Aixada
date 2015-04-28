@@ -465,7 +465,7 @@
 		<div id="tabs-2">
 			<div class="ui-widget">
 				<div><?php write_list_account_select(); ?></div>
-				<?php write_list_account(); ?>
+				<?php write_list_account('', '', '1'); ?>
 			</div>
 		</div><!-- end tab-2 -->
 	</div><!-- end tabs -->
@@ -481,7 +481,7 @@
 				<tr>
 					<th colspan="2"><?php echo $Text['account'];?></th>
 					<th><?php echo $Text['transfer_type'];?></th>
-					<th class="textAlignRight"><?php echo $Text['amount'];?>&nbsp;</th>
+					<th class="textAlignRight"><?php echo $Text['mon_amount'];?>&nbsp;</th>
 					<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
 				</tr>
 			</thead>
