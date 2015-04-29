@@ -5,23 +5,20 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . 'php/lib/account_operations.config.php');
 
 class account_operations {
-    protected $cfg_accounts;
     protected $cfg_use_providers;
     
     public function __construct ($lang='') { // TODO: Use a lang other than User. 
-        $this->cfg_accounts = get_config('accounts', array());
-        $this->cfg_use_providers = isset($this->cfg_accounts['use_providers']) ? 
+        $cfg_accounts = get_config('accounts', array());
+        $this->cfg_use_providers = isset($cfg_accounts['use_providers']) ? 
 				true : false;
 	}
     
     // --------------------------------------------
     // READ
     // --------------------------------------------
-    public function latest_movements_XML(
-                            $limit, $account_types, $show_uf, $show_providers) {
+    public function latest_movements_XML($limit, $account_types) {
 		return rs_XML_fields(
-			$this->latest_movements_rs(
-						$limit, $account_types, $show_uf, $show_providers),
+			$this->latest_movements_rs($limit, $account_types),
 			cnv_config_formats(array(
 				'id' =>         '',
 				'account_id' => '',
@@ -31,11 +28,11 @@ class account_operations {
 			))
 		);
 	}
-    protected function latest_movements_rs(
-                            $limit, $account_types, $show_uf, $show_providers) {
+    protected function latest_movements_rs($limit, $account_types) {
         $sql = array();
         $db = DBWrap::get_instance();
-        if ($account_types) {
+        $filter = $this->get_account_types_filter($account_types);
+        if ($filter['account_types']) {
             array_push($sql, "(
                 select a.id, a.account_id, time(a.ts) as time, a.ts,
                     a.quantity, balance,
@@ -55,9 +52,9 @@ class account_operations {
                     and a.payment_method_id = p.id
                     and a.account_id = -ad.id
                 where account_id < 1000
-                and ad.account_type in(".implode(',', $account_types).") )");
+                and ad.account_type in(".$filter['account_types'].") )");
         }
-        if ($show_uf) {
+        if ($filter['show_uf']) {
             array_push($sql, "(
                 select a.id, a.account_id, time(a.ts) as time, a.ts,
                     a.quantity, balance,
@@ -78,7 +75,7 @@ class account_operations {
                     and a.account_id - 1000 = uf.id
                 where account_id between 1000 and 1999)");
         }
-        if ($show_providers && $this->cfg_use_providers) {
+        if ($filter['show_providers']) {
             array_push($sql, "(
                 select a.id, a.account_id, time(a.ts) as time, a.ts,
                     a.quantity, balance,
@@ -113,15 +110,12 @@ class account_operations {
      * Retrieves list of accounts
      * @param boolean $all if set to true, list active and non-active accounts. when set to false, list only active UFs
      */
-    public function get_accounts_XML($all=0, $account_types, $show_uf, $show_providers) {
-        // Load config
-        $cfg_accounts = get_config('accounts', array());
-
+    public function get_accounts_XML($all=0, $account_types) {
+        $filter = $this->get_account_types_filter($account_types);
         // start XML
         $strXML = '';
-        
         // Specific accounts
-        if ($account_types) {
+        if ($filter['account_types']) {
             $sqlStr = "SELECT -id id, description name
 				FROM aixada_account_desc ad
 				where account_type in(".implode(',', $account_types).")";
@@ -130,20 +124,20 @@ class account_operations {
             $strXML .= query_to_XML($sqlStr);
         }    
         // UF accounts
-        if ($show_uf) {
-            if ($show_uf == 2) {
-                $strXML .= array_to_XML(array(
-                    'id'    => 1000,
-                    'name'  => i18n('mon_all_active_uf')
-                ));            
-            }
+        if ($filter['show_uf_generic']) {
+            $strXML .= array_to_XML(array(
+                'id'    => 1000,
+                'name'  => i18n('mon_all_active_uf')
+            ));            
+        }
+        if ($filter['show_uf']) {
             $sqlStr = "SELECT id+1000 id, concat(id,' ',name) name FROM aixada_uf";
             $sqlStr .= $all ? "" :" where active=1";
             $sqlStr .= " order by id";
             $strXML .= query_to_XML($sqlStr);
         }
         // Providers
-        if ($show_providers && $this->cfg_use_providers) {
+        if ($filter['show_providers']) {
             $sqlStr = "SELECT id+2000 id, concat(name,'#',id) name FROM aixada_provider";
             $sqlStr .= $all ? "" :" where active=1";
             $sqlStr .= " order by id";
@@ -221,26 +215,60 @@ class account_operations {
         return '<rowset>'.$strXML.'</rowset>';
     }
     
-	protected function get_balances_filter($account_types) {
-		$where_array = array();        
-        $_key = array_search(1000, $account_types, true);
-        if ($_key !== false) {
+    protected function get_balances_filter($account_types) {
+        $where_array = array();
+        $filter = $this->get_account_types_filter($account_types);
+        if ($filter['show_uf']) {
             array_splice($account_types, $_key, 1);
             array_push($where_array," a.account_id between 1000 and 1999"); 
         }
-        $_key = array_search(2000, $account_types, true);
-        if ($_key !== false && $this->cfg_use_providers) {
+        if ($filter['show_providers']) {
             array_splice($account_types, $_key, 1);
             array_push($where_array," a.account_id between 2000 and 2999"); 
         }
-        if (count($account_types) > 0) {
+        if ($filter['account_types']) {
             array_push($where_array,
-                " ad.account_type in(".implode(',', $account_types).")"
+                " ad.account_type in(".$filter['account_types'].")"
             ); 
         }
         return ( count($where_array) > 0 ? 
                 '( '.implode($where_array, ' or ').' )' : '1=0' );
-	}
+    }
+    /**
+     * There are five types: 
+     *    * 1 service, 2 treasury, 
+     *    * 1000 ufs, 1999 selection of all active uf,
+     *    * 2000 providers
+     */
+    protected function get_account_types_filter($account_types) {
+        $response = array(
+            'show_uf' => false,
+            'show_uf_generic' => false,
+            'show_providers' => false,
+            'account_types' => null
+        );
+        $_key = array_search(1000, $account_types, true);
+        if ($_key !== false) {
+            array_splice($account_types, $_key, 1);
+            $response['show_uf'] = true;
+        }
+        $_key = array_search(1999, $account_types, true);
+        if ($_key !== false) {
+            array_splice($account_types, $_key, 1);
+            $response['show_uf_generic'] = true;
+        }
+        $_key = array_search(2000, $account_types, true);
+        if ($_key !== false) {
+            array_splice($account_types, $_key, 1);
+            if ($this->cfg_use_providers) {
+                $response['show_providers'] = true;
+            }
+        }
+        if (count($account_types)) {
+            $response['account_types'] = implode(',', $account_types);
+        }
+        return $response;
+    }
     protected function balances_rs($account_types) {
         $sql = "
             select account_group_id account_id, account_desciption name,

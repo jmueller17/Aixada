@@ -243,7 +243,7 @@
 		 */
 		$('#latestMovements tbody').xml2html('init',{
 				url		: 'php/ctrl/Account.php',
-				params	: 'oper=latestMovements&account_types=1&show_uf=1&show_providers=1',
+				params	: 'oper=latestMovements&account_types=1,1000,2000',
 				beforeLoad : function(){
 					$('#latestMovements_ui .loadSpinner').show();
 				},
@@ -436,17 +436,17 @@
 				<tr><td style="padding-bottom:5px" colspan="2">            
 				<?php
 					write_account_html_select(
-						'account_from', 'mon_from', 'account',          '&account_types=1');
+						'account_from', 'mon_from', 'account',      '&account_types=1');
 					write_account_html_select(
-						'uf_from',      'mon_from', 'uf_long',          '&show_uf=1');
+						'uf_from',      'mon_from', 'uf_long',      '&account_types=1000');
 					write_account_html_select(
-						'provider_from','mon_from', 'provider_name',    '&show_providers=1');
+						'provider_from','mon_from', 'provider_name','&account_types=2000');
 					write_account_html_select(
-						'account_to',   'mon_to',   'account',          '&account_types=1');
+						'account_to',   'mon_to',   'account',      '&account_types=1');
 					write_account_html_select(
-						'uf_to',        'mon_to',   'uf_long',          '&show_uf=2');
+						'uf_to',        'mon_to',   'uf_long',      '&account_types=1000,1999');
 					write_account_html_select(
-						'provider_to',  'mon_to',   'provider_name',    '&show_providers=1');
+						'provider_to',  'mon_to',   'provider_name','&account_types=2000');
 				?>
 				<tr class="mov_text_tr"><td><?php echo $Text['amount'];?>:&nbsp;&nbsp;</td>
 					<td><input type="text" autocomplete="off" name="quantity" id="operation_amount" class="inputTxtMiddle ui-widget-content ui-corner-all" value=""/></td></tr>
@@ -465,7 +465,7 @@
 		<div id="tabs-2">
 			<div class="ui-widget">
 				<div><?php write_list_account_select(); ?></div>
-				<?php write_list_account('', '', '1'); ?>
+				<?php write_list_account('', '', '1,1000,2000'); ?>
 			</div>
 		</div><!-- end tab-2 -->
 	</div><!-- end tabs -->

@@ -23,9 +23,7 @@ try{
         case 'getAccounts':
 	        printXML($ao->get_accounts_XML(
                 get_param_int('all', 0), 
-                get_param_array_int('account_types'), 
-                get_param_int('show_uf'), 
-                get_param_int('show_providers')
+                get_param_array_int('account_types')
             ));
             exit;
 
@@ -46,12 +44,10 @@ try{
 			));
   			exit; 
   		
-  	 	case 'latestMovements':  	 		
+  	 	case 'latestMovements':
             printXML($ao->latest_movements_XML(
                 get_param_int('limit', 10), 
-                get_param_array_int('account_types'), 
-                get_param_int('show_uf', 1), 
-                get_param_int('show_providers', 0)
+                get_param_array_int('account_types',array(1000))
             ));
 	    	exit;
 	    	

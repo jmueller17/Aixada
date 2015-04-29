@@ -148,7 +148,7 @@ function write_list_account_select() {
 }
 
 function write_list_account($addClasses = '', $p_msg_err_nomovements='', 
-        $account_types='1,2') {
+        $account_types='1,2,1000,2000') {
 	global $Text;
 	?>
 	<div id="account_listing" class="ui-widget">
@@ -195,8 +195,7 @@ function write_list_account($addClasses = '', $p_msg_err_nomovements='',
 				p_msg_err_nomovements, account_types) {
 			$("#account_select").xml2html("init", {
 				url: 'php/ctrl/Account.php',
-				params : 'oper=getAccounts&all=0&account_types='+account_types+
-					'&show_uf=1&show_providers=1',
+				params : 'oper=getAccounts&all=0&account_types='+account_types,
 				offSet : 1,
 				loadOnInit: true
 			}).change(function(){
