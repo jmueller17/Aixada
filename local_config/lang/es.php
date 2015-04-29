@@ -245,6 +245,7 @@ $Text['mon_from'] = 'De';
 $Text['mon_to'] = 'A';
 $Text['mon_all_active_uf'] = '* Todas las UF activas *';
 $Text['mon_success'] = 'La operación ha tenido éxito, {count} anotaciones!';
+$Text['mon_war_no_all_hu'] = "{mon_all_active_uf} No puede usar-se en esta operación.";
 $Text['mon_war_decimals'] = "La cantidad no debe tener más de dos decimales!";
 $Text['mon_war_gt_zero'] = "Cantidad debe ser mayor que cero!";
 $Text['mon_war_accounts_not_set'] = "Alguna de las cuentas requeridas no constan.";

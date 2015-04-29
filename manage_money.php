@@ -431,9 +431,9 @@
 						write_operation_html_ul(true);
 					?></ul -->
 				</div>
-				<div id="submitMsg"></div>                     
-				<table class="tblForms" style="width:100%;clear:both">                     
-				<tr><td style="padding-bottom:5px" colspan="2">            
+				<div id="submitMsg" style="clear:both"></div>
+				<table class="tblForms" style="width:100%;clear:both">
+				<tr><td style="padding-bottom:5px" colspan="2">
 				<?php
 					write_account_html_select(
 						'account_from', 'mon_from', 'account',      '&account_types=1');

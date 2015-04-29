@@ -242,6 +242,7 @@ $Text['mon_from'] = 'From';
 $Text['mon_to'] = 'To';
 $Text['mon_all_active_uf'] = '* All active HU *';
 $Text['mon_success'] = 'Operation has been successful, {count} annotations!';
+$Text['mon_war_no_all_hu'] = "{mon_all_active_uf} Can not be used in this operation.";
 $Text['mon_war_decimals'] = "Amount must not have more than two decimals!";
 $Text['mon_war_gt_zero'] = "Amount needs to be larger than zero!";
 $Text['mon_war_accounts_not_set'] = "Required accounts are not set.";
