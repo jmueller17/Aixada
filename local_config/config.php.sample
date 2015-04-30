@@ -27,6 +27,18 @@ class configuration_vars {
    * What is the name of this cooperative?
    */
   public $coop_name = 'L\'Aixada';
+  // Show coop name on header of login.php
+    public $login_header_show_name = false;
+  // Header image used in login.php.
+    public $login_header_image = "local_config/custom_img/our_cooperative_banner.jpg";
+            // Set to false to not use image
+  // Used in Report headers
+    public $coop_header_logo = 'local_config/custom_img/our_cooperative_logo.png';
+            // Set to false to not use logo
+    public $coop_VAT_number = 'F9999999'; // CIF
+    public $coop_address = 'Street...';
+    public $coop_city = 'Zip City';
+    public $coop_contact_inf = 'email@bla.com<br>bla bla bla...'; // Use <br> to force line break
 
   
   /**
