@@ -1836,16 +1836,10 @@ begin
 				os.unit_price_stamp,
 				os.product_id,
 				os.quantity, 
-				iva.percent,
-				r.rev_tax_percent
+				iva_percent,
+				rev_tax_percent
 			from
 				aixada_order_to_shop os
-			join (aixada_product p,
-				aixada_iva_type iva,
-				aixada_rev_tax_type r)
-			on p.id = os.product_id
-				and p.iva_percent_id = iva.id
-				and p.rev_tax_type_id = r.id
 			where 
 				os.order_id = the_order_id
 				and os.uf_id = the_uf_id
@@ -4440,7 +4434,7 @@ begin
   declare total_price decimal(10,2);
   
   select 
-	sum(si.quantity * si.unit_price_stamp) into total_price
+	sum( CAST(si.quantity * si.unit_price_stamp as decimal(10,2)) ) into total_price
   from 
 	aixada_shop_item si
   where
