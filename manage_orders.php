@@ -176,10 +176,13 @@
 						var theadStr = '<th>'+local_lang.total+'</th>'; 
 						var theadStr2 = '';
 						$(xml).find('row').each(function(){
-							var id = $(this).find('id').text();
+							var id = $(this).find('id').text(),
+								uf_name = $(this).find('name').text();
 							var colClass = 'Col-'+id;
 							header.push(id);
-							theadStr += '<th class="'+colClass+' hidden col">'+id+'</th>';
+							theadStr += '<th class="'+colClass+' hidden col"'+
+								' uf_name="'+uf_name+'" id="ror_th_uf-'+id+'">'+
+								id+'</th>';
 							theadStr2 += '<td class="'+colClass+' hidden col"></td>';
 						});
 
@@ -682,7 +685,8 @@
 			//interactivity for editing cells
 			$('td.interactiveCell')
 				.live('mouseover', function(e){						//make each cell editable on mouseover. 
-					var col = $(this).attr('col');
+					var col = $(this).attr('col'),
+						uf_name = $('#ror_th_uf-'+col).attr('uf_name');
 					var row = $(this).attr('row');
 					var product = $(this).parent().children().eq(1).text();
 					if (!$(this).hasClass('editable') && gSection == 'review'){
@@ -698,7 +702,8 @@
 									indicator: local_lang._saving,
 									placeholder:'',
 								    tooltip	:
-                                        local_lang.uf_short + ' ' + col + '\n' +
+                                        local_lang.uf_short + ' ' + col +
+                                            ' '+uf_name+'\n'+
                                         product + '\n' +
                                         local_lang.click_to_edit,
 									callback: function(value, settings){
@@ -1842,7 +1847,7 @@
 					</thead>
 					<tfoot>
 						<tr class="orderTotals">
-							<td colspan="3"class="orderTotalsDesc"><?php echo $Text['or_prv_prices']; ?><td>
+							<td colspan="3" class="orderTotalsDesc"><?php echo $Text['or_prv_prices']; ?><td>
 							<td class="arrivedCol"></td>
 						</tr>
 					</tfoot>
