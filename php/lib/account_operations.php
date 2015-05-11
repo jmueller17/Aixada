@@ -219,11 +219,9 @@ class account_operations {
         $where_array = array();
         $filter = $this->get_account_types_filter($account_types);
         if ($filter['show_uf']) {
-            array_splice($account_types, $_key, 1);
             array_push($where_array," a.account_id between 1000 and 1999"); 
         }
         if ($filter['show_providers']) {
-            array_splice($account_types, $_key, 1);
             array_push($where_array," a.account_id between 2000 and 2999"); 
         }
         if ($filter['account_types']) {
