@@ -205,7 +205,7 @@
 					
 					switch (link){
 						case "printWindow": 
-							printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
+							var printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
 			    			
 							printWin.focus();
 							printWin.print();

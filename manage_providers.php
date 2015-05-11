@@ -277,7 +277,7 @@
 					msg: "<?php echo $Text['msg_confirm_del_provider']; ?>",
 					buttons: {
 						"<?=$Text['btn_ok'];?>":function(){
-							$this = $(this);
+							var $this = $(this);
 							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_provider&id='+providerId; 
 
 							$.ajax({
@@ -766,8 +766,8 @@
 					type: "POST",
 					url: "php/ctrl/ActivateProducts.php?oper=count_ordered_items&product_id="+productId+"&order_status=0",
 					success: function(xml){
-						xmlDoc = $.parseXML(xml);
-  						count = $(xmlDoc).find( "total_ordered_items" ).text();
+						var xmlDoc = $.parseXML(xml);
+  						var count = $(xmlDoc).find( "total_ordered_items" ).text();
 						
 						if (count > 0){
 							$.showMsg({
@@ -1067,7 +1067,7 @@
 					if (gSelProvider.attr('providerId') > 0) { 
 						if (gProductListReload){
 							$('#tbl_products tbody').xml2html("reload",{
-								params: 'oper=getShopProducts&provider_id='+gSelProvider.attr('providerId')+"&all=1",
+								params: 'oper=getShopProducts&provider_id='+gSelProvider.attr('providerId')+"&all=1"
 							});
 						}
 

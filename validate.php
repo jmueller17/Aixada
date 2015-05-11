@@ -472,7 +472,7 @@
 
 						$(row).children().last().text(currentStock.toFixed(2));
 						$(row).children().eq(3).text(minStock.toFixed(2));
-					},
+					}
 			});
 
 

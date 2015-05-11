@@ -456,7 +456,7 @@
 					quantity 		: formatNumInput($("#cart_quantity_"+id).val()),
 					unit 			: $("td.item_unit", row).text(),
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
-					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
+					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val())
 				};
 			  //alert(objItem.id + " qu: " + objItem.quantity + " price: " + objItem.price + " tax: " + objItem.rev_tax_percent);
 			  

@@ -35,7 +35,7 @@
 				disabled:true,
 				icons : {
 					secondary: "ui-icon-check"
-				},
+				}
 			}); 
 			
 			$("#btn_reset").button();

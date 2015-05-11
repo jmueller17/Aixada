@@ -323,6 +323,7 @@
 
 			
 		   	var mentorUf = $('#mentor_uf option:selected').val(); 
+			var stupidHack;
 			mentorUf = (mentorUf == -1)? gMentorUf:mentorUf; 
 			
 			if (ufId > 0){
@@ -503,8 +504,7 @@
 						//$('.loadAnimShop').show();
 						$('#member_list_search tbody').xml2html('reload',{
 							url : "php/ctrl/UserAndUf.php",
-							params : "oper=searchMember&like="+searchStr,
-							
+							params : "oper=searchMember&like="+searchStr
 						});
 						
 					} else {					 
@@ -541,7 +541,7 @@
 					msg: "<?php echo $Text['msg_confirm_del_mem']; ?>",
 					buttons: {
 						"<?=$Text['btn_ok'];?>":function(){
-							$this = $(this);
+							var $this = $(this);
 							var urlStr = 'php/ctrl/UserAndUf.php?oper=delMember&member_id='+member_id; 
 
 							$.ajax({
@@ -895,7 +895,7 @@
 
 						//reload all members of this uf
 				   	 	$('#uf_detail_member_list').xml2html('reload',{
-							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid'),
+							params: "oper=getMemberInfo&uf_id="+gSelUfRow.attr('ufid')
 						});
 						//show them
 				   		switchTo('ufMemberView');
@@ -959,7 +959,7 @@
 					$('#uf_info input:checkbox').attr('disabled','disabled');	
 
 					
-					selMentorUf = (gSelUfRow.attr('mentoruf') > 0)? gSelUfRow.attr('mentoruf'):-1; 	//copy mentor uf and disable select
+					var selMentorUf = (gSelUfRow.attr('mentoruf') > 0)? gSelUfRow.attr('mentoruf'):-1; 	//copy mentor uf and disable select
 
 					$('#mentor_uf')
 						.val(selMentorUf)

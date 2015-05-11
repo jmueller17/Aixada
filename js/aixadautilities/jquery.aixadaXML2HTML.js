@@ -37,7 +37,7 @@
 					}
 	   					
 					var $this = $(this);
-					data = $this.data('xml2html');
+					var data = $this.data('xml2html');
 	   	
 					//if an offset is specified, then we look for a list header
 					//the container element can have a list header which can be specified with the lt(index) which counts

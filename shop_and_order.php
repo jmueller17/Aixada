@@ -392,7 +392,7 @@
 		})
 
 		$("#categorySelect").xml2html("reload", {
-			params : 'oper=get'+what+'Categories&date='+dateText,
+			params : 'oper=get'+what+'Categories&date='+dateText
 		})
 
 		$('#product_list_provider tbody').xml2html("removeAll");

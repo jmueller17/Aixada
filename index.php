@@ -158,14 +158,14 @@
 				if (orderId > 0) {
 					$('#tbl_diffOrderShop').attr('currentOrderId',orderId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getDiffOrderShop&order_id='+orderId, 
+						params : 'oper=getDiffOrderShop&order_id='+orderId
 					});	
 
 				} else if (providerId > 0){
 					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
 					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder, 
+						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder
 					});	
 					
 				} 

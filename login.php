@@ -133,7 +133,7 @@ if (!isset($_SESSION)) {
 			$('#newsWrap').xml2html('init',{
 					url: 'php/ctrl/Incidents.php',
 					params : 'oper=getIncidentsListing&filter=pastWeek&type=3',
-					loadOnInit: true,
+					loadOnInit: true
 			});
 
 

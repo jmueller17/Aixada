@@ -26,7 +26,7 @@
 				providerName : "Proveedor",
 				quantity : "Cantidad",
 				quantityAbbrev : "Can",
-				unit : "Unidad",
+				unit : "Unidad"
 			},
 			msg : {
 				saveSuccess : "Tus productos se han guardado correctamente",

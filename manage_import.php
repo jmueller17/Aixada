@@ -58,6 +58,7 @@
 		$('input[name=provider_id]').val(gSelProvider);
 
 		//set the title import destination
+        var title;
 		switch(gImportTo){
 	
 			case 'aixada_provider':
@@ -249,7 +250,7 @@
 		function constructPreviewTable(tbl){
 			$('#preview').html(tbl);
 
-			thead = '<thead><tr>';
+			var thead = '<thead><tr>';
 			$('#preview table tr:first td').each(function(){
 				thead += '<td class="mapSelect"></td>';
 			})

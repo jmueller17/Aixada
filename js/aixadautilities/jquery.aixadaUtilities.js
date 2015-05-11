@@ -152,7 +152,7 @@ $(function(){
 		},
 		//util function to retrieve formated date from datepicker
 		getSelectedDate: function(selector, format, defaultValues){
-			formatDate = (format != null && format != '')? format:'yy-mm-dd';
+			var formatDate = (format != null && format != '')? format:'yy-mm-dd';
 			
 			var date = null; 
 
@@ -333,7 +333,7 @@ $(function(){
 	
 	$('body').append('<div id="aixada_msg" class="msg_dialog"></div>');
 	$( "#aixada_msg" ).dialog({
-			autoOpen: false,
+			autoOpen: false
 	});
 	
 	

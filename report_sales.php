@@ -313,7 +313,7 @@
 
 		function reloadProviders(){
 			$('#tbl_Providers tbody').xml2html('reload',{
-				params : 'oper=getTotalSalesByProviders&provider_id=0&groupby='+gGroupBy+'&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to'), 
+				params : 'oper=getTotalSalesByProviders&provider_id=0&groupby='+gGroupBy+'&from_date='+$.getSelectedDate('#datepicker_from')+'&to_date='+$.getSelectedDate('#datepicker_to')
 			});
 		}
 
