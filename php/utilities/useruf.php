@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 require_once(__ROOT__ . 'php/inc/database.php');
