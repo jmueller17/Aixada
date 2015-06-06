@@ -565,6 +565,7 @@ $Text['cart_id'] = "Id de la cesta";
 $Text['msg_several_carts'] = "La UF seleccionada tiene más de una cesta pendiente de validación.  Por favor, seleccione una:";
 $Text['transfer_type'] = "Tipo";
 $Text['todays_carts'] = "Cestas de hoy";
+$Text['week_carts'] = "Cestas de la semana";
 $Text['head_ti_torn'] = "Mirada turno"; 
 $Text['btn_validate'] = "Validar";
 $Text['desc_validate'] = "Validar cestas anteriores y actuales para las UFs. Hacer depósitos de dinero.";

@@ -568,6 +568,7 @@ $Text['cart_id'] = "Cart id";
 $Text['msg_several_carts'] = "The selected household has more than one cart pending for validation. Please select one:";
 $Text['transfer_type'] = "Type";
 $Text['todays_carts'] = "Today's carts";
+$Text['week_carts'] = "Week carts";
 $Text['head_ti_torn'] = "Working shift overview"; 
 $Text['btn_validate'] = "Validate";
 $Text['desc_validate'] = "Validate past and present carts for households. Make money deposits.";

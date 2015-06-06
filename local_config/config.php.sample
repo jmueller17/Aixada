@@ -67,6 +67,16 @@ class configuration_vars {
    * @var boolean
    */
   public $validate_deposit = true;
+
+  /**
+   * What period are shown the carts on validation, values allowed: 'day' 
+   * or 'week', default value is 'day'.
+   *
+   * NOTE: If validation is not performed the day that orders are distributed
+   * may be desirable to see all carts of the week.
+   * @var boolean
+   */  
+  public $validate_show_carts = 'day';
  
   /**
    * 
