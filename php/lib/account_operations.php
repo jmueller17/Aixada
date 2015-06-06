@@ -64,15 +64,9 @@ class account_operations {
                     -- 'uf_id' use for reasons of compatibility
                     concat(uf.id,' ',uf.name) as uf_id 
                 from aixada_account a
-                left join (
-                    aixada_currency c,
-                    aixada_payment_method p,
-                    aixada_uf uf
-                )
-                on 
-                    a.currency_id = c.id
-                    and a.payment_method_id = p.id
-                    and a.account_id - 1000 = uf.id
+                left join aixada_currency c       on a.currency_id = c.id
+                left join aixada_payment_method p on a.payment_method_id = p.id
+                left join aixada_uf uf            on a.account_id - 1000 = uf.id
                 where account_id between 1000 and 1999)");
         }
         if ($filter['show_providers']) {
@@ -85,15 +79,9 @@ class account_operations {
                     -- 'uf_id' use for reasons of compatibility                    
                     concat(prv.name,'(',prv.id,')') as uf_id
                 from aixada_account a
-                left join (
-                    aixada_currency c,
-                    aixada_payment_method p,                
-                    aixada_provider prv
-                )
-                on 
-                    a.currency_id = c.id
-                    and a.payment_method_id = p.id
-                    and a.account_id - 2000 = prv.id
+                left join aixada_currency c       on a.currency_id = c.id
+                left join aixada_payment_method p on a.payment_method_id = p.id
+                left join aixada_provider prv     on a.account_id - 2000 = prv.id
                 where account_id between 2000 and 2999)");
         }
         if (count($sql) != 0) {
@@ -296,8 +284,7 @@ class account_operations {
 					account_id,
 					max(a.id) as MaxId 
 				from aixada_account a
-				left join (aixada_account_desc ad)
-				on account_id = -ad.id
+				left join aixada_account_desc ad on account_id = -ad.id
 				where ".$this->get_balances_filter($account_types)."
 				group by account_id ) r,
                 aixada_account aa
@@ -351,8 +338,7 @@ class account_operations {
 						else '??'
 					end as account_desciption
 				from aixada_account a
-				left join (aixada_account_desc ad)
-				on a.account_id = -ad.id
+				left join aixada_account_desc ad on a.account_id = -ad.id
 				where a.ts between '{$date}' and date_add('{$date}', interval 1 day)
 					and ".$this->get_balances_filter($account_types).") r
             group by account_group_id, account_group_or, account_desciption
