@@ -39,6 +39,15 @@ if (!isset($_SESSION)) {
 	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
 	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>	
    	
+    <style><?php
+        $login_header_image =
+            get_config('login_header_image', 'img/aixada_header800.150.png');
+        if ($login_header_image) {
+            echo "p#logonHeader {background-image: url({$login_header_image});}";
+        } else {
+            echo "p#logonHeader {background-image: none;}";
+        }
+    ?></style>
 	   	
 	
 	   	
@@ -156,7 +165,10 @@ if (!isset($_SESSION)) {
 <div id="wrap">
 
 	<div id="headwrap">
-		<p id="logonHeader"></p>
+		<p id="logonHeader"><span><?php 
+            if (get_config('login_header_show_name', false)) {
+                echo $Text['coop_name']; 
+            } ?></span></p>
 	</div>
 
 	<div id="stagewrap" class="ui-widget">

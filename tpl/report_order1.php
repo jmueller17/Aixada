@@ -1,4 +1,7 @@
-<?php include "../php/inc/header.inc.php" ?>
+<?php 
+    include "../php/inc/header.inc.php";
+    require_once "report_header_writer.php";
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -28,7 +31,7 @@
 
 		
 		
-		div#logo			{width:500px; height:180px; float:left; border:1px solid black; margin-bottom:20px;}
+		div#logo			{width:500px; float:left;}
 		div#address			{}
 
 		.loadingMsg			{font-weight:bold; font-size:2em; text-align:center; display:block;}
@@ -89,24 +92,7 @@
 </head>
 <body>
 	
-	<div id="header" class="section">
-		<div id="logo">
-						<img alt="coop logo" src="../img/tpl_header_logo.png" width="500" height="180"/>
-		</div>
-		<div id="address">
-			<h2 class="txtAlignRight">COOPERATIVA NAME</h2>
-			<h2 class="txtAlignRight">CIF/NIF: F6500000</h2>
-			<p class="txtAlignRight">Street<br/>
-			Zip City<br/>
-			email@bla.com
-			</p>
-		</div>
-	</div>
-
-	<p>&nbsp</p>
-	<p>&nbsp</p>
-	<p>&nbsp</p>
-	<p>&nbsp</p>
+	<div id="header" class="section"><?php write_tpl_header(); ?></div>
 	
 	<h2 class="loadingMsg"><?php echo $Text['loading'] ; ?></h2>
 	
