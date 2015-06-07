@@ -12,19 +12,19 @@
     <style>
         .tblReviseOrder td.grossPrice,
         .tblReviseOrder td.netPrice {
-             background-color:#dee;
+             background-color:#dee; text-align:right;
         }
         .tblReviseOrder td.grossRow {
-             background-color:#ece;
+             background-color:#ece; text-align:right;
         }
         .tblReviseOrder td.grossTotalOrder {
-             background-color:#cce;
+             background-color:#cce; text-align:right;
         }
         .tblReviseOrder td.netRow {
-            background-color:#ebe;
+            background-color:#ebe; text-align:right;
         }
         .tblReviseOrder td.netTotalOrder {
-            background-color:#bbe;
+            background-color:#bbe; text-align:right;
         }
         .orderTotalsDesc {
             text-align: right;
@@ -189,15 +189,15 @@
 						theadStr += '<th>'+local_lang.total+'</th>';
 						theadStr2 += '<td>&nbsp;</td>';
 						theadStr += 
-							'<th class="grossLabel">'+local_lang._gross_price+'</th>'+
-							'<th class="grossLabel">'+local_lang._gross_total+'</th>'+
-							'<th class="netLabel">'+local_lang._net_price+'</th>'+
-							'<th class="netLabel">'+local_lang._net_total+'</th>';
+							'<th class="grossCol grossLabel">'+local_lang._gross_price+'</th>'+
+							'<th class="grossCol grossLabel">'+local_lang._gross_total+'</th>'+
+							'<th class="netCol netLabel">'+local_lang._net_price+'</th>'+
+							'<th class="netCol netLabel">'+local_lang._net_total+'</th>';
 						theadStr2 += 
-							'<td class="grossLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
-							'<td class="grossTotalOrder textAlignRight"></td>'+
-							'<td class="netLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
-							'<td class="netTotalOrder textAlignRight"></td>';
+							'<td class="grossCol grossLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
+							'<td class="grossCol grossTotalOrder"></td>'+
+							'<td class="netCol netLabel orderTotalsDesc">'+local_lang._suma+':</td>'+
+							'<td class="netCol netTotalOrder"></td>';
 						theadStr += '<th class="revisedCol">'+local_lang.ostat_revised+'</th>';
 						theadStr2 += '<td>&nbsp;</td>';
 						
@@ -273,21 +273,6 @@
                 });
                 $('.netTotalOrder').text(total.toFixed(2));
             }
-            function hideNetTotalOrder() {
-                var hasIva = false;
-                $(".productIdClass").each(function() {
-                    if ($(this).attr('iva_percent') != 0) {
-                        hasIva = true;
-                        return false;
-                    }
-                });
-                if (hasIva === false) {
-                    $('.netLabel').hide();
-                    $('.netTotalOrder').hide();
-                    $('.netPrice').hide();
-                    $('.netRow').hide();
-                }
-            }
 
 			//STEP 2: construct table structure: products and col-cells. 
 			$('#tbl_reviseOrder tbody').xml2html('init',{
@@ -308,10 +293,10 @@
 					//product total quantities
 					tbodyStr += '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
                     if (gSection !== 'print') {
-                        tbodyStr += '<td id="grossPrice_'+product_id+'" class="nobr textAlignRight grossPrice"></td>';
-                        tbodyStr += '<td id="grossRow_'+product_id+'"   class="nobr textAlignRight grossRow"></td>';
-                        tbodyStr += '<td id="netPrice_'+product_id+'" class="nobr textAlignRight netPrice"></td>';
-                        tbodyStr += '<td id="netRow_'+product_id+'"     class="nobr textAlignRight netRow"></td>';
+                        tbodyStr += '<td id="grossPrice_'+product_id+'" class="grossCol grossPrice"></td>';
+                        tbodyStr += '<td id="grossRow_'+product_id+'"   class="grossCol grossRow"></td>';
+                        tbodyStr += '<td id="netPrice_'+product_id+'"   class="netCol netPrice"></td>';
+                        tbodyStr += '<td id="netRow_'+product_id+'"     class="netCol netRow"></td>';
                     }
 					
 					//revised checkbox for product
@@ -333,6 +318,7 @@
 						var quShop = 0; 
 						var lastId = -1; 
 						var quShopHTML = '';  
+						var hasIva = false;
 						
 						$(xml).find('row').each(function(){
 						
@@ -343,6 +329,9 @@
 								quShopHTML = (gSection == 'view')? ' <span class="shopQuantity">(' +quShop +')</span> ':'';
 							}
 							var product_id = $(this).find('product_id').text();
+							if ($(this).find('iva_percent').text() !== '0') {
+								hasIva = true;
+							}
 							var uf_id = $(this).find('uf_id').text();
 							var qu = $(this).find('quantity').text();
 							var revised = $(this).find('revised').text();
@@ -394,12 +383,16 @@
                             refreshRowPrices(lastId);
                             refreshTotalOrder();
                             $('.orderTotals').show();
-                            $('.grossLabel').show();
-                            hideNetTotalOrder()
+                            $('.grossCol').show();
+                            if (hasIva === true) {
+                                $('.netCol').show();
+                            } else {
+                                $('.netCol').hide();
+                            }
                         } else {
                             $('.orderTotals').hide();
-                            $('.grossLabel').hide();
-                            $('.netLabel').hide();
+                            $('.grossCol').hide();
+                            $('.netCol').hide();
                         }
 
 						//don't need revised and arrived column for viewing order
@@ -436,7 +429,7 @@
 							loadPrintOrder();
 						}
 
-
+						$('#tbl_reviseOrder').show();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
@@ -1513,6 +1506,8 @@
 							$('#btn_'+gRevStatus[sindex]).button('disable');
 							$('#currentOrderStatus').html(gRevStatus[sindex]);
 							$('#dialog_orderStatus').dialog("open");
+							$('.orderTotals').hide();
+							$('#tbl_reviseOrder').hide();
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
@@ -1525,10 +1520,12 @@
 							$('.providerName').html(title);							
 							$('.overviewElements').hide();
 							$('.viewElements').fadeIn(1000);
+							$('.orderTotals').hide();
+							$('#tbl_reviseOrder').hide();
+							$('#tbl_orderDetailInfo').hide();
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
-							
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
 								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
 								complete : function(rowCount){
@@ -1537,6 +1534,7 @@
 									//copy the order status 
 									var tdStatus = gSelRow.children().eq(8).clone();
 									$('#orderDetailRevisionStatus').before(tdStatus).remove();
+									$('#tbl_orderDetailInfo').show();
 								}
 			 				});
 							
@@ -1678,7 +1676,7 @@
 			</div>
 			<div class="ui-widget-content ui-corner-all">
 				
-				<table id="tbl_orderDetailInfo" class="tblListingBorder2">
+				<table id="tbl_orderDetailInfo" class="hidden tblListingBorder2">
 					<thead>	
 						<tr>
 							<th colspan="2"><p><?=$Text['provider_name'];?></p></th>
