@@ -208,7 +208,8 @@ p#logonHeader span		{padding: 0 16px;
 .ui-state-error, div.ui-widget .ui-state-error,
 .success_tips			{text-align:center; border-radius:10px;}
 .ui-state-error, div.ui-widget .ui-state-error
-						{background-color: #fdd; background-image: none;}
+						{background-color: #fdd; background-image: none;
+						color:#933;}
 sup						{color:red; font-size:0.6em; padding-top:3px;}
 
 div.portalPost			{border-bottom:3px solid #e4e4f1;}
