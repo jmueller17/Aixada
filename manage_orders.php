@@ -426,7 +426,7 @@
 							loadPrintOrder();
 						}
 
-
+						$('#tbl_reviseOrder').show();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$.showMsg({
@@ -1501,7 +1501,8 @@
 							$('#btn_'+gRevStatus[sindex]).button('disable');
 							$('#currentOrderStatus').html(gRevStatus[sindex]);
 							$('#dialog_orderStatus').dialog("open");
-                            $('.orderTotals').hide();
+							$('.orderTotals').hide();
+							$('#tbl_reviseOrder').hide();
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
@@ -1514,10 +1515,12 @@
 							$('.providerName').html(title);							
 							$('.overviewElements').hide();
 							$('.viewElements').fadeIn(1000);
+							$('.orderTotals').hide();
+							$('#tbl_reviseOrder').hide();
+							$('#tbl_orderDetailInfo').hide();
 							$('#tbl_reviseOrder tbody').xml2html("reload", {						//load order details for revision
 								params : 'oper=getOrderedProductsListPrices&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
 							})
-							$('.orderTotals').hide();
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
 								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
 								complete : function(rowCount){
