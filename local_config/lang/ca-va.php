@@ -562,6 +562,7 @@ $Text['cart_id'] = "Id cistella";
 $Text['msg_several_carts'] = "La UF seleccionada té més d'una cistella pendent de validar. Tria'n una si us plau:";
 $Text['transfer_type'] = "Tipus";
 $Text['todays_carts'] = "Cistelles d'avui";
+$Text['week_carts'] = "Cistelles de la setmana";
 $Text['head_ti_torn'] = "Resum del torn"; 
 $Text['btn_validate'] = "Validar";
 $Text['desc_validate'] = "Validar cistelles actuals i antigues de les UF. Ingressar efectiu.";

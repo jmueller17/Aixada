@@ -52,6 +52,10 @@
 			var gTornUfId = <?=get_session_uf_id();?>;
 			var cfg_js_validate_self = <?php echo $cfg_js_validate_self; ?>;
 			var cfg_js_validate_deposit = <?php echo $cfg_js_validate_deposit; ?>;
+			var cfg_js_show_carts_filter = '<?php 
+                echo get_config('validate_show_carts','day')!=='week'? 
+                    'today' : 
+                    'steps&steps=1&range=week' ?>';
 
 
 			//stores todays date
@@ -395,7 +399,7 @@
   			 //carts to validate today
 			 $('#tbl_cart_listing tbody').xml2html('init',{
 					url		: 'php/ctrl/Shop.php',
-					params : 'oper=getShopListing&filter=today',
+					params : 'oper=getShopListing&filter='+cfg_js_show_carts_filter,
                     autoReload: 100200,
                     loadOnInit:true,
                     beforeLoad : function(){
@@ -860,7 +864,11 @@
 
 			<div id="monitorCarts" class="ui-widget">
 				<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
-					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php echo $Text['todays_carts']; ?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+					<h3 class="ui-widget-header ui-corner-all"><span class="left-icons ui-icon ui-icon-triangle-1-s"></span><?php 
+                        echo get_config('validate_show_carts','day')!=='week'?
+                            $Text['todays_carts']:
+                            $Text['week_carts']; 
+                        ?><span class="loadAnim floatRight"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
 					<table id="tbl_cart_listing" class="tblListingDefault">
 						<thead>
 							<tr >
