@@ -309,7 +309,7 @@ function cnv_config_formats($field_types) {
 function i18n($text_code, $replace=null) {
 	global $Text;
 	if (!isset($Text[$text_code])) {
-		return "i18n('{$text_code}')";
+		return $text_code;
 	}
 	$text = $Text[$text_code];
     if ($replace && count($replace)){
