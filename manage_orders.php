@@ -968,6 +968,13 @@
 						var ts = tds.eq(5).text();
 						var str = (ts == "0000-00-00 00:00:00")? '-':'<p title="'+ts+'">'+ts.substr(0,10)+'</p>';
 						tds.eq(5).html(str);
+
+						//if order has been send but not yet received, it can be reopened
+						var statusTd = $(row).children().eq(8).attr('revisionStatus');
+						if (statusTd == 1){
+							tds.eq(1).html('<a href="javascript:void(null)" class="reopenOrderBtn">'+orderId+'</a>');
+						}
+
 					} else {
 						//while open and not sent off, no order_id exists. show the finalize button
 						tds.eq(1).html('<p>-</p>');
@@ -986,6 +993,43 @@
 				}
 			});
 
+
+			$('.reopenOrderBtn')
+				.live("click", function(){
+					var orderId = $(this).parents('tr').attr("id");
+						
+						$.showMsg({
+							msg:"<?=$Text['os_reopen_order'];?>",
+							buttons: {
+								"<?=$Text['btn_ok'];?>":function(){	
+										$this = $(this);		
+										$.ajax({
+											type: "POST",
+											url: 'php/ctrl/Orders.php?oper=reopenOrder&order_id='+orderId,
+											success: function(txt){
+													$('#tbl_orderOverview tbody').xml2html('reload');
+											},
+											error : function(XMLHttpRequest, textStatus, errorThrown){
+												$.showMsg({
+													msg:XMLHttpRequest.responseText,
+													type: 'error'});
+											},
+											complete:function(){
+												$this.dialog( "close" );
+											}
+										});
+
+									},
+								"<?=$Text['btn_cancel'];?>" : function(){
+										$( this ).dialog( "close" );
+									}
+								},
+						type: 'warning'});
+
+
+					e.stopPropagation();
+
+				})
 
 			/**
 			 *	To finalize an order means no further modifications are possile. 

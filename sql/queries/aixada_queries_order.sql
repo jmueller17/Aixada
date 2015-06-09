@@ -788,6 +788,74 @@ end |
 
 
 /**
+ *	If an order has been accidentally closed, it can be reopened. If internet connection is 
+ *	active, this might be confusing with providers who receive several orders for the same 
+ *	date...!! 
+ */
+drop procedure if exists reopen_order|
+create procedure reopen_order (in the_order_id int)
+begin
+
+	declare order_date date default NULL;
+	declare closing_date date default NULL;  
+
+	/** save order date **/
+	set order_date= 
+		(select
+			date_for_order
+		from 
+		 	aixada_order o
+		where 
+			o.id = the_order_id);
+
+
+	/** calculate new closing date **/
+	set closing_date = 
+		(select 
+			subdate(order_date, pv.offset_order_close)
+		from
+			aixada_order o,
+			aixada_provider pv
+		where
+			o.provider_id = pv.id
+		limit 1);
+
+
+	/** update closing date for products of this order/provider **/
+	update 
+		aixada_product_orderable_for_date po,
+		aixada_product p, 
+		aixada_order o,
+		aixada_provider pv 
+	set
+		po.closing_date = closing_date
+	where
+		o.id = the_order_id
+		and pv.id = o.provider_id
+		and p.provider_id = pv.id
+		and p.id = po.product_id;
+
+
+	/** reset order_id of order_items to NULL **/
+	update 
+		aixada_order_item oi
+	set 
+		oi.order_id = NULL
+	where
+		oi.order_id = the_order_id;
+
+
+	/** delete order **/
+	delete from 
+		aixada_order
+	where
+		id = the_order_id; 
+
+
+end|
+
+
+/**
  * resets the revision process for an order. This means that its revision_status is set to 1 (send off)
  * and that already distributed items are delted from shop carts (only if the cart is not yet validated). 
  */

@@ -936,6 +936,7 @@ $Text['or_click_to_edit_total'] = 'Click to adjust total quantities';
 $Text['or_click_to_edit_gprice'] = 'Click to adjust price';
 $Text['or_saving'] = 'Saving';
 $Text['or_ostat_desc_validated'] = 'Items of this order have been validated';
+$Text['os_reopen_order'] = 'Are you sure to reopen this order?';
 
 
 //$Text[''] = ""; 

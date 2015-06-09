@@ -102,6 +102,10 @@ try{
   		case 'finalizeOrder':
   			echo finalize_order(get_param('provider_id'), get_param('date'));
   			exit;
+
+      case 'reopenOrder':
+        echo do_stored_query('reopen_order', get_param('order_id'));
+        exit;
   			
   		case 'preorderToOrder':
   			echo do_stored_query('convert_preorder',get_param('provider_id'), get_param('date_for_order'));
