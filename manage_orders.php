@@ -995,7 +995,7 @@
 
 
 			$('.reopenOrderBtn')
-				.live("click", function(){
+				.live("click", function(e){
 					var orderId = $(this).parents('tr').attr("id");
 						
 						$.showMsg({
