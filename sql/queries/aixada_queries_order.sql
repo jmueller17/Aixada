@@ -831,6 +831,7 @@ begin
 		po.closing_date = closing_date
 	where
 		o.id = the_order_id
+		and po.date_for_order = o.date_for_order
 		and pv.id = o.provider_id
 		and p.provider_id = pv.id
 		and p.id = po.product_id;
