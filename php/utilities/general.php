@@ -560,13 +560,13 @@ function query_XML_noparam($queryname)
 
 function printXML($str) {
   $newstr = '<?xml version="1.0" encoding="utf-8"?>';  
-  $newstr .= $str; 
+  $newstr .= $str;
   header('Content-Type: text/xml');
   header('Last-Modified: '.date(DATE_RFC822));
   header('Pragma: no-cache');
   header('Cache-Control: no-cache, must-revalidate');
   header('Expires: '. date(DATE_RFC822, time() - 3600));
-  header('Content-Length: ' . strlen($newstr));
+  // header('Content-Length: ' . strlen($newstr)); // See comments of on #134
   echo $newstr;
 }
 
