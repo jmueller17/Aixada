@@ -180,6 +180,7 @@ $Text['picture']  = "Picture";
 $Text['offset_order_close'] = "Processing time";
 $Text['iva_percent_id'] = "IVA type";
 $Text['percent'] = "Percent";
+$Text['type'] = "Type";
 $Text['adult'] = "Adult";
 
 
@@ -591,10 +592,20 @@ $Text['incl_iva'] = "incl. VAT";
 $Text['incl_revtax'] = "incl. RevTax";
 $Text['no_news_today'] = "No new is good news: no incidents have been posted for today!";
 $Text['nav_mng_iva'] = "VAT types";
+$Text['nav_mng_revtax'] = "Rev. Tax";
+$Text['nav_mng_accdec'] = "Accounts";
+$Text['nav_mng_paymeth'] = "Type of deposit/payment";
+$Text['nav_mng_movtype'] = "Stock type";
 $Text['nav_mng_money'] = "Money";
 $Text['nav_mng_admin'] = "Admin";
 $Text['nav_mng_users'] = "Users";
 $Text['nav_mng_access_rights'] = "Access rights";
+$Text['nav_mng_aux'] = "Auxiliary Maintenance";
+$Text['dataman_consult'] = "Consult \"{data}\"";
+$Text['dataman_edit'] = "Maintenance of \"{data}\"";
+$Text['dataman_err_related'] = "There are data related to \"{related}\"";
+
+
 $Text['msg_sel_account'] = "Choose an account first, then filter the results!";
 $Text['msg_err_nomovements'] = "Sorry, there are no movements for the selected account and date. Try to widen the consulted time period with the filter button.";
 $Text['active_changed_uf'] = "Active state changed for HU";

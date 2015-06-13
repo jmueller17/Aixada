@@ -177,6 +177,7 @@ $Text['picture']  = "Imatge";
 $Text['offset_order_close'] = "Temps de procés";
 $Text['iva_percent_id'] = "Tipus d'IVA";
 $Text['percent'] = "Percentatge";
+$Text['type'] = "Tipus";
 $Text['adult'] = "Adult";
 
 
@@ -584,11 +585,21 @@ $Text['quantity_short'] = "Qu";
 $Text['incl_iva'] = "incl. IVA";
 $Text['incl_revtax'] = "incl. ImpRev";
 $Text['no_news_today'] = "Cap notícia és la millor notícia: avui no hi ha hagut incidents!";
-$Text['nav_mng_iva'] = "tipus d'IVA";
+$Text['nav_mng_iva'] = "Tipus d'IVA";
+$Text['nav_mng_revtax'] = "Imp. ImpRev";
+$Text['nav_mng_accdec'] = "Comptes"; 
+$Text['nav_mng_paymeth'] = "Tipus ingrés/pagament";
+$Text['nav_mng_movtype'] = "Tipus Estoc";
 $Text['nav_mng_money'] = "Diners";
 $Text['nav_mng_admin'] = "Admin";
 $Text['nav_mng_users'] = "Usuaris";
 $Text['nav_mng_access_rights'] = "Permisos d'accés";
+$Text['nav_mng_aux'] = 'Manteniments auxiliats';
+$Text['dataman_consult'] = "Consultar de \"{data}\"";
+$Text['dataman_edit'] = "Manteniment de \"{data}\"";
+$Text['dataman_err_related'] = "Hi ha dades relacionades a \"{related}\"";
+
+
 $Text['msg_sel_account'] = "Tria un compte primer, i aleshores filtra'n els resultats!";
 $Text['msg_err_nomovements'] = "Mala sort, no hi ha moviments per a aquest compte en aquesta data. Prova a ampliar el període consultat amb el botó de filtre.";
 $Text['active_changed_uf'] = "Estat actiu de la UF modificat";
