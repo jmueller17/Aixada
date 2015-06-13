@@ -71,3 +71,48 @@ from
     aixada_order_item oi
 where 
     oi.id = si.order_item_id;
+
+/**
+ * "unit_price_stamp": Add 4 decimals, and always supplemented
+ *      with `iva_percent` & `rev_tax_percent`.
+ */
+ALTER TABLE aixada_order_item 
+	MODIFY unit_price_stamp		decimal(14,6)	default 0,
+	ADD COLUMN iva_percent 		decimal(5,2)	default 0 AFTER unit_price_stamp,
+	ADD COLUMN rev_tax_percent	decimal(5,2)	default 0 AFTER iva_percent;
+ALTER TABLE aixada_shop_item 
+	MODIFY unit_price_stamp		decimal(14,6)	default 0;
+ALTER TABLE aixada_order_to_shop
+	MODIFY unit_price_stamp		decimal(14,6)	default 0,
+	ADD COLUMN iva_percent 		decimal(5,2)	default 0 AFTER unit_price_stamp,
+	ADD COLUMN rev_tax_percent	decimal(5,2)	default 0 AFTER iva_percent;
+   
+/**
+ * Fill `iva_percent` & `rev_tax_percent` in existing records
+ *      on `aixada_order_to_shop`.
+ */
+SET SQL_SAFE_UPDATES = 0;
+-- from: aixada_shop_item
+    update aixada_order_to_shop ots
+    join (aixada_shop_item si)
+    on ots.order_item_id = si.order_item_id
+    set ots.iva_percent = si.iva_percent,
+        ots.rev_tax_percent = si.rev_tax_percent
+    where ots.iva_percent = 0 and 
+        ots.rev_tax_percent = 0;
+-- from: aixada_product (ots.order_item_id not exist on aixada_shop_item)
+    update aixada_order_to_shop ots
+    left join (aixada_shop_item si)
+    on ots.order_item_id = si.order_item_id
+    join ( aixada_product p,
+        aixada_rev_tax_type rev,
+        aixada_iva_type iva)
+    on  p.id = ots.product_id and
+        rev.id = p.rev_tax_type_id and
+        iva.id = p.iva_percent_id
+    set ots.iva_percent = iva.percent,
+        ots.rev_tax_percent = rev.rev_tax_percent
+    where ots.iva_percent = 0 and 
+        ots.rev_tax_percent = 0 and 
+        si.order_item_id is null;
+SET SQL_SAFE_UPDATES = 1;
