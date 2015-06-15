@@ -1,5 +1,6 @@
 aixada.host.key
 local_config/config.php
+local_config/timeline.svg
 *~
 js/js_for_activate_products.js
 js/js_for_activate_roles.js
