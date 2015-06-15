@@ -94,10 +94,10 @@
 		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_products'];?></a>
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
-				<li><a href="manage_table.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
+				<li><a href="manage_data.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
 				<!-- li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li-->
-				<li><a href="manage_table.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
-				
+				<li><a href="manage_data.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
+				<li><a href="manage_data.php?table=aixada_rev_tax_type"><?php echo $Text['nav_mng_revtax']; ?></a></li>
 			</ul>
 		</li>
 		<li><a href="manage_orders.php"><?php echo $Text['nav_mng_orders'];?></a></li>
@@ -107,12 +107,18 @@
 			</ul>
 		</li-->
 		<li><a href="manage_money.php"><?php echo $Text['nav_mng_money'];?></a>
-		</li>
+			<ul>
+				<li><a href="manage_data.php?table=aixada_payment_method"><?php echo $Text['nav_mng_paymeth']; ?></a></li>
+			</ul></li>
 		<li><a href="#TODO"><?php echo $Text['nav_mng_admin'];?></a>
 			<ul>
 				<li><a href="manage_admin.php"><?php echo $Text['nav_mng_db'];?></a></li>
 				<!-- li><a href="#TODO"><?php echo $Text['nav_mng_users'];?></a></li>
 				<li><a href="#TODO"><?php echo $Text['nav_mng_access_rights'];?></a></li-->
+				<li><a href="#TODO"><?php echo $Text['nav_mng_aux'] ?></a>
+					<ul>
+						<li><a href="manage_data.php?table=aixada_stock_movement_type"><?php echo $Text['nav_mng_movtype']; ?></a></li>
+					</ul></li>
 			</ul>
 		</li>
 

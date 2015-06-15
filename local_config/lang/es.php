@@ -182,6 +182,7 @@ $Text['picture']  = "Imagen";
 $Text['offset_order_close'] = "Tiempo de procesamiento";
 $Text['iva_percent_id'] = "Typo de IVA";
 $Text['percent'] = "Porcentaje";
+$Text['type'] = "Tipo";
 $Text['adult'] = "Adulto";
 
 
@@ -588,10 +589,20 @@ $Text['incl_iva'] = "incl. IVA";
 $Text['incl_revtax'] = "incl. ImpRev";
 $Text['no_news_today'] = "¡Ninguna noticia es una buena noticia: hoy no han habido incidencias!";
 $Text['nav_mng_iva'] = "Tipos de IVA";
+$Text['nav_mng_revtax'] = "Imp. ImpRev";
+$Text['nav_mng_accdec'] = "Cuentas"; 
+$Text['nav_mng_paymeth'] = "Tipo ingreso/pago";
+$Text['nav_mng_movtype'] = "Tipo Estoc";
 $Text['nav_mng_money'] = "Dinero";
 $Text['nav_mng_admin'] = "Admin";
 $Text['nav_mng_users'] = "Usuarios";
 $Text['nav_mng_access_rights'] = "Permisos de Acceso";
+$Text['nav_mng_aux'] = "Mantenimientos auxiliares";
+$Text['dataman_consult'] = "Consultar \"{data}\"";
+$Text['dataman_edit'] = "Mantenimiento de \"{data}\"";
+$Text['dataman_err_related'] = "Hay datos relacionados en \"{related}\"";
+
+
 $Text['msg_sel_account'] = "Elige una cuenta primero, después filtra los resultados!";
 $Text['msg_err_nomovements'] = "Lo siento, no hay movimientos para la cuenta seleccionada y fecha. Trate de ampliar el periodo de tiempo con el botón de filtro.";
 $Text['active_changed_uf'] = "Estado activo de la UF modificado";

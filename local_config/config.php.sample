@@ -435,7 +435,10 @@ class configuration_vars {
                    'may_edit_account',
                    'may_edit_unit_measure',
              	   'may_edit_iva_type',
-                   'may_view_all_accounts'),
+                   'may_view_all_accounts',
+                   'may_edit_rev_tax_type',
+                   'may_edit_payment_method'
+             ),
              'Consumer' =>
              array('may_edit_incident',
                    'may_edit_provider'),
@@ -464,8 +467,11 @@ class configuration_vars {
                    'may_edit_account',
                    'may_edit_unit_measure',
                    'may_view_all_accounts',
-             	   'may_edit_iva_type'),
-             
+                   'may_edit_iva_type',
+                   'may_edit_rev_tax_type',
+                   'may_edit_payment_method',
+                   'may_edit_stock_movement_type'
+             ),
              'Fifth Commission' =>
              array('may_edit_incident'),
 
