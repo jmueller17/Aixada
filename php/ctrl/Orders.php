@@ -39,7 +39,8 @@ try{
         case 'getOrderedProductsListPrices':
             printXML(rs_XML_fields(get_ordered_products_with_prices(
                 get_param_int('order_id'), get_param_int('provider_id'),
-                get_param_date('date')
+                get_param_date('date'),
+				get_param('page', '-')
             )));
             exit;
 
@@ -80,6 +81,7 @@ try{
     		
     	//revise individual items of order
     	case 'setOrderItemStatus':
+			prepare_order_to_shop(get_param_int('order_id')); // and check $order_id parameter
     		echo do_stored_query('set_order_item_status', get_param('order_id'), get_param('product_id'), get_param('has_arrived'), get_param('is_revised')  ); 
     		exit;
 
@@ -90,6 +92,7 @@ try{
     		
 		//moves an order from revision to shop_item (into people's cart for the given date) 
     	case 'moveOrderToShop':
+			prepare_order_to_shop(get_param_int('order_id'));
     		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
     		
