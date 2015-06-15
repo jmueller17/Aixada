@@ -13,8 +13,8 @@ function write_tpl_header() {
     ?>
     <div id="address" class="floatRight">
         <h2 class="txtAlignRight"><?php echo get_config('coop_name');?></h2>
-        <h2 class="txtAlignRight">CIF/NIF: <?php
-                    echo get_config('coop_VAT_number');?></h2>
+        <h4 class="txtAlignRight">CIF/NIF: <?php
+                    echo get_config('coop_VAT_number');?></h4>
         <p class="txtAlignRight"><?php
             write_tpl_header_item(get_config('coop_address'));
             write_tpl_header_item(get_config('coop_city'));
