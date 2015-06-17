@@ -156,8 +156,9 @@ abstract class abstract_data_manager {
         $sql = $this->sql();
         $sql .= ' order by '.$req_sidx.' '.$req_sord;
         if ($req_page != -1 && $limit != 0) {
-            $total_entries = get_row_query(
-                "SELECT COUNT(*) AS count FROM {$this->db_table()}")[0];
+            $aux_row = get_row_query(
+                "SELECT COUNT(*) AS count FROM {$this->db_table()}");
+            $total_entries = $aux_row[0];
             list($start, $total_pages) = 
                 $db->calculate_page_limits(
                     $total_entries, $req_page, $limit);
