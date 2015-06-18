@@ -75,7 +75,8 @@
             print_order_template: "<?php echo get_config(
                         'print_order_template', 'report_order1.php'); ?>",
             order_review_uf_sequence: "<?php echo get_config(
-                        'order_review_uf_sequence', 'desc'); ?>"
+                        'order_review_uf_sequence', 'desc'); ?>",
+            revision_fixed_uf: <?php echo get_config('revision_fixed_uf', 0); ?>
         };
     </script>
 	   
@@ -388,6 +389,10 @@
                                 $('.netCol').show();
                             } else {
                                 $('.netCol').hide();
+                            }
+                            if (local_cfg.revision_fixed_uf) {
+                                $('.Col-'+local_cfg.revision_fixed_uf)
+                                    .removeClass('hidden').show();
                             }
                         } else {
                             $('.orderTotals').hide();
