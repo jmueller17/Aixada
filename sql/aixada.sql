@@ -481,3 +481,14 @@ create table aixada_price (
   foreign key (operator_id) references aixada_user(id)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
+
+/**
+ * Account descriptions 
+ **/
+create table aixada_account_desc (
+  id            smallint    not null auto_increment,
+  description   varchar(50) not null,
+  account_type  tinyint     default 1, -- 1:treasury, 2:service
+  active        tinyint     default 1,
+  primary key (id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;

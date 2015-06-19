@@ -126,12 +126,37 @@ class configuration_vars {
   
   /**
    * 
-   * Set the system wide currency symbol. The currency description can be set 
-   * in the specific language files $Text['currency_desc'] = "" 
+   * Set the system wide currency symbol and type_id. The currency description 
+   * can be set in the specific language files $Text['currency_desc'] = "" 
    * @var string
    */
   public $currency_sign = "€";
+  public $currency_type_id = 1;
   
+  /**
+   * Formats used to format data according to type and kind of content.
+   *
+   * NOTE: By the moment only applied to data related with money information
+   *       and management.
+   */
+  public $type_formats = array(
+    // Leave a format as false to not format a kind of content.
+    'dates' => array(
+        // Date formats, uses formatting of php 
+        'date' => 'd-m-Y',
+        'datetime' => 'd-m-Y H:i'
+    ),
+    'numbers' => array(
+        // Numeric formats as "ndt" where:
+        //     n=number of decimals (one numeric digit or z to remove leading
+        //          zeros to the right of the decimal)
+        //     d=separator for the decimal point
+        //     t=thousands separator.
+        // NOTE: By the moment only 'n.' is supported because since part of the
+        //       js code is not yet adapted.
+        'amount' => '2.' 
+    )
+  );
   
   /**
    * Sets the global development variable for debugging etc. 
@@ -605,6 +630,24 @@ class configuration_vars {
         )
     );
  
+    /**
+     * How to use the accounts.
+     */
+    public $accounts = array(
+	// With 'account_operations' key you can select operations to be
+	// used in `manage_money.php` and the order in which they appear.
+	// If you do not specify 'account_operations' all available operations are used.
+	// Available operations are:
+	//     'deposit_uf', 'uf_from', 'deposit_others', 'debit_uf', 'refund_uf',	
+	//     'pay_pr', 'withdraw_others', 'invoice_pr', 'move', 'correction'
+	//E.G.:
+		//'account_operations' => array('pay_pr','refund_uf','deposit_uf'),
+	
+	// Whith 'use_providers' key lets you choose whether providers accounts are
+	// used, disabling the operations of providers not appear.
+	// NOTE: This key has priority over 'account_operations'.
+		'use_providers' => false
+    );
              
 
   // from here on follow internals of the configuration_vars class.

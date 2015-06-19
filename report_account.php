@@ -1,4 +1,7 @@
-<?php include "php/inc/header.inc.php" ?>
+<?php 
+	include "php/inc/header.inc.php";
+	require_once(__ROOT__.'php/lib/account_writers.php');
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language;?>" lang="<?=$language;?>">
 <head>
@@ -39,73 +42,16 @@
 			
 			if (what == 'my_account'){
 				$('.myAccountElements').show();
-				$('.reportAccountElements').hide();				
+				$('.reportAccountElements').hide();
+				$('#account_listing .account_id').text("<?php 
+					$row_uf = get_row_query('SELECT name from aixada_uf where id='.
+						get_session_uf_id());
+					echo (1000 + get_session_uf_id()).' '.$row_uf['name']; 
+				?>");
 			} else { 
 				$('.myAccountElements').hide();
 				$('.reportAccountElements').show();
 			}
-
-			
-			/**
-			 * 	account extract
-			 */
-			 $('#list_account tbody').xml2html('init',{
-					url		: 'php/ctrl/Account.php',
-					resultsPerPage : 20,
-					paginationNav : '#list_account tfoot td',
-					beforeLoad : function(){
-						$('.loadSpinner').show();
-					},
-					rowComplete : function (rowIndex, row){
-						$.formatQuantity(row, "<?=$Text['currency_sign'];?>");
-					},
-					complete : function(rowCount){
-						$('.loadSpinner').hide();
-						
-						if ($('#list_account tbody tr').length == 0){
-							$.showMsg({
-								msg:"<?php echo $Text['msg_err_nomovements']; ?>",
-								type: 'warning'});
-						} else {
-							$('#list_account tbody tr:even').addClass('rowHighlight'); 
-						}
-					}
-			});
-			
-			/**				
-			   -1          	Manteniment
-			   -2          	Consum
-			   -3 			Cashbox
-			   1..999      Uf cash sources (money that comes out of our pockets or goes in)
-			   1001..1999  regular UF accounts  (1000 + uf.id)
-			   2001..2999  regular provider account (2000 + provider.id)
-			*/				
-							
-
-			/**
-			 * build account SELECT
-			 */
-			$("#account_select").xml2html("init", {
-									url: 'php/ctrl/Account.php',
-									params : 'oper=getActiveAccounts',
-									offSet : 1,
-									loadOnInit: true
-						}).change(function(){
-							//get the id of the provider
-							var id = $("option:selected", this).val();
-							
-							if (id <= -100) {
-								$('#list_account tbody').xml2html('removeAll');
-								return true;
-							}
-
-							$('.account_id').html(id); 
-							
-							
-							$('#list_account tbody').xml2html('reload',{
-								params	: 'oper=accountExtract&account_id='+id+'&filter=pastYear',
-							});						
-			}); //end select change
 
 
 			$("#tblAccountViewOptions")
@@ -183,51 +129,12 @@
 				</div>		
 				
   				<p class="reportAccountElements textAlignCenter"> 
-  					<select id="account_select" class="longSelect">
-                    	<option value="-100" selected="selected"><?php echo $Text['sel_account']; ?></option> 
-		    			<option value="{id}">{id} {name}</option>
-		    		</select>
+					<?php write_list_account_select(); ?>
 		    	</p>
 		    </div>
 		</div>
 		
-		<div id="account_listing" class="ui-widget">
-			<div class="ui-widget-content ui-corner-all">
-					
-					<h3 class="ui-widget-header ui-corner-all"><?=$Text['latest_movements'];?> <span class="account_id"></span> <span style="float:right; margin-top:-4px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
-					<table id="list_account" class="tblListingDefault">
-					<thead>
-						<tr>
-							<th><?php echo $Text['date'];?></th>
-							<th><?php echo $Text['operator']; ?></th>
-							<th><?php echo $Text['description']; ?></th>
-							<th>Type</th>
-							<th><p class="textAlignCenter"><?php echo $Text['account']; ?></p></th>
-							<th><p class="textAlignRight"><?php echo $Text['amount']; ?></p></th>
-							<th><p class="textAlignRight"><?php echo $Text['balance']; ?></p></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="xml2html_tpl">
-							<td>{ts}</td>
-							<td>{operator}</td>
-							<td>{description}</td>
-							<td>{method}</td>
-							<td><p class="textAlignCenter">{account}</p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{quantity}</span></p></td>
-							<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr><td></td></tr>
-					</tfoot>
-					</table>
-					
-					
-			</div>	
-		</div>
-
-		
+		<?php write_list_account('', $Text['msg_err_nomovements']); ?>
 	</div>
 	<!-- end of stage wrap -->
 </div>

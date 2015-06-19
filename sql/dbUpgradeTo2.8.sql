@@ -116,3 +116,24 @@ SET SQL_SAFE_UPDATES = 0;
         ots.rev_tax_percent = 0 and 
         si.order_item_id is null;
 SET SQL_SAFE_UPDATES = 1;
+
+
+/**
+ * Account descriptions 
+ **/
+create table aixada_account_desc (
+  id            smallint    not null auto_increment,
+  description   varchar(50) not null,
+  account_type  tinyint     default 1, -- 1:treasury, 2:service
+  active        tinyint     default 1,
+  primary key (id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;
+
+-- create accounts descriptions --
+insert into
+    aixada_account_desc (id, description, account_type)
+values
+    (1, 'Manteniment',                  2),
+    (2, 'Consum (stock adjustments)',   2),
+    (3, 'Cashbox',                      1);
+

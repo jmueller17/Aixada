@@ -78,7 +78,7 @@ $Text['head_ti_manage_uf'] = "Households/Members";
 $Text['head_ti_incidents'] = "Incidents";
 $Text['head_ti_stats'] = "Statistics of the Day";
 $Text['head_ti_prev_orders'] = "My previous purchases"; 
-$Text['head_ti_cashbox'] = "Cashbox control"; 
+$Text['head_ti_cashbox'] = "Money control"; 
 
 
 
@@ -191,7 +191,7 @@ $Text['deposit_cashbox'] = 'Deposit money in cashbox';
 $Text['widthdraw_cashbox'] = 'Withdraw money from cashbox'; 
 $Text['current_balance'] = 'Current balance';
 $Text['deposit_type'] = 'Type of deposit';
-$Text['deposit_by_uf'] = 'Deposite by HU';
+$Text['deposit_by_uf'] = 'Deposit by HU';
 $Text['deposit_other'] = 'All other stuff...';
 $Text['make_deposit_4HU'] = 'Deposit by';
 $Text['short_desc'] = 'Short description';
@@ -204,7 +204,59 @@ $Text['correct_balance'] = 'Correct balance';
 $Text['set_balance'] = 'Set current balance in cashbox';
 $Text['name_cash_account'] = 'Cashbox';
 
-
+// See `account_operations.config.php`
+//     * Translated keys of $config_account_operations with the prefix 'mon_op_'
+$Text['mon_op_deposit_uf'] = 'HU deposit';
+$Text['mon_op_deposit_others'] = 'Deposit others';
+$Text['mon_op_debit_uf'] = 'Debit to HU';
+$Text['mon_op_pay_pr'] = 'Payment to Prv.';
+$Text['mon_op_refund_uf'] = 'Refund to HU.';
+$Text['mon_op_withdraw_others'] = 'Withdraw others';
+$Text['mon_op_invoice_pr'] = 'Invoice from Prv.';
+$Text['mon_op_move'] = 'Move';
+$Text['mon_op_correction'] = 'Balance correction';
+$Text['mon_op_a_debit_uf'] = 'Anular Càrrec a UF';
+$Text['mon_op_a_pay_pr'] = 'Anular Pag.Prv.';
+$Text['mon_op_a_invoice_pr'] = 'Anular Factura Prv.';
+// See `account_operations.config.php`
+//   * Translated sub-keys values from 'default_desc' and 'auto_desc'
+//     on $config_account_operations with the prefix 'mon_desc_'
+$Text['mon_desc_deposit_uf'] = 'Deposit from HU';
+$Text['mon_desc_deposit_from_uf'] = 'Deposit from HU #{uf_from_id} {comment}';
+$Text['mon_desc_payment'] = 'Payment to provider';
+$Text['mon_desc_payment_to_provider'] = 'Payment to #{provider_to_id} {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Refund to HU: #{uf_to_id} {comment}';
+$Text['mon_desc_invoice'] = 'Provider invoice.';
+$Text['mon_desc_treasury_movement'] = 'Treasury movement.';
+$Text['mon_desc_move_from'] = 'Move from #{account_from_id} {comment}';
+$Text['mon_desc_move_to'] = 'Move to #{account_to_id} {comment}';
+$Text['mon_desc_correction'] = 'Balance correction';
+$Text['mon_desc_a_payment_to_provider'] = 'ANNULAR Payment to #{provider_to_id} {comment}';
+$Text['mon_desc_a_payment'] = 'ANNULAR Payment to provider';
+$Text['mon_desc_a_invoice'] = 'ANNULAR Provider invoice.';
+// Used in manege_money.php and controllers
+$Text['mon_ops_standard'] = 'Standard';
+$Text['mon_ops_corrections'] = 'Corrections';
+$Text['mon_send'] = 'Send';
+$Text['mon_from'] = 'From';
+$Text['mon_to'] = 'To';
+$Text['mon_all_active_uf'] = '* All active HU *';
+$Text['mon_success'] = 'Operation has been successful, {count} annotations!';
+$Text['mon_war_no_all_hu'] = "{mon_all_active_uf} Can not be used in this operation.";
+$Text['mon_war_decimals'] = "Amount must not have more than two decimals!";
+$Text['mon_war_gt_zero'] = "Amount needs to be larger than zero!";
+$Text['mon_war_accounts_not_set'] = "Required accounts are not set.";
+$Text['mon_war_description'] = "Account movement warning: should write a short comment.";
+$Text['mon_dailyTreasurySummary'] = "Treasury Summary of the day";
+$Text['mon_balance'] = "Balance";
+$Text['mon_amount'] = "Amount";
+$Text['mon_dailyBalance'] = "Balance of the day";
+$Text['mon_accountBalances'] = "Balance of accounts";
+$Text['mon_uf_balances'] = "HU balances";
+$Text['mon_result'] = "Result";
+$Text['mon_lastOper'] =  "Last operation";
+$Text['mon_operation_account'] = "Make operations";
+$Text['mon_list_account'] = "Consult the operations of an account";
 
 /**
  *				validate

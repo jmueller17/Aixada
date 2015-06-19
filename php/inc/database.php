@@ -82,7 +82,27 @@ class DBWrap {
       self::$instance = new DBWrap;
     return self::$instance;
   }
+  
+  /**
+   * Executes a start_transaction (uses mysql "START TRANSACTION")
+   */
+  public function start_transaction() {
+    return $this->mysqli->query("START TRANSACTION;");
+  }
 
+  /**
+   * Executes a commit of current transaction (uses mysqli "COMMIT")
+   */
+  public function commit() {
+    return $this->mysqli->query("COMMIT;");
+  }
+  
+  /**
+   * Rolls back current transaction (uses mysql "ROLLBACK")
+   */
+  public function rollback() {
+    return $this->mysqli->query("ROLLBACK;");
+  }
 
   /**
    * Raise exception to report an error, if necessary. Right now, only 

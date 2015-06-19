@@ -77,7 +77,7 @@ $Text['head_ti_manage_uf'] = "Unitats familiars/Membres";
 $Text['head_ti_incidents'] = "Incidents";
 $Text['head_ti_stats'] = "Estadístiques diàries";
 $Text['head_ti_prev_orders'] = "Les meves compres anteriors"; 
-$Text['head_ti_cashbox'] = "Control de caixa"; 
+$Text['head_ti_cashbox'] = "Control de diners"; 
 
 
 
@@ -201,8 +201,59 @@ $Text['correct_balance'] = 'Corregir balanç';
 $Text['set_balance'] = 'Actualitzar balanç de la caixa';
 $Text['name_cash_account'] = 'Caixa';
 
-
-
+// See `account_operations.config.php`
+//     * Translated keys of $config_account_operations with the prefix 'mon_op_'
+$Text['mon_op_deposit_uf'] = 'Ingrés de UF';
+$Text['mon_op_deposit_others'] = 'Ingrés altres';
+$Text['mon_op_debit_uf'] = 'Càrrec a UF';
+$Text['mon_op_pay_pr'] = 'Pagament a Prv.';
+$Text['mon_op_refund_uf'] = 'Devolució a UF.';
+$Text['mon_op_withdraw_others'] = 'Pagament altres';
+$Text['mon_op_invoice_pr'] = 'Factura de Prv.';
+$Text['mon_op_move'] = 'Moure';
+$Text['mon_op_correction'] = 'Ajustar saldo';
+$Text['mon_op_a_debit_uf'] = 'Anul·lar Càrrec a UF';
+$Text['mon_op_a_pay_pr'] = 'Anul·lar Pag.Prv.';
+$Text['mon_op_a_invoice_pr'] = 'Anul·lar Factura Prv.';
+// See `account_operations.config.php`
+//   * Translated sub-keys values from 'default_desc' and 'auto_desc'
+//     on $config_account_operations with the prefix 'mon_desc_'
+$Text['mon_desc_deposit_uf'] = 'Dipòsit de UF';
+$Text['mon_desc_deposit_from_uf'] = 'Dipòsit de UF #{uf_from_id} {comment}';
+$Text['mon_desc_payment'] = 'Pagament a proveïdor';
+$Text['mon_desc_payment_to_provider'] = 'Pagament a #{provider_to_id} {comment}';
+$Text['mon_desc_refund_to_uf'] = 'Restitució a UF #{uf_to_id} {comment}';
+$Text['mon_desc_invoice'] = 'Factura de proveïdor.';
+$Text['mon_desc_treasury_movement'] = 'Moviment de tresoreria.';
+$Text['mon_desc_move_from'] = 'Moviment ve de #{account_from_id} {comment}';
+$Text['mon_desc_move_to'] = 'Moviment va a #{account_to_id} {comment}';
+$Text['mon_desc_correction'] = 'Correcció de saldo';
+$Text['mon_desc_a_payment_to_provider'] = 'ANUL·LAR Pagament a #{provider_from_id} {comment}';
+$Text['mon_desc_a_payment'] = 'ANUL·LAR Pagament a proveïdor';
+$Text['mon_desc_a_invoice'] = 'ANUL·LAR Factura de proveïdor.';
+// Used in manege_money.php and controllers
+$Text['mon_ops_standard'] = 'Normals';
+$Text['mon_ops_corrections'] = 'Correccions';
+$Text['mon_send'] = 'Confirmar';
+$Text['mon_from'] = 'De';
+$Text['mon_to'] = 'A';
+$Text['mon_all_active_uf'] = '* Totes les UF actives *';
+$Text['mon_success'] = "L'operació ha tingut èxit, {count} anotacions!";
+$Text['mon_war_no_all_hu'] = "{mon_all_active_uf} No pot usar-se en aquesta operació.";
+$Text['mon_war_decimals'] = "La quantitat no ha de tenir més de dos decimals!";
+$Text['mon_war_gt_zero'] = "Quantitat ha de ser més gran que zero!";
+$Text['mon_war_accounts_not_set'] = "Algun dels comptes requerits no consten.";
+$Text['mon_war_description'] = "Ha d'escriure un breu comentari.";
+$Text['mon_dailyTreasurySummary'] = "Resum Tresoreria d'avui";
+$Text['mon_balance'] = "Saldo";
+$Text['mon_amount'] = "Import";
+$Text['mon_dailyBalance'] = "Saldo del dia";
+$Text['mon_accountBalances'] = "Saldo dels comptes";
+$Text['mon_uf_balances'] = "Saldo de les UFs";
+$Text['mon_result'] = "Resultat";
+$Text['mon_lastOper'] = "Última operació";
+$Text['mon_operation_account'] = "Fer operacions";
+$Text['mon_list_account'] = "Consultar operacions d'un compte";
 
 /**
  *				validar
@@ -221,8 +272,8 @@ $Text['consum_account'] = "Compte de Consum";
 $Text['operator'] = "Usuari";
 $Text['balance'] = "Balanç";
 $Text['dailyStats'] = "Estadístiques diàries";
-$Text['totalIncome'] = "Ingressos totals";
-$Text['totalSpending'] = "Despeses totals";
+$Text['totalIncome'] = "Ingressos";
+$Text['totalSpending'] = "Despeses";
 $Text['negativeUfs']= "Unitats familiars en negatiu";
 $Text['lastUpdate']= "Última actualització";
 $Text['negativeStock']="Productes amb estoc negatiu";

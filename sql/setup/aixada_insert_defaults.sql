@@ -93,4 +93,11 @@ insert into
 	aixada_version (version) 
 values 
 		('2.8'); 
-      
+
+-- create accounts descriptions --
+insert into
+    aixada_account_desc (id, description, account_type)
+values
+    (1, 'Manteniment',                  2),
+    (2, 'Consum (stock adjustments)',   2),
+    (3, 'Cashbox',                      1);

@@ -195,6 +195,37 @@ function get_param_int($param_name, $default=null) {
     return $val;
 }
 
+
+/**
+ * Provides some basic logic to retrieve array of integers from URL parameters. 
+ * @param string    $param_name  Name of the parameter passed along
+ * @param array(int|string)|string|null  $default  Default value used when 
+ *     parameter is not set (default value must bee a array of integers or a
+ *     string that corresponds to a list integers, if not null is used as
+ *     default)
+ * @return array(int)|null Returns a array of integers if parameter exist and it
+ *     is a array of integers, otherwise returns $default.
+ */
+function get_param_array_int($param_name, $default=null, $separator=',') {
+	$val = get_param($param_name, false);
+	if ($val !== false) {
+		$str_array = explode($separator, $val);
+	} else {
+		if (!$default) { return null; } // exit
+		if (is_array($default)) {
+			$str_array = $default;
+		} else {
+			$str_array = explode($separator, $default);
+		}
+	}
+	$result = array();
+	foreach ($str_array as $item) {
+		if (!is_numeric($item) || !is_int($item+0)) { return null; } // exit
+		array_push($result, $item+0);
+	}
+	return $result;
+}
+
 /**
  *
  * Provides some basic logic to retrieve date values from URL parameters. 
@@ -239,6 +270,58 @@ function get_config($param_name, $default=null) {
     } else {
         return $default;
     }
+}
+
+/**
+ * Tranform a $field_types assoc array to field_formats assoc array using the 
+ *      configuration value $type_formats.
+ * @param array(string) $field_types Associative array with field_name and type of format. 
+ * @return array() $field_formats Associative array with field_name and format.
+ */
+function cnv_config_formats($field_types) {
+    $cfg_formats = get_config('type_formats');
+    if (!$cfg_formats) {
+        return null;
+    }
+    $field_formats = array();
+    foreach ($field_types as $field_name => $content) {
+        foreach (array('dates','numbers') as $type) {
+            if (isset($cfg_formats[$type]) &&
+                        array_key_exists($content, $cfg_formats[$type])) {
+                $field_formats[$field_name] = array(
+                    'type' => $type,
+                    'format' => $cfg_formats[$type][$content]
+                );
+                break;
+            }
+        }
+        
+    }
+    return $field_formats;
+}
+
+/**
+ * Provides some basic logic to retrieve translations using the $Text array.
+ * @param string $text_code The code of the text to translate.
+ * @param $replace Associative array with the parameters to replace (search=>value)
+ * @return Text translated
+ */
+function i18n($text_code, $replace=null) {
+	global $Text;
+	if (!isset($Text[$text_code])) {
+		return $text_code;
+	}
+	$text = $Text[$text_code];
+    if ($replace && count($replace)){
+		$r_search = array();
+		$r_replace = array();
+		foreach ($replace as $key => $value) {
+			array_push($r_search, '{'.$key.'}');
+			array_push($r_replace, $value);
+		}
+		$text = str_replace($r_search, $r_replace, $text);
+	}
+	return $text;
 }
 
 /**
@@ -460,40 +543,108 @@ function stored_query_XML_fields()
 }
 
 /**
- * Execute a SQL query and returs a XML row set.
+ * Execute a SQL query and returns a XML <rowset>.
  * @param string|array $strSQL A SQL query
  * @return string The XML
  */
 function query_XML_fields($strSQL) {
-    return rs_XML_fields(
-        DBWrap::get_instance()->Execute(func_get_args())
+    return '<rowset>'.query_to_XML($strSQL).'</rowset>';
+}
+
+/**
+ * Execute a SQL query and returns a list of XML <row>.
+ * @param string|array $strSQL A SQL query
+ * @param array(string)|null $field_formats Associative array with field_name and format.
+ * @return string The XML
+ */
+function query_to_XML($strSQL, $field_formats = null) {
+    return rs_to_XML(
+        DBWrap::get_instance()->Execute(func_get_args()), $field_formats
     );
 }
 
 /**
- * Walk a mysqli_result and returs a XML row set.
+ * Walk a mysqli_result and returns a XML <rowset>.
  * @param mysqli_result $rs
+ * @param array(string)|null $field_formats Associative array with field_name and format.
  * @return string The XML
  */
-function rs_XML_fields($rs) {
-    $strXML = '<rowset>';
-    global $Text;
-    while ($row = $rs->fetch_assoc()) {
-        $strXML .= '<row';
-        if (isset($row['id'])) 
-            $strXML .= ' id ="' . $row['id'] . '"';
-        $strXML .= '>';
-        foreach ($row as $field => $value) {
-            if ($field == 'description' and isset($Text[$value])) 
-                $value = $Text[$value];
-            $strXML 
-                .= '<' . $field . ' f="' . $field 
-                . '"><![CDATA[' . clean_zeros($value) . "]]></$field>";
+function rs_XML_fields($rs, $field_formats = null) {
+    return '<rowset>'.rs_to_XML($rs, $field_formats).'</rowset>';
+}
+
+/**
+ * Walk a mysqli_result and returns a list of XML <row>.
+ * @param mysqli_result $rs
+ * @param array(string)|null $field_formats Associative array with field_name and format. 
+ * @return string The XML
+ */
+function rs_to_XML($rs, $field_formats = null) {
+    $strXML = '';
+    if ($rs) {
+        while ($row = $rs->fetch_assoc()) {
+            $strXML .= array_to_XML($row, $field_formats);
         }
-        $strXML .= '</row>';
+        $rs->free();
     }
-    $strXML .= '</rowset>';
     return $strXML;
+}
+
+/**
+ * Tranform a assoc array to a XML <row>.
+ * @param array $ass_array A associative array
+ * @param array(string)|null $field_formats Associative array with field_name and format. 
+ * @return string The XML
+ */
+function array_to_XML($ass_array, $field_formats = null) {
+    global $Text;
+    $strXML = '<row';
+    if (isset($ass_array['id'])) {
+        $strXML .= ' id ="'.$ass_array['id'].'"';
+    }
+    $strXML .= '>';
+    foreach ($ass_array as $field => $value) {
+        if ($field_formats && isset($field_formats[$field])) {
+            $format = $field_formats[$field];
+            if (isset($format['type'])) {
+                $format_f = $format['format'];                    
+                switch ($format['type']) {
+                case 'dates':
+                    if (!$format_f) {
+                        $value_f = $value;
+                    } else {
+                        $value_f = date($format['format'], strtotime($value));
+                    }
+                    break;
+                case 'numbers':
+                    if (!$format_f) {
+                        $value_f = $value;
+                    } elseif (substr($format_f,0,1) == 'z') {
+                        $value_f = clean_zeros($value);
+                    } else {
+                        $value_f = number_format($value,
+                            substr($format_f,0,1),
+                            substr($format_f,1,1),
+                            substr($format_f,2,1)
+                        );
+                    }
+                    break;
+                default:
+                    $value_f = $value;
+                }
+            } else {
+                $value_f = $value;
+            }
+            $strXML .= "<{$field} f=\"{$field}\">{$value_f}</{$field}>";
+        } else {
+            if ($field == 'description' and isset($Text[$value])) {
+                $value = $Text[$value];
+            }
+            $strXML .= "<{$field} f=\"{$field}\"><![CDATA[".
+                clean_zeros($value)."]]></{$field}>";
+        }
+    }
+    return $strXML .= '</row>';    
 }
 
 function query_XML() //$strSQL, $group_tag, $row_tag, $param1=0, $param2=0)
