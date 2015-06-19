@@ -123,6 +123,20 @@ class configuration_vars {
    */
   public $default_theme = "smoothness"; // start | ui-lightness | smoothness | redmond
   
+
+  /**
+   * Aixada provides two methods of backup one via script and one internal by
+   *    mysqli (internal is experimental but is already used in production)
+   * By default the script is used and whether its execution fails due to host
+   * restrictions internal method is used.
+   *
+   * To force usage of internal method set `public $db_backup_method = 'int';`
+   *
+   * (For data migration internal method provides a more comfortable to read or
+   *    edit db-backup sql files)
+   */
+  // public $db_backup_method = 'int';
+  
   
   /**
    * 
