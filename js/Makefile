@@ -33,7 +33,7 @@ CANONICAL_DEPS = \
 
 JSFILES = $(patsubst %,js_for_%.min.js,$(FILEROOTS))
 
-all: $(JSFILES)
+all: $(JSFILES) clean_temp
 
 %.min.js : %.js
 ifdef FINAL
@@ -105,3 +105,6 @@ js_for_manage_ufs.js: \
 
 clean: 
 	rm -f *js *~
+
+clean_temp:
+	rm -f `find *.js ! -name "*.min.js"`
