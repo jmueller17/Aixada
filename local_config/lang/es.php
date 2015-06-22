@@ -4,6 +4,8 @@
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
+require_once(__ROOT__. 'local_config/config.php');
+
 $Text['es'] = 'Castellano';
 $Text['charset'] = "utf-8";
 $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
@@ -32,7 +34,7 @@ $Text['tue'] = 'Martes';
 $Text['wed'] = 'Miércoles';
 $Text['thu'] = 'Jueves';
 $Text['fri'] = 'Viernes';
-$Text['sat'] = 'Sabado';
+$Text['sat'] = 'Sábado';
 $Text['sun'] = 'Domingo';
 
 
@@ -61,14 +63,14 @@ $Text['validate'] = "Validar";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = configuration_vars::get_instance()->coop_name;;
-$Text['head_ti_order'] = "Pedido";
-$Text['head_ti_shop'] = "Comprar productos";
-$Text['head_ti_reports'] = "Informes"; 
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;
+$Text['head_ti_order'] = "Pedido"; // Unused!
+$Text['head_ti_shop'] = "Comprar productos"; // Unused!
+$Text['head_ti_reports'] = "Informes"; // Unused!
 $Text['head_ti_validate'] = "Validar";
 
-$Text['head_ti_active_products'] = "Productos activos";
-$Text['head_ti_arrived_products'] = "Productos que han llegado";
+$Text['head_ti_active_products'] = "Activar/Desactivar Productos para pedidos";
+$Text['head_ti_arrived_products'] = "Productos que han llegado"; // Unused!
 $Text['head_ti_active_roles'] = "Roles activos";
 $Text['head_ti_account'] = "Cuentas";
 $Text['head_ti_manage_orders'] = "Gestionar los pedidos";
@@ -87,7 +89,7 @@ $Text['head_ti_cashbox'] = "Control de dinero";
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "Las UFs podrán pedir lo siguiente PARA el día  ";
-$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día "; // no consta en 'en.php'
+$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día "; // Unused!
 $Text['ti_mng_activate_roles'] = "Gestionar los roles de usuario ";
 $Text['ti_mng_activate_users'] = "Activar usuarios como ";
 $Text['ti_mng_move_orders'] = "Cambiar un pedido";
@@ -95,7 +97,7 @@ $Text['ti_mng_activate_preorders'] = "Convertir un prepedido en pedido";
 $Text['ti_mng_members'] = "Gestionar los miembros";
 $Text['ti_mng_ufs'] = "Gestionar las unidades familiares";
 $Text['ti_mng_dates'] = "De-/activar individualmente fechas para hacer pedidos";
-$Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos";
+$Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos"; // Unused!
 $Text['ti_mng_db'] = "Copia de seguridad de la base de datos"; 
 $Text['ti_order'] = "Hacer el pedido para ";
 $Text['ti_shop'] = "Comprar artículos ";
@@ -180,9 +182,11 @@ $Text['bank_name'] = "Banco o Caja";
 $Text['bank_account'] = "Cuenta bancario";
 $Text['picture']  = "Imagen";
 $Text['offset_order_close'] = "Tiempo de procesamiento";
-$Text['iva_percent_id'] = "Typo de IVA";
+$Text['iva_percent_id'] = "Tipo de IVA";
 $Text['percent'] = "Porcentaje";
 $Text['type'] = "Tipo";
+$Text['treasury'] = "Tesorería";
+$Text['service'] = "Servicio";
 $Text['adult'] = "Adulto";
 
 
@@ -204,7 +208,6 @@ $Text['withdraw_provider'] = 'Reintegro para pago a proveedores';
 $Text['btn_make_withdrawal'] = 'Paga';
 $Text['correct_balance'] = 'Corregir balance';
 $Text['set_balance'] = 'Actualizar balance de la caja';
-$Text['current_balance'] = 'Balance actual';
 $Text['name_cash_account'] = 'Caja';
 
 // See `account_operations.config.php`
@@ -331,7 +334,7 @@ $Text['nav_wiz'] = "Turno";
 	$Text['nav_wiz_validate'] = "Validar";
 	$Text['nav_wiz_open'] = "Abrir";
 	$Text['nav_wiz_close'] = "Cerrar";
-	$Text['nav_wiz_torn'] = "Resumen torn";
+	$Text['nav_wiz_torn'] = "Resumen turno";
 	$Text['nav_wiz_cashbox'] = "Caja";
 $Text['nav_shop'] = "Comprar hoy";
 $Text['nav_order'] = "Siguiente pedido";
@@ -348,7 +351,7 @@ $Text['nav_mng'] = "Gestionar";
 		$Text['nav_mng_move'] = "Cambiar la fecha del pedido";
 		$Text['nav_mng_orders_overview'] = "Gestionar pedidos";
 		$Text['nav_mng_preorder'] = "Convertir el prepedido en pedido";
-	$Text['nav_mng_db'] = "Copia de seguridad bd";
+	$Text['nav_mng_db'] = "Copia seguridad de bd";
 	$Text['nav_mng_roles'] = "Roles";
 $Text['nav_report'] = "Informes";
 $Text['nav_report_order'] = "Pedido actual";
@@ -399,7 +402,7 @@ $Text['btn_create'] = "Crear";
 $Text['btn_close'] = "Cerrar";
 $Text['btn_make_deposit'] = "Ingresar";
 $Text['btn_new_incident'] = "Incidente nuevo";
-$Text['btn_reset_pwd'] = "Reestablecer contraseña"; 
+$Text['btn_reset_pwd'] = "Re-establecer contraseña"; 
 $Text['btn_view_cart'] = "Carrito"; 
 $Text['btn_view_cart_lng'] = "Ver únicamente el carrito";
 $Text['btn_view_list'] = "Productos";
@@ -458,7 +461,7 @@ $Text['msg_err_usershort'] = "El nombre de usuario es demasiado corto. Tiene que
 $Text['msg_err_userexists'] = "El nombre de usuario ya está ocupado. Elige otro.";
 $Text['msg_err_passshort'] = "La contraseña es demasiado corta. Tiene que tener entre 4 y 15 caracteres";
 $Text['msg_err_notempty'] = " no puede estar vacío."; 
-$Text['msg_err_namelength'] = "El nombre y apelido no puede estar vació y no puede tener más de 255 characters!"; 
+$Text['msg_err_namelength'] = "El nombre y apellido no puede estar vació y no puede tener más de 255 caracteres!"; 
 $Text['msg_err_only_num'] = " sólo acepta cifras y no puede estar vacío."; 
 $Text['msg_err_email'] = "El formato del correo electrónico no es correcto. Tiene que ser del estilo nombre@dominio.com o parecido.";
 $Text['msg_err_select_uf'] = "Para asignar un nuevo miembro a una UF primero tienes que seleccionar la UF clicando sobre ella. Si quieres crear una nueva UF, hazlo clicando en + Nueva UF.";
@@ -577,7 +580,7 @@ $Text['not_validated'] = 'no validado';
 /* definitely new stuff */
 
 $Text['download_db_zipped'] = 'Descargar Base de Datos comprimida';
-$Text['backup'] = '¡Ok, haz una copia de la Bade de Datos!';
+$Text['backup'] = '¡Ok, haz una copia de la Base de Datos!';
 $Text['filter_incidents'] = 'Filtrar incidencias';
 $Text['todays'] = "Hoy";
 $Text['recent_ones'] = 'Más recientes';
@@ -638,7 +641,7 @@ $Text['val_by'] = "Validado por";
 $Text['purchase_details'] = "Detalle de la compra de la cesta #";
 $Text['filter_uf'] = "Filtrar por UF";
 $Text['purchase_uf'] = "Compra de la UF";
-$Text['quantity_short'] = "Qu";
+$Text['quantity_short'] = "Can";
 $Text['incl_iva'] = "incl. IVA";
 $Text['incl_revtax'] = "incl. ImpRev";
 $Text['no_news_today'] = "¡Ninguna noticia es una buena noticia: hoy no han habido incidencias!";
@@ -695,7 +698,7 @@ $Text['finalize_now'] = "Finalizar ahora";
 $Text['msg_err_order_filter'] = "No hay pedidos coincidentes con el criterio de búsqueda.";
 $Text['msg_finalize'] = "Está a punto de terminar un pedido. Esto significa que ya no podrá hacer modificaciones.  ¿Está seguro de continuar?";
 $Text['msg_finalize_open'] = "Este pedido está todavía abierto. Finalizar-lo implica que deberá cerrarlo antes de su fecha límite. ¿Está seguro de continuar?";
-$Text['msg_wait_tbl'] = "Las cabeceras de la tabla todavía se estan creando. En función de su conexión de internet puede llevar un tiempo.  Inténtelo otra vez en 5 segundos. ";
+$Text['msg_wait_tbl'] = "Las cabeceras de la tabla todavía se están creando. En función de su conexión de Internet puede llevar un tiempo.  Inténtelo otra vez en 5 segundos. ";
 $Text['msg_err_invalid_id'] = "¡No se encontró ningún ID válido para el pedido! ¡¡Este pedido no ha sido enviado al proveedor!!";
 $Text['msg_revise_revised'] = "Los ítems de este pedido han sido revisados y asignados a las cestas para la fecha de venta indicada.  Revisarlos otra vez implica perder la modificaciones ya hechas y interferir en las correcciones creadas por los usuarios. <br/><br/> ¡¡¿Está totalmente seguro de continuar?!! <br/><br/> Si pulsa OK borrará los ítems de las cestas existentes y iniciará el proceso de revisión del pedido otra vez.";
 $Text['wait_reset'] = "Por favor, espere mientras el pedido se reinicia...";
@@ -754,6 +757,7 @@ $Text['msg_confirm_move'] = "¿Está seguro de que quiere hacer disponible el pe
 $Text['alter_date'] = "Escoja una fecha alternativa";
 $Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versión más antigua del software que es incompatible con la funcionalidad de revisión actual.  Lo siento, este pedido no puede ser revisado.";
 
+
 //added 29.09
 
 $Text['order_closes'] = "El pedido se cierra el"; //as in: order closes 20 SEP 2012
@@ -762,7 +766,7 @@ $Text['ostat_closed'] = "El pedido está cerrado";
 $Text['ostat_desc_fin_send'] = "El pedido se ha cerrado. La referencia es: #";
 $Text['msg_err_past'] = "¡Esto es el pasado! <br/> Demasiado tarde para modificar cosas.";
 $Text['msg_err_is_deactive_p'] = "Este producto está desactivado. Para abrirlo para una fecha primero debes activarlo.";
-$Text['msg_err_deactivate_p'] = "Estás a punto de desactivar el producto. Esto quiere decir que las fechas en que se puede pedir también se eliminaran.<br/><br/>También podrias desactivar las fechas en que se puede pedir clicando en las casillas correspondientes.";
+$Text['msg_err_deactivate_p'] = "Estás a punto de desactivar el producto. Esto quiere decir que las fechas en que se puede pedir también se eliminaran.<br/><br/>También podrías desactivar las fechas en que se puede pedir clicando en las casillas correspondientes.";
 $Text['msg_err_closing_date'] = "¡La fecha de cierre no puede ser posterior a la del pedido!";
 $Text['msg_err_sel_col'] = "¡La fecha seleccionada no tiene productos para pedir! Debe establecer un producto para pedir si quiere crear una  plantilla para esta fecha.";
 $Text['msg_err_closing'] = "Para modificar la fecha de cierre, hay que poner al menos un producto que puede pedir.";
@@ -778,7 +782,7 @@ $Text['btn_later'] = "después de"; //más tarde... futuro
 $Text['pattern_intro'] = "Activa los productos i días para los próximos ";
 $Text['pattern_scale'] = "meses ";
 $Text['week'] = "cada semana";
-$Text['second'] = "cada 15 dias";  //2nd 
+$Text['second'] = "cada 15 días";  //2nd 
 $Text['third'] = "cada 3 semanas";
 $Text['fourth'] = "una vez al mes";
 $Text['msg_pattern'] = "¡NOTA: Esta acción regenerará los productos y fechas a partir de esta!";

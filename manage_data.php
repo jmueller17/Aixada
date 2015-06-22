@@ -36,12 +36,12 @@
     $is_edit = 'false';
     if ($data_manager){
         if (may_edit_table($table_name)) {
-            $page_title = str_replace('{data}', $data_manager->title(),
-                $Text['dataman_edit']);
+            $page_title = i18n('dataman_edit',
+                array('data'=>$data_manager->title()) );
             $is_edit = 'true';
         } else {
-            $page_title = str_replace('{data}', $data_manager->title(),
-                $Text['dataman_consult']);
+            $page_title = i18n('dataman_consult',
+                array('data'=>$data_manager->title()) );
         }
     } else {
         $page_title = '??';
@@ -87,20 +87,22 @@
         echo ($data_manager ? $data_manager->callCreateEditorJs() : '');
         ?></script>
     <script type="text/javascript">
-    function createEditor(allowed_edit_modes, col_models) {
+    function createEditor(allowed_edit_modes, col_models, col_sort) {
         createEditor_aux(
             "<?php echo $data_manager ? $table_name : '' ?>",
-            "<?php echo $data_manager ? str_replace('"','\\"', $page_title) : '???' ?>",
+            "<?php echo $data_manager ? to_js_str($page_title) : '???' ?>",
             (<?php echo $is_edit ?> ? 
                 allowed_edit_modes :
                 {edit:false,add:false,del:false}
             ),
-            col_models
+            col_models,
+            col_sort
         );
     }
 	</script>    
 	<script type="text/javascript">
-    function createEditor_aux(current_table, page_title, edit_modes, col_models) {
+    function createEditor_aux(current_table, page_title, edit_modes,
+                                                         col_models, col_sort) {
         if (current_table === '') { return; }
         var selected_row;
         var lastsel = 0; 
@@ -115,7 +117,9 @@
             filter_text = "&filter=" + filter_cond;
         }
         var col_names = [],
-            col_sortIndex = 0;
+            col_sortIndex = 0,
+            col_sortName =  (col_sort ? col_sort[0] : ''),
+            col_sortOrder = (col_sort ? col_sort[1] : 'asc');
         if (col_models[col_sortIndex].name === 'id') {
             col_sortIndex++;
         }
@@ -145,14 +149,16 @@
             col_models[i] = col_model;
             col_names.push(col_model.label);
         }
-        var col_sortname = (
-            col_models[col_sortIndex].index ?
-            col_models[col_sortIndex].index :
-            col_models[col_sortIndex].name
-        );
+        if (col_sortName === '') {
+            col_sortName = (
+                col_models[col_sortIndex].index ?
+                col_models[col_sortIndex].index :
+                col_models[col_sortIndex].name
+            );
+        }
 
         active_fields = [];//result.active_fields;
-        
+        var last_row_sel = null;
         $("#desc").jqGrid({
             url: "php/ctrl/ManageData.php?table="+current_table+
                 "&oper=listAll"+filter_text,
@@ -160,6 +166,19 @@
             datatype: 'xml',
             colNames: col_names,
             colModel: col_models,
+            onSelectRow: function(id) {
+                if (edit_modes.edit && id && id !== last_row_sel) {
+                    if (last_row_sel !== null) {
+                        jQuery('#desc').saveRow(last_row_sel);
+                        // TODO: Do automatic refresh without breaking anything,
+                        //       one step could be (but missing something): 
+                        //          jQuery("#desc").trigger("reloadGrid");
+                    }
+                    jQuery('#desc').editRow(id, true);
+                    last_row_sel = id;
+                }
+            },
+            // loadonce: false, // Used with "reloadGrid", see previous TODO
             xmlReader: {
                 root: 'rowset',
                 row:  'row',
@@ -174,9 +193,9 @@
             // autowidth: true, 
             height:'100%',
             pager: '#desc_pager', 
-            sortname: col_sortname,
+            sortname: col_sortName,
+            sortorder: col_sortOrder,
             viewrecords: true,
-            sortorder: 'asc',
             multiselect: false, 
             editurl:"php/ctrl/ManageData.php?table="+current_table,
             caption: page_title,

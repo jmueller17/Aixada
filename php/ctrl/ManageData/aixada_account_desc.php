@@ -6,40 +6,45 @@ class data_manager extends abstract_data_manager {
         return 'aixada_account_desc';
     }
     public function title(){
-        global $Text;
-        return $Text['nav_mng_accdec'];
+        return i18n('nav_mng_accdec');
+    }
+    public function col_sort() {
+        return "['id','desc']";
+    }
+    protected function before_delete($values) {
+        return $this->chk_related($values, i18n('mon_accountBalances'),
+            "SELECT * FROM aixada_account where account_id = -{id}");
     }
     protected function form_fields(){
-        global $Text;
-        // See reference: http://www.trirand.com/jqgridwiki/doku.php?id=wiki:common_rules
         return "[{
                 name:'id',
-                width:'50',
+                width:'50', align:'right',
                 editable:false
             }, {
-                name:'description', label:'".$Text['description']."',
+                name:'active', label:'".i18n_js('active')."',
+                width:'80', align:'center',
+                edittype:'checkbox', formatter:'checkbox',
+                editoptions:{
+                    value:'1:0',
+                    defaultValue:'1'
+                },
+                editrules:{ required:true }
+            }, {
+                name:'description', label:'".i18n_js('description')."',
                 width:'400',
-                editrules:{required:true},
+                editoptions:{ size:50, maxlength:50 },
+                editrules:{ required:true }
             }, {
-                name:'account_type', label:'".$Text['type']."',
+                name:'account_type', label:'".i18n_js('type')."',
                 width:'100',
-                editrules:{required:true,defaultValue:1, number: true}
-            }, {
-                name:'active', label:'".$Text['active']."',
-                width:'100',
-                edittype: 'checkbox',
-                editrules:{required:true}
+                editable:false,
+                edittype:'select', formatter:'select', 
+                editoptions:{
+                    value:'1:".i18n_js('treasury')."; 2:".i18n_js('service')."',
+                    defaultValue:'1'
+                },
+                editrules:{ required:true }
         }]";
     }
 }
-/*
-
-
-aixada_account_desc (
-  id            smallint    not null auto_increment,
-  description   varchar(50) not null,
-  account_type  tinyint     default 1, -- 1:treasury, 2:service
-  active        tinyint     default 1,
-  
-  */
 ?>
