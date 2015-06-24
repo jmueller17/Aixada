@@ -13,6 +13,8 @@
 .cart_product_list		{width:100%;}
 .cart_success_msg			{padding:3px; background-color:#d2f3d2; border:1px solid #72b42d; text-align:center; border-radius:10px;}
 .cart_product_list td	{text-align:right; background:#EBEBEB; padding:5px 5px;}
+.cart_product_list td.item_unit,
+.product_list      td.item_unit {text-align: left;}
 .cart_floatRight			{float:right;}
 .cart_hidden			{display:none;}
 .cart_animOrder			{margin-top:-48px;}
