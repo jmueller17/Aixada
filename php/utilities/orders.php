@@ -47,12 +47,13 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 
 /**
  * Prepare the order to review: Insert order items into aixada_order_to_shop 
- *      if is needed.    
+ *      if is needed.
+ * @param integer $order_id
  */        
 function prepare_order_to_shop($order_id) {
 	// Check parameters
 	if (!is_numeric($order_id)) {
-        throw new Exception("`order_id` must be integer!");      			
+        throw new Exception("`order_id` must be integer!");
     }
 	$is_edited = get_row_query(
 		"select order_id from aixada_order_to_shop
@@ -95,9 +96,67 @@ function prepare_order_to_shop($order_id) {
 		$ok = DBWrap::get_instance()->Execute($sql);
 		if (!$ok) {
 			throw new Exception(
-					"An error occured during preparing aixada_order_to_shop!!");      			
+					"An error occurred during preparing aixada_order_to_shop!!");
 		}
 	}
+}
+
+
+/**
+ * Reset order to review again after distribution
+ * @param integer $order_id
+ */
+function reset_order_to_shop($order_id, $clear) {
+    if (!is_numeric($order_id)) {
+        throw new Exception("`order_id` must be integer!");
+    }
+    $db = DBWrap::get_instance();
+
+    // Start transaction
+    $db->start_transaction();
+    
+    // Delete shop items
+    $sql = "delete from aixada_shop_item
+            where order_item_id in (
+                select id from aixada_order_item
+                where order_id = {$order_id});";
+    $ok = $db->Execute($sql);
+    if (!$ok) {
+        $db->rollback();
+        throw new Exception("An error occurred during reset_order_to_shop-1!");
+    }
+    // Delete empty carts
+    $sql = "delete from aixada_cart
+            where id not in(
+                select cart_id from aixada_shop_item);";
+    $ok = $db->Execute($sql);
+    if (!$ok) {
+        $db->rollback();
+        throw new Exception("An error occurred during reset_order_to_shop-2!");
+    }
+    // Reset the shop_date and revision status for this order
+    $sql = "update aixada_order
+            set 
+                date_for_shop = null,
+                revision_status = 1
+            where id = {$order_id};";
+    $ok = $db->Execute($sql);
+    if (!$ok) {
+        $db->rollback();
+        throw new Exception("An error occurred during reset_order_to_shop-3!");
+    }
+    // Delete tmp revison items
+    if ($clear) {
+        $sql = "delete from aixada_order_to_shop where order_id = {$order_id};";
+        $ok = $db->Execute($sql);
+        if (!$ok) {
+            $db->rollback();
+            throw new Exception("An error occurred during reset_order_to_shop-4!");
+        }
+    }
+    
+    // End transaction
+    $db->commit();
 }
 
 /**

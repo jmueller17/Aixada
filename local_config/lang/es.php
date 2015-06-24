@@ -697,8 +697,14 @@ $Text['msg_finalize'] = "Está a punto de terminar un pedido. Esto significa que
 $Text['msg_finalize_open'] = "Este pedido está todavía abierto. Finalizar-lo implica que deberá cerrarlo antes de su fecha límite. ¿Está seguro de continuar?";
 $Text['msg_wait_tbl'] = "Las cabeceras de la tabla todavía se estan creando. En función de su conexión de internet puede llevar un tiempo.  Inténtelo otra vez en 5 segundos. ";
 $Text['msg_err_invalid_id'] = "¡No se encontró ningún ID válido para el pedido! ¡¡Este pedido no ha sido enviado al proveedor!!";
-$Text['msg_revise_revised'] = "Los ítems de este pedido han sido revisados y asignados a las cestas para la fecha de venta indicada.  Revisarlos otra vez implica perder la modificaciones ya hechas y interferir en las correcciones creadas por los usuarios. <br/><br/> ¡¡¿Está totalmente seguro de continuar?!! <br/><br/> Si pulsa OK borrará los ítems de las cestas existentes y iniciará el proceso de revisión del pedido otra vez.";
+$Text['msg_revise_revised'] =
+    "Los elementos del pedido ya han sido revisados y cargados en las cestas de los usuarios. <br>
+    Volverlos a revisar puede interferir con modificaciones hechas por los propios usuarios. <br>
+    Las opciones posibles son o <b>modificar</b> la revisión hecha o <b>borrarla</b> y empezar de nuevo.";
+$Text['btn_modify'] = "Modificar";
+$Text['btn_delete'] = "Borrar";
 $Text['wait_reset'] = "Por favor, espere mientras el pedido se reinicia...";
+$Text['msg_done'] = "Hecho!";
 $Text['msg_err_already_val'] = "Algunos o todos los ítems ya han sido validados! ¡¡Lo siento pero no es posible hacer mas cambios!!";
 $Text['print_several'] = "There is more than one order currently selected. Do you want to print them all in one go?";
 $Text['btn_yes_all'] = "Sí, imprimir todo";
@@ -748,8 +754,10 @@ $Text['total_after_revision'] = "Después de revisión";
 $Text['delivery_ref'] = "Ref. de entrega";
 $Text['payment_ref'] = "Ref. de pago";
 $Text['arrived'] = "Llegado"; //as in order items have arrived. this is a table heading
+$Text['tit_set_orStatus'] = "Establecer estado del pedido";
+$Text['tit_set_shpDate'] = "Establecer fecha de compra";
 $Text['msg_cur_status'] = "El estado actual del pedido es";
-$Text['msg_change_status'] = "Cambiar el estado del pedido a alguna de las siguientes opciones";
+$Text['msg_change_status'] = "Cambia el estado a";
 $Text['msg_confirm_move'] = "¿Está seguro de que quiere hacer disponible el pedido para la compra? Todos los productos asociados seran distribuidos en las cestas para la fecha:";
 $Text['alter_date'] = "Escoja una fecha alternativa";
 $Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versión más antigua del software que es incompatible con la funcionalidad de revisión actual.  Lo siento, este pedido no puede ser revisado.";
@@ -923,6 +931,8 @@ $Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de st
 
 
 $Text['msg_success'] = "Fin correcto";
+$Text['msg_confirm'] = "Confirmación";
+$Text['msg_warning'] = "Advertencia";
 $Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 
 $Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo "; 
 $Text['msg_import_matchcol'] = "Hay que hacer coincidir las entradas de la base de datos con las filas de la tabla. Debes asignar la columna que corresponde a "; //+ here then comes the name of the matching column, e.g. custom_product_ref

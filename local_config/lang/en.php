@@ -698,8 +698,14 @@ $Text['msg_finalize'] = "You are about to finalize an order. This means that no 
 $Text['msg_finalize_open'] = "This order is still open. Finalizing it now implies that you will close it before the announced deadline. Are you sue you want to continue?";
 $Text['msg_wait_tbl'] = "The table header is still being constructed. Depending on your internet connection this might take a little while. Try again in 5 seconds. ";
 $Text['msg_err_invalid_id'] = "No valid ID for order found! This order has not been sent off to the provider!!";
-$Text['msg_revise_revised'] = "The items of this order have already been revised and placed into people\'s carts for the indicated shop date. Revising them again will override the modifications already made and potentially interfere with people\'s own corrections. <br/><br/> Are you really sure you want to proceed anyway?! <br/><br/>Pressing OK will delete the items from the existing shopping carts and start the order-revision process again.";
+$Text['msg_revise_revised'] =
+     "The items of this order have already been revised and placed into people\'s carts.<br>
+     Revising again will override modifications already made and potentially interfere with people\'s own corrections.<br>
+     Possible options are <b>modify</ b> the revision made or <b>delete</ b> it and start again.";
+$Text['btn_modify'] = "Modify";
+$Text['btn_delete'] = "Delete";
 $Text['wait_reset'] = "Please wait while the order is being reset...";
+$Text['msg_done'] = "Done!";
 $Text['msg_err_already_val'] = "Some or all order items have already been validated! Sorry, but it is not possible to make any further changes!!";
 $Text['print_several'] = "There is more than one order currently selected. Do you want to print them all in one go?";
 $Text['btn_yes_all'] = "Yes, print all";
@@ -749,8 +755,10 @@ $Text['total_after_revision'] = "After revision";
 $Text['delivery_ref'] = "Delivery ref.";
 $Text['payment_ref'] = "Payment ref.";
 $Text['arrived'] = "Arrived"; //as in order items have arrived. this is a table heading
+$Text['tit_set_orStatus'] = "Set Order Status";
+$Text['tit_set_shpDate'] = "Set shopping date";
 $Text['msg_cur_status'] = "The current order status is";
-$Text['msg_change_status'] = "Change the order status to one of the following options";
+$Text['msg_change_status'] = "Change the order status to";
 $Text['msg_confirm_move'] = "Are you sure you want to make this order available for shopping? All corresponding products will be placed into the shopping cart for the following date:";
 $Text['alter_date'] = "Choose an alternative date";
 $Text['msg_err_miss_info'] = "It seems that this order was created with an older version of the platform which is incompatible with the current revision functionality. Sorry, but this order cannot be revised.";
@@ -925,6 +933,8 @@ $Text['stock_info_product'] = "Note: consult all previous stock movements (adds,
 
 
 $Text['msg_success'] = "Completed successfully";
+$Text['msg_confirm'] = "Confirm";
+$Text['msg_warning'] = "Warning";
 $Text['msg_confirm_prov'] = "Are you sure you want to export all providers?"; 
 $Text['msg_err_upload'] = "An error occurred during uploading the file "; 
 $Text['msg_import_matchcol'] = "Need to match up database entries with table rows! Please assign the required matching column "; //+ here then comes the name of the matching column, e.g. custom_product_ref

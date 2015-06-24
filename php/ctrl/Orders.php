@@ -115,7 +115,7 @@ try{
   			exit;
   			
   		case 'resetOrder':
-  			echo do_stored_query('reset_order_revision', get_param('order_id'));
+            reset_order_to_shop(get_param_int('order_id'), get_param_int('clear'));
   			exit;
   			
   		case 'editOrderDetailInfo':
