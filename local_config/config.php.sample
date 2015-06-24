@@ -312,8 +312,8 @@ class configuration_vars {
                array (
                       'navHome'      => 'enable',
                       'navWizard'    => 'enable',
-                      'navShop'      => 'enable',
-                      'navOrder'     => 'enable',
+                      'navShop'      => 'disable',
+                      'navOrder'     => 'disable',
                       'navManage'    => 'enable',
                       'navReport'    => 'enable',
                       'navIncidents' => 'enable' 

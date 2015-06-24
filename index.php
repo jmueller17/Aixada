@@ -11,6 +11,9 @@
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
      
+	<style>
+		.ui-state-disabled a {pointer-events: none;}
+	</style>
     
     <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
 	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
@@ -61,6 +64,28 @@
 			$('#tmp').hide();
 
 
+			// To apply menu access rights to icons
+			var role =  $("#role_select option:selected").val();
+			if (typeof(role) == "string" ) {
+				$.ajax({
+					type: "POST",
+					url: "php/ctrl/SmallQ.php?oper=configMenu&user_role="+role,
+					dataType: "xml", 
+					success: function(xml){
+						$(xml).find('navigation').children().each( function(){
+							var tag = $(this)[0].tagName; 
+							var val = $(this).text();
+							console.log(tag +':'+val);
+							if (val == 'disable') {
+								$('.index_'+tag).addClass('ui-state-disabled');
+							} else if (val == 'enable') {
+								$('.index_'+tag).removeClass('ui-state-disabled');
+							}
+						} );
+					}
+				});
+			}
+	
 
 			/********************************************************
 			 *      My ORDERS
@@ -512,16 +537,16 @@
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">
 				<?php if ($cfg_use_shop) {  // USE SHOP: start  ?>
-				<div class="homeIcon">
+				<div class="homeIcon index_navShop">
 					<a href="shop_and_order.php?what=Shop"><img src="img/cesta.png"/></a>
 					<p><a href="shop_and_order.php?what=Shop"><?php echo $Text['icon_purchase'];?></a></p>
 				</div>
 				<?php } // - - - - - - - - - - USE SHOP: end ?>
-				<div class="homeIcon">
+				<div class="homeIcon index_navOrder">
 					<a href="shop_and_order.php?what=Order"><img src="img/pedido.png"/></a>
 					<p><a href="shop_and_order.php?what=Order"><?php echo $Text['icon_order'];?></a></p>
 				</div>
-				<div class="homeIcon">
+				<div class="homeIcon index_navIncidents">
 					<a href="incidents.php"><img src="img/incidencias.png"/></a>
 					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
 				</div>
