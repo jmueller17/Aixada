@@ -7,7 +7,7 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
-
+require_once(__ROOT__."php/lib/account_operations.php");
 
 
 /**
@@ -323,6 +323,118 @@ function finalize_order($provider_id, $date_for_order)
 	return $msg; 
 	
 }
+
+/**
+ * Distribute and directly validate an order
+ * @param integer $order_id
+ */
+function directly_validate_order($order_id) {
+    
+    prepare_order_to_shop(get_param_int('order_id'));
+    $db = DBWrap::get_instance();
+    $db->start_transaction(); // $db->commit() and $db->rollback()
+    
+    // Set date for shop as date for order
+    $row_or = get_row_query(
+        "select provider_id, date_for_order 
+        from aixada_order where id = {$order_id};");
+    $date_for_shop = $row_or['date_for_order'];
+    $provider_id = $row_or['provider_id'];
+    
+    $operator_id = get_session_user_id();
+    //For each uf    
+    $rs = $db->Execute("select distinct os.uf_id
+            from aixada_order_to_shop os
+            where os.arrived = 1 and os.order_id = {$order_id};");
+    $carts = array();
+    while ($row = $rs->fetch_assoc()) {
+        $uf_id = $row['uf_id'];
+        // Create cart
+        $db->Execute(
+            "insert into aixada_cart (
+                uf_id, date_for_shop
+            )
+            values (
+                {$uf_id}, '{$date_for_shop}'
+            );"
+        );
+        $cart_id = $db->last_insert_id();
+        array_push($carts, $cart_id);
+        // Copy revised items into aixada_shop_item with to corresponding cart
+        $db->Execute(
+            "insert into aixada_shop_item (
+                cart_id, order_item_id, unit_price_stamp, product_id,
+                quantity, iva_percent, rev_tax_percent)
+            select
+                {$cart_id}, 
+                os.order_item_id,
+                os.unit_price_stamp,
+                os.product_id,
+                os.quantity, 
+                iva_percent,
+                rev_tax_percent
+            from
+                aixada_order_to_shop os
+            where 
+                os.order_id = {$order_id}
+                and os.uf_id = {$uf_id}
+                and os.arrived = 1;"
+        );
+        
+        // If quantities have changed, revision status is 5; otherwise it is 2.
+        $qu_diff_row = get_row_query(
+            "select sum(abs(oi.quantity - (
+                select os.quantity * os.arrived
+                from aixada_order_to_shop os
+                where os.order_id = {$order_id}
+                      and os.order_item_id = oi.id) ) ) qu_diff
+            from aixada_order_item oi
+            where oi.order_id = {$order_id};"
+        );
+        $db->Execute(
+            "update aixada_order
+            set
+                date_for_shop = '{$date_for_shop}',
+                revision_status = ".($qu_diff_row['qu_diff'] === 0 ? 2 : 5)."
+            where id = {$order_id};"
+        );
+    }
+    $db->commit();
+    
+    // Validate carts
+    // TODO: Only one transaction!!
+    //          Currently is not possible since 'validate_shop_cart' as
+    //          a own transaction
+    $desc_pay = "order#{$order_id} {$date_for_shop} cart#";
+    foreach ($carts as $cart) {
+        do_stored_query('validate_shop_cart', $cart, $operator_id, $desc_pay);            
+    }
+    // Add povider invoice
+    $ao = new account_operations();
+    if ($ao->uses_providers()) {
+        $prv_tot_row = get_row_query(
+            "select sum( 
+                        quantity * 
+                        round( unit_price_stamp / (1 + rev_tax_percent/100), 2 )
+                    ) prv_tot from (
+                select 
+                    sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
+                from aixada_order_to_shop os
+                where 
+                    os.order_id = {$order_id}
+                    and os.arrived = 1
+                group by
+                    unit_price_stamp, rev_tax_percent, iva_percent) r;"
+        );
+        $ao->add_operation(
+            'invoice_pr',
+            array('provider_from_id' => $provider_id + 2000),
+            $prv_tot_row['prv_tot'], 
+            "validation order#{$order_id} {$date_for_shop}"
+        );
+    }
+}
+
 
 /**
  * 

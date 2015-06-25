@@ -95,6 +95,11 @@ try{
 			prepare_order_to_shop(get_param_int('order_id'));
     		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
+            
+    	//Distribute and directly validate an order
+    	case 'directlyValidateOrder':
+    		directly_validate_order(get_param_int('order_id'));
+    		exit;
     		
     	//retrieves info about originally ordered quanties and available items after received orders have been revised and distributed in carts. 
   		case 'getDiffOrderShop':

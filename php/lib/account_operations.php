@@ -16,6 +16,11 @@ class account_operations {
     // --------------------------------------------
     // READ
     // --------------------------------------------
+
+    public function uses_providers() {
+        return $this->cfg_use_providers;
+    }
+
     public function latest_movements_XML($limit, $account_types) {
 		return rs_XML_fields(
 			$this->latest_movements_rs($limit, $account_types),

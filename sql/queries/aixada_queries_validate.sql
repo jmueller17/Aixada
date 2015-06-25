@@ -70,7 +70,7 @@ end|
  * and registers the money in the corresponding accounts.  
  */
 drop procedure if exists validate_shop_cart|
-create procedure validate_shop_cart(in the_cart_id int, in the_op_id int)
+create procedure validate_shop_cart(in the_cart_id int, in the_op_id int, in the_desc_pay varchar(50))
 begin
   declare current_balance decimal(10,2) default 0.0;
   declare total_price decimal(10,2) default 0.0;
@@ -134,7 +134,7 @@ begin
    the_account_id,
     - total_price,
     6,
-    concat('cart #', the_cart_id),
+    concat(the_desc_pay, the_cart_id),
     the_op_id,
     current_balance - total_price;
     
