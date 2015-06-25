@@ -34,6 +34,7 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 	//calc and save adjusted quantities for each uf
 	$xml = '<total>'.$total_quantity.'</total>';
 	$xml .= '<rows>';
+	$new_total_quantity = round($new_total_quantity, 3);
 	foreach ($uf_qu as $uf_id => $quantity){
 	    $new_quantity = round(($quantity / $total_quantity) * $new_total_quantity, 3);
 	    do_stored_query('modify_order_item_detail', $order_id, $product_id, $uf_id, $new_quantity);
@@ -126,7 +127,8 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
         where os.product_id = {$product_id}
             and os.order_id = {$order_id}
             and os.uf_id = {$uf_id};");
-	if ($item) {
+    $quantity = round($quantity, 3);
+    if ($item) {
         // Update quantity
         $ok = do_stored_query('modify_order_item_detail', 
                                 $order_id, $product_id, $uf_id, $quantity);

@@ -359,7 +359,7 @@
 							if (lastId == -1) {lastId = product_id}; 							
 							if (lastId != product_id){
 								
-								var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
+								var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 								
 								$('.total_'+lastId).html(total);
 								if (gSection !== 'print') {
@@ -376,7 +376,7 @@
 						});
 
 						
-						var total = "<span>"+quTotal.toFixed(2)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
+						var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 						$('.total_'+lastId).html(total);
 
                         if (gSection !== 'print') {
@@ -635,7 +635,7 @@
 										$('#ckboxRevised_'+pid).attr('checked','checked');
 										
 										$('.total_' + pid).each(function(){
-											$(this).children(':first').empty().text(total_quantity.toFixed(2));
+											$(this).children(':first').empty().text(total_quantity.toFixed(3));
 										});
 										refreshRowPrices(pid);
 										refreshTotalOrder();
