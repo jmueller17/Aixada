@@ -195,11 +195,11 @@ class report_manager {
                  '<p class="productDescription">' . $row['description'] . '</p>'
                  : '&nbsp;')
               . "</td>\n"
-              . '<td style="border:1px solid #ccc;padding:0px 2px;text-align:right;"><span class="totalQuantity">' 
+              . '<td style="border:1px solid #ccc;padding:0px 4px;text-align:right;"><span class="totalQuantity">' 
               . clean_zeros($row['total_quantity']) 
               . "</span></td>\n"
-              . '<td style="border:1px solid #ccc;padding:0px 2px;"><span class="units">[' . $row['unit'] . "]</span></td>\n"
-              . '<td style="border:1px solid #ccc;padding:0px 2px;text-align:right;"><span class="totalPrice">' . $row['total_price'] . "</span></td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 4px;text-align:left;"><span class="units">' . $row['unit'] . "</span></td>\n"
+              . '<td style="border:1px solid #ccc;padding:0px 4px;text-align:right;"><span class="totalPrice">' . $row['total_price'] . "</span></td>\n"
               . "</tr>\n";
       }
       DBWrap::get_instance()->free_next_results();
