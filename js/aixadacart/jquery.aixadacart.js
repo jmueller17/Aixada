@@ -221,7 +221,7 @@
 					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" id="cart_iva_percent_'+itemObj.id+'" />'
 					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
 					//str += 								'<input type="hidden" name="time_left"  value="'+itemObj.time_left+'" id="cart_time_left_'+itemObj.id+'" /> ';
-					str += '<td class="'+deaTd+'">' + itemObj.unit + '</td>';
+					str += '<td class="item_unit '+deaTd+'">' + itemObj.unit + '</td>';
 					str += '<td class="item_total '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
 					str += '</tr>';
 
