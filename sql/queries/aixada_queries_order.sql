@@ -842,6 +842,11 @@ begin
 
 	/** delete order **/
 	delete from 
+		aixada_order_to_shop
+	where
+		order_id = the_order_id;
+
+	delete from 
 		aixada_order
 	where
 		id = the_order_id; 
