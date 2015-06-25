@@ -215,15 +215,16 @@ function reset_password($user_id)
         $subject = $Text['msg_pwd_email_reset'];
         $message = '<p>'.$Text['msg_pwd_change'].
             '<span style="color:red">'. $newPwd ."</span></p>\n";
-        $message .= '<p>'.str_replace('{$user}',
-            $login,
-            $Text['msg_pwd_email_logon'])."</p>\n";
-        $message .= '<p>'.str_replace('{$menu}',
-                '<span style="color:#666">"'.
-                    $Text['nav_myaccount'].'"</span>:'.
-                '<span style="color:#666">"'.
-                    $Text['nav_myaccount_settings'].'"</span>',
-                $Text['msg_pwd_email_change'])."</p>\n";
+        $message .= '<p>'.i18n('msg_pwd_email_logon',
+                array('user' => '<span style="color:blue">'.$login.'</span>')
+            )."</p>\n";
+        $message .= '<p><span style="color:#666">'.i18n(
+                'msg_pwd_email_change', 
+                array('menu' => '"<span style="color:green">'
+                        .$Text['nav_myaccount']
+                        .'</span>"&gt;"<span style="color:green">'
+                        .$Text['nav_myaccount_settings'].'</span>"')
+            )."</span></p>\n";
         if (send_mail($toEmail, $subject, $message)){
             echo $Text['msg_pwd_emailed'];
         } else {
