@@ -51,9 +51,16 @@ function manage_incident($incident_id){
 		$subject = "[".$Text['ti_incidents']."] " . $params["subject"];
 		$message = "Info: " . $params["author"] . " | " . $params["comis"] . " | " .$params["prov"] . " | " . $params["priority"]; 
         $message .= "\n";
-		$message .= '<pre style="margin-left:1em; padding: 5px; font-size:120%;'.
-                'border:1px #888 solid; background-color:#ddd;">'.
-            $params["msg"]."</pre>\n";
+		$message .= '<div style="margin:1em; padding: 5px; font-size:120%;'
+            .'border:1px #888 solid; background-color:#ddd;">'
+            .str_replace(
+                array("<br>   ",          "<br> ",      "<br>"),
+                array("<br>&nbsp;&nbsp;", "<br>&nbsp;", "<br>\n"),
+                str_replace(
+                    array("\r\n","\r","\n"),
+                    array("<br>","<br>","<br>"),
+                    $params["msg"]
+            ) )."</div>\n";
 
 		if (send_mail($to,$subject,$message,array('reply_to'=>$reply_to))){
 			$msg = $Text['msg_incident_emailed'];			
