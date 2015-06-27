@@ -72,6 +72,16 @@
 
         // Configuration values used by js code.        
         var local_cfg = {
+            order_distribution_method: "<?php echo get_config(
+                        'order_distribution_method', 'only_distribute'); ?>",
+            record_provider_invoice: <?php 
+                $cfg_accounts = get_config('accounts', array());
+                $cfg_record_provider_invoice = get_config(
+                    'order_distributeValidate_invoce', 
+                    (isset($cfg_accounts['use_providers']) &&
+                            $cfg_accounts['use_providers'] ? 1 : 0)
+                );
+                echo $cfg_record_provider_invoice; ?>,
             print_order_template: "<?php echo get_config(
                         'print_order_template', 'report_order1.php'); ?>",
             order_review_uf_sequence: "<?php echo get_config(
@@ -533,6 +543,62 @@
 				}
 			});
 				
+            /**
+             * Distribute and validate
+             */
+            $("#btn_disValidate").button({
+                icons: { primary: "ui-icon-cart" }
+            }).click(function(e) {
+                var allRevised = true;
+                $('input:checkbox[name="revised"]').each( function(){
+                    if (!$(this).is(':checked')){
+                        allRevised = false; 
+                        return false; 
+                    }
+                });
+                $.showMsg({
+                    msg: (allRevised ? "" : "<?=$Text['msg_err_unrevised']?><hr><br>") +
+                        "<?=str_replace( array("\r", "\n"), array("\\r", "\\n"),
+                                $cfg_record_provider_invoice ? 
+                                i18n('msg_con_disValitate_prvInv') :
+                                i18n("msg_con_disValitate") );?>",
+                    buttons: {
+                        "<?=$Text['btn_disValitate_ok'];?>": function(){
+                            var $this = $(this);
+                            var _orderId = gSelRow.attr('orderId');
+                            $('.ui-dialog-buttonpane button', $this.parent()).hide();
+                            $this.html('<?=$Text['wait_work'];?>');
+                            $.ajax({
+                                type: "POST",
+                                url: 'php/ctrl/Orders.php?oper=directlyValidateOrder&order_id='+_orderId+
+                                    '&record_provider_invoice='+local_cfg.record_provider_invoice,
+                                success: function(txt){
+                                    $this.html("<?=i18n('msg_done');?>");
+                                    setTimeout( function() {
+                                        //reload order list
+                                        switchTo('overview');
+                                        $('#tbl_orderOverview tbody').xml2html('reload');
+                                        $this.dialog("close");
+                                    }, 1000);
+                                },
+                                error : function(XMLHttpRequest, textStatus, errorThrown){
+                                    switchTo('overview');
+                                    $this.dialog("close");
+                                    $.showMsg({
+                                        msg: "<?=i18n('msg_err_disValitate');?>"+ _orderId +
+                                            "<hr>" + XMLHttpRequest.responseText,
+                                        type: 'error'});
+                                }
+                            });
+                        },
+                        "<?=$Text['btn_bakToRevise'];?>": function(){
+                            $(this).dialog("close");
+                        }
+                    },
+                    title: "<?=i18n('msg_confirm');?>",
+                    type: 'confirm'
+                });
+            }).hide();
 
 			/**
 			 *	when closing a preorder, a delivery date needs to be set. 
@@ -1530,6 +1596,8 @@
 					switch (page){
 						case 'overview':
 							$('.reviewElements, .viewElements').hide();
+							$('#btn_setShopDate').hide();
+							$('#btn_disValidate').hide();
 		    				$('.overviewElements').fadeIn(1000);
 		    				$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
 							gSelRow.addClass('ui-state-highlight');
@@ -1543,8 +1611,20 @@
 							var title = "(#"+gSelRow.attr('orderId')+"), <span class='aix-style-provider-name'>" +gSelRow.children().eq(2).text() + "</span>, "  + $.getCustomDate(gSelRow.attr('dateForOrder'), 'D d M, yy');
 							var sindex = gSelRow.children().eq(8).attr('revisionStatus');
 							
-							$('.providerName').html(title);							
-							$('.reviewElements').fadeIn(1000);
+							$('.providerName').html(title);
+                            // Show review elements
+                            $('.reviewElements').fadeIn(1000);
+                            switch (local_cfg.order_distribution_method) {
+                            case 'only_distribute':
+                                $('#btn_setShopDate').show();
+                                break;
+                            case 'distribute_and_validate':
+                                $('#btn_disValidate').show();
+                                break;
+                            case 'choice':
+                                $('#btn_setShopDate').show();
+                                $('#btn_disValidate').show();
+                            }
 
 							$('#dialog_orderStatus button').button('enable');
 							$('#btn_'+gRevStatus[sindex]).button('disable');
@@ -1586,6 +1666,7 @@
 			 				});
 							
 							$('#btn_setShopDate').hide();
+							$('#btn_disValidate').hide();
 							break;
 					}
 					gSection = page; 
@@ -1635,7 +1716,8 @@
 		   	<div id="titleRightCol50">
 		   		<!-- button id="btn_setReview" class="viewElements btn_right"><?=$Text['btn_revise']; ?></button-->
 		   		
-		   		<button id="btn_setShopDate" class="reviewElements btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
+		   		<button id="btn_disValidate" class="btn_right" title="<?=$Text['btn_disValitate'];?>"><?=$Text['btn_disValitate'];?></button>
+		   		<button id="btn_setShopDate" class="btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
 				<button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['filter_orders']; ?></button>
 				<button id="btn_order_export" class="floatRight viewElements" ><?php echo $Text['btn_export']; ?></button>
 				

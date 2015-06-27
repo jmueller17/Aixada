@@ -98,7 +98,7 @@ try{
             
     	//Distribute and directly validate an order
     	case 'directlyValidateOrder':
-    		directly_validate_order(get_param_int('order_id'));
+    		directly_validate_order(get_param_int('order_id'), get_param_int('record_provider_invoice', 0));
     		exit;
     		
     	//retrieves info about originally ordered quanties and available items after received orders have been revised and distributed in carts. 

@@ -328,7 +328,7 @@ function finalize_order($provider_id, $date_for_order)
  * Distribute and directly validate an order
  * @param integer $order_id
  */
-function directly_validate_order($order_id) {
+function directly_validate_order($order_id, $record_provider_invoice) {
     
     prepare_order_to_shop(get_param_int('order_id'));
     $db = DBWrap::get_instance();
@@ -407,31 +407,33 @@ function directly_validate_order($order_id) {
     //          a own transaction
     $desc_pay = "order#{$order_id} {$date_for_shop} cart#";
     foreach ($carts as $cart) {
-        do_stored_query('validate_shop_cart', $cart, $operator_id, $desc_pay);            
+        do_stored_query('validate_shop_cart', $cart, $operator_id, $desc_pay);
     }
-    // Add povider invoice
-    $ao = new account_operations();
-    if ($ao->uses_providers()) {
-        $prv_tot_row = get_row_query(
-            "select sum( 
-                        quantity * 
-                        round( unit_price_stamp / (1 + rev_tax_percent/100), 2 )
-                    ) prv_tot from (
-                select 
-                    sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
-                from aixada_order_to_shop os
-                where 
-                    os.order_id = {$order_id}
-                    and os.arrived = 1
-                group by
-                    unit_price_stamp, rev_tax_percent, iva_percent) r;"
-        );
-        $ao->add_operation(
-            'invoice_pr',
-            array('provider_from_id' => $provider_id + 2000),
-            $prv_tot_row['prv_tot'], 
-            "validation order#{$order_id} {$date_for_shop}"
-        );
+    if ($record_provider_invoice) {
+        // Add provider invoice
+        $ao = new account_operations();
+        if ($ao->uses_providers()) {
+            $prv_tot_row = get_row_query(
+                "select sum( 
+                            quantity * 
+                            round( unit_price_stamp / (1 + rev_tax_percent/100), 2 )
+                        ) prv_tot from (
+                    select 
+                        sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
+                    from aixada_order_to_shop os
+                    where 
+                        os.order_id = {$order_id}
+                        and os.arrived = 1
+                    group by
+                        unit_price_stamp, rev_tax_percent, iva_percent) r;"
+            );
+            $ao->add_operation(
+                'invoice_pr',
+                array('provider_from_id' => $provider_id + 2000),
+                $prv_tot_row['prv_tot'], 
+                "validation order#{$order_id} {$date_for_shop}"
+            );
+        }
     }
 }
 

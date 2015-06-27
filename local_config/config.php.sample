@@ -115,7 +115,20 @@ class configuration_vars {
    */
   public $order_review_uf_sequence = 'desc';
   
+  /**
+   * Possible methods of distributing orders are: 'only_distribute',
+   *    'distribute_and_validate' and 'choice' (both are available),
+   *     default is 'only_distribute'.
+   */
+  public $order_distribution_method = 'distribute_and_validate';
   
+  /**
+   * When the method 'distribute_and_validate' is used can also record the
+   * provider note as invoice into account provider, default is true
+   * (requires option `$accounts['use_providers'] = true` to take effect)
+   */
+  public $order_distributeValidate_invoce = true;
+
   /**
    * 
    * the default jquery-ui theme. these are located in css/ui-themes
