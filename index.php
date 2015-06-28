@@ -75,7 +75,6 @@
 						$(xml).find('navigation').children().each( function(){
 							var tag = $(this)[0].tagName; 
 							var val = $(this).text();
-							console.log(tag +':'+val);
 							if (val == 'disable') {
 								$('.index_'+tag).addClass('ui-state-disabled');
 							} else if (val == 'enable') {
