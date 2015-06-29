@@ -519,7 +519,7 @@ begin
 	/**checks if quantities have changed between original order and revised one by computing difference for each quantity row **/
 	set qu_diff = ( select
 						sum(abs(oi.quantity - ( select 
-													os.quantity 
+													os.quantity * os.arrived
 												from 
 													aixada_order_to_shop os
 												where 
