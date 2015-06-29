@@ -65,6 +65,13 @@ class configuration_vars {
   public $use_shop = true;
 
   /**
+   * Allows allocate losses order distribution to a fictitious family (when the
+   * review is done)
+   * @var integer
+   */
+  // public $revision_fixed_uf = 1; // Uncomment to active
+  
+  /**
    *
    * Allow yourself validate your cart.
    * (if it is not set `false` is used as default value)
