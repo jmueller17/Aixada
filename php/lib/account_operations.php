@@ -6,12 +6,14 @@ require_once(__ROOT__ . 'php/lib/account_operations.config.php');
 
 class account_operations {
     protected $cfg_use_providers;
+    public $use_transaction;
     
     public function __construct ($lang='') { // TODO: Use a lang other than User. 
         $cfg_accounts = get_config('accounts', array());
         $this->cfg_use_providers = isset($cfg_accounts['use_providers']) ? 
-				true : false;
-	}
+                true : false;
+        $this->use_transaction = true;
+    }
     
     // --------------------------------------------
     // READ
@@ -476,7 +478,9 @@ function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
 		}
 		$db = DBWrap::get_instance();
 		try {
-			$db->start_transaction();
+			if ($this->use_transaction) {
+				$db->start_transaction();
+			}
 			foreach ($cfg_operation as $account_id_name => $o_params) {
 				$_account_id = $accounts[$account_id_name.'_id'];
 				if (isset($o_params['auto_desc'])) {
@@ -519,9 +523,13 @@ function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
 					}
 				}
 			}
-			$db->commit();
+			if ($this->use_transaction) {
+				$db->commit();
+			}
 		} catch (Exception $e) {
-			$db->rollback();
+			if ($this->use_transaction) {
+				$db->rollback();
+			}
 			throw new Exception($e->getMessage());
 		} 
         return i18n('mon_success', array('count'=>$success_count));
@@ -583,7 +591,6 @@ function get_account_extract_XML($account_id, $filter, $from_date, $to_date) {
             ))) {
 				return 0;
 			} else {
-				$bd->rollback();
 				throw new Exception("Account setup {$account_id} failed");
 				exit;
 			}

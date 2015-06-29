@@ -705,6 +705,7 @@ $Text['msg_con_disValitate_prvInv'] =
 $Text['msg_err_disValitate'] = "Error when distribute and validate order #";
 $Text['btn_disValitate_ok'] = "Understood: distributes and validates!";
 $Text['btn_bakToRevise'] = "Not yet: I want to continue reviewing";
+$Text['btn_disValitate_done'] = "Right!<br>Order #{order_id} has been distributed and validated.";
 $Text['wait_work'] = "Please wait while the work is done...";
 $Text['msg_err_edit_order'] = "This order is not finalized. You can only save the notes and references once the order has been sent off.";
 $Text['order_open'] = "Order is open";

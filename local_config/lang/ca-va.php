@@ -698,6 +698,7 @@ $Text['msg_con_disValitate_prvInv'] =
 $Text['msg_err_disValitate'] = "Error al distribuir i validar la comanda #";
 $Text['btn_disValitate_ok'] = "Entesos: distribueix i valida!";
 $Text['btn_bakToRevise'] = "Encara no: vull seguir revisant";
+$Text['btn_disValitate_done'] = "Correcte!<br>La comanda #{order_id} ha estat distribuida i validada.";
 $Text['wait_work'] = "Si us plau, espera mentre es fa la feina...";
 $Text['msg_err_edit_order'] = "Aquesta comanda no està completada. Només pots desar les notes i referències quan la comanda s'hagi enviat.";
 $Text['order_open'] = "La comanda està oberta";

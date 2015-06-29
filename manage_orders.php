@@ -573,20 +573,24 @@
                                 url: 'php/ctrl/Orders.php?oper=directlyValidateOrder&order_id='+_orderId+
                                     '&record_provider_invoice='+local_cfg.record_provider_invoice,
                                 success: function(txt){
-                                    $this.html("<?=i18n('msg_done');?>");
-                                    setTimeout( function() {
-                                        //reload order list
-                                        switchTo('overview');
-                                        $('#tbl_orderOverview tbody').xml2html('reload');
-                                        $this.dialog("close");
-                                    }, 1000);
+                                    $this.dialog("close");
+                                    //reload order list
+                                    $('#tbl_orderOverview tbody').xml2html('reload');
+                                    switchTo('overview');
+                                    $.showMsg({
+                                        msg: txt,
+                                        autoclose: 3000,
+                                        buttons: {},
+                                        title: "<?php echo $Text['msg_success']; ?>",
+                                        type: 'success'
+                                    });
                                 },
                                 error : function(XMLHttpRequest, textStatus, errorThrown){
                                     switchTo('overview');
                                     $this.dialog("close");
                                     $.showMsg({
                                         msg: "<?=i18n('msg_err_disValitate');?>"+ _orderId +
-                                            "<hr>" + XMLHttpRequest.responseText,
+                                            "<hr><br>" + XMLHttpRequest.responseText,
                                         type: 'error'});
                                 }
                             });

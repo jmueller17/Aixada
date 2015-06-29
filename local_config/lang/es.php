@@ -704,6 +704,7 @@ $Text['msg_con_disValitate_prvInv'] =
 $Text['msg_err_disValitate'] = "Error al distribuir y validar el pedido #";
 $Text['btn_disValitate_ok'] = "Entendidos: distribuye y valida!";
 $Text['btn_bakToRevise'] = "Todavía no: quiero seguir revisando";
+$Text['btn_disValitate_done'] = "Correcto!<br>El pedido #{order_id} ha sido distribuido y validado.";
 $Text['wait_work'] = "Por favor, espera mientras se hace el trabajo...";
 $Text['msg_err_edit_order'] = "Este pedido no está completo. Solo se pueden añadir notas y referencias cuando se haya enviado.";
 $Text['order_open'] = "El Pedido está abierto";
