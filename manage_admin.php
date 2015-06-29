@@ -23,8 +23,15 @@
     <?php }?>
     
    
+	<?php 
+        $backup_method = get_config('db_backup_method','');
+        if ($backup_method === '') {
+            $backup_method = 'backupDatabase';
+        } else {
+            $backup_method = 'backupDatabase_'.$backup_method;
+        }
+    ?>
 	<script type="text/javascript">
-	
 	$(function(){
 
 						
@@ -40,7 +47,7 @@
 			.click(function(e){
 
 				$.ajax({
-					   url: "php/ctrl/Admin.php?oper=backupDatabase",
+					   url: "php/ctrl/Admin.php?oper=<?php echo $backup_method ?>",
 					   beforeSend: function(){
 						   $('.loadAnim').show();
 						   $('#btn_backup').button( "option", "disabled", true );
