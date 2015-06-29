@@ -5,7 +5,6 @@
 
 require_once(__ROOT__. 'local_config/config.php');
 
-
 $Text['ca-va'] = 'Català';
 $Text['charset'] = "utf-8";
 $Text['text_dir'] = "ltr"; // ('ltr' significa d'esquerra a dreta, 'rtl' per aescriure de dreta a esquerra)
@@ -178,6 +177,8 @@ $Text['offset_order_close'] = "Temps de procés";
 $Text['iva_percent_id'] = "Tipus d'IVA";
 $Text['percent'] = "Percentatge";
 $Text['type'] = "Tipus";
+$Text['treasury'] = "Tresoreria";
+$Text['service'] = "Servei";
 $Text['adult'] = "Adult";
 
 
@@ -341,7 +342,7 @@ $Text['nav_mng'] = "Gestiona";
 		//$Text['nav_mng_move'] = "Canvia la data de la comanda";
 		//$Text['nav_mng_orders_overview'] = "Gestiona comandes";
 		$Text['nav_mng_preorder'] = "Converteix la comanda acumulativa en comanda";
-	$Text['nav_mng_db'] = "Backup bd";
+	$Text['nav_mng_db'] = "Còpia seguretat de bd";
 	$Text['nav_mng_roles'] = "Rols";
 $Text['nav_report'] = "Informes";
 //$Text['nav_report_order'] = "Comanda actual";
@@ -709,7 +710,7 @@ $Text['ostat_desc_cancel'] = "La comanda s'ha cancel·lat";
 $Text['ostat_desc_changes'] = "Revisat amb modificacions";
 $Text['ostat_desc_incomp'] = "Comanda ignorada. Falta informació anterior a la v2.5";
 $Text['set_ostat_desc_arrived'] = "La majoria o tots els productes han arribat. Procedir amb la revisió i distribució de productes a les cistelles...";
-$Text['set_ostat_desc_postpone'] = "La comanda no ha arribat a la data esperada, però provablement ho faci en les properes setmanes.";
+$Text['set_ostat_desc_postpone'] = "La comanda no ha arribat a la data esperada, però probablement ho faci en les properes setmanes.";
 $Text['set_ostat_desc_cancel'] = "Els productes no arribaran mai.";
 $Text['msg_move_to_shop'] = "Els articles han estat carregats a les cistelles de la compra de les dates corresponents.";
 $Text['msg_err_noselect'] = "No has seleccionat res!";
@@ -850,7 +851,7 @@ $Text['sel_sales_dates'] = "Per quines dades vols consultar les vendes?";
 $Text['sel_sales_dates_ti'] = "Escull un període"; 
 
 $Text['instant_repeat'] = "Repeteix directament";
-$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estàs segur de desactivar-l'ho? Això esborrarà la comanda d'aquest producte de les cistelles.";
+$Text['msg_confirm_delordereditems'] = "Ja s'ha demanat aquest producte per aquest dia. Estàs segur de desactivar-lo? Això esborrarà la comanda d'aquest producte de les cistelles.";
 $Text['msg_confirm_instantr'] = "Vols repetir aquesta acció per a la resta de les dates activades?";
 $Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquesta data. No es pot desactivar!";
 $Text['msg_pre2Order'] = "Converteix aquesta comanda acumulativa a comanda normal. Pots triar una data d'entrega";

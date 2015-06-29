@@ -19,10 +19,14 @@ abstract class abstract_data_manager {
     public function id_name(){
         return "id";
     }
+    public function col_sort() {
+        return "null";
+    }
     public function callCreateEditorJs() {
         return "$(function (){createEditor(
                     {$this->allow_modes()},
-                    {$this->form_fields()});});";
+                    {$this->form_fields()},
+                    {$this->col_sort()});});";
     }
     // Default internal funtions that can be overwritten
     protected function allow_modes(){
@@ -119,14 +123,10 @@ abstract class abstract_data_manager {
     protected function after_delete($values) {
     }
     protected function chk_related($values, $related_title, $sql) {
-        global $Text;
         $id = $this->get_key($values);
         if ( get_row_query(str_replace('{id}', $id, $sql)) ) {
             throw new Exception(
-                str_replace(
-                    '{related}',
-                    $related_title,
-                    $Text['dataman_err_related'])
+                i18n('dataman_err_related', array('related'=>$related_title))
             );  
         }
         return true;

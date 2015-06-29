@@ -64,10 +64,10 @@ $Text['validate'] = "Validate";
 /**
  *  			titles for header <title></title>
  */
-$Text['global_title'] = configuration_vars::get_instance()->coop_name . " platform";
+$Text['global_title'] = configuration_vars::get_instance()->coop_name;
 $Text['head_ti_validate'] = "Validate";
 
-$Text['head_ti_active_products'] = "De/activate orderable products";
+$Text['head_ti_active_products'] = "Activate/Deactivate orderable products";
 //$Text['head_ti_arrived_products'] = "Products that have arrived";
 $Text['head_ti_active_roles'] = "Active Roles";
 $Text['head_ti_account'] = "Accounts";
@@ -181,6 +181,8 @@ $Text['offset_order_close'] = "Processing time";
 $Text['iva_percent_id'] = "IVA type";
 $Text['percent'] = "Percent";
 $Text['type'] = "Type";
+$Text['treasury'] = "Treasury";
+$Text['service'] = "Service";
 $Text['adult'] = "Adult";
 
 
@@ -215,9 +217,9 @@ $Text['mon_op_withdraw_others'] = 'Withdraw others';
 $Text['mon_op_invoice_pr'] = 'Invoice from Prv.';
 $Text['mon_op_move'] = 'Move';
 $Text['mon_op_correction'] = 'Balance correction';
-$Text['mon_op_a_debit_uf'] = 'Anular Càrrec a UF';
-$Text['mon_op_a_pay_pr'] = 'Anular Pag.Prv.';
-$Text['mon_op_a_invoice_pr'] = 'Anular Factura Prv.';
+$Text['mon_op_a_debit_uf'] = 'Annul HU debit';
+$Text['mon_op_a_pay_pr'] = 'Annul provider payment';
+$Text['mon_op_a_invoice_pr'] = 'Annul provider invoice';
 // See `account_operations.config.php`
 //   * Translated sub-keys values from 'default_desc' and 'auto_desc'
 //     on $config_account_operations with the prefix 'mon_desc_'
@@ -463,17 +465,17 @@ $Text['msg_err_email'] = "The email format is not correct. Should be name@domain
 //$Text['msg_err_insufficient_stock'] = 'Insufficient stock for ';
 
 
-$Text['msg_edit_success'] = "Everything saved succesfully!"; //changed!!!!! 
-//$Text['msg_edit_mysettings_success'] = "Your new settings have been saved succesfully!";
+$Text['msg_edit_success'] = "Everything saved successfully!"; //changed!!!!! 
+//$Text['msg_edit_mysettings_success'] = "Your new settings have been saved successfully!";
 $Text['msg_pwd_changed_success'] = "Your password has been changed successfully!"; 
 $Text['msg_confirm_del'] = "Are you sure you want to remove this member from this household?"; //changed!!!!!
 $Text['msg_enter_deposit_amount'] = "Deposit amount should only contain numbers and not be empty!";
 $Text['msg_please_set_ufid_deposit'] = "The HU ID is not set. You either have to choose a cart or select an alternative HU to make a deposit!";
-//$Text['msg_error_deposit'] = "An error has occured while making the deposit. You can try again. Successful deposits should show in the account listing. <br/>The error message was: ";
+//$Text['msg_error_deposit'] = "An error has occurred while making the deposit. You can try again. Successful deposits should show in the account listing. <br/>The error message was: ";
 $Text['msg_deposit_success'] = "Deposit has been successful!";
 $Text['msg_withdrawal_success'] = "The withdrawal has been successful!";
 $Text['msg_select_cart_first'] = "In order to add items for validating you have to select an HU/cart first!";
-//$Text['msg_err_move_date'] = "An error has occured while moving the order to the new date. Try again. ";
+//$Text['msg_err_move_date'] = "An error has occurred while moving the order to the new date. Try again. ";
 $Text['msg_no_active_products'] = "Sorry, but currently there are no products activated for ordering. Talk to the person in charge of provider(s)!";
 //$Text['msg_no_movements'] = "Sorry, no movements for given account and date!"; 
 $Text['msg_delete_incident'] = "Are you sure you want to delete this incident?";
@@ -541,8 +543,8 @@ $Text['description_url'] = 'URL of description';
  * added after 14.5
  */
 $Text['msg_err_validate_self'] = 'You cannot validate your own cart!';
-//$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preoder you have to choose a date in the future!';
-//$Text['msg_preorder_success'] = 'Preorder has been successfuly activated for the following date: ';
+//$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preorder you have to choose a date in the future!';
+//$Text['msg_preorder_success'] = 'Preorder has been successfully activated for the following date: ';
 //$Text['msg_can_be_ordered'] =  'Items can be ordered for this date';
 //$Text['msg_has_ordered_items'] = 'Items have been ordered for this day; they cannot be deleted, just moved';
 //$Text['msg_today'] = 'Today';

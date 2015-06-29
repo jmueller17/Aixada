@@ -323,6 +323,28 @@ function i18n($text_code, $replace=null) {
 	}
 	return $text;
 }
+/**
+ * Same function as i18n but returns a escaped string safe to put into js code.
+ * @param string $text_code The code of the text to translate.
+ * @param $replace Associative array with the parameters to replace (search=>value)
+ * @return Text translated and escaped
+ */
+function i18n_js($text_code, $replace=null) {
+    return to_js_str(i18n($text_code, $replace));
+}
+/**
+ * Escapes a string to use into a js code as string,
+ * @param string $text The text.
+ * @return string Text with escapes.
+ */
+function to_js_str($text) {
+    //return $text;
+    return str_replace(
+        array("\\",   "\n",  "\r",  "\t", '"',   "'"  ),
+        array("\\\\", "\\n", "\\r", "\\t",'\\"', "\\'"),
+        $text
+    );
+}
 
 /**
  * 

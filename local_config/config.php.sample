@@ -483,6 +483,7 @@ class configuration_vars {
              	   'may_edit_iva_type',
                    'may_view_all_accounts',
                    'may_edit_rev_tax_type',
+                   'may_edit_account_desc',
                    'may_edit_payment_method'
              ),
              'Consumer' =>
@@ -515,6 +516,7 @@ class configuration_vars {
                    'may_view_all_accounts',
                    'may_edit_iva_type',
                    'may_edit_rev_tax_type',
+                   'may_edit_account_desc',
                    'may_edit_payment_method',
                    'may_edit_stock_movement_type'
              ),
