@@ -1,4 +1,4 @@
-QUERIES = $(wildcard queries/*sql)
+QUERIES = $(sort $(wildcard queries/*sql))
 DB_NAME = aixada
 DB_USER = aixada
 DB_PASSWD = aixada
