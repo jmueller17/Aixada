@@ -692,6 +692,23 @@ $Text['finished_loading'] = "Finished loading";
 $Text['msg_err_unrevised'] = "There are still unrevised items in this order. Please make sure all ordered products have arrived!";
 $Text['btn_dis_anyway'] = "Distribute anyway";
 $Text['btn_remaining'] = "Revise remaining";
+$Text['btn_disValitate'] = "Distribute and validate";
+$Text['msg_con_disValitate'] =
+    "Distribute and validate can not cancel!!:<ul>
+    <li>the products will be put as purchases of UF on the date of the order</li>
+    <li>and the amount of the purchases will be put as a debt in the accounts of each HU</li>
+    </ul>";
+$Text['msg_con_disValitate_prvInv'] =
+    "Distribute and validate can not cancel!!:<ul>
+    <li>the products will be put as purchases of UF on the date of the order,</li>
+    <li>the amount of the purchases will be put as a debt in the accounts of each HU</li>
+    <li>and the total amount will be put as invoice to the provider account.</li>
+    </ul>";
+$Text['msg_err_disValitate'] = "Error when distribute and validate order #";
+$Text['btn_disValitate_ok'] = "Understood: distributes and validates!";
+$Text['btn_bakToRevise'] = "Not yet: I want to continue reviewing";
+$Text['btn_disValitate_done'] = "Right!<br>Order #{order_id} has been distributed and validated.";
+$Text['wait_work'] = "Please wait while the work is done...";
 $Text['msg_err_edit_order'] = "This order is not finalized. You can only save the notes and references once the order has been sent off.";
 $Text['order_open'] = "Order is open";
 $Text['finalize_now'] = "Finalize now";

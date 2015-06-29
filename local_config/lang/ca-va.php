@@ -684,6 +684,23 @@ $Text['finished_loading'] = "Càrrega acabada";
 $Text['msg_err_unrevised'] = "Encara hi ha element pendents de revisar a la comanda. Si us plau, verifica que hagin arribat tots els productes!";
 $Text['btn_dis_anyway'] = "Distribueix igualment";
 $Text['btn_remaining'] = "Revisar els pendents";
+$Text['btn_disValitate'] = "Distribueix i valida";
+$Text['msg_con_disValitate'] =
+    "Distribuir i validar no es pot anular!!:<ul>
+    <li>s'anotaran els productes com a compres de les UF en la data de la comanda</li>
+    <li>i els imports de les compres s'anotarà com a deute als comptes de les UF</li>
+    </ul>";
+$Text['msg_con_disValitate_prvInv'] =
+    "Distribuir i validar no es pot anular!!:<ul>
+    <li>s'anotaran els productes com a compres de les UF en la data de la comanda,</li>
+    <li>els imports de les compres s'anotarà com a deute als comptes de les UF</li>
+    <li>i l'import de l'albarà s'anotará al compte del proveïdor com a factura.</li>
+    </ul>";
+$Text['msg_err_disValitate'] = "Error al distribuir i validar la comanda #";
+$Text['btn_disValitate_ok'] = "Entesos: distribueix i valida!";
+$Text['btn_bakToRevise'] = "Encara no: vull seguir revisant";
+$Text['btn_disValitate_done'] = "Correcte!<br>La comanda #{order_id} ha estat distribuida i validada.";
+$Text['wait_work'] = "Si us plau, espera mentre es fa la feina...";
 $Text['msg_err_edit_order'] = "Aquesta comanda no està completada. Només pots desar les notes i referències quan la comanda s'hagi enviat.";
 $Text['order_open'] = "La comanda està oberta";
 $Text['finalize_now'] = "Finalitza ara";

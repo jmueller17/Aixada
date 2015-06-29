@@ -692,6 +692,23 @@ $Text['finished_loading'] = "Carga Finalizada";
 $Text['msg_err_unrevised'] = "¡Hay items sin revisar en este pedido. Por favor, asegúrese de que todos los productos pedidos han llegado!";
 $Text['btn_dis_anyway'] = "Distribuir igualmente";
 $Text['btn_remaining'] = "Revisar los pendientes";
+$Text['btn_disValitate'] = "Distribuye y valida";
+$Text['msg_con_disValitate'] =
+    "Distribuir y validar no se puede anular!!:<ul>
+    <li>se anotarán los productos como compras de las UF en la fecha del pedido</li>
+    <li>y los importes de las compras se anotarán como deuda a las cuentas de las UF</li>
+    </ul>";
+$Text['msg_con_disValitate_prvInv'] =
+    "Distribuir y validar no se puede anular!!:<ul>
+    <li>se anotarán los productos como compras de las UF en la fecha del pedido,</li>
+    <li>los importes de las compras se anotarán como deuda a las cuentas de las UF</li>
+    <li>y el importe del albarán se anotará en la cuenta del proveedor como factura.</li>
+    </ul>";
+$Text['msg_err_disValitate'] = "Error al distribuir y validar el pedido #";
+$Text['btn_disValitate_ok'] = "Entendidos: distribuye y valida!";
+$Text['btn_bakToRevise'] = "Todavía no: quiero seguir revisando";
+$Text['btn_disValitate_done'] = "Correcto!<br>El pedido #{order_id} ha sido distribuido y validado.";
+$Text['wait_work'] = "Por favor, espera mientras se hace el trabajo...";
 $Text['msg_err_edit_order'] = "Este pedido no está completo. Solo se pueden añadir notas y referencias cuando se haya enviado.";
 $Text['order_open'] = "El Pedido está abierto";
 $Text['finalize_now'] = "Finalizar ahora";

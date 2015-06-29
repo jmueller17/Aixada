@@ -70,13 +70,15 @@ end|
  * and registers the money in the corresponding accounts.  
  */
 drop procedure if exists validate_shop_cart|
-create procedure validate_shop_cart(in the_cart_id int, in the_op_id int)
+create procedure validate_shop_cart(in the_cart_id int, in the_op_id int, in the_desc_pay varchar(50), in use_transaction boolean)
 begin
   declare current_balance decimal(10,2) default 0.0;
   declare total_price decimal(10,2) default 0.0;
   declare the_account_id int;
   
-  start transaction;
+  if (use_transaction is true) then
+    start transaction;
+  end if;
   
   set the_account_id = (
 	  select
@@ -134,11 +136,12 @@ begin
    the_account_id,
     - total_price,
     6,
-    concat('cart #', the_cart_id),
+    concat(the_desc_pay, the_cart_id),
     the_op_id,
     current_balance - total_price;
-    
+  if (use_transaction is true) then
    commit;
+  end if;
 
 end|
 

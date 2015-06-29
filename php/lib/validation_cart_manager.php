@@ -38,7 +38,7 @@ class validation_cart_manager extends shop_cart_manager {
  protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
   {
     //do_stored_query('deduct_stock_and_pay', $cart_id);
-    do_stored_query('validate_shop_cart', $cart_id, $this->_op_id);
+    do_stored_query('validate_shop_cart', $cart_id, $this->_op_id, 'cart #', 1);
   }
 
 }
