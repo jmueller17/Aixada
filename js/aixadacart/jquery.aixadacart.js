@@ -35,7 +35,7 @@
 					$.extend( settings, options );
 				}
 
-  				data = $this.data('aixadacart');
+  				var data = $this.data('aixadacart');
   			   
 				// If the plugin hasn't been initialized yet
 				if ( ! data ) {		
@@ -303,7 +303,7 @@
       */
      options : function (options){
     	 return this.each(function(){
-    		 data = $(this).data('aixadacart');
+    		 var data = $(this).data('aixadacart');
     		 
     		 //if the new date is different from the current one, emtpy the cart!
     		 if (options.date != undefined && data.date != options.date) {
@@ -407,7 +407,7 @@
 	   */
 	  destroy : function( ) {
 	       return this.each(function(){
-	           data = $(this).data('aixadacart');
+	           var data = $(this).data('aixadacart');
 	    	   $(window).unbind('.aixadacart');
 	    	   data.aixadacart.remove();
 	    	   $(this).removeData('aixadacart');
@@ -555,7 +555,6 @@
 	 *	when quantity has changed, calculates new item total cost
 	 */
 	function updateRow(itemObj){
-		$this = $('#aixada_cart_list'); 
 		var item_total 		= itemObj.price * itemObj.quantity; 
 		//set/update quantity (set the value if quantity has been changed in product list for example
 		$("#cart_quantity_"+itemObj.id).val(itemObj.quantity);

@@ -147,7 +147,7 @@ function navGrid_options() {
 					
 	        		multiselect: false, 
 					editurl:"php/ctrl/TableManager.php?table=" +  current_table,
-					caption:  current_table,
+					caption:  current_table
 				}) // close jqgrid
 				
 	   			$("#desc").navGrid('#desc_pager',  

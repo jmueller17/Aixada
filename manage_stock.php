@@ -60,7 +60,7 @@
 				
 				
 				$("#tbl_stock_movements tbody").xml2html("reload", {
-					params : 'oper=stockMovements&product_id='+	pid,
+					params : 'oper=stockMovements&product_id='+	pid
 				});
 				switchTo('detail');
 

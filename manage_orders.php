@@ -564,7 +564,7 @@
 								setTimeout(function(){
 									$this.dialog( "close" );
 									$('#tbl_orderOverview tbody').xml2html('reload',{
-										params : 'oper=getOrdersListing&filter=pastMonths2Future',
+										params : 'oper=getOrdersListing&filter=pastMonths2Future'
 									});
 								},500);
 
@@ -757,7 +757,7 @@
 				var product_id = $(this).attr('isRevisedId');	
 				var is_revised = $(this).is(':checked')? 1:0;
 				var has_arrived = $('#ckboxArrived_'+product_id).is(':checked')? 1:0;
-				$this = $(this);
+				var $this = $(this);
 				$.ajax({
 					type: "POST",
 					url: 'php/ctrl/Orders.php?oper=setOrderItemStatus&order_id='+gSelRow.attr('orderId')+'&product_id='+product_id+'&has_arrived='+has_arrived+'&is_revised='+is_revised,
@@ -1002,7 +1002,7 @@
 							msg:"<?=$Text['os_reopen_order'];?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){	
-										$this = $(this);		
+										var $this = $(this);
 										$.ajax({
 											type: "POST",
 											url: 'php/ctrl/Orders.php?oper=reopenOrder&order_id='+orderId,
@@ -1316,7 +1316,7 @@
 						//show hide deactivated products
 						var filter = $(item).attr('id');
 						$('#tbl_orderOverview tbody').xml2html('reload',{
-							params : 'oper=getOrdersListing&filter='+filter,
+							params : 'oper=getOrdersListing&filter='+filter
 						});
 						
 					}//end item selected 

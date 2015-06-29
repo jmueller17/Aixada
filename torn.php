@@ -29,7 +29,7 @@
 			.button()
 			.click(function(e){
 
-				btnId = $(this).attr('id'); 
+				var btnId = $(this).attr('id'); 
 				switch(btnId){
 					case 'btn_nav_validate':
 						window.location.href = "validate.php";

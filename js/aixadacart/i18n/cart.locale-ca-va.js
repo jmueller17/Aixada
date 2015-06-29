@@ -26,7 +26,7 @@
 				providerName : "Proveïdor",
 				quantity : "Quantitat",
 				quantityAbbrev : "Qu",
-				unit : "Unitat",
+				unit : "Unitat"
 			},
 			msg : {
 				saveSuccess : "S'han desat correctament els productes!",

@@ -26,7 +26,7 @@
 				providerName : "Provider",
 				quantity : "Quantity",
 				quantityAbbrev : "Qu",
-				unit : "Unit",
+				unit : "Unit"
 			},
 			msg : {
 				saveSuccess : "Your items have been successfully saved!",

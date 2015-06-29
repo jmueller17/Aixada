@@ -176,7 +176,7 @@
 				
 				switch (link){
 					case "printWindow": 
-						printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
+						var printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
 						printWin.focus();
 						printWin.print();
 						break;

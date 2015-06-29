@@ -179,7 +179,7 @@
             sortorder: 'asc',
             multiselect: false, 
             editurl:"php/ctrl/ManageData.php?table="+current_table,
-            caption: page_title,
+            caption: page_title
         }); // close jqgrid
         
         $("#desc").navGrid('#desc_pager',  

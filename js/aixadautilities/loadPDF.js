@@ -30,7 +30,7 @@ function downloadPDF(outputFormat, fileName){
 					
 					var newWin = window.open("", "win"); 
 					newWin.document.open("text/html", "replace");
-					html = '<html><head></head><body>'; 
+					var html = '<html><head></head><body>';
 					html +='<div style="background: transparent url(../img/ajax-loader_fff.gif) no-repeat">';
 					html +='<object height="1250px" width="100%" type="application/pdf" data="../local_config/reports/'+fileName+'">';
 					html +='<param value="../local_config/reports/'+fileName+'" name="src"/>';

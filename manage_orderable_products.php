@@ -522,7 +522,7 @@
 				//reload the products 
 				$('#dot tbody').xml2html('reload',{
 					url : 'php/ctrl/ActivateProducts.php',
-					params:'oper=getTypeOrderableProducts&provider_id='+provider_id,
+					params:'oper=getTypeOrderableProducts&provider_id='+provider_id
 				});
 			} else {
 				$('#btn_export').fadeOut(500);
