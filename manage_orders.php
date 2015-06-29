@@ -32,19 +32,15 @@
         }
     </style>
     
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>   	
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	<script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
-	   	<script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
-	   	  
-   	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_manage_orders.min.js"></script>
-    <?php }?>
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+    <script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+    <script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
+    <script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
+    <script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
      
 	<script type="text/javascript">
         // Texts of the literals in the language of the user. For use in js.
@@ -66,6 +62,8 @@
             _net_price:      "<?php echo $Text['or_net_price']; ?>",
             _net_total:      "<?php echo $Text['or_net_total']; ?>",
             _saving:         "<?php echo $Text['or_saving']; ?>",
+            _confirm:        "<?php echo $Text['msg_confirm']; ?>",
+            _warning:        "<?php echo $Text['msg_warning']; ?>",
             _click_to_edit_total: "<?php echo $Text['or_click_to_edit_total']; ?>",
             _click_to_edit_gprice:"<?php echo $Text['or_click_to_edit_gprice']; ?>"
         };
@@ -113,6 +111,9 @@
 
 			//order revision status states. 
 			var gRevStatus = [null, 'finalized','revised','postponed','canceled','revisedMod'];
+			var gRevStatusI18n = [null, local_lang.ostat_desc_sent, local_lang.ostat_desc_nochanges, local_lang.ostat_desc_postponed, local_lang.ostat_desc_cancel, local_lang.ostat_desc_changes];
+			var gRevStatusClass = ['dim40', 'isSend','asOrdered','postponed','orderCanceled','withChanges'];
+
 
 
 			//if this page has been called from torn...
@@ -494,6 +495,7 @@
 									$( this ).dialog( "close" );
 								}
 							},
+							title: local_lang._confirm,
 							type: 'confirm'});
 
 					}
@@ -510,9 +512,13 @@
 							type: "POST",
 							url: 'php/ctrl/Orders.php?oper=moveOrderToShop&order_id='+gSelRow.attr('orderId')+'&date='+$.getSelectedDate('#datepicker'),
 							success: function(txt){
+								$('.ui-dialog-buttonpane button', $this.parent()).hide();
+								$('#showDatePicker').hide();
 								$('.success_msg').show().next().hide();
 								$this.button('disable');
 								setTimeout(function(){
+									$('.ui-dialog-buttonpane button', $this.parent()).show();
+									$('#showDatePicker').show();
 									$this.dialog( "close" )
 									$('.interactiveCell').hide();
 									$('.success_msg').hide().next().show();
@@ -553,6 +559,7 @@
 						if ($.getSelectedDate('#datepicker2') == $.datepicker.formatDate('yy-mm-dd', gToday)){
 							$.showMsg({
 								msg:"Please select an order date starting from at least tomorrow onwards.",
+								title: local_lang._warning,
 								type: 'warning'});
 							return false; 
 						}
@@ -802,6 +809,7 @@
 					} else {
 						$.showMsg({
 							msg:"<?=$Text['msg_err_edit_order'];?>",
+							title: local_lang._warning,
 							type: 'warning'});
 					}
 				})
@@ -991,6 +999,7 @@
 					if (rowCount == 0){
 						$.showMsg({
 							msg:"<?=$Text['msg_err_order_filter'];?>",
+							title: local_lang._warning,
 							type: 'warning'});
 					}
 					$('#tbl_orderOverview tbody tr:even').addClass('rowHighlight');
@@ -1028,9 +1037,10 @@
 								"<?=$Text['btn_cancel'];?>" : function(){
 										$( this ).dialog( "close" );
 									}
-								},
-						type: 'warning'});
-
+							},
+							title: local_lang._warning,
+							type: 'warning'
+						});
 
 					e.stopPropagation();
 
@@ -1071,6 +1081,7 @@
 								$( this ).dialog( "close" );
 							}
 						},
+						title: local_lang._confirm,
 						type: 'confirm'});
 					
 					e.stopPropagation();
@@ -1166,27 +1177,31 @@
 							//test fails!! 
 							//alert("has cart " + hasCart + "  isvalidated "  + isValidated);
 							if (hasCart && !isValidated){
+								var _reset_butt = function(clear) {
+									return function() {
+										$('.ui-dialog-buttonpane button', $(this).parent()).hide();
+										$(this).html('<?=$Text['wait_reset'];?>');
+										gSelRow.children().eq(8).attr('revisionStatus',1);
+										var $this = $(this);
+										resetOrder(gSelRow.attr('orderId'), clear, function(){
+											$this.html('<?=$Text['msg_done'];?>');
+											setTimeout(function(){
+												switchTo('review', {});
+												$this.dialog("close");
+											}, 1000);
+										});
+									};
+								};
 								$.showMsg({
-									msg:"<?=$Text['msg_revise_revised'];?>",
+									msg:"<?php echo str_replace(array("\n","\r" ),array("\\n","\\r"),$Text['msg_revise_revised']); ?>",
 									buttons: {
-										"<?=$Text['btn_ok'];?>":function(){	
-											//reset this order to "finalized"
-											$(this).html('<?=$Text['wait_reset'];?>');
-											gSelRow.children().eq(8).attr('revisionStatus',1);
-											var $this = $(this);
-											resetOrder(gSelRow.attr('orderId'), function(){
-												$this.html('Done!');
-												setTimeout(function(){
-													switchTo('review', {});
-													$this.dialog("close");
-												}, 1000);
-												
-											});					
-										},
-										"<?=$Text['btn_cancel'];?>" : function(){
+										"<?php echo $Text['btn_modify'];?>": _reset_butt(false),
+										"<?php echo $Text['btn_delete'];?>": _reset_butt(true),
+										"<?php echo $Text['btn_cancel'];?>" : function(){
 											$( this ).dialog( "close" );
 										}
 									},
+									title: local_lang._warning,
 									type: 'warning'});
 
 							} else if (isValidated){
@@ -1231,8 +1246,9 @@
 										$(this).dialog("close");
 									}
 								},
+								title: local_lang._warning,
 								type: 'warning'});
-	        			} else {
+						} else {
 
 
 		        		
@@ -1397,7 +1413,7 @@
 				
 					switch(td.text()){
 						case "1": 
-							td.attr("title",local_lang.ostat_desc_sent).html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
+							td.attr("title",local_lang.ostat_desc_sent).addClass('isSend').html('<span class="tdIconCenter ui-icon ui-icon-mail-closed"></span>');
 							break;
 						case "2": 
 							td.attr("title",local_lang.ostat_desc_nochanges).addClass('asOrdered').html('<span class="tdIconCenter ui-icon ui-icon-check"></span>');
@@ -1437,6 +1453,7 @@
 									$(this).dialog("close");
 								}
 							},
+							title: local_lang._warning,
 							type: 'warning'});
 					} else {
 
@@ -1509,10 +1526,11 @@
 				 *	if an already revised order is changed in its status (again revised, postponed, etc.) 
 				 *  need to make sure that already distributed items get deleted. 
 				 */
-				function resetOrder(orderId, callbackfn){
+				function resetOrder(orderId, clear, callbackfn){
 					$.ajax({
 						type: "POST",
-						url: 'php/ctrl/Orders.php?oper=resetOrder&order_id='+orderId,
+						url: 'php/ctrl/Orders.php?oper=resetOrder&order_id='+orderId+
+							'&clear='+(clear?1:0),
 						success: function(txt){
 							callbackfn.call(this);
 						},
@@ -1522,7 +1540,7 @@
 								type: 'error'});
 							
 						}
-					});		
+					});
 
 				}
 
@@ -1553,7 +1571,11 @@
 
 							$('#dialog_orderStatus button').button('enable');
 							$('#btn_'+gRevStatus[sindex]).button('disable');
-							$('#currentOrderStatus').html(gRevStatus[sindex]);
+							$('#currentOrderStatus')
+								.html(gRevStatusI18n[sindex])
+								.removeClass()
+								.addClass("ui-corner-all aix-style-padding3x3 "+
+									gRevStatusClass[sindex]);
 							$('#dialog_orderStatus').dialog("open");
 							$('.orderTotals').hide();
 							$('#tbl_reviseOrder').hide();
@@ -1927,9 +1949,9 @@
 </div>
 <!-- end of wrap -->
 
-<div id="dialog_orderStatus" title="Set Order Status">
+<div id="dialog_orderStatus" title="<?php echo $Text['tit_set_orStatus'] ?>">
 	<p>&nbsp;</p>
-	<p><?php echo $Text['msg_cur_status'];?>: <span id="currentOrderStatus" class="ui-state-highlight ui-corner-all aix-style-padding3x3"></span>.</p>
+	<p><?php echo $Text['msg_cur_status'];?>: <span id="currentOrderStatus" class="ui-corner-all aix-style-padding3x3"></span>.</p>
 	<p><?php echo $Text['msg_change_status']; ?>: </p>
 	<p>&nbsp;</p>
 	<table>
@@ -1950,7 +1972,7 @@
 	<div id="datepicker2"></div>
 </div>
 
-<div id="dialog_setShopDate" title="Set shopping date">
+<div id="dialog_setShopDate" title="<?php echo $Text['tit_set_shpDate']; ?>">
 	<p>&nbsp;</p>
 	<p class="success_msg aix-style-ok-green ui-corner-all aix-style-padding8x8"><?php echo $Text['msg_move_to_shop']; ?></p>
 	<p><?php echo $Text['msg_confirm_move']; ?></p>

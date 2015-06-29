@@ -334,6 +334,7 @@ td.missing	{background:#FFCCCA;}
 .editHighlightRow			{opacity:.6}
 .editHighlightCol			{opacity:.6}
 
+.isSend			{background:#e8e8e8;}
 .asOrdered		{background:#D1F3D1;}
 .withChanges	{background:#FFEDA1;}
 .orderCanceled	{background:#ff7a75;}

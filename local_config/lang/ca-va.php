@@ -692,8 +692,14 @@ $Text['msg_finalize'] = "Estàs a punt de finalitzar la comanda. Si ho fas, ja n
 $Text['msg_finalize_open'] = "Aquesta comanda encara està oberta. Si la finalitzes ara, l'estaràs tancant abans de la seva data límit. Estàs segur de voler continuar?";
 $Text['msg_wait_tbl'] = "L'encapçalament de la taula s'està construint. Això pot trigar una mica en funció de la velocitat del teu navegador. Torna-ho a provar en 5 segons. ";
 $Text['msg_err_invalid_id'] = "No s'ha trobat un ID de la comanda! Aquesta comanda no s'ha enviat al proveïdor!!";
-$Text['msg_revise_revised'] = "Els elements de la comanda ja han estat revisats i carregats a les cistelles dels usuaris per a la data indicada. Tornar-los a revisar alteraria les modificacions ja fetes, i podria interferir amb les modificacions fetes pels propis usuaris. <br/><br/> Estàs segur de voler continuar?! <br/><br/>Si acceptes s'eliminaran els articles de les cistelles, i el procés de revisió començarà de nou.";
+$Text['msg_revise_revised'] = 
+    "Els elements de la comanda ja han estat revisats i carregats a les cistelles dels usuaris.<br>
+    Tornar-los a revisar pot interferir amb modificacions fetes pels propis usuaris.<br><br>
+    Les opcions possibles són o <b>modificar</b> la revisió feta o <b>esborrar</b>-la i començar de nou.";
+$Text['btn_modify'] = "Modificar";
+$Text['btn_delete'] = "Esborrar";
 $Text['wait_reset'] = "Si us plau, espera mentre re-inicialitzo la comanda...";
+$Text['msg_done'] = "Fet!";
 $Text['msg_err_already_val'] = "Alguns dels elements de la comanda ja han estat validats! Em sap greu, però ja no s'hi poden fer modificacions!!";
 $Text['print_several'] = "Hi ha més d'una comanda seleccionada. Vols imprimir-les totes?";
 $Text['btn_yes_all'] = "Sí, imprimeix-les totes";
@@ -742,9 +748,11 @@ $Text['total_orginal_order'] = "Comanda original";
 $Text['total_after_revision'] = "Després de revisió";
 $Text['delivery_ref'] = "Referència d'entrega";
 $Text['payment_ref'] = "Referència de pagament";
-$Text['arrived'] = "arribat"; //as in order items have arrived. this is a table heading
+$Text['arrived'] = "Arribat"; //as in order items have arrived. this is a table heading
+$Text['tit_set_orStatus'] = "Establir l'estat de la comanda";
+$Text['tit_set_shpDate'] = "Establir data de la compra";
 $Text['msg_cur_status'] = "L'estat de la comanda és";
-$Text['msg_change_status'] = "Canvia l'estat de la comanda a un dels següents";
+$Text['msg_change_status'] = "Canvia l'estat a";
 $Text['msg_confirm_move'] = "Estàs segur que vols fer aquesta comanda disponible per a la venda? Tots els productes disponibles es posaran a les cistelles de la data:";
 $Text['alter_date'] = "Tria una data alternativa";
 $Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
@@ -919,6 +927,8 @@ $Text['stock_info_product'] = "Nota: es poden consultar tots els canvis d'estoc 
 
 
 $Text['msg_success'] = "Fi correcte.";
+$Text['msg_confirm'] = "Confirmació";
+$Text['msg_warning'] = "Advertència";
 $Text['msg_confirm_prov'] = "Estàs segur que vols exportar tots els proveïdors?"; 
 $Text['msg_err_upload'] = "S'ha produït un error en la càrrega de l'arxiu "; 
 $Text['msg_import_matchcol'] = "Cal fer coincidir les entrades de la base de dades amb les files de la taula. Has d'assignar la columna que correspon a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
