@@ -63,11 +63,14 @@ Released 2 April 2013
 * #37 filter session variables for table manager fix
 * ...and otherss
 
-Next release (2.8)
+v2.8 (to publish soon)
 ----
+
+**New Features**
+
+**Changes**
 * report_stock page displays total value of stock products and stock adds/corrections
 * provider/product page now is searchable for products
-* consum account now active and manageable 
 * rudimentary export order to csv 
 * order_to_shop revisions won't be deleted anymore from aixada_order_to_shop. Needed to keep track of total of revised order and validated income
 * currency symbol is not in config.php and currency description in lang files. 
