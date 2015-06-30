@@ -1055,7 +1055,11 @@
 						//if order has been send but not yet received, it can be reopened
 						var statusTd = $(row).children().eq(8).attr('revisionStatus');
 						if (statusTd == 1){
-							tds.eq(1).html('<a href="javascript:void(null)" class="reopenOrderBtn">'+orderId+'</a>');
+							tds.eq(6).html(
+								'<a href="javascript:void(null)" class="reopenOrderBtn">'+
+								'<?php echo i18n_js('os_reopen_order_a'); ?>'+' #'+orderId+
+								'</a>'
+							);
 						}
 
 					} else {
@@ -1083,7 +1087,7 @@
 					var orderId = $(this).parents('tr').attr("id");
 						
 						$.showMsg({
-							msg:"<?=$Text['os_reopen_order'];?>",
+							msg:"<?=i18n_js('os_reopen_order');?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){	
 										var $this = $(this);
