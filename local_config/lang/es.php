@@ -1028,6 +1028,13 @@ $Text['or_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
 $Text['or_click_to_edit_gprice'] = 'Clic para ajustar el precio';
 $Text['or_saving'] = 'Guardando';
 $Text['or_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
-$Text['os_reopen_order'] = 'Estás seguro de re-abrir el pedido?';
+$Text['os_reopen_order_a'] = "Re-abrir";
+$Text['os_reopen_order'] =
+    "¿Seguro que deseas re-abrir este pedido?<hr><br>
+    NOTA:<br>
+    El pedido puede haberse enviado por correo.<br>
+    Si se vuelve a abrir
+    <b>se debe hablar con el proveedor</b>
+    para decirle que el pedido ha sido cancelado!";
 
 ?>

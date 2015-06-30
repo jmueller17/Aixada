@@ -1028,7 +1028,14 @@ $Text['or_click_to_edit_total'] = 'Click to adjust total quantities';
 $Text['or_click_to_edit_gprice'] = 'Click to adjust price';
 $Text['or_saving'] = 'Saving';
 $Text['or_ostat_desc_validated'] = 'Items of this order have been validated';
-$Text['os_reopen_order'] = 'Are you sure to reopen this order?';
+$Text['os_reopen_order_a'] = "Reopen";
+$Text['os_reopen_order'] =
+    "Are you sure to reopen this order?<hr><br>
+    NOTE:<br>
+    The order may have been mailed.<br>
+    If reopens order
+    <b>must talk with the provider</b>
+    to tell him that the order has been cancelled!";
 
 
 //$Text[''] = ""; 
