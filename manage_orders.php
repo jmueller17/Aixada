@@ -1014,6 +1014,8 @@
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
 			//var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
+			var _date_today = new Date();
+				_date_today.setHours(0,0,0,0);
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter='+gFilter, 
@@ -1033,7 +1035,7 @@
 						tds.eq(6).text('-');
 					}
 					
-					if (timeLeft > 0){ 	// order is still open
+					if (timeLeft >= 0){ // order is still open
 						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="<?=$Text['order_open'];?>"></span>');
 
 					} else if (timeLeft < 0 && isPreorder){ //preorder is not closed 
@@ -1055,11 +1057,14 @@
 						//if order has been send but not yet received, it can be reopened
 						var statusTd = $(row).children().eq(8).attr('revisionStatus');
 						if (statusTd == 1){
-							tds.eq(6).html(
-								'<a href="javascript:void(null)" class="reopenOrderBtn">'+
-								'<?php echo i18n_js('os_reopen_order_a'); ?>'+' #'+orderId+
-								'</a>'
-							);
+							var date_for_order = new Date(tds.eq(3).text());
+							if (date_for_order.getTime() >= _date_today.getTime() || isPreorder) {
+								tds.eq(6).html(
+									'<a href="javascript:void(null)" class="reopenOrderBtn">'+
+									'<?php echo i18n_js('os_reopen_order_a'); ?>'+' #'+orderId+
+									'</a>'
+								);
+							}
 						}
 
 					} else {
