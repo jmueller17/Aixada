@@ -1014,14 +1014,16 @@
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
 			//var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
-			var _date_today = new Date();
-				_date_today.setHours(0,0,0,0);
+			var _date_todayOverview;
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
 				beforeLoad : function(){
 					$('.loadSpinner').show();
+					// refresh date
+					_date_todayOverview = new Date();
+					_date_todayOverview.setHours(0,0,0,0);
 				},
 				rowComplete : function (rowIndex, row){
 					var tds = $(row).children();
@@ -1058,7 +1060,7 @@
 						var statusTd = $(row).children().eq(8).attr('revisionStatus');
 						if (statusTd == 1){
 							var date_for_order = new Date(tds.eq(3).text());
-							if (date_for_order.getTime() >= _date_today.getTime() || isPreorder) {
+							if (date_for_order.getTime() >= _date_todayOverview.getTime() || isPreorder) {
 								tds.eq(6).html(
 									'<a href="javascript:void(null)" class="reopenOrderBtn">'+
 									'<?php echo i18n_js('os_reopen_order_a'); ?>'+' #'+orderId+
