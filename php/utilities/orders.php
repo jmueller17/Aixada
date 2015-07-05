@@ -469,9 +469,16 @@ function directly_validate_order($order_id, $record_provider_invoice) {
             if ($ao->uses_providers()) {
                 $prv_tot_row = get_row_query(
                     "select sum( 
-                                quantity * 
-                                round( unit_price_stamp / (1 + rev_tax_percent/100), 2 )
-                            ) prv_tot from (
+                                CAST(
+                                    quantity * round(
+                                        unit_price_stamp /
+                                            (1 + rev_tax_percent/100),
+                                        2
+                                    )
+                                    as decimal(10,2)
+                                )
+                            ) prv_tot
+                    from (
                         select 
                             sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
                         from aixada_order_to_shop os
