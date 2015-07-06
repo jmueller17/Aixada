@@ -106,6 +106,7 @@
 						return false;
 					}
 
+					$("#createCart").hide();
 					if (uf_id <=0) {
 						resetFields();
 						resetDeposit();
@@ -138,6 +139,49 @@
 			}); //end of listing
 
 
+            $("#crtDateForShop").datepicker({
+                dateFormat: 'DD d M, yy',
+                showAnim: '',
+                beforeShowDay: function(date){
+                    return [true, ""];
+                },
+                onSelect: function (dateText, instance){
+                    //refreshSelects($.getSelectedDate('#crtDateForShop'));
+                }
+            }).show();
+            $('.toggleShopDate').click(function(){
+                    $("#crtDateForShop").toggle();
+                });
+            var _today = new Date();
+            $("#crtDateForShop").datepicker('setDate', _today);
+            $("#btn_createCart").button().click(function() {
+                var _uf_id = $("#uf_cart_select option:selected").val(),
+                    _date_for_shop = $.getSelectedDate('#crtDateForShop');
+                $.ajax({
+                    type: "POST",
+                    url: "php/ctrl/Validate.php?oper=createEmptyCart&uf_id="+_uf_id+
+                            "&date="+_date_for_shop,
+                    success: function(msg) {
+                        $('#tbl_cart_listing tbody').xml2html('reload');
+                        $('#uf_cart_select').xml2html('reload',{
+                            url: 'php/ctrl/Validate.php',
+                            params: 'oper=getUFsCartCount',
+                            complete: function(rowCount){
+                                $('#uf_cart_select').val(_uf_id
+                                    ).attr('selected', true
+                                    ).trigger('change');
+                            }
+                        });
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        $.updateTips("#depositMsg", "error",
+                            XMLHttpRequest.responseText);
+                    },
+                    complete: function(msg) {
+                        $("#createCart").hide();
+                    }
+                });
+            });
 
 			//load purchase listing: how may carts does this uf have?
 			$('#tbl_Shop tbody').xml2html('init',{
@@ -158,8 +202,9 @@
 							$.showMsg({
 								msg:"<?php echo $Text['nothing_to_val'] ;?>",
 								type: 'warning'});
-								$('#cartLayer').aixadacart('resetCart');
-								//resetFields();
+							$('#cartLayer').aixadacart('resetCart');
+							$("#createCart").show();
+							//resetFields();
 
 						//one, should be today!
 						} else {
@@ -654,6 +699,7 @@
 				//the url to load the items for given uf/date
 				$('#cartLayer').aixadacart('loadCart',{
 					loadCartURL		: 'php/ctrl/Validate.php?oper=getShopCart&cart_id='+cart_id,
+					loadCartHeadURL: 'php/ctrl/Validate.php?oper=getShopCartHead&cart_id='+cart_id,
 					loadSuccess : function (){
 						$('#cartAnim').hide();
 						gActiveCart = true; 
@@ -711,12 +757,20 @@
 		    </div>
 		    <div id="titleRightCol">
 
-		    	<p class="textAlignRight">
+		    	<div class="textAlignRight">
 		    		<select id="uf_cart_select">
 		    			<option value="-10" selected="selected"><?php echo $Text['sel_uf']; ?></option>
 		    			<option value="{uf_id}" cc="{non_validated_carts}"> {uf_id} {uf_name}</option>
 		    		</select>
-		    	</p>
+		    		<div id="createCart" class="hidden">
+		    			<?=i18n("Fecha de la cesta")?>: <input type="text" 
+		    			    class="datePickerInput ui-widget-content ui-corner-all"
+		    			    id="crtDateForShop"
+		    			    title="<?=i18n("Click to edit")?>">
+		    			<button id="btn_createCart" 
+		    			    title="<?=i18n("Crear Cesta");?>"><?=i18n("Crear Cesta");?></button>
+		    		</div>
+		    	</div>
 		    </div>
 		</div>
 
