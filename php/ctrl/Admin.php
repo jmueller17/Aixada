@@ -111,6 +111,15 @@ function backup_as_internal($output_folder, $backup_name) {
  */
 function backup_by_mysqli($output_folder, $backup_name, $host, $db_name, $user, $pass) { //,$tables = '*')
     $db = new mysqli($host, $user, $pass, $db_name); 
+    if ($db->connect_errno) {
+        throw new InternalException(
+            'Error connecting to database: errno='.$db->connect_errno);
+    }
+    if (!$db->set_charset("utf8")) {
+        throw new InternalException(
+            'Not able to set charset="utf8", current charset is: '.
+                    $db->character_set_name());
+    }
     $tables = array();
     $result = $db->query('SHOW TABLES;');
     while($row = $result->fetch_array()) {
