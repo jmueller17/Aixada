@@ -482,8 +482,11 @@ function directly_validate_order($order_id, $record_provider_invoice) {
                         select 
                             sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
                         from aixada_order_to_shop os
-                        where 
-                            os.order_id = {$order_id}
+                        join aixada_product p
+                        on os.product_id = p.id
+                        where
+                            p.orderable_type_id >= 2 /* only not stock */
+                            and os.order_id = {$order_id}
                             and os.arrived = 1
                         group by
                             unit_price_stamp, rev_tax_percent, iva_percent) r;"
