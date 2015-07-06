@@ -491,12 +491,15 @@ function directly_validate_order($order_id, $record_provider_invoice) {
                         group by
                             unit_price_stamp, rev_tax_percent, iva_percent) r;"
                 );
-                $ao->add_operation(
-                    'invoice_pr',
-                    array('provider_from_id' => $provider_id + 2000),
-                    $prv_tot_row['prv_tot'], 
-                    "validation order#{$order_id} {$date_for_shop}"
-                );
+                $prv_tot = $prv_tot_row['prv_tot'];
+                if ($prv_tot > 0) {
+                    $ao->add_operation(
+                        'invoice_pr',
+                        array('provider_from_id' => $provider_id + 2000),
+                        $prv_tot, 
+                        "validation order#{$order_id} {$date_for_shop}"
+                    );
+                }
             }
         }
         $db->commit();
