@@ -469,24 +469,37 @@ function directly_validate_order($order_id, $record_provider_invoice) {
             if ($ao->uses_providers()) {
                 $prv_tot_row = get_row_query(
                     "select sum( 
-                                quantity * 
-                                round( unit_price_stamp / (1 + rev_tax_percent/100), 2 )
-                            ) prv_tot from (
+                                CAST(
+                                    quantity * round(
+                                        unit_price_stamp /
+                                            (1 + rev_tax_percent/100),
+                                        2
+                                    )
+                                    as decimal(10,2)
+                                )
+                            ) prv_tot
+                    from (
                         select 
                             sum(os.quantity) quantity, unit_price_stamp, rev_tax_percent, iva_percent
                         from aixada_order_to_shop os
-                        where 
-                            os.order_id = {$order_id}
+                        join aixada_product p
+                        on os.product_id = p.id
+                        where
+                            p.orderable_type_id >= 2 /* only not stock */
+                            and os.order_id = {$order_id}
                             and os.arrived = 1
                         group by
                             unit_price_stamp, rev_tax_percent, iva_percent) r;"
                 );
-                $ao->add_operation(
-                    'invoice_pr',
-                    array('provider_from_id' => $provider_id + 2000),
-                    $prv_tot_row['prv_tot'], 
-                    "validation order#{$order_id} {$date_for_shop}"
-                );
+                $prv_tot = $prv_tot_row['prv_tot'];
+                if ($prv_tot > 0) {
+                    $ao->add_operation(
+                        'invoice_pr',
+                        array('provider_from_id' => $provider_id + 2000),
+                        $prv_tot, 
+                        "validation order#{$order_id} {$date_for_shop}"
+                    );
+                }
             }
         }
         $db->commit();
