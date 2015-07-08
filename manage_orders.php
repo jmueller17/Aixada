@@ -1014,12 +1014,16 @@
 			 *		ORDER OVERVIEW FUNCTIONALITY
 			 **********************************************************/
 			//var timePeriod = (gFilter != '')? gFilter:'pastMonths2Future';
+			var _date_todayOverview;
 			$('#tbl_orderOverview tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
 				params : 'oper=getOrdersListing&filter='+gFilter, 
 				loadOnInit : true, 
 				beforeLoad : function(){
 					$('.loadSpinner').show();
+					// refresh date
+					_date_todayOverview = new Date();
+					_date_todayOverview.setHours(0,0,0,0);
 				},
 				rowComplete : function (rowIndex, row){
 					var tds = $(row).children();
@@ -1033,7 +1037,7 @@
 						tds.eq(6).text('-');
 					}
 					
-					if (timeLeft > 0){ 	// order is still open
+					if (timeLeft >= 0){ // order is still open
 						tds.eq(8).html('<span class="tdIconCenter ui-icon ui-icon-unlocked" title="<?=$Text['order_open'];?>"></span>');
 
 					} else if (timeLeft < 0 && isPreorder){ //preorder is not closed 
@@ -1055,7 +1059,14 @@
 						//if order has been send but not yet received, it can be reopened
 						var statusTd = $(row).children().eq(8).attr('revisionStatus');
 						if (statusTd == 1){
-							tds.eq(1).html('<a href="javascript:void(null)" class="reopenOrderBtn">'+orderId+'</a>');
+							var date_for_order = new Date(tds.eq(3).text());
+							if (date_for_order.getTime() >= _date_todayOverview.getTime() || isPreorder) {
+								tds.eq(6).html(
+									'<a href="javascript:void(null)" class="reopenOrderBtn">'+
+									'<?php echo i18n_js('os_reopen_order_a'); ?>'+' #'+orderId+
+									'</a>'
+								);
+							}
 						}
 
 					} else {
@@ -1083,7 +1094,7 @@
 					var orderId = $(this).parents('tr').attr("id");
 						
 						$.showMsg({
-							msg:"<?=$Text['os_reopen_order'];?>",
+							msg:"<?=i18n_js('os_reopen_order');?>",
 							buttons: {
 								"<?=$Text['btn_ok'];?>":function(){	
 										var $this = $(this);
