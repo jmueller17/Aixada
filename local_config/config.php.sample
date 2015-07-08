@@ -127,7 +127,7 @@ class configuration_vars {
    *    'distribute_and_validate' and 'choice' (both are available),
    *     default is 'only_distribute'.
    */
-  public $order_distribution_method = 'distribute_and_validate';
+  public $order_distribution_method = 'only_distribute';
   
   /**
    * When the method 'distribute_and_validate' is used can also record the
