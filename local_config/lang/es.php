@@ -485,6 +485,10 @@ $Text['msg_no_movements'] = "No hay movimientos para la cuenta y la fecha selecc
 $Text['msg_delete_incident'] = "¿Seguro que quieres eliminar este incidente?";
 //$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases. No hay ninguna UF seleccionada.  Elige una primero y luego sus compras."; //ADDED JAN 2012
 
+$Text['click_to_change'] = "Clic par cambiar!";
+$Text['cart_date'] = "Fecha de la cesta";
+$Text['create_cart'] = "Crear Cesta";
+
 /**
  *  Product categories
  */
@@ -589,10 +593,10 @@ $Text['details'] = 'Detalles';
 $Text['actions'] = 'Acciones';
 $Text['incident_details'] = 'Detalles de Incidencias';
 $Text['distribution_level'] = 'Nivel de Distribución';
-$Text['internal_private'] = 'Internal (private)';
-$Text['internal_email_private'] = 'Internal + email (private)';
-$Text['internal_post'] = 'Internal + post to portal (public)';
-$Text['internal_email_post'] = 'Internal + email + post (public)';
+$Text['internal_private'] = 'Interno (privado)';
+$Text['internal_email_private'] = 'Interno + email (privado)';
+$Text['internal_post'] = 'Interno + Enviar al portal (público)';
+$Text['internal_email_post'] = 'Interno + email + Portal (público)';
 
 $Text['date'] = "Fecha";
 $Text['iva'] = "IVA";
@@ -689,7 +693,7 @@ $Text['no_results'] = "La búsqueda no ha producido resultados.";
 $Text['for'] = "para"; //as in order FOR Aurora
 $Text['date_for_order'] = "Fecha de entrega";
 $Text['finished_loading'] = "Carga Finalizada";
-$Text['msg_err_unrevised'] = "¡Hay items sin revisar en este pedido. Por favor, asegúrese de que todos los productos pedidos han llegado!";
+$Text['msg_err_unrevised'] = "¡Hay ítems sin revisar en este pedido. Por favor, asegúrese de que todos los productos pedidos han llegado!";
 $Text['btn_dis_anyway'] = "Distribuir igualmente";
 $Text['btn_remaining'] = "Revisar los pendientes";
 $Text['btn_disValitate'] = "Distribuye y valida";
@@ -726,7 +730,7 @@ $Text['btn_delete'] = "Borrar";
 $Text['wait_reset'] = "Por favor, espere mientras el pedido se reinicia...";
 $Text['msg_done'] = "Hecho!";
 $Text['msg_err_already_val'] = "Algunos o todos los ítems ya han sido validados! ¡¡Lo siento pero no es posible hacer mas cambios!!";
-$Text['print_several'] = "There is more than one order currently selected. Do you want to print them all in one go?";
+$Text['print_several'] = "Hay más de un pedido seleccionado. ¿Quieres imprimirlos todos?";
 $Text['btn_yes_all'] = "Sí, imprimir todo";
 $Text['btn_just_one'] = "No, solo uno";
 $Text['ostat_revised'] = "Revisado";

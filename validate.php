@@ -39,6 +39,10 @@
         $cfg_js_validate_deposit =
             (isset($cfg->validate_deposit) && !$cfg->validate_deposit) ?
             'false' : 'true'; // default true
+        $cfg_js_validate_btn_create_carts =
+            ( isset($cfg->validate_btn_create_carts) &&
+                    $cfg->validate_btn_create_carts ) ?
+            'true' : 'false'; // default false
     ?>
 	<script type="text/javascript">
 	$(function(){
@@ -55,6 +59,7 @@
 			var gTornUfId = <?=get_session_uf_id();?>;
 			var cfg_js_validate_self = <?php echo $cfg_js_validate_self; ?>;
 			var cfg_js_validate_deposit = <?php echo $cfg_js_validate_deposit; ?>;
+			var cfg_js_validate_btn_create_carts = <?php echo $cfg_js_validate_btn_create_carts; ?>;
 			var cfg_js_show_carts_filter = '<?php 
                 echo get_config('validate_show_carts','day')!=='week'? 
                     'today' : 
@@ -139,49 +144,51 @@
 			}); //end of listing
 
 
-            $("#crtDateForShop").datepicker({
-                dateFormat: 'DD d M, yy',
-                showAnim: '',
-                beforeShowDay: function(date){
-                    return [true, ""];
-                },
-                onSelect: function (dateText, instance){
-                    //refreshSelects($.getSelectedDate('#crtDateForShop'));
-                }
-            }).show();
-            $('.toggleShopDate').click(function(){
-                    $("#crtDateForShop").toggle();
-                });
-            var _today = new Date();
-            $("#crtDateForShop").datepicker('setDate', _today);
-            $("#btn_createCart").button().click(function() {
-                var _uf_id = $("#uf_cart_select option:selected").val(),
-                    _date_for_shop = $.getSelectedDate('#crtDateForShop');
-                $.ajax({
-                    type: "POST",
-                    url: "php/ctrl/Validate.php?oper=createEmptyCart&uf_id="+_uf_id+
-                            "&date="+_date_for_shop,
-                    success: function(msg) {
-                        $('#tbl_cart_listing tbody').xml2html('reload');
-                        $('#uf_cart_select').xml2html('reload',{
-                            url: 'php/ctrl/Validate.php',
-                            params: 'oper=getUFsCartCount',
-                            complete: function(rowCount){
-                                $('#uf_cart_select').val(_uf_id
-                                    ).attr('selected', true
-                                    ).trigger('change');
-                            }
-                        });
+            if (cfg_js_validate_btn_create_carts) {
+                $("#crtDateForShop").datepicker({
+                    dateFormat: 'DD d M, yy',
+                    showAnim: '',
+                    beforeShowDay: function(date){
+                        return [true, ""];
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        $.updateTips("#depositMsg", "error",
-                            XMLHttpRequest.responseText);
-                    },
-                    complete: function(msg) {
-                        $("#createCart").hide();
+                    onSelect: function (dateText, instance){
+                        //refreshSelects($.getSelectedDate('#crtDateForShop'));
                     }
+                }).show();
+                $('.toggleShopDate').click(function(){
+                        $("#crtDateForShop").toggle();
+                    });
+                var _today = new Date();
+                $("#crtDateForShop").datepicker('setDate', _today);
+                $("#btn_createCart").button().click(function() {
+                    var _uf_id = $("#uf_cart_select option:selected").val(),
+                        _date_for_shop = $.getSelectedDate('#crtDateForShop');
+                    $.ajax({
+                        type: "POST",
+                        url: "php/ctrl/Validate.php?oper=createEmptyCart&uf_id="+_uf_id+
+                                "&date="+_date_for_shop,
+                        success: function(msg) {
+                            $('#tbl_cart_listing tbody').xml2html('reload');
+                            $('#uf_cart_select').xml2html('reload',{
+                                url: 'php/ctrl/Validate.php',
+                                params: 'oper=getUFsCartCount',
+                                complete: function(rowCount){
+                                    $('#uf_cart_select').val(_uf_id
+                                        ).attr('selected', true
+                                        ).trigger('change');
+                                }
+                            });
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            $.updateTips("#depositMsg", "error",
+                                XMLHttpRequest.responseText);
+                        },
+                        complete: function(msg) {
+                            $("#createCart").hide();
+                        }
+                    });
                 });
-            });
+            }
 
 			//load purchase listing: how may carts does this uf have?
 			$('#tbl_Shop tbody').xml2html('init',{
@@ -203,7 +210,9 @@
 								msg:"<?php echo $Text['nothing_to_val'] ;?>",
 								type: 'warning'});
 							$('#cartLayer').aixadacart('resetCart');
-							$("#createCart").show();
+                            if (cfg_js_validate_btn_create_carts) {
+                                $("#createCart").show();
+                            }
 							//resetFields();
 
 						//one, should be today!
@@ -763,12 +772,12 @@
 		    			<option value="{uf_id}" cc="{non_validated_carts}"> {uf_id} {uf_name}</option>
 		    		</select>
 		    		<div id="createCart" class="hidden">
-		    			<?=i18n("Fecha de la cesta")?>: <input type="text" 
+		    			<?=i18n('cart_date')?>: <input type="text" 
 		    			    class="datePickerInput ui-widget-content ui-corner-all"
 		    			    id="crtDateForShop"
-		    			    title="<?=i18n("Click to edit")?>">
+		    			    title="<?=i18n('click_to_change')?>">
 		    			<button id="btn_createCart" 
-		    			    title="<?=i18n("Crear Cesta");?>"><?=i18n("Crear Cesta");?></button>
+		    			    title="<?=i18n('create_cart');?>"><?=i18n('create_cart');?></button>
 		    		</div>
 		    	</div>
 		    </div>
