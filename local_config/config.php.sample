@@ -684,7 +684,7 @@ class configuration_vars {
 	//E.G.:
 		//'account_operations' => array('pay_pr','refund_uf','deposit_uf'),
 	
-	// Whith 'use_providers' key lets you choose whether providers accounts are
+	// With 'use_providers' key lets you choose whether providers accounts are
 	// used, disabling the operations of providers not appear.
 	// NOTE: This key has priority over 'account_operations'.
 		'use_providers' => false
