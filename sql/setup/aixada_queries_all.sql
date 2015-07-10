@@ -2230,7 +2230,8 @@ end|
  * independent if they are active or not active. 
  */
 drop procedure if exists get_type_orderable_products|
-create procedure get_type_orderable_products (in the_provider_id int)
+create procedure get_type_orderable_products (in the_provider_id int,
+		in ge_orderable_type_id tinyint)
 begin
 	
 	select
@@ -2252,7 +2253,7 @@ begin
 		pv.id = the_provider_id
 		and p.provider_id = pv.id
 		and pv.active = 1
-		and p.orderable_type_id in (2,3,4)
+		and p.orderable_type_id >= ge_orderable_type_id
 	order by is_active desc, name asc;
 end|
 
@@ -2822,7 +2823,7 @@ end|
  * independent if products have been ordered or not. 
  */
 drop procedure if exists get_orderable_providers|
-create procedure get_orderable_providers()
+create procedure get_orderable_providers(in ge_orderable_type_id tinyint)
 begin
   select distinct 
      pv.id, 
@@ -2833,7 +2834,7 @@ begin
   where  
     pv.active = 1
     and pv.id = p.provider_id
-    and p.orderable_type_id in (2,3,4)
+    and p.orderable_type_id >= ge_orderable_type_id
   order by pv.name;
 end|
 
