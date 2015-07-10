@@ -123,6 +123,11 @@ class configuration_vars {
   public $prevent_out_of_stock_purchase = true;
   
   /**
+   * Allows to put stock products into a HU order. Default value is false.
+   */
+  public $orders_allow_stock = false;
+  
+  /**
    *
    * Allows to choose the order in which the UF will be displayed when reviewing
    *    look and print orders.
@@ -689,7 +694,7 @@ class configuration_vars {
 	//E.G.:
 		//'account_operations' => array('pay_pr','refund_uf','deposit_uf'),
 	
-	// Whith 'use_providers' key lets you choose whether providers accounts are
+	// With 'use_providers' key lets you choose whether providers accounts are
 	// used, disabling the operations of providers not appear.
 	// NOTE: This key has priority over 'account_operations'.
 		'use_providers' => false

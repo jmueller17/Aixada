@@ -45,7 +45,7 @@ end|
  * independent if products have been ordered or not. 
  */
 drop procedure if exists get_orderable_providers|
-create procedure get_orderable_providers()
+create procedure get_orderable_providers(in ge_orderable_type_id tinyint)
 begin
   select distinct 
      pv.id, 
@@ -56,7 +56,7 @@ begin
   where  
     pv.active = 1
     and pv.id = p.provider_id
-    and p.orderable_type_id in (2,3,4)
+    and p.orderable_type_id >= ge_orderable_type_id
   order by pv.name;
 end|
 
