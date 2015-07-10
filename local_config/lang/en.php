@@ -481,6 +481,9 @@ $Text['msg_no_active_products'] = "Sorry, but currently there are no products ac
 $Text['msg_delete_incident'] = "Are you sure you want to delete this incident?";
 //$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases."; //ADDED JAN 2012
 
+$Text['click_to_change'] = "Click to change!";
+$Text['cart_date'] = "Cart date";
+$Text['create_cart'] = "Crete Cart";
 
 /**
  *  Product categories

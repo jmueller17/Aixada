@@ -478,6 +478,9 @@ $Text['msg_no_active_products'] = "En aquests moments no hi ha productes actius 
 $Text['msg_delete_incident'] = "Segur que voleu eliminar aquest incident?";
 //$Text['msg_err_selectFirstUF'] = "No hi ha UF seleccionada. Selecciona una primer i després les seves compres."; //ADDED JAN 2012
 
+$Text['click_to_change'] = "Clic per canviar!";
+$Text['cart_date'] = "Data de la cistella";
+$Text['create_cart'] = "Crear Cistella";
 
 /**
  *  Product categories
@@ -694,12 +697,12 @@ $Text['msg_con_disValitate_prvInv'] =
     "Distribuir i validar no es pot anular!!:<ul>
     <li>s'anotaran els productes com a compres de les UF en la data de la comanda,</li>
     <li>els imports de les compres s'anotarà com a deute als comptes de les UF</li>
-    <li>i l'import de l'albarà s'anotará al compte del proveïdor com a factura.</li>
+    <li>i l'import de l'albarà s'anotarà al compte del proveïdor com a factura.</li>
     </ul>";
 $Text['msg_err_disValitate'] = "Error al distribuir i validar la comanda #";
 $Text['btn_disValitate_ok'] = "Entesos: distribueix i valida!";
 $Text['btn_bakToRevise'] = "Encara no: vull seguir revisant";
-$Text['btn_disValitate_done'] = "Correcte!<br>La comanda #{order_id} ha estat distribuida i validada.";
+$Text['btn_disValitate_done'] = "Correcte!<br>La comanda #{order_id} ha estat distribuïda i validada.";
 $Text['wait_work'] = "Si us plau, espera mentre es fa la feina...";
 $Text['msg_err_edit_order'] = "Aquesta comanda no està completada. Només pots desar les notes i referències quan la comanda s'hagi enviat.";
 $Text['order_open'] = "La comanda està oberta";

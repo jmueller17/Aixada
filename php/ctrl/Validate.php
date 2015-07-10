@@ -46,8 +46,19 @@ try{
     	//this is the same as in /ctrl/Shop.php except the uf_id parameter which is flexible here
 	    case 'getShopCart':
   			printXML(stored_query_XML_fields('get_shop_cart', get_param('date',0), get_param('uf_id',0), get_param('cart_id',0),get_param('validated',0))); 
-			exit; 
-	    
+			exit;
+
+        case 'getShopCartHead':
+            $cart_id = get_param_int('cart_id', 0);
+            printXML(query_XML_fields(
+                "select id cart_id, ts_last_saved from aixada_cart
+                where ts_validated = 0 and id = {$cart_id}")); 
+            exit; 
+
+        case 'createEmptyCart':
+            echo create_empty_cart(get_param_int('uf_id'),get_param('date'));
+            exit;
+
 	  	case 'commit':
        		try {
 		  		$vm = new validation_cart_manager(get_session_user_id(), get_param('uf_id'), get_param('date')); 

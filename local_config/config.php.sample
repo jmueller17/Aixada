@@ -96,6 +96,16 @@ class configuration_vars {
    * @var boolean
    */  
   public $validate_show_carts = 'day';
+
+  /**
+   * Allows create a empty cart at validation. This is usefully to assign
+   *    products to a UF with no orders and no shop or when is used the
+   *    option `$order_distribution_method = 'distribute_and_validate'`.
+   * If is true a button "Create cart" is displayed when is select a UF without
+   *    not validated carts (default value is false)
+   * @var boolean
+   */  
+  public $validate_btn_create_carts = false;
  
   /**
    * 

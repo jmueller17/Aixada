@@ -352,7 +352,8 @@
     		 }
     			 
     		 $this.aixadacart("options",options);
-    		 
+    		 _loadCartHeadURL = (options.loadCartHeadURL ?
+                    options.loadCartHeadURL : null);
     		 $this.data('aixadacart').isLoading = true;
     		 $('#cart .cartLoadAnim').show();
     		 
@@ -380,8 +381,27 @@
 			  		 
 			  		});// end each row	
     			 	
-    			 	$('#global_cart_id').val(lastCartId);
-    			 	$('#global_ts_last_saved').val(ts_last_saved);
+                    if (lastCartId === -1 && _loadCartHeadURL) {
+                        // Is a empty cart but is set loadCartHeadURL option.
+                        $.ajax({ 
+                            type:"GET", 
+                            url: _loadCartHeadURL,
+                            dataType: "xml",
+                            success: function(xml){
+                                var lastCartId = -1;
+                                var ts_last_saved = 0; 
+                                $(xml).find('row').each(function(){
+                                    lastCartId = $(this).find('cart_id').text();
+                                    ts_last_saved = $(this).find('ts_last_saved').text();
+                                });
+                                $('#global_cart_id').val(lastCartId);
+                                $('#global_ts_last_saved').val(ts_last_saved);
+                            }
+                        });
+                    } else {
+                        $('#global_cart_id').val(lastCartId);
+                        $('#global_ts_last_saved').val(ts_last_saved);
+                    }
     			 	
     			 	$this.data('aixadacart').loadSuccess.call(this);
     			 	$this.data('aixadacart').unsavedItems = false;
