@@ -1,4 +1,0 @@
-sed "s/([0-9]*, \(.*\)),/\$Text[\1] \t= \1;/g" tmp.txt 
-
-where tmp.txt contains only the lines from aixada_setup_details.php
-pertaining to product categories

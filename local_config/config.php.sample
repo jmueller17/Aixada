@@ -207,12 +207,6 @@ class configuration_vars {
     )
   );
   
-  /**
-   * Sets the global development variable for debugging etc. 
-   * 
-   */
-  public $development = true; 
-  
   
     /**
    * the email address of the admin; used for sending out pwd changes
@@ -438,9 +432,7 @@ class configuration_vars {
                   'manage_table.php',
                   'activate_products.php',
                   'activate_roles.php',
-                  'activate_all_roles.php',
-                  'manage_preorders.php',
-                  'all_prevorders.php'
+                  'activate_all_roles.php'
                   ),
             
             'Checkout' =>
@@ -453,22 +445,19 @@ class configuration_vars {
             'Consumer Commission' =>
             array(
                   'activate_all_roles.php',
-                  'validate.php',
-                  'all_prevorders.php'
+                  'validate.php'
                   ),
 
             'Econo-Legal Commission' =>
             array(
                   'activate_all_roles.php',
-                  'validate.php',
-                  'all_prevorders.php'
+                  'validate.php'
                   ),
 
             'Logistic Commission' =>
             array(
                   'activate_all_roles.php',
-                  'validate.php',
-                  'all_prevorders.php'
+                  'validate.php'
                   ),
 
             'Hacker Commission' =>
@@ -477,8 +466,7 @@ class configuration_vars {
             'Fifth Column Commission' =>
             array(
                   'activate_all_roles.php',
-                  'validate.php',
-                  'all_prevorders.php'
+                  'validate.php'
                   ),
 
             'Producer' =>
@@ -489,9 +477,7 @@ class configuration_vars {
                   'activate_roles.php',
                   'activate_all_roles.php',
                   'report_order.php',
-                  'report_account.php',
-                  'manage_preorders.php',
-                  'all_prevorders.php'
+                  'report_account.php'
                   )
             );
                   

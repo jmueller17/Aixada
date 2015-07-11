@@ -1,17 +1,7 @@
-
 $(function(){
 	
 	
 	$("#navHome").button();
-	/*$("#navWizard").button({
-		icons: {
-        	secondary: "ui-icon-triangle-1-s"
-		}
-    }).menu({
-		content: $('#navWizardItems').html(),	
-		showSpeed: 50, 
-		flyOut: true
-	});*/
 	
 	$("#navWizard").button();
 	$("#navShop").button();

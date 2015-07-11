@@ -191,6 +191,7 @@ EOD;
   return $strSQL;
 }
 
+/*
 foreach (glob("local_config/lang/*.php") as $lang_file) {
     $lang = basename($lang_file, '.php');
     $handle = @fopen('canned_responses_' . $lang . '.php', "w");
@@ -198,6 +199,8 @@ foreach (glob("local_config/lang/*.php") as $lang_file) {
     fwrite($handle, make_canned_responses($lang));
     fclose($handle);
 }
+*/
+make_canned_responses();
 
 write_file('sql/queries/canned_queries.sql', make_canned_queries());
 
