@@ -33,21 +33,23 @@ Pasos para actualizar a la versión *2.8* desde *2.7* o un punto intermedio de *
 * Importación productos usando platillas: permite crear los nuevos productos y en los existente actualizar precios y descripciones semanalmente cargando las hojas de calculo del proveedor. De forma opcional los producto que se han importado pueden quedar desactivados (:bulb:`config.php`: `$import_from_char_encoding`, `$import_templates[...]`)
 * Permite la personalización solo usando `config.php`: imagen inicial de login y en los informes el logo y los datos propios de la coope.   
 Ahora también se puede desactivar la compra directa, permitir validarse a uno mismo y no requerir depósitos (`$login_header_*`, `$coop_*`, `$validate_self`, `$validate_deposit`, `$use_shop`)
-* Nueva gestión del dinero que permite nuevas operaciones y anulaciones. En la misma pagina se muestran los cambios que se van haciendo, y entre ellos se puede ver el resultado resumido de la cooperativa. También se permite usar cuentas de proveedores (factura y pagos) (:bulb:`config.php`: `$accounts[...]` en particular `$accounts['use_providers']` y se pemite pequeños ajustes en la presentación de importes y fechas :bulb:`config.php`: `$type_formats[...]`)
+* Nueva gestión del dinero que permite nuevas operaciones y anulaciones. En la misma pagina se muestran los cambios que se van haciendo, y entre ellos se puede ver el resultado resumido de la cooperativa. También se permite usar cuentas de proveedores (factura y pagos) (:bulb:`config.php`: `$accounts[...]` en particular `$accounts['use_providers']` y se permite pequeños ajustes en la presentación de importes y fechas :bulb:`config.php`: `$type_formats[...]`)
 
 **Cambios**
+* Se permite a las UF hacer pedidos de productos de stock (:bulb:`config.php`: `$orders_allow_stock`, es de utilidad conjuntamente con `$use_shop=false`)
 * La revisión de pedidos permite cambiar precios y re-calcula el importe para así poder cuadrar el importe del albarán con el importe calculado con una precisión de 0,01.   
 AL ponerse sobre una celda muestra también el nombre de la UF también puede configurar el orden de las UF.   
 Permite asignar productos a UF que no lo han pedido pero que sí que se lo han quedado (:bulb:`config.php`: `$order_review_uf_sequence`, `$revision_fixed_uf`)
 * Se puede distribuir y validar directamente un pedido (:bulb:`config.php`: `$order_distribution_method`, `$order_distributeValidate_invoce`)
 * Es posible configurar que al validar muestre todos los carros de la semana en vez de solo los del día (:bulb:`config.php`: `$validate_show_carts`).
+* Al validar se pueden crear cestas vacías para asignar compra a UF si pedido o compra previa (:bulb:`config.php`: `$validate_btn_create_carts`) y se solventa el problema de poner productos en cestas vacias.
 * Añadir edición de la mayoría de tablas auxiliares y mejorar la existente permitiendo edición en la lista.
 * Al volver a revisar un pedido que ya se ha distribuido se puede conservar el trabajo de revisión hecho previamente.
 * Se permite reabrir un pedido cerrado por error.
 * Mejorar el envío de correos conservando acentos y añadiendo un poco de formateo en: envío de pedido al proveedor, re-establecimiento de contraseña y incidentes. Ahora se soportar acentos y caracteres especiales como `ç`, `ñ` etc.
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.
-* En la página proveedor/producto ahora se puede filtraar por descripción de los productos.
+* En la página proveedor/producto ahora se puede filtrar por descripción de los productos.
 * Exportación rudimentaria de pedido a csv
 * Las revisiones de pedidos ahora no se borran de la tabla `aixada_order_to_shop`. Era necesario para realizar un seguimiento del total de recibido revisado y validado.
 * Símbolo de moneda está ahora en `config.php` y la descripción moneda en archivos lang.
