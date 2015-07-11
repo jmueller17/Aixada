@@ -9,17 +9,12 @@
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
     
-    <?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-		<script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-		<script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-
-   	<?php  } else { ?>
-	   	 <script type="text/javascript" src="js/js_for_activate_roles.min.js"></script>
-    <?php }?>
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+    <script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
    		
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
      

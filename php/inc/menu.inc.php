@@ -66,14 +66,6 @@
 </div>
 
 
-<div id="navWizardItems" class="hidden">
-	<ul>
-		<li><a href="validate.php"><?php echo $Text['nav_wiz_validate'];?></a></li>
-		<li><a href="report_torn.php"><?php echo $Text['nav_wiz_torn'];?></a></li>
-		<li><a href="all_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li>
-		<li><a href="manage_cashbox.php"><?php echo $Text['nav_wiz_cashbox'];?></a></li>
-	</ul>
-</div>
 <div id="navManageItems" class="hidden">
 	<ul>
 		<li><a href="manage_ufmember.php"><?php echo $Text['uf_short'];?> & <?php echo $Text['nav_mng_member'];?></a>
