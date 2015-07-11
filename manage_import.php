@@ -12,23 +12,13 @@
         .darkGrayed {color:#777;}
     </style>
 
+    <script type="text/javascript" src="js/jquery/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="js/jqueryui/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
+    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
 
-	<?php if (isset($_SESSION['dev']) && $_SESSION['dev'] == true ) { ?> 
-	    <script type="text/javascript" src="js/jquery/jquery-1.9.0.js"></script>
-		<script type="text/javascript" src="js/jqueryui/jquery-ui-1.10.0.custom.min.js"></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	   	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-	   	
-
-		<script src="js/jquery-fileupload/js/jquery.iframe-transport.js"></script>
-		<script src="js/jquery-fileupload/js/jquery.fileupload.js"></script>
-	   	
-	   	
-   	<?php  } else { ?>
-	   	<script type="text/javascript" src="js/js_for_manage_import.min.js"></script>
-    <?php }?>
-   		
- 		
+    <script src="js/jquery-fileupload/js/jquery.iframe-transport.js"></script>
+    <script src="js/jquery-fileupload/js/jquery.fileupload.js"></script>
  	
 	<script type="text/javascript">
 	
