@@ -825,7 +825,7 @@
 								<td class="item_it">{id}</td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input name="{id}" class="ui-corner-all" value="0.00"  size="4" id="quantity_{id}"/></td>
+								<td class="item_quantity"><input name="{id}" class="ui-corner-all quantity_{id}" value="0.00"  size="4" id="quantity_{id}"/></td>
 								<td class="item_unit">{unit}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
 								<td class="item_rev_tax_percent">{rev_tax_percent}</td>

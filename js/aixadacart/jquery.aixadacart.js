@@ -189,7 +189,8 @@
    				    : $('#aixada_cart_list');
 
 				//we have unsaved items	
-				$(this).data('aixadacart').unsavedItems = true; 
+				var _self = $(this);
+				_self.data('aixadacart').unsavedItems = true; 
 
 				//check if input field with given id exists, this means item is already in cart
 				var exists = $('#cart_quantity_'+itemObj.id, $this).val(); 
@@ -259,20 +260,22 @@
 						})
 						.bind("change", function(e){
 												
+						//we have unsaved items
+						_self.data('aixadacart').unsavedItems = true;
 						
 						//retrieve all the info of the current cart item
 						var objItem = $this.aixadacart("getRowData", {
 			  												type : 'table',
 			  												row :  $(this).parents("tr")
 			  			});
-						
 						//update the row / calculate the price
 						updateRow.call($(this),objItem);
 						
 						//update the row in the actual product list
 						//TODO pass the name of the field as options when init cart!
 						$('#quantity_'+objItem.id).val(objItem.quantity); //.addClass('ui-state-highlight');
-						
+						$('.quantity_'+objItem.id).val(objItem.quantity);
+
 						//recalculate total cost
 						calculateTotal.call();
 						
@@ -289,6 +292,7 @@
 				
 				//calculate and set cost of item
 				updateRow.call($this, itemObj);
+				$('.quantity_'+itemObj.id).val(itemObj.quantity);
 				calculateTotal.call();
 				
 				//make sure the submit button is active
