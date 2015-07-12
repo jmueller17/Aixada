@@ -24,6 +24,8 @@
    
 	<script type="text/javascript">
 	$(function(){
+		$.ajaxSetup({ cache: false });
+
 			//init tabs
 			$("#tabs").tabs();
 

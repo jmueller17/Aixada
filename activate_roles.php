@@ -28,6 +28,8 @@
     <?php $the_role = $_SESSION['userdata']['current_role']; ?>
 	<script type="text/javascript">
 	$(function(){
+		$.ajaxSetup({ cache: false });
+
 			//init tabs
 			$("#tabs").tabs();
 

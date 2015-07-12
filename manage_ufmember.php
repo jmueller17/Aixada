@@ -26,6 +26,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//loading Spinner
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif").hide(); 

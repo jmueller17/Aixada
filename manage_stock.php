@@ -29,6 +29,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//coming from other page
 		var gStockProvider = (typeof $.getUrlVar('stockProvider') == "string")? $.getUrlVar('stockProvider'):false;

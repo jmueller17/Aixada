@@ -26,6 +26,7 @@
 
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
