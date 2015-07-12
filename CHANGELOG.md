@@ -1,13 +1,16 @@
 Changelog
+=========
 
-v1.0 Done by Gilad Buzi back in 2005
+v1.0
+----
+ * Done by Gilad Buzi back in 2005
 
-
-v2.0 
+v2.0
+----
 * relaunch: major changes in database structure and interface which is now jquey based
 
-
 v2.5
+----
 * new page: manage orders for revising individual quantities 
 * de-/activate dates for orders redone; has now table format and clickable cells
 * logic of turnos has own page which shortcuts for most common tasks
@@ -20,9 +23,8 @@ v2.5
 * order item and shop item linked for better control 
 * vat / iva groups to easy modify tax for product groups
 
-
-
 v2.6
+----
 * direct PDF printing of incidents and bills
 * emailing of incidents
 * new page: purchase total ordered by provider
@@ -31,16 +33,15 @@ v2.6
 * warning message when cart has been validated without money desposit.
 * overview of upcoming orders added to Home
 
-Bugfixes
+**Bugfixes**
 * creating preorders
 * deactivating orderable products failed when other product for the same date had ordered items
 * sum of revised orders is now updated when editing uf quantities
 * mentor household did not show when creating new HU
 
-
-
-
-v2.7 Released 2 April 2013
+v2.7
+----
+Released 2 April 2013
 * provider new/edit form rewrite for better required form-fields checking
 * product new/edit rewrite for better required form-fields checking
 * new field in aixada_product: min order (requires to run dbUpgradeAixada2.6To2.7.sql
@@ -50,7 +51,7 @@ v2.7 Released 2 April 2013
 * import architecture; works for providers and products (formats: csv, ods, xls, xlsx, xml) 
 * change of licence to GPL  
 
-Bugfixes
+**Bugfixes**
 * delete members now possible for unassigned members
 * member validation issues
 * delete order cart completely bug 
@@ -62,25 +63,23 @@ Bugfixes
 * #37 filter session variables for table manager fix
 * ...and otherss
 
+v2.8 (to publish soon)
+----
 
+**New Features**
 
-
-Next release (2.8)
+**Changes**
 * report_stock page displays total value of stock products and stock adds/corrections
 * provider/product page now is searchable for products
-* consum account now active and manageable 
 * rudimentary export order to csv 
 * order_to_shop revisions won't be deleted anymore from aixada_order_to_shop. Needed to keep track of total of revised order and validated income
 * currency symbol is not in config.php and currency description in lang files. 
 * deactivate current_stock = 0 is set in config.php; prevents buying items.  
 
-
-Bugfixes
+**Bugfixes**
 * product edit form, calculation and display of brutto price fixed
 * provider - responsible HU fix
 * #51 pwd create/logon now works with proper salt and is backward compatible 
 * #52 entire product row deactivation
 * #78, #79 
-
-
 
