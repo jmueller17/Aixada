@@ -20,10 +20,6 @@ $tpl_print_incidents = configuration_vars::get_instance()->print_incidents_templ
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 $language = get_session_language(); 
 
-
-//should be deleted in the end, and globally set. 
-$_SESSION['dev'] = configuration_vars::get_instance()->development;
-
    try {
        $cookie = new Cookie();
        $cookie->validate();
