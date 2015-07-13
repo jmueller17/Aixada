@@ -198,7 +198,8 @@ function make_active_time_lines($which, // 'uf', 'provider' or 'product'
     list($orders, $entities, $max_total_price, $max_week, $global_max_price) = $data;
     $ct=0;
     $max_ct = count($orders);
-    $max_ent = intval(array_pop(array_keys($entities)));
+    $entities_k = array_keys($entities);
+    $max_ent = intval(array_pop($entities_k));
     $n_ent = count($entities);
     $label_position = array(); // $lab_y => array($lab_x, $lab_len)
     $pix_per_letter = 8; // average number of pixels per letter in the label
