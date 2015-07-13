@@ -62,7 +62,7 @@
 		
 	
 		$(function(){
-
+			$.ajaxSetup({ cache: false });
 
 			//for the moment being does nothing...
 			window.opener.$('input:checkbox[name="bulkAction"]').each(function(){

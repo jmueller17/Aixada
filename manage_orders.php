@@ -95,6 +95,7 @@
 
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 			$('.reviewElements, .viewElements').hide();
 			$('.success_msg').hide();

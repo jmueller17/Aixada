@@ -28,7 +28,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
-
+		$.ajaxSetup({ cache: false });
 
 			$('#product_list_provider tbody').xml2html("init");
 			$('#btn_submit').button({

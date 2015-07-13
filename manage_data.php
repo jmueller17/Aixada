@@ -103,6 +103,7 @@
 	<script type="text/javascript">
     function createEditor_aux(current_table, page_title, edit_modes,
                                                          col_models, col_sort) {
+        $.ajaxSetup({ cache: false });
         if (current_table === '') { return; }
         var selected_row;
         var lastsel = 0; 

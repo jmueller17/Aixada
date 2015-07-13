@@ -222,6 +222,8 @@
 	}
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
+
 		//loading animation
 		$('.loadSpinner').attr('src', "img/ajax-loader-"+
 			local_cfg.default_theme+".gif").hide();

@@ -51,7 +51,7 @@
 
 	<script type="text/javascript">
 		$(function(){
-
+			$.ajaxSetup({ cache: false });
 
 			//boolean to generate a pdf of this bill 
 			var asPDF = $.getUrlVar('asPDF');

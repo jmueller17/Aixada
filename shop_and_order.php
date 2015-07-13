@@ -31,8 +31,7 @@
 	<script type="text/javascript">
 
 	$(function(){
-
-
+		$.ajaxSetup({ cache: false });
 
 	//decide what to do in which section
 	var what = $.getUrlVar('what');

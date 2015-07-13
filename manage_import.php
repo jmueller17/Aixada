@@ -33,6 +33,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//loading animation
 		$('.loadSpinner').hide(); //attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 

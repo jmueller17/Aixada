@@ -26,6 +26,7 @@
    
 	<script type="text/javascript">
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//how many stock movements do we want to see in one go
 		var gStockMoveLimit = 200; 

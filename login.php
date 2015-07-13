@@ -53,6 +53,7 @@ if (!isset($_SESSION)) {
 	   	
 	<script type="text/javascript">
 		$(function(){
+			$.ajaxSetup({ cache: false });
 
 			document.cookie = 'USERAUTH=';
 			

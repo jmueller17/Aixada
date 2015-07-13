@@ -28,6 +28,7 @@
    
 	<script type="text/javascript">
 	$(function(){
+		$.ajaxSetup({ cache: false });
 
 		//var gUniqueProviders = [];
 

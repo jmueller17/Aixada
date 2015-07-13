@@ -29,9 +29,7 @@
    
 	<script type="text/javascript">
 	$(function(){
-
-		
-			
+		$.ajaxSetup({ cache: false });
 
 			/**
 			 * 	MONITOR Money, daily stats, negative ufs, stock
