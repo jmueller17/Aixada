@@ -207,6 +207,11 @@ class configuration_vars {
     )
   );
   
+  /**
+   * Sets the global development variable for debugging etc. 
+   * 
+   */
+  public $development = true; 
   
     /**
    * the email address of the admin; used for sending out pwd changes
