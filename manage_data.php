@@ -158,7 +158,6 @@
             );
         }
 
-        active_fields = [];//result.active_fields;
         var last_row_sel = null;
         $("#desc").jqGrid({
             url: "php/ctrl/ManageData.php?table="+current_table+

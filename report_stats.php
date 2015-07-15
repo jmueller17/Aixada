@@ -34,7 +34,7 @@
 					url		: 'php/ctrl/Shop.php',
 					params	: 'oper=getProductsBelowMinStock',
 					loadOnInit: true,
-                    autoReload: 100010, /*10000*/
+                    autoReload: 100010 /*10000*/
 			});
 
 

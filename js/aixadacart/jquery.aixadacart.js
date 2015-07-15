@@ -356,7 +356,7 @@
     		 }
     			 
     		 $this.aixadacart("options",options);
-    		 _loadCartHeadURL = (options.loadCartHeadURL ?
+    		 var _loadCartHeadURL = (options.loadCartHeadURL ?
                     options.loadCartHeadURL : null);
     		 $this.data('aixadacart').isLoading = true;
     		 $('#cart .cartLoadAnim').show();

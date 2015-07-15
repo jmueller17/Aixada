@@ -437,8 +437,6 @@
 						autoclose:1500});
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-					
-						$this.dialog("close");
 						$.showMsg({
 								msg: XMLHttpRequest.responseText,
 								type: 'error'});
@@ -689,7 +687,7 @@
 					msg: "<?php echo $Text['msg_confirm_del_product']; ?>",
 					buttons: {
 						"<?=$Text['btn_ok'];?>":function(){
-							$this = $(this);
+							var $this = $(this);
 							var urlStr = 'php/ctrl/TableManager.php?oper=del&table=aixada_product&id='+productId; 
 
 							$.ajax({
@@ -864,7 +862,6 @@
 					setActiveFlagProduct(pid, false);
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-						$this.dialog("close");
 						$.showMsg({
 								msg: XMLHttpRequest.responseText,
 								type: 'error'});
@@ -897,8 +894,6 @@
 						autoclose:1500});
 			   	},
 			   	error : function(XMLHttpRequest, textStatus, errorThrown){
-					
-						$this.dialog("close");
 						$.showMsg({
 								msg: XMLHttpRequest.responseText,
 								type: 'error'});
