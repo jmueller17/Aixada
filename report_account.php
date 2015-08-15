@@ -80,7 +80,7 @@
 					} else {
 						id = (what == 'my_account')? '':id; 
 						$('#list_account tbody').xml2html('reload',{
-							params	: 'oper=accountExtract&account_id='+id+'&filter='+filter,
+							params	: 'oper=accountExtract&account_id='+id+'&filter='+filter
 						});
 					}
 					
@@ -90,7 +90,7 @@
 
 			if (what == 'my_account'){
 				$('#list_account tbody').xml2html('reload',{
-					params	: 'oper=accountExtract&filter=pastYear',
+					params	: 'oper=accountExtract&filter=pastYear'
 				});
 			} 
 						

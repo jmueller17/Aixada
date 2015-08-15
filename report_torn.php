@@ -53,7 +53,7 @@
 						$(row).children().eq(3).text(minStock.toFixed(2));
 					},
 					loadOnInit: true,
-                    autoReload: 100010, /*10000*/
+                    autoReload: 100010 /*10000*/
 			});
 						
 			
