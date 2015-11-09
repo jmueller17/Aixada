@@ -51,7 +51,7 @@ begin
 		aixada_provider pv,
 		aixada_product p
 	where
-		po.closing_date > today
+		po.closing_date >= today
 		and po.date_for_order <= until
 		and po.product_id = p.id
 		and p.provider_id = pv.id
