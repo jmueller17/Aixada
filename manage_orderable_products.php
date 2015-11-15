@@ -28,6 +28,7 @@
 		
 		//dates to be displayed in header
 		var gdates = [];
+		var gdatesIsPast = [];
 
 		//default number of dates at display
 		var seekDateSteps = 20;
@@ -70,12 +71,13 @@
 					var today = new Date();
 					var visMonthYear = new Array(new Date(gdates[0]));
 				
-					
+					gdatesIsPast = [];
 					for (var i=0; i<gdates.length; i++){
 						var dd = new Date(gdates[i]); 
 						var date = $.datepicker.formatDate(outDateFormat, dd);
 						var dateclass = "Date-"+gdates[i];
 						var pastclass = (dd < today)? 'dim40':'';
+						gdatesIsPast.push(pastclass);
 					
 						apstr += '<th class="dateth clickable '+ pastclass +' '+dateclass+'" colDate="'+gdates[i]+'">'+date+'</th>';
 
@@ -103,14 +105,14 @@
 					//load the products 
 					if (provider_id){
 						$('#dot tbody').xml2html('reload');
-					}	
+					} else {
+						$('.loadSpinner').hide();
+					}
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown){
 					$.showMsg({
 						msg:XMLHttpRequest.responseText,
 						type: 'error'});
-				},
-				complete : function(){
 					$('.loadSpinner').hide();
 				}
 			}); //end ajax						
@@ -134,19 +136,22 @@
 					var cellStyle = (isactive)? 'notOrderable':'deactivated'; 
 					
 					
-					var apstr = '';
-					
-					for (var i=0; i<gdates.length; i++){
+					var apstr = [];
+					for (var i=0, gdatesLen=gdates.length; i<gdatesLen; i++){
 						if (ispreorder){
-							apstr = "<td class=\"preorder\" colspan=\""+gdates.length+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
+							apstr = "<td class=\"preorder\" colspan=\""+gdatesLen+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
 							break;
 						}
-						var dateidclass = "Date-"+gdates[i] + " P-"+id; 						//construct two classes to easily select column (date) or row (product id)
-						dateidclass += ($(".Date-"+gdates[i]).hasClass("dim40"))? " dim40":""; 	//dim past dates
-						var tdid		= gdates[i]+"_"+id; 									//construct id selector of td-cell
-						apstr += '<td title="'+gdates[i]+'" id="'+tdid+'" class="'+dateidclass+' interactiveCell '+cellStyle+'"></td>';
+						var gdate = gdates[i];
+						apstr.push('<td title="'+gdate+'"'+ //id selector of td-cell
+									' id="'+gdate+'_'+id+'"'+
+									' class="Date-'+gdate+ //class to select column: date
+										' P-'+id+ //class to select row: product id
+										(gdatesIsPast[i] ? ' dim40' : '')+ //dim past dates
+										' interactiveCell '+cellStyle+'"></td>'
+                        );
 					}
-					$(row).append(apstr);
+					$(row).append(apstr.join());
 
 
 					if (!isactive){
@@ -165,6 +170,9 @@
 						type: "POST",
 						dataType:"xml",
 						url: "php/ctrl/ActivateProducts.php?oper=getOrderableProducts4DateRange&fromDate="+gdates[0]+"&toDate="+gdates[gdates.length-1]+"&provider_id="+provider_id,	
+						beforeSend: function() {
+							$('.loadSpinner').show();
+						},
 						success: function(xml){
 							$(xml).find('row').each(function(){
 								var id = $(this).find('product_id').text();
