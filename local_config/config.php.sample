@@ -597,7 +597,7 @@ class configuration_vars {
 								'order_min_quantity' => 'allow',
 								'category_id' => 'allow',
 								'rev_tax_type_id' => 'allow',
-								'iva_percent_type_id' => 'allow',
+								'iva_percent_id' => 'allow',
 								'unit_price' => 'allow',
 								'unit_measure_order_id' => 'allow',
 								'unit_measure_shop_id' => 'allow',
