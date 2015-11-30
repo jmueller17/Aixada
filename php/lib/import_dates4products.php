@@ -29,7 +29,7 @@ class import_dates4products extends abstract_import_manager {
 								'order_min_quantity' => 'order_min_quantity',
 								'category_id' => 'category',
 								'rev_tax_type_id' => 'rev_tax_type',
-								'iva_percent_type_id' => 'iva_percent_type',
+								'iva_percent_id' => 'iva_percent_type',
 								'unit_price' => 'unit_price',
 								'unit_measure_order_id' => 'unit_measure_order',
 								'unit_measure_shop_id' => 'unit_measure_shop',
