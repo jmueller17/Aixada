@@ -143,7 +143,7 @@
 						 $(row).children().eq(3).html("<p class='textAlignCenter'><?=$Text["not_yet_sent"];?></p>");		
 					} 
 
-					if (timeLeft <= 0){
+					if (timeLeft < 0){
 						$(row).children().eq(2).html('<span class="ui-icon ui-icon-locked tdIconCenter" title="order is closed"></span>');
 					}
 
