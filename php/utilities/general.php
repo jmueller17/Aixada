@@ -390,8 +390,8 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
         'From: '.$from."\r\n".
         'Reply-To: '.
             (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
-        (isset($options['cc']) ? 'Cc :'.$options['cc']."\r\n" : '').
-        (isset($options['bcc']) ? 'Bcc :'.$options['bcc']."\r\n" : '').
+        (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
+        (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
         'Return-Path: '.$from."\r\n".
         "X-Mailer: PHP\r\n".
         "MIME-Version: 1.0\r\n".
