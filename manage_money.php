@@ -50,6 +50,10 @@
         margin-left:6.8em;
         padding:0 .5em 0 0;
     }
+	table.tblListingDefault th,
+	table.tblListingDefault td {
+		vertical-align: middle
+	}
 </style>
 	
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
@@ -74,21 +78,22 @@
 			"</script></td></tr>\n";
 		echo $html;
 	}
-	function write_operation_html_ul($correction) { // filter by local_config
-		$local_accounts = get_config('accounts', array());
-		$local_use_providers = isset($local_accounts['use_providers']) && 
-				$local_accounts['use_providers'];
+	$local_accounts = get_config('accounts', array());
+	$local_use_providers = isset($local_accounts['use_providers']) && 
+			$local_accounts['use_providers'];
+	function write_operation_html_ul($use_providers, $correction) { // filter by local_config
+		global $local_accounts;
 		global $config_account_operations;
 		if (isset($local_accounts['account_operations'])) {
 			$local_operation_accounts = $local_accounts['account_operations'];
 			foreach ($local_operation_accounts as $operation_name) {
                 write_operation_html_li(
-                        $local_use_providers, $correction, $operation_name);
+                        $use_providers, $correction, $operation_name);
 			}
 		} else {
 			foreach ($config_account_operations as $operation_name => $cfg_operation) {
                 write_operation_html_li(
-                        $local_use_providers, $correction, $operation_name);
+                        $use_providers, $correction, $operation_name);
 			}
 		}
 	}
@@ -150,7 +155,8 @@
 
 	// Configuration values used by js code.
 	var local_cfg = {
-		default_theme: "<?=$default_theme;?>"
+		default_theme: "<?=$default_theme;?>",
+		use_providers: <?=($local_use_providers?'true':'false')?>
 	};
 	
 	// Operation configuration
@@ -214,6 +220,10 @@
 		_reload('#dailyStats tbody');
 		_reload('#negative_ufs tbody');
 		_reload('#uf_balances tbody');
+		if (local_cfg.use_providers) {
+			_reload('#provider_balances tbody');
+
+		}
 	}
 	
 	$(function(){
@@ -285,6 +295,24 @@
 			}
 		});
 
+		//Providers balances
+		if (local_cfg.use_providers) {
+			$('#provider_balances tbody').xml2html('init',{
+				url		: 'php/ctrl/Account.php',
+				params	: 'oper=getProviderBalances',
+				beforeLoad : function(){
+					$('#provider_balances_ui .loadSpinner').show();
+				},
+				rowComplete : function (rowIndex, row){
+					$.formatQuantity(row, local_lang.currency_sign);
+				},
+				complete : function(){
+					$('#provider_balances_ui .loadSpinner').hide();
+					$('#provider_balances tbody tr:odd').addClass('rowHighlight');
+				}
+			});
+		}
+		
 		// Show/hide blocks
 		$('.left-icons').bind("mouseenter", function(){
 			if ($(this).hasClass('ui-icon-triangle-1-s')){
@@ -422,10 +450,10 @@
                         <li class="ui-widget-header" val="#ops-2"><?php echo $Text['mon_ops_corrections']; ?></li>
                     </ul>
 					<ul id="ops-1" class="ol_selectable"><?php 
-						write_operation_html_ul(false); 
+						write_operation_html_ul($local_use_providers, false); 
 					?></ul>
                     <ul id="ops-2" class="ol_selectable hidden"><?php 
-						write_operation_html_ul(true);
+						write_operation_html_ul($local_use_providers, true);
 					?></ul -->
 				</div>
 				<div id="submitMsg" style="clear:both"></div>
@@ -561,6 +589,34 @@
 
 			</div>
 		</div>
+		<?php if ($local_use_providers) { ?>		
+		<div id="provider_balances_ui" class="ui-widget">
+			<div class="ui-widget-content ui-corner-all aix-style-observer-widget">
+				<h3 class="ui-widget-header ui-corner-all"><span 
+					class="left-icons ui-icon ui-icon-triangle-1-e"></span><?php
+						echo $Text['mon_provider_balances'];?><span 
+					class="loadAnim floatRight"><img 
+					class="loadSpinner" src="img/ajax-loader.gif"/></span></h3>
+				<table id="provider_balances" class="tblListingDefault hidden">
+					<thead>
+						<tr>
+							<th class="textAlignLeft" colspan="2"><?php echo $Text['provider_name'];?></th>
+							<th class="textAlignRight"><?php echo $Text['mon_balance'];?>&nbsp;</th>
+							<th style="width:125px"><?php echo $Text['mon_lastOper'];?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><p class="textAlignRight">{prv_id}</p></td>
+							<td><p class="textAlignLeft">{name}</p></td>
+							<td><p class="textAlignRight"><span class="formatQty">{balance}</span></p></td>
+							<td style="width:125px">{last_update}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<?php } ?>
 	</div><!-- end of right col -->
 </div><!-- end of stage wrap -->
 </div><!-- end of wrap -->

@@ -180,6 +180,47 @@ class account_operations {
 		}
 		return DBWrap::get_instance()->Execute($sql);
 	}
+		
+	/**
+	 *
+	 */
+    public function get_provider_balances_XML($all, $negative) {
+		return rs_XML_fields(
+			$this->get_provider_balances_rs($all, $negative),
+			cnv_config_formats(array(
+				'last_update'=> 'datetime',
+				'balance' => 'amount'
+			))
+		);
+	}
+	protected function get_provider_balances_rs($all, $negative) {
+		$sql = 
+			"select
+				a.account_id,
+				prv.id as prv_id, prv.name, 
+				a.balance, a.ts as last_update 
+			from (select 
+					account_id, max(id) as MaxId 
+					from aixada_account group by account_id) r		
+			join aixada_account a
+			on a.account_id = r.account_id 
+				and a.id = r.MaxId
+			left join aixada_provider prv
+			on a.account_id - 2000 = prv.id";
+		$sql_where = "";
+		$sql_where .= $all ? "" :" and prv.active=1";
+		$sql_where .= $negative ? " and a.balance < 0" : "";
+		if ($sql_where !== "") {
+			$sql .= " where ".substr($sql_where,5);
+		}
+		$sql .= " order by ";
+		if ($negative) {
+			$sql .= "a.balance;";
+		} else {
+			$sql .= "prv.id;";
+		}
+		return DBWrap::get_instance()->Execute($sql);
+	}
 	
     public function get_balances_XML($account_types) {
 		$formats = cnv_config_formats(array(

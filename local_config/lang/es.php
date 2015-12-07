@@ -259,6 +259,7 @@ $Text['mon_amount'] = "Importe";
 $Text['mon_dailyBalance'] = "Saldo del día";
 $Text['mon_accountBalances'] = "Saldo de las cuentas";
 $Text['mon_uf_balances'] = "Saldo de las UFs";
+$Text['mon_provider_balances'] = "Saldo de Proveedores";
 $Text['mon_result'] = "Resultado";
 $Text['mon_lastOper'] = "Última operación";
 $Text['mon_operation_account'] = "Hacer operaciones";
