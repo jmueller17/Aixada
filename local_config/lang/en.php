@@ -255,6 +255,7 @@ $Text['mon_amount'] = "Amount";
 $Text['mon_dailyBalance'] = "Balance of the day";
 $Text['mon_accountBalances'] = "Balance of accounts";
 $Text['mon_uf_balances'] = "HU balances";
+$Text['mon_provider_balances'] = "Provider balances";
 $Text['mon_result'] = "Result";
 $Text['mon_lastOper'] =  "Last operation";
 $Text['mon_operation_account'] = "Make operations";

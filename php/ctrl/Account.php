@@ -67,6 +67,13 @@ try{
 	   	case 'getNegativeAccounts':
 			printXML($ao->get_uf_balances_XML(0, 1));
 	    	exit;
+
+		case 'getProviderBalances':
+			printXML($ao->get_provider_balances_XML(
+					get_param_int('all', 0),                
+					get_param_int('negative', 0)
+			));
+			exit;
 	    	
 	    case 'getIncomeSpendingBalance':
 			printXML($ao->get_income_spending_XML(
