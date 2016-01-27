@@ -33,7 +33,12 @@ Pasos para actualizar a la versión *2.8* desde *2.7* o un punto intermedio de *
 * Importación productos usando platillas: permite crear los nuevos productos y en los existente actualizar precios y descripciones semanalmente cargando las hojas de calculo del proveedor. De forma opcional los producto que se han importado pueden quedar desactivados (:bulb:`config.php`: `$import_from_char_encoding`, `$import_templates[...]`)
 * Permite la personalización solo usando `config.php`: imagen inicial de login y en los informes el logo y los datos propios de la coope.   
 Ahora también se puede desactivar la compra directa, permitir validarse a uno mismo y no requerir depósitos (`$login_header_*`, `$coop_*`, `$validate_self`, `$validate_deposit`, `$use_shop`)
-* Nueva gestión del dinero que permite nuevas operaciones y anulaciones. En la misma pagina se muestran los cambios que se van haciendo, y entre ellos se puede ver el resultado resumido de la cooperativa. También se permite usar cuentas de proveedores (factura y pagos) (:bulb:`config.php`: `$accounts[...]` en particular `$accounts['use_providers']` y se permite pequeños ajustes en la presentación de importes y fechas :bulb:`config.php`: `$type_formats[...]`)
+* Nueva gestión del dinero que permite nuevas operaciones y anulaciones.
+ En la misma pagina se muestran los cambios que se van haciendo,
+ y entre ellos se puede ver el resultado resumido de la cooperativa.   
+ También se pueden usar cuentas de proveedores (factura y pagos) y ver sus saldos
+ (:bulb:`config.php`: `$accounts[...]` *en particular* `$accounts['use_providers']`)   
+ Se permite pequeños ajustes en la presentación de importes y fechas (:bulb:`config.php`: `$type_formats[...]`)
 
 **Cambios**
 * Se permite a las UF hacer pedidos de productos de stock (:bulb:`config.php`: `$orders_allow_stock`, es de utilidad conjuntamente con `$use_shop=false`)
@@ -48,6 +53,7 @@ Permite asignar productos a UF que no lo han pedido pero que sí que se lo han q
 * Se permite reabrir un pedido cerrado por error.
 * Mejorar el envío de correos conservando acentos y añadiendo un poco de formateo en: envío de pedido al proveedor, re-establecimiento de contraseña y incidentes. Ahora se soportar acentos y caracteres especiales como `ç`, `ñ` etc.
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
+ (entre otros #184)
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.
 * En la página proveedor/producto ahora se puede filtrar por descripción de los productos.
 * Exportación rudimentaria de pedido a csv
@@ -55,6 +61,8 @@ Permite asignar productos a UF que no lo han pedido pero que sí que se lo han q
 * Símbolo de moneda está ahora en `config.php` y la descripción moneda en archivos lang.
 * Desde Aixada se pueden usar un método alternativo de copia de bases de datos; pero si el método convencional falla la copia se realiza con el otro método.   Se puede forzar que siempre se utilice el alternativo (:bulb:`config.php`: `$db_backup_method`)
 * #79 Evita que compren artículos con `current_stock = 0` (:bulb:`config.php`: `$prevent_out_of_stock_purchase`).
+* Poner un poco más de ayuda.
+* #193 Mejora de rendimiento al activar fechas de productos para pedidos (pruebas satisfactorias con más de 500)
 
 **Corrección de errores**
 * Formulario de edición del producto, cálculo y visualización de precio bruto.
@@ -62,4 +70,8 @@ Permite asignar productos a UF que no lo han pedido pero que sí que se lo han q
 * #51 La contraseña ahora trabaja con la longitud total pero es compatible con versiones anteriores.
 * #52, #78 Arreglar desactivar productos.
 * #134, #151 Se ha arreglado el problema en algunas instalaciones de XML cortados.
+* #183 Arreglar caso en que no se ejecutaba auto salvar de carros de la compra.
+* #185 Evitar cache de GET usando hostins NGINX comentado en #156.
+* #195 En algunos hostins fallaba el envío de pedidos a proveedores.
+* #194 No de importaba el tipo de IVA.
 
