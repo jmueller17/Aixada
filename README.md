@@ -2,4 +2,4 @@ Aixada is an Open Source platform that helps people to organize an alternative c
 
 Check out the wiki for more information and install instructions: https://github.com/jmueller17/Aixada/wiki
 
-Copyright (C) 2013 by Jörg Müller and Julian Pfeifle. Aixada is licensed under a the GNU General Public License. <br/>Based on previous code by Gilad Buzi.
+Copyright (C) 2013-2016 by Jörg Müller and Julian Pfeifle. Aixada is licensed under a the GNU General Public License. <br/>Based on previous code by Gilad Buzi.
