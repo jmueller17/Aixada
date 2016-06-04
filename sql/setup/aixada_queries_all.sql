@@ -2281,7 +2281,7 @@ begin
 		po.closing_date,
 		datediff(po.closing_date, today) as time_left,
 		(select
-			o.id
+			max(o.id) -- This prevent error: "Subquery returns more than 1 row"
 		 from
 		 	aixada_order o,
 		 	aixada_product pp

@@ -307,9 +307,22 @@ function finalize_order($provider_id, $date_for_order)
 	
 	
 	//check here if an order_id already exists for this date and provider. 
+    if (!get_row_query(
+        "select oi.id
+        from 
+            aixada_order_item oi,
+            aixada_product p
+        where
+            oi.date_for_order = '{$date_for_order}'
+            and oi.order_id is null -- so, order is not closed
+            and oi.product_id = p.id
+            and p.provider_id = {$provider_id};")
+    ) { // No open orders for this date
+        throw new Exception ($Text['ostat_closed']);
+    }
 	
 	
-	
+	// Send eMail to provider
 	if ($config_vars->internet_connection && $config_vars->email_orders){
 		
         $provider_name = get_list_query(array(
@@ -386,11 +399,27 @@ function finalize_order($provider_id, $date_for_order)
 }
 
 /**
+ * Check no validated carts for this order. Throw error if exist a validated cart
+ * @param integer $order_id
+ */
+function chk_no_validate_order($order_id) {
+    $rs = do_stored_query('get_validated_status',$order_id, 0);
+    $row = $rs->fetch_array();
+    $db = DBWrap::get_instance();
+    $db->free_next_results();
+    if ($row) {
+        throw new Exception(i18n('msg_err_already_val'));
+    }
+}
+
+/**
  * Distribute and directly validate an order
  * @param integer $order_id
  */
 function directly_validate_order($order_id, $record_provider_invoice) {
+    chk_no_validate_order($order_id);
     
+    // Ok, do it
     prepare_order_to_shop(get_param_int('order_id'));
     $db = DBWrap::get_instance();
     try {
