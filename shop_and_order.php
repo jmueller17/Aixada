@@ -79,7 +79,8 @@
 			} else {
 
 				$.showMsg({
-					msg:err_msg + " Your cart will be reloaded.",
+					msg: err_msg +
+						"<br><span style=\"color:black\"><?=$Text['msg_err_cart_reloaded'];?></span>",
 					buttons: {
 						"<?=$Text['btn_ok'];?>":function(){
 
