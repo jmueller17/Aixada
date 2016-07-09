@@ -139,7 +139,7 @@
 					var apstr = [];
 					for (var i=0, gdatesLen=gdates.length; i<gdatesLen; i++){
 						if (ispreorder){
-							apstr = "<td class=\"preorder\" colspan=\""+gdatesLen+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>";
+							apstr = ["<td class=\"preorder\" colspan=\""+gdatesLen+"\"><p class=\"textAlignCenter\"><?=$Text["preorder_item"];?></p></td>"];
 							break;
 						}
 						var gdate = gdates[i];
