@@ -423,15 +423,29 @@ function directly_validate_order($order_id, $record_provider_invoice) {
     prepare_order_to_shop(get_param_int('order_id'));
     $db = DBWrap::get_instance();
     try {
-        $db->start_transaction();
         
-        // Set date for shop as date for order
+        // Check date for shop non empty carts.
         $row_or = get_row_query(
             "select provider_id, date_for_order 
             from aixada_order where id = {$order_id};");
         $date_for_shop = $row_or['date_for_order'];
         $provider_id = $row_or['provider_id'];
+        $carts_for_date = get_row_query(
+            "select c.id
+            from aixada_cart c 
+            inner join aixada_shop_item si on si.cart_id = c.id
+            where c.date_for_shop = '{$date_for_shop}' and c.ts_validated = 0
+            limit 1;"
+        );
+        if ($carts_for_date) {
+            throw new Exception(i18n(
+                'msg_err_disVal_nonEmpyCatrs',
+                array('date_for_shop'=>$date_for_shop)
+            ));
+        }
         
+        // Set date for shop as date for order
+        $db->start_transaction();
         $operator_id = get_session_user_id();
         //For each uf
         $rs = $db->Execute("select distinct os.uf_id
@@ -440,15 +454,30 @@ function directly_validate_order($order_id, $record_provider_invoice) {
         while ($row = $rs->fetch_assoc()) {
             $uf_id = $row['uf_id'];
             // Create cart
-            $db->Execute(
-                "insert into aixada_cart (
-                    uf_id, date_for_shop
-                )
-                values (
-                    {$uf_id}, '{$date_for_shop}'
-                );"
+            $cart_for_date = get_row_query(
+                "select c.id
+                from aixada_cart c
+                left join aixada_shop_item si on si.cart_id = c.id
+                where 
+                    si.cart_id is null 
+                    and c.uf_id = {$uf_id}
+                    and c.date_for_shop = '{$date_for_shop}'
+                    and c.ts_validated = 0
+                limit 1;"
             );
-            $cart_id = $db->last_insert_id();
+            if ($cart_for_date) {
+                $cart_id = $cart_for_date['id'];
+            } else {
+                $db->Execute(
+                    "insert into aixada_cart (
+                        uf_id, date_for_shop
+                    )
+                    values (
+                        {$uf_id}, '{$date_for_shop}'
+                    );"
+                );
+                $cart_id = $db->last_insert_id();
+            }
             // Copy revised items into aixada_shop_item with to corresponding cart
             $db->Execute(
                 "insert into aixada_shop_item (

@@ -701,6 +701,8 @@ $Text['msg_con_disValitate_prvInv'] =
     <li>i l'import de l'albarà s'anotarà al compte del proveïdor com a factura.</li>
     </ul>";
 $Text['msg_err_disValitate'] = "Error al distribuir i validar la comanda #";
+$Text['msg_err_disVal_nonEmpyCatrs'] = 
+    "Hi ha validacions pendents per a la data {date_for_shop}.<br>No és possible \"Distribuir i validar\" per a la mateixa data si hi ha validacions pendents!";
 $Text['btn_disValitate_ok'] = "Entesos: distribueix i valida!";
 $Text['btn_bakToRevise'] = "Encara no: vull seguir revisant";
 $Text['btn_disValitate_done'] = "Correcte!<br>La comanda #{order_id} ha estat distribuïda i validada.";

@@ -710,6 +710,8 @@ $Text['msg_con_disValitate_prvInv'] =
     <li>y el importe del albarán se anotará en la cuenta del proveedor como factura.</li>
     </ul>";
 $Text['msg_err_disValitate'] = "Error al distribuir y validar el pedido #";
+$Text['msg_err_disVal_nonEmpyCatrs'] =
+    "Hay validaciones pendientes para la fecha {date_for_shop}.<br>No es posible \"Distribuir y validar\" para la misma fecha si hay validaciones pendientes!";
 $Text['btn_disValitate_ok'] = "Entendidos: distribuye y valida!";
 $Text['btn_bakToRevise'] = "Todavía no: quiero seguir revisando";
 $Text['btn_disValitate_done'] = "Correcto!<br>El pedido #{order_id} ha sido distribuido y validado.";

@@ -709,6 +709,9 @@ $Text['msg_con_disValitate_prvInv'] =
     <li>and the total amount will be put as invoice to the provider account.</li>
     </ul>";
 $Text['msg_err_disValitate'] = "Error when distribute and validate order #";
+$Text['msg_err_disVal_nonEmpyCatrs'] = 
+    // Used to throw exception, multiple text lines causes a PHP warning "Header may not contain more than a single header..."
+    "There validations pending for {date_for_shop}.<br>Is not possible \"Distribute and validate\" for the same date if there are outstanding validations!";
 $Text['btn_disValitate_ok'] = "Understood: distributes and validates!";
 $Text['btn_bakToRevise'] = "Not yet: I want to continue reviewing";
 $Text['btn_disValitate_done'] = "Right!<br>Order #{order_id} has been distributed and validated.";
