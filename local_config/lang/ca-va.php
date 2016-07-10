@@ -886,6 +886,8 @@ $Text['msg_err_delorerable'] = "Ja s'han demanat productes per aquesta data. No 
 $Text['msg_pre2Order'] = "Converteix aquesta comanda acumulativa a comanda normal. Pots triar una data d'entrega";
 
 $Text['msg_err_modified_order'] = "Algú ha modificat els productes a demanar per la data actual. Alguns productes que havies demanat ja no estan disponibles i desapareixeran del teu carret una vegada recarregat.";
+$Text['msg_err_modif_order_closed'] = "S'ha intentat modificar alguna comanda que ja està tancada.";
+$Text['msg_err_cart_reloaded'] = "La seva cistella es mostrarà de nou.";
 $Text['btn_confirm_del'] = "Esborrar! Estic segur";
 $Text['print_new_win'] = "Nova finestra";
 $Text['print_pdf'] = "Descarregar pdf";

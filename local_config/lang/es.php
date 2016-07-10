@@ -895,6 +895,8 @@ $Text['msg_err_delorerable'] = "Existe un pedido para este producto y fecha. No 
 $Text['msg_pre2Order'] = "Convierte el pedido acumulativo en un pedido regular. Se crea una fecha de entrega. ";
 
 $Text['msg_err_modified_order'] = "Alguien ha modificado los productos a pedir para fecha actual. Algunos productos que habías pedido ya no están disponibles y desaparecerán de tu carrito una vez recargado.";
+$Text['msg_err_modif_order_closed'] = "Se ha intentado modificar algún pedido que ya está cerrado.";
+$Text['msg_err_cart_reloaded'] = "Su cesta se mostrará de nuevo.";
 $Text['btn_confirm_del'] = "Sí, eliminar!!";
 $Text['print_new_win'] = "Ventana nueva";
 $Text['print_pdf'] = "Descarga pdf";
