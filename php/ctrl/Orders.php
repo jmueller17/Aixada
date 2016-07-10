@@ -76,6 +76,7 @@ try{
     		
     	//set the global revisio status of the order
     	case 'setOrderStatus':
+    		chk_no_validate_order(get_param_int('order_id', 0));
     		echo do_stored_query('set_order_status', get_param('order_id'), get_param('status')  );
     		exit; 
     		
@@ -92,7 +93,9 @@ try{
     		
 		//moves an order from revision to shop_item (into people's cart for the given date) 
     	case 'moveOrderToShop':
-			prepare_order_to_shop(get_param_int('order_id'));
+    		$order_id = get_param_int('order_id', 0);
+    		chk_no_validate_order($order_id);
+    		prepare_order_to_shop($order_id);
     		echo do_stored_query('move_order_to_shop', get_param('order_id'), get_param('date'));
     		exit;
             
