@@ -6,8 +6,39 @@
  */
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS dbUpdate_280 $$
-CREATE PROCEDURE dbUpdate_280() BEGIN
+
+DROP PROCEDURE IF EXISTS dbUpdateUtil_removeRelatedFk $$
+CREATE PROCEDURE dbUpdateUtil_removeRelatedFk(in the_table_name varchar(255)) BEGIN
+    declare fk_name varchar(255) default ""; 
+    declare finished integer default 0;
+    declare fk_names cursor for 
+        select constraint_name
+        from information_schema.key_column_usage
+        where
+            CONSTRAINT_SCHEMA = DATABASE()
+            AND referenced_table_name = the_table_name;
+    -- declare not found handler 
+    declare continue handler for not found set finished = 1;
+    open fk_names;
+    read_loop: loop
+        fetch fk_names into fk_name;
+        IF finished = 1 THEN 
+            LEAVE read_loop;
+        END IF;
+        set @q = concat(
+            "alter table aixada_product drop foreign key ", fk_name, ';'
+        );
+        prepare st from @q;
+        execute st;
+        deallocate prepare st;
+        insert into aixada_version (module_name, version) values (
+            concat('> temporarily remove: ', @q), 'removeRelatedFk'
+        );
+    end loop read_loop;
+END $$
+
+DROP PROCEDURE IF EXISTS dbUpdate_280_c01 $$
+CREATE PROCEDURE dbUpdate_280_c01() BEGIN
 
 IF NOT EXISTS (
     SELECT * FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_version'
@@ -28,7 +59,7 @@ IF NOT EXISTS (
 END IF;
 
 insert into aixada_version (module_name, version) values (
-CONCAT('START dbUpdate_280: ', SYSDATE()), '2.8'); 
+CONCAT('START dbUpdate_280_c01: ', SYSDATE()), '2.8'); 
 
 IF NOT EXISTS (
     SELECT * FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_stock_movement_type'
@@ -177,12 +208,35 @@ IF NOT EXISTS (
     '> CREATE table aixada_account_desc', '2.8');
 END IF;
 
+IF EXISTS (
+    SELECT * FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+        AND table_name ='aixada_unit_measure'
+        AND column_name = 'id'
+        AND DATA_TYPE = 'tinyint'
+) THEN
+    /* temporary remove related fk to table aixada_unit_measure */
+    CALL dbUpdateUtil_removeRelatedFk('aixada_unit_measure');
+    /* alter table */
+    alter table aixada_unit_measure
+        modify id 	smallint 	not null auto_increment;
+    alter table aixada_product
+        modify unit_measure_order_id    smallint    default 1,
+        modify unit_measure_shop_id     smallint    default 1;
+    /* re-create fk */
+    alter table aixada_product
+        add foreign key (unit_measure_order_id) references aixada_unit_measure(id),
+        add foreign key (unit_measure_shop_id)  references aixada_unit_measure(id);
+    insert into aixada_version (module_name, version) values (
+    '> CHANGE aixada_unit_measure.id from tinyint to smallint ', '2.8');
+END IF;
+
 insert into aixada_version (module_name, version) values (
-CONCAT('END dbUpdate_280: ', SYSDATE()), '2.8'); 
+CONCAT('END dbUpdate_280_c01: ', SYSDATE()), '2.8'); 
 
 END $$
 
-CALL dbUpdate_280() $$
+CALL dbUpdate_280_c01() $$
 
-DROP PROCEDURE IF EXISTS dbUpdate_280 $$
+DROP PROCEDURE IF EXISTS dbUpdate_280_c01 $$
 DELIMITER ;

@@ -149,7 +149,7 @@ create table aixada_orderable_type (
  *      stores the possible unit measures (kg, piece, 500g etc)
  */
 create table aixada_unit_measure (
-  id   	     		tinyint		 not null auto_increment,
+  id   	     		smallint     not null auto_increment,
   name 				varchar(255) not null,
   unit				varchar(50)	 not null,
   primary key (id)
@@ -196,8 +196,8 @@ create table aixada_iva_type (
   rev_tax_type_id		tinyint			default 1,
   iva_percent_id  	    smallint 		default 1,
   unit_price       		decimal(10,2) 	default 0.0,
-  unit_measure_order_id	tinyint			default 1,
-  unit_measure_shop_id	tinyint			default 1,
+  unit_measure_order_id smallint        default 1,
+  unit_measure_shop_id  smallint        default 1,
   stock_min    	      	decimal(10,4) 	default 0, 
   stock_actual 	      	decimal(10,4) 	default 0, 
   delta_stock           decimal(10,4)   default 0,
