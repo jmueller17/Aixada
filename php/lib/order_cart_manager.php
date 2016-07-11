@@ -71,7 +71,7 @@ class order_cart_manager extends abstract_cart_manager {
 	    $this->tried_modif_closed = false;
         // call the super-class
         $res = parent::commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice);
-        if (true || $this->tried_modif_closed) {
+        if ($this->tried_modif_closed) {
             throw new Exception(i18n('msg_err_modif_order_closed'));
         }
         return $res;
