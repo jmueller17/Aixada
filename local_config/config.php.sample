@@ -213,12 +213,22 @@ class configuration_vars {
    */
   public $development = true; 
   
-    /**
+  /**
    * the email address of the admin; used for sending out pwd changes
    * and orders. 
    */
-  public $admin_email = "admin@admin.com";
+  public $admin_email = "admin@admin.com"; // Ignored when SMTP is used
   
+  /**
+   * Emails SMTP options. Uncomment to use SMTP through the library swiftmailer
+   *
+   * NOTE: When SMTP is activated the `$email_SMTP_user` is used instead of `$admin_email` 
+   */
+  // public $email_SMTP_host = 'localhost';
+  // public $email_SMTP_port = 25;
+  // public $email_SMTP_user = 'admin@admin.com';
+  // public $email_SMTP_pswd = 'mypassword';
+  // public $email_SMTP_name = 'L\'Aixada';
   
   /**
    * 
@@ -293,21 +303,6 @@ class configuration_vars {
    * format of emailed orders: just summarized "1" or just extended "2" or both "3"
    */
   public $email_order_format = 3;
-  
-    /**
-   * emails send options: phpMail() "1" or SMTP "2"
-   */
-  public $email_send_type = 1;
-  
-  /**
-   * emails SMTP options. Only of email_send_type = 2
-   */
-  public $email_SMTP_host = 'localhost';
-  public $email_SMTP_port = 25;
-  public $email_SMTP_user = 'johndoe@domain.com';
-  public $email_SMTP_pswd = 'mypassword';
-  public $email_SMTP_name = 'John Doe';
-  
   
   /**
    * INCIDENTS REPORTING VARS

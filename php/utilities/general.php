@@ -2,7 +2,6 @@
 
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
-require_once(__ROOT__ . 'php'.DS.'external'.DS.'swiftmailer-5.x'.DS.'lib'.DS.'swift_required.php');
 
 /**
  * 
@@ -361,7 +360,6 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
         $options = array();
     }
     $cfg = configuration_vars::get_instance();
-    $from = $cfg->admin_email;
 
     // get URL of aixada root
     $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
@@ -386,7 +384,8 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
                     '/index.php" style="color:#888;">'.$url_root.'</a>'.
             "</div>\r\n".
         "</body></html>";
-    if ($cfg->email_send_type == 1){ // phpMail
+    if (get_config('email_SMTP_host', '') === '') { // phpMail
+      $from = $cfg->admin_email;
       $headers = 
           'From: '.$from."\r\n".
           'Reply-To: '.
@@ -402,7 +401,8 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
       $subject64 = mb_encode_mimeheader($subject);
       return mail($to, $subject64, $messageHTML, $headers);
 
-    }elseif ($cfg->email_send_type == 2){ //SMTP
+    } else { //SMTP
+      require_once(__ROOT__ . 'php/external/swiftmailer-5.x/lib/swift_required.php');
       $errorMail = !Swift_Validate::email($to);
       if(isset($options['reply_to'])){
         $replyToMails = explode(",",$options['reply_to']);
