@@ -294,7 +294,19 @@ class configuration_vars {
    */
   public $email_order_format = 3;
   
+    /**
+   * emails send options: phpMail() "1" or SMTP "2"
+   */
+  public $email_send_type = 1;
   
+  /**
+   * emails SMTP options. Only of email_send_type = 2
+   */
+  public $email_SMTP_host = 'localhost';
+  public $email_SMTP_port = 25;
+  public $email_SMTP_user = 'johndoe@domain.com';
+  public $email_SMTP_pswd = 'mypassword';
+  public $email_SMTP_name = 'John Doe';
   
   
   /**

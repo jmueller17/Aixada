@@ -2,7 +2,7 @@
 
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
-
+require_once(__ROOT__ . 'php'.DS.'external'.DS.'swiftmailer-5.x'.DS.'lib'.DS.'swift_required.php');
 
 /**
  * 
@@ -386,20 +386,60 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
                     '/index.php" style="color:#888;">'.$url_root.'</a>'.
             "</div>\r\n".
         "</body></html>";
-    $headers = 
-        'From: '.$from."\r\n".
-        'Reply-To: '.
-            (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
-        (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
-        (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
-        'Return-Path: '.$from."\r\n".
-        "X-Mailer: PHP\r\n".
-        "MIME-Version: 1.0\r\n".
-        "Content-Type: text/html; charset=UTF-8\r\n";
-    mb_language("uni");
-    mb_internal_encoding("UTF-8");
-    $subject64 = mb_encode_mimeheader($subject);
-    return mail($to, $subject64, $messageHTML, $headers);
+    if ($cfg->email_send_type == 1){ // phpMail
+      $headers = 
+          'From: '.$from."\r\n".
+          'Reply-To: '.
+              (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
+          (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
+          (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
+          'Return-Path: '.$from."\r\n".
+          "X-Mailer: PHP\r\n".
+          "MIME-Version: 1.0\r\n".
+          "Content-Type: text/html; charset=UTF-8\r\n";
+      mb_language("uni");
+      mb_internal_encoding("UTF-8");
+      $subject64 = mb_encode_mimeheader($subject);
+      return mail($to, $subject64, $messageHTML, $headers);
+
+    }elseif ($cfg->email_send_type == 2){ //SMTP
+      $errorMail = !Swift_Validate::email($to);
+      if(isset($options['reply_to'])){
+        $replyToMails = explode(",",$options['reply_to']);
+        for ($i = 0; $i < count($replyToMails) && $errorMail == false ; $i++) {
+          if(!Swift_Validate::email($replyToMails[$i])) $errorMail = true;
+        }
+      }
+      if(isset($options['cc'])){
+        $ccMails = explode(",",$options['cc']);
+        for ($i = 0; $i < count($ccMails) && $errorMail == false ; $i++) {
+          if(!Swift_Validate::email($ccMails[$i])) $errorMail = true;
+        }
+      }
+      if(!$errorMail){
+        $transport = Swift_SmtpTransport::newInstance($cfg->email_SMTP_host, $cfg->email_SMTP_port)
+            ->setUsername($cfg->email_SMTP_user)
+            ->setPassword($cfg->email_SMTP_pswd)
+            ;
+        $mailer = Swift_Mailer::newInstance($transport);
+        $message = Swift_Message::newInstance()
+            ->setFrom(array($cfg->email_SMTP_user => $cfg->email_SMTP_name))
+            ->setTo($to)
+            ->setSubject($subject)
+            ->setBody($messageHTML, 'text/html')
+            ;
+        if(isset($options['reply_to'])){
+          $message->setReplyTo($replyToMails);
+        }
+        if(isset($options['cc'])){
+          $message->setCc($ccMails);
+        }
+        return $mailer->send($message);
+      }else{
+        return false;
+      }
+    }
+    return false;
 }
 
 /**
