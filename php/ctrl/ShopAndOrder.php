@@ -150,7 +150,9 @@ try{
 	        						get_param('cart_id',0), 
 	        						get_param('ts_last_saved',0),
 	        						get_param('preorder',$emptyArr), 
-	        						get_param('price', $emptyArr));
+	        						get_param('price', $emptyArr),
+	        						get_param('notes', $emptyArr)
+	        	);
 	            echo ($cid);
 	        }
 	        catch(Exception $e) {

@@ -191,6 +191,10 @@ create table aixada_iva_type (
   active     	      	tinyint			default 1,
   responsible_uf_id     int             default null,
   orderable_type_id		tinyint			default 2,
+    /* 1-> Stoc
+     * 2-> Orderrable
+     * 3-> Order-notes
+     */
   order_min_quantity	decimal(10,4)	default 0,
   category_id	      	int				default 1,
   rev_tax_type_id		tinyint			default 1,

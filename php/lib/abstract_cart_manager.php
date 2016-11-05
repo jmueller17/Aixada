@@ -49,6 +49,7 @@ class abstract_cart_row {
      */
     protected $_unit_price_stamp = 0; 
     
+    protected $_notes = '';
     
     /**
      * Enter description here ...
@@ -60,7 +61,7 @@ class abstract_cart_row {
      * The constructor takes the id of the containing cart, of the
      * product, the quantity and the price
      */
-    public function __construct($date, $uf_id, $product_id, $quantity, $cart_id, $unit_price_stamp)
+    public function __construct($date, $uf_id, $product_id, $quantity, $cart_id, $unit_price_stamp, $notes = '')
     {
         $this->_date = $date;
         $this->_uf_id = $uf_id;
@@ -68,6 +69,7 @@ class abstract_cart_row {
         $this->_quantity = $quantity;
         $this->_cart_id = $cart_id; 
         $this->_unit_price_stamp = $unit_price_stamp;
+        $this->_notes = $notes;
     }
 
     
@@ -184,7 +186,7 @@ class abstract_cart_manager {
      * @param array $arrPreOrder
      * @return int cart_id
      */
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes) 
     {
     	global $firephp;
     	$hasItems = true; 
@@ -207,7 +209,7 @@ class abstract_cart_manager {
         $db = DBWrap::get_instance();
         try {
             $db->Execute('START TRANSACTION');
-            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice);
+            $this->_make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes);
             $this->_check_rows();
             $this->_delete_rows();
             if ($hasItems) {
@@ -215,7 +217,7 @@ class abstract_cart_manager {
             } else {
             	$this->_delete_cart();
             }
-            $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice);
+            $this->_postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $notes);
             $db->Execute('COMMIT');
         }
         catch (Exception $e) {
@@ -239,7 +241,7 @@ class abstract_cart_manager {
     /**
      * abstract function to make the row classes
      */ 
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes)
     {
     }
 
@@ -287,7 +289,7 @@ class abstract_cart_manager {
     /**
      * abstract function for postprocessing
      */ 
-    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $notes)
     {
     }
 

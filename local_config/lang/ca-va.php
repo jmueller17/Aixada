@@ -903,6 +903,7 @@ $Text['btn_del'] = "Esborrar";
 $Text['btn_new_provider'] = "Nou proveïdor";
 $Text['btn_new_product'] = "Afegir producte";
 $Text['orderable'] = "Comanda directe"; //product type
+$Text['order_notes'] = "(comentaris comanda)"; //product type
 $Text['msg_err_providershort'] = "El nom del proveïdor no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_productshort']  = "El nom del producte no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_select_responsibleuf'] = "Qui s'encarrega? S'ha de seleccionar un responsable.";

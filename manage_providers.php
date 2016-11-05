@@ -479,6 +479,16 @@
 					tds.eq(3).text("<?=$Text['orderable'];?>");
 					tds.eq(10).text(""); //delete stock info
 					tds.eq(11).text("");
+				//order notres
+				} else if (tds.eq(3).text() == "3"){
+					tds.eq(3).text("<?=$Text['order_notes'];?>");
+					tds.eq(5).text(""); //delete price
+					tds.eq(6).text("");
+					tds.eq(7).text("");
+					tds.eq(8).text("");
+					tds.eq(9).text(""); // delete units
+					tds.eq(10).text(""); //delete stock info
+					tds.eq(11).text("");
 				}
 
 				//active
@@ -1237,9 +1247,14 @@
 				}
 
 				if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 1){
+					$('.priceElements').show();
 					$('.stockElements').show();
 				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 2) {
+					$('.priceElements').show();
 					$('.stockElements').hide();
+				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 3) {
+					$('.stockElements').hide();
+					$('.priceElements').hide();
 				}
 				
 			})	
@@ -1426,8 +1441,13 @@
 
 				//show hide stock btn depending on orderable_type
 				if (which == 'orderable_type_id' && selOption == 1){
+					$('.priceElements').fadeIn(500);
 					$('.stockElements').fadeIn(500);
 				} else if (which == 'orderable_type_id' && selOption == 2){
+					$('.priceElements').fadeIn(500);
+					$('.stockElements').fadeOut(500);
+				} else if (which == 'orderable_type_id' && selOption == 3){
+					$('.priceElements').fadeOut(500);
 					$('.stockElements').fadeOut(500);
 				}
 			})
@@ -1695,75 +1715,72 @@
 							    	<input type="hidden" name="category_id" value="{category_id}"/>
 							    	<span class="textAlignLeft sCategoryId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="unit_measure_order_id"><?php echo $Text['unit_measure_order']; ?></label></td>
 							    <td colspan="3">
 							    	<input type="hidden" name="unit_measure_order_id" value="{unit_measure_order_id}"/>
 							    	<span class="textAlignLeft sUnitMeasureOrderId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="unit_measure_shop_id"><?php echo $Text['unit_measure_shop']; ?></label></td>
 							    <td colspan="3">
 							    	<input type="hidden" name="unit_measure_shop_id" value="{unit_measure_shop_id}"/>
 							    	<span class="textAlignLeft sUnitMeasureShopId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="order_min_quantity"><?php echo $Text['order_min']; ?></label></td>
 							    <td colspan="3"><input type="text" name="order_min_quantity" value="{order_min_quantity}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
-							   <tr>
+							  <tr class="priceElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-							  
-							
-							  <tr>
+
+							  <tr class="priceElements">
 							    <td><label for="unit_price"><?php echo $Text['price_net']; ?></label></td>
 							    <td><input type="text" name="unit_price" value="{unit_price_netto}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="iva_percent_id">+ <?php echo $Text['iva_percent']; ?></label></td>
 							    <td>
 							    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
 							    	<span class="textAlignLeft sIvaPercentId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="rev_tax_type_id">+ <?php echo $Text['rev_tax_type']; ?></label></td>
 								  <td>
 							    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
 							    	<span class="textAlignLeft sRevTaxTypeId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label><?php echo $Text['unit_price']; ?></label></td>
 								<td><p class="boldStuff ui-corner-all aix-layout-fixW80 unit_price_brutto">{unit_price}</p></td>
-
 							  </tr>
-							  
-							  
-							  <tr>
+							  <tr class="priceElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-							  <tr>
-							    <td><label class="stockElements" for="stock_actual"><?php echo $Text['stock']; ?></label></td>
+
+							  <tr class="stockElements">
+							    <td><label for="stock_actual"><?php echo $Text['stock']; ?></label></td>
 							    <td>
-							    	<p class="stockElements setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
+							    	<p class="setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
 							    </td>
 							    <td colspan="2">
-							    	<button class="btn_edit_stocks stockElements"><?php echo $Text['btn_edit_stock'];?></button>
+							    	<button class="btn_edit_stocks"><?php echo $Text['btn_edit_stock'];?></button>
 							    </td>
 							  </tr>
-							  <tr>
+							  <tr class="stockElements">
 							    <td><label for="stock_min"><?php echo $Text['stock_min']; ?></label></td>
 							    <td><input type="text" name="stock_min" value="{stock_min}" class="ui-widget-content ui-corner-all" /></td>
 							    <td>&nbsp;</td>
 							    <td>&nbsp;</td>
 							  </tr>
-							  
-							  <tr>
+							  <tr class="stockElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
+
 							  </tbody>
 							  <tfoot>
 								<tr>
