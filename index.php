@@ -13,6 +13,13 @@
      
 	<style>
 		.ui-state-disabled a {pointer-events: none;}
+		table.tblListingDefault td.MyOrderItem {vertical-align: top;}
+		.has_notes pre {
+		    font-size:140%;
+		    margin:1px .5em;
+		    padding:0 2px;
+		    border:dotted #777 1px;
+		}
 	</style>
     
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
@@ -186,7 +193,17 @@
 					$('#tbl_diffOrderShop').attr('currentDateForOrder',dateForOrder);
 					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder
+						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder,
+						rowComplete: function (rowIndex, row){
+						    var orderable_type_id = $(row).attr("orderable_type_id");
+						    if (orderable_type_id == 3) {
+						        $('.has_notes', row).show();
+						        $('.no_notes', row).hide();
+						    } else {
+						        $('.has_notes', row).hide();
+						        $('.no_notes', row).show();
+						    }
+						},
 					});	
 					
 				} 
@@ -662,12 +679,14 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="detail_{order_id} detail_date_{date_for_order} detail_provider_{provider_id}">
+		<tr class="detail_{order_id} detail_date_{date_for_order} xxxx detail_provider_{provider_id}" orderable_type_id="{orderable_type_id}">
 			<td class="MyOrderItem">{product_id}</td>
-			<td class="MyOrderItem" colspan="2">{name}</td>
-			<td class="MyOrderItem">{quantity}</td>
-			<td class="MyOrderItem">{shop_quantity}</td>
-			<!-- td class="MyOrderItem">{unit_price}</td-->
+			<td class="MyOrderItem no_notes" colspan="2">{name}</td>
+			<td class="MyOrderItem has_notes hidden" colspan="4">{name}<br>
+			    <pre>{notes}</pre>
+			</td>
+			<td class="MyOrderItem no_notes">{quantity}</td>
+			<td class="MyOrderItem no_notes">{shop_quantity}</td>
 		</tr>
 	</tbody>
 </table>
