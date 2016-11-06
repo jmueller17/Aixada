@@ -37,8 +37,8 @@ CREATE PROCEDURE dbUpdateUtil_removeRelatedFk(in the_table_name varchar(255)) BE
     end loop read_loop;
 END $$
 
-DROP PROCEDURE IF EXISTS dbUpdate_280_c01 $$
-CREATE PROCEDURE dbUpdate_280_c01() BEGIN
+DROP PROCEDURE IF EXISTS dbUpdate_280_c02 $$
+CREATE PROCEDURE dbUpdate_280_c02() BEGIN
 
 IF NOT EXISTS (
     SELECT * FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_version'
@@ -59,7 +59,7 @@ IF NOT EXISTS (
 END IF;
 
 insert into aixada_version (module_name, version) values (
-CONCAT('START dbUpdate_280_c01: ', SYSDATE()), '2.8'); 
+CONCAT('START dbUpdate_280_c02: ', SYSDATE()), '2.8'); 
 
 IF NOT EXISTS (
     SELECT * FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_stock_movement_type'
@@ -231,12 +231,29 @@ IF EXISTS (
     '> CHANGE aixada_unit_measure.id from tinyint to smallint ', '2.8');
 END IF;
 
+IF NOT EXISTS (
+    SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()
+        AND table_name ='aixada_order_item'
+        AND column_name = 'notes'
+) THEN
+    ALTER TABLE aixada_order_item ADD COLUMN notes text AFTER quantity;
+    IF EXISTS (
+        SELECT * FROM aixada_orderable_type WHERE id = 3
+    ) THEN
+        update aixada_orderable_type set description = 'order_notes' where id = 3;
+    ELSE
+        insert into aixada_orderable_type values (3, 'order_notes');
+    END IF;
+    insert into aixada_version (module_name, version) values (
+    '> ALTER aixada_order_item ADD notes', '2.8');
+END IF;
+
 insert into aixada_version (module_name, version) values (
-CONCAT('END dbUpdate_280_c01: ', SYSDATE()), '2.8'); 
+CONCAT('END dbUpdate_280_c02: ', SYSDATE()), '2.8'); 
 
 END $$
 
-CALL dbUpdate_280_c01() $$
+CALL dbUpdate_280_c02() $$
 
-DROP PROCEDURE IF EXISTS dbUpdate_280_c01 $$
+DROP PROCEDURE IF EXISTS dbUpdate_280_c02 $$
 DELIMITER ;
