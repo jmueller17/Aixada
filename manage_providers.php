@@ -945,26 +945,29 @@
 				err_msg += "<?=$Text['msg_err_product_category'];?>" + "<br/><br/>"; 
 			}
 
-			//if this is an order item, make sure order unit measure is set
-			if ($(mi +' input[name=orderable_type_id]').val() == 2){
-				isValidItem = $.checkSelect($(mi +' input[name=unit_measure_order_id]'),['','1']);
-				if (!isValidItem){
-					isValid = false; 
-					err_msg += "<?=$Text['msg_err_order_unit'];?>" + "<br/><br/>"; 
-				}
-			}
-
-			isValidItem = $.checkSelect($(mi +' input[name=unit_measure_shop_id]'),['','1']);
-			if (!isValidItem){
-				isValid = false; 
-				err_msg += "<?=$Text['msg_err_shop_unit'];?>" + "<br/><br/>"; 
-			}
-
-			isValidItem =  $.checkNumber($(mi+' input[name="unit_price"]'),0.00, 2);
-			if (!isValidItem){
-				isValid = false; 
-				err_msg += "<?php echo $Text['unit_price'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
-			}
+            if ($(mi +' input[name=orderable_type_id]').val() == 3) {
+                $(mi+' input[name="unit_price"]').val(0);
+            } else {
+                //if this is an order item, make sure order unit measure is set
+                if ($(mi +' input[name=orderable_type_id]').val() == 2) {
+                    isValidItem = $.checkSelect($(mi +' input[name=unit_measure_order_id]'),['','1']);
+                    if (!isValidItem) {
+                        isValid = false; 
+                        err_msg += "<?=$Text['msg_err_order_unit'];?>" + "<br/><br/>"; 
+                    }
+                }
+                isValidItem = $.checkSelect($(mi +' input[name=unit_measure_shop_id]'),['','1']);
+                if (!isValidItem){
+                    isValid = false; 
+                    err_msg += "<?=$Text['msg_err_shop_unit'];?>" + "<br/><br/>"; 
+                }
+                // Check price
+                isValidItem =  $.checkNumber($(mi+' input[name="unit_price"]'),0.00, 2);
+                if (!isValidItem){
+                    isValid = false; 
+                    err_msg += "<?php echo $Text['unit_price'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
+                }
+            }
 
 			if (isValid) {
 				return true; 
