@@ -73,11 +73,11 @@ class order_cart_manager extends abstract_cart_manager {
         parent::__construct($uf_id, $date_for_order); 
     }
 
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes) 
     {
 	    $this->tried_modif_closed = false;
         // call the super-class
-        $res = parent::commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes);
+        $res = parent::commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes);
         if ($this->tried_modif_closed) {
             throw new Exception(i18n('msg_err_modif_order_closed'));
         }
@@ -95,7 +95,7 @@ class order_cart_manager extends abstract_cart_manager {
 	 * @param array $arrCartId		the id of aixada_cart(id). If set, this indicates favorite cart
 	 * @param array $arrPreOrder		true/false if item is preorder
 	 */
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $notes)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes)
     {
     	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favori te" cart
     	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
@@ -157,7 +157,8 @@ class order_cart_manager extends abstract_cart_manager {
 	                                                $arrQuant[$i],  
 	                                                $this->_cart_id, 
 	                                                $arrPrice[$i],
-	                                                ($notes ? $notes[$i] : '') );
+	                                                $arrNotes[$i]
+                                                );
             	} elseif (!$tried_modif_closed){
                 // verify if closed order exist and quantity is the same
                     $sql = "select
@@ -198,7 +199,7 @@ class order_cart_manager extends abstract_cart_manager {
     /**
      * Overloaded function to commit the cart to the database
      */
-    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $notes)
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $arrNotes)
     {
        
         // now store preorder items
@@ -211,7 +212,7 @@ class order_cart_manager extends abstract_cart_manager {
                                                 $arrQuant[$i],  
                                                 $this->_cart_id, 
                                                 $arrPrice[$i],
-                                                $notes[$i]
+                                                $arrNotes[$i]
                 );
             }
         }
