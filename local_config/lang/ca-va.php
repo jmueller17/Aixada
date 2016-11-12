@@ -486,7 +486,7 @@ $Text['create_cart'] = "Crear Cistella";
 /**
  *  Product categories
  */
-$Text['SET_ME'] 			= 'SET_ME';
+$Text['SET_ME'] 			= 'Completar...';
 
 $Text['prdcat_vegies']		 	= "Verdures";
 $Text['prdcat_fruit'] 			= "Fruita";

@@ -668,14 +668,23 @@ function get_orders_in_range($time_period='ordersForToday', $uf_id=0, $from_date
  * @param string|null $date Date for order (used only when $order_id is null)
  * @return mysqli_result
  */
-function get_ordered_products_with_prices($order_id, $provider_id, $date,
-			$page='-') {
+function get_ordered_products_with_prices(
+        $order_id, 
+        $provider_id,
+        $date,
+		$page = '-'
+) {
+    global $Text;
 	if ($page === 'review') {
 		prepare_order_to_shop($order_id);
 	}
+    $db = DBWrap::get_instance();
     $sql = "
         select distinct
-            p.id, p.name, um.unit,
+            p.id, p.name,
+            if(p.orderable_type_id=3, 
+                '" . $db->escape_string($Text['order_notes']) . "',
+                um.unit) unit,
             ifnull(ots.unit_price_stamp, oi.unit_price_stamp) uf_price,
             ifnull(ots.rev_tax_percent, rev.rev_tax_percent) rev_tax_percent,
             ifnull(ots.iva_percent, iva.percent) iva_percent            
@@ -716,6 +725,6 @@ function get_ordered_products_with_prices($order_id, $provider_id, $date,
         FROM({$sql}) r
         group by id, name, unit
         order by name;";
-    return DBWrap::get_instance()->Execute($sql2);
+    return $db->Execute($sql2);
 }
 ?>

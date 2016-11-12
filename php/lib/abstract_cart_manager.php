@@ -189,7 +189,7 @@ class abstract_cart_manager {
      * @param array $arrPreOrder
      * @return int cart_id
      */
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes = null) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes) 
     {
     	global $firephp;
     	$hasItems = true; 

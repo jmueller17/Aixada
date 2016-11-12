@@ -489,7 +489,7 @@ $Text['create_cart'] = "Crete Cart";
 /**
  *  Product categories
  */
-$Text['SET_ME'] 			= 'SET_ME';
+$Text['SET_ME'] 			= 'To complete...';
 
 $Text['prdcat_vegies']		 	= "Vegetables";
 $Text['prdcat_fruit'] 			= "Fresh fruits";
