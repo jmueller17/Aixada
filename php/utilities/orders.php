@@ -6,9 +6,9 @@ $price_stamp_decimals = 6;
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
-require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
-require_once(__ROOT__."php/lib/account_operations.php");
-
+require_once(__ROOT__ . 'local_config/lang/' . get_session_language() . '.php');
+require_once(__ROOT__ . 'php/lib/account_operations.php');
+require_once(__ROOT__ . 'php/lib/report_orders.php');
 
 /**
  * 
@@ -299,14 +299,11 @@ function edit_order_gross_price($order_id, $product_id, $gross_price) {
  * @param int $provider_id
  * @param date $date_for_order
  */
-function finalize_order($provider_id, $date_for_order)
+function finalize_order($provider_id, $date_for_order, $revision_status = 1)
 {
-	global $Text;  	
-	$config_vars = configuration_vars::get_instance(); 
-	$msg = ''; 
-	
-	
-	//check here if an order_id already exists for this date and provider. 
+    global $Text;  	
+
+    //check here if an order_id already exists for this date and provider. 
     if (!get_row_query(
         "select oi.id
         from 
@@ -320,82 +317,109 @@ function finalize_order($provider_id, $date_for_order)
     ) { // No open orders for this date
         throw new Exception ($Text['ostat_closed']);
     }
-	
-	
-	// Send eMail to provider
-	if ($config_vars->internet_connection && $config_vars->email_orders){
-		
-        $provider_name = get_list_query(array(
-            'SELECT name FROM aixada_provider WHERE id = :1q',
-            $provider_id));
-		$rm = new report_manager();
-		
-        $message = '<h2>'.$config_vars->coop_name."</h2>\n";
-        $email_order_format = $config_vars->email_order_format;
+
+    // finalize
+    $msg = ''; 
+    if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){
+        while ($row = $rs->fetch_assoc()) {
+            $order_id = $row['id'];
+        }
+        $db = DBWrap::get_instance();
+        $db->free_next_results();
+        $msg .= '<br>' . $Text['ostat_desc_fin_send'] . $order_id;
+        if ($revision_status == 3 || $revision_status == 4) {
+            $ok = $db->Execute(
+                "update aixada_order
+                set revision_status={$revision_status} where id={$order_id}"
+            );
+	    	$db->free_next_results();
+            if ($ok) {
+                switch ($revision_status) {
+                    case 3:
+                        $msg .= '<br>' . $Text['order']  . ' ' . $Text['ostat_postponed'];
+                        break;
+                    case 4:
+                        $msg .= '<br>' . $Text['order']  . ' ' . $Text['ostat_canceled'];
+                        break;
+                }
+            } else {
+                $msg = '<br><span style="color:red">An error occurred changing order status!</span>';
+            }
+        }
+    } else {
+        throw new Exception ($Text['msg_err_finalize']);
+    }
+
+    if ($revision_status == '1') {
+        $msg .= '<br>' . send_order($order_id);
+    }
+
+    return $msg ? substr($msg, 4) : '';
+}
+    
+function send_order($order_id) 
+{
+    global $Text;
+    
+    // Send order by email to provider
+    if (get_config('internet_connection') && get_config('email_orders')) {
+        
+        $row = get_row_query(
+            "SELECT provider_id, date_for_order
+            FROM aixada_order WHERE id = {$order_id}"
+        );
+        if (!$row) {
+            return '';
+        }
+        $provider_id = $row['provider_id'];
+        $date_for_order = $row['date_for_order'];
+        
+        $row = get_row_query(
+            "SELECT name, email
+            FROM aixada_provider WHERE id = {$provider_id}"
+        );
+        if (!$row) {
+            return '';
+        }
+        $toEmail = $row['email'];
+        $providerName = $row['name'];
+        if (is_null($toEmail)) {
+            return '';
+        }
+
+        $ro = new report_order('cost');
+        
+        $message = '<h1>' . get_config('coop_name'). "</h1>\n";
+        $message .= "<h2>
+            <span style\"color:#666\">{$Text['order']}</span> #{$order_id}
+            <span style\"color:#666\">{$Text['for']}</span> {$date_for_order}
+            <span style\"color:#666\">{$Text['for']}</span> {$providerName}
+            </h2>\n";
+        $email_order_format = get_config('email_order_format');
         if ($email_order_format == 1 || $email_order_format == 3){ 
-            $message .= "<h2>".$Text['summarized_orders'].' '.$Text['for'].' "'.
-                    $provider_name.'" '.$Text['for'].' '.
-                    $date_for_order."</h2>\n";
-            $message .= $rm->write_summarized_orders_html($provider_id, $date_for_order);
-            $message .= "<p><br/></p>\n";
+            $message .= $ro->getHtml_orderProd($order_id);
         }
         if ($email_order_format == 2 || $email_order_format == 3){
-            $message .= "<h2>".$Text['detailed_orders'].' '.$Text['for'].' "'.
-                    $provider_name.'" '.$Text['for'].' '.
-                    $date_for_order."</h2>\n";
-            $message .= $rm->extended_orders_for_provider_and_dateHTML($provider_id, $date_for_order);
-            $message .= "<p><br/></p>\n";
+            $message .= $ro->getHtml_orderProdUf($order_id);;
         }
-		
-		$db = DBWrap::get_instance();
-		$db->free_next_results();
-		$strSQL = 'SELECT name, email FROM aixada_provider WHERE email is not null and id = :1q';
-    	$rs = $db->Execute($strSQL, $provider_id);
-		if($rs->num_rows == 0){
-    		throw new Exception("The provider does not have an email.");
-		}
-    	
-		while ($row = $rs->fetch_assoc()) {
-      		$toEmail = $row['email'];
-            $providerName = $row['name'];
-    	}
-    	
-    	$db->free_next_results();
-    	
-		$rs = do_stored_query('get_responsible_uf', $provider_id);
-    	
-    	$responsible_ufs = get_list_rs($rs, 'email');
-    	
-		$subject = $Text['order'].' '.$Text['for'].' "'.$providerName.'" '.
-            $Text['for'].' '.$date_for_order;		
+
+        $subject = 
+            $Text['order'] .' #' . $order_id . ' ' .
+            $Text['for'] . ' "' . $providerName . '" ' .
+            $Text['for'] . ' ' . $date_for_order;
+        $rs = do_stored_query('get_responsible_uf', $provider_id);
+        $responsible_ufs = get_list_rs($rs, 'email');
         if (send_mail($toEmail, $subject, $message, array(
-                        'reply_to'=>$responsible_ufs,
-                        //also send order to responsible uf as cc
-                        'cc'=>$responsible_ufs
-                    ))) {
-			$msg = $Text['msg_order_emailed'];			
-		} else {
-			$msg = '<span style="color:red">'.$Text['msg_err_emailed'].'</span>';
-		}
-		
-		
-	}
-	
-	
-	
-	
-	if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){
-		while ($row = $rs->fetch_assoc()) {
-      		$order_id = $row['id'];
-    	}
-        $msg .= $msg!=='' ? '<br>' : '';
-		$msg .= $Text['ostat_desc_fin_send'] . $order_id;
-	} else {
-		throw new Exception ($Text['msg_err_finalize']);
-	}
-	
-	return $msg; 
-	
+            'reply_to'=>$responsible_ufs,
+            //also send order to responsible uf as cc
+            'cc'=>$responsible_ufs
+        ))) {
+            $msg = $Text['msg_order_emailed'];			
+        } else {
+            $msg = '<span style="color:red">'.$Text['msg_err_emailed'].'</span>';
+        }
+    }
+    return $msg; 
 }
 
 /**

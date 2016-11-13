@@ -7,7 +7,7 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/orders.php");
-require_once(__ROOT__ . "php/lib/report_manager.php");
+
 
 
 if (!isset($_SESSION)) {
@@ -111,7 +111,12 @@ try{
   			
   		//finalizes an order; no more modifications possible	
   		case 'finalizeOrder':
-  			echo finalize_order(get_param('provider_id'), get_param('date'));
+  			echo finalize_order(get_param_int('provider_id'), get_param('date'), get_param_int('revision_status', 1));
+  			exit;
+         
+        //send an order; no more modifications possible	
+  		case 'sendOrder':
+  			echo send_order(get_param('order_id'));
   			exit;
 
       case 'reopenOrder':
@@ -137,6 +142,7 @@ try{
   			
   		//make html file(s) of selected orders and bundle them into a zip
   		case 'bundleOrders':
+            require_once(__ROOT__ . "php/lib/report_manager.php");
   			$rm = new report_manager();
   			$zipfile = $rm->bundle_orders(get_param('provider_id'), get_param('date_for_order'), get_param('order_id'),0);
       		echo $zipfile;
