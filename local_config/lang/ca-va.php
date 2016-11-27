@@ -683,6 +683,7 @@ $Text['add_stock'] = "Afegeix estoc";
 $Text['click_to_edit'] = "Prem la cel·la per a editar-la!";
 $Text['no_results'] = "No hi ha resultats de la cerca.";
 $Text['for'] = "per a"; //as in order FOR Aurora
+$Text['orderToFor'] = "Comanda {id} a \"{provider}\" pel {date}";
 $Text['date_for_order'] = "Data d'entrega";
 $Text['finished_loading'] = "Càrrega acabada";
 $Text['msg_err_unrevised'] = "Encara hi ha element pendents de revisar a la comanda. Si us plau, verifica que hagin arribat tots els productes!";
@@ -835,6 +836,10 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Telèfons";
 $Text['net_amount'] = "Import net"; //importe netto 
 $Text['gross_amount'] = "Import brut"; //importe brutto
+$Text['cost_amount'] = "Cost"; //importe sin impuestos 
+$Text['final_amount'] = "Import final UF"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Cost\" = Import segons preu del proveïdor abans d'aplicar impostos."; //importe sin impuestos 
+$Text['final_amount_desc'] = "\"Final final UF\" = Import par a la UF, amb impostos d'IVA i Rev."; //importe final a las UF
 $Text['add_pagebreak'] = "Prem aquí per a afegir un salt de pàgina";
 $Text['remove_pagebreak'] = "Prem aquí per eliminar el salt de pàgina";
 

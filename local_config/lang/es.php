@@ -692,6 +692,7 @@ $Text['add_stock'] = "Añadir stock";
 $Text['click_to_edit'] = "¡Clica la celda para editar!";
 $Text['no_results'] = "La búsqueda no ha producido resultados.";
 $Text['for'] = "para"; //as in order FOR Aurora
+$Text['orderToFor'] = "Pedido {id} a \"{provider}\" para el {date}";
 $Text['date_for_order'] = "Fecha de entrega";
 $Text['finished_loading'] = "Carga Finalizada";
 $Text['msg_err_unrevised'] = "¡Hay ítems sin revisar en este pedido. Por favor, asegúrese de que todos los productos pedidos han llegado!";
@@ -844,6 +845,10 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Teléfonos";
 $Text['net_amount'] = "Importe neto"; //importe netto 
 $Text['gross_amount'] = "Importe bruto"; //importe brutto
+$Text['cost_amount'] = "Coste"; //importe sin impuestos 
+$Text['final_amount'] = "Importe final UF"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Coste\" = Importe según precio del proveedor antes de aplicar impuestos."; //importe sin impuestos 
+$Text['final_amount_desc'] = "\"Importe final UF\" = Importe para la UF, con impuestos de IVA y Rev."; //importe final a las UF
 $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 

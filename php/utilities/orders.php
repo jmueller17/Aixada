@@ -375,7 +375,7 @@ function send_order($order_id)
         $date_for_order = $row['date_for_order'];
         
         $row = get_row_query(
-            "SELECT name, email
+            "SELECT name, email, order_send_format, order_send_prices
             FROM aixada_provider WHERE id = {$provider_id}"
         );
         if (!$row) {
@@ -386,27 +386,56 @@ function send_order($order_id)
         if (is_null($toEmail)) {
             return '';
         }
-
-        $ro = new report_order('cost');
+        if ($row['order_send_format'] === 'default') {
+            $email_order_format = get_config('email_order_format');
+        } else {
+            $email_order_format = $row['order_send_format'];
+        }
+        if ($row['order_send_prices'] === 'default') {
+            $email_order_prices = get_config('email_order_prices', 'cost_amount');
+        } else {
+            $email_order_prices = $row['order_send_prices'];
+        }
         
-        $message = '<h1>' . get_config('coop_name'). "</h1>\n";
-        $message .= "<h2>
-            <span style\"color:#666\">{$Text['order']}</span> #{$order_id}
-            <span style\"color:#666\">{$Text['for']}</span> {$date_for_order}
-            <span style\"color:#666\">{$Text['for']}</span> {$providerName}
-            </h2>\n";
-        $email_order_format = get_config('email_order_format');
-        if ($email_order_format == 1 || $email_order_format == 3){ 
-            $message .= $ro->getHtml_orderProd($order_id);
-        }
-        if ($email_order_format == 2 || $email_order_format == 3){
-            $message .= $ro->getHtml_orderProdUf($order_id);;
+        $subject = i18n('orderToFor', array(
+            'id' => '#' . $order_id,
+            'provider' => $providerName,
+            'date' => $date_for_order
+        ));
+        $message = '<h2>' . get_config('coop_name'). "</h2>\n";
+        $message .= "<h2>{$subject}</h2>\n";
+        $ro = new report_order($email_order_prices);
+        $message .= $email_order_format . ' ' . $email_order_prices . '<hr>';
+        switch ($email_order_format) {
+            case '1':
+            case 'Prod':
+                $message .= $ro->getHtml_orderProd($order_id);
+                break;
+            case '2':
+            case 'Matrix':
+                $message .= $ro->getHtml_orderMatrix($order_id);
+                break;
+            case '3':
+            case 'Prod_Matrix':
+                $message .= $ro->getHtml_orderProd($order_id);
+                $message .= $ro->getHtml_orderMatrix($order_id);
+                break;
+            case 'ProdUf':
+                $message .= $ro->getHtml_orderProdUf($order_id);
+                break;
+            case 'Prod_ProdUf':
+                $message .= $ro->getHtml_orderProd($order_id);
+                $ro->setPriceType('none');
+                $message .= $ro->getHtml_orderProdUf($order_id);
+                break;
+            case 'UfProd':
+                $message .= $ro->getHtml_orderUfProd($order_id);
+                break;
+            default: // Send anything if format is not supported
+                $message .= $ro->getHtml_orderProd($order_id);
+                break;
         }
 
-        $subject = 
-            $Text['order'] .' #' . $order_id . ' ' .
-            $Text['for'] . ' "' . $providerName . '" ' .
-            $Text['for'] . ' ' . $date_for_order;
         $rs = do_stored_query('get_responsible_uf', $provider_id);
         $responsible_ufs = get_list_rs($rs, 'email');
         if (send_mail($toEmail, $subject, $message, array(

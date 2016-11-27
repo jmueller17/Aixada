@@ -691,6 +691,7 @@ $Text['add_stock'] = "Add stock";
 $Text['click_to_edit'] = "Click cell to edit!";
 $Text['no_results'] = "The search produced no results.";
 $Text['for'] = "for"; //as in order FOR Aurora
+$Text['orderToFor'] = "Order {id} to \"{provider}\" for {date}";
 $Text['date_for_order'] = "Delivery date";
 $Text['finished_loading'] = "Finished loading";
 $Text['msg_err_unrevised'] = "There are still unrevised items in this order. Please make sure all ordered products have arrived!";
@@ -844,6 +845,10 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Phones";
 $Text['net_amount'] = "Net amount"; //importe netto 
 $Text['gross_amount'] = "Gross amount"; //importe brutto
+$Text['cost_amount'] = "Cost"; //importe sin impuestos 
+$Text['final_amount'] = "HU Final amount"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Cost\" = Amount according to provider price before taxes."; //importe sin impuestos 
+$Text['final_amount_desc'] = "\"HU Final amount\" = Amount with VAT and Rev. taxes."; //importe final a las UF
 $Text['add_pagebreak'] = "Click to ADD here a page break while printing";
 $Text['remove_pagebreak'] = "Click to REMOVE this page break";
 
