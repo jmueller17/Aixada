@@ -328,25 +328,25 @@
 
 			//TODO should be replaced with global $.checkNumber...
 			var qu_ele = $("td.item_quantity input", row);
-			var notes = $("td.item_notes textarea", row).val();
-			if (notes) {
+            var orderable_type_id = $("td.item_orderable_type_id", row).text();
+            var notes = '';
+            if (orderable_type_id == 3) {
+                notes = $("td.item_notes textarea", row).val();
 				qu_ele.val(0);
-			} else {
-				notes = '';
+            } else {
 				var qu = qu_ele.val();
 				//don't add nonsense values
 				qu_ele.val(parseFloat(qu.replace(",",".")));
-			}
-
-			if (isNaN(qu_ele.val())) {
-				var $qu_ele = qu_ele;
-				$(qu_ele).addClass("ui-state-error");
-				$(qu_ele).effect('pulsate',{},100, function callback(){
-				var nv = new Number(0);
-				$qu_ele.val(nv.toFixed(2));
-				$qu_ele.removeClass("ui-state-error");
-			});
-				return false;
+                if (isNaN(qu_ele.val())) {
+                    var $qu_ele = qu_ele;
+                    $(qu_ele).addClass("ui-state-error");
+                    $(qu_ele).effect('pulsate',{},100, function callback(){
+                        var nv = new Number(0);
+                        $qu_ele.val(nv.toFixed(2));
+                        $qu_ele.removeClass("ui-state-error");
+                    });
+                    return false;
+                }
 			}
 
 			//if quantity has changed, add it to the cart.
@@ -355,7 +355,7 @@
 					isPreorder 		: isPreorder,
 					provider_name 	: $("td.item_provider_name", row).text(),
 					name 			: $("td.item_name", row).text(),
-					orderable_type_id: $("td.item_orderable_type_id", row).text(),
+					orderable_type_id: orderable_type_id,
 					notes 			: notes,
 					price 			: parseFloat($("td.item_price", row).text()),
 					quantity 		: qu_ele.val(),
