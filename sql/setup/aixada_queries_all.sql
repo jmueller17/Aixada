@@ -307,6 +307,7 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     c.id as cart_id,
 	c.date_for_shop,
 	c.ts_last_saved,
@@ -359,7 +360,9 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     oi.quantity as quantity,
+    oi.notes,
     oi.favorite_cart_id,
     oi.order_id,
     oi.unit_price_stamp as unit_price,
@@ -883,7 +886,8 @@ begin
 			set @q = concat("select 
 					oi.*,
 					p.name, 
-					p.provider_id, 
+					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised, 
 					si.quantity as shop_quantity
@@ -906,6 +910,7 @@ begin
 					oi.*,
 					p.name,
 					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised,
 					si.quantity as shop_quantity
@@ -921,7 +926,7 @@ begin
 					and p.provider_id = ",the_provider_id,"
 					", wherec ,"
 				order by
-					oi.product_id;"); 				
+					oi.product_id;");
 			
 		end if;
 		
@@ -2359,6 +2364,7 @@ begin
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id ");
+        set wherec = concat(wherec, " and p.orderable_type_id <> 3 "); /* Exclude product as order notes */
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
@@ -5016,6 +5022,7 @@ begin
       aixada_order_item.product_id,
       aixada_product.name as product,
       aixada_order_item.quantity,
+      aixada_order_item.notes,
       aixada_order_item.ts_ordered 
     from aixada_order_item 
     left join aixada_uf as aixada_uf on aixada_order_item.uf_id=aixada_uf.id
@@ -5226,6 +5233,8 @@ begin
       aixada_uf.id as responsible_uf_id,
 aixada_uf.name as responsible_uf_name,
       aixada_provider.offset_order_close,
+      aixada_provider.order_send_format,
+      aixada_provider.order_send_prices,
       aixada_provider.ts 
     from aixada_provider 
     left join aixada_uf as aixada_uf on aixada_provider.responsible_uf_id=aixada_uf.id";

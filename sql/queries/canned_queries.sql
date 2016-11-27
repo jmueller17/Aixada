@@ -233,6 +233,7 @@ begin
       aixada_order_item.product_id,
       aixada_product.name as product,
       aixada_order_item.quantity,
+      aixada_order_item.notes,
       aixada_order_item.ts_ordered 
     from aixada_order_item 
     left join aixada_uf as aixada_uf on aixada_order_item.uf_id=aixada_uf.id
@@ -443,6 +444,8 @@ begin
       aixada_uf.id as responsible_uf_id,
 aixada_uf.name as responsible_uf_name,
       aixada_provider.offset_order_close,
+      aixada_provider.order_send_format,
+      aixada_provider.order_send_prices,
       aixada_provider.ts 
     from aixada_provider 
     left join aixada_uf as aixada_uf on aixada_provider.responsible_uf_id=aixada_uf.id";

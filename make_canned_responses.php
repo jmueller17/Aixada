@@ -105,7 +105,7 @@ $Text = '';
 require 'local_config/lang/' . $language . '.php';
 
 
-$rs = $db->Execute('SHOW TABLES');
+$rs = $db->Execute("SHOW TABLES LIKE 'aixada_%'");
 while ($row = $rs->fetch_array()) {
     $current_table = $row[0];
     $tables[] = $current_table;
@@ -139,7 +139,7 @@ function make_canned_queries()
   $strSQL = "delimiter |\n\n";
 
   global $db;
-  $rs = $db->Execute('SHOW TABLES');
+  $rs = $db->Execute("SHOW TABLES LIKE 'aixada_%'");
   while ($row = $rs->fetch_array()) {
     $tables[] = $row[0];
   }

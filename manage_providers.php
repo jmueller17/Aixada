@@ -146,6 +146,8 @@
 			rowComplete : function (rowIndex, row){
 				setCheckBoxes('#frm_provider_edit');
 				populateSelect(gProviderSelects,'#tbl_provider_edit');
+                refreshSelectValue('#tbl_provider_edit .sOrderSendFormat');
+                refreshSelectValue('#tbl_provider_edit .sOrderSendPrices');
 			}
 
 		});
@@ -394,6 +396,8 @@
 
 				//construct the responsible uf select
 				populateSelect(gProviderSelects,'#tbl_provider_new');
+                setSelectValue('#tbl_provider_edit .sOrderSendFormat', 'default');
+                setSelectValue('#tbl_provider_edit .sOrderSendPrices', 'default');
 
 				//new providers have no id
 				$('#tbl_provider_new input[name=id]').remove();
@@ -1263,6 +1267,20 @@
 			})	
 		}
 
+        function setSelectValue(destination, value) {
+            $(destination).prev().val(value);
+            refreshSelectValue(destination);
+        }
+        
+        function refreshSelectValue(destination) {
+            var selValue = $(destination).prev().val();
+            if (selValue == ''){
+                var selValue = $(destination).children('select:first').val();				
+                $(destination).prev().attr('value',selValue);
+            } else {
+                $(destination).children('select').val(selValue).attr('selected','selected');
+            }
+        }
 
 		function manageEditStockBtn(){
 			//since the whole product form runs through the xml2html class
@@ -1939,6 +1957,41 @@
 							<td></td>
 							<td></td>
 						</tr>
+                        <tr>
+                            <td><label for="order_send_format"><?php echo '=order_send_format'; ?></label></td>
+                            <td>
+                                <input type="hidden" name="order_send_format"  value="{order_send_format}"/>
+                                <span class="textAlignLeft sOrderSendFormat">
+                                    <select>
+                                        <option value="default"><?='=default';?></option>
+                                        <option value="Prod"><?='Prod';?></option>
+                                        <option value="Matrix"><?='Matrix';?></option>
+                                        <option value="Prod_Matrix"><?='Prod_Matrix';?></option>
+                                        <option value="ProdUf"><?='ProdUf';?></option>
+                                        <option value="Prod_ProdUf"><?='Prod_ProdUf';?></option>
+                                        <option value="UfProd"><?='UfProd';?></option>
+                                    </select>
+                                </span>
+                            </td>
+                            <td></td>
+							<td></td>
+						</tr>
+                        <tr>
+                            <td colspan=""><label for="order_send_prices"><?php echo '=order_send_prices'; ?></label></td>
+                            <td>
+                                <input type="hidden" name="order_send_prices"  value="{order_send_prices}"/>
+                                <span class="textAlignLeft sOrderSendPrices">
+                                    <select>
+                                        <option value="default"><?='=default';?></option>
+                                        <option value="cost_amount"><?='=cost_amount';?></option>
+                                        <option value="cost"><?='=cost';?></option>
+                                        <option value="none"><?='=none';?></option>
+                                    </select>
+                                </span>
+                            </td>
+                            <td></td>
+							<td></td>
+                        </tr>
 						</tbody>
 						<tfoot>
 						<tr>

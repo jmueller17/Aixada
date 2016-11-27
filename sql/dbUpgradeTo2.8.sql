@@ -248,6 +248,21 @@ IF NOT EXISTS (
     '> ALTER aixada_order_item ADD notes', '2.8');
 END IF;
 
+IF NOT EXISTS (
+    SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()
+        AND table_name ='aixada_provider'
+        AND column_name = 'order_send_format'
+) THEN
+    ALTER TABLE aixada_provider ADD COLUMN
+        order_send_format varchar(25) default 'default'
+        AFTER offset_order_close;
+    ALTER TABLE aixada_provider ADD COLUMN
+        order_send_prices varchar(15) default 'default'
+        AFTER order_send_format;
+    insert into aixada_version (module_name, version) values (
+    '> ALTER aixada_provider ADD order_send_format and order_send_prices', '2.8');
+END IF;
+
 insert into aixada_version (module_name, version) values (
 CONCAT('END dbUpdate_280_c02: ', SYSDATE()), '2.8'); 
 
