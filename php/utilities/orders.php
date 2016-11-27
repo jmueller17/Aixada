@@ -405,7 +405,6 @@ function send_order($order_id)
         $message = '<h2>' . get_config('coop_name'). "</h2>\n";
         $message .= "<h2>{$subject}</h2>\n";
         $ro = new report_order($email_order_prices);
-        $message .= $email_order_format . ' ' . $email_order_prices . '<hr>';
         switch ($email_order_format) {
             case '1':
             case 'Prod':
