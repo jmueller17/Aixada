@@ -845,10 +845,26 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Phones";
 $Text['net_amount'] = "Net amount"; //importe netto 
 $Text['gross_amount'] = "Gross amount"; //importe brutto
+
 $Text['cost_amount'] = "Cost"; //importe sin impuestos 
 $Text['final_amount'] = "HU Final amount"; //importe final a las UF
-$Text['cost_amount_desc'] = "\"Cost\" = Amount according to provider price before taxes."; //importe sin impuestos 
-$Text['final_amount_desc'] = "\"HU Final amount\" = Amount with VAT and Rev. taxes."; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Cost\" = Amount according to provider price before taxes.";
+$Text['final_amount_desc'] = "\"HU Final amount\" = Amount with VAT and Rev. taxes.";
+
+$Text['prvOrd_default'] = "(depending on configuration)";
+$Text['prvOrdF_formatDesc'] = "Send Orders";
+$Text['prvOrdF_prod'] = "List of products";
+$Text['prvOrdF_matrix'] = "Grid products-HU";
+$Text['prvOrdF_prod_matrix'] = "List of products + Grid";
+$Text['prvOrdF_prodUf'] = "List of products with HU detail";
+$Text['prvOrdF_prod_prodUf'] = "List of products + List with HU detail";
+$Text['prvOrdF_ufProd'] = "List of HU with detail products";
+$Text['prvOrdF_none'] = "Do not send";
+$Text['prvOrdP_pricesDesc'] = "Order amounts to send";
+$Text['prvOrdP_cost_amount'] = "Price and cost amount (without tax)";
+$Text['prvOrdP_cost'] = "Amount Cost (VAT + imp.Rev.)";
+$Text['prvOrdP_none'] = "Without cost";
+
 $Text['add_pagebreak'] = "Click to ADD here a page break while printing";
 $Text['remove_pagebreak'] = "Click to REMOVE this page break";
 

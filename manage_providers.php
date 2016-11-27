@@ -1958,18 +1958,19 @@
 							<td></td>
 						</tr>
                         <tr>
-                            <td><label for="order_send_format"><?php echo '=order_send_format'; ?></label></td>
+                            <td><label for="order_send_format"><?=$Text['prvOrdF_formatDesc']?></label></td>
                             <td>
                                 <input type="hidden" name="order_send_format"  value="{order_send_format}"/>
                                 <span class="textAlignLeft sOrderSendFormat">
                                     <select>
-                                        <option value="default"><?='=default';?></option>
-                                        <option value="Prod"><?='Prod';?></option>
-                                        <option value="Matrix"><?='Matrix';?></option>
-                                        <option value="Prod_Matrix"><?='Prod_Matrix';?></option>
-                                        <option value="ProdUf"><?='ProdUf';?></option>
-                                        <option value="Prod_ProdUf"><?='Prod_ProdUf';?></option>
-                                        <option value="UfProd"><?='UfProd';?></option>
+                                        <option value="default"><?=$Text['prvOrd_default']?></option>
+                                        <option value="Prod"><?=$Text['prvOrdF_prod']?></option>
+                                        <option value="Matrix"><?=$Text['prvOrdF_matrix']?></option>
+                                        <option value="Prod_Matrix"><?=$Text['prvOrdF_prod_matrix'];?></option>
+                                        <option value="ProdUf"><?=$Text['prvOrdF_prodUf'];?></option>
+                                        <option value="Prod_ProdUf"><?=$Text['prvOrdF_prod_prodUf']?></option>
+                                        <option value="UfProd"><?=$Text['prvOrdF_ufProd']?></option>
+                                        <option value="none"><?=$Text['prvOrdF_none']?></option>
                                     </select>
                                 </span>
                             </td>
@@ -1977,15 +1978,15 @@
 							<td></td>
 						</tr>
                         <tr>
-                            <td colspan=""><label for="order_send_prices"><?php echo '=order_send_prices'; ?></label></td>
+                            <td colspan=""><label for="order_send_prices"><?=$Text['prvOrdP_pricesDesc']?></label></td>
                             <td>
                                 <input type="hidden" name="order_send_prices"  value="{order_send_prices}"/>
                                 <span class="textAlignLeft sOrderSendPrices">
                                     <select>
-                                        <option value="default"><?='=default';?></option>
-                                        <option value="cost_amount"><?='=cost_amount';?></option>
-                                        <option value="cost"><?='=cost';?></option>
-                                        <option value="none"><?='=none';?></option>
+                                        <option value="default"><?=$Text['prvOrd_default']?></option>
+                                        <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
+                                        <option value="cost"><?=$Text['prvOrdP_cost']?></option>
+                                        <option value="none"><?=$Text['prvOrdP_none']?></option>
                                     </select>
                                 </span>
                             </td>

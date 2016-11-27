@@ -836,10 +836,26 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Telèfons";
 $Text['net_amount'] = "Import net"; //importe netto 
 $Text['gross_amount'] = "Import brut"; //importe brutto
+
 $Text['cost_amount'] = "Cost"; //importe sin impuestos 
 $Text['final_amount'] = "Import final UF"; //importe final a las UF
 $Text['cost_amount_desc'] = "\"Cost\" = Import segons preu del proveïdor abans d'aplicar impostos."; //importe sin impuestos 
 $Text['final_amount_desc'] = "\"Final final UF\" = Import par a la UF, amb impostos d'IVA i Rev."; //importe final a las UF
+
+$Text['prvOrd_default'] = "(segons la configuració)";
+$Text['prvOrdF_formatDesc'] = "Enviar comandes";
+$Text['prvOrdF_prod'] = "Llista de productes";
+$Text['prvOrdF_matrix'] = "Quadrícula Productes-UF";
+$Text['prvOrdF_prod_matrix'] = "Llista de productes + Quadrícula";
+$Text['prvOrdF_prodUf'] = "Llista de productes amb detall UF";
+$Text['prvOrdF_prod_prodUf'] = "Llista de productes + Llista amb detall UF";
+$Text['prvOrdF_ufProd'] = "Llista de UF amb detall de productes";
+$Text['prvOrdF_none'] = "No enviar";
+$Text['prvOrdP_pricesDesc'] = "Imports al enviar comandes";
+$Text['prvOrdP_cost_amount'] = "Preu i import de Cost (sense imp.)";
+$Text['prvOrdP_cost'] = "Import de Cost (amb IVA + imp.Rev.)";
+$Text['prvOrdP_none'] = "Sense imports";
+
 $Text['add_pagebreak'] = "Prem aquí per a afegir un salt de pàgina";
 $Text['remove_pagebreak'] = "Prem aquí per eliminar el salt de pàgina";
 

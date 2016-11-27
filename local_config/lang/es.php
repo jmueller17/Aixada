@@ -845,10 +845,26 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Teléfonos";
 $Text['net_amount'] = "Importe neto"; //importe netto 
 $Text['gross_amount'] = "Importe bruto"; //importe brutto
+
 $Text['cost_amount'] = "Coste"; //importe sin impuestos 
 $Text['final_amount'] = "Importe final UF"; //importe final a las UF
-$Text['cost_amount_desc'] = "\"Coste\" = Importe según precio del proveedor antes de aplicar impuestos."; //importe sin impuestos 
-$Text['final_amount_desc'] = "\"Importe final UF\" = Importe para la UF, con impuestos de IVA y Rev."; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Coste\" = Importe según precio del proveedor antes de aplicar impuestos.";
+$Text['final_amount_desc'] = "\"Importe final UF\" = Importe para la UF, con impuestos de IVA y Rev.";
+
+$Text['prvOrd_default'] = "(según la configuración)";
+$Text['prvOrdF_formatDesc'] = "Enviar pedidos";
+$Text['prvOrdF_prod'] = "Lista de productos";
+$Text['prvOrdF_matrix'] = "Cuadrícula Productos-UF";
+$Text['prvOrdF_prod_matrix'] = "Lista de productos + Cuadrícula";
+$Text['prvOrdF_prodUf'] = "Lista de productos con detalle UF";
+$Text['prvOrdF_prod_prodUf'] = "Lista de productos + Lista con detalle UF";
+$Text['prvOrdF_ufProd'] = "Lista de UF con detalle de productos";
+$Text['prvOrdF_none'] = "No enviar";
+$Text['prvOrdP_pricesDesc'] = "Importes a enviar en pedidos";
+$Text['prvOrdP_cost_amount'] = "Precio y importe de Coste (sin imp.)";
+$Text['prvOrdP_cost'] = "Importe de Coste (con IVA + imp.Rev.)";
+$Text['prvOrdP_none'] = "Sin importes";
+
 $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 

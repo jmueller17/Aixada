@@ -406,6 +406,8 @@ function send_order($order_id)
         $message .= "<h2>{$subject}</h2>\n";
         $ro = new report_order($email_order_prices);
         switch ($email_order_format) {
+            case 'none':
+                return ''; // NO EMAIL!
             case '1':
             case 'Prod':
                 $message .= $ro->getHtml_orderProd($order_id);
