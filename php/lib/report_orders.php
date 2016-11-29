@@ -62,7 +62,7 @@ class report_order
                 }
                 $brk_uf = $row['uf_id'];
                 $brk_order = null;
-                $tbody .= $this->t_uf_head(0, $row['uf_id'], $row['uf_name']);
+                $tbody = $this->t_uf_head(0, $row['uf_id'], $row['uf_name']);
             }
             if ($brk_order != $cur_order) {
                 $brk_order = $cur_order;
@@ -179,6 +179,7 @@ class report_order
                         $row['order_id'], $row['pv_name'], $row['date_for_order']
                     ) .
                     $this->t_title_head(1);
+                $tbody = '';
             }
             if ($brk_product != $row['product_id']) {
                 if ($brk_product) {
