@@ -7,15 +7,14 @@
 
  	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
+  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20161204" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
      
 	<style>
 		.ui-state-disabled a {pointer-events: none;}
 		table.tblListingDefault td.MyOrderItem {vertical-align: top;}
-		.has_notes pre {
-		    font-size:140%;
+		.has_notes div {
 		    margin:1px .5em;
 		    padding:0 2px;
 		    border:dotted #777 1px;
@@ -28,7 +27,7 @@
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>   	    
+    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20161204" ></script>   	    
      
    	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script> 
     <script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
@@ -197,6 +196,14 @@
 						rowComplete: function (rowIndex, row){
 						    var orderable_type_id = $(row).attr("orderable_type_id");
 						    if (orderable_type_id == 3) {
+                                var html = $('.has_notes div', row).html();
+                                html = html.replace(/</g, '&lt;'
+                                    ).replace(/>/g, '&gt;'
+                                    ).replace(/\r\n/g, '<br>'
+                                    ).replace(/\r/g, '<br>'
+                                    ).replace(/\n/g, '<br>');
+                                $('.has_notes div', row).html(html);
+                                
 						        $('.has_notes', row).show();
 						        $('.no_notes', row).hide();
 						    } else {
@@ -683,7 +690,7 @@
 			<td class="MyOrderItem">{product_id}</td>
 			<td class="MyOrderItem no_notes" colspan="2">{name}</td>
 			<td class="MyOrderItem has_notes hidden" colspan="4">{name}<br>
-			    <pre>{notes}</pre>
+			    <div>{notes}</div>
 			</td>
 			<td class="MyOrderItem no_notes">{quantity}</td>
 			<td class="MyOrderItem no_notes">{shop_quantity}</td>
