@@ -318,7 +318,9 @@
 					
 				},
 				complete : function (rowCount){
-					
+					if (!gSelRow) {
+                        return;
+                    }
 					//STEP 3: populate cells with product quantities
 					$.ajax({
 					type: "POST",
@@ -424,26 +426,16 @@
 
 						//if we print, copy the table to the printWindow
 						if (gSection == 'print' && printWin != null){
-
-							var wrapDiv = $('#orderWrap', printWin.document).children(':first').clone();
-							var pname = gPrintList[gPrintIndex].children().eq(2).text(); //get provider name
-							var odate = gPrintList[gPrintIndex].children().eq(3).text(); //get order date	
-							var tbl = $('#tbl_reviseOrder').clone();			//clone the table with the current order data
-							
-							$(tbl).attr('id', 'print_order_'+gPrintIndex);	
-							$('thead', tbl).prepend("<tr><th colspan='100'><h2><?=$Text['order'];?> (#"+gSelRow.attr('orderId')+") <?=$Text['for'];?> "+pname+".&nbsp;&nbsp;&nbsp; <?=$Text['date_for_order'];?>: "+odate+" </h2></th></tr>");	
-							$(wrapDiv).prepend(tbl); //add the table to the wrapper							
-							$('#orderWrap', printWin.document).append(wrapDiv); //and add the wrapper to the doc in the new window
-
+                            // TODO: show as new report_order formats, 
+                            //  * move this to printQueue() function
+                            //  * remove usage of gSection == 'print' 
+                            //  * remove: gPrintList, gPrintIndex,printWin as globals
 							if (gPrintIndex == gPrintList.length-1){
 								$('.loadingMsg', printWin.document).html("<p><?=$Text['finished_loading'];?></p>").fadeOut(2000);
 								$('#orderWrap', printWin.document).children(':first').hide();
-								//printWin.print();
 							} else {
 								$('.loadingMsg', printWin.document).html("<p><?=$Text['loading']; ?> " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
 							}
-
-							loadPrintOrder();
 						}
 
 						$('#tbl_reviseOrder').show();
@@ -1358,51 +1350,6 @@
 							.data("export", "order")
 							.dialog("open");
 					 }); 
-        		
-
-				//view selected order (no editing)
-				/*$('.viewOrderBtn')
-					.live('click', function(e){
-						gSelRow = $(this).parents('tr'); 
-						$('.col').hide();	
-						switchTo('view',{});
-					});*/
-
-				
-				//print the selected order. If more than one is selected, confirm bulk print
-				/*$('.printOrderBtn')
-				.live('click', function(e){
-					$this = $(this);
-					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
-						$.showMsg({
-							msg:"<?=$Text['print_several'];?>",
-							width:500,
-							buttons: {
-								"<?=$Text['btn_yes_all'];?>":function(){						
-									printQueue();
-									$(this).dialog("close");
-								},
-								"<?=$Text['btn_just_one']?>" : function(){
-									$('input:checkbox[name="bulkAction"]').attr('checked', false);
-									$this.parents('tr').children('td:first').find('input').attr('checked','checked');
-									printQueue();
-									$( this ).dialog( "close" );
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'warning'});
-
-					} else {
-						$(this).parents('tr').children('td:first').find('input').attr('checked','checked');
-						printQueue();
-					}
-					e.stopPropagation();
-				});*/
-
-
-				
 			
 				$("#tblViewOptions")
 				.button({
@@ -1522,60 +1469,28 @@
 				/**
 				 *	prepares the printing queue of the selected orders. 
 				 */
-				function printQueue(){
-					gPrintIndex = -1; 
-					gPrintList = [];
-					gSelRow = null;  
-
-					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-						$.showMsg({
-							msg:"<?=$Text['msg_err_noselect'];?>",
-							buttons: {
-								"<?=$Text['btn_ok'];?>":function(){						
-									$(this).dialog("close");
-								}
-							},
-							title: local_lang._warning,
-							type: 'warning'});
-					} else {
-
-						printWin = window.open('tpl/'+local_cfg.print_order_template);
-						printWin.focus();
-										
-						var i = 0;  						
-						$('input:checkbox[name="bulkAction"]').each(function(){
-							if ($(this).is(':checked')){
-								gPrintList[i++] = $(this).parents('tr');
-							} 
-						});
-						
-	
-						loadPrintOrder();
-					}
-				}
-				
-
-				/**
-				 *  part of a call sequence to load the marked orders one after
-				 *  the other, clone the data in the table and then copy it to the new
-				 *  print window. 
-				 */
-				function loadPrintOrder(){
-
-					gPrintIndex++;
-					
-					if (gPrintIndex == gPrintList.length) return false; 
-					
-					$('.col').hide();
-					gSection = 'print';
-					gSelRow = gPrintList[gPrintIndex]; 
-
-					//need to introduce a delay here in order to load all orders correctly. don't ask me why.... 
-					setTimeout(function(){
-						$('#tbl_reviseOrder tbody').xml2html("reload", {	//load order details for printing
-							params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
-						})
-					}, 1000); 
+				function printQueue() {
+                    // TODO: see gSection == 'print' to fix report as html
+					var _queryStr = '';
+                    $('input:checkbox[name="bulkAction"]').each(function(){
+                        if ($(this).is(':checked')){
+                            var gSelRow = $(this).parents('tr');
+                            _queryStr += 
+                                '&order_id[]=' + gSelRow.attr("orderId") + 
+                                '&provider_id[]=' + gSelRow.attr("providerId") +
+                                '&date[]=' + gSelRow.attr("dateForOrder");
+                        } 
+                    });
+                    if (_queryStr !== '') {
+                        printWin = window.open('php/lib/report_orders_test.php?format=default' + _queryStr);
+                        //printWin = window.open('tpl/'+local_cfg.print_order_template);
+                        printWin.focus();
+                        // setTimeout(function(){
+                            // console.log('html' + _queryStr);
+                            // $('#orderWrap', printWin.document).text(_queryStr);
+                            // // $('#orderWrap', printWin.document).load('' + _queryStr);
+                        // }, 1000);
+                    }
 				}
 
 
@@ -1699,6 +1614,9 @@
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
 								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
 								complete : function(rowCount){
+                      				if (!gSelRow) {
+                                        return;
+                                    }
 									$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
 									$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
 									//copy the order status 
