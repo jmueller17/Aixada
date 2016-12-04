@@ -41,6 +41,129 @@ class report_order
         }
     }
     
+    public static function getHtml_orders($requestArray) 
+    {
+        // check arguments on $requestArray
+        foreach(array('order_id', 'provider_id', 'date') as $key) {
+            if (!array_key_exists($key, $requestArray)) {
+                return '';
+            }
+        }
+        $orderArr = $requestArray['order_id'];
+        $providerArr = $requestArray['provider_id'];
+        $dateArr = $requestArray['date'];
+        if (!is_array($orderArr)) {
+            return '';
+        }
+        if (!is_array($providerArr)) {
+            return '';
+        }
+        if (!is_array($dateArr)) {
+            return '';
+        }
+        if (count($orderArr) !== count($providerArr)) {
+            return '';
+        }
+        if (count($orderArr) !== count($dateArr)) {
+            return '';
+        }
+        if (array_key_exists('format', $requestArray)) {
+            $format = $requestArray['format'];
+        } else {
+            $format = 'default';
+        }
+        if (array_key_exists('prices', $requestArray)) {
+            $prices = $requestArray['prices'];
+        } else {
+            $prices = 'default';
+        }
+        $html = '';
+        for ($i = 0; $i < count($orderArr); $i++) {
+            $html .= self::getHtml_order($orderArr[$i], $providerArr[$i], $dateArr[$i], $format, $prices);
+        }
+        return $html;
+    }
+    
+    public static function getHtml_order($order_id, $provider_id = null, $date_for_order = null, $format = 'default', $prices = 'default') 
+    {
+        global $Text;
+        if ($order_id && !is_numeric($order_id)) {
+            return '';
+        } elseif (!$provider_id && $order_id) { // requires id of provider or order
+            $row = get_row_query(
+                "SELECT provider_id FROM aixada_order WHERE id = {$order_id}"
+            );
+            if (!$row) {
+                return '';
+            }
+            $provider_id = $row['provider_id'];
+        } elseif (!is_numeric($provider_id)) {
+            return '';
+        } 
+        
+        
+        $row = get_row_query(
+            "SELECT order_send_format, order_send_prices
+            FROM aixada_provider WHERE id = {$provider_id}"
+        );
+        if (!$row) {
+            return '';
+        }
+        if ($format != 'default') {
+            $order_format = $format;
+        } else {
+            if ($row['order_send_format'] === 'default') {
+                $order_format = get_config('email_order_format');
+            } else {
+                $order_format = $row['order_send_format'];
+            }
+        }
+        if ($prices != 'default') {
+            $order_prices = $prices;
+        } else {
+            if ($row['order_send_prices'] === 'default') {
+                $order_prices = get_config('email_order_prices', 'cost_amount');
+            } else {
+                $order_prices = $row['order_send_prices'];
+            }
+        }
+        $ro = new report_order($order_prices);
+        $html = '';
+        switch ($order_format) {
+            case 'none':
+                return ''; // NO EMAIL!
+            case '1':
+            case 'Prod':
+                $html .= $ro->getHtml_orderProd($order_id, $provider_id, $date_for_order);
+                break;
+            case '2':
+            case 'Matrix':
+                $html .= $ro->getHtml_orderMatrix($order_id, $provider_id, $date_for_order);
+                break;
+            case '3':
+            case 'Prod_Matrix':
+                $html .= $ro->getHtml_orderProd($order_id, $provider_id, $date_for_order);
+                $html .= $ro->getHtml_orderMatrix($order_id, $provider_id, $date_for_order);
+                break;
+            case 'ProdUf':
+                $html .= $ro->getHtml_orderProdUf($order_id, $provider_id, $date_for_order);
+                break;
+            case 'Prod_ProdUf':
+                $html .= $ro->getHtml_orderProd($order_id, $provider_id, $date_for_order);
+                $ro->setPriceType('none');
+                $html .= $ro->getHtml_orderProdUf($order_id, $provider_id, $date_for_order);
+                break;
+            case 'UfProd':
+                $html .= $ro->getHtml_orderUfProd($order_id, $provider_id, $date_for_order);
+                break;
+            default: // Send anything if format is not supported
+                $html .= $ro->getHtml_orderProd($order_id, $provider_id, $date_for_order);
+                break;
+        }
+        unset($ro);
+        return $html;
+    }
+    
     /**
      * 
      */
@@ -134,7 +257,7 @@ class report_order
             );
         }
         if ($brk_order) {
-            $html .= $this->t_table('', $tbody);
+            $html .= $this->t_table('', $tbody) . '<br>';
         }
         return $html . $this->getHtml_priceDescription();
     }
@@ -398,11 +521,7 @@ class report_order
         }
         return "[<span style=\"padding:0 3px; {$style}\">".$Text[$text_key].'</span>]';
     }
-    
-    /**
-     * 
-     */
-    
+
     /**
      * 
      */
@@ -448,11 +567,11 @@ class report_order
             where ";
         if (is_array($order_id)) {   // order_id
             $sql .= "oi.order_id in( " . implode(',', $order_id) . ")";
-        } elseif ($order_id !== -1 && $order_id !== null) {   // order_id
+        } elseif ($order_id !== -1 && $order_id) {   // order_id
             $sql .= "oi.order_id={$order_id}";
-        } elseif ($date_for_order !== null) { 	        // date for orrder
+        } elseif ($date_for_order) { 	        // date for orrder
             $sql .= "oi.date_for_order='{$date_for_order}'";
-            if ($provider_id !== -1 && $provider_id !== null) {
+            if ($provider_id !== -1 && $provider_id) {
                 $sql .= " and p.provider_id={$provider_id}";
             } else {
                 $sql .= " and ( revision_status is null or revision_status in (1,2,5) )";
@@ -569,18 +688,23 @@ class report_order
     ) {
         $html = '<tr>';
         $html .= $this->t_celBlanck($level);
-        $colspan1 = 3 - $level;
         if ($orderable_type_id == 3) { // product.orderable_type_id=3 => Use product as order notes
             $text = $name;
             if ($order_notes) {
+                $order_notes = str_replace(array("\r\n","\r","\n"), array('<br>','<br>','<br>'), htmlentities($order_notes));
                 $text .=
                     "\n<div style=\"padding: 0 5px 5px 5px;\">\n" .
-                    "<pre style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \n" .
-                    ">{$order_notes}</pre></div>";
+                    "<div style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \n" .
+                    ">{$order_notes}</div></div>";
             }
-            $html .= $this->t_cel($colspan1 + $this->dataColsCount, $text, $underline);
+            $html .= $this->t_cel(
+                $this->dataColsCount + $this->amountColsCount - $level,
+                $text,
+                $underline
+            );
             return $html . "</tr>\n";
         } else { // product as order notes
+            $colspan1 = 3 - $level;
             if ($desc) {
                 $html .= $this->t_cel($colspan1, $name, $underline, $underline);
                 $html .= $this->t_cel(1, $desc, $underline, $underline);
