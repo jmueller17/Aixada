@@ -691,7 +691,11 @@ class report_order
         if ($orderable_type_id == 3) { // product.orderable_type_id=3 => Use product as order notes
             $text = $name;
             if ($order_notes) {
-                $order_notes = str_replace(array("\r\n","\r","\n"), array('<br>','<br>','<br>'), htmlentities($order_notes));
+                $order_notes = str_replace(
+                    array("\r\n",   "\r",   "\n",   '<br>  ',   '<br> '),
+                    array('<br>',   '<br>', '<br>', '<br>&nbsp; &nbsp; ', '<br>&nbsp; '),
+                    htmlentities($order_notes)
+                );
                 $text .=
                     "\n<div style=\"padding: 0 5px 5px 5px;\">\n" .
                     "<div style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \n" .
