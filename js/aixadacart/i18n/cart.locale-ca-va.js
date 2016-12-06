@@ -10,6 +10,7 @@
 			validate : "Valida",
 			submit	: "Envia",
 			save 	: "Desa",
+			deleteRow: "Esborrar producte",
 			saving	: "Guardant...",
 			searchAdd : "Cerca un altre producte",
 			total : "Total",

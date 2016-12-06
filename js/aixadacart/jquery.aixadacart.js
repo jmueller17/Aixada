@@ -190,14 +190,35 @@
 
 				//we have unsaved items	
 				var _self = $(this);
-				_self.data('aixadacart').unsavedItems = true; 
 
 				//check if input field with given id exists, this means item is already in cart
 				var exists = $('#cart_quantity_'+itemObj.id, $this).val(); 
+
+				var emptyRow = false;
+				if (itemObj.orderable_type_id == 3) {
+					if (itemObj.notes.replace(/ /g, ''
+						).replace(/\r/g, ''
+						).replace(/\n/g, '') == '') {
+						itemObj.notes = '';
+					}
+					emptyRow = (itemObj.notes === '');
+				} else {
+					emptyRow = (itemObj.quantity == 0);
+				}
+
 				
-				//if it is not, create a new row
-				if (!exists){
-					
+				if (exists) {
+					if (emptyRow) { // Remove a empty row
+						$('#' + +itemObj.id, $this).remove();
+						$this.aixadacart("saveCart");
+						return;
+					}
+					_self.data('aixadacart').unsavedItems = true; 
+				} else { //if it is not, create a new row
+					if (emptyRow) { // Don't add a empty row
+						return;
+					}
+					_self.data('aixadacart').unsavedItems = true; 
 					itemObj.quantity = formatNumInput(itemObj.quantity);
 					
 					//deactivates items whose provider/order has been already closed
@@ -219,7 +240,9 @@
 					if (itemObj.time_left < 0){
 						str += '<td class="'+deaTd+'"></td>';
 					} else {
-						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close cart_clickable"></span></td>';
+						str += '<td><span id="del_'+itemObj.id +
+							'" class="ui-icon ui-icon-trash cart_clickable" title="' +
+							$.aixadacart.deleteRow + '"></span></td>';
 					}
                     if (itemObj.orderable_type_id == 3) {
                         str += '<td class="item_text" colspan="5">' +
@@ -248,10 +271,10 @@
 					//event listener to remove items from cart
 					$("#del_"+itemObj.id, $this)
 						.bind("mouseenter", function(){
-								$(this).removeClass('ui-icon-close').addClass('ui-icon-circle-close');
+								$(this).removeClass('ui-icon-trash').addClass('ui-icon-circle-close');
 						})
 						.bind("mouseleave", function(){
-							$(this).removeClass('ui-icon-circle-close').addClass('ui-icon-close');
+							$(this).removeClass('ui-icon-circle-close').addClass('ui-icon-trash');
 						})
 						.bind("click", function(e){
 							$(this).parents('tr')
@@ -289,13 +312,19 @@
 						//update the row / calculate the price
 						updateRow.call($(this),objItem);
 						
-						//update the row in the actual product list
-						//TODO pass the name of the field as options when init cart!
-						$('.quantity_'+objItem.id).val(objItem.quantity);
+						//update the row in the all product list
+						$('.quantity_'+objItem.id).val( 
+						    objItem.quantity != 0 ? objItem.quantity : ''
+						);
 						$('.notes_'+objItem.id).val(objItem.notes); // Used in delete row
 
 						//recalculate total cost
 						calculateTotal.call();
+
+						if (objItem.quantity == 0) { // remove empty row
+						    $(this).parents('tr').remove();
+						    $this.aixadacart("saveCart");
+						}
 						
 					});//end event listener
 
@@ -322,6 +351,13 @@
                             //update the cart and notes on other list
                             updateRow.call($(this),objItem);
                             $('.notes_'+objItem.id).val(objItem.notes);
+                            
+                            if (objItem.notes.replace(/ /g, ''
+                            ).replace(/\r/g, ''
+                            ).replace(/\n/g, '') == '') { // remove empty row
+                                $(this).parents('tr').remove();
+                                $this.aixadacart("saveCart");
+                            }
                         }
                     );//end event listener
 				}
@@ -617,8 +653,6 @@
 			
 		//set/update the total cost for item
 		$("#item_total_"+itemObj.id).text(String(round2dText(item_total)));
-		
-		if (itemObj.isPreorder) return;
 	}
 	
 	
