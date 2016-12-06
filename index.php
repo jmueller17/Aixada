@@ -210,7 +210,7 @@
 						        $('.has_notes', row).hide();
 						        $('.no_notes', row).show();
 						    }
-						},
+						}
 					});	
 					
 				} 
