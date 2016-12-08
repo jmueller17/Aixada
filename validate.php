@@ -548,7 +548,7 @@
 
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
-								params: 'oper=getShopProducts&date=0&like='+searchStr,
+								params: 'oper=getToShopProducts&date=0&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id");
 									var qu = $("#cart_quantity_"+id).val();

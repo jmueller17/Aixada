@@ -124,7 +124,7 @@
 					$('.loadSpinner').show();
 					//alert($.getSelectedDate('#datepicker','',what)); //for shop the date needs to be 0!!
 					$('#product_list_provider tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -160,7 +160,7 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -186,7 +186,7 @@
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
+						params: 'oper=getTo'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},

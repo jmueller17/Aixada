@@ -581,7 +581,10 @@ begin
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id ");
-        -- set wherec = concat(wherec, " and p.orderable_type_id <> 3 "); /* Exclude product as order notes */
+        /** hack: the_product_id=-1 works to exclude products as notes **/
+        if the_product_id = -1 then
+            set wherec = concat(wherec, " and p.orderable_type_id <> 3 "); /* Exclude product as order notes */
+        end if;
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
