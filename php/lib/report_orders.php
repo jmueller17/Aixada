@@ -696,6 +696,7 @@ class report_order
                     array('<br>',   '<br>', '<br>', '<br>&nbsp; &nbsp; ', '<br>&nbsp; '),
                     htmlentities($order_notes)
                 );
+                $order_notes = str_replace('<br>', "<br>\n", $order_notes); // break html text lines
                 $text .=
                     "\n<div style=\"padding: 0 5px 5px 5px;\">\n" .
                     "<div style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \n" .
