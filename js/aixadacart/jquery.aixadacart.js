@@ -180,8 +180,6 @@
       * updates the quantity of the item. 
       */
      addItem : function(itemObj) {
-			
-			return this.each(function(){
 				
 				var $this = 
 				(itemObj.isPreorder == "true" || itemObj.isPreorder == 1 ) 
@@ -202,8 +200,14 @@
 						itemObj.notes = '';
 					}
 					emptyRow = (itemObj.notes === '');
+					itemObj.quantity = 0;
 				} else {
+					if (itemObj.quantity.replace(/ /g, '') === '') {
+					    itemObj.quantity = '0';
+					}
+					itemObj.quantity = formatNumInput(itemObj.quantity);
 					emptyRow = (itemObj.quantity == 0);
+					itemObj.notes = '';
 				}
 
 				
@@ -211,15 +215,14 @@
 					if (emptyRow) { // Remove a empty row
 						$('#' + +itemObj.id, $this).remove();
 						$this.aixadacart("saveCart");
-						return;
+						return itemObj;
 					}
 					_self.data('aixadacart').unsavedItems = true; 
 				} else { //if it is not, create a new row
 					if (emptyRow) { // Don't add a empty row
-						return;
+						return itemObj;
 					}
 					_self.data('aixadacart').unsavedItems = true; 
-					itemObj.quantity = formatNumInput(itemObj.quantity);
 					
 					//deactivates items whose provider/order has been already closed
 					var deaTr = (itemObj.time_left < 0)? 'dim60':'';
@@ -279,9 +282,8 @@
 						.bind("click", function(e){
 							$(this).parents('tr')
 								.find('textarea').val('').end()
-								.find('input').val(0).trigger('change').end()
-								.remove();
-							$this.aixadacart("saveCart");
+								.find('input').val(0).trigger('change').end();
+								// Trigger chage when quantity=0 forces a remove and a save
 						}
 					);
 
@@ -372,7 +374,7 @@
 				//make sure the submit button is active
 				$('#btn_submit').button( "option", "disabled", false );
 			
-			}); //end each 
+				return itemObj;
      }, //end addItem 
      
      
@@ -588,6 +590,10 @@
 		  } else if (options.type == "table"){
 			  var row = options.row;
 			  var id =  $(row).attr("id"); 
+			  quantity = $("#cart_quantity_"+id).val();
+			  if (quantity.replace(/ /g, '') === '') {
+			    quantity = '0';
+			  }
 			  objItem =  {
 					id 				: id,
 					isPreorder		: $('#preorder_'+id).val(),
@@ -595,7 +601,7 @@
 					orderable_type_id: $(".orderable_type_id", row).text(),
 					notes			: $("#cart_notes_"+id).val(),
 					provider_name 	: $("td.item_provider_name", row).text(),
-					quantity 		: formatNumInput($("#cart_quantity_"+id).val()),
+					quantity 		: formatNumInput(quantity),
 					unit 			: $("td.item_unit", row).text(),
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
 					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
@@ -626,7 +632,6 @@
   	function formatNumInput(value){
   			
   		var fmtInput = null;
-  		//alert(" ... " + $(this).data('aixadacart').decimalsQu );
 		fmtInput = parseFloat(value.replace(",","."));
 				
 		if (isNaN(fmtInput)){
@@ -634,8 +639,7 @@
 			.html($.aixadacart.msg.errInput)
 			.dialog('option','title','Warning')
 			.dialog("open");
-			var nv = new Number(0);
-			return round2dText(nv);
+			return 0;
 		} else {
 			return fmtInput; 
 		}

@@ -333,24 +333,10 @@
             if (orderable_type_id == 3) {
                 notes = $("td.item_notes textarea", row).val();
 				qu_ele.val(0);
-            } else {
-				var qu = qu_ele.val();
-				//don't add nonsense values
-				qu_ele.val(parseFloat(qu.replace(",",".")));
-                if (isNaN(qu_ele.val())) {
-                    var $qu_ele = qu_ele;
-                    $(qu_ele).addClass("ui-state-error");
-                    $(qu_ele).effect('pulsate',{},100, function callback(){
-                        var nv = new Number(0);
-                        $qu_ele.val(nv.toFixed(2));
-                        $qu_ele.removeClass("ui-state-error");
-                    });
-                    return false;
-                }
-			}
+            }
 
 			//if quantity has changed, add it to the cart.
-			$('#cartLayer').aixadacart("addItem",{
+			var itemObj = $('#cartLayer').aixadacart("addItem",{
 					id 				: $(row).attr("id"),
 					isPreorder 		: isPreorder,
 					provider_name 	: $("td.item_provider_name", row).text(),
@@ -363,6 +349,7 @@
 					rev_tax_percent : $("td.item_rev_tax_percent", row).text(),
 					iva_percent		: $("td.item_iva_percent", row).text()
 			}); //end addItem to cart
+			qu_ele.val(itemObj.quantity === 0 ? '' : itemObj.quantity);
 
 			//sets nr of items in cart hide/view button
 			updateCartLabel();
