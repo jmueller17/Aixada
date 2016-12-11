@@ -1985,8 +1985,8 @@
                                     <select>
                                         <option value="default"><?=$Text['prvOrd_default']?></option>
                                         <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
-                                        <option value="cost"><?=$Text['prvOrdP_cost']?></option>
-                                        <option value="none"><?=$Text['prvOrdP_none']?></option>
+                                        <option value="cost"><?=$Text['prvOrdP_cost_price']?></option>
+                                        <option value="none"><?=$Text['prvOrdP_no_amount']?></option>
                                     </select>
                                 </span>
                             </td>

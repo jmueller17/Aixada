@@ -77,9 +77,20 @@ class report_order
         } else {
             $prices = 'default';
         }
+        
         $html = '';
-        for ($i = 0; $i < count($orderArr); $i++) {
-            $html .= self::getHtml_order($orderArr[$i], $providerArr[$i], $dateArr[$i], $format, $prices);
+        if ($format === 'GroupByUf') {
+            if ($prices != 'default') {
+                $orders_prices = $prices;
+            } else {
+                $orders_prices = get_config('email_order_prices', 'cost_amount');
+            }
+            $ro = new report_order($orders_prices);
+            $html .= $ro->getHtml_ufOrderProd($orderArr, $providerArr, $dateArr);
+        } else {
+            for ($i = 0; $i < count($orderArr); $i++) {
+                $html .= self::getHtml_order($orderArr[$i], $providerArr[$i], $dateArr[$i], $format, $prices);
+            }
         }
         return $html;
     }
@@ -167,11 +178,26 @@ class report_order
     /**
      * 
      */
-    public function getHtml_ufOrderProd($order_id, $provider_id = null, $date_for_order = null) {
+    protected function getHtml_ufOrderProd($orderArr, $providerArr, $dateArr) {
         $db = DBWrap::get_instance();
-        $strSQL = 
-            $this->getSql_orderDetail($order_id, $provider_id, $date_for_order) .
-            'uf_name, date_for_order, pv_name, order_id, p_name';
+        
+        $where = '';
+        for ($i = 0; $i < count($orderArr); $i++) {
+            if ($orderArr[$i]) {   // order_id
+                $where .= " or oi.order_id={$orderArr[$i]}";
+            } elseif ($dateArr[$i]) { 	        // date for orrder
+                $where .= " or (oi.date_for_order='{$dateArr[$i]}' and p.provider_id={$providerArr[$i]})";
+            }
+        }
+        if ($where !== '') {
+            $where = substr($where, 3);
+        } else {
+            $where == '1=0';
+        }
+        $strSQL =
+            "select * from ({$this->getFrom_orderDetail()} where {$where}) r
+            order by uf_name, date_for_order, pv_name, order_id, p_name";
+            
         $rs = $db->Execute($strSQL);
         $html = '';
         $tbody = '';
@@ -525,9 +551,9 @@ class report_order
     /**
      * 
      */
-    protected function getSql_orderDetail($order_id, $provider_id, $date_for_order)
+    protected function getFrom_orderDetail()
     {
-        $sql = "select 	
+        return "select 	
                 oi.order_id, oi.date_for_order,
                 o.revision_status order_status,
                 oi.product_id, p.name p_name, p.description p_desc, p.orderable_type_id,
@@ -564,22 +590,27 @@ class report_order
                 aixada_order_to_shop os )
             on 
                 oi.id = os.order_item_id
-            where ";
+        ";
+    }
+
+    protected function getSql_orderDetail($order_id, $provider_id, $date_for_order)
+    {
+        $where = '';
         if (is_array($order_id)) {   // order_id
-            $sql .= "oi.order_id in( " . implode(',', $order_id) . ")";
+            $where .= "oi.order_id in( " . implode(',', $order_id) . ")";
         } elseif ($order_id !== -1 && $order_id) {   // order_id
-            $sql .= "oi.order_id={$order_id}";
+            $where .= "oi.order_id={$order_id}";
         } elseif ($date_for_order) { 	        // date for orrder
-            $sql .= "oi.date_for_order='{$date_for_order}'";
+            $where .= "oi.date_for_order='{$date_for_order}'";
             if ($provider_id !== -1 && $provider_id) {
                 $sql .= " and p.provider_id={$provider_id}";
             } else {
                 $sql .= " and ( revision_status is null or revision_status in (1,2,5) )";
             }
         } else { // no filter, so nothing to show!
-            $sql .= "1=0";
+            $where .= "1=0";
         }
-        return "select * from ({$sql}) r order by ";
+        return "select * from ({$this->getFrom_orderDetail()} where {$where}) r order by ";
     }
     
     /**

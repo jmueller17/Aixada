@@ -1267,7 +1267,16 @@
 				});
 
 			
-				//global header print buttun
+				// header print buttons
+				$('#dialog_printOpt').dialog({
+				    autoOpen:false,
+				    width:600,
+				    height:200
+				});
+				$("#btn_printOpt").button().click(function(e) {
+					$("#dialog_printOpt").dialog("open");
+				});
+
 				$("#btn_print").button({
 				 icons: {
 		        		primary: "ui-icon-print"
@@ -1453,19 +1462,48 @@
                                 '&date[]=' + gSelRow.attr("dateForOrder");
                         } 
                     });
-                    if (_queryStr !== '') {
-                        var _printWin = window.open('tpl/'+local_cfg.print_order_template);
+                    if (_queryStr === '') {
+                        $.showMsg({
+                            type: 'warning',
+                            title: local_lang._warning,
+                            msg: "<?=$Text['msg_err_noselect'];?>",
+                            buttons: {
+                                "<?=$Text['btn_ok'];?>": function() {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    } else {
+                        _queryStr += '&format=' + $('#printOpt_format').val() + 
+                                     '&prices=' + $('#printOpt_prices').val();
+                        var _printWin = window.open( 
+                                'tpl/'+local_cfg.print_order_template 
+                            ),
+                            _done = false,
+                            _count = 0;
                         _printWin.focus();
-                        setTimeout(function(){
-                            $('.anOrder', _printWin.document).hide();
-                        }, 2000);
-                        setTimeout(function(){
-                            $('.anOrder', _printWin.document).hide();
-                            $('#orderWrap', _printWin.document).load(
-                                'php/ctrl/Orders.php?oper=reportOrders' + _queryStr
-                            );
-                            $('.loadingMsg', _printWin.document).hide();
-                        }, 2500);
+                        var _pull = function() {
+                            setTimeout(function() {
+                                _count++;
+                                if (_done) { return; }
+                                if (_count > 10) { return; }
+                                var orderWrap = $('#orderWrap', _printWin.document);
+                                if (orderWrap.length == 0) {
+                                    _pull();
+                                } else {
+                                    _done = true;
+                                    $('.anOrder', _printWin.document).hide();
+                                    $('.loadingMsg', _printWin.document).hide();
+                                    if (!$('#printOpt_header').prop('checked')) {
+                                        $('#header', _printWin.document).hide();
+                                    }
+                                    orderWrap.load(
+                                        'php/ctrl/Orders.php?oper=reportOrders' + _queryStr
+                                    );
+                                }
+                            }, 250);
+                        };
+                        _pull();
                     }
 				}
 
@@ -1670,6 +1708,50 @@
 					</ul>
 				</div>	
 				<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
+                <button id="btn_printOpt"
+                    title="<?=$Text['order_printOpt_dialog']?>"
+                    class="overviewElements btn_right"
+                    style="padding:4px 0"><span 
+                        class="ui-button-icon-primary ui-icon ui-icon-gear" ></span></button>
+                <div id="dialog_printOpt" title="<?=$Text['order_printOpt_dialog']?>" class="hidden">
+                    <table>
+                    <tr>
+                        <td colspan="2">
+                            <input type="checkbox" id="printOpt_header" value="true" checked style="height: 1em;"/>&nbsp;
+                            <label for="printOpt_header" ><?=$Text['order_printOpt_header']?></label>
+                        </td>
+                    </tr><tr><td colspan="2">&nbsp;</td></tr>
+                    <tr>
+                        <td><label for="printOpt_format"><?=$Text['order_printOpt_format']?></label>&nbsp;</td>
+                        <td class="freeInput">
+                            <select id="printOpt_format">
+                                <option value="default" selected ><?=$Text['order_printOpt_default']?></option>
+                                <option value="Prod"><?=$Text['prvOrdF_prod']?></option>
+                                <option value="Matrix"><?=$Text['prvOrdF_matrix']?></option>
+                                <option value="Prod_Matrix"><?=$Text['prvOrdF_prod_matrix'];?></option>
+                                <option value="ProdUf"><?=$Text['prvOrdF_prodUf'];?></option>
+                                <option value="Prod_ProdUf"><?=$Text['prvOrdF_prod_prodUf']?></option>
+                                <option value="UfProd"><?=$Text['prvOrdF_ufProd']?></option>
+                                <option value="GroupByUf"><?=$Text['prvOrdF_GroupByUf']?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr><td colspan="2">&nbsp;</td></tr>
+                    <tr>
+                        <td><label for="printOpt_prices"><?=$Text['order_printOpt_prices']?></label>&nbsp;</td>
+                        <td class="freeInput">
+                            <select id="printOpt_prices">
+                                <option value="default" selected ><?=$Text['order_printOpt_default']?></option>
+                                <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
+                                <option value="cost"><?=$Text['prvOrdP_cost_price']?></option>
+                                <option value="cost_amount"><?=$Text['prvOrdP_final_amount']?></option>
+                                <option value="cost"><?=$Text['prvOrdP_final_price']?></option>
+                                <option value="none"><?=$Text['prvOrdP_no_amount']?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
 		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
 		   	</div> 	
 		</div> <!--  end of title wrap -->
