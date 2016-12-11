@@ -147,7 +147,11 @@ try{
   			$zipfile = $rm->bundle_orders(get_param('provider_id'), get_param('date_for_order'), get_param('order_id'),0);
       		echo $zipfile;
       		exit;
-      		
+            
+      	case 'reportOrders':
+            require_once(__ROOT__ . "php/lib/report_orders.php");
+  			echo report_order::getHtml_orders($_GET);
+      		exit;	
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  
         break;

@@ -114,9 +114,6 @@
 			//indicates page subsection: overview | review | view
 			var gSection = 'overview';
 
-			//new window for printing
-			var printWin = null;
-
 			//index for current order that is loaded/printed during bulk actions
 			var gPrintIndex  = -1; 
 
@@ -305,12 +302,10 @@
 
 					//product total quantities
 					tbodyStr += '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
-                    if (gSection !== 'print') {
-                        tbodyStr += '<td id="grossPrice_'+product_id+'" class="grossCol grossPrice"></td>';
-                        tbodyStr += '<td id="grossRow_'+product_id+'"   class="grossCol grossRow"></td>';
-                        tbodyStr += '<td id="netPrice_'+product_id+'"   class="netCol netPrice"></td>';
-                        tbodyStr += '<td id="netRow_'+product_id+'"     class="netCol netRow"></td>';
-                    }
+					tbodyStr += '<td id="grossPrice_'+product_id+'" class="grossCol grossPrice"></td>';
+					tbodyStr += '<td id="grossRow_'+product_id+'"   class="grossCol grossRow"></td>';
+					tbodyStr += '<td id="netPrice_'+product_id+'"   class="netCol netPrice"></td>';
+					tbodyStr += '<td id="netRow_'+product_id+'"     class="netCol netRow"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -377,9 +372,7 @@
 								var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 								
 								$('.total_'+lastId).html(total);
-								if (gSection !== 'print') {
-									refreshRowPrices(lastId);
-								}
+								refreshRowPrices(lastId);
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
@@ -394,48 +387,28 @@
 						var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 						$('.total_'+lastId).html(total);
 
-                        if (gSection !== 'print') {
-                            refreshRowPrices(lastId);
-                            refreshTotalOrder();
-                            $('.orderTotals').show();
-                            $('.grossCol').show();
-                            if (hasIva === true) {
-                                $('.netCol').show();
-                            } else {
-                                $('.netCol').hide();
-                            }
-                            if (local_cfg.revision_fixed_uf) {
-                                $('.Col-'+local_cfg.revision_fixed_uf)
-                                    .removeClass('hidden').show();
-                            }
+                        refreshRowPrices(lastId);
+                        refreshTotalOrder();
+                        $('.orderTotals').show();
+                        $('.grossCol').show();
+                        if (hasIva === true) {
+                            $('.netCol').show();
                         } else {
-                            $('.orderTotals').hide();
-                            $('.grossCol').hide();
                             $('.netCol').hide();
+                        }
+                        if (local_cfg.revision_fixed_uf) {
+                            $('.Col-'+local_cfg.revision_fixed_uf)
+                                .removeClass('hidden').show();
                         }
 
 						//don't need revised and arrived column for viewing order
-						if (gSection == 'view' || gSection == 'print'){
+						if (gSection == 'view') {
 							$('.revisedCol, .arrivedCol').hide();
 							$('.shopQuantity').show();
 							$('tr, td').removeClass('toRevise revised missing');
 						} else {
 							$('.revisedCol, .arrivedCol').show();
 							$('.shopQuantity').hide();
-						}
-
-						//if we print, copy the table to the printWindow
-						if (gSection == 'print' && printWin != null){
-                            // TODO: show as new report_order formats, 
-                            //  * move this to printQueue() function
-                            //  * remove usage of gSection == 'print' 
-                            //  * remove: gPrintList, gPrintIndex,printWin as globals
-							if (gPrintIndex == gPrintList.length-1){
-								$('.loadingMsg', printWin.document).html("<p><?=$Text['finished_loading'];?></p>").fadeOut(2000);
-								$('#orderWrap', printWin.document).children(':first').hide();
-							} else {
-								$('.loadingMsg', printWin.document).html("<p><?=$Text['loading']; ?> " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
-							}
 						}
 
 						$('#tbl_reviseOrder').show();
@@ -1470,7 +1443,6 @@
 				 *	prepares the printing queue of the selected orders. 
 				 */
 				function printQueue() {
-                    // TODO: see gSection == 'print' to fix report as html
 					var _queryStr = '';
                     $('input:checkbox[name="bulkAction"]').each(function(){
                         if ($(this).is(':checked')){
@@ -1482,14 +1454,18 @@
                         } 
                     });
                     if (_queryStr !== '') {
-                        printWin = window.open('php/lib/report_orders_test.php?format=default' + _queryStr);
-                        //printWin = window.open('tpl/'+local_cfg.print_order_template);
-                        printWin.focus();
-                        // setTimeout(function(){
-                            // console.log('html' + _queryStr);
-                            // $('#orderWrap', printWin.document).text(_queryStr);
-                            // // $('#orderWrap', printWin.document).load('' + _queryStr);
-                        // }, 1000);
+                        var _printWin = window.open('tpl/'+local_cfg.print_order_template);
+                        _printWin.focus();
+                        setTimeout(function(){
+                            $('.anOrder', _printWin.document).hide();
+                        }, 2000);
+                        setTimeout(function(){
+                            $('.anOrder', _printWin.document).hide();
+                            $('#orderWrap', _printWin.document).load(
+                                'php/ctrl/Orders.php?oper=reportOrders' + _queryStr
+                            );
+                            $('.loadingMsg', _printWin.document).hide();
+                        }, 2500);
                     }
 				}
 

@@ -588,7 +588,7 @@ class report_order
     protected function t_table($thead, $tbody, $style = '') 
     {
         return 
-            "<table style=\"margin-left:30px; border-collapse:collapse; {$style}\">\n" .
+            "<table style=\" width:19cm; margin-left:auto; margin-right:auto; border-collapse:collapse; {$style}\">\n" .
                 "<thead>\n{$thead}\n</thead>\n" .
                 "<tbody>\n{$tbody}\n</tbody>\n" .
             "</table>\n";
@@ -827,7 +827,7 @@ class report_order
             $html .= " colspan=\"{$colspan}\"\n";
         }
         return $html . 
-            " style=\"border-right:1px solid #ccc; padding:0; width:{$colspan}em; {$style}\">&nbsp;</td>\n";
+            " style=\"border:1px solid transparent; border-right:1px solid #ccc; padding:0; width:{$colspan}em; {$style}\">&nbsp;</td>\n";
     }
 }
 ?>
