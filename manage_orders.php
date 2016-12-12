@@ -1493,12 +1493,14 @@
                                 } else {
                                     _done = true;
                                     $('.anOrder', _printWin.document).hide();
-                                    $('.loadingMsg', _printWin.document).hide();
                                     if (!$('#printOpt_header').prop('checked')) {
                                         $('#header', _printWin.document).hide();
                                     }
                                     orderWrap.load(
-                                        'php/ctrl/Orders.php?oper=reportOrders' + _queryStr
+                                        'php/ctrl/Orders.php?oper=reportOrders' + _queryStr,
+                                        function () {
+                                            $('.loadingMsg', _printWin.document).hide();
+                                        }
                                     );
                                 }
                             }, 250);

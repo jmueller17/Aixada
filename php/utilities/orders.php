@@ -374,27 +374,14 @@ function send_order($order_id)
         $provider_id = $row['provider_id'];
         $date_for_order = $row['date_for_order'];
         
-        $row = get_row_query(
-            "SELECT name, email, order_send_format, order_send_prices
-            FROM aixada_provider WHERE id = {$provider_id}"
-        );
-        if (!$row) {
+        $sendOp = report_order::get_sendOptions($provider_id);
+        if (!$sendOp || $sendOp['order_send_format'] === 'none') {
             return '';
         }
-        $toEmail = $row['email'];
-        $providerName = $row['name'];
+        $toEmail = $sendOp['email'];
+        $providerName = $sendOp['name'];
         if (is_null($toEmail)) {
             return '';
-        }
-        if ($row['order_send_format'] === 'default') {
-            $email_order_format = get_config('email_order_format');
-        } else {
-            $email_order_format = $row['order_send_format'];
-        }
-        if ($row['order_send_prices'] === 'default') {
-            $email_order_prices = get_config('email_order_prices', 'cost_amount');
-        } else {
-            $email_order_prices = $row['order_send_prices'];
         }
         
         $subject = i18n('orderToFor', array(
@@ -404,38 +391,7 @@ function send_order($order_id)
         ));
         $message = '<h2>' . get_config('coop_name'). "</h2>\n";
         $message .= "<h2>{$subject}</h2>\n";
-        $ro = new report_order($email_order_prices);
-        switch ($email_order_format) {
-            case 'none':
-                return ''; // NO EMAIL!
-            case '1':
-            case 'Prod':
-                $message .= $ro->getHtml_orderProd($order_id);
-                break;
-            case '2':
-            case 'Matrix':
-                $message .= $ro->getHtml_orderMatrix($order_id);
-                break;
-            case '3':
-            case 'Prod_Matrix':
-                $message .= $ro->getHtml_orderProd($order_id);
-                $message .= $ro->getHtml_orderMatrix($order_id);
-                break;
-            case 'ProdUf':
-                $message .= $ro->getHtml_orderProdUf($order_id);
-                break;
-            case 'Prod_ProdUf':
-                $message .= $ro->getHtml_orderProd($order_id);
-                $ro->setPriceType('none');
-                $message .= $ro->getHtml_orderProdUf($order_id);
-                break;
-            case 'UfProd':
-                $message .= $ro->getHtml_orderUfProd($order_id);
-                break;
-            default: // Send anything if format is not supported
-                $message .= $ro->getHtml_orderProd($order_id);
-                break;
-        }
+        $message .= report_order::getHtml_order($order_id);
 
         $rs = do_stored_query('get_responsible_uf', $provider_id);
         $responsible_ufs = get_list_rs($rs, 'email');

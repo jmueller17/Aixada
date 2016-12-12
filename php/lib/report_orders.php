@@ -24,7 +24,7 @@ class report_order
         $this->setPriceType($priceType);
     }
     
-    public function setPriceType($priceType) {
+    protected function setPriceType($priceType) {
         $this->priceType = $priceType;
         switch ($this->priceType) {
             case 'cost':
@@ -95,30 +95,14 @@ class report_order
         return $html;
     }
     
-    public static function getHtml_order($order_id, $provider_id = null, $date_for_order = null, $format = 'default', $prices = 'default') 
+    public static function get_sendOptions($provider_id, $format = 'default', $prices = 'default') 
     {
-        global $Text;
-        if ($order_id && !is_numeric($order_id)) {
-            return '';
-        } elseif (!$provider_id && $order_id) { // requires id of provider or order
-            $row = get_row_query(
-                "SELECT provider_id FROM aixada_order WHERE id = {$order_id}"
-            );
-            if (!$row) {
-                return '';
-            }
-            $provider_id = $row['provider_id'];
-        } elseif (!is_numeric($provider_id)) {
-            return '';
-        } 
-        
-        
         $row = get_row_query(
-            "SELECT order_send_format, order_send_prices
+            "SELECT name, email, order_send_format, order_send_prices
             FROM aixada_provider WHERE id = {$provider_id}"
         );
         if (!$row) {
-            return '';
+            return null;
         }
         if ($format != 'default') {
             $order_format = $format;
@@ -138,11 +122,39 @@ class report_order
                 $order_prices = $row['order_send_prices'];
             }
         }
-        $ro = new report_order($order_prices);
+        return array(
+            'name' => $row['name'],
+            'email' => $row['email'],
+            'order_send_format' => $order_format,
+            'order_send_prices' => $order_prices
+        );
+    }
+    
+    public static function getHtml_order($order_id, $provider_id = null, $date_for_order = null, $format = 'default', $prices = 'default') 
+    {
+        global $Text;
+        if ($order_id && !is_numeric($order_id)) {
+            return '';
+        } elseif (!$provider_id && $order_id) { // requires id of provider or order
+            $row = get_row_query(
+                "SELECT provider_id FROM aixada_order WHERE id = {$order_id}"
+            );
+            if (!$row) {
+                return '';
+            }
+            $provider_id = $row['provider_id'];
+        } elseif (!is_numeric($provider_id)) {
+            return '';
+        } 
+        
+        $sendOp = self::get_sendOptions($provider_id, $format, $prices);
+        if (!$sendOp) {
+            return '';
+        }
+        
+        $ro = new report_order($sendOp['order_send_prices']);
         $html = '';
-        switch ($order_format) {
-            case 'none':
-                return ''; // NO EMAIL!
+        switch ($sendOp['order_send_format']) {
             case '1':
             case 'Prod':
                 $html .= $ro->getHtml_orderProd($order_id, $provider_id, $date_for_order);
@@ -240,7 +252,7 @@ class report_order
         return $html . $this->getHtml_priceDescription();
     }
     
-    public function getHtml_orderUfProd($order_id, $provider_id = null, $date_for_order = null) {
+    protected function getHtml_orderUfProd($order_id, $provider_id = null, $date_for_order = null) {
         $db = DBWrap::get_instance();
         $strSQL = 
             $this->getSql_orderDetail($order_id, $provider_id, $date_for_order) .
@@ -288,12 +300,12 @@ class report_order
         return $html . $this->getHtml_priceDescription();
     }
     
-    public function getHtml_orderProd($order_id, $provider_id = null, $date_for_order = null)
+    protected function getHtml_orderProd($order_id, $provider_id = null, $date_for_order = null)
     {
         return $this->getHtml_orderProdUfSel($order_id, $provider_id, $date_for_order, false);
     }
     
-    public function getHtml_orderProdUf($order_id, $provider_id = null, $date_for_order = null)
+    protected function getHtml_orderProdUf($order_id, $provider_id = null, $date_for_order = null)
     {
         return $this->getHtml_orderProdUfSel($order_id, $provider_id, $date_for_order, true);
     }
@@ -392,7 +404,7 @@ class report_order
         return $html . $this->getHtml_priceDescription();
     }
     
-    public function getHtml_orderMatrix($order_id, $provider_id = null, $date_for_order = null)
+    protected function getHtml_orderMatrix($order_id, $provider_id = null, $date_for_order = null)
     {
         $db = DBWrap::get_instance();
         $strSQL = 
