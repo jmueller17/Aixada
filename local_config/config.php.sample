@@ -217,18 +217,22 @@ class configuration_vars {
    * the email address of the admin; used for sending out pwd changes
    * and orders. 
    */
-  public $admin_email = "admin@admin.com"; // Ignored when SMTP is used
+  public $admin_email = "admin@admin.com";
   
   /**
    * Emails SMTP options. Uncomment to use SMTP through the library swiftmailer
-   *
-   * NOTE: When SMTP is activated the `$email_SMTP_user` is used instead of `$admin_email` 
+   * 
    */
-  // public $email_SMTP_host = 'localhost';
-  // public $email_SMTP_port = 25;
-  // public $email_SMTP_user = 'admin@admin.com';
-  // public $email_SMTP_pswd = 'mypassword';
-  // public $email_SMTP_name = 'L\'Aixada';
+  // public $email_SMTP_host = 'localhost';       // Set to use a SMTP server. 
+  //                                              // Use SMTP_host='debug' to don't send and dump messages to /local_config/debug_mail/ 
+  // public $email_SMTP_user = 'admin@admin.com'; // Default = $admin_email (is recommend set to null to use $admin_email)
+  // public $email_SMTP_pswd = 'mypassword';      // Default = null (if is null SMTP_user/SMTP_pswd are not used)
+  // public $email_SMTP_port = 25;                // Default = 25
+  // public $email_SMTP_encryption = null         // Valid values: 'ssl', 'tls', null. Default = null
+  // public $email_SMTP_verifyCert = true         // Valid values: true, false. Used if SMTP_encryption is set.
+  //                                              // NOTE: Some host use self-generated certificates. In this case the certificate
+  //                                              //       verification fails and the sending of messages ends in error.
+  //                                              //       So in this case set SMTP_verifyCert=false                                
   
   /**
    * 
@@ -303,6 +307,9 @@ class configuration_vars {
    * format of emailed orders: just summarized "1" or just extended "2" or both "3"
    */
   public $email_order_format = 3;
+  
+  
+  
   
   /**
    * INCIDENTS REPORTING VARS
