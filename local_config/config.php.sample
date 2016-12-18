@@ -225,11 +225,11 @@ class configuration_vars {
    */
   // public $email_SMTP_host = 'localhost';       // Set to use a SMTP server. 
   //                                              // Use SMTP_host='debug' to don't send and dump messages to /local_config/debug_mail/ 
-  // public $email_SMTP_user = 'admin@admin.com'; // Default = $admin_email (is recommend set to null to use $admin_email)
-  // public $email_SMTP_pswd = 'mypassword';      // Default = null (if is null SMTP_user/SMTP_pswd are not used)
   // public $email_SMTP_port = 25;                // Default = 25
-  // public $email_SMTP_encryption = null         // Valid values: 'ssl', 'tls', null. Default = null
-  // public $email_SMTP_verifyCert = true         // Valid values: true, false. Used if SMTP_encryption is set.
+  // public $email_SMTP_user = 'admin@admin.com'; // Default = $admin_email (is recommend to not set, so use default as $admin_email)
+  // public $email_SMTP_pswd = 'mypassword';      // If is not set or null SMTP_user/SMTP_pswd are not used.
+  // public $email_SMTP_encryption = null;        // Valid values: 'ssl', 'tls', null. Default = null
+  // public $email_SMTP_verifyCert = true;        // Valid values: true, false. Used if SMTP_encryption is set.
   //                                              // NOTE: Some host use self-generated certificates. In this case the certificate
   //                                              //       verification fails and the sending of messages ends in error.
   //                                              //       So in this case set SMTP_verifyCert=false                                
