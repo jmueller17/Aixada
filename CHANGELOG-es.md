@@ -51,7 +51,11 @@ Permite asignar productos a UF que no lo han pedido pero que sí que se lo han q
 * Añadir edición de la mayoría de tablas auxiliares y mejorar la existente permitiendo edición en la lista.
 * Al volver a revisar un pedido que ya se ha distribuido se puede conservar el trabajo de revisión hecho previamente.
 * Se permite reabrir un pedido cerrado por error.
-* Mejorar el envío de correos conservando acentos y añadiendo un poco de formateo en: envío de pedido al proveedor, re-establecimiento de contraseña y incidentes. Ahora se soportar acentos y caracteres especiales como `ç`, `ñ` etc.
+* Mejorar el envío de correos:  
+(envío de pedido al proveedor, re-establecimiento de contraseña y incidentes)
+  * Formateo html de los mensajes.
+  * Soportar acentos y caracteres especiales como `ç`, `ñ` etc.
+  * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`).
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
  (entre otros #184)
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.

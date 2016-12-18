@@ -66,6 +66,8 @@ Released 2 April 2013
 v2.8 (to publish soon)
 ----
 
+*This document is out of date for version 2.8, see "CHANGELOG-es.md"*
+
 **New Features**
 
 **Changes**
