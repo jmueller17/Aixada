@@ -262,6 +262,7 @@ class report_order
         $tbody = '';
         $brk_order = null;
         $brk_uf = null;
+        $first_uf = true;
         while ($row = $rs->fetch_assoc()) {
             $cur_order = "{$row['provider_id']}|{$row['date_for_order']}|{$row['order_id']}";
             if ($brk_order != $cur_order) {
@@ -277,7 +278,10 @@ class report_order
             }
             if ($brk_uf != $row['uf_id']) {
                 if ($brk_uf) {
-                    
+                    if (!$first_uf) {
+                        $tbody .= $this->t_tableBreack();
+                    }
+                    $first_uf = false;
                 }
                 $brk_uf = $row['uf_id'];
                 $tbody .= $this->t_uf_head(1, $row['uf_id'], $row['uf_name']);
@@ -325,12 +329,15 @@ class report_order
         $p_current_quantity = 0;
         $brk_order = null;
         $brk_product = null;
+        $first_product = true;
         while ($row = $rs->fetch_assoc()) {
             $cur_order = "{$row['provider_id']}|{$row['date_for_order']}|{$row['order_id']}";
             if ($brk_order != $cur_order) {
                 if ($brk_order) {
                     $tbody .= $p_end();
-                    $html .= $this->t_table($thead, $tbody) . '<br>';
+                    $html .= $this->t_table($thead, $tbody,
+                        ($detail ? '' : 'page-break-inside:auto;')
+                    ) . '<br>';
                 }
                 $brk_order = $cur_order;
                 $brk_product = null;
@@ -345,6 +352,10 @@ class report_order
             if ($brk_product != $row['product_id']) {
                 if ($brk_product) {
                     $tbody .= $p_end();
+                    if ($detail && !$first_product) {
+                        $tbody .= $this->t_tableBreack();
+                    }
+                    $first_product = false;
                 }
                 $brk_product = $row['product_id'];
                 $p_tbody = '';
@@ -399,7 +410,9 @@ class report_order
         }
         if ($brk_order) {            
             $tbody .= $p_end();
-            $html .= $this->t_table($thead, $tbody) . '<br>';
+            $html .= $this->t_table($thead, $tbody,
+                ($detail ? '' : 'page-break-inside:auto;')
+            ) . '<br>';
         }
         return $html . $this->getHtml_priceDescription();
     }
@@ -498,7 +511,7 @@ class report_order
                 $this->t_celNum(1, $matrix[$product]['Total_qty'], 'font-weight: bold;') .
                 "</tr>\n";
         }
-        return $this->t_table($thead, $tbody) . '<br>';
+        return $this->t_table($thead, $tbody, 'page-break-inside:auto; width:auto;') . '<br>';
     }
     
     protected function getHtml_priceDescription() 
@@ -631,17 +644,25 @@ class report_order
     protected function t_table($thead, $tbody, $style = '') 
     {
         return 
-            "<table style=\" width:19cm; margin-left:auto; margin-right:auto; border-collapse:collapse; {$style}\">\n" .
+            "<table\n" .
+            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\n" .
                 "<thead>\n{$thead}\n</thead>\n" .
                 "<tbody>\n{$tbody}\n</tbody>\n" .
             "</table>\n";
+    }
+    protected function t_tableBreack($style = '') 
+    {
+        return 
+            "</tbody></table><table\n" .
+            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\n" .
+            "<tbody>\n";
     }
 
     protected function t_order_head($level, $colCount, $order_id, $pv_name, $date_for_order) 
     {
         $html = '<tr>';
         if ($level) {
-            $html .= $this->t_celBlanck($level, 'border:transparent;');
+            $html .= $this->t_celBlank($level, 'border:transparent;');
         }
         $status = '';
         if ($order_id) {
@@ -669,7 +690,7 @@ class report_order
         global $Text;
         $html = '<tr>';
         if ($level) {
-            $html .= $this->t_celBlanck($level, 'border:transparent;');
+            $html .= $this->t_celBlank($level, 'border:transparent;');
         }
         $html .= 
             $this->t_th(
@@ -703,7 +724,7 @@ class report_order
         global $Text;
         $html = '<tr>';
         if ($level) {
-            $html .= $this->t_celBlanck($level, 'border:transparent;');
+            $html .= $this->t_celBlank($level, 'border:transparent;');
         }
         return $html .
             $this->t_cel(
@@ -730,7 +751,7 @@ class report_order
         $p_final_price
     ) {
         $html = '<tr>';
-        $html .= $this->t_celBlanck($level);
+        $html .= $this->t_celBlank($level);
         if ($orderable_type_id == 3) { // product.orderable_type_id=3 => Use product as order notes
             $text = $name;
             if ($order_notes) {
@@ -863,7 +884,7 @@ class report_order
         );
     }
     
-    protected function t_celBlanck($colspan, $style = '')
+    protected function t_celBlank($colspan, $style = '')
     {
         $html = "<td";
         if ($colspan > 1) {
