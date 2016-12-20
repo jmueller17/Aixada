@@ -352,7 +352,7 @@ class report_order
             if ($brk_product != $row['product_id']) {
                 if ($brk_product) {
                     $tbody .= $p_end();
-                    if ($detail && !$first_product) {
+                    if (($detail || $p_orderable_type_id == 3) && !$first_product) {
                         $tbody .= $this->t_tableBreack();
                     }
                     $first_product = false;
@@ -394,7 +394,7 @@ class report_order
             }
             $p_order_quantity += $row['order_quantity'];
             $p_current_quantity += $row['current_quantity'];
-            if ($detail) {
+            if ($detail || $p_orderable_type_id == 3) {
                 $p_tbody .= $this->t_data_row(2, false,
                     "{$row['uf_name']} {$Text['uf_short']}-{$row['uf_id']}",
                     null,
