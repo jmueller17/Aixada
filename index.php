@@ -181,11 +181,31 @@
 				$('#tbl_diffOrderShop').attr('currentOrderId','');
 				$('#tbl_diffOrderShop').attr('currentDateForOrder','');
 				$('#tbl_diffOrderShop').attr('currentProviderId','');
+				
+                var rowOrderComplete = function (rowIndex, row){
+                    var orderable_type_id = $(row).attr("orderable_type_id");
+                    if (orderable_type_id == 3) {
+                        var html = $('.has_notes div', row).html();
+                        html = html.replace(/</g, '&lt;'
+                            ).replace(/>/g, '&gt;'
+                            ).replace(/\r\n/g, '<br>'
+                            ).replace(/\r/g, '<br>'
+                            ).replace(/\n/g, '<br>');
+                        $('.has_notes div', row).html(html);
+                        
+                        $('.has_notes', row).show();
+                        $('.no_notes', row).hide();
+                    } else {
+                        $('.has_notes', row).hide();
+                        $('.no_notes', row).show();
+                    }
+                };
 								
 				if (orderId > 0) {
 					$('#tbl_diffOrderShop').attr('currentOrderId',orderId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
-						params : 'oper=getDiffOrderShop&order_id='+orderId
+						params : 'oper=getDiffOrderShop&order_id='+orderId,
+						rowComplete: rowOrderComplete
 					});	
 
 				} else if (providerId > 0){
@@ -193,24 +213,7 @@
 					$('#tbl_diffOrderShop').attr('currentProviderId',providerId);
 					$('#tbl_diffOrderShop tbody').xml2html('reload', {
 						params : 'oper=getProductQuantiesForUfs&uf_id=-1&provider_id='+providerId + '&date_for_order='+dateForOrder,
-						rowComplete: function (rowIndex, row){
-						    var orderable_type_id = $(row).attr("orderable_type_id");
-						    if (orderable_type_id == 3) {
-                                var html = $('.has_notes div', row).html();
-                                html = html.replace(/</g, '&lt;'
-                                    ).replace(/>/g, '&gt;'
-                                    ).replace(/\r\n/g, '<br>'
-                                    ).replace(/\r/g, '<br>'
-                                    ).replace(/\n/g, '<br>');
-                                $('.has_notes div', row).html(html);
-                                
-						        $('.has_notes', row).show();
-						        $('.no_notes', row).hide();
-						    } else {
-						        $('.has_notes', row).hide();
-						        $('.no_notes', row).show();
-						    }
-						}
+						rowComplete: rowOrderComplete
 					});	
 					
 				} 

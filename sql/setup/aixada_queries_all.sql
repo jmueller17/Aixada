@@ -1208,8 +1208,10 @@ begin
 	select 
 		p.id as product_id,
 		p.name, 
+		p.orderable_type_id,
 		oi.order_id, 
 		oi.quantity,
+		oi.notes,
 		si.quantity as shop_quantity, 
 		oi.unit_price_stamp as unit_price
 	from 
