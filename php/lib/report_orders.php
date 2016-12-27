@@ -190,9 +190,13 @@ class report_order
     /**
      * 
      */
-    protected function getHtml_ufOrderProd($orderArr, $providerArr, $dateArr) {
+    protected function getHtml_ufOrderProd(
+        $orderArr,
+        $providerArr,
+        $dateArr,
+        $detail = true
+    ) {
         $db = DBWrap::get_instance();
-        
         $where = '';
         for ($i = 0; $i < count($orderArr); $i++) {
             if ($orderArr[$i]) {   // order_id
@@ -209,32 +213,68 @@ class report_order
         $strSQL =
             "select * from ({$this->getFrom_orderDetail()} where {$where}) r
             order by uf_name, date_for_order, pv_name, order_id, p_name";
-            
         $rs = $db->Execute($strSQL);
         $html = '';
-        $tbody = '';
+        
         $brk_uf = null;
+        $info_uf = array();
+        
         $brk_order = null;
+        $info_order = array();
+        $end_order = function() use($detail, &$info_uf, &$info_order) {
+            $head = $this->t_order_head(
+                1,
+                $this->dataColsCount + $this->amountColsCount,
+                $info_order['order_id'],
+                $info_order['pv_name'],
+                $info_order['date_for_order'],
+                $info_order['_sum_amount']
+            );
+            $head .= $this->t_title_head(2);
+            $info_uf['_sum_amount'] +=  $info_order['_sum_amount'];
+            return $head . $info_order['_body'];
+        };
+        $end_uf = function() use($detail, $end_order, &$info_order, &$info_uf) {
+            $info_uf['_body'] .= $end_order(); // first, to add into $info_order['_sum_amount']
+            $body = $this->t_uf_head(
+                0, 
+                $info_uf['uf_id'],
+                $info_uf['uf_name'],
+                $info_uf['_sum_amount']
+            ) . $info_uf['_body'];
+            return $this->t_table('', $body) . '<br>';
+        };
+        
         while ($row = $rs->fetch_assoc()) {
             $cur_order = "{$row['provider_id']}|{$row['date_for_order']}|{$row['order_id']}";
             if ($brk_uf != $row['uf_id']) {
                 if ($brk_uf) {
-                    $html .= $this->t_table('', $tbody) . '<br>';
+                    $html .= $end_uf();
                 }
                 $brk_uf = $row['uf_id'];
                 $brk_order = null;
-                $tbody = $this->t_uf_head(0, $row['uf_id'], $row['uf_name']);
+                $info_uf['_body'] = '';
+                $info_uf['_sum_amount'] = 0;
+                $info_uf['uf_id'] = $row['uf_id'];
+                $info_uf['uf_name'] = $row['uf_name'];
             }
             if ($brk_order != $cur_order) {
+                if ($brk_order) {
+                    $info_uf['_body'] .= $end_order();
+                }
                 $brk_order = $cur_order;
-                $tbody .= 
-                    $this->t_order_head(1,
-                        $this->dataColsCount + $this->amountColsCount,
-                        $row['order_id'], $row['pv_name'], $row['date_for_order']
-                    ) .
-                    $this->t_title_head(2);
+                $info_order['_body'] = '';
+                $info_order['_sum_amount'] = 0;
+                $info_order['order_id'] = $row['order_id'];
+                $info_order['pv_name'] = $row['pv_name'];
+                $info_order['date_for_order'] = $row['date_for_order'];
             }
-            $tbody .= $this->t_data_row(2, false,
+            $info_order['_sum_amount'] += $this->amount(
+                $row['current_quantity'],
+                $row['cost_price'],
+                $row['final_price']
+            );
+            $info_order['_body'] .= $this->t_data_row(2, false,
                 $row['p_name'],
                 $row['p_desc'],
                 $row['orderable_type_id'],
@@ -247,46 +287,90 @@ class report_order
             );
         }
         if ($brk_uf) {
-            $html .= $this->t_table('', $tbody);
+            $html .= $end_uf();
         }
         return $html . $this->getHtml_priceDescription();
     }
     
-    protected function getHtml_orderUfProd($order_id, $provider_id = null, $date_for_order = null) {
+    protected function getHtml_orderUfProd(
+        $order_id,
+        $provider_id = null,
+        $date_for_order = null,
+        $detail = true
+    ) {
         $db = DBWrap::get_instance();
         $strSQL = 
             $this->getSql_orderDetail($order_id, $provider_id, $date_for_order) .
             'pv_name, date_for_order, order_id, uf_name, p_name';
         $rs = $db->Execute($strSQL);
         $html = '';
-        $tbody = '';
+        
         $brk_order = null;
+        $info_order = array();
+        
         $brk_uf = null;
-        $first_uf = true;
+        $info_uf = array('_first' => false);
+        $end_uf = function() use($detail, &$info_order, &$info_uf) {
+            $html = $this->t_uf_head(
+                1, 
+                $info_uf['uf_id'],
+                $info_uf['uf_name'],
+                $info_uf['_sum_amount']
+            ) . $info_uf['_body'];
+            if ($detail || !$info_uf['_first']) {
+                $html .= $this->t_tableBreack();
+            }
+            $info_order['_sum_amount'] += $info_uf['_sum_amount'];
+            $info_product['_first'] = false;
+            return $html;
+        };
+        $end_order = function() use($detail, $end_uf, &$info_order) {
+            $info_order['_body'] .= $end_uf(); // first, to add into $info_order['_sum_amount']
+            $head = $this->t_order_head(0,
+                $this->dataColsCount + $this->amountColsCount,
+                $info_order['order_id'],
+                $info_order['pv_name'],
+                $info_order['date_for_order'],
+                $info_order['_sum_amount']
+            );
+            $head .= $this->t_title_head(1);
+            return $this->t_table(
+                $head,
+                $info_order['_body'],
+                ($detail ? '' : 'page-break-inside:auto;')
+            ) . '<br>';
+        };
+
         while ($row = $rs->fetch_assoc()) {
             $cur_order = "{$row['provider_id']}|{$row['date_for_order']}|{$row['order_id']}";
             if ($brk_order != $cur_order) {
                 if ($brk_order) {
-                    $html .= $this->t_table('', $tbody) . '<br>';
+                    $html .= $end_order();
                 }
                 $brk_order = $cur_order;
                 $brk_uf = null;
-                $tbody = $this->t_order_head(0,
-                    $this->dataColsCount + $this->amountColsCount,
-                    $row['order_id'], $row['pv_name'], $row['date_for_order']
-                );
+                $info_order['_body'] = '';
+                $info_order['_sum_amount'] = 0;
+                $info_order['order_id'] = $row['order_id'];
+                $info_order['pv_name'] = $row['pv_name'];
+                $info_order['date_for_order'] = $row['date_for_order'];
             }
             if ($brk_uf != $row['uf_id']) {
                 if ($brk_uf) {
-                    if (!$first_uf) {
-                        $tbody .= $this->t_tableBreack();
-                    }
-                    $first_uf = false;
+                    $info_order['_body'] .= $end_uf();
                 }
                 $brk_uf = $row['uf_id'];
-                $tbody .= $this->t_uf_head(1, $row['uf_id'], $row['uf_name']);
+                $info_uf['_body'] = '';
+                $info_uf['_sum_amount'] = 0;
+                $info_uf['uf_id'] = $row['uf_id'];
+                $info_uf['uf_name'] = $row['uf_name'];
             }
-            $tbody .= $this->t_data_row(2, false,
+            $info_uf['_sum_amount'] += $this->amount(
+                $row['current_quantity'],
+                $row['cost_price'],
+                $row['final_price']
+            );
+            $info_uf['_body'] .= $this->t_data_row(2, false,
                 $row['p_name'],
                 $row['p_desc'],
                 $row['orderable_type_id'],
@@ -299,7 +383,7 @@ class report_order
             );
         }
         if ($brk_order) {
-            $html .= $this->t_table('', $tbody) . '<br>';
+            $html .= $end_order();
         }
         return $html . $this->getHtml_priceDescription();
     }
@@ -323,79 +407,91 @@ class report_order
             'pv_name, date_for_order, order_id, p_name, uf_name';
         $rs = $db->Execute($strSQL);
         $html = '';
-        $tbody = '';
-        $p_tbody = '';
-        $p_order_quantity = 0;
-        $p_current_quantity = 0;
+        
         $brk_order = null;
+        $info_order = array();
+        
         $brk_product = null;
-        $first_product = true;
+        $info_product = array('_first' => false);
+        $end_product = function() use($detail, &$info_order, &$info_product) {
+            $html = $this->t_data_row(1,
+                $detail,
+                $info_product['p_name'],
+                $info_product['p_desc'],
+                $info_product['orderable_type_id'],
+                null,
+                $info_product['_sum_order_q'],
+                $info_product['_sum_current_q'],
+                $info_product['unit'],
+                $info_product['cost_price'],
+                $info_product['final_price']
+            ) . $info_product['_body'];
+            if (($detail || $info_product['orderable_type_id'] == 3) && !$info_product['_first']) {
+                $html .= $this->t_tableBreack();
+            }
+            $info_order['_sum_amount'] += $this->amount(
+                $info_product['_sum_current_q'],
+                $info_product['cost_price'],
+                $info_product['final_price']
+            );
+            $info_product['_first'] = false;
+            return $html;
+        };
+        $end_order = function() use($detail, $end_product, &$info_order) {
+            $info_order['_body'] .= $end_product(); // first, to add into $info_order['_sum_amount']
+            $head = $this->t_order_head(
+                0,
+                $this->dataColsCount + $this->amountColsCount,
+                $info_order['order_id'],
+                $info_order['pv_name'],
+                $info_order['date_for_order'],
+                $info_order['_sum_amount']
+            );
+            $head .= $this->t_title_head(1);
+            return $this->t_table(
+                $head,
+                $info_order['_body'],
+                ($detail ? '' : 'page-break-inside:auto;')
+            ) . '<br>';
+        };
         while ($row = $rs->fetch_assoc()) {
             $cur_order = "{$row['provider_id']}|{$row['date_for_order']}|{$row['order_id']}";
             if ($brk_order != $cur_order) {
                 if ($brk_order) {
-                    $tbody .= $p_end();
-                    $html .= $this->t_table($thead, $tbody,
-                        ($detail ? '' : 'page-break-inside:auto;')
-                    ) . '<br>';
+                    $html .= $end_order();
                 }
                 $brk_order = $cur_order;
                 $brk_product = null;
-                $thead = 
-                    $this->t_order_head(0,
-                        $this->dataColsCount + $this->amountColsCount,
-                        $row['order_id'], $row['pv_name'], $row['date_for_order']
-                    ) .
-                    $this->t_title_head(1);
-                $tbody = '';
+                $info_order['_body'] = '';
+                $info_order['_sum_amount'] = 0;
+                $info_order['order_id'] = $row['order_id'];
+                $info_order['pv_name'] = $row['pv_name'];
+                $info_order['date_for_order'] = $row['date_for_order'];
             }
             if ($brk_product != $row['product_id']) {
                 if ($brk_product) {
-                    $tbody .= $p_end();
-                    if (($detail || $p_orderable_type_id == 3) && !$first_product) {
-                        $tbody .= $this->t_tableBreack();
-                    }
-                    $first_product = false;
+                    $info_order['_body'] .= $end_product();
                 }
                 $brk_product = $row['product_id'];
-                $p_tbody = '';
-                $p_name = $row['p_name'];
-                $p_desc = $row['p_desc'];
-                $p_order_quantity = 0;
-                $p_current_quantity = 0;
-                $p_cost_price = $row['cost_price'];
-                $p_final_price = $row['final_price'];
-                $p_unit = $row['unit'];
-                $p_orderable_type_id = $row['orderable_type_id'];
-                $p_end = function() use(
-                    $detail,
-                    &$p_name,
-                    $p_desc,
-                    &$p_orderable_type_id,
-                    &$p_order_quantity,
-                    &$p_current_quantity,
-                    &$p_unit,
-                    &$p_cost_price,
-                    &$p_final_price,
-                    &$p_tbody
-                ) {
-                    return $this->t_data_row(1, $detail,
-                        $p_name,
-                        $p_desc,
-                        $p_orderable_type_id,
-                        null,
-                        $p_order_quantity,
-                        $p_current_quantity,
-                        $p_unit,
-                        $p_cost_price,
-                        $p_final_price
-                    ) . $p_tbody;
-                };
+                $info_product['_body'] = '';
+                $info_product['_sum_order_q'] = 0;
+                $info_product['_sum_current_q'] = 0;
+                $info_product['p_name'] = $row['p_name'];
+                $info_product['p_desc'] = $row['p_desc'];
+                $info_product['cost_price'] = $row['cost_price'];
+                $info_product['final_price'] = $row['final_price'];
+                $info_product['unit'] = $row['unit'];
+                $info_product['orderable_type_id'] = $row['orderable_type_id'];
             }
-            $p_order_quantity += $row['order_quantity'];
-            $p_current_quantity += $row['current_quantity'];
-            if ($detail || $p_orderable_type_id == 3) {
-                $p_tbody .= $this->t_data_row(2, false,
+            $info_product['_sum_order_q'] += $row['order_quantity'];
+            $info_product['_sum_current_q'] += $row['current_quantity'];
+            $info_order['_sum_amount'] += $this->amount(
+                $row['current_quantity'],
+                $row['cost_price'],
+                $row['final_price']
+            );
+            if ($detail || $info_product['orderable_type_id'] == 3) {
+                $info_product['_body'] .= $this->t_data_row(2, false,
                     "{$row['uf_name']} {$Text['uf_short']}-{$row['uf_id']}",
                     null,
                     $row['orderable_type_id'],
@@ -408,11 +504,8 @@ class report_order
                 );
             }
         }
-        if ($brk_order) {            
-            $tbody .= $p_end();
-            $html .= $this->t_table($thead, $tbody,
-                ($detail ? '' : 'page-break-inside:auto;')
-            ) . '<br>';
+        if ($brk_order) {
+            $html .= $end_order();
         }
         return $html . $this->getHtml_priceDescription();
     }
@@ -628,9 +721,9 @@ class report_order
         } elseif ($date_for_order) { 	        // date for orrder
             $where .= "oi.date_for_order='{$date_for_order}'";
             if ($provider_id !== -1 && $provider_id) {
-                $sql .= " and p.provider_id={$provider_id}";
+                $where .= " and p.provider_id={$provider_id}";
             } else {
-                $sql .= " and ( revision_status is null or revision_status in (1,2,5) )";
+                $where .= " and ( revision_status is null or revision_status in (1,2,5) )";
             }
         } else { // no filter, so nothing to show!
             $where .= "1=0";
@@ -658,7 +751,7 @@ class report_order
             "<tbody>\n";
     }
 
-    protected function t_order_head($level, $colCount, $order_id, $pv_name, $date_for_order) 
+    protected function t_order_head($level, $colCount, $order_id, $pv_name, $date_for_order, $amount = 0) 
     {
         $html = '<tr>';
         if ($level) {
@@ -675,15 +768,17 @@ class report_order
         } else {
             $status = $this->get_statusDesc(null);
         }
-        return $html .
-            $this->t_cel(
-                $colCount - $level,
-                "{$pv_name}: {$date_for_order}&nbsp; #{$order_id}&nbsp; " .
-                    "<span style=\"color:#777; font-size:80%\">{$status}</span>",
-                'border:transparent; padding:6px 0 3px 0',
-                true
-            ) .
-            "</tr>\n";
+        $html .= $this->t_cel(
+            $colCount - ($level + !!$amount),
+            "{$pv_name}: {$date_for_order}&nbsp; #{$order_id}&nbsp; " .
+                "<span style=\"color:#777; font-size:80%\">{$status}</span>",
+            'border:transparent; border-bottom:1px solid #333; padding:6px 0 3px 0;',
+            true
+        );
+        if ($amount) {
+            $html .= $this->t_celAmo(1, $amount, 'border:transparent; border-bottom:1px solid #333; padding-bottom:3px');
+        }
+        return $html . "</tr>\n";
     }
     protected function t_title_head($level)
     {
@@ -719,21 +814,24 @@ class report_order
         return $html;
     }
     
-    protected function t_uf_head($level, $uf_id, $uf_name) 
+    protected function t_uf_head($level, $uf_id, $uf_name, $amount) 
     {
         global $Text;
         $html = '<tr>';
         if ($level) {
             $html .= $this->t_celBlank($level, 'border:transparent;');
         }
-        return $html .
-            $this->t_cel(
-                $this->dataColsCount + $this->amountColsCount - $level,
-                "{$uf_name} {$Text['uf_short']}-{$uf_id}",
-                'border:transparent;',
-                true
-            ) .
-            "</tr>\n";
+        $html .= $this->t_cel(
+            $this->dataColsCount + $this->amountColsCount - ($level + !!$amount),
+            "{$uf_name} {$Text['uf_short']}-{$uf_id}",
+            'border:transparent; border-bottom:1px solid #333;',
+            true
+        );
+        if ($amount) {
+            $html .= $this->t_celAmo(1, $amount, 
+                'border:transparent; border-bottom:1px solid #333; padding-bottom:3px');
+        }
+        return $html . "</tr>\n";
     }
 
 
@@ -752,6 +850,7 @@ class report_order
     ) {
         $html = '<tr>';
         $html .= $this->t_celBlank($level);
+        $sUnderline = $underline ? 'border-bottom: 1px solid #333;' : '';
         if ($orderable_type_id == 3) { // product.orderable_type_id=3 => Use product as order notes
             $text = $name;
             if ($order_notes) {
@@ -769,69 +868,91 @@ class report_order
             $html .= $this->t_cel(
                 $this->dataColsCount + $this->amountColsCount - $level,
                 $text,
-                $underline
+                $sUnderline
             );
             return $html . "</tr>\n";
         } else { // product as order notes
             $colspan1 = 3 - $level;
             if ($desc) {
-                $html .= $this->t_cel($colspan1, $name, $underline, $underline);
-                $html .= $this->t_cel(1, $desc, $underline, $underline);
+                $html .= $this->t_cel($colspan1, $name, $sUnderline);
+                $html .= $this->t_cel(1, $desc, $sUnderline);
             } else {
-                $html .= $this->t_cel($colspan1 + 1, $name, $underline, $underline);
+                $html .= $this->t_cel($colspan1 + 1, $name, $sUnderline);
             }
             if ($order_quantity != $current_quantity) {
                 $html .= 
                     $this->t_cel(1, 
                         '( ' . clean_zeros($order_quantity) . ' )', 
-                        'color:#777;XXfont-size:80%;text-align:right;',
-                        $underline
+                        'color:#777;XXfont-size:80%;text-align:right;' . $sUnderline
                     ) .
-                    $this->t_celNum(1, $current_quantity, '', $underline);
+                    $this->t_celNum(1, $current_quantity, $sUnderline);
             } else {
-                $html .= $this->t_celNum(2, $current_quantity, '', $underline);
+                $html .= $this->t_celNum(2, $current_quantity, $sUnderline);
             }
-            $html .= $this->t_cel(1, $unit, 'max-width:9em', $underline);
+            $html .= $this->t_cel(1, $unit, 'max-width:9em;' . $sUnderline);
             switch ($this->priceType) {
                 case 'cost':
                     if ($p_cost_price) {
                         $html .= $this->t_celAmo(1,
-                            $p_cost_price, 'color:#555;font-size:80%');
+                            $p_cost_price, 
+                            'color:#555;font-size:80%;' . $sUnderline);
                         $html .= $this->t_celAmo(1,
-                            $p_cost_price * $current_quantity, '', $underline);
+                            $p_cost_price * $current_quantity, $sUnderline);
                     } else {
-                        $html .= $this->t_cel(2, '&nbsp;', '', $underline);
+                        $html .= $this->t_cel(2, '&nbsp;', $sUnderline);
                     }
                     break;
                 case 'cost_amount':
                     if ($p_cost_price) {
                         $html .= $this->t_celAmo(1,
-                            $p_cost_price * $current_quantity, '', $underline);
+                            $p_cost_price * $current_quantity, $sUnderline);
                     } else {
-                        $html .= $this->t_cel(1, '&nbsp;', '', $underline);
+                        $html .= $this->t_cel(1, '&nbsp;', $sUnderline);
                     }
                     break;
                 case 'final':
                     if ($p_final_price) {
-                        $html .= 
-                            $html .= $this->t_celAmo(1,
-                                $p_final_price, 'color:#555;font-size:80%');
-                            $html .= $this->t_celAmo(1,
-                                $p_final_price * $current_quantity, '', $underline);
+                        $html .= $this->t_celAmo(1,
+                            $p_final_price, 
+                            'color:#555;font-size:80%;' . $sUnderline);
+                        $html .= $this->t_celAmo(1,
+                            $p_final_price * $current_quantity, $sUnderline);
                     } else {
-                        $html .= $this->t_cel(2, '&nbsp;', '', $underline);
+                        $html .= $this->t_cel(2, '&nbsp;', $sUnderline);
                     }
                     break;
                 case 'final_amount':
                     if ($p_final_price) {
-                        $html .= $html .= $this->t_celAmo(1,
-                            $p_final_price * $current_quantity, '', $underline);
+                        $html .= $this->t_celAmo(1,
+                            $p_final_price * $current_quantity, $sUnderline);
                     } else {
-                        $html .= $this->t_cel(1, '&nbsp;', '', $underline);
+                        $html .= $this->t_cel(1, '&nbsp;', $sUnderline);
                     }
                     break;
             }
             return $html . "</tr>\n";
+        }
+    }
+
+    protected function amount($current_quantity, $p_cost_price, $p_final_price)
+    {
+        switch ($this->priceType) {
+            case 'cost':
+            case 'cost_amount':
+                if ($p_cost_price) {
+                    return $p_cost_price * $current_quantity;
+                } else {
+                    return 0;
+                }
+            case 'final':
+            case 'final_amount':
+                if ($p_final_price) {
+                    return $p_final_price * $current_quantity;
+                } else {
+                    return 0;
+                }
+            default:
+                return 0;
         }
     }
 
@@ -845,42 +966,32 @@ class report_order
             " style=\"text-align:center; border:1px solid #ccc; padding:6px 4px; background-color:#ddd; {$style}\"\n>{$text}</th>\n";
     }
     
-    protected function t_cel($colspan, $text, $style = '', $underline = false)
+    protected function t_cel($colspan, $text, $style = '')
     {
         $html = "<td";
         if ($colspan > 1) {
             $html .= " colspan=\"{$colspan}\"\n";
         }
-        if ($underline) {
-            return $html .=  
-                " style=\"border:1px solid #ccc; padding:6px 0; {$style}\"><div \n" .
-                " style=\"margin-top:5px; 2px;border-bottom:1px solid #333;padding:0 4px;\"\n" .
-                ">{$text}</div></td>\n";
-        } else {
-            return $html .= 
-                " style=\"border:1px solid #ccc; padding:6px 4px; {$style}\"\n" .
-                ">{$text}</td>\n";
-            
-        }
+        return $html .= 
+            " style=\"border:1px solid #ccc; padding:6px 4px; {$style}\"\n" .
+            ">{$text}</td>\n";
     }
     
-    protected function t_celNum($colspan, $number, $style = '', $underline = false)
+    protected function t_celNum($colspan, $number, $style = '')
     {
         return $this->t_cel(
             $colspan,
             clean_zeros($number),
-            'text-align:right;' . $style,
-            $underline
+            'text-align:right;' . $style
         );
     }
         
-    protected function t_celAmo($colspan, $number, $style = '', $underline = false)
+    protected function t_celAmo($colspan, $number, $style = '')
     {
         return $this->t_cel(
             $colspan,
             ($number ? number_format($number, 2) : '&nbsp;'),
-            'text-align:right;' . $style,
-            $underline
+            'text-align:right;' . $style
         );
     }
     
