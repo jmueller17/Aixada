@@ -1453,6 +1453,9 @@
 				 */
 				function printQueue() {
 					var _queryStr = '';
+                    var _dates = {};
+                    var _orders = [];
+                    var _countOrd = 0;
                     $('input:checkbox[name="bulkAction"]').each(function(){
                         if ($(this).is(':checked')){
                             var gSelRow = $(this).parents('tr');
@@ -1460,6 +1463,11 @@
                                 '&order_id[]=' + gSelRow.attr("orderId") + 
                                 '&provider_id[]=' + gSelRow.attr("providerId") +
                                 '&date[]=' + gSelRow.attr("dateForOrder");
+                            _dates[gSelRow.attr("dateForOrder")] = gSelRow.attr("dateForOrder");
+                            if (gSelRow.attr("orderId")) {
+                                _orders.push(gSelRow.attr("orderId"));
+                            }
+                            _countOrd++;
                         } 
                     });
                     if (_queryStr === '') {
@@ -1474,6 +1482,18 @@
                             }
                         });
                     } else {
+                        var _title = $('#printOpt_format').val();
+                        if (_title === 'default') {
+                            _title = 'cfg_<?=get_config('email_order_format', 'notSet')?>';
+                        }
+                        _title = 'Orders-' + _title;
+                        for (var prop in _dates) {
+                            _title += ' ' + prop;
+                        }
+                        if (_orders.length) {
+                            _title += ' ' + _orders.join(',');
+                        }
+                        _title += ' [' + _countOrd + ']'
                         _queryStr += '&format=' + $('#printOpt_format').val() + 
                                      '&prices=' + $('#printOpt_prices').val();
                         var _printWin = window.open( 
@@ -1496,6 +1516,7 @@
                                     if (!$('#printOpt_header').prop('checked')) {
                                         $('#header', _printWin.document).hide();
                                     }
+                                    _printWin.document.title =_title;
                                     orderWrap.load(
                                         'php/ctrl/Orders.php?oper=reportOrders' + _queryStr,
                                         function () {
@@ -1746,8 +1767,8 @@
                                 <option value="default" selected ><?=$Text['order_printOpt_default']?></option>
                                 <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
                                 <option value="cost"><?=$Text['prvOrdP_cost_price']?></option>
-                                <option value="cost_amount"><?=$Text['prvOrdP_final_amount']?></option>
-                                <option value="cost"><?=$Text['prvOrdP_final_price']?></option>
+                                <option value="final_amount"><?=$Text['prvOrdP_final_amount']?></option>
+                                <option value="final"><?=$Text['prvOrdP_final_price']?></option>
                                 <option value="none"><?=$Text['prvOrdP_no_amount']?></option>
                             </select>
                         </td>
