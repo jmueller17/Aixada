@@ -40,17 +40,48 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
  (:bulb:`config.php`: `$accounts[...]` *en particular* `$accounts['use_providers']`)   
  Se permite pequeños ajustes en la presentación de importes y fechas (:bulb:`config.php`: `$type_formats[...]`)
 
-**Cambios**
-* Se permite a las UF hacer pedidos de productos de stock (:bulb:`config.php`: `$orders_allow_stock`, es de utilidad conjuntamente con `$use_shop=false`)
-* La revisión de pedidos permite cambiar precios y re-calcula el importe para así poder cuadrar el importe del albarán con el importe calculado con una precisión de 0,01.   
-AL ponerse sobre una celda muestra también el nombre de la UF también puede configurar el orden de las UF.   
-Permite asignar productos a UF que no lo han pedido pero que sí que se lo han quedado (:bulb:`config.php`: `$order_review_uf_sequence`, `$revision_fixed_uf`)
-* Se puede distribuir y validar directamente un pedido (:bulb:`config.php`: `$order_distribution_method`, `$order_distributeValidate_invoce`)
-* Es posible configurar que al validar muestre todos los carros de la semana en vez de solo los del día (:bulb:`config.php`: `$validate_show_carts`).
-* Al validar se pueden crear cestas vacías para asignar compra a UF si pedido o compra previa (:bulb:`config.php`: `$validate_btn_create_carts`) y se solventa el problema de poner productos en cestas vacias.
+**Mejoras y cambios**
+* Al hacer pedidos:
+  * Se permite a las UF hacer pedidos de productos de stock (:bulb:`config.php`:
+    `$orders_allow_stock`, es de utilidad conjuntamente con `$use_shop=false`)
+  * Las casillas de las cantidades se muestran en blanco en vez de a 0.
+  * Cuando una cantidad se pone a 0 o en blanco se borra el producto de la cesta.
+  * Se mejora la sincronización de cantidades con la cesta en las pestañas de
+    proveedor, categoría y buscar.
+  * Se permite comentarios en los pedidos. Nuevo tipo de producto de comentarios
+    (sin precio) que al hacer un pedido requiere texto en vez de cantidades
+    (para enviar comentarios sobre los pedidos ya recibidos o para dar
+    instrucciones de preparación del pedido)
+* En gestión de pedidos:
+  * Se permite reabrir un pedido cerrado por error.
+  * Se puede cancelar un pedido abierto sin enviarlo al proveedor.
+  * Más formatos y mejoras de presentación para enviar o imprimir pedidos
+    (detallando: por productos+UF o UF+Productos) y se añade importe total.
+  * Los pedidos se envían en el formato seleccionado para el proveedor y si no
+    según configuración (:bulb:`config.php`: `$email_order_format' y
+    `$email_order_prices`).
+  * Nueva opción para seleccionar el formato en que se desea imprimir los pedidos.
+* Al revisar pedidos:
+  * Permite cambiar precios y re-calcula el importe y así poder cuadrar el
+    importe del albarán con el importe calculado.
+  * Muestra el nombre de la UF al ponerse sobre una celda.
+  * Puede configurarse en que orden aparecen las columna de las UF
+    (:bulb:`config.php`: `$order_review_uf_sequence`)
+  * Permite asignar productos a una UF que no han pedido ese producto.
+  * Se puede configurar que se muetre una columna de una UF determinada para por
+    ejemplo assignarle deterioros posteriores a la recepción
+    (:bulb:`config.php`: `$revision_fixed_uf`)
+  * Se puede distribuir y validar directamente un pedido (:bulb:`config.php`:
+    `$order_distribution_method`, `$order_distributeValidate_invoce`)
+  * Al volver a revisar un pedido que ya se ha distribuido se permite conservar
+    el trabajo de revisión hecho previamente.
+* En validación de cestas:
+  * Es posible configurar que al validar muestre todos los carros de la semana
+    (:bulb:`config.php`: `$validate_show_carts`).
+  * Se pueden crear cestas vacías para asignar compra a UF sin pedido o compra
+    previa (:bulb:`config.php`: `$validate_btn_create_carts`) 
+  * Se solventa el problema de poner productos en cestas vacías.
 * Añadir edición de la mayoría de tablas auxiliares y mejorar la existente permitiendo edición en la lista.
-* Al volver a revisar un pedido que ya se ha distribuido se puede conservar el trabajo de revisión hecho previamente.
-* Se permite reabrir un pedido cerrado por error.
 * Mejorar el envío de correos:  
 (envío de pedido al proveedor, re-establecimiento de contraseña y incidentes)
   * Formateo html de los mensajes.

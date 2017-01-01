@@ -304,11 +304,25 @@ class configuration_vars {
   
   
   /**
-   * format of emailed orders: just summarized "1" or just extended "2" or both "3"
+   * Default format of emailed orders:
+   *  - 'Prod', '1':    List of products (just summarized)
+   *  - 'Matrix', '2':  Grid products-HU (just extended)
+   *  - 'Prod_Matrix',3:List of products + Grid
+   *  - 'ProdUf':       List of products with HU detail
+   *  - 'Prod_ProdUf':  List of products + List with HU detail
+   *  - 'UfProd':       List of HU with detail products
+   *  - 'none':         Do not send
    */
   public $email_order_format = 3;
   
   
+  /**
+   * Default prices used on emailed orders: 
+   *  - 'cost_amount':  Price and cost amount (without tax)
+   *  - 'cost':         Cost Amount (without tax)
+   *  - 'none':         Without cost
+   */
+  public $email_order_prices = 'cost_amount';
   
   
   /**
