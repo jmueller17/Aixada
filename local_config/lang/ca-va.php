@@ -1058,6 +1058,17 @@ $Text['or_click_to_edit_total'] = 'Clic per ajustar la quantitat total';
 $Text['or_click_to_edit_gprice'] = 'Clic per ajustar el preu';
 $Text['or_saving'] = 'Guardant';
 $Text['or_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
+$Text['or_cancel_order_a'] = "Cancel·lar comanda";
+$Text['or_cancel_order'] =
+    "Està segur que vol cancel·lar aquesta comanda?<hr><br>
+    La comanda es finalitzarà com cancel·lada,<br>
+    i NO s'enviarà per correu al proveïdor.<br><br>
+    Posteriorment, si ho desitja, podrà modificar l'estat de la comanda revisant-la.";
+$Text['or_cancel_order_open'] =
+    "Està segur que vol cancel·lar aquesta comanda?<hr><br>
+    La comanda es finalitzarà com cancel·lada <b>abans de la seva data límit</b>,<br>
+    i NO s'enviarà per correu al proveïdor.<br><br>
+    Posteriorment, si ho desitja, podrà modificar l'estat de la comanda revisant-la.";
 $Text['os_reopen_order_a'] = "Reobrir";
 $Text['os_reopen_order'] =
     "Estas segur que vols reobrir aquesta comanda?<hr><br>

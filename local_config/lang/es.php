@@ -1066,6 +1066,17 @@ $Text['or_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
 $Text['or_click_to_edit_gprice'] = 'Clic para ajustar el precio';
 $Text['or_saving'] = 'Guardando';
 $Text['or_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
+$Text['or_cancel_order_a'] = "Cancelar pedido";
+$Text['or_cancel_order'] =
+     "Está seguro que desea cancelar este pedido?<hr><br>
+     El pedido se finalizará como cancelado,<br>
+     y NO se enviará por correo al proveedor.<br><br>
+     Posteriormente, si lo desea, podrá modificar el estado del pedido revisándolo.";
+$Text['or_cancel_order_open'] =
+     "Está seguro que desea cancelar este pedido?<hr><br>
+     El pedido se finalizará como cancelado <b>antes de su fecha límite</b>,<br>
+     y NO se enviará por correo al proveedor.<br><br>
+     Posteriormente, si lo desea, podrá modificar el estado del pedido revisándolo.";
 $Text['os_reopen_order_a'] = "Re-abrir";
 $Text['os_reopen_order'] =
     "¿Seguro que deseas re-abrir este pedido?<hr><br>

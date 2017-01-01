@@ -1023,8 +1023,7 @@
 						tds.eq(5).html(str);
 
 						//if order has been send but not yet received, it can be reopened
-						var statusTd = $(row).children().eq(8).attr('revisionStatus');
-						if (statusTd == 1){
+						if (status == 1 || status == 3 || status == 4) {
 							var date_for_order = new Date(tds.eq(3).text());
 							if (date_for_order.getTime() >= _date_todayOverview.getTime() || isPreorder) {
 								tds.eq(6).html(
@@ -1039,6 +1038,11 @@
 						//while open and not sent off, no order_id exists. show the finalize button
 						tds.eq(1).html('<p>-</p>');
 						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder"><?=$Text['finalize_now'];?></a></p>');
+						tds.eq(9).html(
+						    '<a href="javascript:void(null)" class="cancelOrderBtn">' +
+						    '<?php echo i18n_js('or_cancel_order_a'); ?>' +
+						    '</a>'
+						);
 					}
 				},
 				complete : function (rowCount){
@@ -1054,6 +1058,50 @@
 				}
 			});
 
+			$('.cancelOrderBtn').live("click", function(e) {
+                var rowTr = $(this).parents('tr');
+                var _dateForOrder = rowTr.attr("dateForOrder"),
+                    _providerId = rowTr.attr("providerId"),
+                    timeLeft = rowTr.children().eq(4).text(),
+                    msg;
+                if (timeLeft > 0){
+                    msg = "<?=i18n_js('or_cancel_order_open');?>";
+                } else {
+                    msg = "<?=i18n_js('or_cancel_order');?>";
+                }
+                $.showMsg({
+                    msg: msg,
+                    buttons: {
+                        "<?=$Text['btn_ok'];?>": function() {
+                            var $this = $(this);
+                            $.ajax({
+                                type: "POST",
+                                url: 'php/ctrl/Orders.php?oper=finalizeOrder' +
+                                    '&revision_status=4' + // 4 = Cancel
+                                    '&provider_id=' + _providerId +
+                                    '&date=' + _dateForOrder,
+                                success: function(txt){
+                                        $('#tbl_orderOverview tbody').xml2html('reload');
+                                },
+                                error : function(XMLHttpRequest, textStatus, errorThrown){
+                                    $.showMsg({
+                                        msg:XMLHttpRequest.responseText,
+                                        type: 'error'});
+                                },
+                                complete:function(){
+                                    $this.dialog( "close" );
+                                }
+                            });
+                        },
+                        "<?=$Text['btn_cancel'];?>": function() {
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    title: local_lang._warning,
+                    type: 'warning'
+                });
+                e.stopPropagation();
+            });
 
 			$('.reopenOrderBtn')
 				.live("click", function(e){
@@ -1091,7 +1139,7 @@
 
 					e.stopPropagation();
 
-				})
+				});
 
 			/**
 			 *	To finalize an order means no further modifications are possile. 

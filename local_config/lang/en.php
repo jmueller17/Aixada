@@ -1066,6 +1066,17 @@ $Text['or_click_to_edit_total'] = 'Click to adjust total quantities';
 $Text['or_click_to_edit_gprice'] = 'Click to adjust price';
 $Text['or_saving'] = 'Saving';
 $Text['or_ostat_desc_validated'] = 'Items of this order have been validated';
+$Text['or_cancel_order_a'] = "Cancel order";
+$Text['or_cancel_order'] =
+     "Are you sure you want to cancel this order?<hr><br>
+     The order will be finalized as canceled,<br>
+     and NOT be sent by mail to the provider.<br><br>
+     Later, if you want, you can change the order status.";
+$Text['or_cancel_order_open'] =
+     "Are you sure you want to cancel this order?<hr><br>
+     The order will be finalized as canceled <b>before its deadline</b>,<br>
+     and NOT be sent by mail to the provider.<br><br>
+     Later, if you want, you can change the order status.";
 $Text['os_reopen_order_a'] = "Reopen";
 $Text['os_reopen_order'] =
     "Are you sure to reopen this order?<hr><br>
