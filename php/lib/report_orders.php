@@ -485,11 +485,6 @@ class report_order
             }
             $info_product['_sum_order_q'] += $row['order_quantity'];
             $info_product['_sum_current_q'] += $row['current_quantity'];
-            $info_order['_sum_amount'] += $this->amount(
-                $row['current_quantity'],
-                $row['cost_price'],
-                $row['final_price']
-            );
             if ($detail || $info_product['orderable_type_id'] == 3) {
                 $info_product['_body'] .= $this->t_data_row(2, false,
                     "{$row['uf_name']} {$Text['uf_short']}-{$row['uf_id']}",
