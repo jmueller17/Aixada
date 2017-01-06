@@ -18,6 +18,10 @@ class report_order
     protected $priceType = null;
     protected $dataColsCount = 7; // 5 data cols + 2 indent cols;
     protected $amountColsCount = 0;
+    protected $widthBank = 0.5;
+    protected $widthQua = 1.2;
+    protected $widthUni = 2.5;
+    protected $widthAmo = 1.4;
     
     public function __construct($priceType = 'none')
     {
@@ -89,7 +93,13 @@ class report_order
             $html .= $ro->getHtml_ufOrderProd($orderArr, $providerArr, $dateArr);
         } else {
             for ($i = 0; $i < count($orderArr); $i++) {
-                $html .= self::getHtml_order($orderArr[$i], $providerArr[$i], $dateArr[$i], $format, $prices);
+                $html .= self::getHtml_order(
+                    $orderArr[$i],
+                    $providerArr[$i],
+                    $dateArr[$i],
+                    $format,
+                    $prices
+                );
             }
         }
         return $html;
@@ -130,8 +140,13 @@ class report_order
         );
     }
     
-    public static function getHtml_order($order_id, $provider_id = null, $date_for_order = null, $format = 'default', $prices = 'default') 
-    {
+    public static function getHtml_order(
+        $order_id,
+        $provider_id = null,
+        $date_for_order = null,
+        $format = 'default',
+        $prices = 'default'
+    ) {
         global $Text;
         if ($order_id && !is_numeric($order_id)) {
             return '';
@@ -269,7 +284,7 @@ class report_order
                 $info_order['pv_name'] = $row['pv_name'];
                 $info_order['date_for_order'] = $row['date_for_order'];
             }
-            $info_order['_sum_amount'] += $this->amount(
+            $info_order['_sum_amount'] += $this->calculateAmount(
                 $row['current_quantity'],
                 $row['cost_price'],
                 $row['final_price']
@@ -365,7 +380,7 @@ class report_order
                 $info_uf['uf_id'] = $row['uf_id'];
                 $info_uf['uf_name'] = $row['uf_name'];
             }
-            $info_uf['_sum_amount'] += $this->amount(
+            $info_uf['_sum_amount'] += $this->calculateAmount(
                 $row['current_quantity'],
                 $row['cost_price'],
                 $row['final_price']
@@ -429,7 +444,7 @@ class report_order
             if (($detail || $info_product['orderable_type_id'] == 3) && !$info_product['_first']) {
                 $html .= $this->t_tableBreack();
             }
-            $info_order['_sum_amount'] += $this->amount(
+            $info_order['_sum_amount'] += $this->calculateAmount(
                 $info_product['_sum_current_q'],
                 $info_product['cost_price'],
                 $info_product['final_price']
@@ -524,7 +539,13 @@ class report_order
                     if ($brk_product) {
                         $matrix[$p_name]['Total_qty'] = $p_current_quantity;
                     }
-                    $html .= $this->getHtml_orderMatrixTable($order_id, $pv_name, $date_for_order, $uf_list, $matrix) . '<br>';
+                    $html .= $this->getHtml_orderMatrixTable(
+                        $order_id,
+                        $pv_name,
+                        $date_for_order,
+                        $uf_list,
+                        $matrix
+                    ) . '<br>';
                 }
                 $brk_order = $cur_order;
                 $order_id = $row['order_id'];
@@ -553,7 +574,13 @@ class report_order
             if ($brk_product) {
                 $matrix[$p_name]['Total_qty'] = $p_current_quantity;
             }
-            $html .= $this->getHtml_orderMatrixTable($order_id, $pv_name, $date_for_order, $uf_list, $matrix);
+            $html .= $this->getHtml_orderMatrixTable(
+                $order_id,
+                $pv_name,
+                $date_for_order,
+                $uf_list,
+                $matrix
+            );
         }
         return $html;
     }
@@ -569,14 +596,13 @@ class report_order
             count($uf_list) + 2,
             $order_id, $pv_name, $date_for_order
         );
-        $thead .= "<tr>\n" . $this->t_th(1, $Text['product_name'], '" rowspan="2');
+        $thead .= "<tr>\r\n" . $this->t_th(1, $Text['product_name'], '' , '" rowspan="2');
         $thead .= $this->t_th(count($uf_list), "UFs");
-        $thead .= $this->t_th(1, $Text['quantity'], '" rowspan="2') . "</tr>\n";
-        $thead .= "<tr>\n";
+        $thead .= $this->t_th(1, $Text['quantity'], '', '" rowspan="2') . "</tr>\r\n";
         foreach ($uf_list as $uf) {
             $thead .= $this->t_th(1, $uf);
         }
-        $thead .= "</tr>\n";
+        $thead .= "</tr>\r\n";
         
         // Body
         $tbody = '';
@@ -597,9 +623,13 @@ class report_order
             }
             $tbody .=
                 $this->t_celNum(1, $matrix[$product]['Total_qty'], 'font-weight: bold;') .
-                "</tr>\n";
+                "</tr>\r\n";
         }
-        return $this->t_table($thead, $tbody, 'page-break-inside:auto; width:auto;') . '<br>';
+        return $this->t_table(
+            $thead,
+            $tbody,
+            'page-break-inside:auto; width:auto;'
+        ) . '<br>';
     }
     
     protected function getHtml_priceDescription() 
@@ -620,7 +650,7 @@ class report_order
                 $desc = '??? ' . $this->priceType . ' ???';
                 break;
         }
-        return "<p style=\"text-align:center;\">{$desc}</p>\n";
+        return "<p style=\"text-align:center;\">{$desc}</p>\r\n";
     }
     
     /**
@@ -658,7 +688,9 @@ class report_order
                 return '<span class="DATA-not_yet_sent">??OrderStatus="'.
                     $revision_status.'"??</span>';
         }
-        return "[<span style=\"padding:0 3px; {$style}\">".$Text[$text_key].'</span>]';
+        return "[<span style=\"padding:0 3px; {$style}\">" .
+            $Text[$text_key].
+            '</span>]';
     }
 
     /**
@@ -669,10 +701,15 @@ class report_order
         return "select 	
                 oi.order_id, oi.date_for_order,
                 o.revision_status order_status,
-                oi.product_id, p.name p_name, p.description p_desc, p.orderable_type_id,
+                oi.product_id, p.name p_name, p.description p_desc,
+                p.orderable_type_id,
                 oi.quantity order_quantity,
                 oi.notes order_notes,
-                if(os.quantity is not null, os.quantity*os.arrived, oi.quantity) current_quantity,
+                if(
+                    os.quantity is not null,
+                    os.quantity*os.arrived,
+                    oi.quantity
+                ) current_quantity,
                 ifnull(os.unit_price_stamp, oi.unit_price_stamp) final_price, 
                 if( os.unit_price_stamp is not null,
                     round(
@@ -726,28 +763,56 @@ class report_order
         return "select * from ({$this->getFrom_orderDetail()} where {$where}) r order by ";
     }
     
+    protected function calculateAmount($current_quantity, $p_cost_price, $p_final_price)
+    {
+        switch ($this->priceType) {
+            case 'cost':
+            case 'cost_amount':
+                if ($p_cost_price) {
+                    return $p_cost_price * $current_quantity;
+                } else {
+                    return 0;
+                }
+            case 'final':
+            case 'final_amount':
+                if ($p_final_price) {
+                    return $p_final_price * $current_quantity;
+                } else {
+                    return 0;
+                }
+            default:
+                return 0;
+        }
+    }
+    
     /**
      *  Templates
      */
     protected function t_table($thead, $tbody, $style = '') 
     {
         return 
-            "<table\n" .
-            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\n" .
-                "<thead>\n{$thead}\n</thead>\n" .
-                "<tbody>\n{$tbody}\n</tbody>\n" .
-            "</table>\n";
+            "<table\r\n" .
+            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\r\n" .
+                "<thead>\r\n{$thead}\r\n</thead>\r\n" .
+                "<tbody>\r\n{$tbody}\r\n</tbody>\r\n" .
+            "</table>\r\n";
     }
     protected function t_tableBreack($style = '') 
     {
         return 
-            "</tbody></table><table\n" .
-            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\n" .
-            "<tbody>\n";
+            "</tbody></table><table\r\n" .
+            " style=\"width:19cm;page-break-inside:avoid;margin:0 auto;border-collapse:collapse;{$style}\">\r\n" .
+            "<tbody>\r\n";
     }
 
-    protected function t_order_head($level, $colCount, $order_id, $pv_name, $date_for_order, $amount = 0) 
-    {
+    protected function t_order_head(
+        $level,
+        $colCount,
+        $order_id,
+        $pv_name,
+        $date_for_order,
+        $amount = 0
+    ) {
         $html = '<tr>';
         if ($level) {
             $html .= $this->t_celBlank($level, 'border:transparent;');
@@ -765,15 +830,20 @@ class report_order
         }
         $html .= $this->t_cel(
             $colCount - ($level + !!$amount),
-            "{$pv_name}: {$date_for_order}&nbsp; #{$order_id}&nbsp; " .
-                "<span style=\"color:#777; font-size:80%\">{$status}</span>",
-            'border:transparent; border-bottom:1px solid #333; padding:6px 0 3px 0;',
-            true
+            "{$pv_name}: {$date_for_order}&nbsp; #{$order_id}&nbsp;\r\n" .
+                "<span style=\"color:#777; font-size:80%\">\r\n{$status}</span>\r\n",
+            'padding:6px 0 3px 0;',
+            'border:transparent; border-bottom:1px solid #333;'
         );
         if ($amount) {
-            $html .= $this->t_celAmo(1, $amount, 'border:transparent; border-bottom:1px solid #333; padding-bottom:3px');
+            $html .= $this->t_celAmo(
+                1,
+                $amount,
+                'padding-bottom:3px;',
+                'border:transparent; border-bottom:1px solid #333;'
+            );
         }
-        return $html . "</tr>\n";
+        return $html . "</tr>\r\n";
     }
     protected function t_title_head($level)
     {
@@ -783,29 +853,33 @@ class report_order
             $html .= $this->t_celBlank($level, 'border:transparent;');
         }
         $html .= 
-            $this->t_th(
-                2 + (2 - $level),
-                $Text['product_name']
-            ) . // $this->t_th(1, $Text['description']) .
-            $this->t_th(2, $Text['quantity']) .
-            $this->t_th(1, $Text['unit']);
+            $this->t_th(2 + (2 - $level), $Text['product_name']) .
+            $this->t_th(2, $Text['quantity'],
+                '', 'width:' . $this->widthQua * 2 . 'cm;') .
+            $this->t_th(1, $Text['unit'], '', "width:{$this->widthUni}cm;");
         switch ($this->priceType) {
             case 'cost':
-                $html .= $this->t_th(1, $Text['price']);
-                $html .= $this->t_th(1, $Text['cost_amount']);
+                $html .= $this->t_th(1, $Text['price'],
+                    '', "width:{$this->widthAmo}cm;");
+                $html .= $this->t_th(1, $Text['cost_amount'],
+                    '', "width:{$this->widthAmo}cm;");
                 break;
             case 'cost_amount':
-                $html .= $this->t_th(1, $Text['cost_amount']);
+                $html .= $this->t_th(1, $Text['cost_amount'],
+                    '', "width:{$this->widthAmo}cm;");
                 break;
             case 'final':
-                $html .= $this->t_th(1, $Text['price']);
-                $html .= $this->t_th(1, $Text['final_amount']);
+                $html .= $this->t_th(1, $Text['price'], 
+                    '', "width:{$this->widthAmo}cm;");
+                $html .= $this->t_th(1, $Text['final_amount'],
+                    '', "width:{$this->widthAmo}cm;");
                 break;
             case 'final_amount':
-                $html .= $this->t_th(1, $Text['final_amount']);
+                $html .= $this->t_th(1, $Text['final_amount'],
+                    '', "width:{$this->widthAmo}cm;");
                 break;
         }
-        $html .= "</tr>\n";
+        $html .= "</tr>\r\n";
         return $html;
     }
     
@@ -819,14 +893,16 @@ class report_order
         $html .= $this->t_cel(
             $this->dataColsCount + $this->amountColsCount - ($level + !!$amount),
             "{$uf_name} {$Text['uf_short']}-{$uf_id}",
-            'border:transparent; border-bottom:1px solid #333;',
-            true
+            '',
+            'border:transparent; border-bottom:1px solid #333;'
         );
         if ($amount) {
             $html .= $this->t_celAmo(1, $amount, 
-                'border:transparent; border-bottom:1px solid #333; padding-bottom:3px');
+                'padding-bottom:3px;',
+                'border:transparent; border-bottom:1px solid #333;'
+            );
         }
-        return $html . "</tr>\n";
+        return $html . "</tr>\r\n";
     }
 
 
@@ -854,150 +930,138 @@ class report_order
                     array('<br>',   '<br>', '<br>', '<br>&nbsp; &nbsp; ', '<br>&nbsp; '),
                     htmlentities($order_notes)
                 );
-                $order_notes = str_replace('<br>', "<br>\n", $order_notes); // break html text lines
+                $order_notes = str_replace('<br>', "<br>\r\n", $order_notes); // break html text lines
                 $text .=
-                    "\n<div style=\"padding: 0 5px 5px 5px;\">\n" .
-                    "<div style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \n" .
+                    "\r\n<div style=\"padding: 0 5px 5px 5px;\">\r\n" .
+                    "<div style=\"margin:0; border:1px dotted #ccc;padding:0px 5px;\" \r\n" .
                     ">{$order_notes}</div></div>";
             }
             $html .= $this->t_cel(
                 $this->dataColsCount + $this->amountColsCount - $level,
                 $text,
-                $sUnderline
+                '', $sUnderline
             );
-            return $html . "</tr>\n";
+            return $html . "</tr>\r\n";
         } else { // product as order notes
             $colspan1 = 3 - $level;
             if ($desc) {
-                $html .= $this->t_cel($colspan1, $name, $sUnderline);
-                $html .= $this->t_cel(1, $desc, $sUnderline);
+                $html .= $this->t_cel($colspan1, $name, '', $sUnderline);
+                $html .= $this->t_cel(1, $desc, '', $sUnderline);
             } else {
-                $html .= $this->t_cel($colspan1 + 1, $name, $sUnderline);
+                $html .= $this->t_cel($colspan1 + 1, $name, '', $sUnderline);
             }
             if ($order_quantity != $current_quantity) {
                 $html .= 
-                    $this->t_cel(1, 
-                        '( ' . clean_zeros($order_quantity) . ' )', 
-                        'color:#777;XXfont-size:80%;text-align:right;' . $sUnderline
+                    $this->t_celNum(1, $order_quantity, 
+                        'color:#777;font-size:80%;', $sUnderline
                     ) .
-                    $this->t_celNum(1, $current_quantity, $sUnderline);
+                    $this->t_celNum(1, $current_quantity, '', $sUnderline);
             } else {
-                $html .= $this->t_celNum(2, $current_quantity, $sUnderline);
+                $html .= $this->t_celNum(2, $current_quantity, '', $sUnderline);
             }
-            $html .= $this->t_cel(1, $unit, 'max-width:9em;' . $sUnderline);
+            $html .= $this->t_cel(1, $unit,
+                '', "width:{$this->widthUni}cm;" . $sUnderline);
             switch ($this->priceType) {
                 case 'cost':
                     if ($p_cost_price) {
                         $html .= $this->t_celAmo(1,
                             $p_cost_price, 
-                            'color:#555;font-size:80%;' . $sUnderline);
+                            'color:#555;font-size:80%;', $sUnderline);
                         $html .= $this->t_celAmo(1,
-                            $p_cost_price * $current_quantity, $sUnderline);
+                            $p_cost_price * $current_quantity, '', $sUnderline);
                     } else {
-                        $html .= $this->t_cel(2, '&nbsp;', $sUnderline);
+                        $html .= $this->t_celAmo(2, null, '', $sUnderline);
                     }
                     break;
                 case 'cost_amount':
                     if ($p_cost_price) {
                         $html .= $this->t_celAmo(1,
-                            $p_cost_price * $current_quantity, $sUnderline);
+                            $p_cost_price * $current_quantity, '', $sUnderline);
                     } else {
-                        $html .= $this->t_cel(1, '&nbsp;', $sUnderline);
+                        $html .= $this->t_celAmo(1, null, '', $sUnderline);
                     }
                     break;
                 case 'final':
                     if ($p_final_price) {
                         $html .= $this->t_celAmo(1,
                             $p_final_price, 
-                            'color:#555;font-size:80%;' . $sUnderline);
+                            'color:#555;font-size:80%;', $sUnderline);
                         $html .= $this->t_celAmo(1,
-                            $p_final_price * $current_quantity, $sUnderline);
+                            $p_final_price * $current_quantity, '', $sUnderline);
                     } else {
-                        $html .= $this->t_cel(2, '&nbsp;', $sUnderline);
+                        $html .= $this->t_celAmo(2, null, '', $sUnderline);
                     }
                     break;
                 case 'final_amount':
                     if ($p_final_price) {
                         $html .= $this->t_celAmo(1,
-                            $p_final_price * $current_quantity, $sUnderline);
+                            $p_final_price * $current_quantity, '', $sUnderline);
                     } else {
-                        $html .= $this->t_cel(1, '&nbsp;', $sUnderline);
+                        $html .= $this->t_celAmo(1, null, '', $sUnderline);
                     }
                     break;
             }
-            return $html . "</tr>\n";
+            return $html . "</tr>\r\n";
         }
     }
 
-    protected function amount($current_quantity, $p_cost_price, $p_final_price)
-    {
-        switch ($this->priceType) {
-            case 'cost':
-            case 'cost_amount':
-                if ($p_cost_price) {
-                    return $p_cost_price * $current_quantity;
-                } else {
-                    return 0;
-                }
-            case 'final':
-            case 'final_amount':
-                if ($p_final_price) {
-                    return $p_final_price * $current_quantity;
-                } else {
-                    return 0;
-                }
-            default:
-                return 0;
-        }
-    }
-
-    protected function t_th($colspan, $text, $style = '')
+    protected function t_th($colspan, $text, $style = '', $styleCel = '')
     {
         $html = "<th";
         if ($colspan > 1) {
-            $html .= " colspan=\"{$colspan}\"\n";
+            $html .= " colspan=\"{$colspan}\"\r\n";
         }
         return $html . 
-            " style=\"text-align:center; border:1px solid #ccc; padding:6px 4px; background-color:#ddd; {$style}\"\n>{$text}</th>\n";
+            " style=\"border:1px solid #ccc; background-color:#ddd;{$styleCel}\"\r\n" .
+            "><div style=\"padding:6px 4px; text-align:center;{$style}\"\r\n" .
+            ">{$text}</div></th>\r\n";
     }
     
-    protected function t_cel($colspan, $text, $style = '')
+    protected function t_cel($colspan, $text, $style = '', $styleCel = '')
     {
         $html = "<td";
         if ($colspan > 1) {
-            $html .= " colspan=\"{$colspan}\"\n";
+            $html .= " colspan=\"{$colspan}\"\r\n";
         }
         return $html .= 
-            " style=\"border:1px solid #ccc; padding:6px 4px; {$style}\"\n" .
-            ">{$text}</td>\n";
+            " style=\"border:1px solid #ccc;{$styleCel}\"\r\n" .
+            "><div style=\"padding:6px 4px;{$style}\"\r\n" .
+            ">{$text}</div></td>\r\n";
     }
     
-    protected function t_celNum($colspan, $number, $style = '')
+    protected function t_celNum($colspan, $number, $style = '', $styleCel = '')
     {
+        $width = $colspan * $this->widthQua;
         return $this->t_cel(
             $colspan,
             clean_zeros($number),
-            'text-align:right;' . $style
+            "text-align:right;{$style}", 
+            "width:{$width}cm;{$styleCel}"
         );
     }
         
-    protected function t_celAmo($colspan, $number, $style = '')
+    protected function t_celAmo($colspan, $number, $style = '', $styleCel = '')
     {
+        $width = $colspan * $this->widthAmo;
         return $this->t_cel(
             $colspan,
             ($number ? number_format($number, 2) : '&nbsp;'),
-            'text-align:right;' . $style
+            "text-align:right;{$style}", 
+            "width:{$width}cm;{$styleCel}"
         );
     }
     
     protected function t_celBlank($colspan, $style = '')
     {
-        $html = "<td";
-        if ($colspan > 1) {
-            $html .= " colspan=\"{$colspan}\"\n";
+        $html = '';
+        for ($i = 1; $i < $colspan; $i++) {
+            $html .= "<td \r\n" .
+            "style=\"border:1px solid transparent;width:{$this->widthBank}cm;\">&nbsp;</td>\r\n";
         }
         return $html . 
-            " style=\"border:1px solid transparent; border-right:1px solid #ccc; padding:0; width:{$colspan}em; {$style}\">&nbsp;</td>\n";
+            "<td \r\n" .
+            "style=\"border:1px solid transparent;border-right:1px solid #ccc;width:{$this->widthBank}cm;{$style}\"\r\n" .
+            ">&nbsp;</td>\r\n";
     }
 }
 ?>
