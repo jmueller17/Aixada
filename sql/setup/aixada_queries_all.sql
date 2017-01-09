@@ -3202,68 +3202,6 @@ begin
   with rollup;
 end|
 
-/**
- * report the detailed preorders for a provider for a given date
- */
-drop procedure if exists detailed_preorders_for_provider_and_date|
-create procedure detailed_preorders_for_provider_and_date(in the_provider int)
-begin
-  select
-    p.name as product_name, 
-    p.description,
-    u.id as uf,
-    i.quantity as qty,
-    m.unit,
-    sum(i.quantity) as total_quantity,
-    convert(sum(i.quantity * p.unit_price), decimal(10,2)) as total_price
-  from
-    aixada_order_item i
-    left join aixada_product p
-    on i.product_id = p.id
-    left join aixada_unit_measure m
-    on p.unit_measure_order_id = m.id
-    left join aixada_uf u
-    on i.uf_id = u.id
-  where 
-    i.date_for_order = '1234-01-23'
-    and p.provider_id = the_provider
-  group by p.name, u.id
-  with rollup;
-end|
-
-/**
- * report the total orders for all providers for a given date, in detail
- */
-drop procedure if exists detailed_total_orders_for_date|
-create procedure detailed_total_orders_for_date(IN order_date date)
-begin
-  select
-    pv.name as provider_name, 
-    pv.email as email,
-    p.name as product_name, 
-    p.description,
-    p.iva_percent as iva,
-    i.uf_id as uf,
-    sum(i.quantity) as qty,
-    convert(sum(i.quantity * p.unit_price), decimal(10,2)) as total_price,
-    m.unit as unit
-  from 
-    aixada_order_item i 
-    left join aixada_product p
-    on i.product_id = p.id
-    left join aixada_provider pv
-    on p.provider_id = pv.id
-    left join aixada_unit_measure m
-    on p.unit_measure_order_id = m.id
-  where
-    i.date_for_order = order_date
-  group by
-    pv.id,
-    p.name,
-    i.uf_id
-  with rollup;
-end|
-
 drop procedure if exists spending_per_provider|
 create procedure spending_per_provider(in start_date date)
 begin
