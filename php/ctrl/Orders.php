@@ -9,7 +9,6 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/orders.php");
 
 
-
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -113,11 +112,6 @@ try{
   		case 'finalizeOrder':
   			echo finalize_order(get_param_int('provider_id'), get_param('date'), get_param_int('revision_status', 1));
   			exit;
-         
-        //send an order; no more modifications possible	
-  		case 'sendOrder':
-  			echo send_order(get_param('order_id'));
-  			exit;
 
       case 'reopenOrder':
         echo do_stored_query('reopen_order', get_param('order_id'));
@@ -151,7 +145,7 @@ try{
       	case 'reportOrders':
             require_once(__ROOT__ . "php/lib/report_orders.php");
   			echo report_order::getHtml_orders($_GET);
-      		exit;	
+      		exit;
     default:  
     	 throw new Exception("ctrlOrders: oper={$_REQUEST['oper']} not supported");  
         break;

@@ -1275,7 +1275,7 @@
         function refreshSelectValue(destination) {
             var selValue = $(destination).prev().val();
             if (selValue == ''){
-                var selValue = $(destination).children('select:first').val();				
+                var selValue = $(destination).children('select:first').val();
                 $(destination).prev().attr('value',selValue);
             } else {
                 $(destination).children('select').val(selValue).attr('selected','selected');
@@ -1756,7 +1756,8 @@
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-
+							  
+							
 							  <tr class="priceElements">
 							    <td><label for="unit_price"><?php echo $Text['price_net']; ?></label></td>
 							    <td><input type="text" name="unit_price" value="{unit_price_netto}" class="ui-widget-content ui-corner-all" /></td>
@@ -1776,12 +1777,14 @@
 							  <tr class="priceElements">
 							    <td><label><?php echo $Text['unit_price']; ?></label></td>
 								<td><p class="boldStuff ui-corner-all aix-layout-fixW80 unit_price_brutto">{unit_price}</p></td>
+
 							  </tr>
+							  
+							  
 							  <tr class="priceElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-
 							  <tr class="stockElements">
 							    <td><label for="stock_actual"><?php echo $Text['stock']; ?></label></td>
 							    <td>
@@ -1797,11 +1800,11 @@
 							    <td>&nbsp;</td>
 							    <td>&nbsp;</td>
 							  </tr>
+							  
 							  <tr class="stockElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-
 							  </tbody>
 							  <tfoot>
 								<tr>
@@ -1975,8 +1978,8 @@
                                 </span>
                             </td>
                             <td></td>
-							<td></td>
-						</tr>
+                            <td></td>
+                        </tr>
                         <tr>
                             <td colspan=""><label for="order_send_prices"><?=$Text['prvOrdP_pricesDesc']?></label></td>
                             <td>
@@ -1991,7 +1994,7 @@
                                 </span>
                             </td>
                             <td></td>
-							<td></td>
+                            <td></td>
                         </tr>
 						</tbody>
 						<tfoot>

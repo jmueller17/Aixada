@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20161204" />
+  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20170108" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20161204" ></script>
+    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20170108" ></script>
 
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
@@ -322,7 +322,7 @@
 
 	//attach event listeners for the product input fields; change of quantity will put the
 	//item into the cart.
-    var row_changed = function (e){
+    var row_changed = function(e) {
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
 			var isPreorder = row.attr('preorder')? true:false; 	//check if this is a preorder item
 
@@ -413,6 +413,7 @@
 			$(".quantity_"+id).val(qu > 0 ? qu : '');
 			$(".notes_"+id).val('');
 		}
+
 
 		if (!days2Closing || days2Closing <0){
 			$(row).addClass('dim60');

@@ -7,7 +7,7 @@
 
  	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20161204" />
+  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20170108" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
      
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20161204" ></script>   	    
+    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20170108" ></script>
      
    	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script> 
     <script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
@@ -689,7 +689,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="detail_{order_id} detail_date_{date_for_order} xxxx detail_provider_{provider_id}" orderable_type_id="{orderable_type_id}">
+		<tr class="detail_{order_id} detail_date_{date_for_order} detail_provider_{provider_id}" orderable_type_id="{orderable_type_id}">
 			<td class="MyOrderItem">{product_id}</td>
 			<td class="MyOrderItem no_notes" colspan="2">{name}</td>
 			<td class="MyOrderItem has_notes hidden" colspan="4">{name}<br>
