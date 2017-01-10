@@ -3,7 +3,6 @@
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 
-
 /**
  * 
  * Returns the user_id of the logged user; wraps a check around this, in order to make sure
@@ -356,12 +355,11 @@ function to_js_str($text) {
  * @param array $options valid keys are: 'reply_to', 'cc', 'bcc'
  * @return boolean as response of php mail.
  */
-function send_mail($to, $subject, $bodyHTML, $options=null) {
+function send_mail($to, $subject, $bodyHTML, $options=null)
+{
     if (!isset($options)) {
         $options = array();
     }
-    $cfg = configuration_vars::get_instance();
-    $from = $cfg->admin_email;
 
     // get URL of aixada root
     $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
@@ -372,34 +370,111 @@ function send_mail($to, $subject, $bodyHTML, $options=null) {
     $url_root = (isset($_SERVER['HTTP_HOST']) ? 
                     $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']).
                 substr($_SERVER['SCRIPT_NAME'],0,$pos_root);
-
     // get HTML message
-    $subject = $cfg->coop_name.': '.$subject;
+    $subject = get_config('coop_name') . ': ' . $subject;
     $messageHTML = 
         '<html><head><title>'.$subject."</title></head>\r\n".
         '<body style="font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;">'.
         "\r\n".$bodyHTML."\r\n".
         '<hr><div style="color:#888; text-align: center;">'.
-                $cfg->coop_name.': <a href="'.
+                get_config('coop_name') . ': <a href="'.
                     ($ssl_on ? 'https://' : 'http://').
                     $url_root.
                     '/index.php" style="color:#888;">'.$url_root.'</a>'.
             "</div>\r\n".
         "</body></html>";
-    $headers = 
-        'From: '.$from."\r\n".
-        'Reply-To: '.
-            (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
-        (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
-        (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
-        'Return-Path: '.$from."\r\n".
-        "X-Mailer: PHP\r\n".
-        "MIME-Version: 1.0\r\n".
-        "Content-Type: text/html; charset=UTF-8\r\n";
-    mb_language("uni");
-    mb_internal_encoding("UTF-8");
-    $subject64 = mb_encode_mimeheader($subject);
-    return mail($to, $subject64, $messageHTML, $headers);
+    $from = get_config('admin_email');
+
+    if (!get_config('email_SMTP_host')) { // Send using mail() of PHP
+        $headers = 
+            'From: '.$from."\r\n".
+            'Reply-To: '.
+                (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
+            (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
+            (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
+            'Return-Path: '.$from."\r\n".
+            "X-Mailer: PHP\r\n".
+            "MIME-Version: 1.0\r\n".
+            "Content-Type: text/html; charset=UTF-8\r\n";
+        mb_language("uni");
+        mb_internal_encoding("UTF-8");
+        $subject64 = mb_encode_mimeheader($subject);
+        return mail($to, $subject64, $messageHTML, $headers);
+    } elseif (get_config('email_SMTP_host') === 'debug') { // Don't send, only dump!
+        return !!file_put_contents(
+            __ROOT__ . '/local_config/debug_mail/mail_' . date("Y-m-d_H-i-s") . '.html',
+            "<!DOCTYPE html><html>
+            <head><meta charset='utf-8'></head>
+            <body>
+                To: {$to}<br>
+                From: {$from}<br>
+                Options:<pre style='margin: 0 0 0 3em'>" .
+                    var_export($options, true) . "</pre>
+            <h1 style=\"background-color:#bbb;padding:3px\">{$subject}</h1>
+            {$messageHTML}
+            </body></html>"
+        );
+    } else { // Send using swiftmailer
+        require_once(__ROOT__ . 'php/external/swiftmailer-5.x/lib/swift_required.php');
+        $transport = Swift_SmtpTransport::newInstance(
+            get_config('email_SMTP_host'), 
+            get_config('email_SMTP_port', 25)
+        );
+        $encryp = get_config('email_SMTP_encryption');
+        if ($encryp) {
+            if (!in_array($encryp, stream_get_transports())) {
+                throw new Exception("config['email_SMTP_encryption']=\"{$encryp}\" is not supported on your hosting");
+            }
+            $transport->setEncryption($encryp);
+            if (!get_config('email_SMTP_verifyCert')) {
+                // See at the end of: https://github.com/swiftmailer/swiftmailer/issues/544
+                $https['ssl']['verify_peer'] = false;
+                $https['ssl']['verify_peer_name'] = false; // seems to work fine without this line so far
+                $transport->setStreamOptions($https);
+            }
+        }
+        if (get_config('email_SMTP_pswd')) {
+            $transport
+                ->setUsername(get_config('email_SMTP_user', $from))
+                ->setPassword(get_config('email_SMTP_pswd'));
+        }
+        $mailer = Swift_Mailer::newInstance($transport);
+        $message = Swift_Message::newInstance()
+            ->setSubject($subject)
+            ->setBody($messageHTML, 'text/html');
+        try {
+            $message->setFrom($from);
+        } catch(Exception $e) {
+            throw new Exception("config['admin_email']=\"{$from}\" is not a valid email");
+        } 
+        try {
+            $message->setTo(explode(',', $to));
+        } catch(Exception $e) {
+            throw new Exception("send_mail to: \"{$to}\" is not a list of valid emails");
+        } 
+        if (isset($options['reply_to']) && $options['reply_to']){
+            try {
+                $message->setReplyTo(explode(',', $options['reply_to']));
+            } catch(Exception $e) {
+                throw new Exception("send_mail reply_to: {$options['reply_to']} is not a list of valid emails.");
+            }
+        }
+        if (isset($options['cc']) && $options['cc']) {
+            try {
+                $message->setCc(explode(',', $options['cc']));
+            } catch(Exception $e) {
+                throw new Exception("send_mail cc: {$options['cc']} is not a list of valid emails.");
+            }
+        }
+        if (isset($options['bcc']) && $options['bcc']) {
+            try {
+                $message->setBcc(explode(',', $options['bcc']));
+            } catch(Exception $e) {
+                throw new Exception("send_mail bcc: {$options['bcc']} is not a list of valid emails.");
+            }
+        }
+        return !!$mailer->send($message);
+    }
 }
 
 /**
