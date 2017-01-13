@@ -10,6 +10,7 @@
 			validate : "Validate",
 			submit	: "Submit",
 			save 	: "Save",
+			deleteRow: "Delete product",
 			saving	: "Saving...",
 			searchAdd : "Search and add another item",
 			total : "Total",

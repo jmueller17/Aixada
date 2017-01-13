@@ -10,7 +10,7 @@
 
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
+  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20170108" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
@@ -20,7 +20,7 @@
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
+    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20170108" ></script>
 
     <script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
@@ -548,7 +548,7 @@
 
 						if (searchStr.length >= minLength){
 						  	$('#product_list_search tbody').xml2html('reload',{
-								params: 'oper=getShopProducts&date=0&like='+searchStr,
+								params: 'oper=getToShopProducts&date=0&like='+searchStr,
 								rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 									var id =  $(row).attr("id");
 									var qu = $("#cart_quantity_"+id).val();

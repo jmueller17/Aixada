@@ -146,6 +146,8 @@
 			rowComplete : function (rowIndex, row){
 				setCheckBoxes('#frm_provider_edit');
 				populateSelect(gProviderSelects,'#tbl_provider_edit');
+                refreshSelectValue('#tbl_provider_edit .sOrderSendFormat');
+                refreshSelectValue('#tbl_provider_edit .sOrderSendPrices');
 			}
 
 		});
@@ -394,6 +396,8 @@
 
 				//construct the responsible uf select
 				populateSelect(gProviderSelects,'#tbl_provider_new');
+                setSelectValue('#tbl_provider_edit .sOrderSendFormat', 'default');
+                setSelectValue('#tbl_provider_edit .sOrderSendPrices', 'default');
 
 				//new providers have no id
 				$('#tbl_provider_new input[name=id]').remove();
@@ -477,6 +481,16 @@
 				//orderable
 				} else if (tds.eq(3).text() == "2"){
 					tds.eq(3).text("<?=$Text['orderable'];?>");
+					tds.eq(10).text(""); //delete stock info
+					tds.eq(11).text("");
+				//order notres
+				} else if (tds.eq(3).text() == "3"){
+					tds.eq(3).text("<?=$Text['order_notes'];?>");
+					tds.eq(5).text(""); //delete price
+					tds.eq(6).text("");
+					tds.eq(7).text("");
+					tds.eq(8).text("");
+					tds.eq(9).text(""); // delete units
 					tds.eq(10).text(""); //delete stock info
 					tds.eq(11).text("");
 				}
@@ -935,26 +949,29 @@
 				err_msg += "<?=$Text['msg_err_product_category'];?>" + "<br/><br/>"; 
 			}
 
-			//if this is an order item, make sure order unit measure is set
-			if ($(mi +' input[name=orderable_type_id]').val() == 2){
-				isValidItem = $.checkSelect($(mi +' input[name=unit_measure_order_id]'),['','1']);
-				if (!isValidItem){
-					isValid = false; 
-					err_msg += "<?=$Text['msg_err_order_unit'];?>" + "<br/><br/>"; 
-				}
-			}
-
-			isValidItem = $.checkSelect($(mi +' input[name=unit_measure_shop_id]'),['','1']);
-			if (!isValidItem){
-				isValid = false; 
-				err_msg += "<?=$Text['msg_err_shop_unit'];?>" + "<br/><br/>"; 
-			}
-
-			isValidItem =  $.checkNumber($(mi+' input[name="unit_price"]'),0.00, 2);
-			if (!isValidItem){
-				isValid = false; 
-				err_msg += "<?php echo $Text['unit_price'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
-			}
+            if ($(mi +' input[name=orderable_type_id]').val() == 3) {
+                $(mi+' input[name="unit_price"]').val(0);
+            } else {
+                //if this is an order item, make sure order unit measure is set
+                if ($(mi +' input[name=orderable_type_id]').val() == 2) {
+                    isValidItem = $.checkSelect($(mi +' input[name=unit_measure_order_id]'),['','1']);
+                    if (!isValidItem) {
+                        isValid = false; 
+                        err_msg += "<?=$Text['msg_err_order_unit'];?>" + "<br/><br/>"; 
+                    }
+                }
+                isValidItem = $.checkSelect($(mi +' input[name=unit_measure_shop_id]'),['','1']);
+                if (!isValidItem){
+                    isValid = false; 
+                    err_msg += "<?=$Text['msg_err_shop_unit'];?>" + "<br/><br/>"; 
+                }
+                // Check price
+                isValidItem =  $.checkNumber($(mi+' input[name="unit_price"]'),0.00, 2);
+                if (!isValidItem){
+                    isValid = false; 
+                    err_msg += "<?php echo $Text['unit_price'] .  $Text['msg_err_only_num']; ?>"+ "<br/><br/>";
+                }
+            }
 
 			if (isValid) {
 				return true; 
@@ -1237,14 +1254,33 @@
 				}
 
 				if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 1){
+					$('.priceElements').show();
 					$('.stockElements').show();
 				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 2) {
+					$('.priceElements').show();
 					$('.stockElements').hide();
+				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 3) {
+					$('.stockElements').hide();
+					$('.priceElements').hide();
 				}
 				
 			})	
 		}
 
+        function setSelectValue(destination, value) {
+            $(destination).prev().val(value);
+            refreshSelectValue(destination);
+        }
+        
+        function refreshSelectValue(destination) {
+            var selValue = $(destination).prev().val();
+            if (selValue == ''){
+                var selValue = $(destination).children('select:first').val();
+                $(destination).prev().attr('value',selValue);
+            } else {
+                $(destination).children('select').val(selValue).attr('selected','selected');
+            }
+        }
 
 		function manageEditStockBtn(){
 			//since the whole product form runs through the xml2html class
@@ -1426,8 +1462,13 @@
 
 				//show hide stock btn depending on orderable_type
 				if (which == 'orderable_type_id' && selOption == 1){
+					$('.priceElements').fadeIn(500);
 					$('.stockElements').fadeIn(500);
 				} else if (which == 'orderable_type_id' && selOption == 2){
+					$('.priceElements').fadeIn(500);
+					$('.stockElements').fadeOut(500);
+				} else if (which == 'orderable_type_id' && selOption == 3){
+					$('.priceElements').fadeOut(500);
 					$('.stockElements').fadeOut(500);
 				}
 			})
@@ -1695,72 +1736,72 @@
 							    	<input type="hidden" name="category_id" value="{category_id}"/>
 							    	<span class="textAlignLeft sCategoryId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="unit_measure_order_id"><?php echo $Text['unit_measure_order']; ?></label></td>
 							    <td colspan="3">
 							    	<input type="hidden" name="unit_measure_order_id" value="{unit_measure_order_id}"/>
 							    	<span class="textAlignLeft sUnitMeasureOrderId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="unit_measure_shop_id"><?php echo $Text['unit_measure_shop']; ?></label></td>
 							    <td colspan="3">
 							    	<input type="hidden" name="unit_measure_shop_id" value="{unit_measure_shop_id}"/>
 							    	<span class="textAlignLeft sUnitMeasureShopId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="order_min_quantity"><?php echo $Text['order_min']; ?></label></td>
 							    <td colspan="3"><input type="text" name="order_min_quantity" value="{order_min_quantity}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
-							   <tr>
+							  <tr class="priceElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
 							  
 							
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="unit_price"><?php echo $Text['price_net']; ?></label></td>
 							    <td><input type="text" name="unit_price" value="{unit_price_netto}" class="ui-widget-content ui-corner-all" /></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="iva_percent_id">+ <?php echo $Text['iva_percent']; ?></label></td>
 							    <td>
 							    	<input type="hidden" name="iva_percent_id" value="{iva_percent_id}"/>
 							    	<span class="textAlignLeft sIvaPercentId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label for="rev_tax_type_id">+ <?php echo $Text['rev_tax_type']; ?></label></td>
 								  <td>
 							    	<input type="hidden" name="rev_tax_type_id" value="{rev_tax_type_id}"/>
 							    	<span class="textAlignLeft sRevTaxTypeId"></span></td>
 							  </tr>
-							  <tr>
+							  <tr class="priceElements">
 							    <td><label><?php echo $Text['unit_price']; ?></label></td>
 								<td><p class="boldStuff ui-corner-all aix-layout-fixW80 unit_price_brutto">{unit_price}</p></td>
 
 							  </tr>
 							  
 							  
-							  <tr>
+							  <tr class="priceElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
-							  <tr>
-							    <td><label class="stockElements" for="stock_actual"><?php echo $Text['stock']; ?></label></td>
+							  <tr class="stockElements">
+							    <td><label for="stock_actual"><?php echo $Text['stock']; ?></label></td>
 							    <td>
-							    	<p class="stockElements setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
+							    	<p class="setStockActualProductPage aix-layout-fixW100">{stock_actual}</p>
 							    </td>
 							    <td colspan="2">
-							    	<button class="btn_edit_stocks stockElements"><?php echo $Text['btn_edit_stock'];?></button>
+							    	<button class="btn_edit_stocks"><?php echo $Text['btn_edit_stock'];?></button>
 							    </td>
 							  </tr>
-							  <tr>
+							  <tr class="stockElements">
 							    <td><label for="stock_min"><?php echo $Text['stock_min']; ?></label></td>
 							    <td><input type="text" name="stock_min" value="{stock_min}" class="ui-widget-content ui-corner-all" /></td>
 							    <td>&nbsp;</td>
 							    <td>&nbsp;</td>
 							  </tr>
 							  
-							  <tr>
+							  <tr class="stockElements">
 							    <td>&nbsp;</td>
 							    <td colspan="3">&nbsp;</td>
 							  </tr>
@@ -1919,6 +1960,42 @@
 							<td></td>
 							<td></td>
 						</tr>
+                        <tr>
+                            <td><label for="order_send_format"><?=$Text['prvOrdF_formatDesc']?></label></td>
+                            <td>
+                                <input type="hidden" name="order_send_format"  value="{order_send_format}"/>
+                                <span class="textAlignLeft sOrderSendFormat">
+                                    <select>
+                                        <option value="default"><?=$Text['prvOrd_default']?></option>
+                                        <option value="Prod"><?=$Text['prvOrdF_prod']?></option>
+                                        <option value="Matrix"><?=$Text['prvOrdF_matrix']?></option>
+                                        <option value="Prod_Matrix"><?=$Text['prvOrdF_prod_matrix'];?></option>
+                                        <option value="ProdUf"><?=$Text['prvOrdF_prodUf'];?></option>
+                                        <option value="Prod_ProdUf"><?=$Text['prvOrdF_prod_prodUf']?></option>
+                                        <option value="UfProd"><?=$Text['prvOrdF_ufProd']?></option>
+                                        <option value="none"><?=$Text['prvOrdF_none']?></option>
+                                    </select>
+                                </span>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan=""><label for="order_send_prices"><?=$Text['prvOrdP_pricesDesc']?></label></td>
+                            <td>
+                                <input type="hidden" name="order_send_prices"  value="{order_send_prices}"/>
+                                <span class="textAlignLeft sOrderSendPrices">
+                                    <select>
+                                        <option value="default"><?=$Text['prvOrd_default']?></option>
+                                        <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
+                                        <option value="cost"><?=$Text['prvOrdP_cost_price']?></option>
+                                        <option value="none"><?=$Text['prvOrdP_no_amount']?></option>
+                                    </select>
+                                </span>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
 						</tbody>
 						<tfoot>
 						<tr>

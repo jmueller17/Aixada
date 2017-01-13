@@ -489,7 +489,7 @@ $Text['create_cart'] = "Crete Cart";
 /**
  *  Product categories
  */
-$Text['SET_ME'] 			= 'SET_ME';
+$Text['SET_ME'] 			= 'To complete...';
 
 $Text['prdcat_vegies']		 	= "Vegetables";
 $Text['prdcat_fruit'] 			= "Fresh fruits";
@@ -691,6 +691,7 @@ $Text['add_stock'] = "Add stock";
 $Text['click_to_edit'] = "Click cell to edit!";
 $Text['no_results'] = "The search produced no results.";
 $Text['for'] = "for"; //as in order FOR Aurora
+$Text['orderToFor'] = "Order {id} to \"{provider}\" for {date}";
 $Text['date_for_order'] = "Delivery date";
 $Text['finished_loading'] = "Finished loading";
 $Text['msg_err_unrevised'] = "There are still unrevised items in this order. Please make sure all ordered products have arrived!";
@@ -844,6 +845,34 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Phones";
 $Text['net_amount'] = "Net amount"; //importe netto 
 $Text['gross_amount'] = "Gross amount"; //importe brutto
+
+$Text['cost_amount'] = "Cost"; //importe sin impuestos 
+$Text['final_amount'] = "HU Final amount"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Cost\" = Amount according to provider price before taxes.";
+$Text['final_amount_desc'] = "\"HU Final amount\" = Amount with VAT and Rev. taxes.";
+
+$Text['prvOrd_default'] = "(depending on configuration)";
+$Text['prvOrdF_formatDesc'] = "Send Orders";
+$Text['prvOrdF_prod'] = "List of products";
+$Text['prvOrdF_matrix'] = "Grid products-HU";
+$Text['prvOrdF_prod_matrix'] = "List of products + Grid";
+$Text['prvOrdF_prodUf'] = "List of products with HU detail";
+$Text['prvOrdF_prod_prodUf'] = "List of products + List with HU detail";
+$Text['prvOrdF_ufProd'] = "List of HU with detail products";
+$Text['prvOrdF_none'] = "Do not send";
+$Text['prvOrdF_GroupByUf'] = "Group orders by UF";
+$Text['prvOrdP_pricesDesc'] = "Order amounts to send";
+$Text['prvOrdP_cost_amount'] = "Cost Amount (without tax)";
+$Text['prvOrdP_cost_price'] = "Price and cost amount (without tax)";
+$Text['prvOrdP_final_amount'] = "Final amount UF (VAT + imp.Rev.)";
+$Text['prvOrdP_final_price'] = "Price and final amount UF (VAT + imp.Rev.)";
+$Text['prvOrdP_no_amount'] = "No amounts";
+$Text['order_printOpt_dialog'] = "Options to print orders";
+$Text['order_printOpt_header'] = "Print head";
+$Text['order_printOpt_format'] = "Format";
+$Text['order_printOpt_prices'] = 'Amount';
+$Text['order_printOpt_default'] = "(depending on the provider)";
+
 $Text['add_pagebreak'] = "Click to ADD here a page break while printing";
 $Text['remove_pagebreak'] = "Click to REMOVE this page break";
 
@@ -912,6 +941,7 @@ $Text['btn_del'] = "Delete";
 $Text['btn_new_provider'] = "New provider";
 $Text['btn_new_product'] = "Add product";
 $Text['orderable'] = "Orderable"; //product type
+$Text['order_notes'] = "(order comments)"; //order comments
 $Text['msg_err_providershort']  = "The provider cannot be empty and should be at least 2 characters long.";
 $Text['msg_err_productshort']  = "The product name cannot be empty and should be at least 2 characters long.";
 $Text['msg_err_select_responsibleuf'] = "Who is in charge? Please select a responsible household.";
@@ -1037,6 +1067,17 @@ $Text['or_click_to_edit_total'] = 'Click to adjust total quantities';
 $Text['or_click_to_edit_gprice'] = 'Click to adjust price';
 $Text['or_saving'] = 'Saving';
 $Text['or_ostat_desc_validated'] = 'Items of this order have been validated';
+$Text['or_cancel_order_a'] = "Cancel order";
+$Text['or_cancel_order'] =
+     "Are you sure you want to cancel this order?<hr><br>
+     The order will be finalized as canceled,<br>
+     and NOT be sent by mail to the provider.<br><br>
+     Later, if you want, you can change the order status.";
+$Text['or_cancel_order_open'] =
+     "Are you sure you want to cancel this order?<hr><br>
+     The order will be finalized as canceled <b>before its deadline</b>,<br>
+     and NOT be sent by mail to the provider.<br><br>
+     Later, if you want, you can change the order status.";
 $Text['os_reopen_order_a'] = "Reopen";
 $Text['os_reopen_order'] =
     "Are you sure to reopen this order?<hr><br>

@@ -29,7 +29,8 @@ insert into aixada_product_category values
 
 insert into aixada_orderable_type values
        (1, 'stock'),
-       (2, 'orderable');
+       (2, 'orderable'),
+       (3, 'order_notes');
        
 insert into aixada_rev_tax_type values
        (1, 'default revolutionary tax', 'what everybody pays', 3.00),

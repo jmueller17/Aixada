@@ -486,7 +486,7 @@ $Text['create_cart'] = "Crear Cistella";
 /**
  *  Product categories
  */
-$Text['SET_ME'] 			= 'SET_ME';
+$Text['SET_ME'] 			= 'Completar...';
 
 $Text['prdcat_vegies']		 	= "Verdures";
 $Text['prdcat_fruit'] 			= "Fruita";
@@ -683,6 +683,7 @@ $Text['add_stock'] = "Afegeix estoc";
 $Text['click_to_edit'] = "Prem la cel·la per a editar-la!";
 $Text['no_results'] = "No hi ha resultats de la cerca.";
 $Text['for'] = "per a"; //as in order FOR Aurora
+$Text['orderToFor'] = "Comanda {id} a \"{provider}\" pel {date}";
 $Text['date_for_order'] = "Data d'entrega";
 $Text['finished_loading'] = "Càrrega acabada";
 $Text['msg_err_unrevised'] = "Encara hi ha element pendents de revisar a la comanda. Si us plau, verifica que hagin arribat tots els productes!";
@@ -823,8 +824,8 @@ $Text['maintenance_account'] = "Manteniment";
 $Text['posted_by'] = "Creat per"; //Posted by
 $Text['ostat_yet_received'] = "pendent de rebre";
 $Text['ostat_is_complete'] = "està complet";
-$Text['ostat_postponed'] = "posposat";
-$Text['ostat_canceled'] = "cancel·lat";
+$Text['ostat_postponed'] = "posposada";
+$Text['ostat_canceled'] = "cancel·lada";
 $Text['ostat_changes'] = "amb canvis";
 $Text['filter_todays'] = "D'avui";
 $Text['bill'] = "Factura";
@@ -835,6 +836,34 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Telèfons";
 $Text['net_amount'] = "Import net"; //importe netto 
 $Text['gross_amount'] = "Import brut"; //importe brutto
+
+$Text['cost_amount'] = "Cost"; //importe sin impuestos 
+$Text['final_amount'] = "Import final UF"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Cost\" = Import segons preu del proveïdor abans d'aplicar impostos."; //importe sin impuestos 
+$Text['final_amount_desc'] = "\"Final final UF\" = Import par a la UF, amb impostos d'IVA i Rev."; //importe final a las UF
+
+$Text['prvOrd_default'] = "(segons la configuració)";
+$Text['prvOrdF_formatDesc'] = "Enviar comandes";
+$Text['prvOrdF_prod'] = "Llista de productes";
+$Text['prvOrdF_matrix'] = "Quadrícula Productes-UF";
+$Text['prvOrdF_prod_matrix'] = "Llista de productes + Quadrícula";
+$Text['prvOrdF_prodUf'] = "Llista de productes amb detall UF";
+$Text['prvOrdF_prod_prodUf'] = "Llista de productes + Llista amb detall UF";
+$Text['prvOrdF_ufProd'] = "Llista de UF amb detall de productes";
+$Text['prvOrdF_none'] = "No enviar";
+$Text['prvOrdF_GroupByUf'] = "Agrupar les comandes per UF";
+$Text['prvOrdP_pricesDesc'] = "Imports al enviar comandes";
+$Text['prvOrdP_cost_amount'] = "Import de Cost (sense imp.)";
+$Text['prvOrdP_cost_price'] = "Preu i import de Cost (sense imp.)";
+$Text['prvOrdP_final_amount'] = "Import final UF (amb IVA + imp.Rev.)";
+$Text['prvOrdP_final_price'] = "Preu i import final UF (amb IVA + imp.Rev.)";
+$Text['prvOrdP_no_amount'] = "Sense imports";
+$Text['order_printOpt_dialog'] = "Opcions d'imprimir comandes";
+$Text['order_printOpt_header'] = "Imprimir capçalera";
+$Text['order_printOpt_format'] = "Format";
+$Text['order_printOpt_prices'] = "Imports";
+$Text['order_printOpt_default'] = "(segons el proveïdor)";
+
 $Text['add_pagebreak'] = "Prem aquí per a afegir un salt de pàgina";
 $Text['remove_pagebreak'] = "Prem aquí per eliminar el salt de pàgina";
 
@@ -903,6 +932,7 @@ $Text['btn_del'] = "Esborrar";
 $Text['btn_new_provider'] = "Nou proveïdor";
 $Text['btn_new_product'] = "Afegir producte";
 $Text['orderable'] = "Comanda directe"; //product type
+$Text['order_notes'] = "(comentaris comanda)"; //order comments
 $Text['msg_err_providershort'] = "El nom del proveïdor no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_productshort']  = "El nom del producte no pot quedar buit i ha de ser de més de 2 caràcters.";
 $Text['msg_err_select_responsibleuf'] = "Qui s'encarrega? S'ha de seleccionar un responsable.";
@@ -1028,6 +1058,17 @@ $Text['or_click_to_edit_total'] = 'Clic per ajustar la quantitat total';
 $Text['or_click_to_edit_gprice'] = 'Clic per ajustar el preu';
 $Text['or_saving'] = 'Guardant';
 $Text['or_ostat_desc_validated'] = "Els productes d'aquesta comanda han estat validats";
+$Text['or_cancel_order_a'] = "Cancel·lar comanda";
+$Text['or_cancel_order'] =
+    "Està segur que vol cancel·lar aquesta comanda?<hr><br>
+    La comanda es finalitzarà com cancel·lada,<br>
+    i NO s'enviarà per correu al proveïdor.<br><br>
+    Posteriorment, si ho desitja, podrà modificar l'estat de la comanda revisant-la.";
+$Text['or_cancel_order_open'] =
+    "Està segur que vol cancel·lar aquesta comanda?<hr><br>
+    La comanda es finalitzarà com cancel·lada <b>abans de la seva data límit</b>,<br>
+    i NO s'enviarà per correu al proveïdor.<br><br>
+    Posteriorment, si ho desitja, podrà modificar l'estat de la comanda revisant-la.";
 $Text['os_reopen_order_a'] = "Reobrir";
 $Text['os_reopen_order'] =
     "Estas segur que vols reobrir aquesta comanda?<hr><br>

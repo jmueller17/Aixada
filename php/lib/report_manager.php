@@ -27,41 +27,9 @@ require_once(__ROOT__ . 'php/inc/database.php');
 class report_manager {
 
   /**
-   * Report all orders for a given date
-   */
-  public function total_orders_for_dateHTML($date, $standalone_HTML=false, $with_rollup=true)
-  {
-    global $Text;
-    $rs = do_stored_query('detailed_total_orders_for_date', $date);
-    $headings = array('provider_name' => $Text['provider_name'] . ' ' . $date, 
-		      'product_name'  => $Text['product_name'], 
-		      'iva'           => $Text['iva'],
-		      'uf'            => $Text['uf_short'],
-		      'qty'           => $Text['quantity']);
-    $totals = array('total_quantity'          => $Text['total_qty'], 
-		    'total_price'        => $Text['total_price']);
-    $styles   = array('provider_name' => 'style1',
-		      'product_name'  => 'style2',
-		      'uf'            => 'style3',
-		      'qty'     => 'style4',
-		      'total_price'   => 'style_total_price');
-    $options = array('title' => "All orders for $date",
-		     'standalone_HTML'    => $standalone_HTML,
-		     'pagebreak_after_h1' => true,
-		     'additional_h1_info' => array('email' => 'email'),
-		     'additional_pagebreak_info' => array('email' => 'email'),
-		     'additional_last_info' => 'unit');
-    $strHTML = ($with_rollup ? 
-		$this->rowset_to_HTML_with_rollup($rs, $headings, $totals, $styles, $options) :
-		$this->rowset_to_HTML_without_rollup($rs, $headings, $styles, $options));
-    DBWrap::get_instance()->free_next_results();
-    return $strHTML;
-  }
-
-  /**
    * Report all orders for a given provider and date, extended (old-style) format
    */
-  public function extended_ordersHTML($rs)
+  protected function extended_ordersHTML($rs)
   {
     global $Text;
     $matrix = array();
@@ -111,7 +79,7 @@ class report_manager {
   /**
    * Report all orders for a given provider and date, compact (sparse) format
    */
-  public function compact_ordersHTML($rs, $standalone_HTML=false, $with_rollup=true)
+  protected function compact_ordersHTML($rs, $standalone_HTML=false, $with_rollup=true)
   {
     global $Text;
     $headings = array('product_name'  => $Text['product_name'], 
@@ -139,7 +107,7 @@ class report_manager {
     return $strHTML;
   }
 
-  public function compact_orders_for_provider_and_dateHTML($provider_id, $date)
+  protected function compact_orders_for_provider_and_dateHTML($provider_id, $date)
   {
       $rs = do_stored_query('detailed_orders_for_provider_and_date', $provider_id, $date);
       $result = $this->compact_ordersHTML($rs);
@@ -147,7 +115,7 @@ class report_manager {
       return $result;
   }
 
-  public function extended_orders_for_provider_and_dateHTML($provider_id, $date)
+  protected function extended_orders_for_provider_and_dateHTML($provider_id, $date)
   {
       $rs = do_stored_query('detailed_orders_for_provider_and_date', $provider_id, $date);
       $result = $this->extended_ordersHTML($rs);
@@ -155,25 +123,7 @@ class report_manager {
       return $result;
   }
 
-
-
-  public function compact_preorders_for_provider($provider_id)
-  {
-      $rs = do_stored_query('detailed_preorders_for_provider_and_date', $provider_id);
-      $result = $this->compact_ordersHTML($rs);
-      DBWrap::get_instance()->free_next_results();
-      return $result;
-  }
-
-  public function extended_preorders_for_provider($provider_id)
-  {
-      $rs = do_stored_query('detailed_preorders_for_provider_and_date', $provider_id);
-      $result = $this->extended_ordersHTML($rs);
-      DBWrap::get_instance()->free_next_results();
-      return $result;
-  }
-
-  public function write_summarized_orders_html($id, $the_date)
+  protected function write_summarized_orders_html($id, $the_date)
   {
       global $Text;
       $html = '<table style="margin-left:30px; border-collapse:collapse;">'
@@ -205,107 +155,6 @@ class report_manager {
       DBWrap::get_instance()->free_next_results();
       return $html . "</tbody></table>\n";
   }
-
-  private function create_summarized_orders_html($the_date)
-  {
-      global $Text;
-      $prov_ids = array();
-      $prov_name = array();
-      $prov_email = array();
-      $prov_phone = array();
-      $resp_uf = array();
-      $resp_uf_name = array();
-      $resp_uf_phone = array();
-      $total_price = array();
-
-      $rs = do_stored_query('summarized_orders_for_date', $the_date);
-      while ($row = $rs->fetch_assoc()) {
-          $id = $row['provider_id'];
-          $prov_ids[]            = $row['provider_id'];
-          $prov_name[$id]       = $row['provider_name'] . ' ' . $the_date;
-          $prov_email[$id]      = $row['provider_email'];
-          $prov_phone[$id]      = $row['provider_phone'];
-          $resp_uf[$id]         = $row['responsible_uf'];
-          $resp_uf_name[$id]    = $row['responsible_uf_name'];
-          $resp_uf_phone[$id]   = $row['responsible_uf_phone'];
-          $total_price[$id]     = $row['total_price'];
-      }    
-      DBWrap::get_instance()->free_next_results();
-            
-      $headerfile = __ROOT__.'php/inc/report_header.html';
-      $inhandle = @fopen($headerfile, 'r');
-      if (!$inhandle)
-          throw new Exception("Couldn't open {$headerfile} for reading");
-      $header = fread($inhandle, 4096);
-      $report_files = array();
-      
-      
-      foreach($prov_ids as $id) {
-          $report_file =  __ROOT__. 'local_config/orders/comanda.' 
-              . str_replace(' ', '+', $prov_name[$id])
-              . '.' . $the_date . '.html';
-          $report_file = htmlentities($report_file);
-          $report_files[] = $report_file;
-          $outhandle = @fopen($report_file, 'w');
-          if (!$outhandle)
-              throw new Exception("Couldn't open {$report_file} for writing");
-          $html = $header 
-              . '<title>' 
-              . $Text['order'].' '.$Text['for'].' "'.$prov_name[$id].'" '.
-                    $Text['for'].' '.$the_date
-              . '</title></head><body>';
-          $html .= 
-              '<h1>'.$Text['order'].' '.$Text['for'].' <span class="providerName">'
-              . $prov_name[$id]
-              . '</span> '.$Text['for']
-              . $the_date
-              . '</h1><p><span class="responsibleUF">' 
-              . $Text['responsible_uf'] . ': ' . $Text['uf_short'].$resp_uf[$id] . ' ' . $resp_uf_name[$id] 
-              . ' (Tel. ' 
-              . $resp_uf_phone[$id]. ')'
-              . '</span><br/><span class="providerInfo">Info '.$Text['provider'].' "'.$prov_name[$id]
-              . '": telf: '
-              . $prov_phone[$id]
-              . ' / email: '
-              . $prov_email[$id]
-              . '</span></p>';
-
-          $html .= '<h2>' . $Text['summarized_orders'] . '</h2>';
-          $html .= $this->write_summarized_orders_html($id, $the_date);
-          $html .= '<div/>';
-          $html .= '<h2>' . $Text['detailed_orders'] . '</h2>';
-          $html .= $this->compact_orders_for_provider_and_dateHTML($id, $the_date);
-          $html .= '<div/>';
-          $html .= '<h2>' . $Text['detailed_orders'] . '</h2>';
-          $html .= $this->extended_orders_for_provider_and_dateHTML($id, $the_date);
-          $html .= '</body></html>';
-          fwrite($outhandle, $html);
-      }      
-      return $report_files;      
-  }
-
-  public function bundle_orders_for_date($the_date)
-  {
-      $report_files = $this->create_summarized_orders_html($the_date);
-      $zip = new ZipArchive();
-      $filename = 'local_config/orders/comanda.' . $the_date . '.zip';
-      if ($zip->open(__ROOT__.$filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) !== TRUE) {
-          throw new Exception("cannot open <$filename>\n");
-      }      
-      foreach($report_files as $file) {
-          $localfile = substr(strrchr($file, '/'), 1); // only filename, no directory
-          $zip->addFile($file, $localfile);
-      }
-      $zip->close();
-      return $filename;
-  }
-  
-
-  
-  
-  
-  
-  
   
  public function bundle_orders($arr_providers,$arr_dates, $arr_order_ids)
   {

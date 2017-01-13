@@ -114,9 +114,6 @@
 			//indicates page subsection: overview | review | view
 			var gSection = 'overview';
 
-			//new window for printing
-			var printWin = null;
-
 			//index for current order that is loaded/printed during bulk actions
 			var gPrintIndex  = -1; 
 
@@ -305,12 +302,10 @@
 
 					//product total quantities
 					tbodyStr += '<td class="nobr totalQu total_'+product_id+'" row_tot="'+product_id+'"></td>';
-                    if (gSection !== 'print') {
-                        tbodyStr += '<td id="grossPrice_'+product_id+'" class="grossCol grossPrice"></td>';
-                        tbodyStr += '<td id="grossRow_'+product_id+'"   class="grossCol grossRow"></td>';
-                        tbodyStr += '<td id="netPrice_'+product_id+'"   class="netCol netPrice"></td>';
-                        tbodyStr += '<td id="netRow_'+product_id+'"     class="netCol netRow"></td>';
-                    }
+					tbodyStr += '<td id="grossPrice_'+product_id+'" class="grossCol grossPrice"></td>';
+					tbodyStr += '<td id="grossRow_'+product_id+'"   class="grossCol grossRow"></td>';
+					tbodyStr += '<td id="netPrice_'+product_id+'"   class="netCol netPrice"></td>';
+					tbodyStr += '<td id="netRow_'+product_id+'"     class="netCol netRow"></td>';
 					
 					//revised checkbox for product
 					tbodyStr += '<td class="textAlignCenter revisedCol"><input type="checkbox" isRevisedId="'+product_id+'" id="ckboxRevised_'+product_id+'" name="revised" /></td>';
@@ -318,7 +313,9 @@
 					
 				},
 				complete : function (rowCount){
-					
+					if (!gSelRow) {
+                        return;
+                    }
 					//STEP 3: populate cells with product quantities
 					$.ajax({
 					type: "POST",
@@ -375,9 +372,7 @@
 								var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 								
 								$('.total_'+lastId).html(total);
-								if (gSection !== 'print') {
-									refreshRowPrices(lastId);
-								}
+								refreshRowPrices(lastId);
 								quTotal = 0; 
 								quShopTotal = 0; 
 							}
@@ -392,58 +387,28 @@
 						var total = "<span>"+quTotal.toFixed(3)+"</span> <span class='shopQuantity'>("+quShopTotal.toFixed(2)+")</span>";
 						$('.total_'+lastId).html(total);
 
-                        if (gSection !== 'print') {
-                            refreshRowPrices(lastId);
-                            refreshTotalOrder();
-                            $('.orderTotals').show();
-                            $('.grossCol').show();
-                            if (hasIva === true) {
-                                $('.netCol').show();
-                            } else {
-                                $('.netCol').hide();
-                            }
-                            if (local_cfg.revision_fixed_uf) {
-                                $('.Col-'+local_cfg.revision_fixed_uf)
-                                    .removeClass('hidden').show();
-                            }
+                        refreshRowPrices(lastId);
+                        refreshTotalOrder();
+                        $('.orderTotals').show();
+                        $('.grossCol').show();
+                        if (hasIva === true) {
+                            $('.netCol').show();
                         } else {
-                            $('.orderTotals').hide();
-                            $('.grossCol').hide();
                             $('.netCol').hide();
+                        }
+                        if (local_cfg.revision_fixed_uf) {
+                            $('.Col-'+local_cfg.revision_fixed_uf)
+                                .removeClass('hidden').show();
                         }
 
 						//don't need revised and arrived column for viewing order
-						if (gSection == 'view' || gSection == 'print'){
+						if (gSection == 'view') {
 							$('.revisedCol, .arrivedCol').hide();
 							$('.shopQuantity').show();
 							$('tr, td').removeClass('toRevise revised missing');
 						} else {
 							$('.revisedCol, .arrivedCol').show();
 							$('.shopQuantity').hide();
-						}
-
-						//if we print, copy the table to the printWindow
-						if (gSection == 'print' && printWin != null){
-
-							var wrapDiv = $('#orderWrap', printWin.document).children(':first').clone();
-							var pname = gPrintList[gPrintIndex].children().eq(2).text(); //get provider name
-							var odate = gPrintList[gPrintIndex].children().eq(3).text(); //get order date	
-							var tbl = $('#tbl_reviseOrder').clone();			//clone the table with the current order data
-							
-							$(tbl).attr('id', 'print_order_'+gPrintIndex);	
-							$('thead', tbl).prepend("<tr><th colspan='100'><h2><?=$Text['order'];?> (#"+gSelRow.attr('orderId')+") <?=$Text['for'];?> "+pname+".&nbsp;&nbsp;&nbsp; <?=$Text['date_for_order'];?>: "+odate+" </h2></th></tr>");	
-							$(wrapDiv).prepend(tbl); //add the table to the wrapper							
-							$('#orderWrap', printWin.document).append(wrapDiv); //and add the wrapper to the doc in the new window
-
-							if (gPrintIndex == gPrintList.length-1){
-								$('.loadingMsg', printWin.document).html("<p><?=$Text['finished_loading'];?></p>").fadeOut(2000);
-								$('#orderWrap', printWin.document).children(':first').hide();
-								//printWin.print();
-							} else {
-								$('.loadingMsg', printWin.document).html("<p><?=$Text['loading']; ?> " + (gPrintIndex+1) + "/"+gPrintList.length+" order(s)</p>");
-							}
-
-							loadPrintOrder();
 						}
 
 						$('#tbl_reviseOrder').show();
@@ -1058,8 +1023,7 @@
 						tds.eq(5).html(str);
 
 						//if order has been send but not yet received, it can be reopened
-						var statusTd = $(row).children().eq(8).attr('revisionStatus');
-						if (statusTd == 1){
+						if (status == 1 || status == 3 || status == 4) {
 							var date_for_order = new Date(tds.eq(3).text());
 							if (date_for_order.getTime() >= _date_todayOverview.getTime() || isPreorder) {
 								tds.eq(6).html(
@@ -1074,6 +1038,11 @@
 						//while open and not sent off, no order_id exists. show the finalize button
 						tds.eq(1).html('<p>-</p>');
 						tds.eq(5).html('<p><a href="javascript:void(null)" class="finalizeOrder"><?=$Text['finalize_now'];?></a></p>');
+						tds.eq(9).html(
+						    '<a href="javascript:void(null)" class="cancelOrderBtn">' +
+						    '<?php echo i18n_js('or_cancel_order_a'); ?>' +
+						    '</a>'
+						);
 					}
 				},
 				complete : function (rowCount){
@@ -1089,6 +1058,50 @@
 				}
 			});
 
+			$('.cancelOrderBtn').live("click", function(e) {
+                var rowTr = $(this).parents('tr');
+                var _dateForOrder = rowTr.attr("dateForOrder"),
+                    _providerId = rowTr.attr("providerId"),
+                    timeLeft = rowTr.children().eq(4).text(),
+                    msg;
+                if (timeLeft > 0){
+                    msg = "<?=i18n_js('or_cancel_order_open');?>";
+                } else {
+                    msg = "<?=i18n_js('or_cancel_order');?>";
+                }
+                $.showMsg({
+                    msg: msg,
+                    buttons: {
+                        "<?=$Text['btn_ok'];?>": function() {
+                            var $this = $(this);
+                            $.ajax({
+                                type: "POST",
+                                url: 'php/ctrl/Orders.php?oper=finalizeOrder' +
+                                    '&revision_status=4' + // 4 = Cancel
+                                    '&provider_id=' + _providerId +
+                                    '&date=' + _dateForOrder,
+                                success: function(txt){
+                                        $('#tbl_orderOverview tbody').xml2html('reload');
+                                },
+                                error : function(XMLHttpRequest, textStatus, errorThrown){
+                                    $.showMsg({
+                                        msg:XMLHttpRequest.responseText,
+                                        type: 'error'});
+                                },
+                                complete:function(){
+                                    $this.dialog( "close" );
+                                }
+                            });
+                        },
+                        "<?=$Text['btn_cancel'];?>": function() {
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    title: local_lang._warning,
+                    type: 'warning'
+                });
+                e.stopPropagation();
+            });
 
 			$('.reopenOrderBtn')
 				.live("click", function(e){
@@ -1126,7 +1139,7 @@
 
 					e.stopPropagation();
 
-				})
+				});
 
 			/**
 			 *	To finalize an order means no further modifications are possile. 
@@ -1302,7 +1315,16 @@
 				});
 
 			
-				//global header print buttun
+				// header print buttons
+				$('#dialog_printOpt').dialog({
+				    autoOpen:false,
+				    width:600,
+				    height:200
+				});
+				$("#btn_printOpt").button().click(function(e) {
+					$("#dialog_printOpt").dialog("open");
+				});
+
 				$("#btn_print").button({
 				 icons: {
 		        		primary: "ui-icon-print"
@@ -1358,51 +1380,6 @@
 							.data("export", "order")
 							.dialog("open");
 					 }); 
-        		
-
-				//view selected order (no editing)
-				/*$('.viewOrderBtn')
-					.live('click', function(e){
-						gSelRow = $(this).parents('tr'); 
-						$('.col').hide();	
-						switchTo('view',{});
-					});*/
-
-				
-				//print the selected order. If more than one is selected, confirm bulk print
-				/*$('.printOrderBtn')
-				.live('click', function(e){
-					$this = $(this);
-					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length > 1){
-						$.showMsg({
-							msg:"<?=$Text['print_several'];?>",
-							width:500,
-							buttons: {
-								"<?=$Text['btn_yes_all'];?>":function(){						
-									printQueue();
-									$(this).dialog("close");
-								},
-								"<?=$Text['btn_just_one']?>" : function(){
-									$('input:checkbox[name="bulkAction"]').attr('checked', false);
-									$this.parents('tr').children('td:first').find('input').attr('checked','checked');
-									printQueue();
-									$( this ).dialog( "close" );
-								},
-								"<?=$Text['btn_cancel'];?>" : function(){
-									$( this ).dialog( "close" );
-								}
-							},
-							type: 'warning'});
-
-					} else {
-						$(this).parents('tr').children('td:first').find('input').attr('checked','checked');
-						printQueue();
-					}
-					e.stopPropagation();
-				});*/
-
-
-				
 			
 				$("#tblViewOptions")
 				.button({
@@ -1522,60 +1499,83 @@
 				/**
 				 *	prepares the printing queue of the selected orders. 
 				 */
-				function printQueue(){
-					gPrintIndex = -1; 
-					gPrintList = [];
-					gSelRow = null;  
-
-					if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-						$.showMsg({
-							msg:"<?=$Text['msg_err_noselect'];?>",
-							buttons: {
-								"<?=$Text['btn_ok'];?>":function(){						
-									$(this).dialog("close");
-								}
-							},
-							title: local_lang._warning,
-							type: 'warning'});
-					} else {
-
-						printWin = window.open('tpl/'+local_cfg.print_order_template);
-						printWin.focus();
-										
-						var i = 0;  						
-						$('input:checkbox[name="bulkAction"]').each(function(){
-							if ($(this).is(':checked')){
-								gPrintList[i++] = $(this).parents('tr');
-							} 
-						});
-						
-	
-						loadPrintOrder();
-					}
-				}
-				
-
-				/**
-				 *  part of a call sequence to load the marked orders one after
-				 *  the other, clone the data in the table and then copy it to the new
-				 *  print window. 
-				 */
-				function loadPrintOrder(){
-
-					gPrintIndex++;
-					
-					if (gPrintIndex == gPrintList.length) return false; 
-					
-					$('.col').hide();
-					gSection = 'print';
-					gSelRow = gPrintList[gPrintIndex]; 
-
-					//need to introduce a delay here in order to load all orders correctly. don't ask me why.... 
-					setTimeout(function(){
-						$('#tbl_reviseOrder tbody').xml2html("reload", {	//load order details for printing
-							params : 'oper=getOrderedProductsList&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder")
-						})
-					}, 1000); 
+				function printQueue() {
+					var _queryStr = '';
+                    var _dates = {};
+                    var _orders = [];
+                    var _countOrd = 0;
+                    $('input:checkbox[name="bulkAction"]').each(function(){
+                        if ($(this).is(':checked')){
+                            var gSelRow = $(this).parents('tr');
+                            _queryStr += 
+                                '&order_id[]=' + gSelRow.attr("orderId") + 
+                                '&provider_id[]=' + gSelRow.attr("providerId") +
+                                '&date[]=' + gSelRow.attr("dateForOrder");
+                            _dates[gSelRow.attr("dateForOrder")] = gSelRow.attr("dateForOrder");
+                            if (gSelRow.attr("orderId")) {
+                                _orders.push(gSelRow.attr("orderId"));
+                            }
+                            _countOrd++;
+                        } 
+                    });
+                    if (_queryStr === '') {
+                        $.showMsg({
+                            type: 'warning',
+                            title: local_lang._warning,
+                            msg: "<?=$Text['msg_err_noselect'];?>",
+                            buttons: {
+                                "<?=$Text['btn_ok'];?>": function() {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    } else {
+                        var _title = $('#printOpt_format').val();
+                        if (_title === 'default') {
+                            _title = 'cfg_<?=get_config('email_order_format', 'notSet')?>';
+                        }
+                        _title = 'Orders-' + _title;
+                        for (var prop in _dates) {
+                            _title += ' ' + prop;
+                        }
+                        if (_orders.length) {
+                            _title += ' ' + _orders.join(',');
+                        }
+                        _title += ' [' + _countOrd + ']'
+                        _queryStr += '&format=' + $('#printOpt_format').val() + 
+                                     '&prices=' + $('#printOpt_prices').val();
+                        var _printWin = window.open( 
+                                'tpl/'+local_cfg.print_order_template 
+                            ),
+                            _done = false,
+                            _count = 0;
+                        _printWin.focus();
+                        var _pull = function() {
+                            setTimeout(function() {
+                                _count++;
+                                if (_done) { return; }
+                                if (_count > 10) { return; }
+                                var orderWrap = $('#orderWrap', _printWin.document);
+                                if (orderWrap.length == 0) {
+                                    _pull();
+                                } else {
+                                    _done = true;
+                                    $('.anOrder', _printWin.document).hide();
+                                    if (!$('#printOpt_header').prop('checked')) {
+                                        $('#header', _printWin.document).hide();
+                                    }
+                                    _printWin.document.title =_title;
+                                    orderWrap.load(
+                                        'php/ctrl/Orders.php?oper=reportOrders' + _queryStr,
+                                        function () {
+                                            $('.loadingMsg', _printWin.document).hide();
+                                        }
+                                    );
+                                }
+                            }, 250);
+                        };
+                        _pull();
+                    }
 				}
 
 
@@ -1699,6 +1699,9 @@
 							$('#tbl_orderDetailInfo tbody').xml2html('reload',{						//load the info of this order
 								params : 'oper=orderDetailInfo&order_id='+gSelRow.attr("orderId")+'&provider_id='+gSelRow.attr("providerId")+'&date='+gSelRow.attr("dateForOrder"),
 								complete : function(rowCount){
+                      				if (!gSelRow) {
+                                        return;
+                                    }
 									$('#orderDetailDateForOrder').text($.getCustomDate(gSelRow.attr('dateForOrder')));
 									$('#orderDetailShopDate').text($.getCustomDate($('#orderDetailShopDate').text()));
 									//copy the order status 
@@ -1776,6 +1779,50 @@
 					</ul>
 				</div>	
 				<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
+                <button id="btn_printOpt"
+                    title="<?=$Text['order_printOpt_dialog']?>"
+                    class="overviewElements btn_right"
+                    style="padding:4px 0"><span 
+                        class="ui-button-icon-primary ui-icon ui-icon-gear" ></span></button>
+                <div id="dialog_printOpt" title="<?=$Text['order_printOpt_dialog']?>" class="hidden">
+                    <table>
+                    <tr>
+                        <td colspan="2">
+                            <input type="checkbox" id="printOpt_header" value="true" checked style="height: 1em;"/>&nbsp;
+                            <label for="printOpt_header" ><?=$Text['order_printOpt_header']?></label>
+                        </td>
+                    </tr><tr><td colspan="2">&nbsp;</td></tr>
+                    <tr>
+                        <td><label for="printOpt_format"><?=$Text['order_printOpt_format']?></label>&nbsp;</td>
+                        <td class="freeInput">
+                            <select id="printOpt_format">
+                                <option value="default" selected ><?=$Text['order_printOpt_default']?></option>
+                                <option value="Prod"><?=$Text['prvOrdF_prod']?></option>
+                                <option value="Matrix"><?=$Text['prvOrdF_matrix']?></option>
+                                <option value="Prod_Matrix"><?=$Text['prvOrdF_prod_matrix'];?></option>
+                                <option value="ProdUf"><?=$Text['prvOrdF_prodUf'];?></option>
+                                <option value="Prod_ProdUf"><?=$Text['prvOrdF_prod_prodUf']?></option>
+                                <option value="UfProd"><?=$Text['prvOrdF_ufProd']?></option>
+                                <option value="GroupByUf"><?=$Text['prvOrdF_GroupByUf']?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr><td colspan="2">&nbsp;</td></tr>
+                    <tr>
+                        <td><label for="printOpt_prices"><?=$Text['order_printOpt_prices']?></label>&nbsp;</td>
+                        <td class="freeInput">
+                            <select id="printOpt_prices">
+                                <option value="default" selected ><?=$Text['order_printOpt_default']?></option>
+                                <option value="cost_amount"><?=$Text['prvOrdP_cost_amount']?></option>
+                                <option value="cost"><?=$Text['prvOrdP_cost_price']?></option>
+                                <option value="final_amount"><?=$Text['prvOrdP_final_amount']?></option>
+                                <option value="final"><?=$Text['prvOrdP_final_price']?></option>
+                                <option value="none"><?=$Text['prvOrdP_no_amount']?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
 		   		<button id="btn_zip" class="overviewElements btn_right">Zip</button>			
 		   	</div> 	
 		</div> <!--  end of title wrap -->

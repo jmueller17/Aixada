@@ -180,8 +180,6 @@
       * updates the quantity of the item. 
       */
      addItem : function(itemObj) {
-			
-			return this.each(function(){
 				
 				var $this = 
 				(itemObj.isPreorder == "true" || itemObj.isPreorder == 1 ) 
@@ -190,15 +188,41 @@
 
 				//we have unsaved items	
 				var _self = $(this);
-				_self.data('aixadacart').unsavedItems = true; 
 
 				//check if input field with given id exists, this means item is already in cart
 				var exists = $('#cart_quantity_'+itemObj.id, $this).val(); 
-				
-				//if it is not, create a new row
-				if (!exists){
-					
+
+				var emptyRow = false;
+				if (itemObj.orderable_type_id == 3) {
+					if (itemObj.notes.replace(/ /g, ''
+						).replace(/\r/g, ''
+						).replace(/\n/g, '') == '') {
+						itemObj.notes = '';
+					}
+					emptyRow = (itemObj.notes === '');
+					itemObj.quantity = 0;
+				} else {
+					if (itemObj.quantity.replace(/ /g, '') === '') {
+					    itemObj.quantity = '0';
+					}
 					itemObj.quantity = formatNumInput(itemObj.quantity);
+					emptyRow = (itemObj.quantity == 0);
+					itemObj.notes = '';
+				}
+
+				
+				if (exists) {
+					if (emptyRow) { // Remove a empty row
+						$('#' + +itemObj.id, $this).remove();
+						$this.aixadacart("saveCart");
+						return itemObj;
+					}
+					_self.data('aixadacart').unsavedItems = true; 
+				} else { //if it is not, create a new row
+					if (emptyRow) { // Don't add a empty row
+						return itemObj;
+					}
+					_self.data('aixadacart').unsavedItems = true; 
 					
 					//deactivates items whose provider/order has been already closed
 					var deaTr = (itemObj.time_left < 0)? 'dim60':'';
@@ -207,23 +231,41 @@
 					
 					//add it as row
 					var str = '<tr id="'+itemObj.id+'" class="'+deaTr+'" >'; 
+					str += '<td class="hidden">' +
+						'<span class="hidden orderable_type_id" >'+itemObj.orderable_type_id+'</span>' +
+						'<input type="hidden" name="order_item_id[]" value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />' +
+						'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />' +
+						'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />' +
+						'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />' +
+						'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" id="cart_iva_percent_'+itemObj.id+'" />' +
+						'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" />' +
+					'</td>';
 					if (itemObj.time_left < 0){
 						str += '<td class="'+deaTd+'"></td>';
 					} else {
-						str += '<td><span id="del_'+itemObj.id+'" class="ui-icon ui-icon-close cart_clickable"></span></td>';
+						str += '<td><span id="del_'+itemObj.id +
+							'" class="ui-icon ui-icon-trash cart_clickable" title="' +
+							$.aixadacart.deleteRow + '"></span></td>';
 					}
-					str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
-					str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
-					str += '<td class="item_quantity '+deaTd+'"><input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
-					str +=								'<input type="hidden" name="order_item_id[]" value="'+itemObj.order_item_id+'" id="cart_order_item_id_'+itemObj.id+'" />';
-					str += 							 	'<input type="hidden" name="preorder[]" value="'+itemObj.isPreorder+'" id="preorder_'+itemObj.id+'" />';
-					str += 							 	'<input type="hidden" name="price[]" value="'+itemObj.price+'" id="cart_price_'+itemObj.id+'" />';
-					str += 								'<input type="hidden" name="product_id[]" value="'+itemObj.id+'" />';
-					str += 								'<input type="hidden" name="iva_percent[]" value="'+itemObj.iva_percent+'" id="cart_iva_percent_'+itemObj.id+'" />'
-					str += 								'<input type="hidden" name="rev_tax_percent[]" value="'+itemObj.rev_tax_percent+'" id="cart_rev_tax_percent_'+itemObj.id+'" /></td>';
-					//str += 								'<input type="hidden" name="time_left"  value="'+itemObj.time_left+'" id="cart_time_left_'+itemObj.id+'" /> ';
-					str += '<td class="item_unit '+deaTd+'">' + itemObj.unit + '</td>';
-					str += '<td class="item_total '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
+                    if (itemObj.orderable_type_id == 3) {
+                        str += '<td class="item_text" colspan="5">' +
+                                '<span class="item_name '+deaTd+'">'+itemObj.name+'</span> | ' +
+                                '<span class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</span><br>' +
+                                '<textarea name="notes[]" class="ui-widget-content ui-corner-all textareaLarge inputTxtMax" id="cart_notes_'+itemObj.id+'">'+itemObj.notes+'</textarea>' +
+                            '</td>';
+                        str += '<td class="item_quantity '+deaTd+' hidden">' +
+                            '<input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
+                        str += '<td class="item_unit '+deaTd+' hidden">' + itemObj.unit + '</td>';
+                        str += '<td class="item_total '+deaTd+' hidden" id="item_total_'+itemObj.id+'"></td>';
+                    } else {
+                        str += '<td class="item_name '+deaTd+'">'+itemObj.name+'</td>';
+                        str += '<td class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</td>';
+                        str += '<td class="item_quantity '+deaTd+'">' +
+                            '<input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />' +
+                            '<textarea name="notes[]" class="hidden" id="cart_notes_'+itemObj.id+'"></textarea>';
+                        str += '<td class="item_unit '+deaTd+'">' + itemObj.unit + '</td>';
+                        str += '<td class="item_total '+deaTd+'" id="item_total_'+itemObj.id+'"></td>';
+                    }
 					str += '</tr>';
 
 					
@@ -232,18 +274,19 @@
 					//event listener to remove items from cart
 					$("#del_"+itemObj.id, $this)
 						.bind("mouseenter", function(){
-								$(this).removeClass('ui-icon-close').addClass('ui-icon-circle-close');
+								$(this).removeClass('ui-icon-trash').addClass('ui-icon-circle-close');
 						})
 						.bind("mouseleave", function(){
-							$(this).removeClass('ui-icon-circle-close').addClass('ui-icon-close');
+							$(this).removeClass('ui-icon-circle-close').addClass('ui-icon-trash');
 						})
 						.bind("click", function(e){
-							$(this).parents('tr').find('input').val(0).trigger('change').end().remove();
-							$this.aixadacart("saveCart");	
+							$(this).parents('tr')
+								.find('textarea').val('').end()
+								.find('input').val(0).trigger('change').end();
+								// Trigger chage when quantity=0 forces a remove and a save
+						}
+					);
 
-					});
-			
-					
 					//event listener to detect quantity changes in cart
 					$("#cart_quantity_"+itemObj.id, $this)
 						.bind("focus", function(e){
@@ -271,34 +314,67 @@
 						//update the row / calculate the price
 						updateRow.call($(this),objItem);
 						
-						//update the row in the actual product list
-						//TODO pass the name of the field as options when init cart!
-						$('#quantity_'+objItem.id).val(objItem.quantity); //.addClass('ui-state-highlight');
-						$('.quantity_'+objItem.id).val(objItem.quantity);
+						//update the row in the all product list
+						$('.quantity_'+objItem.id).val( 
+						    objItem.quantity != 0 ? objItem.quantity : ''
+						);
+						$('.notes_'+objItem.id).val(objItem.notes); // Used in delete row
 
 						//recalculate total cost
 						calculateTotal.call();
+
+						if (objItem.quantity == 0) { // remove empty row
+						    $(this).parents('tr').remove();
+						    $this.aixadacart("saveCart");
+						}
 						
 					});//end event listener
-				
-				//if item exists, update the quanity field	
-				} else {
-					
-					$('#cart_quantity_'+itemObj.id, $this).val(itemObj.quantity); 
-					
-				} //end if exists
-				
+
+                    $("#cart_notes_"+itemObj.id, $this).bind(
+                        "focus", function(e){
+                            if($(this).parent().hasClass('ui-state-error')){
+                                $("#cart_dialog")
+                                    .html($.aixadacart.msg.orderClosed)
+                                    .dialog('option','title','Warning')
+                                    .dialog("open");
+                                $(this).blur();
+                                return false; 
+                            }
+                        }
+                    ).bind(
+                        "change", function(e){
+                            //we have unsaved items
+                            _self.data('aixadacart').unsavedItems = true;
+                            //retrieve all the info of the current cart item
+                            var objItem = $this.aixadacart("getRowData", {
+                                type : 'table',
+                                row :  $(this).parents("tr")
+                            });
+                            //update the cart and notes on other list
+                            updateRow.call($(this),objItem);
+                            $('.notes_'+objItem.id).val(objItem.notes);
+                            
+                            if (objItem.notes.replace(/ /g, ''
+                            ).replace(/\r/g, ''
+                            ).replace(/\n/g, '') == '') { // remove empty row
+                                $(this).parents('tr').remove();
+                                $this.aixadacart("saveCart");
+                            }
+                        }
+                    );//end event listener
+				}
 				
 				
 				//calculate and set cost of item
 				updateRow.call($this, itemObj);
 				$('.quantity_'+itemObj.id).val(itemObj.quantity);
+				$('.notes_'+itemObj.id).val(itemObj.notes);
 				calculateTotal.call();
 				
 				//make sure the submit button is active
 				$('#btn_submit').button( "option", "disabled", false );
 			
-			}); //end each 
+				return itemObj;
      }, //end addItem 
      
      
@@ -424,7 +500,6 @@
     		 }); //end ajax
     	 });//end each
 	  },  //end loadCart   
-      
 	  
 	  /**
 	   * remove event listeners and free memory
@@ -437,16 +512,6 @@
 	    	   $(this).removeData('aixadacart');
 	       })
 	  },	  
-	  
-	  /**
-	   * removes one item from the cart and triggers the recalc of the total price
-	   */
-	  removeItem : function(id) { 
-		  return this.each(function(){
-			  $('tr[id='+id+']', this).find('input').val(0).trigger('change').end().remove();
-			 
-		  });
-	  }, //end removeItem
 	  
 	  /**
 	   * resets the cart: removes all items, and sets the date to 0
@@ -509,6 +574,8 @@
 					isPreorder			: $(row).find('preorder').text(),
 					provider_name 		: $(row).find('provider_name').text(),
 					name 				: $(row).find('name').text(),
+					orderable_type_id	: $(row).find('orderable_type_id').text(),
+					notes				: $(row).find('notes').text(),
 					quantity 			: $(row).find('quantity').text(),
 					unit 				: $(row).find('unit').text(),
 					price 				: parseFloat($(row).find('unit_price').text()),
@@ -523,12 +590,18 @@
 		  } else if (options.type == "table"){
 			  var row = options.row;
 			  var id =  $(row).attr("id"); 
+			  quantity = $("#cart_quantity_"+id).val();
+			  if (quantity.replace(/ /g, '') === '') {
+			    quantity = '0';
+			  }
 			  objItem =  {
 					id 				: id,
 					isPreorder		: $('#preorder_'+id).val(),
-					name 			: $("td.item_name", row).text(),
+					name 			: $(".item_name", row).text(),
+					orderable_type_id: $(".orderable_type_id", row).text(),
+					notes			: $("#cart_notes_"+id).val(),
 					provider_name 	: $("td.item_provider_name", row).text(),
-					quantity 		: formatNumInput($("#cart_quantity_"+id).val()),
+					quantity 		: formatNumInput(quantity),
 					unit 			: $("td.item_unit", row).text(),
 					price 			: parseFloat($("#cart_price_"+id, row).val()),
 					rev_tax_percent	: parseFloat($("#cart_rev_tax_percent_"+id, row).val()),
@@ -559,7 +632,6 @@
   	function formatNumInput(value){
   			
   		var fmtInput = null;
-  		//alert(" ... " + $(this).data('aixadacart').decimalsQu );
 		fmtInput = parseFloat(value.replace(",","."));
 				
 		if (isNaN(fmtInput)){
@@ -567,8 +639,7 @@
 			.html($.aixadacart.msg.errInput)
 			.dialog('option','title','Warning')
 			.dialog("open");
-			var nv = new Number(0);
-			return round2dText(nv);
+			return 0;
 		} else {
 			return fmtInput; 
 		}
@@ -582,11 +653,10 @@
 		var item_total 		= itemObj.price * itemObj.quantity; 
 		//set/update quantity (set the value if quantity has been changed in product list for example
 		$("#cart_quantity_"+itemObj.id).val(itemObj.quantity);
+		$("#cart_notes_"+itemObj.id).val(itemObj.notes);
 			
 		//set/update the total cost for item
 		$("#item_total_"+itemObj.id).text(String(round2dText(item_total)));
-		
-		if (itemObj.isPreorder) return;
 	}
 	
 	

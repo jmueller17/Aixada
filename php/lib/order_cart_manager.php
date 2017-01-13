@@ -22,13 +22,20 @@ class order_item extends abstract_cart_row {
 	
     public function commit_string() 
     {
+        $db = DBWrap::get_instance();
+        if ($this->_notes) {
+            $notesSql = "'" . $db->escape_string($this->_notes) . "'";
+        } else {
+            $notesSql = 'null';
+        }
         return '(null, '	//order_id is always null; set when order is send_off/closed
         	. $this->_cart_id . ","
             . "'" . $this->_date . "',"
             . $this->_uf_id . ','
             . $this->_product_id . ','
             . $this->_quantity . ','
-            . $this->_unit_price_stamp 
+            . $this->_unit_price_stamp . ','
+            . $notesSql
             . ')';
     }
 }
@@ -61,16 +68,16 @@ class order_cart_manager extends abstract_cart_manager {
         $this->_id_string = 'order';
         $this->_commit_rows_prefix = 
             'replace into aixada_order_item' .
-            ' (order_id, favorite_cart_id, date_for_order, uf_id, product_id, quantity, unit_price_stamp)' .
+            ' (order_id, favorite_cart_id, date_for_order, uf_id, product_id, quantity, unit_price_stamp, notes)' .
             ' values ';
         parent::__construct($uf_id, $date_for_order); 
     }
 
-    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice) 
+    public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes) 
     {
 	    $this->tried_modif_closed = false;
         // call the super-class
-        $res = parent::commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice);
+        $res = parent::commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes);
         if ($this->tried_modif_closed) {
             throw new Exception(i18n('msg_err_modif_order_closed'));
         }
@@ -88,7 +95,7 @@ class order_cart_manager extends abstract_cart_manager {
 	 * @param array $arrCartId		the id of aixada_cart(id). If set, this indicates favorite cart
 	 * @param array $arrPreOrder		true/false if item is preorder
 	 */
-    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice)
+    protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes)
     {
     	//set the cartid to null for most orders. order_items have cart_id only if bookmarked as "favori te" cart
     	$this->_cart_id = (isset($cart_id) && $cart_id>0)? $cart_id:'null';
@@ -149,7 +156,9 @@ class order_cart_manager extends abstract_cart_manager {
 	                                                $arrProdId[$i], 
 	                                                $arrQuant[$i],  
 	                                                $this->_cart_id, 
-	                                                $arrPrice[$i]);
+	                                                $arrPrice[$i],
+	                                                $arrNotes[$i]
+                                                );
             	} elseif (!$tried_modif_closed){
                 // verify if closed order exist and quantity is the same
                     $sql = "select
@@ -190,29 +199,24 @@ class order_cart_manager extends abstract_cart_manager {
     /**
      * Overloaded function to commit the cart to the database
      */
-    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $arrNotes)
     {
        
         // now store preorder items
        	$this->_rows = array();
         for ($i=0; $i < count($arrQuant); ++$i) {
-            if ($arrPreOrder[$i] == 'true')
-             	$this->_rows[] = new order_item('1234-01-23',
+            if ($arrPreOrder[$i] == 'true') {
+                $this->_rows[] = new order_item('1234-01-23',
                                                 $this->_uf_id,
                                                 $arrProdId[$i], 
                                                 $arrQuant[$i],  
                                                 $this->_cart_id, 
-                                                $arrPrice[$i]);
-             
-                                                
+                                                $arrPrice[$i],
+                                                $arrNotes[$i]
+                );
+            }
         }
         $this->_commit_rows();
     }
-
- 
-
 }
-
-
-
 ?>

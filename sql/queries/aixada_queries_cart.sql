@@ -28,6 +28,7 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     c.id as cart_id,
 	c.date_for_shop,
 	c.ts_last_saved,
@@ -80,7 +81,9 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     oi.quantity as quantity,
+    oi.notes,
     oi.favorite_cart_id,
     oi.order_id,
     oi.unit_price_stamp as unit_price,
@@ -114,53 +117,6 @@ begin
   	/** and orderable_type_id > 1  ... why do we need this? if items are in aixada_order_item, they are orderable **/
   order by p.provider_id, p.name; 
 end|
-
-
-/**
- * TODO
- * retrieves all favorite order carts for a given uf_id. An order cart exists if a aixada_cart(id) 
- * exists for aixada_order_items. 
- */
-drop procedure if exists get_favorite_order_carts|
-create procedure get_favorite_order_carts (in the_uf_id int)
-begin
-	
-	select 
-		c.id,
-		c.name
-	from
-		aixada_cart c,
-		aixada_order_item oi
-	where 
-		oi.uf_id = the_uf_id
-		and oi.favorite_cart_id = c.id;
-	
-end |
-
-
-
-/**
- * TODO
- * creates a favorite order cart. requires existing items in aixada_order_item and 
- * then creates an cart_id for it which then gets saved to each order_item. 
- */
-drop procedure if exists make_favorite_order_cart|
-create procedure make_favorite_order_cart (in the_name varchar(255), in the_uf_id int, in the_date date)
-begin
-	
-end |
-
-
-/**
- * TODO
- * delete a favorite order cart
- */
-drop procedure if exists delete_favorite_order_cart|
-create procedure delete_favorite_order_cart (in the_cart_id int)
-begin
-	
-
-end |
 
 
 delimiter ; 

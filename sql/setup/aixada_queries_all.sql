@@ -307,6 +307,7 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     c.id as cart_id,
 	c.date_for_shop,
 	c.ts_last_saved,
@@ -359,7 +360,9 @@ begin
     p.id,
     p.name,
     p.description,
+    p.orderable_type_id,
     oi.quantity as quantity,
+    oi.notes,
     oi.favorite_cart_id,
     oi.order_id,
     oi.unit_price_stamp as unit_price,
@@ -393,53 +396,6 @@ begin
   	/** and orderable_type_id > 1  ... why do we need this? if items are in aixada_order_item, they are orderable **/
   order by p.provider_id, p.name; 
 end|
-
-
-/**
- * TODO
- * retrieves all favorite order carts for a given uf_id. An order cart exists if a aixada_cart(id) 
- * exists for aixada_order_items. 
- */
-drop procedure if exists get_favorite_order_carts|
-create procedure get_favorite_order_carts (in the_uf_id int)
-begin
-	
-	select 
-		c.id,
-		c.name
-	from
-		aixada_cart c,
-		aixada_order_item oi
-	where 
-		oi.uf_id = the_uf_id
-		and oi.favorite_cart_id = c.id;
-	
-end |
-
-
-
-/**
- * TODO
- * creates a favorite order cart. requires existing items in aixada_order_item and 
- * then creates an cart_id for it which then gets saved to each order_item. 
- */
-drop procedure if exists make_favorite_order_cart|
-create procedure make_favorite_order_cart (in the_name varchar(255), in the_uf_id int, in the_date date)
-begin
-	
-end |
-
-
-/**
- * TODO
- * delete a favorite order cart
- */
-drop procedure if exists delete_favorite_order_cart|
-create procedure delete_favorite_order_cart (in the_cart_id int)
-begin
-	
-
-end |
 
 
 delimiter ; 
@@ -883,7 +839,8 @@ begin
 			set @q = concat("select 
 					oi.*,
 					p.name, 
-					p.provider_id, 
+					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised, 
 					si.quantity as shop_quantity
@@ -906,6 +863,7 @@ begin
 					oi.*,
 					p.name,
 					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised,
 					si.quantity as shop_quantity
@@ -921,7 +879,7 @@ begin
 					and p.provider_id = ",the_provider_id,"
 					", wherec ,"
 				order by
-					oi.product_id;"); 				
+					oi.product_id;");
 			
 		end if;
 		
@@ -1250,8 +1208,10 @@ begin
 	select 
 		p.id as product_id,
 		p.name, 
+		p.orderable_type_id,
 		oi.order_id, 
 		oi.quantity,
+		oi.notes,
 		si.quantity as shop_quantity, 
 		oi.unit_price_stamp as unit_price
 	from 
@@ -2359,6 +2319,10 @@ begin
     /** no date provided we assume that we are shopping, i.e. all active products are shown stock + orderable **/
     if the_date = 0 then
     	set wherec = concat(wherec, " and p.unit_measure_shop_id = u.id ");
+        /** hack: the_product_id=-1 works to exclude products as notes **/
+        if the_product_id = -1 then
+            set wherec = concat(wherec, " and p.orderable_type_id <> 3 "); /* Exclude product as order notes */
+        end if;
     
     /** hack: date=-1 works to filter stock only products **/ 	
     elseif the_date = '1234-01-01' then 
@@ -3235,68 +3199,6 @@ begin
     i.date_for_order = order_date
     and p.provider_id = the_provider
   group by p.name, u.id
-  with rollup;
-end|
-
-/**
- * report the detailed preorders for a provider for a given date
- */
-drop procedure if exists detailed_preorders_for_provider_and_date|
-create procedure detailed_preorders_for_provider_and_date(in the_provider int)
-begin
-  select
-    p.name as product_name, 
-    p.description,
-    u.id as uf,
-    i.quantity as qty,
-    m.unit,
-    sum(i.quantity) as total_quantity,
-    convert(sum(i.quantity * p.unit_price), decimal(10,2)) as total_price
-  from
-    aixada_order_item i
-    left join aixada_product p
-    on i.product_id = p.id
-    left join aixada_unit_measure m
-    on p.unit_measure_order_id = m.id
-    left join aixada_uf u
-    on i.uf_id = u.id
-  where 
-    i.date_for_order = '1234-01-23'
-    and p.provider_id = the_provider
-  group by p.name, u.id
-  with rollup;
-end|
-
-/**
- * report the total orders for all providers for a given date, in detail
- */
-drop procedure if exists detailed_total_orders_for_date|
-create procedure detailed_total_orders_for_date(IN order_date date)
-begin
-  select
-    pv.name as provider_name, 
-    pv.email as email,
-    p.name as product_name, 
-    p.description,
-    p.iva_percent as iva,
-    i.uf_id as uf,
-    sum(i.quantity) as qty,
-    convert(sum(i.quantity * p.unit_price), decimal(10,2)) as total_price,
-    m.unit as unit
-  from 
-    aixada_order_item i 
-    left join aixada_product p
-    on i.product_id = p.id
-    left join aixada_provider pv
-    on p.provider_id = pv.id
-    left join aixada_unit_measure m
-    on p.unit_measure_order_id = m.id
-  where
-    i.date_for_order = order_date
-  group by
-    pv.id,
-    p.name,
-    i.uf_id
   with rollup;
 end|
 
@@ -5016,6 +4918,7 @@ begin
       aixada_order_item.product_id,
       aixada_product.name as product,
       aixada_order_item.quantity,
+      aixada_order_item.notes,
       aixada_order_item.ts_ordered 
     from aixada_order_item 
     left join aixada_uf as aixada_uf on aixada_order_item.uf_id=aixada_uf.id
@@ -5226,6 +5129,8 @@ begin
       aixada_uf.id as responsible_uf_id,
 aixada_uf.name as responsible_uf_name,
       aixada_provider.offset_order_close,
+      aixada_provider.order_send_format,
+      aixada_provider.order_send_prices,
       aixada_provider.ts 
     from aixada_provider 
     left join aixada_uf as aixada_uf on aixada_provider.responsible_uf_id=aixada_uf.id";

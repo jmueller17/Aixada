@@ -81,6 +81,8 @@ create table aixada_provider (
   active     	  	tinyint 		default 1,
   responsible_uf_id	int     		default null,
   offset_order_close int			default 4, 			/* default offset closing of order in days*/
+  order_send_format varchar(25)     default 'default',
+  order_send_prices varchar(15)     default 'default'
   ts			  	timestamp 		not null default current_timestamp,
   primary key (id),
   key (active),
@@ -191,6 +193,10 @@ create table aixada_iva_type (
   active     	      	tinyint			default 1,
   responsible_uf_id     int             default null,
   orderable_type_id		tinyint			default 2,
+    /* 1-> Stoc
+     * 2-> Orderrable
+     * 3-> Order-notes
+     */
   order_min_quantity	decimal(10,4)	default 0,
   category_id	      	int				default 1,
   rev_tax_type_id		tinyint			default 1,
@@ -294,7 +300,8 @@ create table aixada_order_item (
   rev_tax_percent	decimal(5,2)	default 0,
   date_for_order 	date		not null,
   product_id	  	int 		not null,	
-  quantity 	  		float(10,4) default 0.0,				
+  quantity 	  		float(10,4) default 0.0,
+  notes    	  		text,
   ts_ordered   	  	timestamp 	default current_timestamp,
   primary key (id),
   foreign key (order_id) references aixada_order(id),

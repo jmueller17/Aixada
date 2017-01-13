@@ -204,7 +204,8 @@ begin
 			set @q = concat("select 
 					oi.*,
 					p.name, 
-					p.provider_id, 
+					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised, 
 					si.quantity as shop_quantity
@@ -227,6 +228,7 @@ begin
 					oi.*,
 					p.name,
 					p.provider_id,
+					p.orderable_type_id,
 					1 as arrived, 
 					0 as revised,
 					si.quantity as shop_quantity
@@ -242,7 +244,7 @@ begin
 					and p.provider_id = ",the_provider_id,"
 					", wherec ,"
 				order by
-					oi.product_id;"); 				
+					oi.product_id;");
 			
 		end if;
 		
@@ -571,8 +573,10 @@ begin
 	select 
 		p.id as product_id,
 		p.name, 
+		p.orderable_type_id,
 		oi.order_id, 
 		oi.quantity,
+		oi.notes,
 		si.quantity as shop_quantity, 
 		oi.unit_price_stamp as unit_price
 	from 

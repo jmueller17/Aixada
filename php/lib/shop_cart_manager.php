@@ -25,7 +25,7 @@ class shop_item extends abstract_cart_row {
 	protected $_order_item_id = 0; 
 
  
-	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id, $unit_price_stamp){
+	public function __construct($product_id, $quantity, $cart_id, $iva, $revtax, $order_item_id, $unit_price_stamp, $notes = ''){
 		$this->_iva_percent = $iva; 
 		$this->_rev_tax_percent = $revtax;
 		$this->_order_item_id = $order_item_id;
@@ -83,7 +83,7 @@ class shop_cart_manager extends abstract_cart_manager {
   /**
    * Overloaded function to make sale_item rows
    */
-  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $last_saved, $arrPreorder, $arrPrice)
+  	protected function _make_rows($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cartId, $last_saved, $arrPreorder, $arrPrice, $arrNotes)
     {
 		global $Text; 
     	
@@ -191,7 +191,7 @@ class shop_cart_manager extends abstract_cart_manager {
 	/**
      * Overloaded function; set/get last_saved timestamp for cart
      */
-    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice)
+    protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $addNotes)
     {
 
 		//update cart last saved

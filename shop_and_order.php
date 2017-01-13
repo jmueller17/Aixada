@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
   	<link rel="stylesheet" type="text/css"   media="print"  href="css/print.css" />
-  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css" />
+  	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=20170108" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
 
@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
     <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
-    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js" ></script>
+    <script type="text/javascript" src="js/aixadacart/jquery.aixadacart.js?v=20170108" ></script>
 
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
  	<script type="text/javascript" src="js/aixadacart/i18n/cart.locale-<?=$language;?>.js" ></script>
@@ -124,7 +124,7 @@
 					$('.loadSpinner').show();
 					//alert($.getSelectedDate('#datepicker','',what)); //for shop the date needs to be 0!!
 					$('#product_list_provider tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -160,7 +160,7 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -186,7 +186,7 @@
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=get'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
+						params: 'oper=getTo'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -322,44 +322,41 @@
 
 	//attach event listeners for the product input fields; change of quantity will put the
 	//item into the cart.
-	$('.product_list tbody')
-		.find("input")
-		.live("change", function (e){
+    var row_changed = function(e) {
 			var row = $(this).parents("tr");										//retrieve the current table row where quantity has been changed
-			var isPreorder = $(this).parents("tr").attr('preorder')? true:false; 	//check if this is a preorder item
+			var isPreorder = row.attr('preorder')? true:false; 	//check if this is a preorder item
 
 			//TODO should be replaced with global $.checkNumber...
-			var qu = $(this).val();													//don't add nonsense values
-			$(this).val(parseFloat(qu.replace(",",".")));
-
-			if (isNaN($(this).val())) {
-				var $this = $(this);
-				$(this).addClass("ui-state-error");
-				$(this).effect('pulsate',{},100, function callback(){
-						var nv = new Number(0);
-						$this.val(nv.toFixed(2));
-						$this.removeClass("ui-state-error");
-					});
-				return false;
-			}
+			var qu_ele = $("td.item_quantity input", row);
+            var orderable_type_id = $("td.item_orderable_type_id", row).text();
+            var notes = '';
+            if (orderable_type_id == 3) {
+                notes = $("td.item_notes textarea", row).val();
+				qu_ele.val(0);
+            }
 
 			//if quantity has changed, add it to the cart.
-			$('#cartLayer').aixadacart("addItem",{
+			var itemObj = $('#cartLayer').aixadacart("addItem",{
 					id 				: $(row).attr("id"),
 					isPreorder 		: isPreorder,
 					provider_name 	: $("td.item_provider_name", row).text(),
 					name 			: $("td.item_name", row).text(),
+					orderable_type_id: orderable_type_id,
+					notes 			: notes,
 					price 			: parseFloat($("td.item_price", row).text()),
-					quantity 		: $(this).val(),
+					quantity 		: qu_ele.val(),
 					unit 			: $("td.item_unit", row).text(),
 					rev_tax_percent : $("td.item_rev_tax_percent", row).text(),
 					iva_percent		: $("td.item_iva_percent", row).text()
 			}); //end addItem to cart
+			qu_ele.val(itemObj.quantity === 0 ? '' : itemObj.quantity);
 
 			//sets nr of items in cart hide/view button
 			updateCartLabel();
 
-	});//end event listener for product list
+	};
+	$('.product_list tbody').find("input").live("change", row_changed);//listener for product changed
+	$('.product_list tbody').find("textarea").live("change", row_changed);//listener for product changed
 
 	//update the cart show/hide button
 	function updateCartLabel (){
@@ -408,8 +405,14 @@
 		var days2Closing = $(row).attr("closingdate");
 		var id =  $(row).attr("id");
 		var qu = $("#cart_quantity_"+id).val();
-		qu = (qu > 0)? qu:0;
-		$("#quantity_"+id).val(qu);
+		var notes = $("#cart_notes_"+id).val();
+		if (notes) {
+			$(".quantity_"+id).val(0);
+			$(".notes_"+id).val(notes);
+		} else {
+			$(".quantity_"+id).val(qu > 0 ? qu : '');
+			$(".notes_"+id).val('');
+		}
 
 
 		if (!days2Closing || days2Closing <0){
@@ -423,15 +426,23 @@
 		var orderType	= $(row).attr("ordertype");
 
 		//this is a stock product without any stock left: can't be bought. 
-		if (preventOutofStock == true && orderType == 1 && stockActual <=0){
-			$(row).addClass('dim60');
-			$('td', row).addClass('ui-state-highlight');
-			$('input', row).attr('disabled','disabled');
-			$('td:eq(1)', row).empty().append("<?php echo $Text['no_stock']; ?>")
+		if (orderType == 3) { // order nones
+			$('input', row).hide();
+			$('td.item_notes', row).show();
+			$('td.item_name', row).hide();
+			$('td.item_provider_name', row).hide();
+			$('td.item_quantity', row).hide();
+			$('td.item_unit', row).hide();
+			$('td.item_price', row).hide();
+		} else {
+			$('textarea', row).hide();
+			if (preventOutofStock == true && orderType == 1 && stockActual <=0) {
+				$(row).addClass('dim60');
+				$('td', row).addClass('ui-state-highlight');
+				$('input', row).attr('disabled','disabled');
+				$('td:eq(1)', row).empty().append("<?php echo $Text['no_stock']; ?>");
+			}
 		}
-
-
-
 	}
 
 
@@ -516,10 +527,14 @@
 							<tr id="{id}" closingdate="{time_left}" stock="{stock_actual}" ordertype="{orderable_type_id}">
 								<td class="item_it">{id}</td>
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
-								<td class="item_name">{name}</td>
 								<td class="item_provider_name hidden">{provider_name}</td>
-								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_name">{name}</td>
+								<td class="item_notes hidden" colspan="4">
+									{name}<br>
+									<textarea class="ui-widget-content ui-corner-all textareaLarge inputTxtMax notes_{id}" name="notes_{id}">{notes}</textarea></td>
+								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4"/></td>
 								<td class="item_unit">{unit}</td>
+								<td class="item_orderable_type_id hidden">{orderable_type_id}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
@@ -546,7 +561,6 @@
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['quantity'];?></th>
 							<th><?php echo $Text['unit'];?></th>
-							<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 							<th><?php echo $Text['price'];?></th>
 						</tr>
 						</thead>
@@ -556,8 +570,12 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="ui-corner-all quantity_{id}"  name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_notes hidden" colspan="5">
+									{name} | {provider_name}<br>
+									<textarea class="ui-widget-content ui-corner-all textareaLarge inputTxtMax notes_{id}" name="notes_{id}">{notes}</textarea></td>
+								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4"/></td>
 								<td class="item_unit">{unit}</td>
+								<td class="item_orderable_type_id hidden">{orderable_type_id}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
@@ -582,7 +600,6 @@
 							<th><?php echo $Text['provider_name'];?></th>
 							<th><?php echo $Text['quantity'];?></th>
 							<th><?php echo $Text['unit'];?></th>
-							<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 							<th><?php echo $Text['price'];?></th>
 						</tr>
 						</thead>
@@ -592,8 +609,12 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_notes hidden" colspan="5">
+									{name} | {provider_name}<br>
+									<textarea class="ui-widget-content ui-corner-all textareaLarge inputTxtMax notes_{id}" name="notes_{id}">{notes}</textarea></td>
+								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4"/></td>
 								<td class="item_unit">{unit}</td>
+								<td class="item_orderable_type_id hidden">{orderable_type_id}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>
@@ -610,11 +631,10 @@
 							<tr>
 								<th><?php echo $Text['id'];?></th>
 								<th><?php echo $Text['info'];?></th>
-								<th><?php echo $Text['provider_name'];?></th>
 								<th><?php echo $Text['name_item'];?></th>
+								<th><?php echo $Text['provider_name'];?></th>
 								<th><?php echo $Text['quantity'];?></th>
 								<th><?php echo $Text['unit'];?></th>
-								<!-- th><?php echo $Text['revtax_abbrev'];?></th-->
 								<th><?php echo $Text['price'];?></th>
 							</tr>
 						</thead>
@@ -624,8 +644,12 @@
 								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
 								<td class="item_name">{name}</td>
 								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_quantity"><input class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4" id="quantity_{id}"/></td>
+								<td class="item_notes hidden" colspan="5">
+									{name} | {provider_name}<br>
+									<textarea class="ui-widget-content ui-corner-all textareaLarge inputTxtMax notes_{id}" name="notes_{id}">{notes}</textarea></td>
+								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4"/></td>
 								<td class="item_unit">{unit}</td>
+								<td class="item_orderable_type_id hidden">{orderable_type_id}</td>
 								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
 								<td class="item_price">{unit_price}</td>
 								<td class="item_iva_percent hidden">{iva_percent}</td>

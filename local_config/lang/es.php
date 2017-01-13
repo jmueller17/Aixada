@@ -692,6 +692,7 @@ $Text['add_stock'] = "Añadir stock";
 $Text['click_to_edit'] = "¡Clica la celda para editar!";
 $Text['no_results'] = "La búsqueda no ha producido resultados.";
 $Text['for'] = "para"; //as in order FOR Aurora
+$Text['orderToFor'] = "Pedido {id} a \"{provider}\" para el {date}";
 $Text['date_for_order'] = "Fecha de entrega";
 $Text['finished_loading'] = "Carga Finalizada";
 $Text['msg_err_unrevised'] = "¡Hay ítems sin revisar en este pedido. Por favor, asegúrese de que todos los productos pedidos han llegado!";
@@ -844,6 +845,34 @@ $Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Teléfonos";
 $Text['net_amount'] = "Importe neto"; //importe netto 
 $Text['gross_amount'] = "Importe bruto"; //importe brutto
+
+$Text['cost_amount'] = "Coste"; //importe sin impuestos 
+$Text['final_amount'] = "Importe final UF"; //importe final a las UF
+$Text['cost_amount_desc'] = "\"Coste\" = Importe según precio del proveedor antes de aplicar impuestos.";
+$Text['final_amount_desc'] = "\"Importe final UF\" = Importe para la UF, con impuestos de IVA y Rev.";
+
+$Text['prvOrd_default'] = "(según la configuración)";
+$Text['prvOrdF_formatDesc'] = "Enviar pedidos";
+$Text['prvOrdF_prod'] = "Lista de productos";
+$Text['prvOrdF_matrix'] = "Cuadrícula Productos-UF";
+$Text['prvOrdF_prod_matrix'] = "Lista de productos + Cuadrícula";
+$Text['prvOrdF_prodUf'] = "Lista de productos con detalle UF";
+$Text['prvOrdF_prod_prodUf'] = "Lista de productos + Lista con detalle UF";
+$Text['prvOrdF_ufProd'] = "Lista de UF con detalle de productos";
+$Text['prvOrdF_none'] = "No enviar";
+$Text['prvOrdF_GroupByUf'] = "Agrupar los pedidos por UF";
+$Text['prvOrdP_pricesDesc'] = "Importes a enviar en pedidos";
+$Text['prvOrdP_cost_amount'] = "Importe de Coste (con IVA + imp.Rev.)";
+$Text['prvOrdP_cost_price'] = "Precio y importe de Coste (sin imp.)";
+$Text['prvOrdP_final_amount'] = "Importe final UF (con IVA + imp.Rev.)";
+$Text['prvOrdP_final_price'] = "Precio y importe final UF (con IVA + imp.Rev.)";
+$Text['prvOrdP_no_amount'] = "Sin importes";
+$Text['order_printOpt_dialog'] = "Opciones de imprimir pedidos";
+$Text['order_printOpt_header'] = "Imprimir cabecera";
+$Text['order_printOpt_format'] = "Formato";
+$Text['order_printOpt_prices'] = "Importes";
+$Text['order_printOpt_default'] = "(según el proveedor)";
+
 $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
@@ -912,6 +941,7 @@ $Text['btn_del'] = "Eliminar";
 $Text['btn_new_provider'] = "Nuevo proveedor";
 $Text['btn_new_product'] = "Añadir producto";
 $Text['orderable'] = "Pedido directo"; //product type
+$Text['order_notes'] = "(comentarios pedido)"; //order comments
 $Text['msg_err_providershort'] = "El nombre del proveedor no puede quedar vacío y debe contener al menos 2 caracteres.";
 $Text['msg_err_productshort'] = "El nombre del producto no puede quedar vacío y debe contener al menos 2 caracteres.";
 $Text['msg_err_select_responsibleuf'] = "¿Quién se encarga? Hay que seleccionar un responsable.";
@@ -1037,6 +1067,17 @@ $Text['or_click_to_edit_total'] = 'Clic para ajustar la cantidad total';
 $Text['or_click_to_edit_gprice'] = 'Clic para ajustar el precio';
 $Text['or_saving'] = 'Guardando';
 $Text['or_ostat_desc_validated'] = 'Los productos de este pedido han sido validados';
+$Text['or_cancel_order_a'] = "Cancelar pedido";
+$Text['or_cancel_order'] =
+     "Está seguro que desea cancelar este pedido?<hr><br>
+     El pedido se finalizará como cancelado,<br>
+     y NO se enviará por correo al proveedor.<br><br>
+     Posteriormente, si lo desea, podrá modificar el estado del pedido revisándolo.";
+$Text['or_cancel_order_open'] =
+     "Está seguro que desea cancelar este pedido?<hr><br>
+     El pedido se finalizará como cancelado <b>antes de su fecha límite</b>,<br>
+     y NO se enviará por correo al proveedor.<br><br>
+     Posteriormente, si lo desea, podrá modificar el estado del pedido revisándolo.";
 $Text['os_reopen_order_a'] = "Re-abrir";
 $Text['os_reopen_order'] =
     "¿Seguro que deseas re-abrir este pedido?<hr><br>
