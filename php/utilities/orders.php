@@ -181,12 +181,15 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
     }
     // Check if exist
     prepare_order_to_shop($order_id); // and check $order_id parameter
-    $item = get_row_query("
-        select uf_id from aixada_order_to_shop os
+    $item = get_row_query(
+        "select uf_id from aixada_order_to_shop os
         where os.product_id = {$product_id}
             and os.order_id = {$order_id}
             and os.uf_id = {$uf_id};");
     $quantity = round($quantity, 3);
+
+    $db = DBWrap::get_instance();
+    $db->start_transaction();
     if ($item) {
         // Update quantity
         $ok = do_stored_query('modify_order_item_detail', 
@@ -194,48 +197,166 @@ function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
     } else {
         // CREATE aixada_order_item and aixada_order_to_shop
         // 0. Insert oder items to aixada_order_to_shop table if is needed.            
-        // 1. Copy any aixada_order_item on order and protduct with 0 quantity
-        $db = DBWrap::get_instance();
-    //TODO: Use $db->beginTransaction() $db->commit() and $db->rollback()
-        $ok = $db->Execute("
-            INSERT INTO aixada_order_item (
-                uf_id, order_id, unit_price_stamp, date_for_order, 
-                -- TODO (phase 2): iva_percent, rev_tax_percent,
-                product_id, quantity )
-            SELECT {$uf_id}, order_id, unit_price_stamp, date_for_order,
-                -- TODO (phase 2): iva_percent, rev_tax_percent,
-                product_id, 0
-            FROM aixada_order_item 
-            WHERE order_id={$order_id} and product_id = {$product_id}
-            LIMIT 1;");
+        // 1. Copy any aixada_order_item on order and product with 0 quantity
+        $other_item = get_row_query(
+            "select 
+                date_for_order, 
+                unit_price_stamp
+                -- TODO (phase 2): , iva_percent, rev_tax_percent
+            from aixada_order_item oi
+            where oi.product_id = {$product_id} and oi.order_id = {$order_id}
+            LIMIT 1;"
+        );
+        $create_item = null;
+        if (!$other_item) { // Product is not in the order, so add it to the order.
+            $create_item = edit_order_quantity_addProduct($order_id, $product_id);
+            $other_item = $create_item;
+        }
+        $ok = $db->Execute(
+            "INSERT INTO aixada_order_item (
+                uf_id, order_id,
+                date_for_order,
+                product_id,
+                unit_price_stamp, quantity 
+                -- TODO (phase 2): , iva_percent, rev_tax_percent
+            )
+            VALUES (
+                {$uf_id}, {$order_id},
+                '{$other_item['date_for_order']}',
+                {$product_id},
+                {$other_item['unit_price_stamp']}, 0
+            )"
+        );
         if (!$ok) {
+            $db->rollback();
             throw new Exception("No order for this product!!");
         }
         $new_order_item_id = $db->last_insert_id();
         if (!$new_order_item_id) {
+            $db->rollback();
             throw new Exception("No order id for this product!!");
         }
         // 2. Insert new aixada_order_to_shop with the quantity
-        $ok = $db->Execute("
-            INSERT INTO aixada_order_to_shop (
-                order_item_id, uf_id, order_id, unit_price_stamp, product_id,
-                iva_percent, rev_tax_percent,
-                quantity, arrived, revised
-            )
-            SELECT
-                {$new_order_item_id}, {$uf_id}, order_id, unit_price_stamp, product_id,
-                iva_percent, rev_tax_percent,
-                {$quantity}, 1, 1
-            FROM aixada_order_to_shop
-            WHERE order_id={$order_id} and product_id = {$product_id}
-            LIMIT 1;"
-        );
+        if ($create_item) {
+            // Create a item reviewed using product price
+            $ok = $db->Execute(
+                "INSERT INTO aixada_order_to_shop (
+                    order_item_id, uf_id, order_id, product_id,
+                    unit_price_stamp, iva_percent, rev_tax_percent, 
+                    quantity, arrived, revised
+                )
+                SELECT
+                    id, uf_id, order_id, product_id,
+                    {$create_item['unit_price_stamp']},
+                    {$create_item['iva_percent']},
+                    {$create_item['rev_tax_percent']},
+                    {$quantity}, 1, 1
+                FROM aixada_order_item
+                WHERE id={$new_order_item_id};"
+            );
+        } else {
+            // Copy other item reviewed from the same product:
+            // - The price under review may be different from the order price
+            $ok = $db->Execute(
+                "INSERT INTO aixada_order_to_shop (
+                    order_item_id, uf_id, order_id, product_id,
+                    unit_price_stamp, iva_percent, rev_tax_percent, 
+                    quantity, arrived, revised
+                )
+                SELECT
+                    {$new_order_item_id}, {$uf_id}, order_id, product_id,
+                    unit_price_stamp, iva_percent, rev_tax_percent,
+                    {$quantity}, 1, 1
+                FROM aixada_order_to_shop
+                WHERE order_id={$order_id} and product_id = {$product_id}
+                LIMIT 1;"
+            );
+        }
     }
     if (!$ok) {
+        $db->rollback();
         throw new Exception(
                    "An error occured during saving the new product quantity!!");
     }
+    $db->commit();
     return $quantity;
+}
+
+function edit_order_quantity_addProduct($order_id, $product_id)
+{
+    $db = DBWrap::get_instance();
+    $orderRow = get_row_query(
+        "select provider_id, date_for_order
+        from aixada_order
+        where id = {$order_id};"
+    );
+    if (!$orderRow) {
+        $db->rollback();
+        throw new Exception("Order #{$order_id} does not exist!!");
+    }
+    $provider_id = $orderRow['provider_id'];
+    $date_for_order = $orderRow['date_for_order'];
+    $productRow = get_row_query(
+        "select
+            iva.percent iva_percent,
+            rev.rev_tax_percent,
+            round(p.unit_price * (1 + iva.percent/100)
+                * (1 + rev.rev_tax_percent/100), 2) unit_price_stamp
+        from aixada_product p
+        join (aixada_rev_tax_type rev, aixada_iva_type iva)
+        on rev.id = p.rev_tax_type_id and iva.id = p.iva_percent_id
+        where active = 1 and  p.id = {$product_id} 
+            and provider_id={$provider_id};");
+    if (!$productRow) {
+        $db->rollback();
+        throw new Exception(
+            "Product for this provider does not exist or is not active!!"
+        );
+    }
+    $iva_percent = $productRow['iva_percent'];
+    $rev_tax_percent = $productRow['rev_tax_percent'];
+    $unit_price_stamp = $productRow['unit_price_stamp'];
+    $orderDateRow = get_row_query(
+        "select closing_date
+        from aixada_product_orderable_for_date
+        where product_id = {$product_id}
+            and date_for_order = '{$date_for_order}'
+        LIMIT 1;");
+    if (!$orderDateRow) {
+        $orderDateRow = get_row_query(
+            "select closing_date
+            from aixada_product_orderable_for_date od
+            join aixada_product p on od.product_id = p.id
+            where p.provider_id = {$provider_id}
+                and date_for_order = '{$date_for_order}'
+            LIMIT 1;");
+        if (!$orderDateRow) {
+            $db->rollback();
+            throw new Exception(
+                "No products of provider #{$provider_id} is not active for this date!!"
+            );
+        }
+        $closing_date = $orderDateRow['closing_date'];
+        $db = DBWrap::get_instance();
+        $ok = $db->Execute(
+            "insert into aixada_product_orderable_for_date (
+                product_id, date_for_order, closing_date
+            ) values (
+                {$product_id}, '{$date_for_order}', '{$closing_date}');"
+        );
+        if (!$ok) {
+            $db->rollback();
+            throw new Exception(
+                "Error when product is activated for this date!!"
+            );
+        }
+    }
+    return array(
+        'iva_percent' => $iva_percent ,
+        'rev_tax_percent' => $rev_tax_percent,
+        'unit_price_stamp' => $unit_price_stamp,
+        'date_for_order' => $date_for_order
+    );
 }
 
 /**
