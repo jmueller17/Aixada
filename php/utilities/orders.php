@@ -28,16 +28,51 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 	while ($row = $rs->fetch_assoc()) {
 		$uf_qu[$row['uf_id']] =  $row['quantity'];
 	 	$total_quantity = $total_quantity + $row['quantity'];	 
-	}		
-	DBWrap::get_instance()->free_next_results();
+	}
+    $db = DBWrap::get_instance();
+    $db->free_next_results();
+    if ($total_quantity == 0) {
+        if ($new_total_quantity == 0) { // Set to 0, but is already 0
+            $total_quantity = 1;
+        } else {
+            $rs = $db->Execute(
+                "select uf_id
+                from aixada_order_item oi
+                where oi.order_id = {$order_id}
+                group by uf_id;"
+            );
+            $total_quantity = 0;
+            while ($row = $rs->fetch_assoc()) {
+                $uf_qu[$row['uf_id']] = 1;
+                $total_quantity += 1;	 
+            }
+            $db->free_next_results();
+        }
+    }
+    $uf_new_qu = array();
+    $new_total = 0;
+    foreach ($uf_qu as $uf_id => $quantity) {
+        $uf_new_qu[$uf_id] = round(($quantity / $total_quantity) * $new_total_quantity, 3);
+        $new_total += $uf_new_qu[$uf_id];
+    }
+    $to_round = $new_total_quantity - $new_total;
+    if (abs($to_round) >= 0.001) {
+        $c001 = $to_round < 0 ? -0.001 : 0.001;
+        foreach ($uf_qu as $uf_id => $quantity) {
+            $uf_new_qu[$uf_id] += $c001;
+            $new_total += $c001;
+            if ($new_total_quantity == round($new_total, 3)) {
+                break;
+            }
+        }
+    }
 	
 	//calc and save adjusted quantities for each uf
 	$xml = '<total>'.$total_quantity.'</total>';
 	$xml .= '<rows>';
 	$new_total_quantity = round($new_total_quantity, 3);
-	foreach ($uf_qu as $uf_id => $quantity){
-	    $new_quantity = round(($quantity / $total_quantity) * $new_total_quantity, 3);
-	    do_stored_query('modify_order_item_detail', $order_id, $product_id, $uf_id, $new_quantity);
+	foreach ($uf_new_qu as $uf_id => $new_quantity) {
+	    edit_order_quantity($order_id, $product_id, $uf_id, $new_quantity);
 	    $xml .= "<row><uf_id>${uf_id}</uf_id><quantity>${new_quantity}</quantity></row>";
 	}
 	DBWrap::get_instance()->free_next_results();
