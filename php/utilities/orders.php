@@ -206,13 +206,13 @@ function reset_order_to_shop($order_id, $clear) {
 function edit_order_quantity($order_id, $product_id, $uf_id, $quantity){
     // Check parameters
     if (!is_numeric($product_id)) {
-        throw new Exception("`product_id` must be integer!");      			
+        throw new Exception(i18n('product_name') . ': ' . i18n('msg_err_only_num'));      			
     }
     if (!is_numeric($uf_id)) {
-        throw new Exception("`uf_id` must be integer!");     			
+        throw new Exception(i18n('uf_long') . ': ' . i18n('msg_err_only_num'));     			
     }
     if (!is_numeric($quantity)) {
-        throw new Exception("`quantity` must be numeric!");      			
+        throw new Exception(i18n('quantity') . ': ' . i18n('msg_err_only_num'));      			
     }
     // Check if exist
     prepare_order_to_shop($order_id); // and check $order_id parameter
@@ -892,5 +892,54 @@ function get_ordered_products_with_prices(
         group by id, name, unit
         order by name;";
     return $db->Execute($sql2);
+}
+
+function get_all_products_to_order($order_id)
+{
+    $rowOrder = get_row_query(
+        "select provider_id 
+        from aixada_order
+        where id = {$order_id};"
+    );
+    if (!$rowOrder) {
+        throw new Exception("Order not exists!");
+    }
+    $provider_id = $rowOrder['provider_id'];
+    $db = DBWrap::get_instance();
+    $sql = "
+        select p.id,
+        concat(p.name, if((
+                select count(*)
+                from aixada_order_item oi 
+                where oi.order_id = {$order_id}
+                and p.id = oi.product_id
+                ) > 0
+                , '', ' (+)'
+            )) product_name
+        from aixada_product p
+        where p.active = 1 
+        and p.orderable_type_id <> 3
+        and p.provider_id = {$provider_id}
+        group by p.id, p.name
+        order by p.name;";
+    return $db->Execute($sql);
+}
+
+function get_all_ufs_to_order($order_id)
+{
+    $db = DBWrap::get_instance();
+    $sql = "
+        select uf.id, concat(uf.name, ' #', uf.id, if((
+                select count(*)
+                from aixada_order_item oi 
+                where oi.order_id = {$order_id}
+                and uf.id = oi.uf_id
+                ) > 0
+                , '', ' (+)'
+            )) uf_name
+        from aixada_uf uf
+        where uf.active = 1
+        order by uf.name;";
+    return $db->Execute($sql);
 }
 ?>

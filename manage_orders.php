@@ -101,7 +101,8 @@
 			$('.success_msg').hide();
 
 			//loading animation
-			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
+			$('.loadSpinner').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif");
+			$('.loadSpinner_order').attr('src', "img/ajax-loader-<?=$default_theme;?>.gif"); 
 			
 
 			var header = [];
@@ -287,7 +288,10 @@
 			//STEP 2: construct table structure: products and col-cells. 
 			$('#tbl_reviseOrder tbody').xml2html('init',{
 				url : 'php/ctrl/Orders.php',
-				loadOnInit : false, 
+				loadOnInit : false,
+				beforeLoad : function() {
+					$('.loadSpinner_order').show();
+				},
 				rowComplete : function (rowIndex, row){
 					
 					var product_id = $(row).children(':first').text();
@@ -314,6 +318,7 @@
 				},
 				complete : function (rowCount){
 					if (!gSelRow) {
+                        $('.loadSpinner_order').hide();
                         return;
                     }
 					//STEP 3: populate cells with product quantities
@@ -322,7 +327,7 @@
 					url: 'php/ctrl/Orders.php?oper=getProductQuantiesForUfs&order_id='+ gSelRow.attr('orderId')+'&provider_id='+gSelRow.attr("providerId")+'&date_for_order='+gSelRow.attr("dateForOrder"),
 					dataType:"xml",
 					success: function(xml){
-
+						$('.loadSpinner_order').hide();
 						var quTotal = 0;
 						var quShopTotal = 0; 
 						var quShop = 0; 
@@ -414,11 +419,12 @@
 						$('#tbl_reviseOrder').show();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
+						$('.loadSpinner_order').hide();
 						$.showMsg({
 							msg:XMLHttpRequest.responseText,
 							type: 'error'});
 					}
-			}); //end ajax	
+					}); //end ajax	
 						
 				}
 			});
@@ -436,6 +442,66 @@
     				switchTo('overview'); 
         		}).hide();
 
+            // Add item to order
+            $("#btn_addToOrder").button({
+                icons: {
+                        primary: "ui-icon-plus"
+                }
+            }).click(function(e) {
+                $('#dialog_addToOrder').dialog("open");
+            }).hide();
+            $('#dialog_addToOrder').dialog({
+                autoOpen: false,
+                width: 600,
+                height: 300,
+                buttons: {  
+                    "<?=i18n_js('btn_addToOrder');?>": function() {
+                        $('#tbl_reviseOrder').hide();
+                        var $this = $(this);
+                        $.ajax({
+                            type: "POST",
+                            url: 'php/ctrl/Orders.php?oper=editQuantity' +
+                                '&order_id=' +gSelRow.attr('orderId') +
+                                '&product_id=' + $('#ordItemAdd_product').val() +
+                                '&uf_id=' + $('#ordItemAdd_uf').val() +
+                                '&quantity=' + $('#ordItemAdd_quantity').val(),
+                            success: function(txt) {
+                                $('#tbl_reviseOrder tbody').xml2html("reload", {
+                                    //reload order details for revision
+                                    params: 'oper=getOrderedProductsListPrices' + 
+                                        '&order_id=' + gSelRow.attr("orderId") +
+                                        '&provider_id=' + gSelRow.attr("providerId") +
+                                        '&date=' + gSelRow.attr("dateForOrder") +
+                                        '&page=review'
+                                });
+                                $('#dialog_addToOrder').dialog("close");
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown){
+                                $('#tbl_reviseOrder').show();
+                                $.showMsg({
+                                    msg:XMLHttpRequest.responseText,
+                                    type: 'error'});
+                                
+                            }
+                        });
+                    },
+                    "<?=$Text['btn_close'];?>": function() {
+                        $(this).dialog("close");
+                    } 
+                }
+            });
+            $('#ordItemAdd_product').xml2html("init", {
+                url: "php/ctrl/Orders.php",
+                offSet: 1,
+                loadOnInit: false,
+                complete: function() { }
+            });
+            $('#ordItemAdd_uf').xml2html("init", {
+                url: "php/ctrl/Orders.php",
+                offSet: 1,
+                loadOnInit: false,
+                complete: function() { }
+            });
 			
 			/**
 			 *	copies order_items after revision into aixada_shop_item only if not already
@@ -1637,6 +1703,8 @@
 							$('.reviewElements, .viewElements').hide();
 							$('#btn_setShopDate').hide();
 							$('#btn_disValidate').hide();
+							$('#btn_addToOrder').hide();
+							$('#dialog_addToOrder').dialog("close");
 		    				$('.overviewElements').fadeIn(1000);
 		    				$('#tbl_orderOverview tbody tr').removeClass('ui-state-highlight');
 							gSelRow.addClass('ui-state-highlight');
@@ -1664,6 +1732,16 @@
                                 $('#btn_setShopDate').show();
                                 $('#btn_disValidate').show();
                             }
+                            $('#ordItemAdd_product').xml2html("reload",{
+                                params: 'oper=getAllProductsToOrder&order_id=' +
+                                    gSelRow.attr('orderId')
+                                    
+                            });
+                            $('#ordItemAdd_uf').xml2html("reload",{
+                                params: 'oper=getAllUfsToOrder&order_id=' +
+                                    gSelRow.attr('orderId')
+                            });
+                            $('#btn_addToOrder').show();
 
 							$('#dialog_orderStatus button').button('enable');
 							$('#btn_'+gRevStatus[sindex]).button('disable');
@@ -1764,8 +1842,10 @@
 		   		
 		   		<button id="btn_disValidate" class="btn_right" title="<?=$Text['btn_disValitate'];?>"><?=$Text['btn_disValitate'];?></button>
 		   		<button id="btn_setShopDate" class="btn_right" title="<?=$Text['distribute_desc'];?>"><?=$Text['btn_distribute'];?></button>
+		   		<button id="btn_addToOrder" class="btn_right" title="<?=i18n('addToOrder_desc');?>"><?=i18n('btn_addToOrder');?></button>
 				<button	id="tblViewOptions" class="overviewElements btn_right"><?=$Text['filter_orders']; ?></button>
 				<button id="btn_order_export" class="floatRight viewElements" ><?php echo $Text['btn_export']; ?></button>
+				<span style="float:right; margin-top:0px; margin-right:5px;"><img class="loadSpinner_order hidden" src="img/ajax-loader.gif"/></span>
 				
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
@@ -2108,6 +2188,30 @@
 	</table>
 </div>	
 
+<div id="dialog_addToOrder" title="<?php echo i18n('title_addToOrder') ?>">
+    <table><tr>
+        <td><?php echo i18n('product_name');?>:</td>
+        <td><select id="ordItemAdd_product" class="longSelect">
+                <option value="" selected="selected">(...)</option>
+                <option value="{id}">{product_name}</option>
+            </select>
+        </td>
+    </tr><tr>
+        <td><?php echo i18n('uf_long');?>:</td>
+        <td><select id="ordItemAdd_uf" class="longSelect">
+                <option value="" selected="selected">(...)</option>
+                <option value="{id}">{uf_name}</option>
+            </select>
+        </td>
+    </tr><tr>
+        <td><?php echo i18n('quantity');?>:</td>
+        <td><input type="text" id="ordItemAdd_quantity"
+            class="inputTxtMiddle ui-widget-content ui-corner-all"
+            autocomplete="off"
+            value=""
+        ></td>
+    </tr></table>
+</div>
 
 <div id="dialog_convertPreorder" title="Convert preorder to order">
 	<p>&nbsp;</p>
