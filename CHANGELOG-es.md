@@ -67,13 +67,16 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
   * Muestra el nombre de la UF al ponerse sobre una celda.
   * Puede configurarse en que orden aparecen las columna de las UF
     (:bulb:`config.php`: `$order_review_uf_sequence`)
-  * Permite asignar productos a una UF que no han pedido ese producto.
-  * Se puede configurar que se muetre una columna de una UF determinada para por
-    ejemplo assignarle deterioros posteriores a la recepción
-    (:bulb:`config.php`: `$revision_fixed_uf`)
+  * Permite asignar productos cualquier casilla en blanco de una UF que
+    no haya pedido ese producto.
+  * Permite añadir cantidades de cualquier producto del proveedor o UF activos,
+    ver nuevo botón "*Añadir ítem*"
+    (también se puede configurar para añadir al revisar la columna de una
+    determinada UF, y así por ejemplo asignar deterioros de reparto
+    :bulb:`config.php`: `$revision_fixed_uf`)
   * Se puede distribuir y validar directamente un pedido (:bulb:`config.php`:
     `$order_distribution_method`, `$order_distributeValidate_invoce`)
-  * Al volver a revisar un pedido que ya se ha distribuido se permite conservar
+  * Al volver a revisar un pedido ya distribuido se permite conservar
     el trabajo de revisión hecho previamente.
 * En validación de cestas:
   * Es posible configurar que al validar muestre todos los carros de la semana
