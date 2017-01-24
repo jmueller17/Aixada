@@ -905,6 +905,7 @@ function get_all_products_to_order($order_id)
         throw new Exception("Order not exists!");
     }
     $provider_id = $rowOrder['provider_id'];
+    $ge_orderable_type_id = get_config('orders_allow_stock', false) ? 1 : 2;
     $db = DBWrap::get_instance();
     $sql = "
         select p.id,
@@ -918,6 +919,7 @@ function get_all_products_to_order($order_id)
             )) product_name
         from aixada_product p
         where p.active = 1 
+        and p.orderable_type_id >= {$ge_orderable_type_id}
         and p.orderable_type_id <> 3
         and p.provider_id = {$provider_id}
         group by p.id, p.name
