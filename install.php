@@ -1,0 +1,99 @@
+<?php
+$startResponse = '';
+if (filesize('js/jquery/jquery.js') < 100) {
+    copy('js/jquery/jquery-1.7.1.min.js', 'js/jquery/jquery.js');
+    copy('js/jqueryui/jquery-ui-1.8.20.custom.min.js', 'js/jqueryui/jqueryui.js');
+    copy('css/ui-themes/redmond/jquery-ui-1.8.20.custom.css', 'css/ui-themes/redmond/jqueryui.css');
+    copy('css/ui-themes/start/jquery-ui-1.8.20.custom.css', 'css/ui-themes/start/jqueryui.css');
+    copy('css/ui-themes/ui-lightness/jquery-ui-1.8.20.custom.css', 'css/ui-themes/ui-lightness/jqueryui.css');
+    copy('css/ui-themes/smoothness/jquery-ui-1.8.20.custom.css', 'css/ui-themes/smoothness/jqueryui.css');
+    $startResponse .= "The symbolic link files (.js & .css) have been copied correctly.\n";
+}
+if (!is_file('local_config/config.php')) {
+    copy('local_config/config.php.sample', 'local_config/config.php');
+    $startResponse .= 
+        "\n****\n" .
+        "Configuration file 'local_config/config.php' created by copy of 'config.php.sample' file.\n\n" .
+        "**********************************************************************\n" .
+        "**  The database parameters MUST BE CONFIGURED before proceeding!!  **\n" .
+        "**  => edit file: 'local_config/config.php'                         **\n" .
+        "**********************************************************************\n" .
+        "\n****\n";
+}
+require_once 'php/inc/header.inc.base.php';
+require_once __ROOT__ . 'php/inc/authentication.inc.php';
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?=$language?>" lang="<?=$language?>">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>INSTALL Aixada</title>
+    
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/aixada_main.css" />
+    <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
+    <style>
+        .logMessage {padding: 0.5em; border: 1px solid #aaa; max-width: 60em;}
+        .warningStart {background-color: yellow}
+        .correctEnd  {background-color: #ccffcc}
+        .wrongEnding {background-color: #ffcccc}
+    </style>
+    <?php echo aixada_js_src(false); ?>	
+</head>
+<body>
+    <div id="wrap">
+        <div id="stagewrap" class="ui-widget">
+            <div id="titlewrap">
+                <h1>Install or uptate Aixada database</h1>
+            </div>
+            <p id="msg_link">Confirm to do procedures!</p>
+            <br/><br/>
+            <p>
+                <span class="loadAnim floatLeft hidden">
+                    <img src="img/ajax-loader_fff.gif"/>
+                </span>
+                <button id="btn_install">Do install</button>
+            </p>
+            <br/><br/>
+            <p id="dbError" class="width-280"></p>
+            <pre id="install_log"
+                class="<?php if($startResponse) {echo 'logMessage warningStart';} ?>"><?=$startResponse?></pre>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ajaxSetup({ cache: false });
+        $('#btn_install').button({
+            icons: {primary: "ui-icon-copy"}
+        }).click(function(e) {
+            $.ajax({
+                url: 'php/ctrl/InstallAixada.php?oper=aixada_update',
+                beforeSend: function() {
+                    $('.loadAnim').show();
+                    $('#install_log')
+                        .removeClass('warningStart correctEnd wrongEnding')
+                        .hide();
+                    $('#btn_install').button('option', 'disabled', true);
+                },
+                success: function(msg) {
+                    $('#install_log').addClass('logMessage correctEnd').text(msg).show();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    $('#install_log')
+                        .addClass('logMessage wrongEnding')
+                        .text(XMLHttpRequest.responseText)
+                        .show();
+                    $.showMsg({
+                        msg: 'An error has occured during the db install!',
+                        type: 'error'
+                    });
+                },
+                complete : function(msg) {
+                   $('.loadAnim').hide();
+                   $('#btn_install').button('option', 'disabled', false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
