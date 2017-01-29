@@ -789,6 +789,8 @@ $Text['msg_change_status'] = "Cambia el estado a";
 $Text['msg_confirm_move'] = "¿Está seguro de que quiere hacer disponible el pedido para la compra? Todos los productos asociados seran distribuidos en las cestas para la fecha:";
 $Text['alter_date'] = "Escoja una fecha alternativa";
 $Text['msg_err_miss_info'] = "Aparentemente este pedido fue creado con una versión más antigua del software que es incompatible con la funcionalidad de revisión actual.  Lo siento, este pedido no puede ser revisado.";
+$Text['title_addToOrder'] = "Añadir ítem al pedido";
+$Text['btn_addToOrder'] = "Añadir ítem";
 
 
 //added 29.09

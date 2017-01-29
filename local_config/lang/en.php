@@ -789,6 +789,8 @@ $Text['msg_change_status'] = "Change the order status to";
 $Text['msg_confirm_move'] = "Are you sure you want to make this order available for shopping? All corresponding products will be placed into the shopping cart for the following date:";
 $Text['alter_date'] = "Choose an alternative date";
 $Text['msg_err_miss_info'] = "It seems that this order was created with an older version of the platform which is incompatible with the current revision functionality. Sorry, but this order cannot be revised.";
+$Text['title_addToOrder'] = "Add item to the Order";
+$Text['btn_addToOrder'] = "Add item";
 
 
 //added 29.09

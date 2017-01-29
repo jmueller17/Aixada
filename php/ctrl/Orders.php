@@ -42,6 +42,16 @@ try{
 				get_param('page', '-')
             )));
             exit;
+        case 'getAllProductsToOrder':
+            printXML(rs_XML_fields(get_all_products_to_order(
+                get_param_int('order_id')
+            )));
+            exit;
+        case 'getAllUfsToOrder':
+            printXML(rs_XML_fields(get_all_ufs_to_order(
+                get_param_int('order_id')
+            )));
+            exit;
 
     	//retrieves the order detail uf/quantities for given order. order_id OR provider_id / date are needed. Filters for uf and/or product_id if needed. 
     	case 'getProductQuantiesForUfs':

@@ -780,6 +780,8 @@ $Text['msg_change_status'] = "Canvia l'estat a";
 $Text['msg_confirm_move'] = "Estàs segur que vols fer aquesta comanda disponible per a la venda? Tots els productes disponibles es posaran a les cistelles de la data:";
 $Text['alter_date'] = "Tria una data alternativa";
 $Text['msg_err_miss_info'] = "Sembla que aquesta comanda prové d'una versió anterior de la plataforma, incompatible amb la nova funcionalitat de revisió. Em sap greu, però no es pot revisar aquesta comanda.";
+$Text['title_addToOrder'] = "Afegir ítem a la comanda";
+$Text['btn_addToOrder'] = "Afegir ítem";
 
 
 //added 29.09
