@@ -384,14 +384,18 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
             "</div>\r\n".
         "</body></html>";
     $from = get_config('admin_email');
+    if (get_config('email_safe_replyTo')) {
+        $reply_to = $from;
+    } elseif (isset($options['reply_to']) && $options['reply_to']) {
+        $reply_to = $options['reply_to'];
+    } else {
+        $reply_to = $from;
+    }
 
     if (!get_config('email_SMTP_host')) { // Send using mail() of PHP
         $headers = 
             'From: '.$from."\r\n".
-            'Reply-To: '.
-                (isset($options['reply_to']) ? $options['reply_to'] : $from)."\r\n".
-            (isset($options['cc']) ? 'Cc:'.$options['cc']."\r\n" : '').
-            (isset($options['bcc']) ? 'Bcc:'.$options['bcc']."\r\n" : '').
+            'Reply-To: ' . $reply_to . "\r\n" .
             'Return-Path: '.$from."\r\n".
             "X-Mailer: PHP\r\n".
             "MIME-Version: 1.0\r\n".
@@ -408,6 +412,7 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
             <body>
                 To: {$to}<br>
                 From: {$from}<br>
+                Reply-To: {$reply_to}<br>
                 Options:<pre style='margin: 0 0 0 3em'>" .
                     var_export($options, true) . "</pre>
             <h1 style=\"background-color:#bbb;padding:3px\">{$subject}</h1>
@@ -415,6 +420,9 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
             </body></html>"
         );
     } else { // Send using swiftmailer
+        $cleanExplode = function($text) {
+            return array_map('trim', explode(',', $text));
+        };
         require_once(__ROOT__ . 'php/external/swiftmailer-5.x/lib/swift_required.php');
         $transport = Swift_SmtpTransport::newInstance(
             get_config('email_SMTP_host'), 
@@ -448,27 +456,27 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
             throw new Exception("config['admin_email']=\"{$from}\" is not a valid email");
         } 
         try {
-            $message->setTo(explode(',', $to));
+            $message->setTo($cleanExplode($to));
         } catch(Exception $e) {
             throw new Exception("send_mail to: \"{$to}\" is not a list of valid emails");
         } 
-        if (isset($options['reply_to']) && $options['reply_to']){
+        if ($reply_to) {
             try {
-                $message->setReplyTo(explode(',', $options['reply_to']));
+                $message->setReplyTo($cleanExplode($reply_to));
             } catch(Exception $e) {
-                throw new Exception("send_mail reply_to: {$options['reply_to']} is not a list of valid emails.");
+                throw new Exception("send_mail reply_to: {$reply_to} is not a list of valid emails.");
             }
         }
         if (isset($options['cc']) && $options['cc']) {
             try {
-                $message->setCc(explode(',', $options['cc']));
+                $message->setCc($cleanExplode($options['cc']));
             } catch(Exception $e) {
                 throw new Exception("send_mail cc: {$options['cc']} is not a list of valid emails.");
             }
         }
         if (isset($options['bcc']) && $options['bcc']) {
             try {
-                $message->setBcc(explode(',', $options['bcc']));
+                $message->setBcc($cleanExplode($options['bcc']));
             } catch(Exception $e) {
                 throw new Exception("send_mail bcc: {$options['bcc']} is not a list of valid emails.");
             }
