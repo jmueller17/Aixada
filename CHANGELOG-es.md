@@ -89,7 +89,9 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
 (envío de pedido al proveedor, re-establecimiento de contraseña y incidentes)
   * Formateo html de los mensajes.
   * Soportar acentos y caracteres especiales como `ç`, `ñ` etc.
-  * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`).
+  * Permitir el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`).
+  * Permite evitar un uso de reply-to que generaba sospechas de SPAM en algunos
+    hostings (:bulb:`config.php`: `$email_safe_replyTo = true`) 
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
  (entre otros #184)
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.
@@ -109,7 +111,7 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
 * #52, #78 Arreglar desactivar productos.
 * #134, #151 Se ha arreglado el problema en algunas instalaciones de XML cortados.
 * #183 Arreglar caso en que no se ejecutaba auto salvar de carros de la compra.
-* #185 Evitar cache de GET usando hostins NGINX comentado en #156.
-* #195 En algunos hostins fallaba el envío de pedidos a proveedores.
+* #185 Evitar cache de GET usando hostings NGINX comentado en #156.
+* #195 En algunos hostings fallaba el envío de pedidos a proveedores.
 * #194 No de importaba el tipo de IVA.
 
