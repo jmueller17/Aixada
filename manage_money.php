@@ -58,10 +58,7 @@
 	
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
     <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-    <script type="text/javascript" src="js/fgmenu/fg.menu.js"></script>
-    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaMenu.js"></script>     	 
-    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+    <?php echo aixada_js_src(); ?>
 
 <?php
 // Generate html to use in the form.

@@ -131,7 +131,7 @@ $(function(){
 	
 	$.extend({
 		getAixadaDates : function(oper, callbackfn){
-			$.ajax({
+			$.ajaxQueue({
 				type: "POST",
 				url: "php/ctrl/Dates.php?oper="+oper+"&responseFormat=array",		
 				dataType: "JSON", 
@@ -147,7 +147,7 @@ $(function(){
 						type: 'error'});
 					
 				}		
-			}); //end ajax retrieve date
+			}); //end retrieve date
 			
 		},
 		//util function to retrieve formated date from datepicker

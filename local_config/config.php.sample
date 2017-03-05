@@ -214,6 +214,12 @@ class configuration_vars {
   public $development = true; 
   
   /**
+   * To work on hostings with few resources (memory) it is recommended to
+   * sequence ajax requests, this avoids simulating requests from a page.
+   */
+  //public $use_ajaxQueue  = true; 
+  
+    /**
    * the email address of the admin; used for sending out pwd changes
    * and orders. 
    */
