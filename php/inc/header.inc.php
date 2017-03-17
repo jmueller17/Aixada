@@ -22,6 +22,10 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
 $language = get_session_language(); 
 
 // To declare common JavaScript sources used by a Aixada page.
+function aixada_js_version() {
+    global $aixada_vesion_lastDate;
+    return $aixada_vesion_lastDate;
+}
 function aixada_js_src($useMenus = true) {
     global $aixada_vesion_lastDate;
     $src = "<!-- aixada_js_src -->";
