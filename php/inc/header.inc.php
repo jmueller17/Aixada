@@ -1,5 +1,7 @@
 <?php 
-require_once("php/inc/header.inc.base.php");
+define('DS', DIRECTORY_SEPARATOR);
+define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
+require_once(__ROOT__ . "/php/inc/header.inc.base.php");
 
 $tpl_print_orders = configuration_vars::get_instance()->print_order_template;
 $tpl_print_myorders = configuration_vars::get_instance()->print_my_orders_template;

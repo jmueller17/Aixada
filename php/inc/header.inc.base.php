@@ -1,7 +1,8 @@
 <?php 
-
-define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+if (!defined('__ROOT__')) {
+    define('DS', DIRECTORY_SEPARATOR);
+    define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
+}
 
 require_once("header.inc.version.php"); // To obtain: $aixada_vesion_lastDate
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
