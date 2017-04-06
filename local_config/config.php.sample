@@ -226,6 +226,18 @@ class configuration_vars {
   public $admin_email = "admin@admin.com";
   
   /**
+   * Set true to prevent false locks as SPAM when sending mails.
+   * 
+   * NOTE: Aixada puts in 'reply-to' the 'to' or 'cc' of mails, but some hosting
+   *       filters interpret this as a possible malicious attempt to send SPAM.
+   * Comment by a hosting technical support:
+   *      "Usually spammers use this technique to send spam. You should
+   *       avoid using freemail service provider addresses
+   *       in header 'from' or 'reply-to' address."
+   */
+  public $email_safe_replyTo = true;
+  
+  /**
    * Emails SMTP options. Uncomment to use SMTP through the library swiftmailer
    * 
    */
