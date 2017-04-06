@@ -1,19 +1,7 @@
 <?php
+require_once("php/inc/header.inc.base.php");
 
-
-define('DS', DIRECTORY_SEPARATOR);
-define('__ROOT__', dirname(__FILE__).DS); 
-
-require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'authentication.inc.php');
-require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php');
-require_once(__ROOT__ . 'local_config'.DS.'config.php');
-require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
-
-
-$default_theme = get_session_theme();
-$language = get_session_language();
-require_once(__ROOT__ . 'local_config'.DS.'lang'.DS.'' . $language  . '.php');
 
 // This controls if the table_manager objects are stored in $_SESSION or not.
 // It looks like doing it cuts down considerably on execution time.
@@ -36,8 +24,7 @@ if (!isset($_SESSION)) {
    
 	<script type="text/javascript" src="js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
-	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-	<script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>	
+	<?php echo aixada_js_src(false); ?>	
    	
     <style><?php
         $login_header_image =

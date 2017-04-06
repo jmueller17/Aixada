@@ -204,5 +204,7 @@ make_canned_responses();
 
 write_file('sql/queries/canned_queries.sql', make_canned_queries());
 
-
-?>
+write_file(
+    'php/inc/header.inc.version.php',
+    "\$aixada_vesion_lastDate = '" . date('Ymd_His') . "';\n"
+);

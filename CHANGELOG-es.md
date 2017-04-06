@@ -92,6 +92,8 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
   * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`).
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
  (entre otros #184)
+  * Para trabajar en hostings con pocos recursos se recomientda sequenciar ajax
+    (:bulb:`config.php`: `$use_ajaxQueue`).
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.
 * En la página proveedor/producto ahora se puede filtrar por descripción de los productos.
 * Exportación rudimentaria de pedido a csv

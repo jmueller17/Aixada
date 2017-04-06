@@ -14,8 +14,7 @@
 
     <script type="text/javascript" src="js/jquery/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="js/jqueryui/jquery-ui-1.10.0.custom.min.js"></script>
-    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaXML2HTML.js" ></script>
-    <script type="text/javascript" src="js/aixadautilities/jquery.aixadaUtilities.js" ></script>
+    <?php echo aixada_js_src(false); ?>
 
     <script src="js/jquery-fileupload/js/jquery.iframe-transport.js"></script>
     <script src="js/jquery-fileupload/js/jquery.fileupload.js"></script>

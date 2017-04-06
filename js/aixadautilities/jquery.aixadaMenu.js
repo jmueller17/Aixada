@@ -52,7 +52,7 @@ $(function(){
 	$('#role_select').change(function (){
    		var new_role = $("#role_select option:selected").val(); 
 		var rq_uri = window.location;
-   		$.ajax({
+   		$.ajaxQueue({
    			type: "POST",
             url: "php/ctrl/Cookie.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
             dataType: "xml",
@@ -68,7 +68,7 @@ $(function(){
 	
 	//function to retrieve menu access rights
 	if (typeof(role) == "string" ){
-		$.ajax({
+		$.ajaxQueue({
 			type: "POST",
 	            url: "php/ctrl/SmallQ.php?oper=configMenu&user_role="+role,
 	            dataType: "xml", 
@@ -85,7 +85,7 @@ $(function(){
 	$('#lang_select').change(function (){
    		var new_lang = $("#lang_select option:selected").val(); 
 		var rq_uri = window.location;
-   		$.ajax({
+   		$.ajaxQueue({
    			type: "POST",
             url: "php/ctrl/Cookie.php?change_lang_to=" + new_lang + "&originating_uri=" + rq_uri,
             dataType: "xml",
@@ -98,7 +98,7 @@ $(function(){
 	
 	$('#logoutRef').click(function(e){
 		
-		 $.ajax({
+		 $.ajaxQueue({
 			type: 'POST',
 			url: 'php/ctrl/Login.php?oper=logout',
 			success : function(msg){

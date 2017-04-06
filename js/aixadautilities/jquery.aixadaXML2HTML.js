@@ -133,7 +133,7 @@
 				    	var rowName =  $this.data('xml2html').rowName;
 	    	
 				    	//load the initial list
-				    	$.ajax({
+				    	$.ajaxQueue({
 									type: type,
 									url: url + "?" + params,		
 									dataType: "xml", 
@@ -170,7 +170,7 @@
 	  							   complete : function(msg){
 	  							 	
 	  							    }
-						});	//end ajax
+						});	//end
 				    	
 				    	
 				    	
