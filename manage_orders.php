@@ -1321,7 +1321,10 @@
 					
 					//if shop date exists, check if it items have already been moved to shop_item and/or validated
 					if (shopDate != ''){
-						$.post('php/ctrl/Orders.php?oper=checkValidationStatus&order_id='+gSelRow.attr('orderId'), function(xml) {
+						$.ajaxQueue({
+							type: "POST",
+							url: 'php/ctrl/Orders.php?oper=checkValidationStatus&order_id='+gSelRow.attr('orderId'),
+							success: function(xml) {
 							
 							var hasCart = false; 
 							var isValidated = false; 
@@ -1370,6 +1373,7 @@
 							} else {
 								switchTo('review', {});
 							}		 
+						}
 						});
 					} else {
 						switchTo('review', {});
