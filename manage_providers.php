@@ -393,8 +393,6 @@
 
 				//construct the responsible uf select
 				populateSelect(gProviderSelects,'#tbl_provider_new');
-                setSelectValue('#tbl_provider_edit .sOrderSendFormat', 'default');
-                setSelectValue('#tbl_provider_edit .sOrderSendPrices', 'default');
 
 				//new providers have no id
 				$('#tbl_provider_new input[name=id]').remove();
@@ -413,8 +411,8 @@
 			//reset provider id. 
 			$('.setProviderId', frm).html('&nbsp;');
 			$('.setProviderName').text('');
-			
-			
+            setSelectValue('#tbl_provider_new .sOrderSendFormat', 'default');
+            setSelectValue('#tbl_provider_new .sOrderSendPrices', 'default');
 		}
 
 
