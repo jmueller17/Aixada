@@ -82,7 +82,7 @@ create table aixada_provider (
   responsible_uf_id	int     		default null,
   offset_order_close int			default 4, 			/* default offset closing of order in days*/
   order_send_format varchar(25)     default 'default',
-  order_send_prices varchar(15)     default 'default'
+  order_send_prices varchar(15)     default 'default',
   ts			  	timestamp 		not null default current_timestamp,
   primary key (id),
   key (active),
