@@ -1234,34 +1234,38 @@
 		
 
 		
-		function loadSelectHTML(urlStr, destination){
-			$.post(urlStr, function(html){
-				var selValue = $(destination).empty().append(html).prev().val(); 
-				//new provider/product have no value, so we take the first option
-				//this needs to be set manually, otherwise with a new form, no values get send
-				if (selValue == ''){
-					var selValue = $(destination).children('select:first').val();				
-					$(destination).prev().attr('value',selValue);
-				} else {
-					$(destination).children('select').val(selValue).attr('selected','selected');
-				}						
-				
-				if (destination.indexOf('sOrderableTypeId') > 0){// && !$('#btn_edit_stocks').is(':data(autocomplete)') ){
-					 manageEditStockBtn();
-				}
+		function loadSelectHTML(urlStr, destination) {
+			$.ajaxQueue({
+                type: "POST",
+                url: urlStr,
+                success:function(html) {
+                    var selValue = $(destination).empty().append(html).prev().val(); 
+                    //new provider/product have no value, so we take the first option
+                    //this needs to be set manually, otherwise with a new form, no values get send
+                    if (selValue == ''){
+                        var selValue = $(destination).children('select:first').val();
+                        $(destination).prev().attr('value',selValue);
+                    } else {
+                        $(destination).children('select').val(selValue).attr('selected','selected');
+                    }
+                    
+                    if (destination.indexOf('sOrderableTypeId') > 0){// && !$('#btn_edit_stocks').is(':data(autocomplete)') ){
+                         manageEditStockBtn();
+                    }
 
-				if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 1){
-					$('.priceElements').show();
-					$('.stockElements').show();
-				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 2) {
-					$('.priceElements').show();
-					$('.stockElements').hide();
-				} else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 3) {
-					$('.stockElements').hide();
-					$('.priceElements').hide();
-				}
-				
-			})	
+                    if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 1){
+                        $('.priceElements').show();
+                        $('.stockElements').show();
+                    } else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 2) {
+                        $('.priceElements').show();
+                        $('.stockElements').hide();
+                    } else if (destination.indexOf('sOrderableTypeId') > 0 && selValue == 3) {
+                        $('.stockElements').hide();
+                        $('.priceElements').hide();
+                    }
+                    
+                }
+            });
 		}
 
         function setSelectValue(destination, value) {
