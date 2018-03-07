@@ -1,3 +1,13 @@
+/** =============================
+ * WARNING: 
+ *      SESSION SQL_MODE will be altered to allow use of mySQL that does Aixada:
+ *              - for example `timestamp` with zero value.
+ ** =============================
+ */
+SET SESSION SQL_MODE = '';
+
+
+
 /***********************************************
  *	Aixada DB Structure 
  *
@@ -105,9 +115,9 @@ create table aixada_user (
   provider_id           int,
   language              char(5)        default 'en',
   gui_theme	       		varchar(50)    default null,
-  last_login_attempt    timestamp,
-  last_successful_login timestamp,
-  created_on            timestamp,
+  last_login_attempt    timestamp null,
+  last_successful_login timestamp null,
+  created_on            timestamp not null default current_timestamp,
   primary key (id),
   foreign key (uf_id) references aixada_uf(id),
   foreign key (member_id) references aixada_member(id),

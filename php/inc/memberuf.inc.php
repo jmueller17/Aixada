@@ -67,7 +67,7 @@
 						</tr>
 						<tr>
 							<td><label for="last_seen"><?php echo $Text['last_logon']; ?>:</label></td>
-							<td colspan="2"><p class="textAlignLeft ui-corner-all">{last_successful_login}</p></td>
+							<td colspan="2"><p class="textAlignLeft ui-corner-all">{last_login_attempt}</p></td>
 						</tr>
 						<tr>
 							<td><label for="default_theme"><?php echo $Text['theme']; ?>:</label></td>
