@@ -39,7 +39,6 @@ if ($oper) {
         }
     } else {
         throw new Exception("ctrl/ManageData: table={$table_name} not defined");  
-                break;
     }
 }
 
