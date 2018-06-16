@@ -300,7 +300,11 @@ div#cashbox_listing				{width:100%; clear:both;}
 
 
 /** for de-activate products table **/
-.table_datesOrderableProducts td				{background:#EBEBEB; padding:5px;}
+.table_datesOrderableProducts td				{background:#EBEBEB; padding:4px;}
+.table_datesOrderableProducts td				{border:#EBEBEB 1px solid;}
+.table_datesOrderableProducts th				{border:#E1E1E1 1px solid;}
+.table_datesOrderableProducts .ax_state_hover   {border:1px solid #999999; pading:4px; color:red;}
+
 .table_datesOrderableProducts td.isOrderable	{background:#D1F3D1; cursor:pointer;}
 .table_datesOrderableProducts td.notOrderable	{background:#FFEDA1; cursor:pointer;}
 .table_datesOrderableProducts td.deactivated	{background:#FFCCCA;}
