@@ -21,23 +21,23 @@ function aixada_js_version() {
     global $aixada_vesion_lastDate;
     return $aixada_vesion_lastDate;
 }
-function aixada_js_src($useMenus = true) {
+function aixada_js_src($useMenus = true, $rootJs = '') {
     global $aixada_vesion_lastDate;
-    $src = "<!-- aixada_js_src -->";
+    $src = "<!-- aixada_js_src rootJs='{$rootJs}' -->";
     if ($useMenus) {
         $src .= "
-            <script src=\"js/fgmenu/fg.menu.js?v={$aixada_vesion_lastDate}\"></script>
-            <script src=\"js/aixadautilities/jquery.aixadaMenu.js?v={$aixada_vesion_lastDate}\"></script>";
+        <script src=\"{$rootJs}js/fgmenu/fg.menu.js?v={$aixada_vesion_lastDate}\"></script>
+        <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaMenu.js?v={$aixada_vesion_lastDate}\"></script>";
     }
     $src .= "
-        <script src=\"js/aixadautilities/jquery.aixadaXML2HTML.js?v={$aixada_vesion_lastDate}\"></script>
-        <script src=\"js/aixadautilities/jquery.aixadaUtilities.js?v={$aixada_vesion_lastDate}\"></script>";
+        <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaXML2HTML.js?v={$aixada_vesion_lastDate}\"></script>
+        <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaUtilities.js?v={$aixada_vesion_lastDate}\"></script>";
     if (get_config('use_ajaxQueue')) {
         $src .= "
-            <script src=\"js/jquery-ajaxQueue/jQuery.ajaxQueue.js?v={$aixada_vesion_lastDate}\"></script>";
+        <script src=\"{$rootJs}js/jquery-ajaxQueue/jQuery.ajaxQueue.js?v={$aixada_vesion_lastDate}\"></script>";
     } else {
         $src .= "
-            <script src=\"js/jquery-ajaxQueue/jQuery.ajaxQueueNo.js?v={$aixada_vesion_lastDate}\"></script>";
+        <script src=\"{$rootJs}js/jquery-ajaxQueue/jQuery.ajaxQueueNo.js?v={$aixada_vesion_lastDate}\"></script>";
     }
     return $src . "\n";
 }
