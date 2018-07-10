@@ -14,7 +14,6 @@
 	<?php echo aixada_js_src(); ?>
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>   
     
-   
 	<script type="text/javascript">
 	$(function(){
 		$.ajaxSetup({ cache: false });
@@ -244,11 +243,11 @@
 		//make the product name interactive for row actions menu
 		$('.rowActions')
 			.live('mouseenter', function(e){
-				$(this).addClass('ui-state-hover');
+				$(this).addClass('ax_state_hover');
 
 			})
 			.live('mouseleave', function(e){
-				$(this).removeClass('ui-state-hover');
+				$(this).removeClass('ax_state_hover');
 			})
 			.live('click',function(e){
 
@@ -310,12 +309,12 @@
 			.live('mouseenter', function(e){
 				$( "#colActionIcons" ).hide();
 				var colDate = $(this).attr('colDate');
-				$(".Date-"+colDate).addClass('ui-state-hover');
+				$(".Date-"+colDate).addClass('ax_state_hover');
 				
 			})
 			.live('mouseleave', function(e){
 				var colDate = $(this).attr('colDate');
-				$(".Date-"+colDate).removeClass('ui-state-hover');
+				$(".Date-"+colDate).removeClass('ax_state_hover');
 				e.stopPropagation();
 			})
 			.live('click', function(e){
