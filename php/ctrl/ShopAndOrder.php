@@ -69,7 +69,7 @@ try{
 	    	exit;
 	
   		case 'getToShopProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), 0, get_param('all',0), -1));
+	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), '1234-01-01', get_param('all',0), -1));
 	    	exit;
 	    	
   		case 'getPreorderableProducts':
