@@ -22,7 +22,7 @@
      } 
      echo '</select> ';
      
-     $cfg_use_shop = get_config('use_shop', true);
+     $cfg_use_shop = get_config('use_shop', 'order_and_stock');
      if (get_config('show_menu_language_select', false)) {
 	     echo '<select size="0" name="lang_select" id="lang_select">';
 	       $keys = $_SESSION['userdata']['language_keys'];

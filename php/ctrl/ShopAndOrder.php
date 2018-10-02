@@ -32,7 +32,7 @@ try{
 	    	exit;
 	    
 	   	case 'getShopProviders':
-	    	printXML(stored_query_XML_fields('get_shop_providers'));
+	    	printXML(query_XML_fields(getSql_shop_providers()));
 	    	exit;
 	    	
 	    case 'getOrderCategories':
@@ -42,7 +42,7 @@ try{
 	    //retrieves all categories of all products active; optional the date parameter
 	    //would retrieve all categories for stock products and orderable for the given date. 	
 	    case 'getShopCategories':
-	    	printXML(stored_query_XML_fields('get_shop_categories_for_date', 0));
+	    	printXML(query_XML_fields(getSql_shop_categories()));
 	    	exit;
 	    	
 	    case 'getStockProviders':
@@ -69,7 +69,13 @@ try{
 	    	exit;
 	
   		case 'getToShopProducts':
-	    	printXML(stored_query_XML_fields('get_products_detail',get_param('provider_id',0), get_param('category_id',0), get_param('like',''), '1234-01-01', get_param('all',0), -1));
+            $use_shop = get_config('use_shop', 'order_and_stock');
+            printXML(stored_query_XML_fields('get_products_detail',
+                ($use_shop ? get_param('provider_id',0) : -1), // no products for shop
+                get_param('category_id',0), get_param('like',''),
+                ($use_shop === 'only_stock' ? '1234-01-01' : '0'), // '1234-01-01' is used to filter only stock products for shop
+                get_param('all',0), -1)
+            );
 	    	exit;
 	    	
   		case 'getPreorderableProducts':

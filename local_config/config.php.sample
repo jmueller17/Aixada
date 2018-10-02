@@ -57,12 +57,14 @@ class configuration_vars {
   ****************************************************************************/
 
   /**
-   *
-   * Indicates whether the store is used. If true (or missing), direct purchase
-   * options are shown, otherwise can only make orders.
-   * @var boolean
+   * Indicates whether the store is used. Possible values are:
+   *    - 'order_and_stock': The shop is shown with all active products
+   *                         (default if is missing or true)
+   *    - 'only_stock':      The shop is shown only with active stock products.
+   *    - false:             The shop is not shown.
+   * @var string|boolean
    */
-  public $use_shop = true;
+  public $use_shop = 'order_and_stock';
 
   /**
    * Allows allocate losses order distribution to a fictitious family (when the
