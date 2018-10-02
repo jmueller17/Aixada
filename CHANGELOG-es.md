@@ -32,7 +32,7 @@ Pasos para actualizar a la versión *2.8* desde *2.7* o un punto intermedio de *
 **Nuevas funcionalidades**
 * Importación productos usando platillas: permite crear los nuevos productos y en los existente actualizar precios y descripciones semanalmente cargando las hojas de calculo del proveedor. De forma opcional los producto que se han importado pueden quedar desactivados (:bulb:`config.php`: `$import_from_char_encoding`, `$import_templates[...]`)
 * Permite la personalización solo usando `config.php`: imagen inicial de login y en los informes el logo y los datos propios de la coope.   
-Ahora también se puede desactivar la compra directa, permitir validarse a uno mismo y no requerir depósitos (`$login_header_*`, `$coop_*`, `$validate_self`, `$validate_deposit`, `$use_shop`)
+Se puede desactivar la compra directa o solo permitir productos de stock, permitir validarse a uno mismo y no requerir depósitos (`$login_header_*`, `$coop_*`, `$validate_self`, `$validate_deposit`, `$use_shop`)
 * Nueva gestión del dinero que permite nuevas operaciones y anulaciones.
  En la misma pagina se muestran los cambios que se van haciendo,
  y entre ellos se puede ver el resultado resumido de la cooperativa.   
@@ -41,9 +41,12 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
  Se permite pequeños ajustes en la presentación de importes y fechas (:bulb:`config.php`: `$type_formats[...]`)
 
 **Mejoras y cambios**
-* Al hacer pedidos:
+* Al hacer pedidos y compras directas:
   * Se permite a las UF hacer pedidos de productos de stock (:bulb:`config.php`:
-    `$orders_allow_stock`, es de utilidad conjuntamente con `$use_shop=false`)
+    `$orders_allow_stock`)
+  * Se puede desactivar la compra directa con (:bulb:`config.php`:`$use_shop=false`)
+  * En la compra directa se pueden admitir todos los productos o solo los de stock
+    (:bulb:`config.php`:`$use_shop='only_stock'`, por defecto `'order_and_stock'`)
   * Las casillas de las cantidades se muestran en blanco en vez de a 0.
   * Cuando una cantidad se pone a 0 o en blanco se borra el producto de la cesta.
   * Se mejora la sincronización de cantidades con la cesta en las pestañas de
@@ -94,7 +97,7 @@ Ahora también se puede desactivar la compra directa, permitir validarse a uno m
     hostings (:bulb:`config.php`: `$email_safe_replyTo = true`) 
 * Mejoras en soporte de plataformas diversas, servidores Windows, MariaDB, versiones de PHP >= 5.3...
  (entre otros #184)
-  * Para trabajar en hostings con pocos recursos se recomientda sequenciar ajax
+  * Para trabajar en hostings con pocos recursos se recomienda secuenciar ajax
     (:bulb:`config.php`: `$use_ajaxQueue`).
 * La página report_stock muestra en valor total del stock de productos y adiciones/correcciones.
 * En la página proveedor/producto ahora se puede filtrar por descripción de los productos.
