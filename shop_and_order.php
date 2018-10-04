@@ -415,7 +415,7 @@
 		if (!days2Closing || days2Closing <0){
 			$(row).addClass('dim60');
 			$('td', row).addClass('ui-state-error');
-			$('input', row).attr('disabled','disabled');
+			$('input,textarea', row).attr('disabled','disabled');
 			counterClosed++;
 		}
 
