@@ -227,7 +227,7 @@
 					//deactivates items whose provider/order has been already closed
 					var deaTr = (itemObj.time_left < 0)? 'dim60':'';
 					var deaTd = (itemObj.time_left < 0)? 'ui-state-error':'';
-					var deaIn = (itemObj.time_left < 0)? 'disabled':'';
+					var deaIn = (itemObj.time_left < 0)? 'data-disabled="disabled"':'';
 					
 					//add it as row
 					var str = '<tr id="'+itemObj.id+'" class="'+deaTr+'" >'; 
@@ -251,7 +251,7 @@
                         str += '<td class="item_text" colspan="5">' +
                                 '<span class="item_name '+deaTd+'">'+itemObj.name+'</span> | ' +
                                 '<span class="item_provider_name '+deaTd+'">'+itemObj.provider_name+'</span><br>' +
-                                '<textarea name="notes[]" class="ui-widget-content ui-corner-all textareaLarge inputTxtMax" id="cart_notes_'+itemObj.id+'">'+itemObj.notes+'</textarea>' +
+                                '<textarea name="notes[]" class="ui-widget-content ui-corner-all textareaLarge inputTxtMax" '+deaIn+' id="cart_notes_'+itemObj.id+'">'+itemObj.notes+'</textarea>' +
                             '</td>';
                         str += '<td class="item_quantity '+deaTd+' hidden">' +
                             '<input name="quantity[]" value="'+itemObj.quantity+'" id="cart_quantity_'+itemObj.id+'" size="4" class="ui-corner-all" />'; 
@@ -332,7 +332,7 @@
 
                     $("#cart_notes_"+itemObj.id, $this).bind(
                         "focus", function(e){
-                            if($(this).parent().hasClass('ui-state-error')){
+                            if($(this).attr("data-disabled") === "disabled"){
                                 $("#cart_dialog")
                                     .html($.aixadacart.msg.orderClosed)
                                     .dialog('option','title','Warning')
