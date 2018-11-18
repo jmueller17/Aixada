@@ -90,11 +90,6 @@
 			beforeLoad: function(){
 				$('.loadSpinner').show();
 			},
-			//resultsPerPage:20,
-			//paginationNav : '#uf_list tfoot td',
-			beforeLoad : function(){
-				//$('#uf_listing .loadAnim').show();
-			},
 			rowComplete: function(index, row){
 				var ckbx = row.children().first().find('input');
 				if (ckbx.val() == "1") ckbx.attr('checked',true); //set the checkbox if uf is active or not

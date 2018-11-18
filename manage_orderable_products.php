@@ -183,7 +183,7 @@
 								closingIcon		 = (orderId > 0)? "ui-icon-mail-closed" : closingIcon;
 								var closingTitle = (days2Closing > 0)? "<?=$Text['order_closes'];?> " + closingDate + ". \n " +days2Closing + " <?=$Text['left_ordering'];?>": "<?=$Text['ostat_closed'];?>";
 								closingTitle = (orderId > 0)? "<?=$Text['ostat_desc_fin_send'];?>" + orderId: closingTitle;
-								var hasItems = (hasItems > 0) ? "#"+hasItems: "-";
+								hasItems = (hasItems > 0) ? "#"+hasItems : "-";
 								
 								//var selector = ".Date-"+date + ".Prod-"+id;
 								var selector = "#"+date+"_"+id;

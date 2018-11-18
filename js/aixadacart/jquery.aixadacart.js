@@ -590,7 +590,7 @@
 		  } else if (options.type == "table"){
 			  var row = options.row;
 			  var id =  $(row).attr("id"); 
-			  quantity = $("#cart_quantity_"+id).val();
+			  var quantity = $("#cart_quantity_"+id).val();
 			  if (quantity.replace(/ /g, '') === '') {
 			    quantity = '0';
 			  }

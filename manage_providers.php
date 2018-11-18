@@ -1274,7 +1274,7 @@
         function refreshSelectValue(destination) {
             var selValue = $(destination).prev().val();
             if (selValue == ''){
-                var selValue = $(destination).children('select:first').val();
+                selValue = $(destination).children('select:first').val();
                 $(destination).prev().attr('value',selValue);
             } else {
                 $(destination).children('select').val(selValue).attr('selected','selected');
@@ -1364,7 +1364,7 @@
 			var rev = new Number(revp);
 			var iva = new Number(ivap);
 			
-			var price = price * (1 + iva/100) * (1 + rev/100); 
+			price = price * (1 + iva/100) * (1 + rev/100); 
 
 			$('.unit_price_brutto', frm).text(price.toFixed(2));
 		}
