@@ -9,11 +9,13 @@ require_once(__ROOT__ . 'local_config'.DS.'config.php');
  * the value is set. 
  */
 function get_session_user_id() {
-	
+	if (!isset($_SESSION)) {
+        session_start();
+    }
 	if (isset($_SESSION['userdata']['user_id']) && $_SESSION['userdata']['user_id'] > 0 ) {
 		return $_SESSION['userdata']['user_id'];
 	} else {
-		throw new Exception("$_Session data user_id is not set!! ");
+		throw new Exception("Session data user_id is not set!! ");
 	}
 }
 
@@ -23,11 +25,13 @@ function get_session_user_id() {
  * returns the uf of the logged user. 
  */
 function get_session_uf_id() {
-	
+	if (!isset($_SESSION)) {
+        session_start();
+    }
 	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ) {
 		return $_SESSION['userdata']['uf_id'];
 	} else {
-		throw new Exception("$_Session data uf_id is not set!! ");
+		throw new Exception("Session data uf_id is not set!! ");
 	}
 }
 
@@ -37,11 +41,13 @@ function get_session_uf_id() {
  * Returns the member_id of the logged user. 
  */
 function get_session_member_id() {
-	
+	if (!isset($_SESSION)) {
+        session_start();
+    }
 	if (isset($_SESSION['userdata']['member_id']) && $_SESSION['userdata']['member_id'] > 0 ) {
 		return $_SESSION['userdata']['member_id'];
 	} else {
-		throw new Exception("$_Session data member_id is not set!! ");
+		throw new Exception("Session data member_id is not set!! ");
 	}	
 }
 
@@ -50,11 +56,13 @@ function get_session_member_id() {
  * Returns the login of the logged user. 
  */
 function get_session_login() {
-	
+	if (!isset($_SESSION)) {
+        session_start();
+    }
 	if (isset($_SESSION['userdata']['login']) && $_SESSION['userdata']['login'] != "") {
 		return $_SESSION['userdata']['login'];
 	} else {
-		throw new Exception("$_Session data login is not set!! ");
+		throw new Exception("Session data login is not set!! ");
 	}	
 }
 
@@ -64,10 +72,13 @@ function get_session_login() {
  * returns the language for the logged user
  */
 function get_session_language() {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
     if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
-	return $_SESSION['userdata']['language'];
+        return $_SESSION['userdata']['language'];
     } else {
-	return	configuration_vars::get_instance()->default_language;
+        return configuration_vars::get_instance()->default_language;
     }
 }
 
@@ -77,6 +88,9 @@ function get_session_language() {
  * returns the theme for the logged user
  */
 function get_session_theme() {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
     if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
 		return $_SESSION['userdata']['theme'];
     } else {
@@ -91,6 +105,9 @@ function get_session_theme() {
  */
 function get_current_role()
 {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
 	 if (isset($_SESSION['userdata']['current_role']) and $_SESSION['userdata']['current_role'] != '') {
 		return $_SESSION['userdata']['current_role'];
     } else {

@@ -28,6 +28,9 @@ ob_start();
 $firephp = FirePHP::getInstance(true);
 
 
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 try{ 
    
@@ -104,7 +107,8 @@ try{
                 }
             }
 			echo $dt->get_html_table();
-			$_SESSION['import_file'] = $path; 
+			$_SESSION['import_file'] = $path;
+            session_commit();
  			exit;
 
  	

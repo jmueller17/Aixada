@@ -11,6 +11,9 @@ $tpl_print_incidents = configuration_vars::get_instance()->print_incidents_templ
    try {
        $cookie = new Cookie();
        $cookie->validate();
+       if (!isset($_SESSION)) {
+           session_start();
+       }
        if (isset($_SESSION['userdata']) 
 	   and isset($_SESSION['userdata']['current_role']) 
 	   and $_SESSION['userdata']['current_role'] !== false) {
@@ -25,11 +28,6 @@ $tpl_print_incidents = configuration_vars::get_instance()->print_incidents_templ
 	       }
 	   }
 	   if ($forbidden) {
-	       /* $firephp->log('forbidden'); */
-	       /* $firephp->log($uri, 'uri'); */
-	       /* $firephp->log($role, 'role'); */
-	       /* $firephp->log($_SESSION, 'session'); */
-	       /* $firephp->log($_SERVER, 'server'); */
 	       header("Location: index.php");
 	   }
      }

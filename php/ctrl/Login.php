@@ -11,10 +11,6 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/exceptions.php");
 require_once(__ROOT__ . 'php/inc/cookie.inc.php');
 
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start();
 $firephp = FirePHP::getInstance(true);
@@ -70,13 +66,10 @@ try{
 	                               array_values($langs), 
 	                               $current_language_key,
 	                               $theme);
-	
-	          $cookie->set();
 	      }	catch (AuthException $e) {
 		  	header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
 	        die($e->getMessage());
 	      }	
-	      print $cookie->package();
 	      exit; 
 	      	
 	  default:

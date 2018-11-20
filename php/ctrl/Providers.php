@@ -8,13 +8,6 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-
-
-if (!isset($_SESSION)) {
-    session_start();
- }
- 
-
 try{
 
     switch ($_REQUEST['oper']) {

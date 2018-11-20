@@ -10,18 +10,6 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/dates.php");
 require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
-
-
-// This controls if the table_manager objects are stored in $_SESSION or not.
-// It looks like doing it cuts down considerably on execution time.
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-
-
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
 //DBWrap::get_instance()->debug = true;
 
 try{

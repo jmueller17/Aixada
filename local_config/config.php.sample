@@ -357,26 +357,6 @@ class configuration_vars {
    * users if available. 
    */
   public $incidents_email_list = ""; 
-  
-  
-  
-  
-  
-  /**
-   * CODE OPTIMIZATIONS
-   */
-
-  /**
-   * @var bool In case the database is parsed, this variable controls if the table_manager objects are stored in $_SESSION or not. Setting this variable to true cuts down considerably on execution time.
-   */
-  public $use_session_cache = true;
-
-  /**
-   * @var bool If true, this variable says to not parse the database every time a page is loaded, but to read the pre-compiled responses from the file canned_responses.php.  Setting this variable to true cuts down considerably on execution time.
-   */
-  public $use_canned_responses = true;
-
-
 
   /**
    * 

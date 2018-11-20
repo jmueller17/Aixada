@@ -8,15 +8,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/account_operations.php");
 
-
-$use_session_cache = true; 
-
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-
 try{ 
    	$ao = new account_operations();
  	switch ($_REQUEST['oper']) {

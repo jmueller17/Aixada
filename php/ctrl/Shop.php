@@ -7,10 +7,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/shop.php");
 
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 try{
 
     switch (get_param('oper')) {

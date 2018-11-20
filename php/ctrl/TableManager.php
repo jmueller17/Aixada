@@ -7,18 +7,8 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-              
 require_once(__ROOT__ . 'local_config/lang/' . get_session_language() . '.php');
 require_once(__ROOT__ . "php/utilities/tables.php");
-
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-$use_canned_responses = configuration_vars::get_instance()->use_canned_responses;
-
-
 
 function get_columns_as_JSON()
 {
@@ -45,6 +35,10 @@ function get_options()
   case 'aixada_account':
     if (strlen($options['filter'])>0) {
       $options['filter'] .= ' and ';
+    }
+    
+    if (!isset($_SESSION)) {
+        session_start();
     }
     $uf_id = 1000 + (int)($_SESSION['userdata']['uf_id']);
     $options['filter'] .= "aixada_account.account_id=$uf_id";
@@ -186,8 +180,7 @@ try{
 
   require_once(__ROOT__ . 'php/lib/table_manager.php');
   if (!$special_table)
-    $tm = new table_manager($_REQUEST['table'], 
-			    configuration_vars::get_instance()->use_session_cache);
+    $tm = new table_manager($_REQUEST['table']);
 
   switch ($_REQUEST['oper']) {
   case 'get_by_id':

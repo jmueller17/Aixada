@@ -8,11 +8,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/orders.php");
 
-
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 try{
 	
 

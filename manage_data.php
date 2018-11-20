@@ -23,16 +23,21 @@
         $table_aux = strstr($data_table, '_');
         $prefix = strstr($data_table, '_', true);
         if ($prefix !== 'aixada') {
-            $table_aux = '_'.$prefix.$table_aux;
+            $table_aux = '_' . $prefix.$table_aux;
         }
-        $property = 'may_edit'.$table_aux;
-        if (in_array($property, 
-                     configuration_vars::get_instance()->rights_of[$_SESSION['userdata']['current_role']])) {
-            return true;
-        } else {
-            return false;
+        if (!isset($_SESSION)) {
+            session_start();
         }
+        if (isset($_SESSION['userdata'])) {
+            $rights_of = get_config('rights_of');
+            $current_role = $_SESSION['userdata']['current_role'];
+            if (in_array('may_edit' . $table_aux, $rights_of[$current_role])) {
+                return true;
+            }
+        }
+        return false;
     }
+
     $is_edit = 'false';
     if ($data_manager){
         if (may_edit_table($table_name)) {

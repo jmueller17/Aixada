@@ -11,12 +11,6 @@ if (!isset($_SESSION)) {
     session_start();
  }
 
-DBWrap::get_instance()->debug = true;
-
-function get_deactivated_roles($member_id)
-{
-
-}
 
 try{
   $op_id = $_SESSION['userdata']['uf_id'];

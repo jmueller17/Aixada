@@ -14,10 +14,13 @@
     <?php echo aixada_js_src(); ?>
    		
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
-     
    
-   
-    <?php $the_role = $_SESSION['userdata']['current_role']; ?>
+    <?php 
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        $the_role = $_SESSION['userdata']['current_role'];
+    ?>
 	<script type="text/javascript">
 	$(function(){
 		$.ajaxSetup({ cache: false });
