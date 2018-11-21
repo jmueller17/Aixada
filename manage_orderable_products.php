@@ -671,51 +671,70 @@
         /**
          *	check if provider can be made preorderable and switch state between preorder & normal
          */
-        function preorderProvider(providerId){
-            var ispreorder = $('table.table_datesOrderableProducts tbody tr').attr('ispreorder');
-            if (ispreorder == "1"){
+        function selectMultiProduct() {
+            var _existPreorder = false;
+            $('table.table_datesOrderableProducts tbody tr').each(function() {
+                    if ($(this).attr('ispreorder') == 1) {
+                        _existPreorder = true;
+                        return false;
+                    }
+            });
+            var _promises = [],
+                _toggleFn = function() {
+                    if ($(this).attr('isactive')==1) {
+                        productId = $(this).attr('id');
+                        $('#rowActionItems').attr('currentrowid', productId);
+                        _promises.push(
+                            toggleOrderableProduct('reloadTable', productId, '1234-01-23', false)
+                        );
+                    }
+                },
+                _refresh = function() {
+                    $('#dot tbody').xml2html('reload', {
+                        comlpete: function() {
+                            $('.loadSpinner').hide();
+                        }
+                    });
+                };
+            
+            if (_existPreorder){
                 $.showMsg({
                     msg		: "<?=$Text['msg_delete_preorder_p'];?>",
                     buttons: {
-                        "<?=$Text['btn_delete'];?>":function(){
-                            toggleEntireRow('1234-01-23');
+                        "<?=$Text['btn_delete'];?>": function() {
                             $(this).dialog("close");
+                            $('.loadSpinner').show();
+                            _promises = [];
+                            $('table.table_datesOrderableProducts tbody tr[ispreorder="1"]')
+                                .each(_toggleFn);
+                            if (_promises.length === 0) {
+                                _promises.push(null);
+                            }
+                            $.when.apply($, _promises).then(_refresh, _refresh);
                         },
                         "<?=$Text['btn_cancel'];?>" : function(){
-                            $( this ).dialog( "close" );
+                            $(this).dialog("close");
                         }
                     },
-                    type: 'confirm'});
+                    type: 'confirm'
+                });
             } else {
                 $.showMsg({
                     msg		: "<?=$Text['msg_make_preorder_p'];?>",
                     buttons: {
-                        "<?=$Text['btn_ok_go'];?>":function(){
-                            var that = this;
-                            var orderDate = '1234-01-23';
-                            var closingDate = '9999-01-01';
-                            var urlStr = 'php/ctrl/ActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+providerId+'&order_date='+orderDate+'&closing_date='+closingDate;
-                            $.ajax({
-                                type: "POST",
-                                url: urlStr,
-                                dataType: 'html',
-                                beforeSend : function() {
-                                    toggleEntireRow(orderDate);
-                                },
-                                success: function() {
-                                    $(that).dialog("close");
-                                    $('#dot tbody').xml2html('reload');
-                                },
-                                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                                    $.showMsg({
-                                        msg:XMLHttpRequest.responseText,
-                                        type: 'error'
-                                    });
-                                }
-                            }); //end ajax
+                        "<?=$Text['btn_ok_go'];?>": function() {
+                            $(this).dialog("close");
+                            $('.loadSpinner').show();
+                            _promises = [];
+                            $('table.table_datesOrderableProducts tbody tr')
+                                .each(_toggleFn);
+                            if (_promises.length === 0) {
+                                _promises.push(null);
+                            }
+                            $.when.apply($, _promises).then(_refresh, _refresh);
                         },
                         "<?=$Text['btn_cancel'];?>" : function(){
-                            $( this ).dialog( "close" );
+                            $(this).dialog("close");
                         }
                     },
                     type: 'confirm'
@@ -834,14 +853,19 @@
 		 *  from checkOrderStatus. if the product was not orderable for this date it will 
 		 *  become orderable and vice versa. 
 		 */
-		function toggleOrderableProduct(id, productId, orderDate){
-				$.ajax({
+		function toggleOrderableProduct(id, productId, orderDate, reload){
+				var _reload = (reload === false) ? false : true;
+				return $.ajax({ // Return to use promise returned by $.ajax
 					type: "POST",
 					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate+"&instantRepeat="+gInstantRepeat,	
 					beforeSend : function (){
-						$('.loadSpinner').show();
+
+						if (_reload) {
+							$('.loadSpinner').show();
+						}
 					},	
 					success: function(txt){
+						if (_reload === false) { return; }
 						if (id == 'reloadTable'){ //we change from/to preorder and have to rebuild the entire row
 							$('#dot tbody').xml2html('reload');
 						} else { //otherwise just change the look of the individual cell
@@ -861,7 +885,9 @@
 						
 					}, 
 					complete : function(){
-						$('.loadSpinner').hide();
+						if (_reload) {
+							$('.loadSpinner').hide();
+						}
 					}
 				}); 
 			
@@ -1148,7 +1174,7 @@
 									msg		: "<?=$Text['msg_err_no_provider'];?>",
 									type: 'error'});
 							}else{
-								preorderProvider(providerId);
+								selectMultiProduct();
 							}
 							break;
 							
