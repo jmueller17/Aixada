@@ -668,6 +668,60 @@
 
 		}
 		
+        /**
+         *	check if provider can be made preorderable and switch state between preorder & normal
+         */
+        function preorderProvider(providerId){
+            var ispreorder = $('table.table_datesOrderableProducts tbody tr').attr('ispreorder');
+            if (ispreorder == "1"){
+                $.showMsg({
+                    msg		: "<?=$Text['msg_delete_preorder_p'];?>",
+                    buttons: {
+                        "<?=$Text['btn_delete'];?>":function(){
+                            toggleEntireRow('1234-01-23');
+                            $(this).dialog("close");
+                        },
+                        "<?=$Text['btn_cancel'];?>" : function(){
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    type: 'confirm'});
+            } else {
+                $.showMsg({
+                    msg		: "<?=$Text['msg_make_preorder_p'];?>",
+                    buttons: {
+                        "<?=$Text['btn_ok_go'];?>":function(){
+                            var that = this;
+                            var orderDate = '1234-01-23';
+                            var closingDate = '9999-01-01';
+                            var urlStr = 'php/ctrl/ActivateProducts.php?oper=modifyOrderClosingDate&provider_id='+providerId+'&order_date='+orderDate+'&closing_date='+closingDate;
+                            $.ajax({
+                                type: "POST",
+                                url: urlStr,
+                                dataType: 'html',
+                                beforeSend : function() {
+                                    toggleEntireRow(orderDate);
+                                },
+                                success: function() {
+                                    $(that).dialog("close");
+                                    $('#dot tbody').xml2html('reload');
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                    $.showMsg({
+                                        msg:XMLHttpRequest.responseText,
+                                        type: 'error'
+                                    });
+                                }
+                            }); //end ajax
+                        },
+                        "<?=$Text['btn_cancel'];?>" : function(){
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    type: 'confirm'
+                });
+            }
+        }
 
 		/**
 		 *	check if product can be made preorderable
@@ -1085,7 +1139,17 @@
 								$(item).children('span').addClass('ui-icon ui-icon-check');
 								gInstantRepeat = 1;
 							}
+							break;
 
+						case 'provider-preorder':
+							var providerId = getProviderId();
+							if(!providerId){
+								$.showMsg({
+									msg		: "<?=$Text['msg_err_no_provider'];?>",
+									type: 'error'});
+							}else{
+								preorderProvider(providerId);
+							}
 							break;
 							
 					}; //end switch
@@ -1193,13 +1257,14 @@
 		   		<div class="textAlignRight"><button	id="tblOptions"><?php echo $Text['view_opt']; ?></button></div>
 				<div id="tblOptionsItems" class="hidden">
 					<ul>
-						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['show_deactivated']; ?></a></li>
-						<li><a href="javascript:void(null)">&nbsp;&nbsp;<?php echo $Text['days_display'];?></a>
+						<li><a href="javascript:void(null)" id="provider-preorder">-&nbsp;<?php echo $Text['do_preorder']; ?></a></li>
+						<li><a href="javascript:void(null)" id="showInactiveProducts" isChecked="false"><span class="floatLeft"></span>-&nbsp;<?php echo $Text['show_deactivated']; ?></a></li>
+						<li><a href="javascript:void(null)">-&nbsp;<?php echo $Text['days_display'];?></a>
 							<ul>
 								<li><a href="javascript:void(null)" id="plus7"><?php echo $Text['plus_seven']; ?></a></li>
 								<li><a href="javascript:void(null)" id="minus7"><?php echo $Text['minus_seven']; ?></a></li></ul>
 						</li>
-						<li><a href="javascript:void(null)" id="instantRepeat"><span class="floatLeft"></span>&nbsp;&nbsp;<?php echo $Text['instant_repeat']; ?></a></li>
+						<li><a href="javascript:void(null)" id="instantRepeat"><span class="floatLeft"></span>-&nbsp;<?php echo $Text['instant_repeat']; ?></a></li>
 						
 					</ul>
 				</div>
