@@ -32,12 +32,8 @@ try{
   		echo get_dates('today', $format='array');
   		exit;
 
-  	case 'getNextAvailableOrderDate':
-  		echo get_dates('get_orderable_dates', $format='xml', $limit=1);
-  		exit;
-  		
-  	case 'getAllOrderableDates':
-  	  	echo get_dates('get_orderable_dates', $format='array');
+  	case 'getOrderableDates':
+  	  	echo get_orderable_dates();
   	  	exit;
   	  	
   	case 'getUpcomingOrders':

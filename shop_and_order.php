@@ -10,6 +10,25 @@
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/aixadacart/aixadacart.css?v=<?=aixada_js_version();?>" />
   	<link rel="stylesheet" type="text/css"   media="screen" href="js/fgmenu/fg.menu.css"   />
     <link rel="stylesheet" type="text/css"   media="screen" href="css/ui-themes/<?=$default_theme;?>/jqueryui.css"/>
+    <style>
+    .ol_selectable .ui-selecting { background: #FECA40;  }
+    .ol_selectable .ui-selected  {
+        background: #F39814; border-color: #555;
+        color: white;
+    }
+    .ol_selectable {
+        list-style-type: none;
+        margin: 0; padding: 0;
+        line-height: 200%;
+    }
+    .ol_selectable li {
+        display: inline-block;
+        font-weight: normal;
+        cursor: pointer;
+        margin: 3px; padding: 0 0.4em;
+        border-radius: 4px;
+    }
+    </style>
 
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
     <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
@@ -46,6 +65,15 @@
 	var counterClosed = 0;
 	$("#providerClosedStatus").hide();
 
+    
+    var getSelectedDate = function(defaultValues){
+       switch(defaultValues){
+            case "Shop":
+                return 0; 
+            default: 
+                return $('#dateSel').val();
+        }
+    };
 
 	//init cart
 	$('#cartLayer').aixadacart("init",{
@@ -70,7 +98,7 @@
 				$('#cartLayer').aixadacart('resetCart');
 
 				//refresh page, including cart.
-				refreshSelects($.getSelectedDate('#datepicker'));
+				refreshSelects(getSelectedDate());
 
 			//another serious error, now for real
 			} else {
@@ -83,7 +111,7 @@
 
 							$('#cartLayer').aixadacart('resetCart');
 
-							refreshSelects($.getSelectedDate('#datepicker'));
+							refreshSelects(getSelectedDate());
 
 							$(this).dialog("close");
 						}
@@ -98,12 +126,6 @@
 	$('#product_list_provider tbody').xml2html("init");
 	$('#product_list_category tbody').xml2html("init");
 	$('#product_list_search tbody').xml2html("init");
-	$('#product_list_preorder tbody').xml2html("init",{
-			url: 'php/ctrl/ShopAndOrder.php',
-			params : 'oper=getPreorderableProducts',
-			loadOnInit : true
-	});
-
 
 	/**
 	 * build Provider SELECT
@@ -119,9 +141,8 @@
 					if (id < 0) { return true;}
 
 					$('.loadSpinner').show();
-					//alert($.getSelectedDate('#datepicker','',what)); //for shop the date needs to be 0!!
 					$('#product_list_provider tbody').xml2html("reload",{
-						params: 'oper=getTo'+what+'Products&provider_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&provider_id='+id+'&date='+getSelectedDate(what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -157,7 +178,7 @@
 
 					$('.loadSpinner').show();
 					$('#product_list_category tbody').xml2html("reload",{
-						params: 'oper=getTo'+what+'Products&category_id='+id+'&date='+$.getSelectedDate('#datepicker','',what),
+						params: 'oper=getTo'+what+'Products&category_id='+id+'&date='+getSelectedDate(what),
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -183,7 +204,7 @@
 				if (searchStr.length >= minLength){
 					$('.loadSpinner').show();
 				  	$('#product_list_search tbody').xml2html("reload",{
-						params: 'oper=getTo'+what+'Products&date='+$.getSelectedDate('#datepicker','',what)+'&like='+searchStr,
+						params: 'oper=getTo'+what+'Products&date='+getSelectedDate(what)+'&like='+searchStr,
 						rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
 							formatRow(row);
 						},
@@ -197,12 +218,23 @@
 				}
 		e.preventDefault();						//prevent default event propagation. once the list is build, just stop here.
 	}); //end autocomplete
-
+    $("#search_all").click(function(e){
+        $('.loadSpinner').show();
+        $("#search").val('');
+        $('#product_list_search tbody').xml2html("reload",{
+            params: 'oper=getTo'+what+'Products&date='+getSelectedDate(what)+'&like=',
+            rowComplete : function(rowIndex, row){	//updates quantities for items already in cart
+                formatRow(row);
+            },
+            complete : function(rowCount){
+                $('.loadSpinner').hide();
+            }
+        });
+    });
 
 
 	//dates available to make orders; start with dummy date
-	var availableDates = ["2011-00-00"];
-
+	var _availableDatepickerDates = [];
 
 	$("#datepicker").datepicker({
 				dateFormat 	: 'DD d M, yy',
@@ -210,7 +242,7 @@
 				beforeShowDay: function(date){		//activate only those dates that are available for ordering.
 					if (what == 'Order'){
 						var ymd = $.datepicker.formatDate('yy-mm-dd', date);
-						if ($.inArray(ymd, availableDates) == -1) {
+						if ($.inArray(ymd, _availableDatepickerDates) == -1) {
 						    return [false,"","Unavailable"];
 						} else {
 							  return [true, ""];
@@ -220,28 +252,45 @@
 					}
 				},
 				onSelect 	: function (dateText, instance){
-					refreshSelects($.getSelectedDate('#datepicker'));
+					var date = $.datepicker.formatDate('yy-mm-dd', $(this).datepicker('getDate'));
+					$('#dateSel').val(date);
+					selectSelectableDate(date);
+					refreshSelects(date);
 				}//end select
 
 	}).show();//end date pick
 
+	/**
+	 * Set dates on datepicker and selectable
+	 */
+	var selectDatepickerDate = function(dateYyMmDd) {
+		if (dateYyMmDd !== '1234-01-23') {
+			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', dateYyMmDd));
+			$("#datepicker").datepicker("refresh");
+		}
+	};
+
+	var selectSelectableDate = function(dateYyMmDd) {
+		$("#dateList .ui-selected").removeClass("ui-selected");
+		$("#dateList [val='" + dateYyMmDd + "']").addClass("ui-selected");
+	};
+
 
    	/**
-   	 *	init the datepicker
+   	 *	init the datepicker and selectable
    	 */
 	if (what == "Shop") {
 		$('#tabs ul').children('li:gt(2)').hide(); 			//preorder tab is only available for ordering
 		$("#datepicker").hide();							//hide date input field for shop
 
 		$.getAixadaDates('getToday', function (date){
-			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', date[0]));
-			$("#datepicker").datepicker("refresh");
+			selectDatepickerDate(date[0]);
 			refreshSelects(date[0]);
 		});
 
 	} else {
 
-		$.getAixadaDates('getAllOrderableDates', function (dates){
+		$.getAixadaDates('getOrderableDates', function (dates){
 			//if no dates are available, products have to be activated first!!
 			if (dates.length == 0){
 				$.showMsg({
@@ -250,10 +299,54 @@
 				return false;
 			}
 
-			availableDates = dates;
-			$("#datepicker").datepicker('setDate', $.datepicker.parseDate('yy-mm-dd', availableDates[0]));
-			$("#datepicker").datepicker("refresh");
-			refreshSelects(dates[0]);
+            var _MAX_SELECTABLES = 5,
+                _selectablesCount = 1;
+            
+            $.each(dates, function () {
+                if (this == '1234-01-23') {
+                    $('#dateList').append('<li class="ui-widget-header" val="1234-01-23">' +
+                    $.aixadacart.title.preorder + 
+                    '</li>');
+                } else {
+                    var orderDate = $.datepicker.parseDate('yy-mm-dd', this);
+                    _availableDatepickerDates.push(this + '');
+                    _selectablesCount++;
+                    if (_selectablesCount <= _MAX_SELECTABLES) {
+                        $('#dateList').append(
+                            '<li class="ui-widget-header" val="' + this + '">' +
+                            $.datepicker.formatDate('DD d M', orderDate) + 
+                            '</li>'
+                        );
+                    }
+                }
+            });
+            $("#dateList").selectable({
+                selecting: function (event, ui) {
+                    // Can select only one button
+                    $(event.target).children('.ui-selected').removeClass('ui-selected');
+                },
+                stop: function() {
+                    $(".ui-selected", this).each(function() {
+                        var dateYyMmDd = $(this).attr("val");
+                        $('#dateSel').val(dateYyMmDd);
+                        selectDatepickerDate(dateYyMmDd);
+                        refreshSelects(dateYyMmDd);
+                    });
+                }
+            });
+            
+            // Show
+            var startDate;
+            if (_availableDatepickerDates.length) {
+                startDate = _availableDatepickerDates[0];
+            } else {
+                startDate = dates[0];
+            }
+            $('#dateSel').val(startDate);
+            selectDatepickerDate(startDate);
+            selectSelectableDate(startDate);
+            refreshSelects(startDate);
+
 		});
 	}
 
@@ -479,6 +572,8 @@
 		    					printf('<sup class="toggleShopDate" title="%s">(*)</sup>',$Text['show_date_field']);
 		    				}?>
 		    	&nbsp; <input  type="text" class="datePickerInput ui-widget-content ui-corner-all" id="datepicker" title="Click to edit"></h1>
+		    	<ul id="dateList" class="ol_selectable"></ul>
+		    	<input id="dateSel" type="hidden">
     		</div>
     		<div id="titleRightCol">
     			<div id="ViewChoice">
@@ -495,7 +590,6 @@
 				<li><a href="#tabs-1"><?php echo $Text['by_provider']; ?></a></li>
 				<li><a href="#tabs-2"><?php echo $Text['by_category']; ?></a></li>
 				<li><a href="#tabs-3"><?php echo $Text['search']; ?></a></li>
-				<li><a href="#tabs-4"><?php echo $Text['special_offer']; ?></a></li>
 			</ul>
 			<span style="float:right; margin-top:-40px; margin-right:5px;"><img class="loadSpinner" src="img/ajax-loader.gif"/></span>
 			<div id="tabs-1">
@@ -585,6 +679,9 @@
 				<div class="ui-widget">
                                  <label for="search"><?php echo $Text['search'];?></label>
 						<input id="search" value="" class="ui-widget-content ui-corner-all"/>
+                        &nbsp; <button id="search_all"
+                            class="ui-button ui-corner-all"
+                            style="padding: 0 0.4em;"><?php echo $Text['filter_all']?></button>
 				</div>
 				<p>&nbsp;</p>
 				<div class="product_list_wrap">
@@ -619,41 +716,6 @@
 						</tbody>
 					</table>
 				</div>
-
-			</div>
-			<div id="tabs-4">
-
-				<table id="product_list_preorder" class="product_list" >
-						<thead>
-							<tr>
-								<th><?php echo $Text['id'];?></th>
-								<th><?php echo $Text['info'];?></th>
-								<th><?php echo $Text['name_item'];?></th>
-								<th><?php echo $Text['provider_name'];?></th>
-								<th><?php echo $Text['quantity'];?></th>
-								<th><?php echo $Text['unit'];?></th>
-								<th><?php echo $Text['price'];?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr id="{id}" preorder="true">
-								<td class="item_it">{id}</td>
-								<td class="item_info"><p class="ui-corner-all iconContainer textAlignCenter rowProductInfo" stock="{stock_actual}" iva_percent="{iva_percent}" rev_tax_percent="{rev_tax_percent}" description="{description}"><span class="ui-icon ui-icon-info"></span></p></td>
-								<td class="item_name">{name}</td>
-								<td class="item_provider_name">{provider_name}</td>
-								<td class="item_notes hidden" colspan="5">
-									{name} | {provider_name}<br>
-									<textarea class="ui-widget-content ui-corner-all textareaLarge inputTxtMax notes_{id}" name="notes_{id}">{notes}</textarea></td>
-								<td class="item_quantity"><input  class="ui-corner-all quantity_{id}" name="{id}" value="0.00" size="4"/></td>
-								<td class="item_unit">{unit}</td>
-								<td class="item_orderable_type_id hidden">{orderable_type_id}</td>
-								<td class="item_rev_tax_percent hidden">{rev_tax_percent}</td>
-								<td class="item_price">{unit_price}</td>
-								<td class="item_iva_percent hidden">{iva_percent}</td>
-							</tr>
-						</tbody>
-					</table>
-
 
 			</div>
 		</div><!-- end tabs -->
