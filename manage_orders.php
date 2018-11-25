@@ -1063,7 +1063,8 @@
 					var isPreorder = (tds.eq(3).text() == '1234-01-23')? true:false;
 
 					if (isPreorder){ //preorder has no closing date
-						tds.eq(3).text('preorder!');
+						tds.eq(3).text("<?php echo $Text['special_offer']?>");
+						tds.eq(4).text('');
 						tds.eq(6).text('-');
 					}
 					
@@ -1604,7 +1605,7 @@
                         }
                         _title = 'Orders-' + _title;
                         for (var prop in _dates) {
-                            _title += ' ' + prop;
+                            _title += ' ' + (prop == '1234-01-23' ? "<?=$Text['special_offer']?>" : prop);
                         }
                         if (_orders.length) {
                             _title += ' ' + _orders.join(',');

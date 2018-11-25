@@ -813,6 +813,7 @@ class report_order
         $date_for_order,
         $amount = 0
     ) {
+        global $Text;
         $html = '<tr>';
         if ($level) {
             $html .= $this->t_celBlank($level, 'border:transparent;');
@@ -828,9 +829,13 @@ class report_order
         } else {
             $status = $this->get_statusDesc(null);
         }
+        $date_for_order_text = ($date_for_order === '1234-01-23') ? 
+            $date_for_order_text = '"' . $Text['special_offer'] . '"' :
+            $date_for_order_text = $date_for_order;
+        $order_id_text = $order_id ? '#' . $order_id : '';
         $html .= $this->t_cel(
             $colCount - ($level + !!$amount),
-            "{$pv_name}: {$date_for_order}&nbsp; #{$order_id}&nbsp;\r\n" .
+            "{$pv_name}: {$date_for_order_text}&nbsp; {$order_id_text}&nbsp;\r\n" .
                 "<span style=\"color:#777; font-size:80%\">\r\n{$status}</span>\r\n",
             'padding:6px 0 3px 0;',
             'border:transparent; border-bottom:1px solid #333;'
