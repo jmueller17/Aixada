@@ -159,7 +159,6 @@
         $("#desc").jqGrid({
             url: "php/ctrl/ManageData.php?table="+current_table+
                 "&oper=listAll"+filter_text,
-            height: 200,
             datatype: 'xml',
             colNames: col_names,
             colModel: col_models,
@@ -188,7 +187,7 @@
             rowNum: 10,
             rowList: [10, 20, 30],
             // autowidth: true, 
-            height:'100%',
+            height: '100%',
             pager: '#desc_pager', 
             sortname: col_sortName,
             sortorder: col_sortOrder,
