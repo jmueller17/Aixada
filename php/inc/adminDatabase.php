@@ -29,7 +29,7 @@ function connect_by_mysqli($host, $db_name, $user, $pass)
     $db = new mysqli($host, $user, $pass, $db_name); 
     if ($db->connect_errno) {
         ob_clean();
-        throw new InternalException(
+        throw new Exception(
             "MySQL Error: {$db->connect_errno}-{$db->connect_error}\n" .
             "Connecting to: host='{$host}' database='{$db_name}' user='{$user}'\n"
         );
@@ -37,7 +37,7 @@ function connect_by_mysqli($host, $db_name, $user, $pass)
     $db->query("alter session character set utf8 collate utf8_general_ci;");
     if (!$db->set_charset("utf8")) {
         ob_clean();
-        throw new InternalException(
+        throw new Exception(
             "Not able to set charset='utf8', charset is: {$db->character_set_name()}"
         );
     }
