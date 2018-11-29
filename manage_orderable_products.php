@@ -855,7 +855,7 @@
 		 */
 		function toggleOrderableProduct(id, productId, orderDate, reload){
 				var _reload = (reload === false) ? false : true;
-				return $.ajax({ // Return to use promise returned by $.ajax
+				return $.ajaxQueue({ // Return to use promise returned by $.ajax
 					type: "POST",
 					url:  "php/ctrl/ActivateProducts.php?oper=toggleOrderableProduct&product_id="+productId+"&date="+orderDate+"&instantRepeat="+gInstantRepeat,	
 					beforeSend : function (){
