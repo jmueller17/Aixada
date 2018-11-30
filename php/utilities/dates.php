@@ -181,8 +181,23 @@ function get_dates($which, $format = 'xml', $limit=117111451111, $from_date=0)
 	}
 }
 
-
-
-
-	
-?>
+function get_orderable_dates($from_date = 0)
+{
+	if ($from_date == 0){
+		//TODO server - client difference in time/date?!
+		$from_date = date('Y-m-d', strtotime("Today")); 
+	}
+    $db = DBWrap::get_instance();
+    $dates = array();
+	$rs = $db->Execute(
+       "select distinct po.date_for_order d
+        from aixada_product_orderable_for_date po
+        where po.date_for_order = '1234-01-23' or po.date_for_order > '{$from_date}'
+        order by po.date_for_order asc"
+    );
+    while ($row = $rs->fetch_assoc()) {
+        $dates[] = '"' . $row['d'] . '"';
+    }
+    $db->free_next_results();
+	return '['. implode(',', $dates) . ']';
+}

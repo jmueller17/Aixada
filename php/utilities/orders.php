@@ -455,7 +455,7 @@ function edit_order_gross_price($order_id, $product_id, $gross_price) {
  * @param int $provider_id
  * @param date $date_for_order
  */
-function finalize_order($provider_id, $date_for_order, $revision_status = 1)
+function finalize_order($provider_id, $date_for_order, $new_date_for_order = '', $revision_status = 1)
 {
     global $Text;  	
 
@@ -476,7 +476,13 @@ function finalize_order($provider_id, $date_for_order, $revision_status = 1)
 
     // finalize
     $msg = ''; 
-    if ($rs = do_stored_query('finalize_order', $provider_id, $date_for_order)){
+    if ($date_for_order === '1234-01-23') {
+        $new_date_for_order = $new_date_for_order ? $new_date_for_order : date('Y-m-d', strtotime("Today"));
+        $rs = do_stored_query('convert_preorder', $provider_id, $new_date_for_order);
+    } else {
+        $rs = do_stored_query('finalize_order', $provider_id, $date_for_order);
+    }
+    if ($rs) {
         while ($row = $rs->fetch_assoc()) {
             $order_id = $row['id'];
         }

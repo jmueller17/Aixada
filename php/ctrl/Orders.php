@@ -120,7 +120,7 @@ try{
   			
   		//finalizes an order; no more modifications possible	
   		case 'finalizeOrder':
-  			echo finalize_order(get_param_int('provider_id'), get_param('date'), get_param_int('revision_status', 1));
+  			echo finalize_order(get_param_int('provider_id'), get_param_date('date'), get_param_date('new_date'), get_param_int('revision_status', 1));
   			exit;
 
       case 'reopenOrder':
@@ -128,7 +128,7 @@ try{
         exit;
   			
   		case 'preorderToOrder':
-  			echo do_stored_query('convert_preorder',get_param('provider_id'), get_param('date_for_order'));
+  			echo finalize_order(get_param_int('provider_id'), '1234-01-23', get_param_date('date_for_order'), get_param_int('revision_status', 1));
   			exit;
   			
   		case 'resetOrder':

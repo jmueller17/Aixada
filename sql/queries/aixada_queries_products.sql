@@ -592,7 +592,11 @@ begin
     
     /** otherwise search for products with orderable dates **/
     else 
-    	set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");
+    	if the_date = '1234-01-23' then
+    	    set fieldc = ", 999 as time_left";
+    	else
+    	    set fieldc = concat(", datediff(po.closing_date, '",today,"') as time_left");
+    	end if;
        	set fromc = 	"aixada_product_orderable_for_date po, ";
     	set wherec = 	concat(wherec, " and po.date_for_order = '",the_date,"' and po.product_id = p.id and p.unit_measure_order_id = u.id ");	
     end if;
