@@ -47,14 +47,14 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
 ## Mejoras
 
 ### Hacer pedidos y compras
+  * Se permite comentarios en los pedidos. Nuevo tipo de producto de comentarios
+    que en los pedidos requiere texto en vez de cantidades y no tiene precio.  
+    (puede servir para enviar comentarios sobre los pedidos ya recibidos o para
+    dar instrucciones de preparación del pedido al proveedor)
   * Las casillas de las cantidades se muestran en blanco en vez de a 0.
   * Cuando una cantidad se pone a 0 o en blanco se borra el producto de la cesta.
   * Se mejora la sincronización de cantidades con la cesta en las pestañas de
   proveedor, categoría y buscar.
-  * Se permite comentarios en los pedidos. Nuevo tipo de producto de comentarios
-  (sin precio) que al hacer un pedido requiere texto en vez de cantidades
-  (para enviar comentarios sobre los pedidos ya recibidos o para dar
-  instrucciones de preparación del pedido)
 
 ### Gestión de pedidos
   * Se puede cancelar un pedido abierto sin enviarlo al proveedor.
@@ -83,7 +83,7 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
 ## Mejoras
 
 ### Envío de correos
-  * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`).
+  * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`)
 
 ### Corrección de errores
   * #205, #206 Al hacer pedidos se combrueva que el pedido no esté ya cerrado.
