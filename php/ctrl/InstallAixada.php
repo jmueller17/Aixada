@@ -56,7 +56,7 @@ try{
                     "SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_price'"
                 );
                 if (!$isUpdatable) {
-                    throw new Exception("The version of Aixada is previous to 2.6.3!\n" .
+                    throw new Exception("The version of Aixada is previous to 2.7!\n" .
                         "It must be updated manually!!\n\n" .
                         "(see 'sql/dbUpgradeTo2.6.2.sql' and also previous versions)"
                     );
