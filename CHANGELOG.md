@@ -63,10 +63,10 @@ Released 2 April 2013
 * #37 filter session variables for table manager fix
 * ...and otherss
 
-v2.8 (to publish soon)
+v2.8 (see `master` instead of a version)
 ----
 
-*This document is out of date for version 2.8, see "CHANGELOG-es.md"*
+*This document is out of date for version >= 2.8, see "[CHANGELOG-es.md](https://github.com/jmueller17/Aixada/blob/master/CHANGELOG-es.md)"*
 
 **New Features**
 
