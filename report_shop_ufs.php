@@ -174,40 +174,18 @@
 			$("#btn_print")
 			.button({
 				icons: {
-					primary: "ui-icon-print",
-		        	secondary: "ui-icon-triangle-1-s"
+					primary: "ui-icon-print"
 				}
 		    })
-		    .menu({
-				content: $('#printOptionsItems').html(),	
-				showSpeed: 50, 
-				width:180,
-				flyOut: true, 
-				itemSelected: function(item){	
-					
-					var link = $(item).attr('id');
-
-					var shopId = gSelShopRow.attr('shopId');
-    				var date = gSelShopRow.attr('dateForShop');
-    				var op_name = gSelShopRow.attr('operatorName');
-    				var op_uf = gSelShopRow.attr('operatorUf');
-    			
-    				
-					
-					switch (link){
-						case "printWindow": 
-							var printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
-			    			
-							printWin.focus();
-							printWin.print();
-							break;
-		
-						case "printPDF": 
-							window.frames['dataFrame'].window.location = 'tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf+'&asPDF=1&outputFormat=D' 
-							break;
-					}
-									
-				}//end item selected 
+		    .click(function(e){
+                var shopId = gSelShopRow.attr('shopId');
+                var date = gSelShopRow.attr('dateForShop');
+                var op_name = gSelShopRow.attr('operatorName');
+                var op_uf = gSelShopRow.attr('operatorUf');
+                var printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
+                printWin.focus();
+                printWin.print();
+                return false;
 			});//end print menu
 	    	
 		
@@ -370,12 +348,6 @@
 		    </div>
 		    <div id="titleRightCol">		    	
 		    	<button id="btn_print" class="detailElements btn_right"><?=$Text['printout'];?></button>
-		    		<div id="printOptionsItems" class="hidden hideInPrint">
-					<ul>
-					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
-					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
-					</ul>
-					</div>	
 				<button id="btn_export" class="detailElements floatRight"><?php echo $Text['btn_export']; ?></button>
 					
 		    	<p class="textAlignRight overviewElements">

@@ -137,50 +137,33 @@
 		$("#btn_print")
 		.button({
 			icons: {
-				primary: "ui-icon-print",
-	        	secondary: "ui-icon-triangle-1-s"
+				primary: "ui-icon-print"
 			}
 	    })
-	    .menu({
-			content: $('#printOptionsItems').html(),	
-			showSpeed: 50, 
-			width:180,
-			flyOut: true, 
-			itemSelected: function(item){	
-				if ($('input:checkbox[name="bulkAction"][checked="checked"]').length  == 0){
-					$.showMsg({
-						msg:"<?=$Text['msg_err_noselect'];?>",
-						buttons: {
-							"<?=$Text['btn_ok'];?>":function(){						
-								$(this).dialog("close");
-							}
-						},
-						type: 'warning'});
-					return false; 
-				}
-
-				var link = $(item).attr('id');
-
-				var idList = "";
-				$('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
-						idList += $(this).parents('tr').attr('incidentId')+",";
-				});
-				idList = idList.substring(0,idList.length-1);
-				
-				switch (link){
-					case "printWindow": 
-						var printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
-						printWin.focus();
-						printWin.print();
-						break;
-	
-					case "printPDF": 
-						window.frames['dataFrame'].window.location = "tpl/<?=$tpl_print_incidents;?>?idlist="+idList+"&asPDF=1&outputFormat=D"; 
-						break;
-				}
-								
-			}//end item selected 
-		});//end print menu
+        .click(function(e){
+            var idList = "";
+            $('input:checkbox[name="bulkAction"][checked="checked"]').each(function(){
+                    idList += $(this).parents('tr').attr('incidentId')+",";
+            });
+            if (idList === '') {
+                $.showMsg({
+                    type: 'warning',
+                    title: "<?php echo $Text['msg_warning']; ?>",
+                    msg: "<?=$Text['msg_err_noselect'];?>",
+                    buttons: {
+                        "<?=$Text['btn_ok'];?>": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            } else {
+                idList = idList.substring(0,idList.length-1);
+                var printWin = window.open('tpl/<?=$tpl_print_incidents;?>?idlist='+idList);
+                printWin.focus();
+                printWin.print();
+            }
+            return false;
+		});
 		
 
 	
@@ -445,15 +428,6 @@
 		    	
 		    	
 		    	<button id="btn_print" class="overviewElements btn_right"><?=$Text['printout'];?></button>
-		    		<div id="printOptionsItems" class="hidden hideInPrint">
-					<ul>
-					 <li><a href="javascript:void(null)" id="printWindow"><?=$Text['print_new_win'];?></a></li>
-					 <li><a href="javascript:void(null)" id="printPDF"><?=$Text['print_pdf'];?></a></li>
-					</ul>
-					</div>		
-		   		<!-- button id="btn_zip" class="overviewElements">Zip</button-->
-		    	
-		    			
 		    </div>
 		</div>
 		

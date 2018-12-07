@@ -43,7 +43,6 @@
 	<script type="text/javascript" src="../js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../js/jqueryui/jqueryui.js"></script>
 	<?php echo aixada_js_src(false, '../'); ?>
-	<script type="text/javascript" src="../js/aixadautilities/loadPDF.js" ></script>
 	
  
 
