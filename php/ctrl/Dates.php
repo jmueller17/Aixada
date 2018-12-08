@@ -15,6 +15,8 @@ function extract_data($what) {
 }
 
 try{
+    validate_session(); // The user must be logged in.
+    
     $oper = extract_data('oper');
     $date = extract_data('date');
 

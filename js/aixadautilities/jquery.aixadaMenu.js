@@ -54,7 +54,7 @@ $(function(){
 		var rq_uri = window.location;
    		$.ajaxQueue({
    			type: "POST",
-            url: "php/ctrl/Cookie.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
+            url: "php/ctrl/AixadaSession.php?change_role_to=" + new_role + "&originating_uri=" + rq_uri,
             dataType: "xml",
             success:  function(xml){
 		window.location.href = $(xml).find('navigation').text(); 
@@ -86,7 +86,7 @@ $(function(){
 		var rq_uri = window.location;
    		$.ajaxQueue({
    			type: "POST",
-            url: "php/ctrl/Cookie.php?change_lang_to=" + new_lang + "&originating_uri=" + rq_uri,
+            url: "php/ctrl/AixadaSession.php?change_lang_to=" + new_lang + "&originating_uri=" + rq_uri,
             dataType: "xml",
             success:  function(xml){
             window.location.href = $(xml).find('navigation').text();

@@ -7,13 +7,9 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-
 try{
-  $op_id = $_SESSION['userdata']['uf_id'];
+  validate_session(); // The user must be logged in.
+    
   $user_id = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : '';
 
 

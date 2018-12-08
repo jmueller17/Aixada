@@ -16,10 +16,7 @@
  	<script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
    
     <?php 
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        $the_role = $_SESSION['userdata']['current_role'];
+        $the_role = get_current_role();
     ?>
 	<script type="text/javascript">
 	$(function(){

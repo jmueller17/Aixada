@@ -6,19 +6,10 @@ define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 
 require_once(__ROOT__ . "php/utilities/statistics.php");
 require_once(__ROOT__ . "php/utilities/visualization.php");
-
-
-$use_session_cache = true; 
-// This controls if the table_manager objects are stored in $_SESSION or not.
-// It looks like doing it cuts down considerably on execution time.
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-//DBWrap::get_instance()->debug = true;
+require_once __ROOT__ . "php/utilities/general.php";
 
 try{
+    validate_session(); // The user must be logged in.
     
     switch ($_REQUEST['oper']) {
 	    case 'uf':

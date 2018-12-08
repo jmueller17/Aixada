@@ -1,25 +1,22 @@
 <div id="logonStatus">
 	<p class="ui-widget">
 <?php 
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-    if ($_SESSION['userdata']['login'] != '') {
+    if (is_created_session()) {
         // Help
         echo '<a href="docs/index_' . get_session_language() . '.php" target="_blank">' .
             $Text['nav_help'] . '</a> | ';	
         
         // Login name and uf_id
-        echo  $Text['nav_signedIn'] . " " . $_SESSION['userdata']['login'] . 
-            " | " . $Text['uf_long'] . ' ' . $_SESSION['userdata']['uf_id'] .
-            " | " . $_SESSION['userdata']['provider_id'];
+        echo  $Text['nav_signedIn'] . " " . get_session_value('login'). 
+            " | " . $Text['uf_long'] . ' ' . get_session_value('uf_id') .
+            " | " . get_session_value('provider_id');
         
         // Select rol
         echo '<select size="0" name="role_select" id="role_select">';
-        foreach ($_SESSION['userdata']['roles'] as $role) {
+        foreach (get_session_value('roles') as $role) {
             echo '<option';
             $rt = (isset($Text[$role]) ? $Text[$role] : "TRANSLATE[$role]");
-            if ($role == $_SESSION['userdata']['current_role']) {
+            if ($role == get_current_role()) {
                 echo ' selected';
             }
             echo ' value="' . $role. '">' . $rt . '</option>'; 
@@ -30,11 +27,11 @@
         $cfg_use_shop = get_config('use_shop', 'order_and_stock');
         if (get_config('show_menu_language_select', false)) {
             echo '<select size="0" name="lang_select" id="lang_select">';
-            $keys = $_SESSION['userdata']['language_keys'];
-            $names = $_SESSION['userdata']['language_names'];
+            $keys = get_session_value('language_keys');
+            $names = get_session_value('language_names');
             for ($i=0; $i < count($keys); $i++) {
                 echo '<option';
-                if ($keys[$i] == $_SESSION['userdata']['language']) {
+                if ($keys[$i] == get_session_value('language')) {
                     echo ' selected';
                 }
                 echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
@@ -78,7 +75,7 @@
 			<ul>
 			<li>
             <?php 
-            	if($_SESSION['userdata']['current_role'] == 'Hacker Commission') {
+            	if (get_current_role() == 'Hacker Commission') {
      				echo '<a href="activate_all_roles.php">';
  				} else {
      				echo '<a href="activate_roles.php">';

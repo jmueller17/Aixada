@@ -9,17 +9,10 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 
-
-
-
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 DBWrap::get_instance()->debug = true;
 
 try{
-	
+	validate_session(); // The user must be logged in.
 	
     // first we process those requests that don't need to construct a cart manager
     switch (get_param('oper')) {
@@ -108,17 +101,17 @@ try{
     switch (get_param('what', $default='')) {
 	    case 'Shop':
 	        require_once(__ROOT__ . "php/lib/shop_cart_manager.php");
-	        $cm = new shop_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
+	        $cm = new shop_cart_manager(get_session_uf_id(), get_param('date')); 
 	        break;
 	      
 	    case 'Order':
 	        require_once(__ROOT__ . "php/lib/order_cart_manager.php");
-	        $cm = new order_cart_manager($_SESSION['userdata']['uf_id'], get_param('date')); 
+	        $cm = new order_cart_manager(get_session_uf_id(), get_param('date')); 
 	        break;
 	      
 	    case 'favorite_order':
 	        require_once(__ROOT__ . "php/lib/favorite_order_cart_manager.php");
-	        $cm = new favorite_order_cart_manager($_SESSION['userdata']['uf_id'], get_param('name')); 
+	        $cm = new favorite_order_cart_manager(get_session_uf_id(), get_param('name')); 
 	        break;
 	      
 	    default:

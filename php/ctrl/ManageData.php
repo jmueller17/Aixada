@@ -6,9 +6,6 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-if (!isset($_SESSION)) {
-    session_start();
-}
 $table_name = get_param('table');
 $oper = get_param('oper');
 if ($oper) {
@@ -16,6 +13,8 @@ if ($oper) {
         include_once(__ROOT__."php/ctrl/ManageData/{$table_name}.php");
         $data_manager = new data_manager();
         try {
+            validate_session(); // The user must be logged in.
+            
             switch ($oper) {
             case 'edit':
                 echo $data_manager->update($_REQUEST);

@@ -9,7 +9,15 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/incidents.php");
 
 try{
+    if (get_param('oper') === 'getIncidentsListing' && 
+        get_param('type', 1) == 3 // Incident sent to portal (used in login.php)
+    ) {
+        echo get_incidents_in_range(get_param('filter', 'prev2Month'), get_param('fromDate',0), get_param('toDate',0), get_param('type',1) );
+	    exit; 
+    }
 
+    validate_session(); // For all other requests, the user must be logged in
+    
     switch (get_param('oper')) {
     	    	
     	 case 'getIncidentTypes':

@@ -15,8 +15,7 @@
     }
     
 	/**
-	 * This function looks at the current_role written to the
-	 * cookie and the $_SESSION['userdata'] to determine if the table
+	 * This function looks at the current_role to determine if the table
 	 * currently requested may be edited by the user in the current role.
 	 */
     function may_edit_table($data_table) {
@@ -25,12 +24,9 @@
         if ($prefix !== 'aixada') {
             $table_aux = '_' . $prefix.$table_aux;
         }
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        if (isset($_SESSION['userdata'])) {
+        if (is_created_session()) {
             $rights_of = get_config('rights_of');
-            $current_role = $_SESSION['userdata']['current_role'];
+            $current_role = get_current_role();
             if (in_array('may_edit' . $table_aux, $rights_of[$current_role])) {
                 return true;
             }

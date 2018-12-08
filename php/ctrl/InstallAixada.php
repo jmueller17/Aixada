@@ -65,7 +65,7 @@ try{
                 ));
             } else {
                 // Do it!
-                $results .= "\n\nDone by: '{$_SESSION['userdata']['login']}' at " . date('Y-m-d H:i:s') . "\n\n";
+                $results .= "\n\nDone by: '" . get_session_login() . "' at " . date('Y-m-d H:i:s') . "\n\n";
                 
                 // Do a previous backup.
                 $results .= "\nA database backup has been created as:\n  "  .

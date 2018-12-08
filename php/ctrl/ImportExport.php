@@ -27,13 +27,9 @@ require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.
 ob_start();
 $firephp = FirePHP::getInstance(true);
 
-
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 try{ 
-   
+	validate_session(); // The user must be logged in.
+
 	global $firephp; 
 	
  	switch (get_param('oper')) {

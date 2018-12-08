@@ -13,7 +13,8 @@ require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 //DBWrap::get_instance()->debug = true;
 
 try{
-	
+  validate_session(); // The user must be logged in.
+  
   switch($_REQUEST['oper']) {
   	
 	  case 'listAllOrderableProviders':

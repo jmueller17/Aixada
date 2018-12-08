@@ -4,117 +4,171 @@ require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 
 /**
- * 
+ * Creates a Aixada session of the user.
+ */
+function create_session(
+        $user_id, 
+        $login, 
+        $uf_id, 
+        $member_id, 
+        $provider_id, 
+        $roles, 
+        $current_role, 
+        $language_keys, 
+        $language_names, 
+        $current_language_key, 
+        $theme
+    ) {
+    load_session();
+    $_SESSION['userdata'] = array(
+        'user_id' => $user_id,
+        'login' => $login,
+        'uf_id' => $uf_id, 
+        'member_id' => $member_id, 
+        'provider_id' => $provider_id,
+        'roles' => $roles,
+        'current_role' => $current_role,
+        'language_keys' => $language_keys,
+        'language_names' => $language_names,
+        'language' => $current_language_key,
+        'theme' => $theme
+    );
+    save_session();
+} 
+
+/**
+ * Load php session if is not yet loaded.
+ */
+function load_session() {
+    if (!isset($_SESSION)) {
+         session_start();
+    }
+}
+
+/**
+ * Determines if the Aixada session of the user exist, returns true/false
+ */
+function is_created_session() {
+    load_session();
+    return isset($_SESSION['userdata']);
+}
+
+/**
+ * Logout Aixada session destroying php session.
+ */
+function logout_session() {
+    load_session();
+    session_unset();
+    session_destroy();
+}
+
+/**
+ * Save Aixada session (only used in this general.php)
+ */
+function save_session() {
+    session_commit();
+}
+
+/**
+ * Validate the Aixada session, throw error if the user is not logged in.
+ */
+function validate_session() {
+    load_session();
+    if (!isset($_SESSION['userdata'])) {
+        throw new AuthException("Not logged in");
+    }
+}
+
+/**
+ * Returns a value of the Aixada session, throw error if is not logged in.
+ */
+function get_session_value($name) {
+    validate_session();
+    return $_SESSION['userdata'][$name];
+}
+
+/**
  * Returns the user_id of the logged user; wraps a check around this, in order to make sure
  * the value is set. 
  */
 function get_session_user_id() {
-	if (!isset($_SESSION)) {
-        session_start();
-    }
-	if (isset($_SESSION['userdata']['user_id']) && $_SESSION['userdata']['user_id'] > 0 ) {
-		return $_SESSION['userdata']['user_id'];
-	} else {
-		throw new Exception("Session data user_id is not set!! ");
-	}
+    return get_session_value('user_id');
 }
 
-
 /**
- * 
  * returns the uf of the logged user. 
  */
 function get_session_uf_id() {
-	if (!isset($_SESSION)) {
-        session_start();
-    }
-	if (isset($_SESSION['userdata']['uf_id']) && $_SESSION['userdata']['uf_id'] > 0 ) {
-		return $_SESSION['userdata']['uf_id'];
-	} else {
-		throw new Exception("Session data uf_id is not set!! ");
-	}
+    return get_session_value('uf_id');
 }
 
-
 /**
- * 
  * Returns the member_id of the logged user. 
  */
 function get_session_member_id() {
-	if (!isset($_SESSION)) {
-        session_start();
-    }
-	if (isset($_SESSION['userdata']['member_id']) && $_SESSION['userdata']['member_id'] > 0 ) {
-		return $_SESSION['userdata']['member_id'];
-	} else {
-		throw new Exception("Session data member_id is not set!! ");
-	}	
+    return get_session_value('member_id');
 }
 
 /**
- * 
  * Returns the login of the logged user. 
  */
 function get_session_login() {
-	if (!isset($_SESSION)) {
-        session_start();
-    }
-	if (isset($_SESSION['userdata']['login']) && $_SESSION['userdata']['login'] != "") {
-		return $_SESSION['userdata']['login'];
-	} else {
-		throw new Exception("Session data login is not set!! ");
-	}	
+    return get_session_value('login');
 }
 
-
 /**
- * 
  * returns the language for the logged user
  */
 function get_session_language() {
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-    if (isset($_SESSION['userdata']['language']) and $_SESSION['userdata']['language'] != '') {
+    if (is_created_session()) {
         return $_SESSION['userdata']['language'];
     } else {
         return configuration_vars::get_instance()->default_language;
     }
 }
 
-
 /**
- * 
  * returns the theme for the logged user
  */
 function get_session_theme() {
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-    if (isset($_SESSION['userdata']['theme']) and $_SESSION['userdata']['theme'] != '') {
+    if (is_created_session()) {
 		return $_SESSION['userdata']['theme'];
     } else {
 		return	configuration_vars::get_instance()->default_theme;
     }	 
 }
 
-
 /**
- * 
  * retrieves active role of the logged user
  */
 function get_current_role()
 {
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-	 if (isset($_SESSION['userdata']['current_role']) and $_SESSION['userdata']['current_role'] != '') {
-		return $_SESSION['userdata']['current_role'];
-    } else {
-		return false; 
-    }
+    return get_session_value('current_role'); 
 }
 
+/**
+* Changes the role of a user. Information is written to $_SESSION['userdata'].
+*/
+function change_session_role($new_role) {
+    validate_session();
+    if (!in_array($new_role, $_SESSION['userdata']['roles'])) {
+        throw new AuthException("Not logged in role");
+    }
+    $_SESSION['userdata']['current_role'] = $new_role;
+    save_session();
+}
+
+/**
+* Changes the language of a user. Information is written to $_SESSION['userdata'].
+*/
+function change_session_language($new_language_key) {
+    validate_session();
+    if (!in_array($new_language_key, $_SESSION['userdata']['language_keys'])) {
+        throw new AuthException("Language is not valid");
+    }
+    $_SESSION['userdata']['language'] = $new_language_key;
+    save_session();
+}
 
 /**
  * 

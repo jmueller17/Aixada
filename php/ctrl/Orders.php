@@ -9,7 +9,7 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/orders.php");
 
 try{
-	
+	validate_session(); // The user must be logged in.
 
     switch (get_param('oper')) {
     	

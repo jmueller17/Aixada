@@ -37,10 +37,7 @@ function get_options()
       $options['filter'] .= ' and ';
     }
     
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-    $uf_id = 1000 + (int)($_SESSION['userdata']['uf_id']);
+    $uf_id = 1000 + (int)(get_session_uf_id());
     $options['filter'] .= "aixada_account.account_id=$uf_id";
     // we do this here so that the user can't hijack other users' account data 
     //by mangling the request in the browser
@@ -117,7 +114,7 @@ function post_edit_hook($request)
 	$db = DBWrap::get_instance();
 	$row = $db->Execute("select current_price from aixada_price where product_id=:1", $request['id'])->fetch_array();
 	if ($row[0] != $request['unit_price']) {
-	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], $_SESSION['userdata']['user_id']);
+	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], get_session_user_id());
 	}
 	break;
     default:
@@ -129,7 +126,7 @@ function post_create_hook($index, $request)
 {
     switch ($request['table']) {
     case 'aixada_product': 
-	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], $_SESSION['userdata']['user_id']);
+	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], get_session_user_id());
 	break;
     default:
 	break;
@@ -140,6 +137,8 @@ function post_create_hook($index, $request)
 
 
 try{
+  validate_session(); // The user must be logged in.
+  
   $special_table = ($_REQUEST['table'] == "aixada_user");
 
   if (!isset($_REQUEST['oper']))

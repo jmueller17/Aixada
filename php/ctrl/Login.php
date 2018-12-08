@@ -9,7 +9,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/inc/authentication.inc.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/exceptions.php");
-require_once(__ROOT__ . 'php/inc/cookie.inc.php');
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start();
@@ -25,8 +24,7 @@ try{
 	  case 'logout':
 	      try {
 		  	  //global $firephp;
-	        $cookie=new Cookie();
-	        $cookie->logout();
+	        logout_session();
 		  	$h = 'Location:' . __ROOT__ . 'login.php';
 	      } 
 	      catch (AuthException $e) {
@@ -54,7 +52,7 @@ try{
 	               $theme) = $auth->check_credentials(get_param('login'), get_param('password'));
 	      	  
 	          $langs = existing_languages();
-	          $cookie = new Cookie(true, 
+	          create_session( 
 	                               $user_id, 
 	                               $login, 
 	                               $uf_id, 

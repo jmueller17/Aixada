@@ -13,7 +13,7 @@ require_once(__ROOT__ . "php/lib/validation_cart_manager.php");
 DBWrap::get_instance()->debug = true;
 
 try{
-
+  validate_session(); // The user must be logged in.
 	
   switch (get_param('oper')) {
 

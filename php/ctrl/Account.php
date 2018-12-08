@@ -9,6 +9,8 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/account_operations.php");
 
 try{ 
+    validate_session(); // The user must be logged in.
+    
    	$ao = new account_operations();
  	switch ($_REQUEST['oper']) {
         case 'getAccounts':
