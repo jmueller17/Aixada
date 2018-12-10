@@ -31,7 +31,11 @@ function create_session(
         'language_keys' => $language_keys,
         'language_names' => $language_names,
         'language' => $current_language_key,
-        'theme' => $theme
+        'theme' => $theme,
+        'cli_addr' => $_SERVER['REMOTE_ADDR'],
+        'cli_agent' => $_SERVER['HTTP_USER_AGENT'],
+        't_created' => time(),
+        't_saved' => time()
     );
     save_session();
 } 
@@ -58,6 +62,7 @@ function is_created_session() {
  */
 function logout_session() {
     load_session();
+    session_regenerate_id(true);
     session_unset();
     session_destroy();
 }
@@ -66,6 +71,7 @@ function logout_session() {
  * Save Aixada session (only used in this general.php)
  */
 function save_session() {
+    $_SESSION['userdata']['t_saved'] = time();
     session_commit();
 }
 
@@ -76,6 +82,17 @@ function validate_session() {
     load_session();
     if (!isset($_SESSION['userdata'])) {
         throw new AuthException("Not logged in");
+    }
+    if ((time() - $_SESSION['userdata']['t_saved']) > 30 * 86400 || // More than 30 days inactive
+        $_SESSION['userdata']['cli_addr'] !== $_SERVER['REMOTE_ADDR'] || // Client IP address is changed
+        $_SESSION['userdata']['cli_agent'] !== $_SERVER['HTTP_USER_AGENT'] // Client browser is changed
+    ) {
+        logout_session();
+        throw new AuthException("Not logged in");
+    } 
+    if ((time() - $_SESSION['userdata']['t_saved']) > 15 * 60) { // > 15 min
+        save_session();
+        load_session();
     }
 }
 

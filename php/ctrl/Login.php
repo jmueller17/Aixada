@@ -50,6 +50,12 @@ try{
 	               $current_role, 
 	               $current_language_key, 
 	               $theme) = $auth->check_credentials(get_param('login'), get_param('password'));
+              /* FIXME
+                    There a security issues here: 'login' and 'password' are posted unencrypted, and so is visible to everyone!
+                    Even encrypting the username/password is no solution, because anyone who intercepts the communication
+                    can just send the encrypted text without knowing what it decrypts to, but can log in anyways.
+                    The solution could be to implement an SSL protocol.
+              */
 	      	  
 	          $langs = existing_languages();
 	          create_session( 
