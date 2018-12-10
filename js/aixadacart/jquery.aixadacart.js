@@ -143,7 +143,11 @@
   									
   							    },
   							   error : function(XMLHttpRequest, textStatus, errorThrown){
-  							    	$this.data('aixadacart').submitError.call($this,XMLHttpRequest.responseText);
+                                    if (XMLHttpRequest.responseText === $.aixadaUtilities_lang.NOT_LOGGED_IN) {
+                                        $.AixadaNotLoggedInMsg();
+                                    } else {
+                                        $this.data('aixadacart').submitError.call($this,XMLHttpRequest.responseText);
+                                    }
   							    	//alert(errorThrown);
   							    	
   							    	//updateCartTips.call($this,'error',XMLHttpRequest.responseText);

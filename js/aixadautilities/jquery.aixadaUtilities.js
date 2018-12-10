@@ -323,6 +323,22 @@ $(function(){
 		closeMsg : function(){
 			$('#aixada_msg').dialog( "close" );
 			
+		},
+		AixadaNotLoggedInMsg: function() {
+		    var buttonClick = {};
+		    buttonClick[$.aixadaUtilities_lang.btn_ok] = function(){
+		        $(this).dialog("close");
+		        window.location.href = 'login.php';
+		    };
+		    $.showMsg({
+		        title: $.aixadaUtilities_lang.not_logged_in,
+		        msg:   $.aixadaUtilities_lang.must_identify,
+		        buttons: buttonClick,
+		        type: 'error'
+		    });
+		    $("#aixada_msg").on("dialogclose", function() {
+		        window.location.href = 'login.php';
+		    });
 		}
 	});
 	

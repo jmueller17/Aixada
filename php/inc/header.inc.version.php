@@ -4,4 +4,4 @@
  * Do not edit it, but instead run
  * php make_canned_responses.php
  */
-$aixada_vesion_lastDate = '20170304_234636';
+$aixada_vesion_lastDate = '20181210_140125';
