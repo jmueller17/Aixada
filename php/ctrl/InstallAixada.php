@@ -16,32 +16,44 @@ $LOG_FOLDER = 'local_config/dbBkups/';
 
 try{
     switch (get_param('oper')) {
+        case 'aixada_check':
+            logInstall('--> Check install');
+            
+            $response = (CheckExistAndLogin() ? "Update Aixada" : "INSTALL: A new Aixada");
+            logInstall("Is: '{$response}'");
+            echo $response;
+            exit;
         case 'aixada_update':
-            logInstall('--> Stat install');
+            logInstall('--> Start install');
+            
+            $existAixada = CheckExistAndLogin();
+            
+            // Start info.
+            $sysVarsChar = get_row_query("SELECT *
+                        FROM performance_schema.session_variables
+                        WHERE VARIABLE_NAME = 'character_set_results'");
+            $sysVarsColl = get_row_query("SELECT *
+                        FROM performance_schema.session_variables
+                        WHERE VARIABLE_NAME = 'collation_connection'");
+            $results = 
+                ($existAixada ?
+                    'Aixada database update' :
+                    'Aixada database NEW INSTALL') .
+                    ' | Using PHP v' . PHP_VERSION . "\n" .
+                'MySQL: host="' . get_config('db_host') . 
+                    '" database="' . get_config('db_name') .
+                    '" user="' . get_config('db_user') . "\"\n" .
+                'Character_set="' . $sysVarsChar['VARIABLE_VALUE'] .
+                    '" collation="' . $sysVarsColl['VARIABLE_VALUE'] .
+                    "\"\n";
+
+            // Do it.
             $db = connect_by_mysqli(     
                 get_config('db_host'),
                 get_config('db_name'),
                 get_config('db_user'),
                 get_config('db_password')
             );
-            $existAixada = get_row_query("SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_uf'");
-            
-            // Start info.
-            $results = 
-                'Aixada database install | Using PHP v' . PHP_VERSION . "\n" .
-                'MySQL: host="' . get_config('db_host') . 
-                    '" database="' . get_config('db_name') .
-                    '" user="' . get_config('db_user') . "\"\n" .
-                'Character_set="' .
-                    get_row_query("SELECT *
-                        FROM performance_schema.session_variables
-                        WHERE VARIABLE_NAME = 'character_set_results'")['VARIABLE_VALUE'] .
-                    '" collation="' .
-                    get_row_query("SELECT *
-                        FROM performance_schema.session_variables
-                        WHERE VARIABLE_NAME = 'collation_connection'")['VARIABLE_VALUE'] .
-                    "\"\n";
-
             if (!$existAixada) {
                 // Create tables
                 $mode = 'Create';
@@ -52,29 +64,6 @@ try{
                     'setup/aixada_insert_default_user.sql'
                 ));
             } else {
-                $isUpdatable = !!get_row_query(
-                    "SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_price'"
-                );
-                if (!$isUpdatable) {
-                    throw new Exception("The version of Aixada is previous to 2.7!\n" .
-                        "It must be updated manually!!\n\n" .
-                        "(see 'sql/dbUpgradeTo2.6.2.sql' and also previous versions)"
-                    );
-                }
-                // Logged options
-                if (!isset($_SESSION)) {
-                    session_start();
-                }
-                if (!isset($_SESSION['userdata']) || 
-                    !isset($_SESSION['userdata']['roles']) || 
-                    !isset($_SESSION['userdata']['login'])
-                ) {
-                    throw new Exception('Must identify as a user before starting an database update!');
-                }
-                if (!in_array('Hacker Commission', $_SESSION['userdata']['roles'])) {
-                    throw new Exception('Only a user with role "Hacker Commission" can do an database update!');
-                }
-                
                 // Do it!
                 $results .= "\n\nDone by: '{$_SESSION['userdata']['login']}' at " . date('Y-m-d H:i:s') . "\n\n";
                 
@@ -140,4 +129,36 @@ function logInstall($text) {
         );
     } catch(Exception $e) {
     }
+}
+
+function CheckExistAndLogin() {
+    $existAixada = get_row_query("SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_uf'");
+    if ($existAixada) {
+        // Logged options
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        if (!isset($_SESSION['userdata']) || 
+            !isset($_SESSION['userdata']['roles']) || 
+            !isset($_SESSION['userdata']['login'])
+        ) {
+            throw new Exception("Must identify as a user before starting an database update!
+            <br><a href=\"login.php?\">login</a>");
+        }
+        if (!in_array('Hacker Commission', $_SESSION['userdata']['roles'])) {
+            throw new Exception("Only a user with role \"Hacker Commission\" can do an database update!
+            <br><a href=\"login.php?\">login</a>");
+        }
+        // Is updatable?
+        $isUpdatable = !!get_row_query(
+            "SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_price'"
+        );
+        if (!$isUpdatable) {
+            throw new Exception("The version of Aixada is previous to 2.7!\n" .
+                "It must be updated manually!!\n\n" .
+                "(see 'sql/dbUpgradeTo2.6.2.sql' and also previous versions)"
+            );
+        }
+    }
+    return $existAixada;
 }
