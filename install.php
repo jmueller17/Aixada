@@ -47,8 +47,9 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             <div id="titlewrap">
                 <h1>Install or uptate Aixada database</h1>
             </div>
-            <p id="msg_link">Confirm to do procedures!</p>
-            <br/><br/>
+            <h2 id="install_mode" style="color: blue;"></h2>
+            <p id="msg_link">Confirm to do procedure!</p>
+            <br/>
             <p>
                 <span class="loadAnim floatLeft hidden">
                     <img src="img/ajax-loader_fff.gif"/>
@@ -73,7 +74,7 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
                     $('#install_log')
                         .removeClass('warningStart correctEnd wrongEnding')
                         .hide();
-                    $('#btn_install').button('option', 'disabled', true);
+                    $('#btn_install').button("disable");
                 },
                 success: function(msg) {
                     $('#install_log').addClass('logMessage correctEnd').text(msg).show();
@@ -84,15 +85,46 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
                         .text(XMLHttpRequest.responseText)
                         .show();
                     $.showMsg({
-                        msg: 'An error has occured during the db install!',
+                        msg: 'An error has occured during the db install!' + 
+                            '<br><b>' + XMLHttpRequest.responseText + '</b>',
                         type: 'error'
                     });
                 },
                 complete : function(msg) {
                    $('.loadAnim').hide();
-                   $('#btn_install').button('option', 'disabled', false);
                 }
             });
+        });
+        
+        $.ajax({
+            url: 'php/ctrl/InstallAixada.php?oper=aixada_check',
+            beforeSend: function() {
+                $('.loadAnim').show();
+                $('#install_log')
+                    .removeClass('warningStart correctEnd wrongEnding')
+                    .hide();
+                $('#btn_install').button("disable");
+            },
+            success: function(msg) {
+                $('#install_mode').text(msg).show();
+                $('#btn_install').button("enable");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $('#install_mode').text('').hide();
+                $('#install_log')
+                    .addClass('logMessage wrongEnding')
+                    .text(XMLHttpRequest.responseText)
+                    .show();
+                $('#btn_install').button("disable");
+                $.showMsg({
+                    msg: 'Previous verification warning' + 
+                        '<br><hr><span style="color: #777">' + XMLHttpRequest.responseText + '</span>',
+                    type: 'warning'
+                });
+            },
+            complete : function(msg) {
+               $('.loadAnim').hide();
+            }
         });
     </script>
 </body>
