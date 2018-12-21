@@ -135,19 +135,14 @@ function CheckExistAndLogin() {
     $existAixada = get_row_query("SELECT table_name FROM information_schema.tables where table_schema=DATABASE() and table_name='aixada_uf'");
     if ($existAixada) {
         // Logged options
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        if (!isset($_SESSION['userdata']) || 
-            !isset($_SESSION['userdata']['roles']) || 
-            !isset($_SESSION['userdata']['login'])
-        ) {
+        if (!is_created_session()) {
             throw new Exception("Must identify as a user before starting an database update!
-            <br><a href=\"login.php?\">login</a>");
+            <br><a target=\"_blank\" href=\"login.php?\">login</a>");
         }
-        if (!in_array('Hacker Commission', $_SESSION['userdata']['roles'])) {
+        $roles = get_session_value('roles');
+        if (!in_array('Hacker Commission', $roles)) {
             throw new Exception("Only a user with role \"Hacker Commission\" can do an database update!
-            <br><a href=\"login.php?\">login</a>");
+            <br><a target=\"_blank\" href=\"login.php?\">login</a>");
         }
         // Is updatable?
         $isUpdatable = !!get_row_query(

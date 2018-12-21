@@ -83,6 +83,14 @@ function validate_session() {
     if (!isset($_SESSION['userdata'])) {
         throw new AuthException("Not logged in");
     }
+    // For compatibility with old versions the creation tate is forced if it does not exist.
+    if (!isset($_SESSION['userdata']['t_saved'])) {
+        $_SESSION['userdata']['t_saved'] = time();
+        $_SESSION['userdata']['cli_addr'] = $_SERVER['REMOTE_ADDR'];
+        $_SESSION['userdata']['cli_agent'] = $_SERVER['HTTP_USER_AGENT'];
+    }
+
+    // Check if the session is still valid.
     if ((time() - $_SESSION['userdata']['t_saved']) > 30 * 86400 || // More than 30 days inactive
         $_SESSION['userdata']['cli_addr'] !== $_SERVER['REMOTE_ADDR'] || // Client IP address is changed
         $_SESSION['userdata']['cli_agent'] !== $_SERVER['HTTP_USER_AGENT'] // Client browser is changed
