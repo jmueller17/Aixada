@@ -155,7 +155,7 @@ class abstract_import_manager {
     	}
 
   	
-        if (count($data_table) == 0){
+        if ($data_table->count() == 0){
     		throw new Exception ("Import error: the data table is empty. Nothing to import!!");
     		exit; 
     	} else {
@@ -422,7 +422,7 @@ class abstract_import_manager {
     	
     	$this->_foreign_keys = array();
     	foreach ($key_array as $db_field=>$refs){
-    		if (isset($refs) && count($refs) > 1){
+    		if (isset($refs) && $refs && count($refs) > 1){
 	    		$sql = "select ". $refs[1]." from " . $refs[0];
 	    		$rs =  $db->Execute($sql);
 	    		$ids = array();
@@ -536,7 +536,7 @@ class abstract_import_manager {
         }
         
     	$rowc = 0;
-  		$_data_table = null; 
+  		$_data_table = array(); 
   		$_header = false; 		
 
   		$extension = substr($path2File, -4);
