@@ -29,12 +29,6 @@ try{
             $existAixada = CheckExistAndLogin();
             
             // Start info.
-            $sysVarsChar = get_row_query("SELECT *
-                        FROM performance_schema.session_variables
-                        WHERE VARIABLE_NAME = 'character_set_results'");
-            $sysVarsColl = get_row_query("SELECT *
-                        FROM performance_schema.session_variables
-                        WHERE VARIABLE_NAME = 'collation_connection'");
             $results = 
                 ($existAixada ?
                     'Aixada database update' :
@@ -42,10 +36,7 @@ try{
                     ' | Using PHP v' . PHP_VERSION . "\n" .
                 'MySQL: host="' . get_config('db_host') . 
                     '" database="' . get_config('db_name') .
-                    '" user="' . get_config('db_user') . "\"\n" .
-                'Character_set="' . $sysVarsChar['VARIABLE_VALUE'] .
-                    '" collation="' . $sysVarsColl['VARIABLE_VALUE'] .
-                    "\"\n";
+                    '" user="' . get_config('db_user') . "\"\n";
 
             // Do it.
             $db = connect_by_mysqli(     
