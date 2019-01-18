@@ -8,13 +8,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/dates.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-
 DBWrap::get_instance()->debug = true;
 
 function extract_data($what) {
@@ -22,6 +15,8 @@ function extract_data($what) {
 }
 
 try{
+    validate_session(); // The user must be logged in.
+    
     $oper = extract_data('oper');
     $date = extract_data('date');
 

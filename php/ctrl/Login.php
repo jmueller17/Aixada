@@ -9,11 +9,6 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/inc/authentication.inc.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/exceptions.php");
-require_once(__ROOT__ . 'php/inc/cookie.inc.php');
-
-if (!isset($_SESSION)) {
-    session_start();
-}
 
 require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
 ob_start();
@@ -29,8 +24,7 @@ try{
 	  case 'logout':
 	      try {
 		  	  //global $firephp;
-	        $cookie=new Cookie();
-	        $cookie->logout();
+	        logout_session();
 		  	$h = 'Location:' . __ROOT__ . 'login.php';
 	      } 
 	      catch (AuthException $e) {
@@ -56,9 +50,15 @@ try{
 	               $current_role, 
 	               $current_language_key, 
 	               $theme) = $auth->check_credentials(get_param('login'), get_param('password'));
+              /* FIXME
+                    There a security issues here: 'login' and 'password' are posted unencrypted, and so is visible to everyone!
+                    Even encrypting the username/password is no solution, because anyone who intercepts the communication
+                    can just send the encrypted text without knowing what it decrypts to, but can log in anyways.
+                    The solution could be to implement an SSL protocol.
+              */
 	      	  
 	          $langs = existing_languages();
-	          $cookie = new Cookie(true, 
+	          create_session( 
 	                               $user_id, 
 	                               $login, 
 	                               $uf_id, 
@@ -70,13 +70,10 @@ try{
 	                               array_values($langs), 
 	                               $current_language_key,
 	                               $theme);
-	
-	          $cookie->set();
 	      }	catch (AuthException $e) {
 		  	header("HTTP/1.1 401 Unauthorized " . $e->getMessage());
 	        die($e->getMessage());
 	      }	
-	      print $cookie->package();
 	      exit; 
 	      	
 	  default:

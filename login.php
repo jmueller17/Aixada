@@ -3,13 +3,11 @@ require_once("php/inc/header.inc.base.php");
 
 require_once(__ROOT__ . 'php'.DS.'inc'.DS.'authentication.inc.php');
 
-// This controls if the table_manager objects are stored in $_SESSION or not.
-// It looks like doing it cuts down considerably on execution time.
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-
 if (!isset($_SESSION)) {
     session_start();
- }
+    $_SESSION['aixada'] = true;
+    session_commit(); // Force write session to create it and able to open $_SESSION faster.
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -41,9 +39,6 @@ if (!isset($_SESSION)) {
 	<script type="text/javascript">
 		$(function(){
 			$.ajaxSetup({ cache: false });
-
-			document.cookie = 'USERAUTH=';
-			
 			/**
 			 *	logon stuff
 			 */
@@ -55,21 +50,7 @@ if (!isset($_SESSION)) {
 					type: "POST",
                     url: "php/ctrl/Login.php?oper=login",
 					data:dataSerial,		
-					success: function(returned_cookie){
-					    /*
-					      FIXME
-					      there are two very basic security issues here:
-					      1. the dataSerial is posted unencrypted, and so is visible to everyone!
-					      Even encrypting the username/password is no solution, because anyone who intercepts the communication
-					      can just send the encrypted text without knowing what it decrypts to, but can log in anyways.
-					      The solution could be to implement an SSL protocol.
-					      2. The cookie never expires.
-					      This has two parts: here in document.cookie we could set an expiry date;
-					      on the other hand, if the cookie is seen to have expired in cookie.inc.php, 
-					      it is just renewed without any consequence.
-					     */
-					    document.cookie = 'USERAUTH=' + escape(returned_cookie);
-					    
+					success: function() {
 					    top.location.href = 'index.php';
 					    
 					},

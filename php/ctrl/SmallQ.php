@@ -9,14 +9,12 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
-if (!isset($_SESSION)) {
-    session_start();
- }
 
 global $Text; 
 
 try{
-
+    validate_session(); // The user must be logged in.
+    
     switch ($_REQUEST['oper']) {
 
 	    case 'configMenu':
@@ -40,7 +38,7 @@ try{
 	        printXML(existing_languages_XML());
 	        exit;
 	        
-	    //returns a list of all active providers for shopping (ony name and id). 
+	    //returns a list of all active providers for shopping (only name and id). 
 		case 'getActiveProviders':
 			printXML(stored_query_XML_fields('get_all_active_providers'));
 			exit;

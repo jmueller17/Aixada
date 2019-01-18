@@ -42,7 +42,9 @@
 
 
 		//show/hide reset pwd. 
-		var isAdmin = "<?=$_SESSION['userdata']['current_role'];?>";
+		var isAdmin = "<?php
+            echo get_current_role();
+        ?>";
 		isAdmin = (isAdmin == "Hacker Commission")? true:false; 
 
 			

@@ -7,18 +7,8 @@ require_once(__ROOT__ . "local_config/config.php");
 require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-              
 require_once(__ROOT__ . 'local_config/lang/' . get_session_language() . '.php');
 require_once(__ROOT__ . "php/utilities/tables.php");
-
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-$use_canned_responses = configuration_vars::get_instance()->use_canned_responses;
-
-
 
 function get_columns_as_JSON()
 {
@@ -46,7 +36,8 @@ function get_options()
     if (strlen($options['filter'])>0) {
       $options['filter'] .= ' and ';
     }
-    $uf_id = 1000 + (int)($_SESSION['userdata']['uf_id']);
+    
+    $uf_id = 1000 + (int)(get_session_uf_id());
     $options['filter'] .= "aixada_account.account_id=$uf_id";
     // we do this here so that the user can't hijack other users' account data 
     //by mangling the request in the browser
@@ -123,7 +114,7 @@ function post_edit_hook($request)
 	$db = DBWrap::get_instance();
 	$row = $db->Execute("select current_price from aixada_price where product_id=:1", $request['id'])->fetch_array();
 	if ($row[0] != $request['unit_price']) {
-	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], $_SESSION['userdata']['user_id']);
+	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], get_session_user_id());
 	}
 	break;
     default:
@@ -135,7 +126,7 @@ function post_create_hook($index, $request)
 {
     switch ($request['table']) {
     case 'aixada_product': 
-	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], $_SESSION['userdata']['user_id']);
+	DBWrap::get_instance()->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $index, $request['unit_price'], get_session_user_id());
 	break;
     default:
 	break;
@@ -146,6 +137,8 @@ function post_create_hook($index, $request)
 
 
 try{
+  validate_session(); // The user must be logged in.
+  
   $special_table = ($_REQUEST['table'] == "aixada_user");
 
   if (!isset($_REQUEST['oper']))
@@ -186,8 +179,7 @@ try{
 
   require_once(__ROOT__ . 'php/lib/table_manager.php');
   if (!$special_table)
-    $tm = new table_manager($_REQUEST['table'], 
-			    configuration_vars::get_instance()->use_session_cache);
+    $tm = new table_manager($_REQUEST['table']);
 
   switch ($_REQUEST['oper']) {
   case 'get_by_id':

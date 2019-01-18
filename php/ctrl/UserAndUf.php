@@ -8,14 +8,8 @@ require_once(__ROOT__ . "php/inc/database.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/utilities/useruf.php");
 
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
-
 try{
-   
+  validate_session(); // The user must be logged in.
 
   switch ($_REQUEST['oper']) {
   	    

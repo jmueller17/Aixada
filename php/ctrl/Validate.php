@@ -10,16 +10,10 @@ require_once(__ROOT__ . "php/utilities/dates.php");
 require_once(__ROOT__ . "php/utilities/shop_and_order.php");
 require_once(__ROOT__ . "php/lib/validation_cart_manager.php");
 
-$use_session_cache = configuration_vars::get_instance()->use_session_cache;
-
-if (!isset($_SESSION)) {
-    session_start();
- }
-
 DBWrap::get_instance()->debug = true;
 
 try{
-
+  validate_session(); // The user must be logged in.
 	
   switch (get_param('oper')) {
 

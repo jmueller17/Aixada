@@ -164,8 +164,15 @@
 									},//end success
 									
 									error : function(XMLHttpRequest, textStatus, errorThrown){
-	  							    	alert('An error "' + errorThrown + '", status "' + textStatus + '" occurred during loading data: ' + XMLHttpRequest.responseText);
-
+                                        if (XMLHttpRequest.responseText === $.aixadaUtilities_lang.NOT_LOGGED_IN) {
+                                            $.AixadaNotLoggedInMsg();
+                                        } else {
+                                            alert('An error "' + errorThrown + 
+                                                '", status "' + textStatus + 
+                                                '" occurred during loading data: ' +
+                                                XMLHttpRequest.responseText
+                                            );
+                                        }
 	  							    },
 	  							   complete : function(msg){
 	  							 	

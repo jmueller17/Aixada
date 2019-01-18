@@ -27,10 +27,9 @@ require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.
 ob_start();
 $firephp = FirePHP::getInstance(true);
 
-
-
 try{ 
-   
+	validate_session(); // The user must be logged in.
+
 	global $firephp; 
 	
  	switch (get_param('oper')) {
@@ -104,7 +103,8 @@ try{
                 }
             }
 			echo $dt->get_html_table();
-			$_SESSION['import_file'] = $path; 
+			$_SESSION['import_file'] = $path;
+            session_commit();
  			exit;
 
  	

@@ -5,8 +5,6 @@ if (!defined('__ROOT__')) {
 }
 
 require_once("header.inc.version.php"); // To obtain: $aixada_vesion_lastDate
-require_once(__ROOT__ . 'php'.DS.'inc'.DS.'cookie.inc.php');
-//require_once(__ROOT__ . 'php'.DS.'lib'.DS.'exceptions.php'); Is required by 'cookie.inc.php'
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
@@ -31,7 +29,9 @@ function aixada_js_src($useMenus = true, $rootJs = '') {
     }
     $src .= "
         <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaXML2HTML.js?v={$aixada_vesion_lastDate}\"></script>
-        <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaUtilities.js?v={$aixada_vesion_lastDate}\"></script>";
+        <script src=\"{$rootJs}js/aixadautilities/jquery.aixadaUtilities.js?v={$aixada_vesion_lastDate}\"></script>
+        <script src=\"{$rootJs}js/aixadautilities/i18n/aixadaUtilities-" . get_session_language() . 
+            ".js?v={$aixada_vesion_lastDate}\"></script>";
     if (get_config('use_ajaxQueue')) {
         $src .= "
         <script src=\"{$rootJs}js/jquery-ajaxQueue/jQuery.ajaxQueue.js?v={$aixada_vesion_lastDate}\"></script>";
