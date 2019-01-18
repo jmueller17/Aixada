@@ -146,7 +146,13 @@ class data_table {
 		}
 	}//end constructor
 	
-	
+    /**
+     * Returns the number of table rows
+     */
+    public function count() {
+        return count($this->_data_table);
+    }
+    
 	/**
 	 * 
 	 * Returns the row index of the data table by search for the given $needle in the specified column
