@@ -9,6 +9,20 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
 
 ***
 
+# Cambios año 2019
+
+## Mejoras
+
+### Aixada funciona en PHP7.
+  * Se han arreglado diversos problema, ahora también funciona con PHP7.
+  
+### Mejoras de seguridad
+  * Se ha cambiado la gestión de sesiones.
+  * Ahora las sesiones inactivas más de 30 días se cierran automáticamente.
+  * Se han subsanado alguno problemas de seguridad.
+
+***
+
 # Cambios año 2018
 
 ## Mejoras
@@ -16,7 +30,7 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
 ### Hacer pedidos y compras
   *  Solo permitir productos de stock en compras (:bulb:`config.php`:
    `$use_shop='only_stock'`)
-  * Al hacer pedidos apare una lista de botones con las fechas activas (visión
+  * Al hacer pedidos aparece una lista de botones con las fechas activas (visión
     alternativa al calendario).  
     Si hay pedidos acumulativos activos el primer botón de fechas permite acceder
     a ellos (se han eliminado las pestañas de acumulativos)
@@ -28,7 +42,6 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
     
 ### Otras mejoras
   * Instalación y actualización automática de Aixada vía `install.php`.
-
     
 ## Corrección de errores
   * Se arreglas la cancelación de pedidos acumulativos.
@@ -36,8 +49,10 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
     la fecha 1234-01-23 se informa que és un pedido acumulativo.
   * #233 Arreglar que no se puedan cambiar productos de anotaciones si el pedido
     está cerrado.
+  * #230 Arreglar algunos informes que fallaban.
   * #227 Al activar perdidos para una fecha evitar parpadeo y perder el foco del
     menú desplegado.
+  * #228 Error "cut GROUP_CONCAT()" al consultar algún miembro.
   * #229 Los informes de compras y pedidos por UF no funcionaban.
 
 ***
@@ -86,12 +101,12 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
   * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`)
 
 ### Corrección de errores
-  * #205, #206 Al hacer pedidos se combrueva que el pedido no esté ya cerrado.
+  * #205, #206 Al hacer pedidos se comprueba que el pedido no esté ya cerrado.
   * #204 Usar precio final también en pedidos acumulativos.
   * #202 Permitir catalogar más de 127 unidades.
   * #201 Control el estado del pedido en el servidor para evitar peticiones
     incoherentes.
-  * #200 Evitar errores por carros de compra vacios
+  * #200 Evitar errores por carros de compra vacíos
 
 ***
   
