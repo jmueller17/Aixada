@@ -132,6 +132,9 @@ class Authentication {
 		    $language = $row['language'];
 		    $roles = $this->_ask_roles($db, $user_id);
 		    $theme	= $row['gui_theme'];
+		    if (!$theme) {
+		        $theme = 'start';
+		    }
 		    $current_role = ( in_array('Consumer', $roles) ? 'Consumer' : (isset($roles[0]) ? $roles[0] : '' ) );
 		    
 	
@@ -143,4 +146,3 @@ class Authentication {
 	    
   }
 }
-?>
