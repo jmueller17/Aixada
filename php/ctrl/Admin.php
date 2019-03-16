@@ -10,6 +10,7 @@ require_once __ROOT__ . "php/utilities/general.php";
 try{
   validate_session(); // The user must be logged in.
 	
+  ini_set('max_execution_time', 300);
   switch (get_param('oper')) {
 	
 	  	case 'backupDatabase':
