@@ -26,7 +26,12 @@ function backup_as_internal($output_folder, $backup_name) {
 
 function connect_by_mysqli($host, $db_name, $user, $pass)
 {
-    $db = new mysqli($host, $user, $pass, $db_name); 
+    $host_ = explode(":", $host);
+    if (count($host_) > 1) {
+        $db = new mysqli($host_[0], $user, $pass, $db_name, $host_[1]);
+    } else {
+        $db = new mysqli($host, $user, $pass, $db_name);
+    }
     if ($db->connect_errno) {
         ob_clean();
         throw new Exception(
@@ -65,7 +70,8 @@ function execute_sql_files($db, $sql_folder, $sqlFilesArray) {
  *  * compression in chunks: 
  *      http://stackoverflow.com/questions/6073397/how-do-you-create-a-gz-file-using-php
  */
-function backup_by_mysqli($output_folder, $backup_name, $host, $db_name, $user, $pass) { //,$tables = '*')
+function backup_by_mysqli($output_folder, $backup_name, $host, $db_name, $user, $pass)
+{
     $db = connect_by_mysqli($host, $db_name, $user, $pass);
     $tables = array();
     $result = $db->query('SHOW TABLES;');
