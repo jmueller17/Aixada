@@ -47,14 +47,14 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             <div id="titlewrap">
                 <h1>Install or uptate Aixada database</h1>
             </div>
-            <h2 id="install_mode" style="color: blue;"></h2>
-            <p id="msg_link">Confirm to do procedure!</p>
+            <h2 id="install_mode_1" style="color: blue;"></h2>
+            <p id="install_mode_2" style="color: #999;"></p>
             <br/>
             <p>
                 <span class="loadAnim floatLeft hidden">
                     <img src="img/ajax-loader_fff.gif"/>
                 </span>
-                <button id="btn_install">Do install</button>
+                <button id="btn_install">Do "<span id="install_mode_bt">install</span>"</button>
             </p>
             <br/><br/>
             <p id="dbError" class="width-280"></p>
@@ -106,11 +106,15 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
                 $('#btn_install').button("disable");
             },
             success: function(msg) {
-                $('#install_mode').text(msg).show();
+                var msgArr = (msg + '\n').split('\n');
+                $('#install_mode_bt').text(msgArr[0]).show();
+                $('#install_mode_1').text(msgArr[0]).show();
+                $('#install_mode_2').text(msgArr[1]).show();
                 $('#btn_install').button("enable");
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
-                $('#install_mode').text('').hide();
+                $('#install_mode_1').text('').hide();
+                $('#install_mode_2').text('').hide();
                 $('#install_log')
                     .addClass('logMessage wrongEnding')
                     .text(XMLHttpRequest.responseText)
