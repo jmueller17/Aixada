@@ -32,11 +32,6 @@ require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.
 class DBWrap {
   public $debug = true;
 
-  private $type;
-  private $host;
-  private $name;
-  private $user;
-  private $password;
   private $mysqli = false;
   private $key_info = array();
   private static $instance = false;
@@ -54,12 +49,16 @@ class DBWrap {
   private function __construct() 
   {
     $cv = configuration_vars::get_instance();
-    $this->type = $cv->db_type;
-    $this->host = $cv->db_host;
-    $this->db_name = $cv->db_name;
-    $this->user = $cv->db_user;
-    $this->password = $cv->db_password;
-    $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->db_name);
+    $host = $cv->db_host;
+    $db_name = $cv->db_name;
+    $user = $cv->db_user;
+    $password = $cv->db_password;
+    $host_ = explode(":", $host);
+    if (count($host_) > 1) {
+        $this->mysqli = new mysqli($host_[0], $user, $password, $db_name, $host_[1]);
+    } else {
+        $this->mysqli = new mysqli($host, $user, $password, $db_name);
+    }
     if (mysqli_connect_errno())
       throw new InternalException('Unable to connect to database. ' . mysqli_connect_error());
     if (!$this->mysqli->set_charset("utf8"))

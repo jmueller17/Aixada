@@ -44,8 +44,7 @@ class configuration_vars {
   /**
    * Configure the database connection
    */
-  public $db_type = 'mysqli';
-  public $db_host = 'localhost';
+  public $db_host = 'localhost'; // To force a port: $db_host='myHost:9999'
   public $db_name = 'aixada';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
