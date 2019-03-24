@@ -47,8 +47,16 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             <div id="titlewrap">
                 <h1>Install or uptate Aixada database</h1>
             </div>
-            <h2 id="install_mode_1" style="color: blue;"></h2>
-            <p id="install_mode_2" style="color: #999;"></p>
+            <h2 style="color: blue;">
+                <span id="install_mode_1"></span>
+            </h2>
+            <p style="color: #999; margin-left:1em">
+                <span id="install_mode_2"></span><br>
+                <button id="btn_sql_info" 
+                    style="color: #777; border-radius: 5px; padding: 3px">
+                    Get Session sql information
+                </button>
+            </p>
             <br/>
             <p>
                 <span class="loadAnim floatLeft hidden">
@@ -64,8 +72,38 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
     </div>
     <script type="text/javascript">
         $.ajaxSetup({ cache: false });
+        
+        $('#btn_sql_info').click(function(e) {
+            $.ajax({
+                url: 'php/ctrl/InstallAixada.php?oper=sql_info',
+                beforeSend: function() {
+                    $('.loadAnim').show();
+                    $('#install_log')
+                        .removeClass('warningStart correctEnd wrongEnding')
+                        .hide();
+                },
+                success: function(msg) {
+                    $('#install_log').addClass('logMessage correctEnd').text(msg).show();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    $('#install_log')
+                        .addClass('logMessage wrongEnding')
+                        .text(XMLHttpRequest.responseText)
+                        .show();
+                    $.showMsg({
+                        msg: 'An error has occured!' + 
+                            '<br><b>' + XMLHttpRequest.responseText + '</b>',
+                        type: 'error'
+                    });
+                },
+                complete : function(msg) {
+                    $('.loadAnim').hide();
+                }
+            });
+        });
+        
         $('#btn_install').button({
-            icons: {primary: "ui-icon-copy"}
+            icons: {primary: "ui-icon-script"}
         }).click(function(e) {
             $.ajax({
                 url: 'php/ctrl/InstallAixada.php?oper=aixada_update',

@@ -27,6 +27,35 @@ try{
             logInstall("Is: '{$response}'");
             echo $response;
             exit;
+        case 'sql_info':
+            logInstall("--> Get Session sql information\n", true);
+            $existAixada = CheckExistAndLogin();
+            $php_datetime = new Datetime("now");
+            $rs = get_row_query("SELECT concat(
+                '\n version = \'' , @@version, '\'',
+                '\n version_comment = \'' , @@version_comment, '\'\n',
+                
+                '\n SQL_MODE = \'' , @@SQL_MODE, '\'',
+                '\n group_concat_max_len = ' , @@group_concat_max_len, '\n',
+                
+                '\n character_set_client = \'' , @@character_set_client, '\'',
+                '\n character_set_results = \'' , @@character_set_results, '\'',
+                '\n collation_connection = \'' , @@collation_connection, '\'\n',
+                
+                '\n current_timestamp = \'' , current_timestamp, '\'',
+                '\n time_zone = \'' , @@time_zone, '\'',
+                '\n PHP-datetime = \'{$php_datetime->format("Y-m-d H:i:s")}\'\n',
+                
+                '\n schema = \'' , DATABASE(), '\'',
+                ''
+            ) r;");
+            $response = 
+                ($existAixada? "Update Aixada" : "INSTALL a new Aixada") . "\n\n" .
+                "Session sql information: \n" .
+                $rs['r'];
+            logInstall($response);
+            echo $response;
+            exit;
         case 'aixada_update':
             ini_set('max_execution_time', 300);
             logInstall("--> Start install\n\n", true);
@@ -132,6 +161,7 @@ try{
 } catch(Exception $e) {
     header('HTTP/1.0 401 Install error');
     logInstall("ERROR:\n" . $e->getMessage(), true);
+    ob_clean();
     die($results . "\n...aborted!\n\n" . $e->getMessage());
 }
 
