@@ -64,8 +64,9 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
-    $this->mysqli->query("SET SESSION SQL_MODE = '';");
-    $this->mysqli->query("SET SESSION group_concat_max_len = 255;");
+    $this->mysqli->query("SET @@SQL_MODE = ' ';"); // At least one blank space is required!
+                                                   // otherwise, it does not act in MariaDB 10.3.13
+    $this->mysqli->query("SET @@group_concat_max_len = 255;");
   }
   /**
    * The DBWrap class is implemented as a Singleton. Call this
