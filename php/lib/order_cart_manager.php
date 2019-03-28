@@ -192,7 +192,7 @@ class order_cart_manager extends abstract_cart_manager {
     	$db = DBWrap::get_instance();
         
     	//only delete those order items which don't have an order_id yet. 
-    	$db->Execute("delete from aixada_order_item where uf_id=:1q and order_id is null and (date_for_order=:2q or date_for_order='1234-01-23')", $this->_uf_id, $this->_date);	
+    	$db->Execute("delete from aixada_order_item where uf_id=:1q and order_id is null and (date_for_order=:2q)", $this->_uf_id, $this->_date);	
     }
     
     
