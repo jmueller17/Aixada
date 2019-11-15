@@ -36,3 +36,5 @@ RUN DEBIAN_FRONTEND=noninteractive \
     /var/cache/* \
     /var/lib/apt/lists/* \
     /var/tmp/*
+
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli

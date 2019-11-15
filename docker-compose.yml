@@ -1,0 +1,23 @@
+version: '2.3'
+services:
+  mariadb:
+    image: 'bitnami/mariadb:10.3'
+    environment:
+      - MARIADB_ROOT_PASSWORD=bitnami
+    volumes:
+      - '~/data/aixada:/bitnami'
+  phpmyadmin:
+    image: 'bitnami/phpmyadmin:4'
+    ports:
+      - '8080:80'
+      - '443:443'
+    depends_on:
+      - mariadb
+  php:
+    build: .
+    ports:
+      - '80:80'
+    volumes:
+      - '.:/var/www/html'
+    depends_on:
+      - mariadb
