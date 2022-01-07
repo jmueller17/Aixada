@@ -1,11 +1,6 @@
 <?php
 
-
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
@@ -29,13 +24,9 @@ class account {
 
 
 	protected function set_account($account_number){
-		//global $firephp; 
-		//$firephp->log($account_number, "anumber");
-		
 		$rs = do_stored_query('account_exists', $account_number); 
  		$row = $rs->fetch_array();
  		
- 		//$firephp->log($row, "row");
  		$nr = $row[0];
 
 		DBWrap::get_instance()->free_next_results();

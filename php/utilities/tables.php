@@ -44,7 +44,6 @@ function get_names ($tm)
     $col_names = '[';
     foreach ($tm->get_table_cols() as $field => $col_class) {
         $the_name = isset($substituted_alias[$field]) ? $substituted_alias[$field] : $field;
-        //        $firephp->log($field . '->' . $the_name);
         $the_text = (isset($Text[$the_name]) ? $Text[$the_name] : "TRANSLATION($the_name)");
         $the_text = str_replace("'", "_", $the_text);
         $col_names 

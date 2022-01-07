@@ -209,12 +209,6 @@ class configuration_vars {
   );
   
   /**
-   * Sets the global development variable for debugging etc. 
-   * 
-   */
-  public $development = true; 
-  
-  /**
    * To work on hostings with few resources (memory) it is recommended to
    * sequence ajax requests, this avoids simulating requests from a page.
    */

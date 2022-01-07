@@ -21,17 +21,11 @@ require_once(__ROOT__ . "php/utilities/general.php");
  
 
 require_once(__ROOT__ . 'php/lib/gdrive.php'); //Zend Gdata throws stupid PHP Strict Warning 
-
-
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start();
-$firephp = FirePHP::getInstance(true);
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 try{ 
 	validate_session(); // The user must be logged in.
 
-	global $firephp; 
-	
  	switch (get_param('oper')) {
 
  		//upload files from clients computer

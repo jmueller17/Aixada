@@ -9,14 +9,6 @@ require_once(__ROOT__ . 'php'.DS.'inc'.DS.'database.php');
 require_once(__ROOT__ . 'php'.DS.'lib'.DS.'table_with_ref.php');
 require_once(__ROOT__ . 'local_config'.DS.'lang'.DS. get_session_language() . '.php');
 
-
-if (configuration_vars::get_instance()->development){
-	require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-	ob_start();
-	$firephp = FirePHP::getInstance(true);
-}
-
-
 /**
  * The following class implements checking for authentication, based on an
  * implementation from George Schlossnagle, Advanced PHP Programming, p.341

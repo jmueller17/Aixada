@@ -1,8 +1,6 @@
 <?php
 
-require_once(__ROOT__ .'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 /** 
  * @package Aixada
@@ -158,9 +156,6 @@ class DBWrap {
 	   $this->mysqli->query($safe_sql_string));
     if (!$rs) 
       $this->handle_execute_error($this->mysqli->errno, $this->mysqli->error, $safe_sql_string);
-    if ($this->debug) {
-      global $firephp;
-      $firephp->log($safe_sql_string, 'query');
     }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;
@@ -408,16 +403,6 @@ commit;";
    */
   public function make_select_string ($fields, $table_name, $filter, $order_by, $order_sense='asc', $page=-1, $limit=-1)
   {
-//     global $firephp;
-//     if ($this->debug) {
-//       $firephp->log($table_name, 'entering Select');
-//       $firephp->log($fields, '..fields');
-//       $firephp->log($filter, '..filter');
-//       $firephp->log($order_by, '..order_by');
-//       $firephp->log($order_sense, '..order_sense');
-//       $firephp->log($page, '..page');
-//       $firephp->log($limit, '..limit');
-//     }
     $the_table = $this->mysqli->real_escape_string($table_name);
     $the_filter = $this->mysqli->real_escape_string($filter);
     

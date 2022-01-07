@@ -7,12 +7,6 @@ require_once(__ROOT__ . 'local_config/config.php');
 require_once ('general.php');
 require_once(__ROOT__ . 'local_config/lang/'.get_session_language() . '.php');
 
-if (configuration_vars::get_instance()->development){
-	require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-	ob_start();
-	$firephp = FirePHP::getInstance(true);
-}
-
 /**
  * 
  * Updates database fields for given member

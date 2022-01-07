@@ -1,11 +1,7 @@
 <?php
 
 
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
@@ -237,7 +233,6 @@ class abstract_export_manager {
      * @param string $pwd	google account authentication pwd
      */
 	private function write_gdrive($email, $pwd){
-    	global $firephp; 
     	
         
     	$remove_local_copy = !$this->publish; 

@@ -8,7 +8,6 @@ require_once("header.inc.version.php"); // To obtain: $aixada_vesion_lastDate
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
 
-//$dev = configuration_vars::get_instance()->development;
 $language = get_session_language(); 
 $default_theme = get_session_theme();
 
