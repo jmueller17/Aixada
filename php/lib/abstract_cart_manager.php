@@ -191,7 +191,6 @@ class abstract_cart_manager {
      */
     public function commit($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $last_saved, $arrPreOrder, $arrPrice, $arrNotes) 
     {
-    	global $firephp;
     	$hasItems = true; 
     	
     	// are the input array sizes consistent?        
@@ -224,7 +223,6 @@ class abstract_cart_manager {
             $db->Execute('COMMIT');
         }
         catch (Exception $e) {
-            $firephp->log($e);
             $this->_commit_succeeded = false;
             $db->Execute('ROLLBACK');
             throw($e);

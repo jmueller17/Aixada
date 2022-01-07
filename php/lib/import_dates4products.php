@@ -108,8 +108,6 @@ class import_dates4products extends abstract_import_manager {
     
 	protected function insert_rows($insert_ids){
     	$db = DBWrap::get_instance();
-		
-		global $firephp; 
     	
     	foreach($insert_ids as $id => $match_id){
     		

@@ -383,7 +383,6 @@ class report_manager {
     $prev_last_heading_label = '';
 
     while ($row = $rs->fetch_assoc()) {
-//       $firephp->log($row, 'row');
       $current_level = 1;
       $prev_last_heading_label = $last_heading_label;
       $last_heading_label = '';

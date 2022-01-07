@@ -5,9 +5,7 @@ require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'php/utilities/general.php');
 require_once(__ROOT__ . 'local_config/config.php');
 
-require_once(__ROOT__ .'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 function product_prices_times_years($product_id_array, $year_array)
 {
@@ -50,8 +48,6 @@ function product_prices_times_years($product_id_array, $year_array)
 	}
     }
     $json .= ']';
-    global $firephp;
-    $firephp->log($json);
     return $json;
 }
 

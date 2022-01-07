@@ -7,7 +7,7 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
 
-ob_start(); // Starts FirePHP output buffering
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 // global abbreviations: 
 // rs  =  mysqli result resource
@@ -116,7 +116,6 @@ class table_manager extends table_with_ref
       */
   public function list_all ($args)
   {
-    //    global $firephp;
     $fields = $args['fields'];
     if ($fields !== array('*')) {
       // We query only those fields that are actually present in the table.
@@ -127,7 +126,6 @@ class table_manager extends table_with_ref
       $fields = array_intersect($fields, $present_fields);
     }
     $db = DBWrap::get_instance();
-    //    $firephp->log(1, 'before select');
 	//$db->debug = true; 
     list($rs, $total_pages) 
       = $db->Select($fields, 
@@ -137,8 +135,6 @@ class table_manager extends table_with_ref
 		    $args['order_sense'] ? $args['order_sense'] : 'asc',
 		    $args['page'],
 		    $args['limit']);
-    //    $firephp->log($rs, 'after select');
-    //    $firephp->log($total_pages, 'after select total pages');
     if (!$rs) throw new Exception('The statement $strSQL could not retrieve records from' . $this->_table_name . '<br/>' . mysqli_error());
     return array($rs, $total_pages);
   }	
@@ -245,8 +241,6 @@ class table_manager extends table_with_ref
   
   public function row_to_jqGrid_XML($row)
   {
-//     global $firephp;
-//     $firephp->log($row, 'row');
     $strXML = '<row id="' . $row['id'] . '">';
     foreach ($row as $field => $value) {
       list ($conv_value, $looked_up_value) = $this->_get_field_value($field, $value);
@@ -254,7 +248,6 @@ class table_manager extends table_with_ref
 // 	$conv_value = utf8_encode($conv_value);
 //       } 
       $strXML .= '<' . $field . ' f="' . $field . '"><![CDATA[' . $conv_value . "]]></$field>";
-      //      $firephp->log($field, 'row_to_jqGrid_XML');
     }
     $strXML .= '</row>';
     return $strXML;
@@ -292,8 +285,6 @@ class table_manager extends table_with_ref
   public function stored_query ()
   {
     $args = func_get_args();
-//      global $firephp;
-//      $firephp->log($args, 'stored_query args');
     $rs = do_stored_query($args);
     $count = mysqli_num_rows($rs);
     $limit = isset($_REQUEST['rows']) ? $_REQUEST['rows'] : 10;

@@ -10,9 +10,7 @@ require_once(__ROOT__ . "php/inc/authentication.inc.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . "php/lib/exceptions.php");
 
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start();
-$firephp = FirePHP::getInstance(true);
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
 DBWrap::get_instance()->debug = true;
 
@@ -23,13 +21,11 @@ try{
 	
 	  case 'logout':
 	      try {
-		  	  //global $firephp;
 	        logout_session();
 		  	$h = 'Location:' . __ROOT__ . 'login.php';
 	      } 
 	      catch (AuthException $e) {
-		  	global $firephp;
-		  	$firephp->log('caught auth exception');
+	        die($e->getMessage());
 	      }
 	      exit;
 	

@@ -4,11 +4,7 @@ require(__ROOT__ . 'php/external/spreadsheet-reader/php-excel-reader/excel_reade
 require(__ROOT__ . 'php/external/spreadsheet-reader/SpreadsheetReader.php');
 
 
-require_once(__ROOT__ . 'php/external/FirePHPCore/lib/FirePHPCore/FirePHP.class.php');
-ob_start(); // Starts FirePHP output buffering
-$firephp = FirePHP::getInstance(true);
-
-
+ob_start(); // Probably only needed for FirePHP(no longer used)
 
   /** 
    * @package Aixada
@@ -182,9 +178,6 @@ class abstract_import_manager {
     			if (isset($this->_col_map_update[$field])){
 	    			array_push($this->_import_fields4update, $field);
     			}
-    		} else {
-    			global $firephp;
-    			$firephp->log("Import warning: import to field '{$field}' is not allowed. Column will be ignored!");
     		}
     	}
     	
@@ -247,11 +240,6 @@ class abstract_import_manager {
     	//either because the ref does not exist or they are left empty (and hence cannot be matched)
     	$insert_rows = $this->_get_new_rows($update_ids);
     	
-    	
-    	/*global $firephp; 
-    	$firephp->log($update_ids, "update_ids");
-    	$firephp->log($insert_rows, "insert_rows");*/
-    	
     	$imported_rows_count = 0;
     	if (count($update_ids) > 0){
 	    	//should be unique values
@@ -282,8 +270,6 @@ class abstract_import_manager {
     protected function update_rows($update_ids){
 
     	$db = DBWrap::get_instance();
-
-    	global $firephp; 
     	
     	if (count($this->_import_fields4update) == 0) {
     		return; 
@@ -317,8 +303,6 @@ class abstract_import_manager {
     			//add it to the import_row	
 				$db_update_row[$db_field] = $row[$col_index];	
 			}
-
-    		$firephp->log($db_update_row, "update row");
 			
 			//do sqlupdate row
 			try {
@@ -347,7 +331,6 @@ class abstract_import_manager {
      */
 	protected function insert_rows($insert_ids, $keep_match_field = false){
     	$db = DBWrap::get_instance();
-    	global $firephp; 
     	
     	
     	$imported_rows_count = 0;
@@ -392,8 +375,6 @@ class abstract_import_manager {
 			}
 
             if ($db_insert_row != null) {
-                $firephp->log($db_insert_row, "insert row");
-                
                 //do sql
                 try {
                     if ($db->Insert($db_insert_row)) {

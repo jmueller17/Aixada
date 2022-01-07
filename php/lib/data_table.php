@@ -136,9 +136,6 @@ class data_table {
 			$ratio1 = $exact_matches / count($this->_data_table[0]); 
 			$ratio2 = $moreorless /  count($this->_data_table[0]);
 			
-			global $firephp; 
-			$firephp->log($ratio1."-".$ratio2, "nr of matches with dbfields");
-		
     		//do this heuristically... most fields match means this is our table
 			if ($ratio1 > .5 && $ratio2 > .8){
 				$this->_global_match = true; 
@@ -282,9 +279,6 @@ class data_table {
 	 * @param string $css an existing CSS rule to be applied to the table
 	 */
  	public function get_html_table($css=''){
-	  	//global $firephp; 
-	    //$firephp->log($this->_data, "data");
-	    
 	  	$table = '<table class="'.$css.'" isown="'.$this->_global_match.'">';
 	  	for ($r=0; $r<$this->_nr_rows; $r++){
 	  		$table .= '<tr>';
