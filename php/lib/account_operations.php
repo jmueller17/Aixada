@@ -92,7 +92,7 @@ class account_operations {
                 where account_id between 2000 and 2999)");
         }
         if (count($sql) != 0) {
-            $sql2 = implode($sql, ' union ').
+            $sql2 = implode(' union ', $sql).
                                    " order by ts desc, id desc limit {$limit};";
             return $db->Execute($sql2);
         } else	{
@@ -105,7 +105,7 @@ class account_operations {
      * Retrieves list of accounts
      * @param boolean $all if set to true, list active and non-active accounts. when set to false, list only active UFs
      */
-    public function get_accounts_XML($all=0, $account_types) {
+    public function get_accounts_XML($all=0, $account_types='') {
         $filter = $this->get_account_types_filter($account_types);
         // start XML
         $strXML = '';
