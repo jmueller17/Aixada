@@ -266,7 +266,7 @@ class account_operations {
             ); 
         }
         return ( count($where_array) > 0 ? 
-                '( '.implode($where_array, ' or ').' )' : '1=0' );
+                '( '.implode(' or ', $where_array).' )' : '1=0' );
     }
     /**
      * There are five types: 
