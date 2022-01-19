@@ -156,7 +156,6 @@ class DBWrap {
 	   $this->mysqli->query($safe_sql_string));
     if (!$rs) 
       $this->handle_execute_error($this->mysqli->errno, $this->mysqli->error, $safe_sql_string);
-    }
     $this->next_to_last_query_SQL = $this->last_query_SQL;
     $this->last_query_SQL = $safe_sql_string;
     return $rs;

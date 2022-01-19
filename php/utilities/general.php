@@ -1140,7 +1140,7 @@ function get_commissions()
 
 function clean_zeros($value)
 {
-  return ((strpos($value, '.') !== false) ?
+  return (isset($value) && (strpos($value, '.') !== false) ?
 	  rtrim(rtrim($value, '0'), '.') 
 	  : $value);
 }
