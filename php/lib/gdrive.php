@@ -5,8 +5,8 @@
  * mimeType add-on from http://blog.artistandesigns.com/2011/02/zendgdata-lacks-document-download.html
  */
 
-@require_once (__ROOT__.'php/external/ZendGdata-1.12.2/library/Zend/Loader.php');
-set_include_path(__ROOT__.DIRNAME('php/external/ZendGdata-1.12.2/library/.').PATH_SEPARATOR.".");
+@require_once (__ROOT__.'external/php54/ZendGdata-1.12.2/library/Zend/Loader.php');
+set_include_path(__ROOT__.DIRNAME('external/php54/ZendGdata-1.12.2/library/.').PATH_SEPARATOR.".");
 @Zend_Loader::loadClass('Zend_Gdata');
 @Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
 @Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');

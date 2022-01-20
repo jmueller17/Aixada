@@ -4,7 +4,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 
-require_once(__ROOT__ . "php/external/jquery-fileupload/UploadHandler.php");
+require_once(__ROOT__ . "external/php54/jquery-fileupload/UploadHandler.php");
 require_once(__ROOT__ . "local_config/config.php");
 
 require_once(__ROOT__ . "php/lib/import_products.php");
