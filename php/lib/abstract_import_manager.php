@@ -1,8 +1,12 @@
 <?php
 
-require_once(__ROOT__ . 'external/php54/spreadsheet-reader/php-excel-reader/excel_reader2.php');
-require_once(__ROOT__ . 'external/php54/spreadsheet-reader/SpreadsheetReader.php');
-
+if (version_compare(PHP_VERSION, '7.1.0') >= 0) {
+    require_once(__ROOT__ . 'external/php71/spreadsheet-reader/php-excel-reader/excel_reader2.php');
+    require_once(__ROOT__ . 'external/php71/spreadsheet-reader/SpreadsheetReader.php');
+} else {
+    require_once(__ROOT__ . 'external/php54/spreadsheet-reader/php-excel-reader/excel_reader2.php');
+    require_once(__ROOT__ . 'external/php54/spreadsheet-reader/SpreadsheetReader.php');
+}
 
 ob_start(); // Probably only needed for FirePHP(no longer used)
 
