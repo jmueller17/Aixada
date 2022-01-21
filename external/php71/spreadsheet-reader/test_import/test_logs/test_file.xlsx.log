@@ -4,7 +4,7 @@ File: >test_files/test_file.xlsx<
 *** Sheet >Hoja1< *** 1 rows ***
 Row-0: array (
   0 => '1 to 9',
-  1 => 123456789,
+  1 => 123456789.0,
 )
 Row-1: array (
   0 => 'Currency (Euro)',

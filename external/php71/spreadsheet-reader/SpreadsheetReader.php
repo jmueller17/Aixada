@@ -230,7 +230,7 @@
 		 * Rewind the Iterator to the first element.
 		 * Similar to the reset() function for arrays in PHP
 		 */ 
-		public function rewind()
+		public function rewind() : void
 		{
 			$this -> Index = 0;
 			if ($this -> Handle)
@@ -245,7 +245,7 @@
 		 *
 		 * @return mixed current element from the collection
 		 */
-		public function current()
+		public function current() : ?array
 		{
 			if ($this -> Handle)
 			{
@@ -258,15 +258,16 @@
 		 * Move forward to next element. 
 		 * Similar to the next() function for arrays in PHP 
 		 */ 
-		public function next()
+		public function next() : void
 		{
 			if ($this -> Handle)
 			{
 				$this -> Index++;
 
-				return $this -> Handle -> next();
+				$this -> Handle -> next();
+				return;
 			}
-			return null;
+			return;
 		}
 
 		/** 
@@ -275,7 +276,7 @@
 		 *
 		 * @return mixed either an integer or a string
 		 */ 
-		public function key()
+		public function key() : int
 		{
 			if ($this -> Handle)
 			{
@@ -290,7 +291,7 @@
 		 *
 		 * @return boolean FALSE if there's nothing more to iterate over
 		 */ 
-		public function valid()
+		public function valid() : bool
 		{
 			if ($this -> Handle)
 			{
@@ -300,7 +301,7 @@
 		}
 
 		// !Countable interface method
-		public function count()
+		public function count() : int
 		{
 			if ($this -> Handle)
 			{
@@ -315,7 +316,7 @@
 		 *
 		 * @param int Position in file
 		 */
-		public function seek($Position)
+		public function seek(int $Position) : void
 		{
 			if (!$this -> Handle)
 			{
@@ -341,8 +342,6 @@
 					throw new OutOfBoundsException('SpreadsheetError: Position '.$Position.' not found');
 				}
 			}
-
-			return null;
 		}
 	}
 ?>

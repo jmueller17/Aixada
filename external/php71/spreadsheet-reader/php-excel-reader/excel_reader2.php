@@ -542,7 +542,7 @@ class Spreadsheet_Excel_Reader {
 		}
 		return null;
 	}
-	function fontProperty($row,$col,$sheet=0,$prop) {
+	function fontProperty($row,$col,$sheet=0,$prop=null) {
 		$font = $this->fontRecord($row,$col,$sheet);
 		if ($font!=null) {
 			return $font[$prop];
@@ -924,7 +924,7 @@ class Spreadsheet_Excel_Reader {
 			$this->setOutputEncoding($outputEncoding);
 		}
 		for ($i=1; $i<245; $i++) {
-			$name = strtolower(( (($i-1)/26>=1)?chr(($i-1)/26+64):'') . chr(($i-1)%26+65));
+			$name = strtolower(( (($i-1)/26>=1)?chr(floor(($i-1)/26+64)):'') . chr(floor(($i-1)%26+65)));
 			$this->colnames[$name] = $i;
 			$this->colindexes[$i] = $name;
 		}
