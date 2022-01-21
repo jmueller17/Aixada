@@ -130,7 +130,12 @@
 				$this -> RowCount = $this -> Handle -> sheets[$this -> CurrentSheet]['numRows'];
 
 				// For the case when Spreadsheet_Excel_Reader doesn't have the row count set correctly.
-				if (!$this -> RowCount && count($this -> Handle -> sheets[$this -> CurrentSheet]['cells']))
+				if (isset($this -> Handle -> sheets[$this -> CurrentSheet]['cells'])) {
+				    $cells = $this -> Handle -> sheets[$this -> CurrentSheet]['cells'];
+				} else {
+				    $cells = [];
+				}
+				if (!$this -> RowCount && count($cells))
 				{
 					end($this -> Handle -> sheets[$this -> CurrentSheet]['cells']);
 					$this -> RowCount = (int)key($this -> Handle -> sheets[$this -> CurrentSheet]['cells']);
