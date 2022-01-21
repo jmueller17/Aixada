@@ -2,7 +2,8 @@
 /**
  * XLS parsing uses php-excel-reader from http://code.google.com/p/php-excel-reader/
  */
-	header('Content-Type: text/plain');
+	// header('Content-Type: text/plain');
+	// NOTE: header() is removed to display the result in the browser instead of a file
 
 	if (isset($argv[1]))
 	{
@@ -10,6 +11,8 @@
 	}
 	elseif (isset($_GET['File']))
 	{
+		// If browser is used then use <pre>
+		echo "<pre>\n";
 		$Filepath = $_GET['File'];
 	}
 	else
@@ -96,5 +99,10 @@
 	catch (Exception $E)
 	{
 		echo $E -> getMessage();
+	}
+
+	// If browser is used then use <pre>
+	if (php_sapi_name() == 'cli') {
+	    echo "</pre>\n";
 	}
 ?>
