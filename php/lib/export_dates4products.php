@@ -22,7 +22,7 @@ class export_dates4products extends abstract_export_manager {
 	
 	
 	
-	public function __construct($filename="", $provider_id, $from_date='', $to_date=''){		
+	public function __construct($filename="", $provider_id=0, $from_date='', $to_date=''){		
 		
 		$this->export_table = "product_orderable_for_date";
 

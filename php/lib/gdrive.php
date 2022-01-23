@@ -61,7 +61,7 @@ class gDrive{
      * @param string $uploadDir path to location where files will be stored locally
      * @throws Exception
      */
-    public static function fetchFile($sharedLink, $format='csv', $saveFileTo){
+    public static function fetchFile($sharedLink, $format='csv', $saveFileTo=''){
     	
     	
     	//downloading google spreadhsheet

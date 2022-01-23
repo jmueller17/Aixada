@@ -493,7 +493,8 @@ class UploadHandler
             $name = $this->upcount_name($name);
         }
         // Keep an existing filename if this is part of a chunked upload:
-        $uploaded_bytes = $this->fix_integer_overflow((int)$content_range[1]);
+        $r1 = $content_range ? $content_range[1] : '';
+        $uploaded_bytes = $this->fix_integer_overflow((int)$r1);
         while (is_file($this->get_upload_path($name))) {
             if ($uploaded_bytes === $this->get_file_size(
                     $this->get_upload_path($name))) {
@@ -1111,7 +1112,7 @@ class UploadHandler
         }
         if (count($failed_versions)) {
             $file->error = $this->get_error_message('image_resize')
-                    .' ('.implode($failed_versions, ', ').')';
+                    .' ('.implode(', ', $failed_versions).')';
         }
         // Free memory:
         $this->destroy_image_object($file_path);
@@ -1317,7 +1318,8 @@ class UploadHandler
         $this->response = $content;
         if ($print_response) {
             $json = json_encode($content);
-            $redirect = stripslashes($this->get_post_param('redirect'));
+            $ss = $this->get_post_param('redirect');
+            $redirect = stripslashes(($ss ? $ss : ''));
             if ($redirect && preg_match($this->options['redirect_allow_target'], $redirect)) {
                 $this->header('Location: '.sprintf($redirect, rawurlencode($json)));
                 return;
@@ -1450,7 +1452,7 @@ class UploadHandler
         return $this->generate_response($response, $print_response);
     }
 
-    protected function basename($filepath, $suffix = null) {
+    protected function basename($filepath, $suffix = '') {
         $splited = preg_split('/\//', rtrim ($filepath, '/ '));
         return substr(basename('X'.$splited[count($splited)-1], $suffix), 1);
     }
