@@ -13,7 +13,7 @@ require('../SpreadsheetReader.php');
 error_reporting(E_ALL);
 
 $log_path = '';
-foreach (['.csv','.ods','.xls','.xlsx',] as $v) {
+foreach (['.csv','.ods','.xls','.xlsx'] as $v) {
 // foreach (['.xlsx',] as $v) {    
     $file_path = 'test_files/test_file' . $v;
     

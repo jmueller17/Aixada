@@ -1,4 +1,4 @@
-<?php
+    <?php
 /**
  * Class for parsing XLS files
  *
@@ -133,7 +133,7 @@
 				if (isset($this -> Handle -> sheets[$this -> CurrentSheet]['cells'])) {
 				    $cells = $this -> Handle -> sheets[$this -> CurrentSheet]['cells'];
 				} else {
-				    $cells = [];
+				    $cells = array();
 				}
 				if (!$this -> RowCount && count($cells))
 				{
