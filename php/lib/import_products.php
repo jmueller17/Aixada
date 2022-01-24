@@ -72,7 +72,8 @@ class import_products extends abstract_import_manager {
             $rs = $db->Execute(
                 'SELECT id from aixada_product where active = 1'.
                 ' and provider_id = '.$this->provider_id.
-                ' and '.$this->_db_match_field.' not in ('.$match_col_list.')'
+                ' and ( '.$this->_db_match_field.' is null or 
+                    '.$this->_db_match_field.' not in ('.$match_col_list.') )'
             );
             while ($row = $rs->fetch_array()){
                 do_stored_query('change_active_status_product', 0, $row['id']);
