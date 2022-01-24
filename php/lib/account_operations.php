@@ -275,6 +275,10 @@ class account_operations {
      *    * 2000 providers
      */
     protected function get_account_types_filter($account_types) {
+        // See BUG https://github.com/jmueller17/Aixada/issues/288#issuecomment-1019290362
+        // (this error could not be reproduced, but forcing cast to array does no harm)
+        $account_types = (array)$account_types;
+        
         $response = array(
             'show_uf' => false,
             'show_uf_generic' => false,
