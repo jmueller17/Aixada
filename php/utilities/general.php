@@ -521,7 +521,7 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
         $cleanExplode = function($text) {
             return array_map('trim', explode(',', $text));
         };
-        require_once(__ROOT__ . 'external/php54/swiftmailer-5.x/lib/swift_required.php');
+        require_once(__ROOT__ . 'external/php53_2/swiftmailer-5.x/lib/swift_required.php');
         $transport = Swift_SmtpTransport::newInstance(
             get_config('email_SMTP_host'), 
             get_config('email_SMTP_port', 25)
