@@ -451,12 +451,8 @@ function to_js_str($text) {
  * @param array $options valid keys are: 'reply_to', 'cc', 'bcc'
  * @return boolean as response of php mail.
  */
-function send_mail($to, $subject, $bodyHTML, $options=null)
+function send_mail($to, $subject, $bodyHTML, $options=array())
 {
-    if (!isset($options)) {
-        $options = array();
-    }
-
     // get URL of aixada root
     $pos_root = strrpos($_SERVER['SCRIPT_NAME'], '/php/ctrl/');
     if ($pos_root === false) {
@@ -517,69 +513,11 @@ function send_mail($to, $subject, $bodyHTML, $options=null)
             {$messageHTML}
             </body></html>"
         );
-    } else { // Send using swiftmailer
-        $cleanExplode = function($text) {
-            return array_map('trim', explode(',', $text));
-        };
-        require_once(__ROOT__ . 'external/php53_2/swiftmailer-5.x/lib/swift_required.php');
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('email_SMTP_host'), 
-            get_config('email_SMTP_port', 25)
-        );
-        $encryp = get_config('email_SMTP_encryption');
-        if ($encryp) {
-            if (!in_array($encryp, stream_get_transports())) {
-                throw new Exception("config['email_SMTP_encryption']=\"{$encryp}\" is not supported on your hosting");
-            }
-            $transport->setEncryption($encryp);
-            if (!get_config('email_SMTP_verifyCert')) {
-                // See at the end of: https://github.com/swiftmailer/swiftmailer/issues/544
-                $https['ssl']['verify_peer'] = false;
-                $https['ssl']['verify_peer_name'] = false; // seems to work fine without this line so far
-                $transport->setStreamOptions($https);
-            }
-        }
-        if (get_config('email_SMTP_pswd')) {
-            $transport
-                ->setUsername(get_config('email_SMTP_user', $from))
-                ->setPassword(get_config('email_SMTP_pswd'));
-        }
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-            ->setSubject($subject)
-            ->setBody($messageHTML, 'text/html');
-        try {
-            $message->setFrom($from);
-        } catch(Exception $e) {
-            throw new Exception("config['admin_email']=\"{$from}\" is not a valid email");
-        } 
-        try {
-            $message->setTo($cleanExplode($to));
-        } catch(Exception $e) {
-            throw new Exception("send_mail to: \"{$to}\" is not a list of valid emails");
-        } 
-        if ($reply_to) {
-            try {
-                $message->setReplyTo($cleanExplode($reply_to));
-            } catch(Exception $e) {
-                throw new Exception("send_mail reply_to: {$reply_to} is not a list of valid emails.");
-            }
-        }
-        if (isset($options['cc']) && $options['cc']) {
-            try {
-                $message->setCc($cleanExplode($options['cc']));
-            } catch(Exception $e) {
-                throw new Exception("send_mail cc: {$options['cc']} is not a list of valid emails.");
-            }
-        }
-        if (isset($options['bcc']) && $options['bcc']) {
-            try {
-                $message->setBcc($cleanExplode($options['bcc']));
-            } catch(Exception $e) {
-                throw new Exception("send_mail bcc: {$options['bcc']} is not a list of valid emails.");
-            }
-        }
-        return !!$mailer->send($message);
+    } else { // Send using smtp propotol
+        // Send using swiftmailer
+        require_once __ROOT__ . 'external/php53_2/swiftmailer-5.x/lib/swift_required.php';
+        require_once __ROOT__ . 'php/utilities/send_swiftmail.php';
+        return send_swiftmail($from, $reply_to, $to, $subject, $messageHTML, $options);
     }
 }
 
