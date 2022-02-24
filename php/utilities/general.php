@@ -514,10 +514,17 @@ function send_mail($to, $subject, $bodyHTML, $options=array())
             </body></html>"
         );
     } else { // Send using smtp propotol
-        // Send using swiftmailer
-        require_once __ROOT__ . 'external/php53_2/swiftmailer-5.x/lib/swift_required.php';
-        require_once __ROOT__ . 'php/utilities/send_swiftmail.php';
-        return send_swiftmail($from, $reply_to, $to, $subject, $messageHTML, $options);
+        if (version_compare(PHP_VERSION, '7.4.0') >= 0) {
+            // Send using symfony-mailer
+            require_once __ROOT__ . 'external/php74/symfony-mailer/vendor/autoload.php';
+            require_once __ROOT__ . 'php/utilities/send_symfony_mail.php';
+            return send_symfony_mail($from, $reply_to, $to, $subject, $messageHTML, $options);
+        } else {
+            // Send using swiftmailer
+            require_once __ROOT__ . 'external/php53_2/swiftmailer-5.x/lib/swift_required.php';
+            require_once __ROOT__ . 'php/utilities/send_swiftmail.php';
+            return send_swiftmail($from, $reply_to, $to, $subject, $messageHTML, $options);
+        }
     }
 }
 
