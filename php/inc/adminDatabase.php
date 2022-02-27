@@ -38,7 +38,6 @@ function connect_by_mysqli($host, $db_name, $user, $pass)
             "Connecting to: host='{$host}' database='{$db_name}' user='{$user}'\n"
         );
     }
-    $db->query("alter session character set utf8 collate utf8_general_ci;");
     if (!$db->set_charset("utf8")) {
         ob_clean();
         throw new Exception(
