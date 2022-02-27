@@ -56,7 +56,7 @@ function activate_all_for_date($provider_id, $date, $activate)
 function get_dates_for_validation()
 {
 	$xml = stored_query_XML_fields('dates_with_unvalidated_shop_carts');
-	$today = strftime('%Y-%m-%d', strtotime('today'));
+	$today = date('Y-m-d');
 	$pos = strpos($xml, $today);
 	if ($pos !== false) {
 	  	$xml = substr_replace($xml, ' today="true"', $pos-10, 0);
