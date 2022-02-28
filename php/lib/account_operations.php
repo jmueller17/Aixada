@@ -105,7 +105,7 @@ class account_operations {
      * Retrieves list of accounts
      * @param boolean $all if set to true, list active and non-active accounts. when set to false, list only active UFs
      */
-    public function get_accounts_XML($all=0, $account_types='') {
+    public function get_accounts_XML($all=0, $account_types=array()) {
         $filter = $this->get_account_types_filter($account_types);
         // start XML
         $strXML = '';
