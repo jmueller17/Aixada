@@ -7,7 +7,7 @@ if (filesize('js/jquery/jquery.js') < 100) {
     copy('css/ui-themes/start/jquery-ui-1.8.20.custom.css', 'css/ui-themes/start/jqueryui.css');
     copy('css/ui-themes/ui-lightness/jquery-ui-1.8.20.custom.css', 'css/ui-themes/ui-lightness/jqueryui.css');
     copy('css/ui-themes/smoothness/jquery-ui-1.8.20.custom.css', 'css/ui-themes/smoothness/jqueryui.css');
-    $startResponse .= "The symbolic link files (.js & .css) have been copied correctly.\n";
+    $startResponse .= "Symbolic link files (.js & .css) have been copied correctly.\n";
 }
 if (!is_file('local_config/config.php')) {
     copy('local_config/config.php.sample', 'local_config/config.php');
@@ -34,60 +34,74 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
     <script type="text/javascript" src="js/jquery/jquery.js"></script>
     <script type="text/javascript" src="js/jqueryui/jqueryui.js"></script>
     <style>
-        .logMessage {padding: 0.5em; border: 1px solid #aaa; max-width: 60em;}
-        .warningStart {background-color: yellow}
-        .correctEnd  {background-color: #ccffcc}
-        .wrongEnding {background-color: #ffcccc}
+        .container {margin-right:auto;margin-left:auto;padding-left:15px;padding-right:15px}
+        .container {width:750px}
+        .explication {font-size: 90%; color: #888; padding:.5em 0}
+        .logMessage {padding: 0.5em; border: 1px solid #aaa;}
+        .noticeText {background-color: #ffffee}
+        .correctEnd {background-color: #ddffdd}
+        .wrongEnd   {background-color: #ffdddd}
+        h2 {margin-top:1em}
+        button#btn_sql_info {font-size: 75%; color: #886}
     </style>
     <?php echo aixada_js_src(false); ?>	
 </head>
 <body>
-    <div id="wrap">
-        <div id="stagewrap" class="ui-widget">
-            <div id="titlewrap">
-                <h1>Install or uptate Aixada database</h1>
-            </div>
+    <div class="container">
+        <div class="ui-widget">
             <h2 style="color: blue;">
-                <span id="install_mode_1"></span>
+                <span id="install_mode_1">Install or uptate Aixada database</span>
             </h2>
-            <p style="color: #999; margin-left:1em">
-                <span id="install_mode_2"></span><br>
-                <button id="btn_sql_info" 
-                    style="color: #777; border-radius: 5px; padding: 3px">
-                    Get Session sql information
-                </button>
-            </p>
             <br/>
             <p>
                 <span class="loadAnim floatLeft hidden">
                     <img src="img/ajax-loader_fff.gif"/>
                 </span>
-                <button id="btn_install">Do "<span id="install_mode_bt">install</span>"</button>
+                <button id="btn_do">Do "<span id="install_mode_bt">install</span>"</button>
             </p>
-            <br/><br/>
-            <p id="dbError" class="width-280"></p>
-            <pre id="install_log"
-                class="<?php if($startResponse) {echo 'logMessage warningStart';} ?>"><?=$startResponse?></pre>
+            <p id="text_pending_config" class="explication" style="display:none">
+                You must configure a correct database connection in 
+                '<span style="color: #966">local_config/config.php</span>'.
+                <br><br>
+                Neither installation nor upgrade procedures can be executed
+                without a properly defined database connection.
+            <p>
+            <p id="text_install" class="explication" style="display:none">
+                Installation process will create the tables in database and
+                put initial data to start using Aixada.
+            <p>
+            <p id="text_update" class="explication" style="display:none">
+                The execution of update can be repeated without problems, if you doubt, do update!
+            <p>
+            <hr>
+            <br>
+            <br>
+            <p>
+                <button id="btn_sql_info"><span style="">Show sql info</span></button>
+            </p>
+            <br>
+            <pre id="install_mode_2"></pre>
+            <pre id="install_log" class="logMessage"><?=$startResponse?></pre>
         </div>
     </div>
     <script type="text/javascript">
         $.ajaxSetup({ cache: false });
         
-        $('#btn_sql_info').click(function(e) {
+        $('#btn_sql_info').button().click(function(e) {
             $.ajax({
                 url: 'php/ctrl/InstallAixada.php?oper=sql_info',
                 beforeSend: function() {
                     $('.loadAnim').show();
                     $('#install_log')
-                        .removeClass('warningStart correctEnd wrongEnding')
+                        .removeClass('noticeText correctEnd wrongEnd')
                         .hide();
                 },
                 success: function(msg) {
-                    $('#install_log').addClass('logMessage correctEnd').text(msg).show();
+                    $('#install_log').addClass('noticeText').text(msg).show();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     $('#install_log')
-                        .addClass('logMessage wrongEnding')
+                        .addClass('wrongEnd')
                         .text(XMLHttpRequest.responseText)
                         .show();
                     $.showMsg({
@@ -102,7 +116,7 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             });
         });
         
-        $('#btn_install').button({
+        $('#btn_do').button({
             icons: {primary: "ui-icon-script"}
         }).click(function(e) {
             $.ajax({
@@ -110,16 +124,16 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
                 beforeSend: function() {
                     $('.loadAnim').show();
                     $('#install_log')
-                        .removeClass('warningStart correctEnd wrongEnding')
+                        .removeClass('noticeText correctEnd wrongEnd')
                         .hide();
-                    $('#btn_install').button("disable");
+                    $('#btn_do').button("disable");
                 },
                 success: function(msg) {
-                    $('#install_log').addClass('logMessage correctEnd').text(msg).show();
+                    $('#install_log').addClass('correctEnd').text(msg).show();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     $('#install_log')
-                        .addClass('logMessage wrongEnding')
+                        .addClass('wrongEnd')
                         .text(XMLHttpRequest.responseText)
                         .show();
                     $.showMsg({
@@ -139,25 +153,39 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             beforeSend: function() {
                 $('.loadAnim').show();
                 $('#install_log')
-                    .removeClass('warningStart correctEnd wrongEnding')
+                    .removeClass('noticeText correctEnd wrongEnd')
                     .hide();
-                $('#btn_install').button("disable");
+                $('#btn_do').button("disable");
             },
             success: function(msg) {
                 var msgArr = (msg + '\n').split('\n');
                 $('#install_mode_bt').text(msgArr[0]).show();
                 $('#install_mode_1').text(msgArr[0]).show();
                 $('#install_mode_2').text(msgArr[1]).show();
-                $('#btn_install').button("enable");
+                switch (msgArr[0].substr(0, 2)) {
+                    case 'IN': 
+                        $('#text_install').show();
+                        break;
+                    case 'Up':
+                        $('#text_update').show();
+                        break;
+                    case 'Pe':
+                        $('#text_pending_config').show();
+                        $('#btn_do').hide();
+                        $('#btn_sql_info').hide();
+                        $('#install_mode_2').hide();
+                        break;
+                }
+                $('#btn_do').button("enable");
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
                 $('#install_mode_1').text('').hide();
                 $('#install_mode_2').text('').hide();
                 $('#install_log')
-                    .addClass('logMessage wrongEnding')
+                    .addClass('wrongEnd')
                     .text(XMLHttpRequest.responseText)
                     .show();
-                $('#btn_install').button("disable");
+                $('#btn_do').button("disable");
                 $.showMsg({
                     msg: 'Previous verification warning' + 
                         '<br><hr><span style="color: #777">' + XMLHttpRequest.responseText + '</span>',
@@ -169,5 +197,13 @@ require_once __ROOT__ . 'php/inc/authentication.inc.php';
             }
         });
     </script>
+    <?php 
+        if($startResponse) {
+            echo "
+            <script> 
+            $('#install_log').addClass('noticeText').show();
+            </script>";
+        }
+    ?>
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?php
+ini_set('display_errors', 0); // Needed for CheckDbAccess() using PHP < v8.1 where mysqli produces warnings 
 
 define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
@@ -20,7 +21,12 @@ try{
     switch (get_param('oper')) {
         case 'aixada_check':
             logInstall("--> Check install\n", true);
-            
+            if (!CheckDbAccess()) {
+                logInstall("Pendig configure DB in 'local_config/config.php'");
+                echo "Pendig configure DB" . 
+                    "\nLogfile: " . $LOG_FILE;
+                exit;
+            }
             $response = 
                 (CheckExistAndLogin() ? "Update Aixada" : "INSTALL a new Aixada") . 
                 "\nLogfile: " . $LOG_FILE;
@@ -181,6 +187,15 @@ function logInstall($text, $showTime = false) {
         return $text;
     } catch(Exception $e) {
     }
+}
+
+function CheckDbAccess() {
+    $response = 0;
+    try {
+        $response = get_row_query("SELECT 1 from dual");
+    } catch (Exception $e) {
+    }
+    return $response;
 }
 
 function CheckExistAndLogin() {
