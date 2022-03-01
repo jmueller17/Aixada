@@ -3,18 +3,51 @@
 ## ¿Cómo actualizar la versión?:
 
 **¡La rama `marter` se considera estable!**  
-*(actualmente no se sigue un sistema de versiones desde la 2.7.0.1)*
+*(ya no se sigue un sistema de versiones, **¡NO use la última `tag 2.7.0.1`!**)*
 
 Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualizaci%C3%B3n)
 
 ***
 
-# Cambios año 2019
+# Cambios hasta febrero-2022
+
+## Mejoras
+
+### Aixada ahora funciona en PHP7.4 y PHP8.1.
+  * Se han solventado syntaxis PHP ahora consideradas obsoletas y se han hecho
+    importantes cambios en los programas externos usados.
+    * Desaparece el uso de GDrive en importación/exportación.
+    * Para el correo SMTP se usa *SwiftMailer* hasta PHP7.3 y *Synfony-mailer* para PHP7.4 o
+      superior.
+    * Cuestiones técnicas:
+      * Desaparece la opción `$development` en `config.php` y se deja de
+        usar *FirePHP*.
+      * La carpeta de programas externos pasa de `/php/external/` 
+        a `/external/phpXX/` (donde *phpXX* es la menor versión PHP soportada)
+  
+### Uso de MariaDB
+  * Se corrigen problemas usando la base de datos MariaDB 10.3.13
+    (caso [#251](https://github.com/jmueller17/Aixada/issues/251))
+    * `config.php`: Ahora en :bulb:`config.php`:`$db_host` se permite
+      especificar puerto, y deja de usarse `$db_type`.
+  
+### Uso de `install.php`
+  * Mejora la legibilidad.
+  
+## Corrección de errores
+  * [#292](https://github.com/jmueller17/Aixada/issues/292) No se desactivaban los productos con referencia
+  a nulo al importar usando una plantilla con `'deactivate_products'=>true`.
+  * [#267](https://github.com/jmueller17/Aixada/issues/267) Some Dockerization improvements.
+  * [#258](https://github.com/jmueller17/Aixada/issues/258) Usando PHP mail() *cc* y *bcc* se ignoraban.
+
+***
+
+# Cambios hasta abril-2019
 
 ## Mejoras
 
 ### Aixada funciona en PHP7.
-  * Se han arreglado diversos problema, ahora también funciona con PHP7.
+  * Se han arreglado diversos problema, ahora Aixada funciona hasta PHP7.3.
   
 ### Mejoras de seguridad
   * Se ha cambiado la gestión de sesiones.
@@ -100,7 +133,7 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
 ### Envío de correos
   * Permitit el uso de servidores SMTP (:bulb:`config.php`: `$email_SMTP_host`)
 
-### Corrección de errores
+## Corrección de errores
   * #205, #206 Al hacer pedidos se comprueba que el pedido no esté ya cerrado.
   * #204 Usar precio final también en pedidos acumulativos.
   * #202 Permitir catalogar más de 127 unidades.
@@ -181,7 +214,7 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
     `$db_backup_method`)
   * Poner un poco más de ayuda.
 
-### Corrección de errores
+## Corrección de errores
   * #195 En algunos hostins fallaba el envío de pedidos a proveedores.
   * #194 No de importaba el tipo de IVA.
   * #185 Evitar cache de GET usando hostins NGINX comentado en #156.
@@ -193,7 +226,7 @@ Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualiz
   
 # Cambios años anteriores
 
-### Para más detalles ver: [CHANGELOG.md (en inglés)](https://github.com/jmueller17/Aixada/blob/master/CHANGELOG.md)
+Para más detalles ver: [CHANGELOG.md (en inglés)](https://github.com/jmueller17/Aixada/blob/master/CHANGELOG.md)
 
 ### Algunas mejoras
   * La página report_stock muestra en valor total del stock de productos y

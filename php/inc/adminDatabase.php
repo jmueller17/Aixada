@@ -1,7 +1,6 @@
 <?php
 function get_backup_name() {
-    return get_config('db_name'). '.' .
-        strftime('%Y.%m.%d_%H%M', strtotime("now"));
+    return get_config('db_name'). '.' . date('Y-m-d H:i');
 }
 
 function backup_as_internal($output_folder, $backup_name) {
@@ -39,7 +38,6 @@ function connect_by_mysqli($host, $db_name, $user, $pass)
             "Connecting to: host='{$host}' database='{$db_name}' user='{$user}'\n"
         );
     }
-    $db->query("alter session character set utf8 collate utf8_general_ci;");
     if (!$db->set_charset("utf8")) {
         ob_clean();
         throw new Exception(
@@ -94,8 +92,7 @@ function backup_by_mysqli($output_folder, $backup_name, $host, $db_name, $user, 
             "     - mysql host:  $host \n".
             "     - db_name:     $db_name \n".
             "     - user:        $user \n".
-            "     - date-time:   ".
-                            strftime('%Y-%m-%d %H:%M', strtotime("now"))."\n".
+            "     - date-time:   ". date('Y-m-d H:i') ."\n".
             "   ========= */\n";
     gzwrite($fp, $from, strlen($from));
 

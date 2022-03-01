@@ -6,14 +6,6 @@ ob_start(); // Probably only needed for FirePHP(no longer used)
 require_once(__ROOT__ . 'php/lib/exceptions.php');
 require_once(__ROOT__ . 'local_config/config.php');
 require_once(__ROOT__ . 'php/inc/database.php');
-require_once(__ROOT__ . 'php/lib/gdrive.php');
-
-/**
- * @see Zend_Loader
- */
-//$dirs = array(__ROOT__.'php/external/ZendGdata-1.12.2/library'); 
-
-
 
 class abstract_export_manager {
   
@@ -130,11 +122,6 @@ class abstract_export_manager {
     		case "XML":
     			$this->write_xml();
     			break;
-    		case "gdrive":
-    		case "gDrive":
-    		case "google":
-    			$this->write_gdrive($email, $pwd);
-    			break;
     		default:
     			throw new Exception("Export format {$format} not supported.");
     			exit;
@@ -221,55 +208,6 @@ class abstract_export_manager {
 		  	echo $newstr;
 		}	    	
     }
-    
-    
-    /**
-     * 
-     * Exports data to google drive. 
-     * Uses the Zend Gdata library to do this which is "slightly" outdated as Google API has moved on to v3. 
-     * If this is really a feature that will be used the whole thing should probably be rewritten using the
-     * Google Drive Api @link https://developers.google.com/drive/quickstart-php
-     * @param string $email google account authentication email
-     * @param string $pwd	google account authentication pwd
-     */
-	private function write_gdrive($email, $pwd){
-    	
-        
-    	$remove_local_copy = !$this->publish; 
-    	
-    	//create local copy 
-    	$this->publish = true; 
- 		$this->write_csv(false);
- 		
- 		//create file upload handler
- 		$cd = new gDrive($email, $pwd);
- 		
-    	$file = $this->export_dir . $this->filename; 
-    	$info = pathinfo($file);
-		$file_name =  basename($file,'.'.$info['extension']);
-    	
-		//if file with same name exists, delete it first. 
-		//otherwise a new copy will be created with the identical name?!
-		//this could also work as long as we import then the latest version. 
-		//maybe this should be set as an option.  
-        if($gdrive_id = $cd->nameExists($file_name) ){
-    		$cd->deleteDoc($gdrive_id);
-    	}
-    	
-    	//make new copy... otherwise upload won't work. 
-    	//Probably has to do with the headers of the connection, protocol version etc. 
-    	$cd = new gDrive($email, $pwd);
-        //upload to google
-        $cd->uploadDocument($file, $this->filename);
-        
-        //restore true publish settings. 
-		if($remove_local_copy){
-			unlink($file);
-		}
-		$this->publish = !$remove_local_copy;	
-            
-    }
-    
     
    
     

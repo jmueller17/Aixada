@@ -7,24 +7,13 @@
 
 <h4><?php echo $Text['export_format'];?></h4>
 <input type="radio" name="exportFormat" id="export_csv" value="csv" checked="checked" class="freeInput"/> <label for="export_csv">CSV</label>&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="exportFormat" id="export_xml" value="xml" class="freeInput"/> <label for="export_xml">XML</label>&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="exportFormat" id="export_gdrive" value="gdrive" class="freeInput"/> <label for="export_gdrive">Google Spreadsheet</label>
+<input type="radio" name="exportFormat" id="export_xml" value="xml" class="freeInput"/> <label for="export_xml">XML</label>
 <br/><br/>
-
-<div id="export_authentication">
-<h4><?php echo $Text['google_account']; ?></h4>
-<table>
-<tr><td><label for="export_email"><?php echo $Text['email']; ?></label> </td><td>&nbsp;</td><td><input type="text" name="email" value="" id="export_email" class="ui-widget ui-corner-all"/>  <br/></td></tr>
-<tr><td><lable for="export_pwd"><?php echo $Text['pwd'];?></lable> </td><td>&nbsp;</td><td><input type="password" name="password" value="" id="export_pwd" class="ui-widget ui-corner-all"/> </td></tr>
-</table>
-<br/><br/>
-</div>
-
 
 <h4><?php echo $Text['other_options']; ?></h4>
 <input type="checkbox" name="makePublic" id="makePublic" checked="checked" class="freeInput"/> <label for="makePublic"><?php echo $Text['export_publish']; ?></label>
 <br/>
-<p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class="">http://yourdomain.com/loca_config/export/<span id="showExportFileName"></span></span></p>
+<p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class="">http://yourdomain.com/local_config/export/<span id="showExportFileName"></span></span></p>
 <br/>
 </form>
 </div>

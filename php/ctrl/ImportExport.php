@@ -4,7 +4,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 
-require_once(__ROOT__ . "php/external/jquery-fileupload/UploadHandler.php");
+require_once(__ROOT__ . "external/php53_2/jquery-fileupload/UploadHandler.php");
 require_once(__ROOT__ . "local_config/config.php");
 
 require_once(__ROOT__ . "php/lib/import_products.php");
@@ -18,9 +18,6 @@ require_once(__ROOT__ . "php/lib/export_dates4products.php");
 require_once(__ROOT__ . "php/lib/export_members.php");
 require_once(__ROOT__ . "php/utilities/general.php");
 
- 
-
-require_once(__ROOT__ . 'php/lib/gdrive.php'); //Zend Gdata throws stupid PHP Strict Warning 
 ob_start(); // Probably only needed for FirePHP(no longer used)
 
 try{ 
@@ -39,8 +36,41 @@ try{
 			
 		//fetch file from online URL	
  		case 'fetchFile':
- 			$saveFileTo = __ROOT__ . 'local_config/upload/tmpdownload.csv'; 			
- 	 		gDrive::fetchFile(get_param('url'), 'csv', $saveFileTo);
+			$url = get_param('url');
+ 			$saveFileTo = __ROOT__ . 
+			    'local_config/upload/tmpdownload_' .
+			    parse_url($url, PHP_URL_SCHEME) . '_' . PHP_VERSION_ID .
+			        // ^ suffixes that help determine from & where it was created
+			    '.csv';
+
+			// Code fron /php/lib/gdrive.php on gDrive::fetchFile()
+			$outhandle = fopen($saveFileTo, 'w');
+			if (!$outhandle)
+			    throw new Exception("Export exception. Could not open {$saveFileTo} to store fetched file. Make sure that local_config/upload is a writable directory");
+
+			if (version_compare(PHP_VERSION, '5.5.22') < 0) {
+			    // It seems that CURLOPT_FILE does not work with https addresses, output file remains empty
+			    // (It's what it was, I don't spend more time on it)
+			    $ch = curl_init($url);
+			    curl_setopt($ch, CURLOPT_FILE, $outhandle);
+			    curl_exec($ch);
+			    curl_close($ch);
+			} else {
+			    // As of PHP-5.5.22 this works with http & https addresses:
+			    $a = file_get_contents(
+			        $url,
+			        false,
+			        stream_context_create(array(
+			            "ssl"=>array(
+			                "verify_peer"=>false,
+			                "verify_peer_name"=>false,
+			            ),
+			        ))
+			    );
+			    fwrite($outhandle, $a);
+			}
+			fclose($outhandle);
+
  	 		echo $saveFileTo; 
  			exit; 
  		

@@ -631,17 +631,6 @@
 		})
 			
 			
-		$('input[name=exportFormat]').on('click', function(){
-			if ($(this).attr("checked") == "checked" && $(this).val() == "gdrive"){
-				$('#export_authentication').fadeIn(1000);
-			} else {
-				$('#export_authentication').fadeOut(1000);
-			}
-
-		})
-		
-		$('#export_authentication').hide();
-
 		$('#export_ufs').hide();
 
 	

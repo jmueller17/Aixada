@@ -139,7 +139,7 @@ function make_date_x($weeks_into_past, $stepsize)
     $arr_x = array();
     while($t < $now) {
         $t = strtotime($s . ' + ' . $m++ . ' month');
-        $arr_x[strftime('%d-%m-%Y', $t)] = $stepsize * ($t - $t0) / $c;
+        $arr_x[date('d-m-Y', $t)] = $stepsize * ($t - $t0) / $c;
     }
     return $arr_x; 
 }

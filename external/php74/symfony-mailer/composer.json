@@ -1,0 +1,5 @@
+{
+    "require": {
+        "symfony/mailer": "^5.4"
+    }
+}
