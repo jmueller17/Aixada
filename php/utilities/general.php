@@ -761,7 +761,11 @@ function array_to_XML($ass_array, $field_formats = null) {
                     if (!$format_f) {
                         $value_f = $value;
                     } else {
-                        $value_f = date($format['format'], strtotime($value));
+                        if ($format['format'] == 'timestamp') {
+                            $value = strtotime($value);
+                        } else {
+                            $value_f = date($format['format'], strtotime($value));
+                        }
                     }
                     break;
                 case 'numbers':

@@ -731,6 +731,7 @@
 </div>
 <!-- end of wrap -->
 
+<?php include("js/aixadautilities/negativeBalances.js.php"); ?>
 <!-- / END -->
 </body>
 </html>

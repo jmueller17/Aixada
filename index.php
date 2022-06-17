@@ -745,6 +745,7 @@
 		 <div id="cartLayer"></div>
 </div>
 
+<?php include("js/aixadautilities/negativeBalances.js.php"); ?>
 <!-- / END -->
 </body>
 </html>

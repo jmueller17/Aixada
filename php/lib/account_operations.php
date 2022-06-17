@@ -180,6 +180,40 @@ class account_operations {
 		}
 		return DBWrap::get_instance()->Execute($sql);
 	}
+	
+	/**
+	 *
+	 */
+	public function get_uf_current_balance_XML($uf_id) {
+	  return rs_XML_fields(
+	    $this->get_uf_current_balance_rs($uf_id),
+	    cnv_config_formats(array(
+	      'last_update' => 'timestamp',
+	      'balance' => 'amount'
+	    ))
+	  );
+  }
+  public function get_uf_current_balance_rs($uf_id) {
+    $sql = "SELECT
+      a.account_id,
+      uf.id AS uf,
+      uf.name,
+      a.balance,
+      a.ts AS last_update
+    FROM (SELECT
+        account_id, MAX(id) AS max_id
+      FROM aixada_account
+      GROUP BY account_id) r
+    JOIN (aixada_account a, aixada_uf uf)
+    ON a.account_id = r.account_id
+      AND a.id = r.max_id
+      AND uf.id = a.account_id - 1000
+    WHERE uf.id = {$uf_id}
+    ORDER BY a.ts DESC
+    LIMIT 1";
+    
+    return DBWrap::get_instance()->Execute($sql);
+	}
 		
 	/**
 	 *
