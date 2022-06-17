@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    <?php if (is_created_session() && get_current_role() == 'Consumer') : ?>
+    <?php if (is_created_session() && get_current_role() == 'Consumer' && configuration_vars::get_instance()->allow_negative_balances == false) : ?>
         (function() {
             var endpoint = "php/ctrl/Account.php";
             var data = {
@@ -41,7 +41,7 @@
                 if (balance == void 0) return;
                 
                 var result = parseFloat(balance.textContent);
-                if (result > 0) {
+                if (result < 0) {
                     var lastDate = parseDateTime(doc.getElementsByTagName("last_update")[0].textContent);
                     var lastDateDaysDelta = Math.floor((Date.now() - lastDate.getTime()) / (1e+3 * 60 * 60 * 24));
                     var gracePeriodeDays = <?= configuration_vars::get_instance()->negative_balance_grace_periode; ?>;
