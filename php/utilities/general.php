@@ -762,7 +762,7 @@ function array_to_XML($ass_array, $field_formats = null) {
                         $value_f = $value;
                     } else {
                         if ($format['format'] == 'timestamp') {
-                            $value = strtotime($value);
+                            $value_f = strtotime($value);
                         } else {
                             $value_f = date($format['format'], strtotime($value));
                         }

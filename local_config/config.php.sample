@@ -132,6 +132,13 @@ class configuration_vars {
   
   /**
    *
+   * List of pages to block when some user is in the red
+   * @var array
+   */
+  public $negative_balance_disabled_pages = ['shop_and_order.php'];
+  
+  /**
+   *
    * Prevents purchase products with no stock (used in shop_and_order.php)
    * @var boolean
    */  

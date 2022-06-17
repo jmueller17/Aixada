@@ -561,7 +561,7 @@
 	<!-- end of headwrap -->
 
 
-	<div id="stagewrap" class="ui-widget">
+	<div id="stagewrap" class="ui-widget hidden">
 
 		<div id="titlewrap">
 			<div id="titleLeftCol">
