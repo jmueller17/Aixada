@@ -561,7 +561,7 @@
 	<!-- end of headwrap -->
 
 
-	<div id="stagewrap" class="ui-widget hidden">
+	<div id="stagewrap" class="ui-widget <?= in_array(substr($_SERVER['SCRIPT_NAME'], 1), configuration_vars::get_instance()->negative_balance_disabled_pages) ? hidden : ''; ?>">
 
 		<div id="titlewrap">
 			<div id="titleLeftCol">
@@ -731,7 +731,11 @@
 </div>
 <!-- end of wrap -->
 
-<?php include("js/aixadautilities/negativeBalances.js.php"); ?>
+<?php
+if (in_array(substr($_SERVER['SCRIPT_NAME'], 1), configuration_vars::get_instance()->negative_balance_disabled_pages)) {
+  include('js/aixadautilities/negativeBalances.js.php');
+}
+?>
 <!-- / END -->
 </body>
 </html>
