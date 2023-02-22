@@ -1096,4 +1096,5 @@ $Text['negative_balance_disclaimer'] = 'Atention, your credit is ';
 $Text['negative_balance_advise'] = 'Reload your wallet before you can place more orders.';
 $Text['negative_balance_ban_title'] = 'Your wallet is in the red!';
 $Text['negative_balance_ban_subtitle'] = 'Until you reload your wallet, this page will remain blocked.';
+$Text['negative_balance_image_alt'] = 'Angry carrot!';
 ?>

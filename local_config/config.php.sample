@@ -201,7 +201,8 @@ class configuration_vars {
    * can be set in the specific language files $Text['currency_desc'] = "" 
    * @var string
    */
-  public $currency_sign = "€";
+  public $currency_sign = '€';
+  public $currency_iso = 'EUR';
   public $currency_type_id = 1;
   
   /**

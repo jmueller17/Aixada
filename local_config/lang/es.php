@@ -1096,4 +1096,5 @@ $Text['negative_balance_disclaimer'] = 'Atención, tu crédito es de ';
 $Text['negative_balance_advise'] = 'Recarga el monedero antes de poder haces mas comandas.';
 $Text['negative_balance_ban_title'] = 'Tu monedero está en números rojos!';
 $Text['negative_balance_ban_subtitle'] = 'Hasta que no recargues el monedero, esta página permanecerá bloqueada.';
+$text['negative_balance_image_alt'] = 'Zanahoria enfadada!';
 ?>
