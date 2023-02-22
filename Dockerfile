@@ -1,4 +1,4 @@
-FROM php:7-apache
+FROM php:8.1-apache
 
 # Enable headers module
 RUN ln -s /etc/apache2/mods-available/headers.load \
