@@ -76,7 +76,7 @@
             }
 
             function parseDateTime(dt) {
-                return new Date(parseInt(dt, 10) * 1e3);
+                return new Date(dt);
             }
         })();
     <?php else: ?>
