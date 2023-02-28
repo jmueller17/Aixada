@@ -43,8 +43,14 @@
 
                     var result = parseFloat(balance.textContent);
                     if (result < 0) {
-                        var lastDate = parseDateTime(doc.getElementsByTagName("date")[0].textContent);
-                        var lastDateDaysDelta = Math.floor((Date.now() - lastDate.getTime()) / (1e+3 * 60 * 60 * 24));
+                        var lastDate, lastDateDaysDelta;
+                        try {
+                            lastDate = parseDateTime(doc.getElementsByTagName("date")[0].textContent);
+                            lastDateDaysDelta = Math.floor((Date.now() - lastDate.getTime()) / (1e+3 * 60 * 60 * 24));
+                        } catch (err) {
+                            console.error(err);
+                        }
+
 
                         var disabledPages = <?= isset($config->negative_balance_disabled_pages) ? json_encode($config->negative_balance_disabled_pages) : '[]'; ?>;
                         var isPageDisabled = disabledPages.reduce(function(isDisabled, page) {
@@ -52,7 +58,7 @@
                             return isDisabled || "<?= $page_uri; ?>".match(new RegExp(page));
                         }, false);
 
-                        if (lastDateDaysDelta > graceDays && isPageDisabled) {
+                        if (validateDate(lastDate) && lastDateDaysDelta > graceDays && isPageDisabled) {
                             var newContent = document.createElement("div");
                             newContent.id = "noMoneyBan";
                             newContent.innerHTML = `<img src="img/angry-carrot.jpeg" alt="<?= $Text['negative_balance_image_alt']; ?>">
@@ -78,8 +84,23 @@
                     }
                 }
 
+                function validateDate(d) {
+                    return d instanceof Date && ! isNaN(d.valueOf());
+                }
+
                 function parseDateTime(dt) {
-                    return new Date(dt);
+                    var date;
+
+                    date = new Date(dt);
+                    if (!validateDate(date)) {
+                        date = new Date(parseInt(dt, 10) * 1e3);
+                    }
+
+                    if (!validateDate(date)) {
+                        throw new Error("Invalid date: " + String(dt));
+                    }
+
+                    return date;
                 }
             })();
     <?php else : ?>
