@@ -57,8 +57,8 @@ try{
 			));
 	    	exit;
 	    	
-	    case 'getUfCurrentBalance':
-	      printXML($ao->get_uf_current_balance_XML(
+	    case 'getUfNegativeBalance':
+	      printXML($ao->get_uf_negative_balance_XML(
 	        get_param_int('uf_id', -999)
 	     ));
 	     exit;

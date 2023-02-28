@@ -184,36 +184,62 @@ class account_operations {
 	/**
 	 *
 	 */
-	public function get_uf_current_balance_XML($uf_id) {
+	public function get_uf_negative_balance_XML($uf_id) {
 	  return rs_XML_fields(
-	    $this->get_uf_current_balance_rs($uf_id),
+	    $this->get_uf_negative_balance_rs($uf_id),
 	    cnv_config_formats(array(
-	      'last_update' => 'timestamp',
+	      'date' => 'timestamp',
 	      'balance' => 'amount'
 	    ))
 	  );
   }
-  public function get_uf_current_balance_rs($uf_id) {
-    $sql = "SELECT
-      a.account_id,
-      uf.id AS uf,
-      uf.name,
-      a.balance,
-      a.ts AS last_update
+  public function get_uf_negative_balance_rs($uf_id) {
+    $sql = "WITH balances (
+        account_id,
+        id,
+        balance,
+        ts,
+        rank
+    ) AS (SELECT
+        account_id,
+        id,
+        balance,
+        ts,
+        RANK() OVER (PARTITION BY account_id ORDER BY ts) AS rank
+    FROM aixada_account
+    WHERE account_id = {$uf_id} + 1e3)
+    SELECT
+        d.account_id,
+        u.id uf,
+        u.name,
+        b.balance,
+        d.ts date
     FROM (SELECT
-        account_id, MAX(id) AS max_id
-      FROM aixada_account
-      GROUP BY account_id) r
-    JOIN (aixada_account a, aixada_uf uf)
-    ON a.account_id = r.account_id
-      AND a.id = r.max_id
-      AND uf.id = a.account_id - 1000
-    WHERE uf.id = {$uf_id}
-    ORDER BY a.ts DESC
-    LIMIT 1";
+            a.account_id,
+            a.id,
+            a.balance,
+            a.ts
+        FROM balances a
+        LEFT JOIN balances b
+        ON a.rank = b.rank + 1
+        WHERE a.balance < 0
+            AND b.balance >= 0
+        ORDER BY a.ts DESC
+        LIMIT 1) d -- dated
+    INNER JOIN (SELECT
+            account_id,
+            balance
+        FROM balances
+        WHERE account_id = {$uf_id} + 1e3
+        ORDER BY ts DESC
+        LIMIT 1) b -- balance
+     ON d.account_id = b.account_id
+     INNER JOIN aixada_uf u -- unitat familiar
+     ON b.account_id = u.id + 1e3
+     WHERE b.balance < 0;";
     
     return DBWrap::get_instance()->Execute($sql);
-	}
+  }
 		
 	/**
 	 *
