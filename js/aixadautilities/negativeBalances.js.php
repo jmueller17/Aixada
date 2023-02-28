@@ -4,7 +4,7 @@
             (function() {
                 var endpoint = "php/ctrl/Account.php";
                 var data = {
-                    oper: "getUfCurrentBalance",
+                    oper: "getUfNegativeBalance",
                     uf_id: <?= $_SESSION['userdata']['uf_id']; ?>,
                 }
 
@@ -43,7 +43,7 @@
 
                     var result = parseFloat(balance.textContent);
                     if (result < 0) {
-                        var lastDate = parseDateTime(doc.getElementsByTagName("last_update")[0].textContent);
+                        var lastDate = parseDateTime(doc.getElementsByTagName("date")[0].textContent);
                         var lastDateDaysDelta = Math.floor((Date.now() - lastDate.getTime()) / (1e+3 * 60 * 60 * 24));
 
                         var disabledPages = <?= isset($config->negative_balance_disabled_pages) ? json_encode($config->negative_balance_disabled_pages) : '[]'; ?>;
