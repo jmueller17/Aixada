@@ -48,7 +48,8 @@
 
                         var disabledPages = <?= isset($config->negative_balance_disabled_pages) ? json_encode($config->negative_balance_disabled_pages) : '[]'; ?>;
                         var isPageDisabled = disabledPages.reduce(function(isDisabled, page) {
-                            return isDisabled || "<?= $_SERVER['REQUEST_URI'] ?>".match(new RegExp(page));
+                            <?php $page_uri = $_SERVER['REQUEST_URI'] == '/' ? 'index.php' : $_SERVER['REQUEST_URI']; ?>
+                            return isDisabled || "<?= $page_uri; ?>".match(new RegExp(page));
                         }, false);
 
                         if (lastDateDaysDelta > graceDays && isPageDisabled) {
