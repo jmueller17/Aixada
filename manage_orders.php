@@ -1831,7 +1831,7 @@
 	</div>
 	<!-- end of headwrap -->
 	
-	<div id="stagewrap">
+	<div id="stagewrap" class="<?= negative_balances_stagewrap_class() ?>">
 	
 		<div id="titlewrap" class="ui-widget">
 			<div id="titleLeftCol50">

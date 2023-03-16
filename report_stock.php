@@ -328,7 +328,7 @@
 	
 	
 	
-	<div id="stagewrap">
+	<div id="stagewrap" class="<?= negative_balances_stagewrap_class() ?>">
 	
 
 

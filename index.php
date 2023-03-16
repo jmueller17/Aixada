@@ -555,7 +555,7 @@
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	<div id="stagewrap" class="ui-widget <?= in_array(substr($_SERVER['SCRIPT_NAME'], 1), configuration_vars::get_instance()->negative_balance_disabled_pages) ? 'hidden' : ''; ?>">
+	<div id="stagewrap" class="ui-widget <?= negative_balances_stagewrap_class(); ?>">
 	
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">
@@ -745,11 +745,6 @@
 		 <div id="cartLayer"></div>
 </div>
 
-<?php
-if (in_array(substr($_SERVER['SCRIPT_NAME'], 1), configuration_vars::get_instance()->negative_balance_disabled_pages)) {
-  include('js/aixadautilities/negativeBalances.js.php');
-}
-?>
 <!-- / END -->
 </body>
 </html>

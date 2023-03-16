@@ -132,7 +132,7 @@
 	<!-- end of headwrap -->
 	
 	
-	<div id="stagewrap" class="ui-widget">
+	<div id="stagewrap" class="ui-widget <?= negative_balances_stagewrap_class() ?>">
 	
 		<div id="titlewrap">
 			

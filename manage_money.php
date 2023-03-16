@@ -426,7 +426,7 @@
 <div id="headwrap">
 	<?php include "php/inc/menu.inc.php" ?>
 </div><!-- end of headwrap -->
-<div id="stagewrap" class="ui-widget">
+<div id="stagewrap" class="ui-widget <?= negative_balances_stagewrap_class() ?>">
 	<div id="titlewrap">			
 		<h1><?php echo $Text['head_ti_cashbox']; ?></h1>
 	</div>

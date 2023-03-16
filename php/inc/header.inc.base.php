@@ -7,6 +7,7 @@ if (!defined('__ROOT__')) {
 require_once("header.inc.version.php"); // To obtain: $aixada_vesion_lastDate
 require_once(__ROOT__ . 'local_config'.DS.'config.php');
 require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'general.php');
+require_once(__ROOT__ . 'php'.DS.'utilities'.DS.'negative_balances.php');
 
 $language = get_session_language(); 
 $default_theme = get_session_theme();
@@ -38,5 +39,8 @@ function aixada_js_src($useMenus = true, $rootJs = '') {
         $src .= "
         <script src=\"{$rootJs}js/jquery-ajaxQueue/jQuery.ajaxQueueNo.js?v={$aixada_vesion_lastDate}\"></script>";
     }
+
+    $src .= include_negative_balances_js();
+
     return $src . "\n";
 }
