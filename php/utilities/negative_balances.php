@@ -12,7 +12,7 @@ function negative_balances_grace_periode()
 
 function get_negative_balances_disabled_pages()
 {
-    return isset(configuration_vars::get_instance()->negative_balances_disabled_pages) ? configuration_vars::get_instance()->negative_balances_disabled_pages : [];
+    return isset(configuration_vars::get_instance()->negative_balances_disabled_pages) ? configuration_vars::get_instance()->negative_balances_disabled_pages : array();
 }
 
 function include_negative_balances_js()
