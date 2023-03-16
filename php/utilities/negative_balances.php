@@ -1,8 +1,18 @@
 <?php
 
+function allowed_negative_balances()
+{
+    return isset(configuration_vars::get_instance()->allow_negative_balances) && configuration_vars::get_instance()->allow_negative_balances === true;
+}
+
+function negative_balances_grace_periode()
+{
+    return isset(configuration_vars::get_instance()->negative_balances_grace_periode) ? (int) configuration_vars::get_instance()->negative_balances_grace_periode : 14;
+}
+
 function get_negative_balances_disabled_pages()
 {
-    return isset(configuration_vars::get_instance()->negative_balance_disabled_pages) ? configuration_vars::get_instance()->negative_balance_disabled_pages : [];
+    return isset(configuration_vars::get_instance()->negative_balances_disabled_pages) ? configuration_vars::get_instance()->negative_balances_disabled_pages : [];
 }
 
 function include_negative_balances_js()

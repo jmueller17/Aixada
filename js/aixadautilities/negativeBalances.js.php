@@ -1,6 +1,6 @@
 <?php $config = configuration_vars::get_instance(); global $Text; ?>
 <script type="text/javascript">
-    <?php if (is_created_session() && get_current_role() == 'Consumer' && isset($config->allow_negative_balances) && $config->allow_negative_balances == false) : ?>
+    <?php if (is_created_session() && get_current_role() == 'Consumer' && !allowed_negative_balances()) : ?>
     document.addEventListener("DOMContentLoaded", function () {
         var endpoint = "php/ctrl/Account.php";
         var data = {
@@ -36,7 +36,7 @@
         ajax.send();
 
         function onLoad(doc) {
-            var graceDays = <?= isset($config->negative_balance_grace_periode) ? (int) $config->negative_balance_grace_periode : 14 ?>;
+            var graceDays = <?= negative_balances_grace_periode() ?>;
             var balance = doc.getElementsByTagName("balance")[0];
 
             if (balance == void 0) return;
@@ -103,6 +103,8 @@
         }
     });
     <?php else : ?>
-        document.getElementById("stagewrap").classList.remove("hidden");
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("stagewrap").classList.remove("hidden");
+        });
     <?php endif; ?>
 </script>
