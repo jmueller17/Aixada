@@ -118,6 +118,27 @@ class configuration_vars {
   
   /**
    *
+   * Displayt wanrings where uf has negative balances
+   * @var boolean
+   */
+  public $allow_negative_balances = false;
+
+  /**
+   *
+   * In days, the amount of time one uf can purchase without been blocked. Has effect only if `$allow_negative_balances` is set to false.
+   * @var integer
+   */
+  public $negative_balance_grace_periode = 14;
+  
+  /**
+   *
+   * List of pages to block when some user is in the red
+   * @var array
+   */
+  public $negative_balance_disabled_pages = array('index.php', 'shop_and_order.php');
+  
+  /**
+   *
    * Prevents purchase products with no stock (used in shop_and_order.php)
    * @var boolean
    */  
@@ -180,7 +201,8 @@ class configuration_vars {
    * can be set in the specific language files $Text['currency_desc'] = "" 
    * @var string
    */
-  public $currency_sign = "€";
+  public $currency_sign = '€';
+  public $currency_iso = 'EUR';
   public $currency_type_id = 1;
   
   /**
@@ -194,7 +216,9 @@ class configuration_vars {
     'dates' => array(
         // Date formats, uses formatting of php 
         'date' => 'd-m-Y',
-        'datetime' => 'd-m-Y H:i'
+        'datetime' => 'd-m-Y H:i',
+        // timestamp requires only a booealn value because is a formatless date representation
+        'timestamp' => true,
     ),
     'numbers' => array(
         // Numeric formats as "ndt" where:
@@ -204,7 +228,10 @@ class configuration_vars {
         //     t=thousands separator.
         // NOTE: By the moment only 'n.' is supported because since part of the
         //       js code is not yet adapted.
-        'amount' => '2.' 
+        'amount' => '2.',
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat
+        // Number format to parse numeric data on the client
+        'locale' => 'es-ES'
     )
   );
   

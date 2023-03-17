@@ -113,6 +113,7 @@ table.tblFormsSettings 	td label 	{float:left;}
 /** common layout **/
 div#wrap			{width:92%; margin: 0 auto; background-color:#fff;}
 div#stagewrap		{background-color:#ff; min-width:900px;}
+div#stagewrap.hidden {visibility: hidden;}
 div#topMenu			{}
 div#menuBgBar		{padding:5px; margin-bottom:10px;}
 a#navMyAccount		{float:right;}
@@ -395,10 +396,23 @@ input 					{height:1.6em;}
 .table_listing_cashbox td			{text-align:left; padding:2px;}
 .tblOverviewOrders td				{padding-right:4px; padding-left:4px;}
 
+/** Warngin Styles **/
+#noMoneyDisclaimer {
+    background-color: #ff7a75;
+    color: white;
+    border-radius: 7px;
+    box-shadow: 3px 3px 7px #0004;
+    margin: 1rem 0;
+    padding: .5rem 1.5rem;
+    text-align: center;
+}
 
+#noMoneyBan {
+    display: block;
+    text-align: center;
+    padding: 4rem 3.5rem;
+}
 
-
-
-
-
-
+#noMoneyBan h1 {
+    color: #ff7a75
+}

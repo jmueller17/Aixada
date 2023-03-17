@@ -555,7 +555,7 @@
 		<?php include "php/inc/menu.inc.php" ?>
 	</div>
 	<!-- end of headwrap -->
-	<div id="stagewrap" class="ui-widget">
+	<div id="stagewrap" class="ui-widget <?= negative_balances_stagewrap_class(); ?>">
 	
 		<div id="homeWrap">
 			<div class="aix-layout-fixW150 floatLeft">

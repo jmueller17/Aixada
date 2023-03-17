@@ -66,7 +66,7 @@
 	</div>
 	
 	<!-- end of headwrap -->
-	<div id="stagewrap">
+	<div id="stagewrap" class="<?= negative_balances_stagewrap_class() ?>">
 	
 		<div class="aix-layout-center60 ui-widget"> 
 			

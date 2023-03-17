@@ -56,6 +56,12 @@ try{
 					get_param_int('negative', 0)
 			));
 	    	exit;
+	    	
+	    case 'getUfNegativeBalance':
+	      printXML($ao->get_uf_negative_balance_XML(
+	        get_param_int('uf_id', -999)
+	     ));
+	     exit;
 			
 	   	case 'getNegativeAccounts':
 			printXML($ao->get_uf_balances_XML(0, 1));
