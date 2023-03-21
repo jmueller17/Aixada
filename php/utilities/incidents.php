@@ -42,7 +42,7 @@ function manage_incident($incident_id){
 		//otherwise email to individual active users. 
 		} else {
 			//get active members
-			$rs = do_stored_query('get_member_listing', 1); 
+			$rs = do_stored_query('get_member_listing', 0); 
 	    	$to = get_list_rs($rs, 'email');
 			
 		}
