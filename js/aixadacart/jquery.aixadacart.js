@@ -218,6 +218,8 @@
 					_self.data('aixadacart').unsavedItems = true; 
 				} else { //if it is not, create a new row
 					if (emptyRow) { // Don't add a empty row
+						// but allows validation, could be an empty cart
+						$('#btn_submit').button( "option", "disabled", false );
 						return itemObj;
 					}
 					_self.data('aixadacart').unsavedItems = true; 
@@ -485,6 +487,7 @@
                                 });
                                 $('#global_cart_id').val(lastCartId);
                                 $('#global_ts_last_saved').val(ts_last_saved);
+                                $('#btn_submit').button( "option", "disabled", false );
                             }
                         });
                     } else {
