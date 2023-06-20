@@ -37,6 +37,14 @@ class validation_cart_manager extends shop_cart_manager {
    */
  protected function _postprocessing($arrQuant, $arrProdId, $arrIva, $arrRevTax, $arrOrderItemId, $cart_id, $arrPreOrder, $arrPrice, $addNotes)
   {
+    // Here at postprocessing, the cart may not exist if it was empty
+    // See: `abstract_cart_manager::commit(...)` which calls `_delete_cart()` when cart is empty.
+    $cart = get_row_query('SELECT id FROM aixada_cart WHERE id =' . $cart_id);
+    if (!$cart){
+        // No cart, nothing to do!
+        return;
+    }
+    
     //do_stored_query('deduct_stock_and_pay', $cart_id);
     do_stored_query('validate_shop_cart', $cart_id, $this->_op_id, 'cart #', 1);
   }

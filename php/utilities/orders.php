@@ -598,7 +598,7 @@ function directly_validate_order($order_id, $record_provider_invoice) {
         
         // Check date for shop non empty carts.
         $row_or = get_row_query(
-            "select provider_id, date_for_order 
+            "select provider_id, date_for_order, date_for_shop
             from aixada_order where id = {$order_id};");
         $date_for_shop = $row_or['date_for_order'];
         $provider_id = $row_or['provider_id'];
@@ -692,6 +692,19 @@ function directly_validate_order($order_id, $record_provider_invoice) {
             do_stored_query('validate_shop_cart', $cart_id, $operator_id, 
                     "order#{$order_id} {$date_for_shop} cart#", 0);
         }
+        // Delete all empty carts for 'date_for_shop' on table 'aixada_order'
+        $date_for_shop_table = $row_or['date_for_shop'];
+        error_log("delete c from aixada_cart c 
+            left join aixada_shop_item si on si.cart_id=c.id 
+            where si.cart_id is null 
+                and c.date_for_shop = '{$date_for_shop_table}';");
+        $db->Execute(
+            "delete c from aixada_cart c 
+            left join aixada_shop_item si on si.cart_id=c.id 
+            where si.cart_id is null 
+                and c.date_for_shop = '{$date_for_shop_table}';"
+        );
+        
         if ($record_provider_invoice) {
             // Add provider invoice
             $ao = new account_operations();
