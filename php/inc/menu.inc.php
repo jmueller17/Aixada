@@ -1,16 +1,13 @@
 <div id="logonStatus">
 	<p class="ui-widget">
-<?php 
+<?php
     if (is_created_session()) {
-        // Help
-        echo '<a href="docs/index_' . get_session_language() . '.php" target="_blank">' .
-            $Text['nav_help'] . '</a> | ';	
-        
+
         // Login name and uf_id
-        echo  $Text['nav_signedIn'] . " " . get_session_value('login'). 
+        echo  $Text['nav_signedIn'] . " " . get_session_value('login').
             " | " . $Text['uf_long'] . ' ' . get_session_value('uf_id') .
             " | " . get_session_value('provider_id');
-        
+
         // Select rol
         echo '<select size="0" name="role_select" id="role_select">';
         foreach (get_session_value('roles') as $role) {
@@ -19,8 +16,8 @@
             if ($role == get_current_role()) {
                 echo ' selected';
             }
-            echo ' value="' . $role. '">' . $rt . '</option>'; 
-        } 
+            echo ' value="' . $role. '">' . $rt . '</option>';
+        }
         echo '</select> ';
 
         // Select lang
@@ -34,8 +31,8 @@
                 if ($keys[$i] == get_session_value('language')) {
                     echo ' selected';
                 }
-                echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>'; 
-            } 
+                echo ' value="' . $keys[$i]. '">' . $names[$i] . '</option>';
+            }
             echo '</select> ';
         }
         echo " | ";
@@ -55,16 +52,17 @@
 
 <div class="ui-widget-header ui-corner-all" id="menuBgBar">
 <div  id="topMenu">
-<a tabindex="0" href="index.php" 	id="navHome" class="menuTop"><?php echo $Text['nav_home'];?></a>
-<a tabindex="1" href="torn.php" 	id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
+<a tabindex="0" href="ajuda.php" 	id="navAjuda" class="menuTop"><?php echo $Text['nav_ajuda'];?></a>
+<a tabindex="1" href="index.php" 	id="navHome" class="menuTop"><?php echo $Text['nav_home'];?></a>
+<a tabindex="2" href="torn.php" 	id="navWizard" class="menuTop"><?php echo $Text['nav_wiz'];?></a>
 <?php if ($cfg_use_shop) {  // USE SHOP: start ?>
-<a tabindex="2" href="shop_and_order.php?what=Shop" 	id="navShop" class="menuTop"><?php echo $Text['nav_shop'];?></a>
+<a tabindex="3" href="shop_and_order.php?what=Shop" 	id="navShop" class="menuTop"><?php echo $Text['nav_shop'];?></a>
 <?php } // - - - - - - - - - - USE SHOP: end ?>
-<a tabindex="3" href="shop_and_order.php?what=Order" 		id="navOrder" class="menuTop"><?php echo $Text['nav_order'];?></a>
-<a tabindex="4" href="#" 			id="navManage" class="menuTop"><?php echo $Text['nav_mng'];?></a>
-<a tabindex="5" href="#" id="navReport" class="menuTop"><?php echo $Text['nav_report'];?></a>
-<a tabindex="6" href="#" id="navIncidents" class="menuTop"><?php echo $Text['nav_incidents'];?></a>
-<a tabindex="7" href="#" id="navMyAccount" class="menuTop"><?php echo $Text['nav_myaccount'];?></a>
+<a tabindex="4" href="shop_and_order.php?what=Order" 		id="navOrder" class="menuTop"><?php echo $Text['nav_order'];?></a>
+<a tabindex="5" href="#" 			id="navManage" class="menuTop"><?php echo $Text['nav_mng'];?></a>
+<a tabindex="6" href="#" id="navReport" class="menuTop"><?php echo $Text['nav_report'];?></a>
+<a tabindex="7" href="#" id="navIncidents" class="menuTop"><?php echo $Text['nav_incidents'];?></a>
+<a tabindex="8" href="#" id="navMyAccount" class="menuTop"><?php echo $Text['nav_myaccount'];?></a>
 </div>
 </div>
 
@@ -74,18 +72,19 @@
 		<li><a href="manage_ufmember.php"><?php echo $Text['uf_short'];?> & <?php echo $Text['nav_mng_member'];?></a>
 			<ul>
 			<li>
-            <?php 
+            <?php
             	if (get_current_role() == 'Hacker Commission') {
      				echo '<a href="activate_all_roles.php">';
  				} else {
      				echo '<a href="activate_roles.php">';
- 				}  
+ 				}
  				echo $Text['nav_mng_roles'];?>
  		</a></li>
 			</ul>
 		</li>
-		
+
 		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_providers'];?></a></li>
+		<?php if(get_config('calendari')){?><li><a href="manage_calendar.php"><?php echo $Text['nav_mng_calendar'];?></a></li> <?php }?>
 		<li><a href="manage_providers.php"><?php echo $Text['nav_mng_products'];?></a>
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
@@ -118,7 +117,7 @@
 			</ul>
 		</li>
 
-		
+
 	</ul>
 </div>
 
@@ -132,7 +131,7 @@
 		</li>
 		<li><a href="report_account.php"><?php echo $Text['nav_report_account'];?></a></li>
 		<li><a href="report_stock.php"><?php echo $Text['nav_mng_stock'];?></a></li>
-		
+
 		<li><a href="report_torn.php"><?php echo $Text['nav_report_daystats'];?></a></li>
 		<li><a href="#"><?php echo $Text['nav_report_timelines'];?></a>
                 <ul>
@@ -155,7 +154,7 @@
 	<ul>
 		<li><a href="manage_mysettings.php"><?php echo $Text['nav_myaccount_settings'];?></a></li>
 		<li><a href="manage_mysettings.php?what=pwd"><?php echo $Text['nav_changepwd'];?></a></li>
-		<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>		
+		<li><a href="report_account.php?what=my_account"><?php echo $Text['nav_myaccount_account'];?></a></li>
 		<!-- li><a href="my_prevorders.php"><?php echo $Text['nav_prev_orders'];?></a></li-->
 	</ul>
 </div>

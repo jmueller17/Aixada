@@ -1,6 +1,6 @@
 <?php
-// Spanish translation file for aixada 
-// contribute by 
+// Spanish translation file for aixada
+// contribute by
 // Cristóbal Cabeza-Cáceres, Daniel Mollà
 // Email: cristobal.cabeza@gmail.com, dmollaca@gmail.com
 
@@ -11,7 +11,7 @@ $Text['charset'] = "utf-8";
 $Text['text_dir'] = "ltr"; // ('ltr' for left to right, 'rtl' for right to left)
 
 
-/** 
+/**
  *  		Global things
  */
 $Text['coop_name'] = configuration_vars::get_instance()->coop_name;
@@ -24,7 +24,7 @@ $Text['id'] = "id";
 $Text['uf_short'] = "UF";
 $Text['uf_long'] = "Unidad familiar";
 
-/** 
+/**
  *  		misc
  */
 $Text['date_from'] = 'de';
@@ -68,7 +68,6 @@ $Text['head_ti_order'] = "Pedido"; // Unused!
 $Text['head_ti_shop'] = "Comprar productos"; // Unused!
 $Text['head_ti_reports'] = "Informes"; // Unused!
 $Text['head_ti_validate'] = "Validar";
-
 $Text['head_ti_active_products'] = "Activar/Desactivar Productos para pedidos";
 $Text['head_ti_arrived_products'] = "Productos que han llegado"; // Unused!
 $Text['head_ti_active_roles'] = "Roles activos";
@@ -79,10 +78,9 @@ $Text['head_ti_manage'] = "Gestionar";
 $Text['head_ti_manage_uf'] = "Unidades familiares/Miembros";
 $Text['head_ti_incidents'] = "Incidentes";
 $Text['head_ti_stats'] = "Estadísticas diarias";
-$Text['head_ti_prev_orders'] = "Mis compras anteriores"; 
-$Text['head_ti_cashbox'] = "Control de dinero"; 
-
-
+$Text['head_ti_prev_orders'] = "Mis compras anteriores";
+$Text['head_ti_cashbox'] = "Control de dinero";
+$Text['head_ti_calendar'] = "Gestionar el calendario";
 
 
 /**
@@ -98,13 +96,13 @@ $Text['ti_mng_members'] = "Gestionar los miembros";
 $Text['ti_mng_ufs'] = "Gestionar las unidades familiares";
 $Text['ti_mng_dates'] = "De-/activar individualmente fechas para hacer pedidos";
 $Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos"; // Unused!
-$Text['ti_mng_db'] = "Copia de seguridad de la base de datos"; 
+$Text['ti_mng_db'] = "Copia de seguridad de la base de datos";
 $Text['ti_order'] = "Hacer el pedido para ";
 $Text['ti_shop'] = "Comprar artículos ";
-$Text['ti_report_report'] = "Resumen de pedidos para "; 
-$Text['ti_report_account'] = "Informe de todas las cuentas"; 
-$Text['ti_report_my_account'] = "Informe de mi cuenta "; 
-$Text['ti_report_preorder'] = "Resumen de prepedidos"; 
+$Text['ti_report_report'] = "Resumen de pedidos para ";
+$Text['ti_report_account'] = "Informe de todas las cuentas";
+$Text['ti_report_my_account'] = "Informe de mi cuenta ";
+$Text['ti_report_preorder'] = "Resumen de prepedidos";
 $Text['ti_report_incidents'] = "Incidentes de hoy";
 $Text['ti_incidents'] = "Incidentes";
 $Text['ti_validate'] = "Validar la compra de la unidad familiar ";
@@ -118,6 +116,37 @@ $Text['ti_timeline'] = "Informe línea de tiempo";
 $Text['ti_report_torn'] = "Resumen del turno de hoy";
 $Text['ti_mng_cashbox'] = "Control de caja";
 
+/**
+ *              Ayuda
+ */
+$Text['compte_titol'] = 'Número de cuenta on hacer los ingresos y NIF';
+$Text['numCompte'] = 'Número de Cuenta';
+$Text['nif'] = 'Nif';
+$Text['llistatUfs_titol'] = 'Listado Uf\'s activas';
+$Text['gestioTorns_titol'] = 'Gestion Turnos Cesta';
+$Text['guardar'] = 'Guardar';
+$Text['modificar'] = 'Modificar Uf';
+$Text['local'] = 'Local';
+
+/**
+ *              Calendari
+ */
+$Text['torn_creat'] = 'Turno creado';
+$Text['torn_guardat'] = 'Turno guardado';
+$Text['roda_torns_creada'] = 'Rueda de Turnos Creada';
+$Text['torn_eliminat'] = 'Turno eliminado';
+$Text['data_torn'] = "Fecha del turno";
+$Text['assignar_torn'] = "Asignar turno";
+$Text['no_uf'] = "Ninguna uf seleccionada";
+$Text['crear_torn'] = "Crear turno";
+$Text['crear_roda'] = "Crear rueda de turnos";
+$Text['eliminar_torn'] = "Eliminar turno";
+$Text['pregunta_eliminar'] = "Estas seguro de eliminar el turno con fecha: ";
+$Text['pregunta_roda'] ="Estas seguro de crear una rueda de turnos a partir de la fecha: ";
+$Text['pregunta_roda2'] = " Todos los turnos posteriores seran eliminados";
+$Text['afegir_uf'] = "Añadir uf";
+$Text['eliminar_uf'] = "Eliminar uf";
+$mesos=[1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Disiembre"];
 
 /**
  * 				roles
@@ -310,7 +339,7 @@ $Text['ts_validated'] = 'Validada';
 
 /**
  * 		Logon Screen
- */ 
+ */
 $Text['welcome_logon'] = "Bienvenid@s a " . configuration_vars::get_instance()->coop_name . "!";
 $Text['logon'] = "Usuario";
 $Text['pwd']	= "Contraseña";
@@ -329,6 +358,7 @@ $Text['required_fields'] = " son campos obligatorios";
 /**
  *			Navigation
  */
+ $Text['nav_ajuda'] = "Ayuda";
 $Text['nav_home'] = "Inicio";
 $Text['nav_wiz'] = "Turno";
 	$Text['nav_wiz_arrived'] = "Productos que no han llegado";
@@ -373,7 +403,7 @@ $Text['nav_incidents'] = "Incidentes";
 $Text['nav_myaccount'] = "Mi cuenta";
 	$Text['nav_myaccount_settings'] = "Configuración";
 	$Text['nav_myaccount_account'] = "Dinero";
-	$Text['nav_changepwd'] = "Cambia la contraseña"; 
+	$Text['nav_changepwd'] = "Cambia la contraseña";
 	$Text['nav_prev_orders'] = "Compras anteriores";
 
 $Text['nav_logout'] = "Salir";
@@ -403,16 +433,16 @@ $Text['btn_create'] = "Crear";
 $Text['btn_close'] = "Cerrar";
 $Text['btn_make_deposit'] = "Ingresar";
 $Text['btn_new_incident'] = "Incidente nuevo";
-$Text['btn_reset_pwd'] = "Re-establecer contraseña"; 
-$Text['btn_view_cart'] = "Carrito"; 
+$Text['btn_reset_pwd'] = "Re-establecer contraseña";
+$Text['btn_view_cart'] = "Carrito";
 $Text['btn_view_cart_lng'] = "Ver únicamente el carrito";
 $Text['btn_view_list'] = "Productos";
 $Text['btn_view_list_lng'] = "Ver únicamente los productos";
 $Text['btn_view_both'] = "Ambos";
 $Text['btn_view_both_lng'] = "Ver tanto el carrito como los productos";
-$Text['btn_repeat_single'] = "No, uno solo"; 
-$Text['btn_repeat_all'] = "Ok, aplica a todas"; 
- 
+$Text['btn_repeat_single'] = "No, uno solo";
+$Text['btn_repeat_all'] = "Ok, aplica a todas";
+
 
 /**
  * Incidents
@@ -461,18 +491,18 @@ $Text['msg_err_pwdctrl'] = "Las contraseñas no coinciden. Escríbelas de nuevo.
 $Text['msg_err_usershort'] = "El nombre de usuario es demasiado corto. Tiene que tener tres caracteres como mínimo.";
 $Text['msg_err_userexists'] = "El nombre de usuario ya está ocupado. Elige otro.";
 $Text['msg_err_passshort'] = "La contraseña es demasiado corta. Tiene que tener entre 4 y 15 caracteres";
-$Text['msg_err_notempty'] = " no puede estar vacío."; 
-$Text['msg_err_namelength'] = "El nombre y apellido no puede estar vació y no puede tener más de 255 caracteres!"; 
-$Text['msg_err_only_num'] = " sólo acepta cifras y no puede estar vacío."; 
+$Text['msg_err_notempty'] = " no puede estar vacío.";
+$Text['msg_err_namelength'] = "El nombre y apellido no puede estar vació y no puede tener más de 255 caracteres!";
+$Text['msg_err_only_num'] = " sólo acepta cifras y no puede estar vacío.";
 $Text['msg_err_email'] = "El formato del correo electrónico no es correcto. Tiene que ser del estilo nombre@dominio.com o parecido.";
 $Text['msg_err_select_uf'] = "Para asignar un nuevo miembro a una UF primero tienes que seleccionar la UF clicando sobre ella. Si quieres crear una nueva UF, hazlo clicando en + Nueva UF.";
-$Text['msg_err_select_non_member'] = "Para asignar un nuevo miembro a una UF, primero tienes que seleccionarlo de la lista de no miembros que hay a la derecha."; 
+$Text['msg_err_select_non_member'] = "Para asignar un nuevo miembro a una UF, primero tienes que seleccionarlo de la lista de no miembros que hay a la derecha.";
 $Text['msg_err_insufficient_stock'] = 'No hay suficiente stock de ';
 
 
 $Text['msg_edit_success'] = "Los datos editados se han guardado correctamente.";
 $Text['msg_edit_mysettings_success'] = "La nueva configuración se ha guardado correctamente.";
-$Text['msg_pwd_changed_success'] = "La contraseña se ha cambiado correctamente."; 
+$Text['msg_pwd_changed_success'] = "La contraseña se ha cambiado correctamente.";
 $Text['msg_confirm_del'] = "¿Seguro que quieres eliminar a este miembro?";
 $Text['msg_enter_deposit_amount'] = "El campo de cantidad del ingreso solo acepta cifras y no puede estar vacío.";
 $Text['msg_please_set_ufid_deposit'] = "No se ha definido la ID de la UF. Tienes que elegir una compra o seleccionar otra UF para realizar el depósito.";
@@ -482,7 +512,7 @@ $Text['msg_withdrawal_success'] = "El pago se ha realizado correctamente.";
 $Text['msg_select_cart_first'] = "Para añadir artículos para validar, antes tienes que seleccionar una UF o una compra.";
 $Text['msg_err_move_date'] = "Se ha producido un error mientras se cambiaba la fecha del pedido. Inténtalo de nuevo.";
 $Text['msg_no_active_products'] = "En estos momentos no hay productos activos para pedir.";
-$Text['msg_no_movements'] = "No hay movimientos para la cuenta y la fecha seleccionados."; 
+$Text['msg_no_movements'] = "No hay movimientos para la cuenta y la fecha seleccionados.";
 $Text['msg_delete_incident'] = "¿Seguro que quieres eliminar este incidente?";
 //$Text['msg_err_selectFirstUF'] = "There is no household selected. Choose one first and then its purchases. No hay ninguna UF seleccionada.  Elige una primero y luego sus compras."; //ADDED JAN 2012
 
@@ -514,7 +544,7 @@ $Text['prdcat_drinks_alcohol'] 	= "Bebidas alcohólicas";			//vino, cerveza, etc
 $Text['prdcat_drinks_soft'] 	= "Bebidas no alcohólicas";			//zumo, bebidas vegetales
 $Text['prdcat_drinks_hot'] 		= "Café y té";
 $Text['prdcat_driedstuff'] 		= "Picoteo y frutos secos";
-$Text['prdcat_paper'] 			= "Celulosa y papel";		//pañuelos, papel del váter, papel de cocina 
+$Text['prdcat_paper'] 			= "Celulosa y papel";		//pañuelos, papel del váter, papel de cocina
 $Text['prdcat_health'] 			= "Salud";		//papel del váter, papel de cocina
 $Text['prdcat_misc']			= "El resto..." ;
 
@@ -629,7 +659,7 @@ $Text['msg_several_carts'] = "La UF seleccionada tiene más de una cesta pendien
 $Text['transfer_type'] = "Tipo";
 $Text['todays_carts'] = "Cestas de hoy";
 $Text['week_carts'] = "Cestas de la semana";
-$Text['head_ti_torn'] = "Mirada turno"; 
+$Text['head_ti_torn'] = "Mirada turno";
 $Text['btn_validate'] = "Validar";
 $Text['desc_validate'] = "Validar cestas anteriores y actuales para las UFs. Hacer depósitos de dinero.";
 $Text['nav_wiz_revise_order'] = "Revisar";
@@ -640,7 +670,7 @@ $Text['desc_print_orders'] = "Imprimir y descargar los pedidos para la semana si
 $Text['nav_report_status'] = "Estadísticas";
 $Text['desc_stats'] = "Descargar un resumen de los movimientos actuales incluyendo las incidencias de hoy, ufs en negativo, cuenta de gastos total y productos con stock negativo.";
 $Text['order_closed'] = "El pedido está cerrado para este proveedor.";
-$Text['head_ti_sales'] = "Listado de Ventas"; 
+$Text['head_ti_sales'] = "Listado de Ventas";
 $Text['not_yet_val'] = "todavía no validado";
 $Text['val_by'] = "Validado por";
 $Text['purchase_details'] = "Detalle de la compra de la cesta #";
@@ -652,7 +682,7 @@ $Text['incl_revtax'] = "incl. ImpRev";
 $Text['no_news_today'] = "¡Ninguna noticia es una buena noticia: hoy no han habido incidencias!";
 $Text['nav_mng_iva'] = "Tipos de IVA";
 $Text['nav_mng_revtax'] = "Imp. ImpRev";
-$Text['nav_mng_accdec'] = "Cuentas"; 
+$Text['nav_mng_accdec'] = "Cuentas";
 $Text['nav_mng_paymeth'] = "Tipo ingreso/pago";
 $Text['nav_mng_movtype'] = "Tipo Estoc";
 $Text['nav_mng_money'] = "Dinero";
@@ -671,7 +701,7 @@ $Text['active_changed_uf'] = "Estado activo de la UF modificado";
 $Text['msg_err_mentoruf'] = "¡La UF anfitriona debe ser diferente de ella misma!";
 $Text['msg_err_ufexists'] = "La UF ya existe. Por favor, elija otra!";
 $Text['msg_err_form_init'] = "Parece que el formulario para crear un nuevo miembro no se ha inicializado correctamente. Recargue la página y inténtelo otra vez...   ";
-$Text['ti_mng_hu_members'] = "Gestionar UFs y sus miembros"; 
+$Text['ti_mng_hu_members'] = "Gestionar UFs y sus miembros";
 $Text['list_ufs'] = "Lista de UFs";
 $Text['search_members'] = "Búsqueda de miembros";
 $Text['member_pl'] = "Miembros";
@@ -817,7 +847,7 @@ $Text['btn_later'] = "después de"; //más tarde... futuro
 $Text['pattern_intro'] = "Activa los productos i días para los próximos ";
 $Text['pattern_scale'] = "meses ";
 $Text['week'] = "cada semana";
-$Text['second'] = "cada 15 días";  //2nd 
+$Text['second'] = "cada 15 días";  //2nd
 $Text['third'] = "cada 3 semanas";
 $Text['fourth'] = "una vez al mes";
 $Text['msg_pattern'] = "¡NOTA: Esta acción regenerará los productos y fechas a partir de esta!";
@@ -842,13 +872,13 @@ $Text['filter_todays'] = "De hoy";
 $Text['bill'] = "Factura";
 $Text['member'] = "Miembro";
 $Text['cif_nif'] = "CIF/NIF"; //CIF/NIF
-$Text['bill_product_name'] = "Artículo"; //concepte en cat... 
-$Text['bill_total'] = "Total"; //Total factura 
+$Text['bill_product_name'] = "Artículo"; //concepte en cat...
+$Text['bill_total'] = "Total"; //Total factura
 $Text['phone_pl'] = "Teléfonos";
-$Text['net_amount'] = "Importe neto"; //importe netto 
+$Text['net_amount'] = "Importe neto"; //importe netto
 $Text['gross_amount'] = "Importe bruto"; //importe brutto
 
-$Text['cost_amount'] = "Coste"; //importe sin impuestos 
+$Text['cost_amount'] = "Coste"; //importe sin impuestos
 $Text['final_amount'] = "Importe final UF"; //importe final a las UF
 $Text['cost_amount_desc'] = "\"Coste\" = Importe según precio del proveedor antes de aplicar impuestos.";
 $Text['final_amount_desc'] = "\"Importe final UF\" = Importe para la UF, con impuestos de IVA y Rev.";
@@ -878,9 +908,9 @@ $Text['order_printOpt_default'] = "(según el proveedor)";
 $Text['add_pagebreak'] = "Pulsar aquí para añadir un salto de página";
 $Text['remove_pagebreak'] = "Pulsar aquí para eliminar el salto de página";
 
-$Text['show_deactivated'] = "Mostrar desactivados"; 
-$Text['nav_report_sales'] = "Ventas"; 
-$Text['nav_help'] = "Ayuda"; 
+$Text['show_deactivated'] = "Mostrar desactivados";
+$Text['nav_report_sales'] = "Ventas";
+$Text['nav_help'] = "Ayuda";
 $Text['withdraw_from'] = "Retirar dinero ";  //account
 $Text['withdraw_to_bank'] = "Retirar dinero de caja para el banco";
 $Text['withdraw_uf'] = "Retirar dinero de cuenta HU";
@@ -966,7 +996,7 @@ $Text['msg_confirm_del_provider'] = "¿Seguro que quieres borrar este proveedor?
 $Text['msg_err_del_provider'] = "No se puede borrar este proveedor. Borra sus productos antes y vuelve a probar.";
 $Text['price_net'] = "Precio neto";
 
-$Text['custom_product_ref'] = "Id externo"; 
+$Text['custom_product_ref'] = "Id externo";
 $Text['btn_back_products'] = "Volver a productos";
 $Text['copy_column'] = "Copiar columna";
 $Text['paste_column'] = "Pegar";
@@ -997,17 +1027,17 @@ $Text['stock_info_product'] = "Nota: se pueden consultar todos los cambios de st
 $Text['msg_success'] = "Fin correcto";
 $Text['msg_confirm'] = "Confirmación";
 $Text['msg_warning'] = "Advertencia";
-$Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?"; 
-$Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo "; 
+$Text['msg_confirm_prov'] = "¿Seguro que quieres exportar todos los proveedores?";
+$Text['msg_err_upload'] = "Se ha producido un error en la carga del archivo ";
 $Text['msg_import_matchcol'] = "Hay que hacer coincidir las entradas de la base de datos con las filas de la tabla. Debes asignar la columna que corresponde a "; //+ here then comes the name of the matching column, e.g. custom_product_ref
-$Text['msg_import_furthercol'] = "¿Qué otras columnas de la tabla quieres importar además de la columna necesaria?"; 
-$Text['msg_import_done'] = 'Se han importado {$rows} líneas.'; 
-$Text['msg_import_another'] = "¿Quieres importar otro archivo?"; 
-$Text['btn_import_another'] = "Importar otro"; 
-$Text['btn_nothx'] = "No, gracias"; 
+$Text['msg_import_furthercol'] = "¿Qué otras columnas de la tabla quieres importar además de la columna necesaria?";
+$Text['msg_import_done'] = 'Se han importado {$rows} líneas.';
+$Text['msg_import_another'] = "¿Quieres importar otro archivo?";
+$Text['btn_import_another'] = "Importar otro";
+$Text['btn_nothx'] = "No, gracias";
 $Text['direct_import_template'] = "Plantilla de importación directa";
 $Text['import_allowed'] = "Formatos compatibles"; //as in allowed file formats
-$Text['import_file'] = "Archivo de importación"; 
+$Text['import_file'] = "Archivo de importación";
 $Text['public_url'] = "URL pública";
 $Text['btn_load_file'] = "Cargar archivo";
 $Text['msg_uploading'] = "Se está cargando el archivo y se está generando la vista previa. Espera...";
@@ -1024,10 +1054,10 @@ $Text['import_createnew'] = "Crear entradas nuevas";
 $Text['import_update'] = "Sólo actualizar las filas existentes";
 $Text['btn_imp_direct'] = "Importar directamente";
 $Text['btn_import'] = "Importar";
-$Text['btn_preview'] = "Vista previa"; 
-$Text['sel_matchcol'] = "Asignar columna..."; 
-$Text['ti_import_products'] = "Importar o actualizar los productos de "; 
-$Text['ti_import_providers'] = "Importar proveedores"; 
+$Text['btn_preview'] = "Vista previa";
+$Text['sel_matchcol'] = "Asignar columna...";
+$Text['ti_import_products'] = "Importar o actualizar los productos de ";
+$Text['ti_import_providers'] = "Importar proveedores";
 $Text['head_ti_import'] = "Asistente de importación";
 
 $Text['withdraw_desc_banc'] = "Retirar dinero de la cuenta o transferir para pago a proveedores.";
@@ -1035,17 +1065,17 @@ $Text['deposit_desc_banc'] = "Registrar todo el dinero entrante a la cuenta de c
 $Text['deposit_banc'] = "Depositar en la cuenta de consumo";
 $Text['withdraw_banc'] = "Retirar de la cuenta de consumo";
 $Text['deposit_sales_cash'] = "Depósito en efectivo de ventas";
-$Text['ti_stock_report'] = "Reporte de stock para "; 
-$Text['netto_stock'] = "Valor neto del stock"; 
-$Text['brutto_stock'] = "Valor bruto del stock"; 
-$Text['total_netto_stock'] = "Valor neto total del stock"; 
-$Text['total_brutto_stock'] = "Valor bruto total del stock"; 
+$Text['ti_stock_report'] = "Reporte de stock para ";
+$Text['netto_stock'] = "Valor neto del stock";
+$Text['brutto_stock'] = "Valor bruto del stock";
+$Text['total_netto_stock'] = "Valor neto total del stock";
+$Text['total_brutto_stock'] = "Valor bruto total del stock";
 $Text['sales_total_pv'] = "Ventas totales del proveedor ";
 $Text['dates_breakdown'] = "Fechas de vencimiento"; //decía "break down"
-$Text['price_brutto'] = "Precio bruto"; 
+$Text['price_brutto'] = "Precio bruto";
 $Text['total_brutto'] = "Total bruto";
 $Text['total_netto'] = "Total neto";
-$Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por favor, inténtelo de nuevo. "; 
+$Text['msg_err_oldPwdWrong'] = "Disculpe, su clave vieja no es correcta. Por favor, inténtelo de nuevo. ";
 $Text['msg_err_adminStuff'] = "Privilegios de acceso insuficientes. ¡Solo un administrador puede hacer eso!";
 $Text['set_c_balance'] = "Actualizar balance de la cuenta de consumo";
 
@@ -1053,10 +1083,10 @@ $Text['msg_err_deactivate_prdrow'] = "Este producto no puede ser desactivado ya 
 $Text['msg_err_deactivate_ir'] = "Nos se puede desactivar algunas fechas de este producto ya que hay ítemes pedidos. Desactive usando Repetir directamente o desactive individualmente los ítemes producto/fecha.";
 $Text['msg_err_deactivate_product'] = "Hay pedidos abiertos para este producto. Al desactivar eliminará este artículo de los pedidos correspondientes. La eliminación de artículos de un pedido no se puede deshacer.";
 
-$Text['msg_activate_prod_ok'] = "El producto se ha activado con éxito."; 
-$Text['msg_deactivate_prod_ok'] = "El producto se ha desactivado con éxito."; 
-$Text['msg_activate_prov_ok'] = "El proveedor se ha activado con éxito."; 
-$Text['msg_deactivate_prov_ok'] = "El proveedor se ha desactivado con éxito."; 
+$Text['msg_activate_prod_ok'] = "El producto se ha activado con éxito.";
+$Text['msg_deactivate_prod_ok'] = "El producto se ha desactivado con éxito.";
+$Text['msg_activate_prov_ok'] = "El proveedor se ha activado con éxito.";
+$Text['msg_deactivate_prov_ok'] = "El proveedor se ha desactivado con éxito.";
 $Text['no_stock'] = "Sin stock!!";
 $Text['stock_mov_type'] = "Tipo de movimiento";
 
