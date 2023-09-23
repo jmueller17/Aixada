@@ -1,10 +1,13 @@
-function ScrollTable(table, settings) {
+function ScrollTable(table, settings = {}) {
   this.table = table;
   this.settings = settings;
   return this;
 }
 
 ScrollTable.prototype.show = function () {
+  const [height] = this.parseHeight(this.settings.height);
+  if (!this.table.offsetheight || this.table.offsetHeight <= height) return;
+
   $(this.table).on("hide", this.destroy.bind(this));
 
   const viewboxStyle = { ...ScrollTable.viewboxStyle };
@@ -13,35 +16,37 @@ ScrollTable.prototype.show = function () {
   overlayStyle.maxHeight = viewboxStyle.maxHeight;
 
   const wrapper = document.createElement("div");
-  this.applyStyles(wrapper, ScrollTable.wrapperStyle);
+  ScrollTable.applyStyles(wrapper, ScrollTable.wrapperStyle);
   wrapper.classList.add("scroll-table-wrapper");
   this.table.parentElement.insertBefore(wrapper, this.table);
   this.wrapper = wrapper;
 
   const viewbox = document.createElement("div");
-  this.applyStyles(viewbox, viewboxStyle);
+  ScrollTable.applyStyles(viewbox, viewboxStyle);
   viewbox.classList.add("scroll-table-viewbox");
   wrapper.appendChild(viewbox);
   viewbox.appendChild(this.table);
 
   const overlay = document.createElement("div");
-  this.applyStyles(overlay, overlayStyle);
+  ScrollTable.applyStyles(overlay, overlayStyle);
   overlay.classList.add("scroll-table-overlay");
   wrapper.appendChild(overlay);
   overlay.appendChild(this.table.cloneNode(true));
 
   const shadowTable = overlay.children[0];
-  const head = shadowTable.getElementsByTagName("thead");
-  if (!head.length) return;
-  this.applyStyles(head[0], ScrollTable.shadowHeadStyle);
+  const shadowHead = Array.from(shadowTable.getElementsByTagName("thead")).pop();
+  if (shadowHead === void 0) return;
 
   for (let i = 0; i < shadowTable.children.length; i++) {
     const child = shadowTable.children[i];
-    if (child === head[0]) continue;
-    this.applyStyles(child, { visibility: "hidden" });
+    if (child === shadowHead) continue;
+    ScrollTable.applyStyles(child, { visibility: "hidden" });
   }
 
-  this.setScrollbarSpan(shadowTable);
+  shadowTable.style.paddingRight = ScrollTable.scrollbarWidth + "px";
+
+  viewbox.addEventListener("scroll", this.onScroll.bind(this, shadowHead));
+
   $(this.table).trigger("show");
 };
 
@@ -51,7 +56,7 @@ ScrollTable.wrapperStyle = {
 
 ScrollTable.viewboxStyle = {
   maxHeight: "auto",
-  overflowY: "scroll",
+  overflow: "visible scroll",
 };
 
 ScrollTable.overlayStyle = {
@@ -67,31 +72,51 @@ ScrollTable.shadowHeadStyle = {
   boxShadow: "0px 3px 3px -3px",
 };
 
-ScrollTable.prototype.formatHeight = function (height) {
-  if (height === void 0) return "auto";
-
-  const value = parseFloat(height);
-  const unit = String(height).replace(String(value), "");
-  if (unit) return height;
-  return height + "px";
-};
-
-ScrollTable.prototype.applyStyles = function (el, style) {
+ScrollTable.applyStyles = function (el, style) {
   Object.keys(style).forEach((key) => {
     el.style[key] = style[key];
   });
 };
 
-ScrollTable.prototype.setScrollbarSpan = function (table) {
-  if (/Chrome/.test(navigator.userAgent)) {
-    fix = 15;
-  } else if (/Firefox/.test(navigator.userAgent)) {
-    fix = 0;
-  } else {
-    fix = 15;
-  }
+Object.defineProperty(ScrollTable, "scrollbarWidth", {
+  get() {
+    if (
+      navigator.userAgent.match(/Android/i) ||
+      navigator.userAgent.match(/webOS/i) ||
+      navigator.userAgent.match(/iPhone/i) ||
+      navigator.userAgent.match(/iPad/i) ||
+      navigator.userAgent.match(/iPod/i) ||
+      navigator.userAgent.match(/BlackBerry/i) ||
+      navigator.userAgent.match(/Windows Phone/i)
+    ) {
+      return 0;
+    } else if (/Chrome/.test(navigator.userAgent)) {
+      return 15;
+    } else if (/Firefox/.test(navigator.userAgent)) {
+      return 0;
+    } else {
+      return 15;
+    }
+  },
+});
 
-  table.style.paddingRight = fix + "px";
+ScrollTable.prototype.parseHeight = function (height) {
+  if (height === void 0) return [null, null];
+  const value = parseFloat(height);
+  const unit = String(height).replace(String(value), "") || "px";
+  return [value, unit];
+};
+
+ScrollTable.prototype.formatHeight = function (height) {
+  const [value, unit] = this.parseHeight(height);
+  if (!value) return "auto";
+  return value + unit;
+};
+
+ScrollTable.prototype.onScroll = function (shadowHead, { srcElement }) {
+  if (srcElement.scrollTop > 0)
+    ScrollTable.applyStyles(shadowHead, ScrollTable.shadowHeadStyle);
+  else ScrollTable.applyStyles(shadowHead, { boxShadow: null });
 };
 
 ScrollTable.prototype.destroy = function () {
