@@ -39,6 +39,7 @@
     <script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
     <script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
     <script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
+    <script type="text/javascript" src="js/aixadautilities/scroll-table.js"></script>
      
 	<script type="text/javascript">
         // Texts of the literals in the language of the user. For use in js.
@@ -415,6 +416,10 @@
 						}
 
 						$('#tbl_reviseOrder').show();
+
+                        new ScrollTable(document.getElementById('tbl_reviseOrder'), {
+                            height: 500
+                        }).show();
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$('.loadSpinner_order').hide();
