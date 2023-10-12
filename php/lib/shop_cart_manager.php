@@ -44,7 +44,7 @@ class shop_item extends abstract_cart_row {
 	{
 	   return '('
 	   			. $this->_cart_id 		. ','
-	   			. $this->_order_item_id . ','
+	   			. ( $this->_order_item_id != 'undefined' ? $this->_order_item_id : 'null' ) . ','
 	   			. $this->_product_id 	. ','
 	   			. $this->_quantity 		. ','
 	   			. $this->_iva_percent	. ','
