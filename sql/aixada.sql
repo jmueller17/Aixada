@@ -363,7 +363,8 @@ create table aixada_order_to_shop (
   revised			boolean 	default false,
   foreign key (order_id) references aixada_order(id),
   foreign key (product_id) references aixada_product(id),
-  foreign key (uf_id) references aixada_uf(id)
+  foreign key (uf_id) references aixada_uf(id),
+  index (order_item_id)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
 
 
