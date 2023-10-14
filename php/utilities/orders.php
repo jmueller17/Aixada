@@ -694,16 +694,14 @@ function directly_validate_order($order_id, $record_provider_invoice) {
         }
         // Delete all empty carts for 'date_for_shop' on table 'aixada_order'
         $date_for_shop_table = $row_or['date_for_shop'];
-        error_log("delete c from aixada_cart c 
-            left join aixada_shop_item si on si.cart_id=c.id 
-            where si.cart_id is null 
-                and c.date_for_shop = '{$date_for_shop_table}';");
-        $db->Execute(
-            "delete c from aixada_cart c 
-            left join aixada_shop_item si on si.cart_id=c.id 
-            where si.cart_id is null 
-                and c.date_for_shop = '{$date_for_shop_table}';"
-        );
+        if ($date_for_shop_table) {
+            $db->Execute(
+                "delete c from aixada_cart c 
+                left join aixada_shop_item si on si.cart_id=c.id 
+                where si.cart_id is null 
+                    and c.date_for_shop = '{$date_for_shop_table}';"
+            );
+        }
         
         if ($record_provider_invoice) {
             // Add provider invoice
