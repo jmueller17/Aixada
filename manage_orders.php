@@ -520,11 +520,8 @@
        			.click(function(e){
            			var allRevised = true;
 					$('input:checkbox[name="revised"]').each(function(){
-						if (!$(this).is(':checked')){
-							allRevised = false; 
-							return false; 
-						}
-
+                        if (getComputedStyle(this).visibility === 'hidden') return;
+                        if (!$(this).is(':checked')) allRevised = false;
 					});
 
 					if (allRevised){
@@ -599,10 +596,8 @@
             }).click(function(e) {
                 var allRevised = true;
                 $('input:checkbox[name="revised"]').each( function(){
-                    if (!$(this).is(':checked')){
-                        allRevised = false; 
-                        return false; 
-                    }
+                    if (getComputedStyle(this).visibility === 'hidden') return;
+                    if (!$(this).is(':checked')) allRevised = false;
                 });
                 $.showMsg({
                     msg: (allRevised ? "" : "<?=$Text['msg_err_unrevised']?><hr><br>") +
