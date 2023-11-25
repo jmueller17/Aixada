@@ -417,9 +417,11 @@
 
 						$('#tbl_reviseOrder').show();
 
-                        new ScrollTable(document.getElementById('tbl_reviseOrder'), {
+                        var scrollTable = new ScrollTable(document.getElementById('tbl_reviseOrder'), {
                             height: 500
-                        }).show();
+                        })
+                        scrollTable.show();
+                        scrollTable.shadow.querySelector('.revisedCol.textAlignCenter input').style.visibility = 'hidden';
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$('.loadSpinner_order').hide();
