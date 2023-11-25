@@ -27,6 +27,7 @@ ScrollTable.prototype.show = function () {
   viewbox.classList.add("scroll-table-viewbox");
   wrapper.appendChild(viewbox);
   viewbox.appendChild(this.table);
+  viewbox.addEventListener("scroll", this.scrollMirror.bind(this));
 
   const overlay = document.createElement("div");
   ScrollTable.applyStyles(overlay, overlayStyle);
@@ -123,6 +124,13 @@ ScrollTable.prototype.destroy = function () {
   this.wrapper.parentElement.insertBefore(this.table, this.wrapper);
   this.wrapper.parentElement.removeChild(this.wrapper);
   $(this.table).off("hide");
+};
+
+ScrollTable.prototype.scrollMirror = function ({ target }) {
+  this.shadow.parentElement.scrollTo({
+    top: 0,
+    left: target.scrollLeft,
+  });
 };
 
 (function () {
