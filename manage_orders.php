@@ -39,6 +39,7 @@
     <script type="text/javascript" src="js/tablesorter/jquery.tablesorter.js" ></script>
     <script type="text/javascript" src="js/jeditable/jquery.jeditable.mini.js" ></script>
     <script type="text/javascript" src="js/jqueryui/i18n/jquery.ui.datepicker-<?=$language;?>.js" ></script>
+    <script type="text/javascript" src="js/aixadautilities/scroll-table.js"></script>
      
 	<script type="text/javascript">
         // Texts of the literals in the language of the user. For use in js.
@@ -415,6 +416,12 @@
 						}
 
 						$('#tbl_reviseOrder').show();
+
+                        var scrollTable = new ScrollTable(document.getElementById('tbl_reviseOrder'), {
+                            height: 500
+                        })
+                        scrollTable.show();
+                        scrollTable.shadow.querySelector('.revisedCol.textAlignCenter input').style.visibility = 'hidden';
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown){
 						$('.loadSpinner_order').hide();
@@ -513,11 +520,8 @@
        			.click(function(e){
            			var allRevised = true;
 					$('input:checkbox[name="revised"]').each(function(){
-						if (!$(this).is(':checked')){
-							allRevised = false; 
-							return false; 
-						}
-
+                        if (getComputedStyle(this).visibility === 'hidden') return;
+                        if (!$(this).is(':checked')) allRevised = false;
 					});
 
 					if (allRevised){
@@ -592,10 +596,8 @@
             }).click(function(e) {
                 var allRevised = true;
                 $('input:checkbox[name="revised"]').each( function(){
-                    if (!$(this).is(':checked')){
-                        allRevised = false; 
-                        return false; 
-                    }
+                    if (getComputedStyle(this).visibility === 'hidden') return;
+                    if (!$(this).is(':checked')) allRevised = false;
                 });
                 $.showMsg({
                     msg: (allRevised ? "" : "<?=$Text['msg_err_unrevised']?><hr><br>") +
