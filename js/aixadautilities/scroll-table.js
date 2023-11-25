@@ -1,12 +1,13 @@
 function ScrollTable(table, settings = {}) {
   this.table = table;
+  this.shadow = table.cloneNode(true);
   this.settings = settings;
   return this;
 }
 
 ScrollTable.prototype.show = function () {
   const [height] = this.parseHeight(this.settings.height);
-  if (!this.table.offsetheight || this.table.offsetHeight <= height) return;
+  if (!this.table.offsetHeight || this.table.offsetHeight <= height) return;
 
   $(this.table).on("hide", this.destroy.bind(this));
 
@@ -31,19 +32,18 @@ ScrollTable.prototype.show = function () {
   ScrollTable.applyStyles(overlay, overlayStyle);
   overlay.classList.add("scroll-table-overlay");
   wrapper.appendChild(overlay);
-  overlay.appendChild(this.table.cloneNode(true));
+  overlay.appendChild(this.shadow);
 
-  const shadowTable = overlay.children[0];
-  const shadowHead = Array.from(shadowTable.getElementsByTagName("thead")).pop();
+  const shadowHead = Array.from(this.shadow.getElementsByTagName("thead")).pop();
   if (shadowHead === void 0) return;
 
-  for (let i = 0; i < shadowTable.children.length; i++) {
-    const child = shadowTable.children[i];
+  for (let i = 0; i < this.shadow.children.length; i++) {
+    const child = this.shadow.children[i];
     if (child === shadowHead) continue;
     ScrollTable.applyStyles(child, { visibility: "hidden" });
   }
 
-  shadowTable.style.paddingRight = ScrollTable.scrollbarWidth + "px";
+  this.shadow.style.paddingRight = ScrollTable.scrollbarWidth + "px";
 
   viewbox.addEventListener("scroll", this.onScroll.bind(this, shadowHead));
 
