@@ -510,3 +510,13 @@ create table aixada_account_desc (
   active        tinyint     default 1,
   primary key (id)
 ) engine=InnoDB default character set utf8 collate utf8_general_ci;
+
+/**
+ * Torns ufs
+ **/
+create table aixada_torns (
+  id            int(11) not null auto_increment,
+  dataTorn      date    not null,
+  ufTorn        int(11) not null,
+  primary key (id)
+) engine=InnoDB default character set utf8 collate utf8_general_ci;

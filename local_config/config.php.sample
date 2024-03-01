@@ -1,8 +1,8 @@
 <?php
 
-/** 
+/**
  * @package Aixada
- */ 
+ */
 
 
 /**
@@ -21,7 +21,7 @@ class configuration_vars {
    * General variables
    */
   public $default_language = 'es';
-  
+
 
   /**
    * What is the name of this cooperative?
@@ -38,9 +38,10 @@ class configuration_vars {
     public $coop_VAT_number = 'F9999999'; // CIF
     public $coop_address = 'Street...';
     public $coop_city = 'Zip City';
+    public $coop_bank = 'IBAN';
     public $coop_contact_inf = 'email@bla.com<br>bla bla bla...'; // Use <br> to force line break
 
-  
+
   /**
    * Configure the database connection
    */
@@ -48,8 +49,8 @@ class configuration_vars {
   public $db_name = 'aixada';
   public $db_user = 'aixada';
   public $db_password = 'aixada';
-  
-  
+
+
 
   /****************************************************************************
      You should not need to change anything past this point when installing.
@@ -71,7 +72,7 @@ class configuration_vars {
    * @var integer
    */
   // public $revision_fixed_uf = 1; // Uncomment to active
-  
+
   /**
    *
    * Allow yourself validate your cart.
@@ -89,13 +90,13 @@ class configuration_vars {
   public $validate_deposit = true;
 
   /**
-   * What period are shown the carts on validation, values allowed: 'day' 
+   * What period are shown the carts on validation, values allowed: 'day'
    * or 'week', default value is 'day'.
    *
    * NOTE: If validation is not performed the day that orders are distributed
    * may be desirable to see all carts of the week.
    * @var boolean
-   */  
+   */
   public $validate_show_carts = 'day';
 
   /**
@@ -105,17 +106,17 @@ class configuration_vars {
    * If is true a button "Create cart" is displayed when is select a UF without
    *    not validated carts (default value is false)
    * @var boolean
-   */  
+   */
   public $validate_btn_create_carts = false;
- 
+
   /**
-   * 
-   * Sets the max. time scale for activating orderable dates into the future. E.g. 48 means that max. the orderable dates 
-   * for the next 4 years can be generated in advance. 
+   *
+   * Sets the max. time scale for activating orderable dates into the future. E.g. 48 means that max. the orderable dates
+   * for the next 4 years can be generated in advance.
    * @var num
    */
   public $max_month_orderable_dates = 12;
-  
+
   /**
    *
    * Displayt wanrings where uf has negative balances
@@ -129,43 +130,43 @@ class configuration_vars {
    * @var integer
    */
   public $negative_balance_grace_periode = 14;
-  
+
   /**
    *
    * List of pages to block when some user is in the red
    * @var array
    */
   public $negative_balance_disabled_pages = array('index.php', 'shop_and_order.php');
-  
+
   /**
    *
    * Prevents purchase products with no stock (used in shop_and_order.php)
    * @var boolean
-   */  
+   */
   public $prevent_out_of_stock_purchase = true;
-  
+
   /**
    * Allows to put stock products into a HU order. Default value is false.
    */
   public $orders_allow_stock = false;
-  
+
   /**
    *
    * Allows to choose the order in which the UF will be displayed when reviewing
    *    look and print orders.
    * Possible values are: `asc` (by id_uf in ascending), `desc` (by id_uf
    *    descending) and `name` (alphabetically by name) Default value is `desc`.
-   * 
+   *
    */
   public $order_review_uf_sequence = 'desc';
-  
+
   /**
    * Possible methods of distributing orders are: 'only_distribute',
    *    'distribute_and_validate' and 'choice' (both are available),
    *     default is 'only_distribute'.
    */
   public $order_distribution_method = 'only_distribute';
-  
+
   /**
    * When the method 'distribute_and_validate' is used can also record the
    * provider note as invoice into account provider, default is true
@@ -174,12 +175,12 @@ class configuration_vars {
   public $order_distributeValidate_invoce = true;
 
   /**
-   * 
+   *
    * the default jquery-ui theme. these are located in css/ui-themes
    * @var string
    */
   public $default_theme = "smoothness"; // start | ui-lightness | smoothness | redmond
-  
+
 
   /**
    * Aixada provides two methods of backup one via script and one internal by
@@ -193,18 +194,18 @@ class configuration_vars {
    *    edit db-backup sql files)
    */
   // public $db_backup_method = 'int';
-  
-  
+
+
   /**
-   * 
-   * Set the system wide currency symbol and type_id. The currency description 
-   * can be set in the specific language files $Text['currency_desc'] = "" 
+   *
+   * Set the system wide currency symbol and type_id. The currency description
+   * can be set in the specific language files $Text['currency_desc'] = ""
    * @var string
    */
   public $currency_sign = '€';
   public $currency_iso = 'EUR';
   public $currency_type_id = 1;
-  
+
   /**
    * Formats used to format data according to type and kind of content.
    *
@@ -214,7 +215,7 @@ class configuration_vars {
   public $type_formats = array(
     // Leave a format as false to not format a kind of content.
     'dates' => array(
-        // Date formats, uses formatting of php 
+        // Date formats, uses formatting of php
         'date' => 'd-m-Y',
         'datetime' => 'd-m-Y H:i',
         // timestamp requires only a booealn value because is a formatless date representation
@@ -234,22 +235,22 @@ class configuration_vars {
         'locale' => 'es-ES'
     )
   );
-  
+
   /**
    * To work on hostings with few resources (memory) it is recommended to
    * sequence ajax requests, this avoids simulating requests from a page.
    */
-  //public $use_ajaxQueue  = true; 
-  
+  //public $use_ajaxQueue  = true;
+
     /**
    * the email address of the admin; used for sending out pwd changes
-   * and orders. 
+   * and orders.
    */
   public $admin_email = "admin@admin.com";
-  
+
   /**
    * Set true to prevent false locks as SPAM when sending mails.
-   * 
+   *
    * NOTE: Aixada puts in 'reply-to' the 'to' or 'cc' of mails, but some hosting
    *       filters interpret this as a possible malicious attempt to send SPAM.
    * Comment by a hosting technical support:
@@ -258,13 +259,13 @@ class configuration_vars {
    *       in header 'from' or 'reply-to' address."
    */
   public $email_safe_replyTo = true;
-  
+
   /**
    * Emails SMTP options. Uncomment to use SMTP through the library swiftmailer
-   * 
+   *
    */
-  // public $email_SMTP_host = 'localhost';       // Set to use a SMTP server. 
-  //                                              // Use SMTP_host='debug' to don't send and dump messages to /local_config/debug_mail/ 
+  // public $email_SMTP_host = 'localhost';       // Set to use a SMTP server.
+  //                                              // Use SMTP_host='debug' to don't send and dump messages to /local_config/debug_mail/
   // public $email_SMTP_port = 25;                // Default = 25
   // public $email_SMTP_user = 'admin@admin.com'; // Default = $admin_email (is recommend to not set, so use default as $admin_email)
   // public $email_SMTP_pswd = 'mypassword';      // If is not set or null SMTP_user/SMTP_pswd are not used.
@@ -272,77 +273,77 @@ class configuration_vars {
   // public $email_SMTP_verifyCert = true;        // Valid values: true, false. Used if SMTP_encryption is set.
   //                                              // NOTE: Some host use self-generated certificates. In this case the certificate
   //                                              //       verification fails and the sending of messages ends in error.
-  //                                              //       So in this case set SMTP_verifyCert=false                                
-  
+  //                                              //       So in this case set SMTP_verifyCert=false
+
   /**
-   * 
-   * Is this a local install or accessible online. Turns globally on/off 
-   * the emailing of reports and other internet related features. If set to "false" 
-   * emailing order reports and incidents will not work. 
+   *
+   * Is this a local install or accessible online. Turns globally on/off
+   * the emailing of reports and other internet related features. If set to "false"
+   * emailing order reports and incidents will not work.
    * @var boolean
    */
-  public $internet_connection = false; 
-  
-  
-  
-  
-  
+  public $internet_connection = false;
+
+
+
+
+
   /**
    * HTML TEMPLATES
    */
-  
+
   /**
    * The default template for generating the print layout of the orders
    */
   public $print_order_template = 'report_order1.php';
-  
-  
+
+
   /**
-   * 
+   *
    * Default template for printing personal orders of household ...
    * @var string
    */
   public $print_my_orders_template = 'order_model1.php';
-  
-  
-  
+
+
+
   /**
-   * 
+   *
    * Default template for printing bills of cooperative to members
    * @var unknown_type
    */
   public $print_bill_template = 'bill_model1.php';
-  
-  
-  
+
+
+
   /**
-   * 
+   *
    * template for printing incidents
    */
   public $print_incidents_template = 'incidents_model1.php';
-  
- 
+
+
   /**
-   * 
+   *
    * diplays the language select on every page or not
    */
-  public $show_menu_language_select = false; 
-  
-   
-  
-  
+  public $show_menu_language_select = false;
+
+
+
+
   /**
    * ORDER REPORT VARS
    */
-  
+
   /**
-   * if set to true, when finalizing orders they 
-   * will be sent to the respective providers directly. Only works on 
-   * servers where PHP.ini is configured appropriately. 
+   * if set to true, when finalizing orders they
+   * will be sent to the respective providers directly. Only works on
+   * servers where PHP.ini is configured appropriately.
    */
-  public $email_orders = false; 
-  
-  
+  public $email_orders = false;
+
+
   /**
    * Default format of emailed orders:
    *  - 'Prod', '1':    List of products (just summarized)
@@ -354,34 +355,55 @@ class configuration_vars {
    *  - 'none':         Do not send
    */
   public $email_order_format = 3;
-  
-  
+
+
   /**
-   * Default prices used on emailed orders: 
+   * Default prices used on emailed orders:
    *  - 'cost_amount':  Price and cost amount (without tax)
    *  - 'cost':         Cost Amount (without tax)
    *  - 'none':         Without cost
    */
   public $email_order_prices = 'cost_amount';
-  
-  
+
+
   /**
    * INCIDENTS REPORTING VARS
    */
-  
 
-  
+
+
   /**
-   * if the incident emails should be send out to another distribution list. 
-   * if left blank, the incidents will be send out to the email addresses of the 
-   * users if available. 
+   * if the incident emails should be send out to another distribution list.
+   * if left blank, the incidents will be send out to the email addresses of the
+   * users if available.
    */
-  public $incidents_email_list = ""; 
+  public $incidents_email_list = "";
 
   /**
-   * 
+  * CALENDARI
+  */
+
+  /**
+  * Opció per activar o desactivar el mòdul de calendari de torns. Per defecte True.
+  */
+
+  public $calendari = True;
+
+  /**
+   * Llistat de uf's que no participen en la calendarització de torns. Separar número de uf per comes.
+   * per defecte s'anula la uf 1 perquè és la uf admin
+   */
+  public $ufAnulades = array(1);
+
+  /**
+   * Ufs per torn, per defecte 2
+   */
+  public $ufsxTorn = 2;
+
+  /**
+   *
    * MENU AND RIGHTS
-   * 
+   *
    */
   private $default_menus = array(
                       'navHome'      => 'enable',
@@ -390,19 +412,19 @@ class configuration_vars {
                       'navOrder'     => 'disable',
                       'navManage'    => 'enable',
                       'navReport'    => 'enable',
-                      'navIncidents' => 'enable'                                  
+                      'navIncidents' => 'enable'
                                  );
 
-  public $menu_config 
-      = array( 'Consumer' => 
-               array ( 
+  public $menu_config
+      = array( 'Consumer' =>
+               array (
                       'navHome'      => 'enable',
                       'navWizard'    => 'disable',
                       'navShop'      => 'enable',
                       'navOrder'     => 'enable',
                       'navManage'    => 'disable',
                       'navReport'    => 'enable',
-                      'navIncidents' => 'enable' 
+                      'navIncidents' => 'enable'
                        ),
                'Hacker Commission' =>
                array (
@@ -412,19 +434,19 @@ class configuration_vars {
                       'navOrder'     => 'disable',
                       'navManage'    => 'enable',
                       'navReport'    => 'enable',
-                      'navIncidents' => 'enable' 
+                      'navIncidents' => 'enable'
                       ),
                'Checkout' =>
-               array ( 
+               array (
                       'navHome'      => 'enable',
                       'navWizard'    => 'enable',
                       'navShop'      => 'disable',
                       'navOrder'     => 'disable',
                       'navManage'    => 'enable',
                       'navReport'    => 'enable',
-                      'navIncidents' => 'enable' 
-                       ),               
-               'Consumer Commission' => 
+                      'navIncidents' => 'enable'
+                       ),
+               'Consumer Commission' =>
                array(
                      'navHome'      => 'enable',
                      'navWizard'    => 'disable',
@@ -432,9 +454,9 @@ class configuration_vars {
                      'navOrder'     => 'disable',
                      'navManage'    => 'enable',
                      'navReport'    => 'enable',
-                     'navIncidents' => 'enable'                                  
+                     'navIncidents' => 'enable'
                      ),
-               'Econo-Legal Commission' => 
+               'Econo-Legal Commission' =>
                array(
                      'navHome'      => 'enable',
                      'navWizard'    => 'disable',
@@ -442,9 +464,9 @@ class configuration_vars {
                      'navOrder'     => 'disable',
                      'navManage'    => 'enable',
                      'navReport'    => 'enable',
-                     'navIncidents' => 'enable'                                  
+                     'navIncidents' => 'enable'
                      ),
-               'Logistic Commission' => 
+               'Logistic Commission' =>
                array(
                      'navHome'      => 'enable',
                      'navWizard'    => 'disable',
@@ -452,9 +474,9 @@ class configuration_vars {
                      'navOrder'     => 'disable',
                      'navManage'    => 'enable',
                      'navReport'    => 'enable',
-                     'navIncidents' => 'enable'                                  
+                     'navIncidents' => 'enable'
                      ),
-               'Fifth Column Commission' => 
+               'Fifth Column Commission' =>
                array(
                      'navHome'      => 'enable',
                      'navWizard'    => 'disable',
@@ -462,9 +484,9 @@ class configuration_vars {
                      'navOrder'     => 'disable',
                      'navManage'    => 'enable',
                      'navReport'    => 'enable',
-                     'navIncidents' => 'enable'                                  
+                     'navIncidents' => 'enable'
                      ),
-               'Producer' => 
+               'Producer' =>
                array(
                      'navHome'      => 'enable',
                      'navWizard'    => 'disable',
@@ -472,12 +494,12 @@ class configuration_vars {
                      'navOrder'     => 'disable',
                      'navManage'    => 'enable',
                      'navReport'    => 'enable',
-                     'navIncidents' => 'enable'                                  
+                     'navIncidents' => 'enable'
                      )
                );
 
   // Forbidden pages
-  public $forbidden_pages = 
+  public $forbidden_pages =
       array(
             'Consumer' =>
             array(
@@ -487,7 +509,7 @@ class configuration_vars {
                   'activate_roles.php',
                   'activate_all_roles.php'
                   ),
-            
+
             'Checkout' =>
             array(
                   'activate_roles.php',
@@ -533,14 +555,14 @@ class configuration_vars {
                   'report_account.php'
                   )
             );
-                  
-  
+
+
   // Roles and their privileges
-  public $rights_of = 
+  public $rights_of =
       array (
              'Checkout' =>
-             array('may_edit_user', 
-                   'may_edit_uf', 
+             array('may_edit_user',
+                   'may_edit_uf',
                    'may_edit_member',
                    'may_edit_provider',
                    'may_edit_product',
@@ -556,7 +578,7 @@ class configuration_vars {
              'Consumer' =>
              array('may_edit_incident',
                    'may_edit_provider'),
-             
+
              'Consumer Commission' =>
              array('may_edit_product',
                    'may_edit_provider',
@@ -567,13 +589,13 @@ class configuration_vars {
              'Econo-Legal Commission' =>
              array('may_edit_incident',
                    'may_view_all_accounts'),
-             
+
              'Logistic Commission' =>
              array('may_edit_incident'),
-             
+
              'Hacker Commission' =>
-             array('may_edit_user', 
-                   'may_edit_uf', 
+             array('may_edit_user',
+                   'may_edit_uf',
                    'may_edit_member',
                    'may_edit_provider',
                    'may_edit_product',
@@ -593,22 +615,22 @@ class configuration_vars {
              'Producer' =>
              array('may_edit_incident')
              );
-  
-             
+
+
     /**
      *  IMPORT CONTROLS
      */
-    
+
     /**
      * Character encoding used by sources of importations. The data from a
      * source are transformed to 'UTF-8' used used internally by Aixada.
      *
      * If character set from the sources is not known put to 'auto', then could
-     * be lose some chars but is safer than ''. 
+     * be lose some chars but is safer than ''.
      * Remove or sets to '' to don't make transformation, but in this case if
      * files don't use UTF-8 some importations could be fail.
      *
-     * See valid codes in: 
+     * See valid codes in:
      *          http://php.net/manual/en/mbstring.supported-encodings.php
      *
      * NOTE: 'Windows-1252' Is the character encoding of the Latin alphabet
@@ -616,24 +638,24 @@ class configuration_vars {
 	 */
     public $import_from_char_encoding = 'auto';
 
-    
+
     /**
      * if set to true and the import columns/fields match db fields, user will be presented
-     * with an option to try to import all allowed columns without explicit column matching. 
+     * with an option to try to import all allowed columns without explicit column matching.
      * This makes sense for transfers between aixada platforms where we can assume that columns match
-     */  
-    public $allow_global_import = true;  
-     
+     */
+    public $allow_global_import = true;
+
 
 	/**
 	 *	Enable / disable individual import fields. If $allow_global_import is set to false
-	 *  users can select from the allowed fields to match the import data. If set to true, 
-	 *  the script will try to import/match automatically all allowed fields. 
-	 */     
-	public $allow_import_for = 
+	 *  users can select from the allowed fields to match the import data. If set to true,
+	 *  the script will try to import/match automatically all allowed fields.
+	 */
+	public $allow_import_for =
 			array(
-					'aixada_product' => 
-						array(	 
+					'aixada_product' =>
+						array(
 								'name' => 'allow',
 								'provider_id' => 'nope',
 								'description' => 'allow',
@@ -653,13 +675,13 @@ class configuration_vars {
 								'stock_actual' => 'nope',
 								'description_url' => 'allow',
 								'picture' => 'allow',
-								'ts' => 'nope'), 
-					'aixada_provider' => 
+								'ts' => 'nope'),
+					'aixada_provider' =>
 						array( 	'name' => 'allow',
 								'nif' => 'allow',
 								'contact' => 'allow',
 								'address' => 'allow',
-								'city' => 'allow', 
+								'city' => 'allow',
 								'zip' => 'allow',
 								'phone1' => 'allow',
 								'phone2' => 'allow',
@@ -672,13 +694,13 @@ class configuration_vars {
 								'active' => 'alow',
 								'offset_order_close' => 'allow',
 								'ts' => 'nope'),
-						
-					'aixada_product_orderable_for_date' => 
+
+					'aixada_product_orderable_for_date' =>
 						array(	'product_id' => 'allow',
 								'date_for_order' => 'allow',
 								'closing_date' => 'allow')
 								);
- 
+
 	/**
 	 *	Set templates correspondences to directly import by establishing
      *  correspondences from columns with database fields.
@@ -697,7 +719,7 @@ class configuration_vars {
                 'required_fields' => array( //optional
                     // Rows without a required fields are ignored.
                     'custom_product_ref', 'name', 'unit_price'
-                ),                    
+                ),
                 'match_columns' => array( //Required
                 // db_field_name => col_name or regex to match col_name.
                     'custom_product_ref' => '/.*_product_ref/',
@@ -712,14 +734,14 @@ class configuration_vars {
                     'rev_tax_type_id' => 2
                 ),
                 'updatable_columns' => array( //optional: default is all columns
-                    'name', 'unit_price', 
+                    'name', 'unit_price',
                     // updateable columns of forced_values should be included.
                     'active', 'rev_tax_type_id'
                 )
             )
         )
     );
- 
+
     /**
      * How to use the accounts.
      */
@@ -728,17 +750,17 @@ class configuration_vars {
 	// used in `manage_money.php` and the order in which they appear.
 	// If you do not specify 'account_operations' all available operations are used.
 	// Available operations are:
-	//     'deposit_uf', 'uf_from', 'deposit_others', 'debit_uf', 'refund_uf',	
+	//     'deposit_uf', 'uf_from', 'deposit_others', 'debit_uf', 'refund_uf',
 	//     'pay_pr', 'withdraw_others', 'invoice_pr', 'move', 'correction'
 	//E.G.:
 		//'account_operations' => array('pay_pr','refund_uf','deposit_uf'),
-	
+
 	// With 'use_providers' key lets you choose whether providers accounts are
 	// used, disabling the operations of providers not appear.
 	// NOTE: This key has priority over 'account_operations'.
 		'use_providers' => false
     );
-             
+
 
   // from here on follow internals of the configuration_vars class.
   private static $instance = false;
