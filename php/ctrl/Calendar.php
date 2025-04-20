@@ -75,7 +75,7 @@
             {
                 if(ufsAnulada($row['id'])){
                     $ufId = $row['id'];
-                    if($uf>=get_config('ufsxTorn') && $ufId != $ultimaUf[0]){
+                    if($uf>=get_config('ufsxTorn', 2) && $ufId != $ultimaUf[0]){
                         $dataInici = date("Y-m-d",strtotime($dataInici."+ 1 week"));
                         $db->Execute('insert into aixada_torns (dataTorn,ufTorn) values (:1q,:2q)', $dataInici, $ufId);               
                         $uf=1;
