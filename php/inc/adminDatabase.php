@@ -1,6 +1,6 @@
 <?php
 function get_backup_name() {
-    return get_config('db_name'). '.' . date('Y-m-d H:i');
+    return get_config('db_name'). '.' . date('Y-m-d His');
 }
 
 function backup_as_internal($output_folder, $backup_name) {
