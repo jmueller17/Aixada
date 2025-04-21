@@ -53,6 +53,7 @@ function comprovarTorn($data){
     $db = DBWrap::get_instance();
     $rs = $db ->Execute('select * from aixada_torns where dataTorn >=:1q order by dataTorn asc', $dataActual);
 
+    $mateixTorn = '1900-00-00';
     while($row = $rs->fetch_assoc()) 
 	    {    				
         $ufId = $row['ufTorn'];
@@ -123,9 +124,10 @@ function presentarUfs($idOriginal, $dataOriginal, $i){
  function ufAnulada ($uf){
 
     $resultat = true;
-    for( $contador = 0; $contador < count(get_config('ufAnulades')); $contador++ )
+    $ufAnulades = get_config('ufAnulades', array(1)); // second parameter is default value when is not defined in config.php
+    for( $contador = 0; $contador < count($ufAnulades); $contador++ )
     {        
-         if(get_config('ufAnulades')[$contador] == $uf) {
+         if($ufAnulades[$contador] == $uf) {
             $resultat = false;             
          }
     }

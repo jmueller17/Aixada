@@ -1,7 +1,5 @@
 <?php
     include "php/inc/header.inc.php";
-    define('DS', DIRECTORY_SEPARATOR);
-    define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS);
     require_once(__ROOT__ . "local_config/config.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

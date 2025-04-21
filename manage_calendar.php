@@ -142,9 +142,9 @@
         success: function(response){
             let html = '<table>'+
                 '<tr><th COLSPAN="2"><h1><?php echo $Text['crear_torn'];?></h1></th></tr>';
-            for(let i=0;i < <?php echo get_config('ufsxTorn');?>;i++){
+            for(let i=0;i < <?php echo get_config('ufsxTorn', 2);?>;i++){
                 html += '<tr>'+
-                    '<th><?echo $Text['uf_short'];?>:</th>'+
+                    '<th><?php echo $Text['uf_short'];?>:</th>'+
                     '<th><select id="uf'+i+'" name="ufTorn'+i+'">';
                     for(let x=0;x<response.length;x++){
                         html += '<option value="'+response[x].id+'" name="ufSeleccionada">'+response[x].nomSelect+'</option>';
@@ -195,7 +195,7 @@
  function crearTorn(){
 
     let ufsArray = [];
-    for(let i=0;i< <?echo get_config('ufsxTorn');?>;i++){
+    for(let i=0;i< <?php echo get_config('ufsxTorn', 2);?>;i++){
         ufsArray[i] = document.getElementById("uf"+i).value;
     }
 
