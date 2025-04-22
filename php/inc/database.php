@@ -62,8 +62,17 @@ class DBWrap {
     if (!$this->mysqli->set_charset("utf8"))
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
                                     . $mysqli->character_set_name());
+    /* ===========
+     * Any changes here in `SQL_MODE` must also be applied to files in folder: 
+     *  `/sql/queries`
+     *
+     * ( It seems that procedures are executed in `SQL_MODE` in which they were
+     *   created and not in the session `SQL_MODE`. )
+     */
     $this->mysqli->query("SET @@SQL_MODE = ' ';"); // At least one blank space is required!
                                                    // otherwise, it does not act in MariaDB 10.3.13
+    /* 
+     * =========== */
     $this->mysqli->query("SET @@group_concat_max_len = 255;");
   }
   /**

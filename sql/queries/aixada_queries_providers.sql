@@ -1,3 +1,6 @@
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 

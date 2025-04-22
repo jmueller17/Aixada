@@ -1,3 +1,6 @@
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -277,6 +280,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -399,6 +405,9 @@ end|
 
 
 delimiter ; 
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -452,6 +461,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -604,6 +616,9 @@ end |
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -1707,6 +1722,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -2713,6 +2731,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -3001,6 +3022,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -3282,6 +3306,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -3567,6 +3594,9 @@ end|
 
 delimiter ;
 
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 drop procedure if exists most_bought_products|
@@ -3725,6 +3755,9 @@ end|
     
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
@@ -4421,6 +4454,9 @@ end|
 
 
 delimiter ;
+-- See `__construct()` on `/php/inc/database.php`
+SET @@SQL_MODE = ' ';
+
 delimiter |
 
 
