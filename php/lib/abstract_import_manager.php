@@ -621,7 +621,7 @@ class abstract_import_manager {
         
         $sql = "DELETE FROM {$this->_db_table}";
         if ($sql_filter) {
-            $sql .= "WHERE $sql_filter";
+            $sql .= " WHERE {$sql_filter}";
         }
         
         $rs = $db->Execute($sql);
