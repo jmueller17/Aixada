@@ -653,7 +653,7 @@ class configuration_vars {
      *   - update: updates only matching rows
      *   - truncate: truncates the database table before create new rows
      */
-    public $default_import_mode = 'truncate';
+    public $default_import_mode = 'create_update';
 
 
 	/**
