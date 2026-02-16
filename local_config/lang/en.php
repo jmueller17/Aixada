@@ -1022,6 +1022,7 @@ $Text['import_qnew'] = "What should happen with data that does not exist in the 
 $Text['import_create_update'] = "Create new entries and update existing rows";
 $Text['import_createnew'] = "Create new entries";
 $Text['import_update'] = "Just update existing rows";
+$Text['import_truncate'] = "Replace all existing entries with new ones";
 $Text['btn_imp_direct'] = "Import directly";
 $Text['btn_import'] = "Import";
 $Text['btn_preview'] = "Preview first"; 

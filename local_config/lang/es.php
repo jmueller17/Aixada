@@ -1052,6 +1052,7 @@ $Text['import_qnew'] = "¿Qué quieres hacer con los datos que no existen en la 
 $Text['import_create_update'] = "Crear entradas nuevas y actualizar las existentes";
 $Text['import_createnew'] = "Crear entradas nuevas";
 $Text['import_update'] = "Sólo actualizar las filas existentes";
+$Text['import_truncate'] = "Reemplaza todas las entradas existentes con las nuevas";
 $Text['btn_imp_direct'] = "Importar directamente";
 $Text['btn_import'] = "Importar";
 $Text['btn_preview'] = "Vista previa";
