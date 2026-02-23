@@ -452,15 +452,11 @@
 					<form id="frmImpOptions">
                     <?php
                     $defaultMode = configuration_vars::get_instance()->default_import_mode;
-                    if (!$defaultMode || !in_array($defaultMode, array('create_update', 'createnew', 'update', 'truncate'), true)) {
+                    if (!$defaultMode || !in_array($defaultMode, array('create_update', 'createnew', 'update', 'reset'), true)) {
                         $defaultMode = 'create_update';
                     }
                     
                     $import2Table = $_GET['import2Table'];
-                    // disable truncate mode for provider imports to prevent fk errors.
-                    if ($import2Table === 'aixada_provider' && $defaultMode === 'truncate') {
-                        $defaultMode = 'create_update';
-                    }
                     
                     $importIgnoreRowsTxt = str_replace('{$match_field}',
                         '<span class="setRequiredColumn"></span>',
@@ -478,8 +474,8 @@
 					<input type="radio" name="import_mode" value="0" <?php if ('update' === $defaultMode) : ?> checked="checked" <?php endif; ?>/>
 						<?=$Text['import_update'];?>
 						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span><br/>
-					<input type="radio" name="import_mode" value="3" <?php if ('truncate' === $defaultMode) : ?> checked="checked" <?php endif; ?> <?php if ($import2Table === 'aixada_provider') : ?>disabled <?php endif; ?>/>
-						<?=$Text['import_truncate'];?>
+					<input type="radio" name="import_mode" value="3" <?php if ('reset' === $defaultMode) : ?> checked="checked" <?php endif; ?> <?php if ($import2Table === 'aixada_provider') : ?>disabled <?php endif; ?>/>
+						<?=$Text['import_reset'];?>
 						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span>
 					</form>
 				</p>

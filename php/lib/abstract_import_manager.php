@@ -241,10 +241,10 @@ class abstract_import_manager {
      *        is false $keep_match_field is ignored.
      * @return integer Number of rows imported.
 	 */
-    public function import($append_new=false, $keep_match_field = false, $truncate = false){
+    public function import($append_new=false, $keep_match_field = false, $reset = false){
         try {
-    	    if ($truncate) {
-    	        $this->truncate_table();
+    	    if ($reset) {
+    	        $this->reset_table();
     	    }
     	
     	    //format array('db_id'=>'custom_ref', ...)
@@ -607,11 +607,11 @@ class abstract_import_manager {
     }
     
     /**
-     * Deletes entries from the aixada_product db table filtering by provider id.
+     * Deativates all entries from the target db table using an optional filter.
      * 
-     * @param string|null $sql_filter sql where condition to filter to the delete query.
+     * @param string|null $sql_filter SQL where condition to apply to the update query.
      */
-    protected function truncate_table($sql_filter = null) {
+    protected function reset_table($sql_filter = null) {
         if (!$this->_use_transaction) {
             DBWrap::get_instance()->start_transaction();
             $this->_use_transaction = true;
@@ -619,7 +619,7 @@ class abstract_import_manager {
         
         $db = DBWrap::get_instance();
         
-        $sql = "DELETE FROM {$this->_db_table}";
+        $sql = "UPDATE {$this->_db_table} SET active = 0";
         if ($sql_filter) {
             $sql .= " WHERE {$sql_filter}";
         }

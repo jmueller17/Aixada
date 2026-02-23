@@ -651,7 +651,7 @@ class configuration_vars {
      *   - create_update: updates matching rows and create new ones
      *   - createnew: creates only new rows
      *   - update: updates only matching rows
-     *   - truncate: truncates the database table before create new rows
+     *   - reset: deactivates all rows before updating the table
      */
     public $default_import_mode = 'create_update';
 

@@ -145,22 +145,22 @@ try{
  			
             switch(get_param('import_mode')){
                 case '3':
-                    $truncate = true;
+                    $reset = true;
                     $append_new = true;
                     $keep_match_field = true;
                     break;
                 case '2':
-                    $truncate = false;
+                    $reset = false;
                     $append_new = true;
                     $keep_match_field = true;
                     break;
                 case '1':
-                    $truncate = false;
+                    $reset = false;
                     $append_new = true;
                     $keep_match_field = false;
                     break;
                 default:
-                    $truncate = false;
+                    $reset = false;
                     $append_new = false;
                     $keep_match_field = false;
             }
@@ -168,7 +168,7 @@ try{
  				case 'aixada_product':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_product');
  					$pi = new import_products($dt, $map, get_param('provider_id'));
-					echo $pi->import($append_new, $keep_match_field, $truncate);
+					echo $pi->import($append_new, $keep_match_field, $reset);
  					exit; 
  				
  				case 'aixada_product_orderable_for_date':
@@ -178,7 +178,7 @@ try{
  				case 'aixada_provider':
  					$dt = abstract_import_manager::parse_file($_SESSION['import_file'], 'aixada_provider');
  					$pi = new import_providers($dt, $map);
- 					echo $pi->import($append_new, $keep_match_field, $truncate);
+ 					echo $pi->import($append_new, $keep_match_field, $reset);
  					exit; 
  				
  			}
