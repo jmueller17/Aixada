@@ -108,7 +108,14 @@ class import_products extends abstract_import_manager {
     	
 	}
 	
-
+	/**
+	 * Deativates all entries from the `aixada_product` db table filtering by provider id.
+	 * 
+	 * @param string|null $sql_filter SQL where condition to apply to the update query.
+	 */
+	protected function reset_table($sql_filter = null) {
+		parent::reset_table("provider_id={$this->provider_id}");
+	}
     
 	
 }

@@ -451,6 +451,13 @@
 				<p>
 					<form id="frmImpOptions">
                     <?php
+                    $defaultMode = configuration_vars::get_instance()->default_import_mode;
+                    if (!$defaultMode || !in_array($defaultMode, array('create_update', 'createnew', 'update', 'reset'), true)) {
+                        $defaultMode = 'create_update';
+                    }
+                    
+                    $import2Table = $_GET['import2Table'];
+                    
                     $importIgnoreRowsTxt = str_replace('{$match_field}',
                         '<span class="setRequiredColumn"></span>',
                         $Text['import_ignore_rows']);
@@ -458,15 +465,18 @@
                         '<span class="setRequiredColumn"></span>',
                         $Text['import_ignore_value']);
                     ?>
-					<input type="radio" name="import_mode" value="2" checked="checked" />
+					<input type="radio" name="import_mode" value="2" <?php if ('create_update' === $defaultMode) : ?> checked="checked" <?php endif; ?>/>
 						<?=$Text['import_create_update'];?>
 						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
-					<input type="radio" name="import_mode" value="1" />
+					<input type="radio" name="import_mode" value="1" <?php if ('createnew' === $defaultMode) : ?> checked="checked" <?php endif; ?>/>
 						<?=$Text['import_createnew'];?>
 						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span><br/>
-					<input type="radio" name="import_mode" value="0" />
+					<input type="radio" name="import_mode" value="0" <?php if ('update' === $defaultMode) : ?> checked="checked" <?php endif; ?>/>
 						<?=$Text['import_update'];?>
-						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span>
+						<span class="darkGrayed"><?=$importIgnoreValueTxt;?></span><br/>
+					<input type="radio" name="import_mode" value="3" <?php if ('reset' === $defaultMode) : ?> checked="checked" <?php endif; ?> <?php if ($import2Table === 'aixada_provider') : ?>disabled <?php endif; ?>/>
+						<?=$Text['import_reset'];?>
+						<span class="darkGrayed"><?=$importIgnoreRowsTxt;?></span>
 					</form>
 				</p>
 				<br/>

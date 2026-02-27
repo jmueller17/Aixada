@@ -645,6 +645,15 @@ class configuration_vars {
      * This makes sense for transfers between aixada platforms where we can assume that columns match
      */
     public $allow_global_import = true;
+    
+    /**
+     * Handles the default table import mode. There are 4 available modes:
+     *   - create_update: updates matching rows and create new ones
+     *   - createnew: creates only new rows
+     *   - update: updates only matching rows
+     *   - reset: deactivates all rows before updating the table
+     */
+    public $default_import_mode = 'create_update';
 
 
 	/**
