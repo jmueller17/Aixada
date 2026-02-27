@@ -1,4 +1,3 @@
-version: '3.9'
 volumes:
   aixadadb:
 networks:
@@ -6,13 +5,13 @@ networks:
     driver: bridge
 services:
   mariadb:
-    image: 'bitnami/mariadb:10.6'
+    image: "bitnami/mariadb:10.6"
     networks:
       - aixada
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
-      - 'aixadadb:/bitnami/mariadb'
+      - "aixadadb:/bitnami/mariadb"
     environment:
       - ALLOW_EMPTY_PASSWORD=no
       - MARIADB_DATABASE=aixada
@@ -22,15 +21,15 @@ services:
       - MARIADB_CHARACTER_SET=utf8
       - MARIADB_COLLATE=utf8_general_ci
   phpmyadmin:
-    image: 'bitnami/phpmyadmin:5'
+    image: "bitnami/phpmyadmin:5"
     depends_on:
       - mariadb
     networks:
       - aixada
     ports:
-      - '8080:80'
+      - "8080:80"
     links:
-      - 'mariadb:database'
+      - "mariadb:database"
     environment:
       - DATABASE_HOST=mariadb
       - DATABASE_ALLOW_NO_PASSWORD=false
@@ -41,9 +40,9 @@ services:
     networks:
       - aixada
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     links:
-      - 'mariadb:database'
+      - "mariadb:database"
     volumes:
-      - '.:/var/www/html'
+      - ".:/var/www/html"
