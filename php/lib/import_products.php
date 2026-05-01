@@ -66,7 +66,7 @@ class import_products extends abstract_import_manager {
 		        for ($i = 0; $i < $length; ++$i) {
 		                $price = trim($prices[$i]);
 		                
-		                if (is_numeric($price)) {
+		                if (!$price || is_numeric($price)) {
 		                        continue;
 		                }
 		                
