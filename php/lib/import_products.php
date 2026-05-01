@@ -58,6 +58,31 @@ class import_products extends abstract_import_manager {
 			
 		}
 		
+		// Replace localized price values by numeric 
+		$up_col_idx = $data_table->get_col_index('unit_price');
+		if ($up_col_idx !== false) {
+		        $prices = $data_table->get_col_as_array($up_col_idx);
+		        $length = count($prices);
+		        for ($i = 0; $i < $length; ++$i) {
+		                $price = trim($prices[$i]);
+		                
+		                if (is_numeric($price)) {
+		                        continue;
+		                }
+		                
+		                $price = str_replace(',', '.', $price);
+		                $price = preg_replace('/[^\d\.]+/', '', $price);
+		                
+		                if (!is_numeric($price)) {
+		                        throw new Exception("Import error: unit price should contain only numeric values");
+		                }
+		                
+        		        $prices[$i] = $price;
+		        }
+		        
+		        $data_table->set_col_from_array($up_col_idx, $prices);
+		}
+		
 		parent::__construct('aixada_product', $data_table, $map);
 	}
 	

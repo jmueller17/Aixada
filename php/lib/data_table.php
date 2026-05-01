@@ -198,6 +198,29 @@ class data_table {
 		return $this->_data_table[$rindex];
 	}
 	
+	/**
+	 * Replace a row in the table with the given array of values.
+	 *
+	 * @param int   $rindex Row index.
+	 * @param array $values Array of values.
+	 *
+	 * @return array
+	 *
+	 * @throws Exception If values is not an array or the array length does not
+	 *                   match the table columns count.
+	 */
+	public function set_row($rindex, $values) {
+	        if (!is_array($values)) {
+	                throw new Exception("Import error: row values should be passed as an array");
+	        }
+	        
+	        if (count($values) !== $this->_nr_cols) {
+	                throw new Exception("Import error: row length does not match table columns count");
+	        }
+	
+	        $this->_data_table[$rindex] = array_values($values);
+	        return $this->get_row($index);
+	}
 	
 	public function is_match(){
 		return $this->_global_match;	
@@ -271,6 +294,52 @@ class data_table {
 			}
 						
 		return array_search($col_name, $this->_data_table[0]);
+	}
+	
+	/**
+	 * Iterates over the array of values to update the given column vector.
+	 *
+	 * @param string|int $col_ref Column name or index.
+	 * @param array      $values Array of values.
+	 *
+	 * @return array
+	 *
+	 * @throws Exception If values is not an array, or col_ref is unkown.
+	 */
+	public function set_col_from_array($col_ref, $values) {
+	        if (!is_array($values)) {
+	                throw new Exception("Import error: column values should be passed as an array");
+	        }
+	        
+	        if (is_string($col_ref)){
+		        if (!$this->_header){
+		        	throw new Exception("Import error: missing data table header; can't access columns by name!");	
+		        }
+						
+		        $index = array_search($col_ref, $this->_data_table[0]);
+			
+		        // column name exists in data table
+		        if ($index === false){
+		        	return;
+		        } else {
+		        	$col_ref = $index;
+		        }
+	        }
+	        
+	        if (!is_numeric($col_ref)){
+			throw new Exception("Import error: column ref should be a numeric index");
+		}
+		
+		$values = array_values($values);
+		$start  = ($this->_header) ? 1 : 0; 
+		$length = $this->_nr_rows - $start;
+		
+		for ($i = $start; $i < $length; ++$i) {
+		        $value = $values[$i] ?? null;
+		        $this->_data_table[$i][$col_ref] = $value;
+		}
+		
+		return $this->get_col_as_array($col_ref);
 	}
 
 	/**
