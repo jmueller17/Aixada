@@ -334,9 +334,9 @@ class data_table {
 		$start  = ($this->_header) ? 1 : 0; 
 		$length = $this->_nr_rows - $start;
 		
-		for ($i = $start; $i < $length; ++$i) {
+		for ($i = 0; $i < $length; ++$i) {
 		        $value = $values[$i] ?? null;
-		        $this->_data_table[$i][$col_ref] = $value;
+		        $this->_data_table[$i + $start][$col_ref] = $value;
 		}
 		
 		return $this->get_col_as_array($col_ref);
