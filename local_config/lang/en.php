@@ -149,6 +149,14 @@ $Text['eliminar_uf'] = "Delete UF";
 $mesos=[1=>"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 /**
+ * Textos de /php/reports/
+ */ 
+$Text['torns'] = "Shifts";
+$Text['torns_des_de'] = "Shifts from";
+$Text['data_torn_curt'] = "Date";
+$Text['uf_ES_BAIXA'] = "UF LEFT";
+
+/**
  * 				roles
  */
 $Text['Consumer'] = 'Consumer';

@@ -150,6 +150,14 @@ $Text['afegir_uf'] = "Añadir uf";
 $Text['eliminar_uf'] = "Eliminar uf";
 $mesos=[1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Disiembre"];
 
+/** 
+ * Textos de /php/reports/
+ */
+$Text['torns'] = "Turnos";
+$Text['torns_des_de'] = "Turnos desde";
+$Text['data_torn_curt'] = "Fecha";
+$Text['uf_ES_BAIXA'] = "ES BAJA";
+
 /**
  * 				roles
  */

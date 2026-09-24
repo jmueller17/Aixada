@@ -1,0 +1,125 @@
+/**
+ * Usado en /php/reports/, garantiza un pagina limpia a imprimir en din A4
+ */
+
+.num {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
+.lite {
+    font-size: 10pt;
+}
+.lite div,
+.lite span {
+    font-size: 10pt;
+}
+.aprov {
+	text-align: right;
+	font-style: italic;
+}
+.block {
+    page-break-inside: avoid;
+    margin: .5cm 0 0 0; 
+}
+.foot {
+    page-break-inside: avoid;
+    margin: .5cm 0 1cm 0;
+    border-bottom: solid 1px #000;
+}
+.gray{
+    color: #888;
+}
+.block-body{
+    margin:  0 0 1cm .5cm; 
+    padding: .1cm 0 0 .5cm; 
+    border-left: solid 1px #000;
+}
+.cel0hh, .cel0h, .cel1, .cel1h, .cel2, .cel3, .cel3h, .cel4, .cel5,
+.cel6, .cel8, .cel9, .cel10, .cel12, .cel13 {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 .1cm;
+}
+.cel13 {
+    width: 13cm;
+}
+.cel12 {
+    width: 12cm;
+}
+.cel10 {
+    width: 10cm;
+}
+.cel9 {
+    width: 9cm;
+}
+.cel8 {
+    width: 8cm;
+}
+.cel6 {
+    width: 6cm;
+}
+.cel5 {
+    width: 5cm;
+}
+.cel4 {
+    width: 4cm;
+}
+.cel3h {
+    width: 3.5cm;
+}
+.cel3 {
+    width: 3cm;
+}
+.cel2 {
+    width: 2cm;
+}
+.cel1h {
+    width: 1.5cm;
+}
+.cel1 {
+    width: 1cm;
+}
+.cel0h {
+    width: .5cm;
+}
+.cel0hh {
+    width: .1cm;
+}
+
+/**
+ * Apariencia segun aixada_order.revision_status en <span class="DATA-...">
+ */
+.DATA-not_yet_sent,
+.DATA-ostat_yet_received,
+.DATA-ostat_is_complete,
+.DATA-ostat_postponed,
+.DATA-ostat_canceled,
+.DATA-ostat_changes {
+    padding: 0 .2cm;
+}
+
+/* null, 4 */
+.DATA-not_yet_sent, .DATA-ostat_canceled {
+    background:#ff7a75;
+    color:#900; 
+    font-weight: bold;
+}
+/* 1 */
+.DATA-ostat_yet_received {
+    background:#D1F3D1;
+    color:green;
+}   
+/* 2 */
+.DATA-ostat_is_complete {
+    color:green;
+}                       
+/* 3 */
+.DATA-ostat_postponed {
+    background:#efd2f8;
+}                
+/* 5 */
+.DATA-ostat_changes {
+    background:#FFEDA1;
+}                

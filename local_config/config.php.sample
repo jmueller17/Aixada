@@ -570,6 +570,7 @@ class configuration_vars {
                    'may_edit_account',
                    'may_edit_unit_measure',
              	   'may_edit_iva_type',
+                   'may_edit_torns',
                    'may_view_all_accounts',
                    'may_edit_rev_tax_type',
                    'may_edit_account_desc',
@@ -592,6 +593,7 @@ class configuration_vars {
 
              'Logistic Commission' =>
              array('may_edit_incident'),
+                   'may_edit_torns',
 
              'Hacker Commission' =>
              array('may_edit_user',
@@ -604,6 +606,7 @@ class configuration_vars {
                    'may_edit_unit_measure',
                    'may_view_all_accounts',
                    'may_edit_iva_type',
+                   'may_edit_torns',
                    'may_edit_rev_tax_type',
                    'may_edit_account_desc',
                    'may_edit_payment_method',

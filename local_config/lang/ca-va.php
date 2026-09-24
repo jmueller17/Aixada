@@ -143,6 +143,14 @@ $Text['eliminar_uf'] = "Eliminar uf";
 $mesos=[1=>"Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
 
 /**
+ * Textos de /php/reports/
+ */ 
+$Text['torns'] = "Torns";
+$Text['torns_des_de'] = "Torns des de";
+$Text['data_torn_curt'] = "Data torn";
+$Text['uf_ES_BAIXA'] = "ÉS BAIXA";
+
+/**
  * 				roles
  */
 $Text['Consumer'] = 'Consumidor';
