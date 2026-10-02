@@ -1,0 +1,14 @@
+{
+    "require-dev": {
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^13.2"
+    },
+    "scripts": {
+        "test":             "./vendor_t85/bin/phpunit test/PHPUnit_aixada_tests.php --testdox --display-all-issues",
+        "analyse":          "./vendor_t85/bin/phpstan analyse -c test/phpstan.neon --no-progress --memory-limit 500M",
+        "analyse_to_log":   "./vendor_t85/bin/phpstan analyse -c test/phpstan.neon --no-progress --memory-limit 500M > test/logs/phpstan-diagnostic_t85.log 2>&1"
+    },
+    "config": {
+        "vendor-dir": "vendor_t85"
+    }
+}

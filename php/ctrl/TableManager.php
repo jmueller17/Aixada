@@ -10,19 +10,23 @@ require_once(__ROOT__ . "php/utilities/general.php");
 require_once(__ROOT__ . 'local_config/lang/' . get_session_language() . '.php');
 require_once(__ROOT__ . "php/utilities/tables.php");
 
-function get_columns_as_JSON()
-{
-  global $special_table;
-  global $Text;
-  $Text = array();
-  require(__ROOT__ . 'canned_responses_' . get_session_language() . '.php');
-  $ctm = new canned_table_manager();
-  $table = $_REQUEST['table'];
-  return '{"col_names":"' . $ctm->get_col_names_as_JSON($table)
-    . '","col_model":"' . $ctm->get_col_model_as_JSON($table)
-    . '","active_fields":"' . $ctm->get_active_fields_as_JSON($table)
-    . '"}';
-}
+  // PHPStan diagnostic: Instantiated class canned_table_manager not found
+  // -> No se usa 'getColumnsAsJSON' 
+  //    -> get_columns_as_JSON() quitamos la llamada
+  //       -> Se quita la función que instanciaba la clase canned_table_manager() 
+// function get_columns_as_JSON()
+// {
+  // global $special_table;
+  // global $Text;
+  // $Text = array();
+  // require(__ROOT__ . 'canned_responses_' . get_session_language() . '.php');
+  // $ctm = new canned_table_manager();
+  // $table = $_REQUEST['table'];
+  // return '{"col_names":"' . $ctm->get_col_names_as_JSON($table)
+    // . '","col_model":"' . $ctm->get_col_model_as_JSON($table)
+    // . '","active_fields":"' . $ctm->get_active_fields_as_JSON($table)
+    // . '"}';
+// }
 
 function get_options()
 {    
@@ -113,8 +117,15 @@ function post_edit_hook($request)
     case 'aixada_product': 
 	$db = DBWrap::get_instance();
 	$row = $db->Execute("select current_price from aixada_price where product_id=:1", $request['id'])->fetch_array();
-	if ($row[0] != $request['unit_price']) {
-	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);", $request['id'], $request['unit_price'], get_session_user_id());
+    // - Error detectado en php_errors sin poder establecer las circunstancias,.
+    //   -> PHP Warning:  Trying to access array offset on null in \php\ctrl\TableManager.php on line 120
+    // - Se opta por protejer la comparación `$row[0] != $request['unit_price']`
+    //   con valores bien establecidos.
+    $request_price = isset($request['unit_price']) ? $request['unit_price'] : 0;
+    $stored_price  = isset($row[0]) ? $row[0] : 0;
+	if ( $stored_price != $request_price ) {
+	    $db->Execute("insert into aixada_price (product_id, current_price, operator_id) values (:1, :2, :3);",
+	        $request['id'], $request_price, get_session_user_id());
 	}
 	break;
     default:
@@ -145,9 +156,13 @@ try{
     throw new Exception("ctrlTableManager: variable oper not set in query");
 
   switch($_REQUEST['oper']) {
-  case 'getColumnsAsJSON':
-      echo get_columns_as_JSON();
-      exit;
+  // PHPStan diagnostic: Instantiated class canned_table_manager not found
+  // -> No se usa 'getColumnsAsJSON' 
+  //    -> get_columns_as_JSON() quitamos la llamada
+  //       -> Se quita la función que instanciaba la clase canned_table_manager() 
+  // case 'getColumnsAsJSON':
+      // echo get_columns_as_JSON();
+      // exit;
 
   case 'listAll':
     printXML(get_list_all_XML());

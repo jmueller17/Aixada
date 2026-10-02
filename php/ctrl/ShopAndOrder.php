@@ -109,11 +109,6 @@ try{
 	        $cm = new order_cart_manager(get_session_uf_id(), get_param('date')); 
 	        break;
 	      
-	    case 'favorite_order':
-	        require_once(__ROOT__ . "php/lib/favorite_order_cart_manager.php");
-	        $cm = new favorite_order_cart_manager(get_session_uf_id(), get_param('name')); 
-	        break;
-	      
 	    default:
 	        throw new Exception("ctrlShopAndOrder: request what={$_REQUEST['what']} not supported");
     }

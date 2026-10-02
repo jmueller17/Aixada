@@ -73,7 +73,7 @@ function edit_total_order_quantities($order_id, $product_id, $new_total_quantity
 	$new_total_quantity = round($new_total_quantity, 3);
 	foreach ($uf_new_qu as $uf_id => $new_quantity) {
 	    edit_order_quantity($order_id, $product_id, $uf_id, $new_quantity);
-	    $xml .= "<row><uf_id>${uf_id}</uf_id><quantity>${new_quantity}</quantity></row>";
+	    $xml .= "<row><uf_id>{$uf_id}</uf_id><quantity>{$new_quantity}</quantity></row>";
 	}
 	DBWrap::get_instance()->free_next_results();
 	

@@ -2,6 +2,9 @@ aixada.host.key
 local_config/config.php
 local_config/timeline.svg
 *~
-vendor
-/composer.lock
+vendor_t85
+vendor_t74
+/composer_t85.lock
+/composer_t74.lock
 /test/logs
+/.phpunit.result.cache

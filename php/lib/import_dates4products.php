@@ -46,7 +46,7 @@ class import_dates4products extends abstract_import_manager {
 	 * @param int $provider_id requires the id of an existing provider to which products pertain
 	 * @throws Exception
 	 */
-	public function __construct($data_table, $map=null, $provider_id){
+	public function __construct($data_table, $map=null, $provider_id=0){
 
 		$db = DBWrap::get_instance();
 	    $rs = $db->Execute('select id from aixada_provider where id=:1q', $provider_id);
@@ -105,10 +105,12 @@ class import_dates4products extends abstract_import_manager {
 	}
 	
 
-    
-	protected function insert_rows($insert_ids){
+	// PHPStan diagnostic: Method insert_rows() overrides parent method but misses parameter #2 $keep_match_field.
+	// -> Añadimos el segundo parametro que es opcional    
+	protected function insert_rows($insert_ids, $keep_match_field = false){
     	$db = DBWrap::get_instance();
     	
+    	$imported_rows_count = 0;
     	foreach($insert_ids as $id => $match_id){
     		
     		//retrieve row from import data table
@@ -135,10 +137,12 @@ class import_dates4products extends abstract_import_manager {
     			die ($e->getMessage());
 			} 
     		
+    		$imported_rows_count++;
     		
     	}  
+    	// PHPStan diagnostic: Method insert_rows() should return int but return statement is missing
+    	// -> Añadimos la lógica de contar las filas insertada
+    	return $imported_rows_count;
     }
 	
 }
-
-?>

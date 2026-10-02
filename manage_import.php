@@ -82,7 +82,7 @@
 		    url : 'php/ctrl/ImportExport.php?oper=uploadFile',
 	        dataType: 'json',
 	        add: function (e, data) {
-		        $('.setFileName').text(data.files[0].name); 
+		        $('.setFileName').html(data.files[0].name); 
 		        $('.showFileInfo').fadeIn(1000);
 		        $('#btn_fetch').button("disable");
 		        $('#msg_file_upload').fadeIn(600);
@@ -341,7 +341,6 @@
 
 		function resetUpload(){
 			$('.showFileInfo').hide();
-			$('.setFileName').text('');
 			$('.previewElements').hide();
 
 		}
@@ -407,10 +406,8 @@
 					<input id="fileupload" type="file" name="files[]" class="ui-widget ui-corner-all" multiple>
 					</form>
 					<br/>
-					<p>&nbsp;<?=$Text['import_allowed']; ?>: *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
-					<br/>	<br/>
-					<p class="showFileInfo aix-style-ok-green ui-corner-all aix-layout-fixW450 aix-style-padding8x8"><?=$Text['import_file']; ?>:<br>
-						&nbsp;&nbsp;<b class="setFileName"></b></p>
+					<p>&nbsp;<?=$Text['import_allowed']; ?>:<br>
+						&nbsp;&nbsp;&nbsp;&nbsp; *.csv, *.xls, *.ods, *.xlsx, *.xml</p>
 				</div>
 				<div class="floatLeft">
 					<p class="boldStuff"><?=$Text['public_url'];?></p><br/>
@@ -420,6 +417,7 @@
 				</div>
 				<span style="float:right; margin-top:-2px; margin-right:4px;"><img class="loadSpinner" src="img/ajax-loader_fff.gif"/></span>
 				<div style="clear:both">
+					<p>&nbsp;<?=$Text['import_file']; ?>:&nbsp;<b class="setFileName"></b></p>
 					<p id="msg_file_upload" class="uploadMsgElements"><?=$Text['msg_uploading']; ?></p>
 					<p id="msg_fetch_file" class="uploadMsgElements"><?=$Text['msg_parsing']; ?></p>
 					
@@ -451,8 +449,8 @@
 				<p>
 					<form id="frmImpOptions">
                     <?php
-                    $defaultMode = configuration_vars::get_instance()->default_import_mode;
-                    if (!$defaultMode || !in_array($defaultMode, array('create_update', 'createnew', 'update', 'reset'), true)) {
+                    $defaultMode = get_config('default_import_mode', 'create_update');
+                    if (!in_array($defaultMode, array('create_update', 'createnew', 'update', 'reset'), true)) {
                         $defaultMode = 'create_update';
                     }
                     
@@ -486,55 +484,7 @@
 
 
 			</div>		
-		</div>
-		
-		 
-		<!-- div class="ui-widget">
-			<h4>2. CSV import settings for: <span class="setFileName"></span></h4>
-			<div class="ui-widget-content ui-corner-all aix-style-padding8x8">
-				<form id="frm_csv_settings">
-				<table class="tblFormsSettings">
-					<thead>
-						<tr>
-							<th>New Items</th>
-							<th>Seperated by</th>
-							<th>Text delimiter</th>
-							<th>Header</th>
-							
-						</tr>
-					</thead>
-					<tr>
-						<td>
-							<label><input type="radio" name="new_items" value="append" /> Append</label><br/>
-							<label><input type="radio" name="new_items" value="ignore" checked="checked"/> Ignore</label>
-							
-						</td>
-						<td>
-							<label><input type="radio" name="field_delimiter" value="0" checked="checked"/> Comma </label><br/>
-							<label><input type="radio" name="field_delimiter" value="1"/> Semicolon </label><br/>
-							<label><input type="radio" name="field_delimiter" value="2"/> Tab </label><br/>
-							<label><input type="radio" name="field_delimiter" value="3"/> Space</label><br/>
-						</td>
-						<td>
-							<label><input type="radio" name="text_delimiter" value="4" checked="checked"/> Double quote </label><br/>
-							<label><input type="radio" name="text_delimiter" value="5"/> Single quote</label>
-						</td>
-						<td>
-							<label><input type="radio" name="header" value="true" checked="checked"> Use first row</label><br/>
-							<label><input type="radio" name="header" value="false"/> None</label>
-						</td>
-					</tr>
-				</table>
-				</form>
-				<br/>
-
-			</div>
-			
-		</div-->	 
-		<br/><br/>
-		
-				
-		<br/><br/><br/><br/>			
+		</div> 
 	</div>
 	<!-- end of stage wrap -->
 </div>

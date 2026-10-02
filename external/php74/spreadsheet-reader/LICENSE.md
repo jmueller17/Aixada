@@ -1,3 +1,9 @@
+## El código de Spreadsheet-reader contiene cambios especificos para Aixada
+
+Aixada ha adaptado en 2026 este código para que funcione desde PHP 7.4 hasta PHP 8.5.
+
+**¡No se debe actualizar externamente!**
+
 ### spreadsheet-reader is licensed under the MIT License
 
 Copyright (C) 2012-2015 Martins Pilsetnieks

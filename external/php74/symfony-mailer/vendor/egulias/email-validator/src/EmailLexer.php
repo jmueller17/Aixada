@@ -272,7 +272,11 @@ class EmailLexer extends AbstractLexer
         $encoded = $value;
 
         if (mb_detect_encoding($value, 'auto', true) !== 'UTF-8') {
-            $encoded = utf8_encode($value);
+            // PHPUnit: utf8_encode() is deprecated as of PHP 8.2.0
+            // Note: This function does not attempt to guess the current encoding, 
+            //       it assumes it is encoded as ISO-8859-1 (also known as "Latin 1")
+            // See: https://www.php.net/manual/en/function.utf8-encode.php
+            $encoded = mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
         }
 
         if ($this->isValid($encoded)) {

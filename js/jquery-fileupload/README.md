@@ -1,3 +1,11 @@
+## El código PHP usado por UploadHandler contiene cambios especificos para Aixada
+
+- En 2026 se ha eliminado el directorio `./js/jquery-fileupload/server/` para
+  evitar que haya dos versiones distintas de la clase PHP `UploadHandler` ya que
+  Aixada usa el PHP de `./external/php74/jquery-fileupload/UploadHandler.php`.
+
+---
+
 # jQuery File Upload Plugin
 
 ## Demo

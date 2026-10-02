@@ -175,17 +175,21 @@ class shop_cart_manager extends abstract_cart_manager {
   	}  	
   }
 
-  /**
-   * Find a shop cart with ts_validated = 0 and date_for_shop = date. 
-   * If there is more than one such, raise an exception.
-   */
-  public function get_shop_items_for_date($date, $uf = -1)
-  {
-    if ($uf == -1) {
-      $uf = $this->_uf_id;
-    }
-    return $this->_table_manager->stored_query('products_for_shopping', $date, $uf);
-  }
+  // PHPStan diagnostic: Access to an undefined property $this->_table_manager.
+  // -> Se suprime la función:
+  //    - El procedimiento sql 'products_for_shopping' no existe.
+  //    - La funcion get_shop_items_for_date() no se llama en ningun sitio.
+  // /**
+  //  * Find a shop cart with ts_validated = 0 and date_for_shop = date. 
+  //  * If there is more than one such, raise an exception.
+  //  */
+  // public function get_shop_items_for_date($date, $uf = -1)
+  // {
+  //   if ($uf == -1) {
+  //     $uf = $this->_uf_id;
+  //   }
+  //   return $this->_table_manager->stored_query('products_for_shopping', $date, $uf);
+  // }
   
   
 	/**

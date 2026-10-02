@@ -10,6 +10,12 @@ if (isset($slash[1])) {
 require_once(__ROOT__ . 'php/inc/database.php');
 require_once(__ROOT__ . 'local_config/config.php');
 
+// PHPStan diagnostic: Access to an undefined property table_manager::$_primary_index.
+// -> La función get_list_all_query() no se usa
+//    -> Llama a do_list_all() de .\php\utilities\tables.php que solo de usa en get_list_all_query()
+//       -> Llama a list_all() de \php\lib\table_manager.php que solo de usa en do_list_all()
+//          -> Usa la propiedad no definida $this->_primary_index 
+// -> Se mantiene el codigo ya que no va a afectar a la ejecución que la propiedad no esté definida.
 function do_list_all ($tm, $page, $limit, $sidx, $sord, $options = array()) {
   list($rs, $total_pages)
     = $tm->list_all(array('filter' => (isset($options['filter']) ? 
@@ -123,8 +129,9 @@ function get_field_options ($tm, $field)
   $editvalues = ''; 
   foreach ($tm->get_key_cache($field) as $val => $desc)
     $editvalues .= $val . ':' . $desc . ';';
-  $editvalues = rtrim($col_model, ";");
+  // PHPStan diagnostic: Undefined variable: $col_model
+  // No ha fallado por que la función get_field_options() no se usa en ningún sitio
+  // Ponenmos el nombre lógico 
+  $editvalues = rtrim($editvalues, ";");
   return $editvalues;
 }
-
-?>

@@ -13,7 +13,11 @@
 <h4><?php echo $Text['other_options']; ?></h4>
 <input type="checkbox" name="makePublic" id="makePublic" checked="checked" class="freeInput"/> <label for="makePublic"><?php echo $Text['export_publish']; ?></label>
 <br/>
-<p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class="">http://yourdomain.com/local_config/export/<span id="showExportFileName"></span></span></p>
+<p id="exportURL">&nbsp;&nbsp;&nbsp;&nbsp;<span class=""><?php
+    $url_protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $url_base = $url_protocol . "://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']);
+    echo $url_base . '/local_config/export/';
+?><span id="showExportFileName"></span></span></p>
 <br/>
 </form>
 </div>

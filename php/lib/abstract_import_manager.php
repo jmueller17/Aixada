@@ -532,20 +532,32 @@ class abstract_import_manager {
      */
     public static function parse_file($path2File, $db_table='',
                                                     $from_char_encoding='$cfg'){
-        $cfg = configuration_vars::get_instance();
-        if ($from_char_encoding == '$cfg') {
-            if (isset($cfg->import_from_char_encoding)) {
-                $from_char_encoding = $cfg->import_from_char_encoding;
-            }
+        $from_encoding = $from_char_encoding;
+        if ($from_encoding == '$cfg') {
+            $from_encoding = get_config('import_from_char_encoding', 'auto');
         }
         
-    	$rowc = 0;
-  		$_data_table = array(); 
-  		$_header = false; 		
+        $rowc = 0;
+        $_data_table = array(); 
+        $_header = false; 		
 
-  		$extension = substr($path2File, -4);
+  		// FIX: Método seguro de obtener la extensión, y no tiene puto inicial
+  		$file_info = new SplFileInfo($path2File);
 
-  	 	if ($extension == '.xml') {
+  		$extension = $file_info->getExtension();
+
+        // Detectar la codificación si està configurado 'auto', 'UTF-8'
+        if (in_array($from_encoding, ['auto', 'UTF-8']) ) {
+            if (in_array($extension, ['xml', 'csv', 'tsv', 'txt'])) {
+                $from_encoding = mb_detect_encoding(
+                    file_get_contents($path2File),
+                    ['UTF-8', 'Windows-1252', 'ISO-8859-1'],
+                    true
+                );
+            }
+        }
+
+  	 	if ($extension == 'xml') {
 
   	 		$xml = simplexml_load_file($path2File);
 
@@ -556,17 +568,19 @@ class abstract_import_manager {
 					$values[] = (string)$elem;
 					$fieldnames[] = $elem->getName(); 
 				}
-				abstract_import_manager::encode_utf8($values, $from_char_encoding);
+				abstract_import_manager::encode_utf8($values, $from_encoding);
 				$_data_table[$rowc++] = $values; 
 			}
 			array_unshift($_data_table, $fieldnames);
 			$_header=true; 
 			
-  		} else if (in_array($extension, array('.csv', '.tsv', '.txt', '.xlsx','.ods', '.xls'))) {
+  		} else if (in_array($extension, ['csv', 'tsv', 'txt', 'xls', 'xlsx', 'ods'])) {
 	 		$Reader = new SpreadsheetReader($path2File);
-			foreach ($Reader as $Row){    
-			  	abstract_import_manager::encode_utf8($Row, $from_char_encoding);
-			  	$_data_table[$rowc++] = $Row; 
+			foreach ($Reader as $Row){
+			  	if (in_array($extension, ['csv', 'tsv', 'txt'])) {
+			  	    abstract_import_manager::encode_utf8($Row, $from_encoding);
+			  	}
+			  	$_data_table[$rowc++] = $Row;
 	
 			}	
 

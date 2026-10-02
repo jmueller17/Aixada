@@ -294,7 +294,7 @@ IF NOT EXISTS (
 ) THEN
 
     /**
-     * Types of stock movements such as stock corrected, loss, etc. 
+     * Crear tabla de calendario de turnos de reparto
      */
     create table aixada_torns (
       id            int(11) not null auto_increment,

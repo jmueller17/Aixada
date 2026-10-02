@@ -1,13 +1,102 @@
 # Relación de cambios en Aixada
 
-## ¿Cómo actualizar la versión?:
+## ¿Cómo actualizar la versión?
 
-**¡La rama `marter` se considera estable!**  
-*(ya no se sigue un sistema de versiones, **¡NO use la última `tag 2.7.0.1`!**)*
+**¡La rama `master` se considera estable!**  
+*(ya no se sigue un sistema de versiones, **¡NO use `tag 2.7.0.1`!**)*
 
-Ver en wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualizaci%C3%B3n)
+Ver en la wiki: [Actualización](https://github.com/jmueller17/Aixada/wiki/Actualizaci%C3%B3n)
 
-***
+---
+
+# Cambios hasta septiembre de 2026
+
+## Mejoras
+
+### Aixada ahora funciona desde PHP 5.4 hasta la versión PHP 8.5 [#326](https://github.com/jmueller17/Aixada/issues/326)
+
+Se aborda la **compatibilidad con PHP 8.5** desde tres enfoques:
+* Se arreglan los mensajes de error y advertencias al ir ejecutando Aixada con
+  PHP 8.5
+* Se han ejecutado pruebas estáticas de todo el código con
+  [PHPStan](https://phpstan.org/)
+* Se ha creado un conjunto de pruebas con [PHPUnit](https://phpunit.de) 
+  para productos externos dentro de la carpeta `/external/php74/` y de algunos
+  nuevos detalles en el código de Aixada. Ver: [test/README.md](test/README.md).
+
+Para instalar y ejecutar las dos herramientas de pruebas se usa
+[composer](https://getcomposer.org/download/) con dos configuraciones (una para
+cada versión de PHP: 8.5 y 7.4) Más detalles en:
+[test/README.md](https://github.com/jmueller17/Aixada/blob/master/test/README.md)
+
+#### NOTA:
+* Las herramientas de la carpeta `/external/` contienen cambios en el
+  código específicos para que funcionen desde PHP 7.4 hasta PHP 8.5.  
+  **¡No se deben actualizar externamente!**
+
+### Se corrigen diversos problemas en la importación de hojas de cálculo [PR#327](https://github.com/jmueller17/Aixada/pull/327) + [5b52..](https://github.com/jorix/Aixada/commit/5b52d81e9bd77b4f1cfff7b7f1ef735a65dbfeb8)
+
+* Se mejora la lectura de **acentos y caracteres especiales** (se recomienda
+  usar la configuración de `$import_from_char_encoding` como `'auto'` o dejarla
+  sin especificar)
+* Permite importar números con el símbolo de moneda en archivos `.xls`, `.xlsx`
+  y `.ods`.
+* Se evita que se ignoren las filas vacías en archivos `.xlsx`.
+* En la página de importación ahora se muestra el nombre del archivo seleccionado.
+
+### Nueva opción `'reset'` en la importación de productos [PR#324](https://github.com/jmueller17/Aixada/pull/324) + [5b52..](https://github.com/jorix/Aixada/commit/5b52d81e9bd77b4f1cfff7b7f1ef735a65dbfeb8)
+
+* La nueva opción `reset` desactiva todos los productos antes de cargar los nuevos.
+  Para plantillas su código es `'3'`, ver: `local_config/config.php.sample` 
+  ( :bulb:`config.php`: `$default_import_mode` y `$import_templates`).
+    
+### Calendario de turnos de reparto de las UF [PR#306](https://github.com/jmueller17/Aixada/pull/306) + [PR#321](https://github.com/jmueller17/Aixada/pull/321) + [PR#322](https://github.com/jmueller17/Aixada/pull/322) + [64aC..](https://github.com/jorix/Aixada/commit/64a6c7f53113555cf5527db1c3aa629da4fc3e44)
+
+* Se incorpora la gestión del calendario de turnos de reparto de las Unidades Familiares (UF). Se
+  mejora la ayuda para hacerla más accesible y mostrar también los turnos.
+
+### En la revisión de pedidos se habilita marcar todas las líneas como revisadas [PR#314](https://github.com/jmueller17/Aixada/pull/314)
+
+* En la pantalla de revisión de pedidos se habilita una casilla de verificación
+  en la cabecera para validar todas las filas a la vez.
+
+### En revisión de pedidos ahora las cabeceras son siempre visibles [PR#318](https://github.com/jmueller17/Aixada/pull/318)
+
+* Esto es de especial interés para identificar las columnas de las UF.
+
+### Aixada está preparada para *Apply Docker v2 compose specifications* [#299](https://github.com/jmueller17/Aixada/issues/299): [PR#300](https://github.com/jmueller17/Aixada/pull/300) + [PR#325](https://github.com/jmueller17/Aixada/pull/325)
+
+* El proceso de construcción (*build*) se detenía debido a errores en la
+  instalación de la extensión `imagick` con `pecl`.
+
+### Deshabilitar automáticamente el servicio a los hogares con saldo negativo [#269](https://github.com/jmueller17/Aixada/issues/269): [PR#298](https://github.com/jmueller17/Aixada/pull/298)
+
+* Se puede suspender automáticamente el servicio a las UF con saldo negativo.
+* Ver la descripción de los nuevos parámetros que permiten activar este
+  comportamiento en `local_config/config.php.sample` ( :bulb:`config.php`: 
+  `$allow_negative_balances`, `$negative_balance_grace_periode` y 
+  `$negative_balance_disabled_pages`)
+ 
+## Correcciones de errores
+
+* [PR#323](https://github.com/jmueller17/Aixada/pull/323) Asegurar que los
+  procedimientos SQL se ejecuten en el `SQL_MODE` adecuado.
+* [PR#320](https://github.com/jmueller17/Aixada/pull/320) Resuelto un problema
+  que impedía descargar la copia de seguridad.
+* [#303](https://github.com/jmueller17/Aixada/issues/303):
+  [PR#305](https://github.com/jmueller17/Aixada/pull/305) +
+  [PR#310](https://github.com/jmueller17/Aixada/pull/310)
+  Permitir validar carros vacíos (los carros vacíos ensuciaban la lista de UF
+  a validar).
+* [#307](https://github.com/jmueller17/Aixada/issues/307):
+  [PR#311](https://github.com/jmueller17/Aixada/pull/311) Evitar el error
+  `MAX_JOIN_SIZE rows` y mejorar el rendimiento en las consultas a pedidos y
+  compras.
+* [PR#301](https://github.com/jmueller17/Aixada/pull/301) Se corrige el código
+  para que, al crear un nuevo incidente, por defecto solo se envíe a los
+  usuarios activos.
+ 
+---
 
 # Cambios hasta febrero-2022
 

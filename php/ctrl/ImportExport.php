@@ -4,7 +4,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('__ROOT__', dirname(dirname(dirname(__FILE__))).DS); 
 
 
-require_once(__ROOT__ . "external/php53_2/jquery-fileupload/UploadHandler.php");
+require_once(__ROOT__ . "external/php74/jquery-fileupload/UploadHandler.php");
 require_once(__ROOT__ . "local_config/config.php");
 
 require_once(__ROOT__ . "php/lib/import_products.php");
@@ -113,6 +113,13 @@ try{
                     $keep_match_field = false;
                     if (isset($template_options['import_mode'])) {
                         switch($template_options['import_mode']) {
+                            case '3': // reset
+                                $append_new = true;
+                                $keep_match_field = true;
+                                if ( get_param('import2Table') == 'aixada_product' ){
+                                    $pi->deactivate_products();
+                                }
+                                break;
                             case '2':
                                 $append_new = true;
                                 $keep_match_field = true;

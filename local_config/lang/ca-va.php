@@ -107,7 +107,7 @@ $Text['ti_login_news'] = "Inici de sessió i notícies";
 $Text['ti_timeline'] = "Informe línia de temps";
 $Text['ti_report_torn'] = "Resum del torn d'avui";
 //$Text['ti_mng_cashbox'] = "Caixa";
-$Text['head_ti_calendar'] = "Gestionar el calendari";
+
 
 /**
  *              Ajuda
@@ -124,6 +124,7 @@ $Text['local'] = 'Local';
 /**
  *              Calendari
  */
+$Text['head_ti_calendar'] = "Gestionar el calendari";
 $Text['torn_creat'] = 'Torn creat';
 $Text['torn_guardat'] = 'Torn guardat';
 $Text['roda_torns_creada'] = 'Roda de Torns Creada';
@@ -357,7 +358,7 @@ $Text['nav_wiz'] = "Torn";
 	$Text['nav_wiz_validate'] = "Valida";
 //  $Text['nav_wiz_open'] = "Obre";
 //  $Text['nav_wiz_close'] = "Tanca";
-  $Text['nav_wiz_torn'] = "Resum torn";
+    $Text['nav_wiz_torn'] = "Resum torn";
 	$Text['nav_wiz_cashbox'] = "Caixa";
 $Text['nav_shop'] = "Compra avui";
 $Text['nav_order'] = "Propera comanda";

@@ -1,1 +1,5 @@
+# Aixada ha adaptado en 2026 este código para que funcione desde PHP 7.4 hasta PHP 8.5.
+
+**¡No se debe actualizar externamente!**
+
 See at: fujaru/spreadsheet-reader (forked from ho-nl-fork/spreadsheet-reader forked from nuovo/spreadsheet-reader)

@@ -7,8 +7,8 @@ Check **[CHANGELOG-es.md (in Spanish)](https://github.com/jmueller17/Aixada/blob
 
 ### System requirements
 * MySQL 5.1.41 at least or MariaDB
-* PHP5.3.2 at least, PHP7 or PHP8 (tested on PHP8.1)
+* PHP 5.4 at least to PHP 8.5 (latest tested version)
 * Chrome, Firefox, Safari, Opera
 
-Copyright (C) 2013-2022 by Jörg Müller and Julian Pfeifle. Aixada is licensed under a the GNU General Public License.  
+Copyright (C) 2013-2026 by Jörg Müller and Julian Pfeifle. Aixada is licensed under a the GNU General Public License.  
 Based on previous code by Gilad Buzi.

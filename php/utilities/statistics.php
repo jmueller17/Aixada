@@ -37,7 +37,7 @@ function read_timeline_data($which)
     foreach($entities as $ent => $name) {
         $rs = do_stored_query($which . '_weekly_orders', $ent);
         while ($row = $rs->fetch_assoc()) {
-            $week        = clean_zeros($row['order_week']);
+            $week        = (int) clean_zeros($row['order_week']);
             $total_price = $row['total_price'];
             if (!isset($orders[$week]))
                 $orders[$week] = array();
@@ -361,7 +361,7 @@ function make_active_time_lines($which, // 'uf', 'provider' or 'product'
     $date_lines = make_grid_lines($min_x, $cur_x, $min_y, $max_y, $weeks_into_past, $stepsize);
     $svg = write_svg($date_lines, $line, $text, $min_x, $cur_x, $min_y, $max_y, $weeks_into_past);
     $svgname = 'local_config/timeline.svg';
-    $outhandle = @fopen($svgname, 'w');
+    $outhandle = @fopen(__ROOT__ . $svgname, 'w');
     if (!$outhandle)
         throw new Exception("Couldn't open $svgname for writing");
     fwrite($outhandle, $svg);

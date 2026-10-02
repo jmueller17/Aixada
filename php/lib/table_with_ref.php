@@ -24,7 +24,13 @@ class table_col {
 	    $_max_length = false;
 	} else {
 	    $this->_type = strtok($type, '(');
-	    $this->_max_length = strtok(',)'); // this correctly parses "float(10,2)" -> 10 and "varchar(255) -> 255"
+	    // Error Warning: strtok(): Both arguments must be provided when starting tokenization 
+	    // -> Do not call a second time if the first call was false.
+        if ($this->_type) {
+            $this->_max_length = strtok(',)'); // this correctly parses "float(10,2)" -> 10 and "varchar(255) -> 255"
+        } else {
+            $this->_max_length = false;
+        }
 	}
     }
 
@@ -302,7 +308,7 @@ class foreign_key_manager {
   {
     $db = DBWrap::get_instance();
     $rs = $db->Select(array($fDField, $fIndex), $fTable, '', '');
-    if (!$rs) throw new Exception("Could not read foreign key descriptions from table $fTable using $strSQL . Error: " . mysqli_error());
+    if (!$rs) throw new Exception("Could not read foreign key descriptions from table $fTable using {$db->current_query_SQL}. Error: " . $db->get_error());
     //    if (!mysqli_num_rows($rs)) throw new Exception('No foreign keys found in table ' . $fTable);
     $cache = array();
     $rcache = array();
@@ -313,7 +319,11 @@ class foreign_key_manager {
 // 		} 
 	
       $cache[$row[$fIndex]] = $tmp_field_val;
-      $rcache[$row[$fDField]] = $row[$fIndex];
+      // La tabla 'aixada_cart' causa $row[$fDField]=null
+      // -> No creamos la $rcache si el indice es null
+      if (! is_null($row[$fDField])) { 
+        $rcache[$row[$fDField]] = $row[$fIndex];
+      }
     }
     $rs->free();
     $this->_key_cache[$key] = $cache;

@@ -21,7 +21,7 @@
         echo '</select> ';
 
         // Select lang
-        $cfg_use_shop = get_config('use_shop', 'order_and_stock');
+        $cfg_use_shop = get_config('use_shop', 'order_and_stock') != false;
         if (get_config('show_menu_language_select', false)) {
             echo '<select size="0" name="lang_select" id="lang_select">';
             $keys = get_session_value('language_keys');
@@ -89,7 +89,9 @@
 			<ul>
 				<li><a href="manage_orderable_products.php"><?php echo $Text['nav_mng_deactivate'];?></a></li>
 				<li><a href="manage_data.php?table=aixada_unit_measure"><?php echo $Text['nav_mng_units'];?></a></li>
-				<!-- li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li-->
+				<?php if ($cfg_use_shop) {  // USE SHOP: start ?>
+				<li><a href="manage_stock.php"><?php echo $Text['nav_mng_stock'];?> </a></li>
+				<?php } // USE SHOP: end ?>
 				<li><a href="manage_data.php?table=aixada_iva_type"><?php echo $Text['nav_mng_iva']; ?></a></li>
 				<li><a href="manage_data.php?table=aixada_rev_tax_type"><?php echo $Text['nav_mng_revtax']; ?></a></li>
 			</ul>

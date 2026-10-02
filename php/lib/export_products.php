@@ -44,7 +44,10 @@ class export_products extends abstract_export_manager {
 			$this->product_ids = $product_ids; 
 				
 		} else {
-			$this->products_ids = 0;
+			// PHPStan Diagnostic: undefined property export_products::$products_ids
+			// -> Asumimos un error de nombre en la variable 
+			//    Es una sentencia que no se ejecuta si se pasan bien los parámetros
+			$this->product_ids = 0;
 			
 		}
 		

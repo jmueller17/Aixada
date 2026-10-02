@@ -625,10 +625,13 @@ class configuration_vars {
      * Character encoding used by sources of importations. The data from a
      * source are transformed to 'UTF-8' used used internally by Aixada.
      *
-     * If character set from the sources is not known put to 'auto', then could
-     * be lose some chars but is safer than ''.
-     * Remove or sets to '' to don't make transformation, but in this case if
-     * files don't use UTF-8 some importations could be fail.
+     * This parameter is only used for files: 'xml', 'csv', 'tsv' and 'txt'. 
+     * ( For files: 'xlsx', 'ods' and 'xls' is ignored )
+     *
+     * If character set from sources is unknown, use 'auto' or remove it.
+     * ( 'auto' is the default value )
+     *
+     * Sets to '' to don't make transformation.
      *
      * See valid codes in:
      *          http://php.net/manual/en/mbstring.supported-encodings.php
@@ -651,7 +654,8 @@ class configuration_vars {
      *   - create_update: updates matching rows and create new ones
      *   - createnew: creates only new rows
      *   - update: updates only matching rows
-     *   - reset: deactivates all rows before updating the table
+     *   - reset: deactivates all rows before updating the table (applicable
+     *     only to products)
      */
     public $default_import_mode = 'create_update';
 
@@ -711,42 +715,56 @@ class configuration_vars {
 								);
 
 	/**
-	 *	Set templates correspondences to directly import by establishing
-     *  correspondences from columns with database fields.
+     * Direct import templates allow you to map columns to database fields, set
+     * default values ​​for fields not imported, and configure other specific 
+     * settings.
+     *
+     * - If any column is missing from the imported data, the entire template 
+     *   will not be applied, and the columns will need to be assigned manually.
 	 */
     public $import_templates = array(
-        // Table any db_field_name must be allowed by $allow_import_for.
+        // Table name (any db_field_name must be allowed by $allow_import_for)
         'aixada_product' => array(
             // Template name
             'begues' => array(
-                'options' => array( //optional
-                    'import_mode' => '2', // '0' update only (default mode)
-                                          // '1' insert all
-                                          // '2' insert new and update existing
-                    'deactivate_products' => true // option only for products
+                // Optional
+                'options' => array( 
+                    // '0' update only (default mode)
+                    // '1' insert all
+                    // '2' Insert a new element and update the existing one, and
+                    //     set the 'active' field to 1 for all imported rows.
+                    // '3' reset ( then 'deactivate_products' is true )
+                    'import_mode' => '2', 
+                    'deactivate_products' => true, // option only for products
                 ),
-                'required_fields' => array( //optional
+                // Optional
+                'required_fields' => array(
                     // Rows without a required fields are ignored.
-                    'custom_product_ref', 'name', 'unit_price'
+                    'custom_product_ref', 'name', 'unit_price',
                 ),
-                'match_columns' => array( //Required
-                // db_field_name => col_name or regex to match col_name.
+                // Required
+                'match_columns' => array( 
+                    // db_field_name => col_name or regex to match col_name.
                     'custom_product_ref' => '/.*_product_ref/',
                     'name' => '/.*name/',
                     'unit_price' => '/.*unit_price/',
                     'unit_measure_order_id' => '/.*unit_measure_order_id/',
-                    'unit_measure_shop_id' => '/.*unit_measure_order_id/'
+                    'unit_measure_shop_id' => '/.*unit_measure_order_id/',
                 ),
-                'forced_values' => array( //optional
-                    'active' => '1',
+                // Optional
+                'forced_values' => array(
                     'category_id' => '1000',
-                    'rev_tax_type_id' => 2
+                    'rev_tax_type_id' => 2,
                 ),
-                'updatable_columns' => array( //optional: default is all columns
+                // Optional: default is all columns
+                'updatable_columns' => array(
+                    // - In this example, the fields: 'unit_measure_order_id',
+                    //   'unit_measure_shop_id', 'category_id' and 'rev_tax_type_id' will only be
+                    //   used for inserts.
+                    // - The forced_values ​​columns must be included; otherwise,
+                    //   they will be ignored during the update.
                     'name', 'unit_price',
-                    // updateable columns of forced_values should be included.
-                    'active', 'rev_tax_type_id'
-                )
+                ),
             )
         )
     );

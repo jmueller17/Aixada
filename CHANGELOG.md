@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## This document is out of date!
+For version 2.8 or higher (from 2015 onwards), see "[CHANGELOG-es.md](https://github.com/jmueller17/Aixada/blob/master/CHANGELOG-es.md)"
+
 v1.0
 ----
  * Done by Gilad Buzi back in 2005
@@ -65,8 +68,6 @@ Released 2 April 2013
 
 v2.8 (see `master` instead of a version)
 ----
-
-*This document is out of date for version >= 2.8, see "[CHANGELOG-es.md](https://github.com/jmueller17/Aixada/blob/master/CHANGELOG-es.md)"*
 
 **New Features**
 

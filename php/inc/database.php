@@ -38,6 +38,7 @@ class DBWrap {
    * @var string stores the last query string sent to the SQL engine
    */
   public $last_query_SQL = '';
+  public $current_query_SQL = '';
 
   /**
    * @var string stores the next-to-last query string sent to the SQL engine
@@ -60,8 +61,9 @@ class DBWrap {
     if (mysqli_connect_errno())
       throw new InternalException('Unable to connect to database. ' . mysqli_connect_error());
     if (!$this->mysqli->set_charset("utf8"))
+        // PHPStan diagnostic: Undefined variable: $mysqli
         throw new InternalException('Unable to select charset utf8. Current character set: ' 
-                                    . $mysqli->character_set_name());
+                                    . $this->mysqli->character_set_name());
     /* ===========
      * Any changes here in `SQL_MODE` must also be applied to files in folder: 
      *  `/sql/queries`
@@ -149,6 +151,22 @@ class DBWrap {
       }
   }
 
+    /**
+     * Obtiene el último error de MySQL de forma segura para PHP 8.5
+     * 
+     * @return string
+     */
+    public function get_error()
+    {
+        // PHP 8.5 exige estrictamente que mysqli_error reciba el objeto de conexión.
+        // Además, validamos que la propiedad exista y sea una instancia válida de mysqli.
+        if (isset($this->mysqli) && $this->mysqli instanceof mysqli) {
+            return mysqli_error($this->mysqli);
+        }
+        // Si la conexión no se ha iniciado o falló antes de crearse, usamos mysqli_connect_error
+        return mysqli_connect_error() ?: 'Error desconocido o conexión no inicializada';
+    }
+
   /**
    * Executes an SQL query.
    *
@@ -160,6 +178,7 @@ class DBWrap {
    */
   private function do_Execute($safe_sql_string, $multi = false)
   {
+    $this->current_query_SQL = $safe_sql_string;
     $rs = ($multi ? 
 	   $this->mysqli->multi_query($safe_sql_string) :
 	   $this->mysqli->query($safe_sql_string));
@@ -425,7 +444,9 @@ commit;";
 	else $ct++;
 	$strSQL .= $this->mysqli->real_escape_string($field);
       }
-    } else throw new InternalException('Argument ' . $field . ' is neither string nor array');
+    // PHPStan diagnostic: Undefined variable: $field
+    // It is missing an 's', as this is an exception no error has been observed
+    } else throw new InternalException('Argument ' . $fields . ' is neither string nor array');
     
     $strSQL .= ' FROM ' . $the_table;
     if ($filter)
@@ -465,4 +486,3 @@ commit;";
   }
 }
 
-?>

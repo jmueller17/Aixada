@@ -64,12 +64,10 @@ $Text['validate'] = "Validar";
  *  			titles for header <title></title>
  */
 $Text['global_title'] = configuration_vars::get_instance()->coop_name;
-$Text['head_ti_order'] = "Pedido"; // Unused!
-$Text['head_ti_shop'] = "Comprar productos"; // Unused!
-$Text['head_ti_reports'] = "Informes"; // Unused!
 $Text['head_ti_validate'] = "Validar";
+
 $Text['head_ti_active_products'] = "Activar/Desactivar Productos para pedidos";
-$Text['head_ti_arrived_products'] = "Productos que han llegado"; // Unused!
+//
 $Text['head_ti_active_roles'] = "Roles activos";
 $Text['head_ti_account'] = "Cuentas";
 $Text['head_ti_manage_orders'] = "Gestionar los pedidos";
@@ -80,22 +78,16 @@ $Text['head_ti_incidents'] = "Incidentes";
 $Text['head_ti_stats'] = "Estadísticas diarias";
 $Text['head_ti_prev_orders'] = "Mis compras anteriores";
 $Text['head_ti_cashbox'] = "Control de dinero";
-$Text['head_ti_calendar'] = "Gestionar el calendario";
 
 
 /**
  *  			titles for main pages <h1></h1>
  */
 $Text['ti_mng_activate_products'] = "Las UFs podrán pedir lo siguiente PARA el día  ";
-$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día "; // Unused!
 $Text['ti_mng_activate_roles'] = "Gestionar los roles de usuario ";
 $Text['ti_mng_activate_users'] = "Activar usuarios como ";
-$Text['ti_mng_move_orders'] = "Cambiar un pedido";
 $Text['ti_mng_activate_preorders'] = "Convertir un prepedido en pedido";
 $Text['ti_mng_members'] = "Gestionar los miembros";
-$Text['ti_mng_ufs'] = "Gestionar las unidades familiares";
-$Text['ti_mng_dates'] = "De-/activar individualmente fechas para hacer pedidos";
-$Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos"; // Unused!
 $Text['ti_mng_db'] = "Copia de seguridad de la base de datos";
 $Text['ti_order'] = "Hacer el pedido para ";
 $Text['ti_shop'] = "Comprar artículos ";
@@ -115,6 +107,15 @@ $Text['ti_login_news'] = "Inicio de sesión y noticias";
 $Text['ti_timeline'] = "Informe línea de tiempo";
 $Text['ti_report_torn'] = "Resumen del turno de hoy";
 $Text['ti_mng_cashbox'] = "Control de caja";
+$Text['head_ti_shop'] = "Comprar productos"; // Unused!
+$Text['head_ti_reports'] = "Informes"; // Unused!
+$Text['head_ti_arrived_products'] = "Productos que han llegado"; // Unused!
+$Text['head_ti_order'] = "Pedido"; // Unused!
+$Text['ti_mng_arrived_products'] = "Los siguientes productos han llegado el día "; // Unused!
+$Text['ti_mng_move_orders'] = "Cambiar un pedido";
+$Text['ti_mng_ufs'] = "Gestionar las unidades familiares";
+$Text['ti_mng_dates'] = "De-/activar individualmente fechas para hacer pedidos";
+$Text['ti_mng_dates_pattern'] = "Bulk de-/activar fechas para hacer pedidos"; // Unused!
 
 /**
  *              Ayuda
@@ -131,6 +132,7 @@ $Text['local'] = 'Local';
 /**
  *              Calendari
  */
+$Text['head_ti_calendar'] = "Gestionar el calendario";
 $Text['torn_creat'] = 'Turno creado';
 $Text['torn_guardat'] = 'Turno guardado';
 $Text['roda_torns_creada'] = 'Rueda de Turnos Creada';
@@ -358,7 +360,7 @@ $Text['required_fields'] = " son campos obligatorios";
 /**
  *			Navigation
  */
- $Text['nav_ajuda'] = "Ayuda";
+$Text['nav_ajuda'] = "Ayuda";
 $Text['nav_home'] = "Inicio";
 $Text['nav_wiz'] = "Turno";
 	$Text['nav_wiz_arrived'] = "Productos que no han llegado";
@@ -373,6 +375,7 @@ $Text['nav_mng'] = "Gestionar";
 	$Text['nav_mng_uf'] = "Unidades familiares";
 	$Text['nav_mng_member'] = "Miembros";
 	$Text['nav_mng_providers'] = "Proveedores";
+    $Text['nav_mng_calendar'] = "Calendario Turnos";
 	$Text['nav_mng_products'] = "Productos";
 	$Text['nav_mng_deactivate'] = "Activar/desactivar productos";
 	$Text['nav_mng_stock'] = "Stock";

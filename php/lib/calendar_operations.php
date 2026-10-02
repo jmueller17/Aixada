@@ -133,6 +133,3 @@ function presentarUfs($idOriginal, $dataOriginal, $i){
     }
     return $resultat;
  }
-?>
-
-

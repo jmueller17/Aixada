@@ -1,3 +1,11 @@
+## El código de Spreadsheet-reader contiene cambios especificos para Aixada
+
+Aixada ha adaptado en 2026 este código para que funcione desde PHP 7.4 hasta PHP 8.5
+
+**¡No se debe actualizar externamente!**
+
+---
+
 **spreadsheet-reader** is a PHP spreadsheet reader that differs from others in that the main goal for it was efficient
 data extraction that could handle large (as in really large) files. So far it may not definitely be CPU, time
 or I/O-efficient but at least it won't run out of memory (except maybe for XLS files).

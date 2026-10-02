@@ -1,0 +1,11 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "scripts": {
+        "test": "./vendor_t74/bin/phpunit test/PHPUnit_aixada_tests.php --testdox -v "
+    },
+    "config": {
+        "vendor-dir": "vendor_t74"
+    }
+}

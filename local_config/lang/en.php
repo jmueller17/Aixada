@@ -116,6 +116,39 @@ $Text['ti_report_torn'] = "Summary of today's session";
 
 
 /**
+*              Help
+*/
+$Text['compte_titol'] = 'Deposit account number and Tax ID (NIF)';
+$Text['numCompte'] = 'Account Number';
+$Text['nif'] = 'Tax ID (NIF)';
+$Text['llistatUfs_titol'] = 'List of active UFs';
+$Text['gestioTorns_titol'] = 'Basket Shift Management';
+$Text['guardar'] = 'Save';
+$Text['modificar'] = 'Modify UF';
+$Text['local'] = 'Location';
+
+/**
+*              Calendar
+*/
+$Text['head_ti_calendar'] = "Manage calendar";
+$Text['torn_creat'] = 'Shift created';
+$Text['torn_guardat'] = 'Shift saved';
+$Text['roda_torns_creada'] = 'Shift rotation created';
+$Text['torn_eliminat'] = 'Shift deleted';
+$Text['data_torn'] = "Shift date";
+$Text['assignar_torn'] = "Assign shift";
+$Text['no_uf'] = "No UF selected";
+$Text['crear_torn'] = "Create shift";
+$Text['crear_roda'] = "Create shift rotation";
+$Text['eliminar_torn'] = "Delete shift";
+$Text['pregunta_eliminar'] = "Are you sure you want to delete the shift on: ";
+$Text['pregunta_roda'] ="Are you sure you want to create a shift rotation starting from: ";
+$Text['pregunta_roda2'] = " All subsequent shifts will be deleted";
+$Text['afegir_uf'] = "Add UF";
+$Text['eliminar_uf'] = "Delete UF"; 
+$mesos=[1=>"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/**
  * 				roles
  */
 $Text['Consumer'] = 'Consumer';
@@ -145,7 +178,7 @@ $Text['mo_act_user'] = "Active users";
 /**
  * 				uf member manage
  */
-$Text['search_memberuf'] = "Search name or login"; //changed !!!!!!!!!
+$Text['search_memberuf'] = "Search name or login";
 $Text['browse_memberuf'] = "Browse";
 $Text['assign_members'] = "Assign members";
 $Text['login'] = "Login";
@@ -324,6 +357,7 @@ $Text['required_fields'] = " are required fields";
 /**
  *			Navigation
  */
+$Text['nav_ajuda'] = "Help";
 $Text['nav_home'] = "Home";
 $Text['nav_wiz'] = "Wizard";
 //	$Text['nav_wiz_arrived'] = "Products that haven't arrived";
@@ -338,6 +372,7 @@ $Text['nav_mng'] = "Manage";
 	//$Text['nav_mng_uf'] = "Households";
 	$Text['nav_mng_member'] = "Members";
 	$Text['nav_mng_providers'] = "Providers";
+    $Text['nav_mng_calendar'] = "Shift Schedule";
 	$Text['nav_mng_products'] = "Products";
 		$Text['nav_mng_deactivate'] = "De/Activate for orders";
 		$Text['nav_mng_stock'] = "Stock";
@@ -547,8 +582,8 @@ $Text['description_url'] = 'URL of description';
  * added after 14.5
  */
 $Text['msg_err_validate_self'] = 'You cannot validate your own cart!';
-//$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preorder you have to choose a date in the future!';
-//$Text['msg_preorder_success'] = 'Preorder has been successfully activated for the following date: ';
+$Text['msg_err_preorder'] = 'Sorry, but in order to activate this preorder you have to choose a date in the future!';
+$Text['msg_preorder_success'] = 'Preorder has been successfully activated for the following date: ';
 //$Text['msg_can_be_ordered'] =  'Items can be ordered for this date';
 //$Text['msg_has_ordered_items'] = 'Items have been ordered for this day; they cannot be deleted, just moved';
 //$Text['msg_today'] = 'Today';
@@ -575,11 +610,6 @@ $Text['purchase_date'] = 'Date of purchase';
 //$Text['purchase_validated'] = 'Date of validation';
 //$Text['ordered_for'] = 'Items ordered for'; //!!DUPLICATE
 $Text['not_validated'] = 'not validated';
-
-
-
-
-
 
 /* definitely new stuff */
 

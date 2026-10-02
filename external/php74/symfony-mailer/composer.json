@@ -1,5 +1,12 @@
+### Symfony-mailer contiene cambios especificos para Aixada!
+
+**¡No use composer!**. Vea CHANGELOG.md.
+
+Antiguo código:
+```json
 {
     "require": {
         "symfony/mailer": "^5.4"
     }
 }
+```

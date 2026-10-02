@@ -3,9 +3,10 @@ parameters:
     paths:
         - ../
     excludePaths:
+        - ../vendor_t74
+        - ../vendor_t85
         - ../local_config
-        - ../vendor
         - ../external/php53_2
-        - ../php\utilities\send_swiftmail.php
+        - ../php/utilities/send_swiftmail.php
     scanFiles:
         - ../local_config/config.php

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Aixada ha adaptado en 2026 este código para que funcione desde **PHP 5.4**
+ * hasta PHP 8.5.
+ *
+ * **¡No se debe actualizar externamente!**
+ *
+ * - Usado en Aixada por ./js/jquery-fileupload/ para subir archivos
+ * - En 2026 se ha eliminado el directorio `./js/jquery-fileupload/server/`
+ *   para evitar que haya dos versiones distintas de la clase `UploadHandler`
+ */
 /*
  * jQuery File Upload Plugin PHP Class
  * https://github.com/blueimp/jQuery-File-Upload
@@ -14,6 +24,7 @@ class UploadHandler
 {
 
     protected $options;
+    protected $response;
 
     // PHP File Upload error message codes:
     // http://php.net/manual/en/features.file-upload.errors.php

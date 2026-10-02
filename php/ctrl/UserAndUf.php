@@ -26,7 +26,7 @@ try{
             case 'name':
                 $sql .= ' order by name';
                 break;
-            default;
+            default:
                 $sql .= ' order by id desc';
             }
             printXML(query_XML_fields($sql));

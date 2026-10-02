@@ -114,6 +114,13 @@ class table_manager extends table_with_ref
       *
       * @return mysqli_result $rs the query result
       */
+
+  // PHPStan diagnostic: Access to an undefined property table_manager::$_primary_index.
+  // -> La función get_list_all_query() no se usa
+  //    -> Llama a do_list_all() de .\php\utilities\tables.php que solo de usa en get_list_all_query()
+  //       -> Llama a list_all() de \php\lib\table_manager.php que solo de usa en do_list_all()
+  //          -> Usa la propiedad no definida $this->_primary_index 
+  // -> Se mantiene el codigo ya que no va a afectar a la ejecución porque la función no se usa.
   public function list_all ($args)
   {
     $fields = $args['fields'];
@@ -131,11 +138,14 @@ class table_manager extends table_with_ref
       = $db->Select($fields, 
 		    $this->_table_name, 
 		    $args['filter'], 
+            // PHPStan diagnostic: Access to an undefined property table_manager::$_primary_index.
+            // -> Se mantiene el codigo ya que no va a afectar a la ejecución porque la función no se usa.
+            // @phpstan-ignore-next-line
 		    $args['order_by'] ? $args['order_by'] : $this->_primary_index,
 		    $args['order_sense'] ? $args['order_sense'] : 'asc',
 		    $args['page'],
 		    $args['limit']);
-    if (!$rs) throw new Exception('The statement $strSQL could not retrieve records from' . $this->_table_name . '<br/>' . mysqli_error());
+    if (!$rs) throw new Exception('The statement ' . $db->current_query_SQL . ' could not retrieve records from' . $this->_table_name . '<br/>' . $db->get_error());
     return array($rs, $total_pages);
   }	
 
@@ -180,7 +190,9 @@ class table_manager extends table_with_ref
   {
     $db = DBWrap::get_instance();
     $rs = $db->Select($fields, $this->_table_name, $this->_primary_key .'='.$id, '');
-    if (!$rs) throw new Exception('The statement ' . $strSQL . ' could not retrieve records from ' . $this->_table_name . ' for given id: ' . $id . '<br/>' . mysqli_error());
+    // PHPStan diagnostic: Undefined variable: $strSQL
+    // -> Quitamos la variable, ya tenemos información del id i la tabla
+    if (!$rs) throw new Exception('The statement ' . $db->current_query_SQL . ' could not retrieve records from ' . $this->_table_name . ' for given id: ' . $id . '<br/>' . $db->get_error());
     return $rs;
   }
 
@@ -195,7 +207,7 @@ class table_manager extends table_with_ref
   {
     $db = DBWrap::get_instance();
     $rs = $db->Select($fields, $this->_table_name, "$key=$val", '');
-    if (!$rs) throw new Exception('get_by_key: could not retrieve records from ' . $this->_table_name . ' for given key name ' . $key . ' and value ' . $val . '<br/>' . mysqli_error());
+    if (!$rs) throw new Exception('get_by_key: could not retrieve records from ' . $this->_table_name . ' for given key name ' . $key . ' and value ' . $val . '<br/>' . $db->get_error());
     return $rs;
   }
 
@@ -206,7 +218,9 @@ class table_manager extends table_with_ref
       */
   public function row_to_XML($row) 
   {
-    $strXML .= '<' . $this->_table_name . '_row>';
+    // PHPStan diagnostic: Undefined variable: $strXML 
+    // -> Usar = en vez de .=
+    $strXML = '<' . $this->_table_name . '_row>';
     foreach ($row as $field => $value) {
       if ($value) { 
 	list ($conv_value, $looked_up_value) = $this->_get_field_value($field, $value);
@@ -258,7 +272,7 @@ class table_manager extends table_with_ref
       * @param int $page the requested page of the result set
       * @param int $limit the number of rows to be written to the table
       */
-  public function rowset_to_jqGrid_XML($rs, $total_entries=0, $page, $limit=0, $total_pages=0)
+  public function rowset_to_jqGrid_XML($rs, $total_entries=0, $page='', $limit=0, $total_pages=0)
   {
     $strXML = '';
     if ($rs) {

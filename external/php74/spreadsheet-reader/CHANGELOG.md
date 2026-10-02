@@ -1,3 +1,15 @@
+## El código de Spreadsheet-reader contiene cambios especificos para Aixada
+
+Aixada ha adaptado en 2026 este código para que funcione desde PHP 7.4 hasta PHP 8.5. y
+para arreglar los siguientes problemas:
+* Admitir acentos y carácteres especiales.
+* Importar números con simbolo de moneda.
+* Se ha arraglado las filas vacias que se ignoravan con xlsx.
+
+**¡No se debe actualizar externamente!**
+
+---
+
 ### v.0.5.12  2016-03-18
 
 - Added a fix for recognising dates in XLS files created by LibreOffice

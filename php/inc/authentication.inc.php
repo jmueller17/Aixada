@@ -104,6 +104,11 @@ class Authentication {
     	$row = $rs->fetch_assoc();
     	$db->free_next_results();  	
     	
+  		if( empty($row) ) {
+  		    throw new AuthException($Text['msg_err_incorrectLogon']);
+  		    return;
+  		}
+
   		$pwdMatches = $this->check_password_hash($password, $row['password']);
 
   		if ($pwdMatches){

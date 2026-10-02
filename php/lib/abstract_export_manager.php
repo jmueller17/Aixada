@@ -85,7 +85,10 @@ class abstract_export_manager {
     {
     	//if no filename is given, construct one
     	if ($filename == ""){
-			$this->filename = "Export_" . $export_table . date('Y-m-d_h:i');    		
+    	    // PHPStan diagnostic: $export_table no está definida.
+    	    // -> usamos $this->export_table en vez de $export_table. 
+    	    //    En las clase derivadas no parece que nunca $filename==""
+			$this->filename = "Export_" . $this->export_table . date('Y-m-d_h:i');    		
     	} else {
 	  		$this->filename = $filename;        	   
     	}
@@ -165,7 +168,7 @@ class abstract_export_manager {
 			header('Expires: '. date(DATE_RFC822, time() - 3600));
 			$fp = fopen('php://output', 'w');
 			foreach ($this->csv_result as $row) 
-			    fputcsv($fp, $row);
+			    fputcsv($fp, $row, ',', '"', '\\');
 			fclose($fp);
     	}
     	
@@ -230,7 +233,7 @@ class abstract_export_manager {
 	    	
 	    	case "csv":
 	    		foreach ($this->csv_result as $row) {
-	      			fputcsv($outhandle, $row);
+	      			fputcsv($outhandle, $row, ',', '"', '\\');
 		  		}
 		  		break;
 	    	case "xml":

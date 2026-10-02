@@ -1,3 +1,8 @@
+Diàleg amb Cloude per arreglar problemes de funcionament
+========================================================
+
+Estiu de 2026
+
 >Uso l'eina spreadsheet-reader per importar excels en PHP. 
 >Te un problema al importar de xls en els imports amb simlbols de moneda.
 >Sempre ha fallat i no me n'havia preocupat, ara he pensat veure si la IA ho troba...

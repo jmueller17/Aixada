@@ -59,7 +59,9 @@ function get_purchase_in_range($filter='prevMonth', $uf_id=0, $from_date=0, $to_
 			break;
 			
 		default:
-			throw new Exception("get_orders_in_range: param={$time_period} not supported");  
+			// PHPStan diagnostic: Undefined variable: $time_period
+			// -> Se sustituye por la variable del switch
+			throw new Exception("get_orders_in_range: param={$filter} not supported");  
 			break;
 	}
 	

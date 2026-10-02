@@ -184,7 +184,10 @@
                 var op_uf = gSelShopRow.attr('operatorUf');
                 var printWin = window.open('tpl/<?=$tpl_print_bill;?>?shopId='+shopId+'&date='+date+'&operatorName='+op_name+'&operatorUf='+op_uf);
                 printWin.focus();
-                printWin.print();
+                // - En Chrome printWin.print() presentaba todavía el informe vacío, 
+                //   le dejamos al js tiempo para llenarlo... 
+                //   y el usuario lo deberà imprimir él.
+                // printWin.print(); 
                 return false;
 			});//end print menu
 	    	

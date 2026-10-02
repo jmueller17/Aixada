@@ -52,7 +52,7 @@ class account {
 
 
 
-	protected function deposit($quantity, $description='', $operator_id, $payment_method_id=7, $currency_type_id=1){
+	protected function deposit($quantity, $description='', $operator_id=0, $payment_method_id=7, $currency_type_id=1){
 		
 		if ($quantity <= 0) {
 			throw new Exception("Deposit amount needs to be larger than zero!");
@@ -70,7 +70,7 @@ class account {
 
 
 
-	protected function withdraw($quantity, $description='', $operator_id, $payment_method_id=10, $currency_type_id=1){
+	protected function withdraw($quantity, $description='', $operator_id=0, $payment_method_id=10, $currency_type_id=1){
 
 		if ($quantity <= 0) {
 			throw new Exception("Withdraw amount cannot be negative");

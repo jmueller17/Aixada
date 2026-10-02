@@ -1,3 +1,12 @@
+## El código PHP de UploadHandler contiene cambios especificos para Aixada
+
+Aixada ha adaptado en 2026 este código para que funcione desde **PHP 5.4** hasta
+PHP 8.5.
+
+**¡No se debe actualizar externamente!**
+
+---
+
 # jQuery File Upload Plugin
 
 ## Description
