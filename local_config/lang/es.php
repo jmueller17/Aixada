@@ -157,6 +157,9 @@ $Text['torns'] = "Turnos";
 $Text['torns_des_de'] = "Turnos desde";
 $Text['data_torn_curt'] = "Fecha";
 $Text['uf_ES_BAIXA'] = "ES BAJA";
+$Text['active_ufs2'] = "UF activas";
+$Text['ordered2'] = 'Pedido';
+$Text['final'] = 'Final';
 
 /**
  * 				roles

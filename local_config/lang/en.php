@@ -155,6 +155,9 @@ $Text['torns'] = "Shifts";
 $Text['torns_des_de'] = "Shifts from";
 $Text['data_torn_curt'] = "Date";
 $Text['uf_ES_BAIXA'] = "UF LEFT";
+$Text['active_ufs2'] = "Active HU's";
+$Text['ordered2'] = 'Ordered';
+$Text['final'] = 'Final';
 
 /**
  * 				roles

@@ -149,6 +149,9 @@ $Text['torns'] = "Torns";
 $Text['torns_des_de'] = "Torns des de";
 $Text['data_torn_curt'] = "Data torn";
 $Text['uf_ES_BAIXA'] = "ÉS BAIXA";
+$Text['active_ufs2'] = "UFs actives";
+$Text['ordered2'] = 'Demanat';
+$Text['final'] = 'Final';
 
 /**
  * 				roles
