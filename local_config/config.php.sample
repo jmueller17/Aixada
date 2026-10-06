@@ -389,6 +389,14 @@ class configuration_vars {
 
   public $calendari = True;
 
+
+  /**
+  * - Opción pera activar los informes para anotar realizar el peparto anotando
+  *   sobre papel y luego revisar los pedidos en pantalla.
+  * - Por defecto es true.
+  */
+  public $order_print = True;
+
   /**
    * Llistat de uf's que no participen en la calendarització de torns. Separar número de uf per comes.
    * per defecte s'anula la uf 1 perquè és la uf admin

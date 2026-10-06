@@ -160,6 +160,43 @@ $Text['ordered2'] = 'Ordered';
 $Text['final'] = 'Final';
 
 /**
+ * Textos per order_print.php
+ */
+$Text['orpr_tancar_i_enviar'] = "Close and <b>Send</b> orders to providers.<br>( the order is sent to the providers and the responsible household )";
+$Text['orpr_comandes_tancades'] = "Supplier orders for {for_date} are now closed.";
+
+$Text['orpr_icon_print'] = 'Print order';
+$Text['orpr_titol'] = "Print Orders";
+$Text['orpr_informes_per_al'] = "Reports for {for_date}";
+$Text['orpr_bt_enviar'] = "Send";
+$Text['orpr_cap_comanda'] = "<b>There are no orders</b> for {for_date}";
+$Text['orpr_bt_prov_ufs'] = "Prov-HHs";
+$Text['orpr_bt_resum_prov'] = "Prov Summary";
+$Text['orpr_desc_prov_ufs_detall'] = "Detailed list of products by provider, with detail per household.";
+$Text['orpr_desc_repartiment'] = "Use this report printed on A4 to do the <b>distribution</b>!";
+$Text['orpr_desc_repartiment_nota'] = "( write down the quantities actually distributed, especially when products are sold by weight )";
+$Text['orpr_desc_prov_ufs_resum'] = "Summary of orders by provider and household.";
+$Text['orpr_bt_dif_prov_ufs'] = "Diff Prov-HHs";
+$Text['orpr_bt_dif_resum_prov'] = "Diff Prov Summary";
+$Text['orpr_desc_dif_detall'] = "List of products ordered and distributed by provider, with detail per household.";
+$Text['orpr_desc_dif_resum'] = "Summary of products ordered and distributed by provider.";
+$Text['orpr_bt_detall'] = "Detail";
+$Text['orpr_bt_resum'] = "Summary";
+$Text['orpr_bt_ufs_prov'] = "HHs-Prov";
+$Text['orpr_bt_resum_ufs'] = "HH Summary";
+$Text['orpr_desc_ufs_prov_detall'] = "Detailed list of products by household and provider.";
+$Text['orpr_desc_ufs_prov_resum'] = "Summary of amounts by household and provider.";
+$Text['orpr_cap_data'] = "There is no date :-((";
+$Text['orpr_info_interes'] = "Useful information";
+$Text['orpr_propers_torns'] = "Your next shifts:";
+$Text['orpr_bt_torns'] = "Shifts";
+$Text['orpr_desc_torns'] = "Shift calendar report for doing the distribution.";
+$Text['orpr_bt_editar_torns'] = "Edit shifts";
+$Text['orpr_desc_editar_torns'] = "Edit the households' shift calendar.";
+$Text['orpr_bt_directori'] = "Directory";
+$Text['orpr_desc_directori'] = "Emails and phone numbers of providers and households.";
+
+/**
  * 				roles
  */
 $Text['Consumer'] = 'Consumer';
