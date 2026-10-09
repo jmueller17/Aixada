@@ -1,0 +1,33 @@
+/**
+ * Usado en /php/reports/, garantiza un pagina limpia a imprimir en din A4
+ */
+
+* {
+    font-size: 12pt;
+    font-family: Verdana,Arial,sans-serif;
+}
+
+body {
+    background-color:#ccc;
+}
+
+.page-A4p {
+    width: 19.5cm; 
+    margin-left: auto; 
+    margin-right:auto; 
+    background-color:#fff; 
+    border: dotted red 1px; 
+    padding:.3cm;
+}
+
+h1, h2, h3 {
+    font-size:12pt;
+    font-weight: normal;
+    padding:0;
+    margin:0;
+}
+
+h2 {
+    /* page-break-before: always; */
+    text-align: center;
+}

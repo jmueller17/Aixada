@@ -307,6 +307,30 @@ IF NOT EXISTS (
     '> CREATE table aixada_torns', '2.8.4');
 END IF;
 
+/* =========================
+ * v2.8.5
+ * Integración de turnos de la Cistella en Aixada
+ * ========================= */
+IF EXISTS (
+    SELECT * FROM information_schema.tables
+    WHERE table_schema = DATABASE() AND table_name = 'cistella_turn'
+) THEN
+    IF NOT EXISTS (SELECT 1 FROM aixada_torns LIMIT 1) THEN
+
+        START TRANSACTION;
+            INSERT INTO aixada_torns (dataTorn, ufTorn)
+            SELECT date_turn, uf_id FROM cistella_turn
+            WHERE CAST(date_turn AS CHAR) <> '0000-00-00';
+        COMMIT;
+
+        RENAME TABLE cistella_turn TO cistella_turn_old;
+
+        insert into aixada_version (module_name, version) values (
+        '> MOVE rows of cistella_turn to aixada_torns', '2.8.5');
+    END IF;
+    
+END IF;
+
 
 /* =========================
  * Execute update procedure

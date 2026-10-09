@@ -150,6 +150,54 @@ $Text['afegir_uf'] = "Añadir uf";
 $Text['eliminar_uf'] = "Eliminar uf";
 $mesos=[1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Disiembre"];
 
+/** 
+ * Textos de /php/reports/
+ */
+$Text['torns'] = "Turnos";
+$Text['torns_des_de'] = "Turnos desde";
+$Text['data_torn_curt'] = "Fecha";
+$Text['uf_ES_BAIXA'] = "ES BAJA";
+$Text['active_ufs2'] = "UF activas";
+$Text['ordered2'] = 'Pedido';
+$Text['final'] = 'Final';
+
+/**
+ * Textos per order_print.php
+ */
+$Text['orpr_tancar_i_enviar'] = "Cerrar y <b>Enviar</b> los pedidos a los proveedores.<br>( el pedido se envía al proveedor y a la UF responsable )";
+$Text['orpr_comandes_tancades'] = "Los pedidos a los proveedores para {for_date} ya están cerrados.";
+
+$Text['orpr_icon_print'] = 'Imprimir pedidos a repartir';
+$Text['orpr_titol'] = "Imprimir Pedidos";
+$Text['orpr_informes_per_al'] = "Informes para el {for_date}";
+$Text['orpr_bt_enviar'] = "Enviar";
+$Text['orpr_cap_comanda'] = "<b>No hay ningún pedido</b> para el {for_date}";
+$Text['orpr_bt_prov_ufs'] = "Prov-UFs";
+$Text['orpr_bt_resum_prov'] = "Resumen Prov";
+$Text['orpr_desc_prov_ufs_detall'] = "Relación detallada de productos por proveedores con detalle de UFs.";
+$Text['orpr_desc_repartiment'] = "¡Usad este informe impreso en A4 para hacer el <b>reparto</b>!";
+$Text['orpr_desc_repartiment_nota'] = "( anotad en él las cantidades realmente repartidas, especialmente cuando los productos van a peso )";
+$Text['orpr_desc_prov_ufs_resum'] = "Resumen de pedidos por proveedores y UFs.";
+$Text['orpr_bt_dif_prov_ufs'] = "Dif Prov-UFs";
+$Text['orpr_bt_dif_resum_prov'] = "Dif Resumen Prov";
+$Text['orpr_desc_dif_detall'] = "Relación de productos pedidos y repartidos por proveedores con detalle de UFs.";
+$Text['orpr_desc_dif_resum'] = "Resumen de productos pedidos y repartidos por proveedores.";
+$Text['orpr_bt_detall'] = "Detalle";
+$Text['orpr_bt_resum'] = "Resumen";
+$Text['orpr_bt_ufs_prov'] = "UFs-Prov";
+$Text['orpr_bt_resum_ufs'] = "Resumen UFs";
+$Text['orpr_desc_ufs_prov_detall'] = "Relación detallada de productos por UFs y proveedores.";
+$Text['orpr_desc_ufs_prov_resum'] = "Resumen de importes por UFs y proveedores.";
+$Text['orpr_cap_data'] = "No hay ninguna fecha :-((";
+$Text['orpr_info_interes'] = "Información de interés";
+$Text['orpr_propers_torns'] = "Vuestros próximos turnos:";
+$Text['orpr_bt_torns'] = "Turnos";
+$Text['orpr_desc_torns'] = "Informe del calendario de turnos para hacer repartos.";
+$Text['orpr_bt_editar_torns'] = "Editar turnos";
+$Text['orpr_desc_editar_torns'] = "Editar el calendario de turnos de las UFs.";
+$Text['orpr_bt_directori'] = "Directorio";
+$Text['orpr_desc_directori'] = "Emails y teléfonos de los proveedores y las UFs.";
+
 /**
  * 				roles
  */

@@ -573,6 +573,12 @@
 					<a href="incidents.php"><img src="img/incidencias.png"/></a>
 					<p><a href="incidents.php"><?php echo $Text['icon_incidents'];?></a></p>
 				</div>
+				<?php if ( get_config('order_print', true) ) { ?>
+				<div class="homeIcon index_navOrder">
+					<a href="local_custom/order_send.php"><img src="img/validar.png"/></a>
+					<p><a href="order_print.php"><?php echo i18n('orpr_icon_print'); ?></a></p>
+				</div>
+				<?php } ?>
 			</div>
 			<div id="rightSummaryCol" class="aix-style-layout-splitW80 floatLeft aix-layout-widget-center-col">
 

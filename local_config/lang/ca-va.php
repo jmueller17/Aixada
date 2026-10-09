@@ -143,6 +143,54 @@ $Text['eliminar_uf'] = "Eliminar uf";
 $mesos=[1=>"Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"];
 
 /**
+ * Textos de /php/reports/
+ */
+$Text['torns'] = "Torns";
+$Text['torns_des_de'] = "Torns des de";
+$Text['data_torn_curt'] = "Data torn";
+$Text['uf_ES_BAIXA'] = "ÉS BAIXA";
+$Text['active_ufs2'] = "UFs actives";
+$Text['ordered2'] = 'Demanat';
+$Text['final'] = 'Final';
+
+/**
+ * Textos per order_print.php
+ */
+$Text['orpr_tancar_i_enviar'] = "Tancar i <b>Enviar</b> les comandes als proveïdors.<br>( la comanda s'envia al proveïdor i a la UF responsable )";
+$Text['orpr_comandes_tancades'] = "Les comandes als proveïdors per al {for_date} ja estan tancades.";
+
+$Text['orpr_icon_print'] = 'Imprimir comandes a repartir';
+$Text['orpr_titol'] = "Imprimir Comandes";
+$Text['orpr_informes_per_al'] = "Informes per al {for_date}";
+$Text['orpr_bt_enviar'] = "Enviar";
+$Text['orpr_cap_comanda'] = "<b>No hi ha cap comanda</b> per al {for_date}";
+$Text['orpr_bt_prov_ufs'] = "Prov-UFs";
+$Text['orpr_bt_resum_prov'] = "Resum Prov";
+$Text['orpr_desc_prov_ufs_detall'] = "Relació detallada de productes per proveïdors amb detall de UFs.";
+$Text['orpr_desc_repartiment'] = "Useu aquest informe imprès en A4 per fer el <b>repartiment</b>!";
+$Text['orpr_desc_repartiment_nota'] = "( anoteu-hi les quantitats realment repartides, especialment quan els productes van a pes )";
+$Text['orpr_desc_prov_ufs_resum'] = "Resum de comandes per proveïdors i UFs.";
+$Text['orpr_bt_dif_prov_ufs'] = "Dif Prov-UFs";
+$Text['orpr_bt_dif_resum_prov'] = "Dif Resum Prov";
+$Text['orpr_desc_dif_detall'] = "Relació de productes demanats i repartits per proveïdors amb detall de UFs.";
+$Text['orpr_desc_dif_resum'] = "Resum de productes demanats i repartits per proveïdors.";
+$Text['orpr_bt_detall'] = "Detall";
+$Text['orpr_bt_resum'] = "Resum";
+$Text['orpr_bt_ufs_prov'] = "UFs-Prov";
+$Text['orpr_bt_resum_ufs'] = "Resum UFs";
+$Text['orpr_desc_ufs_prov_detall'] = "Relació detallada de productes per UFs i proveïdors.";
+$Text['orpr_desc_ufs_prov_resum'] = "Resum d'imports per UFs i proveïdors.";
+$Text['orpr_cap_data'] = "No hi ha cap data :-((";
+$Text['orpr_info_interes'] = "Informació d'interès";
+$Text['orpr_propers_torns'] = "Els vostres pròxims torns:";
+$Text['orpr_bt_torns'] = "Torns";
+$Text['orpr_desc_torns'] = "Informe del calendari de torns per fer repartiments.";
+$Text['orpr_bt_editar_torns'] = "Editar torns";
+$Text['orpr_desc_editar_torns'] = "Editar el calendari de torns de les UFs.";
+$Text['orpr_bt_directori'] = "Directori";
+$Text['orpr_desc_directori'] = "Emails i telèfons dels proveïdors i les UFs.";
+
+/**
  * 				roles
  */
 $Text['Consumer'] = 'Consumidor';

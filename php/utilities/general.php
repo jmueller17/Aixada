@@ -198,26 +198,21 @@ function change_session_language($new_language_key) {
 /**
  * 
  * Provides some basic logic to retrieve values from URL parameters. 
- * @param str $param_name the name of the parameter passed along 
- * @param $default a default value. if the parameter is not set, the default value will be used
- * @param str $transform basic string transforms applied to the value of the parameter
- * @throws Exception
+ * @param string $param_name Name of the URL parameter passed along 
+ * @param $default           The default value returned if the URL parameter is
+ *                           missing.
+ * Note: It does not throw any exception.
  */
-function get_param($param_name, $default=null, $transform = '') {
+function get_param($param_name, $default=null) {
 	$value = ''; 
 
 	if (isset($_REQUEST[$param_name])) {
 		$value = $_REQUEST[$param_name];
-		if (($value == '' || $value == 'undefined') && isset($default)) {
+		if ( $value == '' || $value == 'undefined' ) {
 			$value = $default;
-		} else if (($value == '' || $value == 'undefined') && !isset($default)) {
-			throw new Exception("get_param: Parameter: {$param_name} has no value and no default value");
-		}	
-			
-	} else if (isset($default) and $default !== null) {
-		$value= $default;
+		}
 	} else {
-		throw new Exception("get_param: Missing or wrong parameter name: {$param_name} in URL");
+		$value= $default;
 	}
 	
 	//utility hack to retrieve uf_id or user_id from session. e.g. &uf_id=-1
@@ -228,29 +223,7 @@ function get_param($param_name, $default=null, $transform = '') {
 	} else if ($param_name == "member_id" && $value==-1) {
 		$value = get_session_member_id();
 	}
-	
-	
-	switch ($transform) {
-		case 'lowercase':
-			$value = strtolower($value);
-			break;
-			
-		case '':
-			$value = $value; 
-			break;
-		
-		case 'array2String':
-			$str = "";
-			foreach ($value as $v) {
-				$str .= $v.",";
-			}
-			$value = rtrim($str,",");
-			break;
-			
-		default: 
-			throw new Exception("get_param: transform '{$transform}' on URL parameter not supported. ");
-			break;
-	}
+
 	return $value;
 }
 
@@ -259,15 +232,19 @@ function get_param($param_name, $default=null, $transform = '') {
  * Provides some basic logic to retrieve numeric values from URL parameters. 
  * @param string       $param_name  Name of the parameter passed along
  * @param number|string|null  $default     Default value used when parameter is
- *     not set (default value must bee numeric and if it is a string it will be
- *     converted to a number, otherwise null is used)
+ *     not set ( if the default value is not empty, it will be
+ *     converted to a number if possible )
  * @return number|null Returns a number if parameter exist and it is numeric,
  *     otherwise returns $default.
  */
 function get_param_numeric($param_name, $default=null) {
     $val = get_param($param_name, false);
     if (!is_numeric($val)) {
-        return (is_numeric($default) ? $default + 0 : null);
+        if ( !empty($default) && is_numeric($default) ) {
+            return $default + 0;
+        } else {
+            return $default;
+        }
     }
     return $val + 0;
 }
@@ -275,48 +252,57 @@ function get_param_numeric($param_name, $default=null) {
 /**
  *
  * Provides some basic logic to retrieve integer values from URL parameters. 
- * @param string    $param_name  Name of the parameter passed along
- * @param int|string|null $default Default value used when parameter is not set,
- *     (default value must bee a numeric value without decimals and if it is a
- *      string it will be converted to a integer, otherwise null is used)
- * @return int|null Returns a integer if parameter exist and it is a integer
+ * @param string    $param_name     Name of the URL parameter passed along
+ * @param int|string|null $default  Default value used when URL parameter 
+ *     is missing or invalid integer ( if the default value is not empty, it is
+ *     converted to a integer if possible )
+ * @return int|$default Returns a integer if parameter exist and it is a integer
  *     number, otherwise returns $default.
  */
 function get_param_int($param_name, $default=null) {
     $val = get_param_numeric($param_name);
-    if (!is_int($val)) {
-        return (is_numeric($default) && is_int($default+0) ? $default+0 : null);
+    if ( !is_int($val) ) {
+        if ( !empty($default) && is_int($default + 0) ) {
+            return $default + 0;
+        } else {
+            return $default;
+        }
     }
     return $val;
 }
 
 
 /**
- * Provides some basic logic to retrieve array of integers from URL parameters. 
- * @param string    $param_name  Name of the parameter passed along
- * @param array(int|string)|string|null  $default  Default value used when 
- *     parameter is not set (default value must bee a array of integers or a
- *     string that corresponds to a list integers, if not null is used as
- *     default)
- * @return array(int)|null Returns a array of integers if parameter exist and it
- *     is a array of integers, otherwise returns $default.
+ * Provides some basic logic to retrieve array of integers from URL parameter
+ * with a text of numbers separated by commas. 
+ * @param string $param_name            Parameter name in URL
+ * @param array()|string|null $default  Default value used when URL parameter 
+ *     is missing or invalid ( if the default value is not empty, it is
+ *     converted to an array(int) if possible )
+ * @return array(int)|$default Returns a array of integers if URL parameter
+ *     exist and it is parsed to an array(int), otherwise returns $default.
  */
 function get_param_array_int($param_name, $default=null, $separator=',') {
 	$val = get_param($param_name, false);
-	if ($val !== false) {
-		$str_array = explode($separator, $val);
+	if ( $val ) {
+		$str_array = explode(',', $val);
 	} else {
-		if (!is_array($default) && !$default) { return null; } // exit
-		if (is_array($default)) {
+		if ( !$default ) {
+            // exit
+            return $default; 
+        }
+        // Parse $default
+		if ( is_array($default) ) {
 			$str_array = $default;
 		} else {
-			$str_array = explode($separator, $default);
+			$str_array = explode(',', $default);
 		}
 	}
 	$result = array();
 	foreach ($str_array as $item) {
-		if (!is_numeric($item) || !is_int($item+0)) { return null; } // exit
-		array_push($result, $item+0);
+		if ( is_numeric($item) && is_int($item + 0) ) {
+            array_push($result, $item + 0);
+        }
 	}
 	return $result;
 }
@@ -324,27 +310,20 @@ function get_param_array_int($param_name, $default=null, $separator=',') {
 /**
  *
  * Provides some basic logic to retrieve date values from URL parameters. 
- * @param string      $param_name   Name of the parameter passed along
- * @param string|null $default      Default value used when parameter is not
- *     set, (default value must bee a valid date as format 'Y-m-d', if not a
- *     null is used as default)
- * @param string      $input_format Input date format, default is 'Y-m-d'
- * @return string|null Returns a date with format 'Y-m-d' if parameter exist
+ * @param string $param_name   Parameter name in URL
+ * @param        $default      Default value used when URL parameter is missing
+ *                             or an invalid date.
+ *
+ * @return string|null Returns a date with format 'Y-m-d' if URL parameter exist
  *     and it is a valid date, otherwise returns $default.
  */
-function get_param_date($param_name, $default=null, $input_format='Y-m-d') {
-    $val = get_param($param_name, false);
-    if ($val) {
-        $date = date_parse_from_format($input_format, $val);
+function get_param_date($param_name, $default=null) {
+    $val = get_param($param_name);
+    if ( $val ) {
+        $date = date_parse_from_format('Y-m-d', $val);
     }
     if (!$val || $date['error_count'] !== 0) {
-        if ($default === null) {
-            return null;
-        }
-        $date = date_parse_from_format('Y-m-d', $default);
-        if ($date['error_count'] !== 0) {
-            return null;
-        }
+        return $default;
     }
     $date_o = new DateTime();
     $date_o->setDate($date['year'], $date['month'], $date['day']);
