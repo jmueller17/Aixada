@@ -1,0 +1,12 @@
+/**
+ * Usado en /php/reports/, garantiza un pagina limpia a imprimir en din A4
+ */
+
+body {
+    background-color: #fff;
+}
+
+.page-A4p { 
+    border-style: none; 
+    padding: 0;
+}

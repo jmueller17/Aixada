@@ -389,6 +389,14 @@ class configuration_vars {
 
   public $calendari = True;
 
+
+  /**
+  * - Opción pera activar los informes para anotar realizar el peparto anotando
+  *   sobre papel y luego revisar los pedidos en pantalla.
+  * - Por defecto es true.
+  */
+  public $order_print = True;
+
   /**
    * Llistat de uf's que no participen en la calendarització de torns. Separar número de uf per comes.
    * per defecte s'anula la uf 1 perquè és la uf admin
@@ -570,6 +578,7 @@ class configuration_vars {
                    'may_edit_account',
                    'may_edit_unit_measure',
              	   'may_edit_iva_type',
+                   'may_edit_torns',
                    'may_view_all_accounts',
                    'may_edit_rev_tax_type',
                    'may_edit_account_desc',
@@ -592,6 +601,7 @@ class configuration_vars {
 
              'Logistic Commission' =>
              array('may_edit_incident'),
+                   'may_edit_torns',
 
              'Hacker Commission' =>
              array('may_edit_user',
@@ -604,6 +614,7 @@ class configuration_vars {
                    'may_edit_unit_measure',
                    'may_view_all_accounts',
                    'may_edit_iva_type',
+                   'may_edit_torns',
                    'may_edit_rev_tax_type',
                    'may_edit_account_desc',
                    'may_edit_payment_method',
